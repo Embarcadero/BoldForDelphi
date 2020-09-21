@@ -1,0 +1,190 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Propagation/BoldListenerCOM.UnitDoc 3     02-03-05 23:29 Johosos $">
+   <Classes>
+      <Class Name="EBoldPropagatorTypeLib">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldListenerCOM">
+         <Events>
+            <Event Name="OnExtendLeaseFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="QueueNotEmptyNotifyEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DebugGetQueueContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DecodeAndPush">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultExtendLeaseInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoExtendLeaseFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoRegisterWithPropagatorFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeaseTimeLeft">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Lock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OnTimer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PushMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterWithPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExtendLeaseAfter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLeaseDuration">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnregisterWithPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setAutoExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClientIdentifierString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExtendErrorMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExtendLeaseAfter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LeaseDuration">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnExtendLeaseFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PollingInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Propagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Queue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="QueueNotEmptyNotifyEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Registered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldExtendLeaseFailureEvent">
+         <Summary>EventType that signals that an extend lease operation did not succeed</Summary>
+         <Desc>An extent lease operation can fail in different ways, see <See Type="TBoldExtendLeaseResult"/> for details</Desc>
+      </Type>
+      <Type Name="TBoldExtendLeaseResult">
+         <Summary>Enum for the result of an Extend lease operation</Summary>
+         <Desc></Desc>
+         <Enumeration>
+            <EnumItem Name="elrExtended">
+               <Desc>The operation completed successfully, and the client was allowed to extend the lease</Desc>
+            </EnumItem>
+            <EnumItem Name="elrFailed">
+               <Desc>The call to the propagator failed, lease was not extended</Desc>
+            </EnumItem>
+            <EnumItem Name="elrFailedExpired">
+               <Desc>THe call to the propagator failed, lease was not extended, and most likely, the lease has expired by now</Desc>
+            </EnumItem>
+            <EnumItem Name="elrDenied">
+               <Desc>The call to the propagator worked, but the propagator denied the client to extend the lease (most likely because the lease had expired). If this happens, the listener must reregister with the propagator, but all subscriptions that the client has with the propagator will be lost.</Desc>
+            </EnumItem>
+            <EnumItem Name="elrNotRegistered">
+               <Desc>The client was not registered with the propagator, so no call could be made. If this happens, the listener should first register with the propagator.</Desc>
+            </EnumItem>
+         </Enumeration>
+      </Type>
+      <Type Name="TBoldMessageEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

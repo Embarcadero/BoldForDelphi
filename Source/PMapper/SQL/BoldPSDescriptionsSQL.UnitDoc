@@ -1,0 +1,437 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PMapper/SQL/BoldPSDescriptionsSQL.UnitDoc 7     02-05-06 18:03 Johosos $">
+   <Classes>
+      <Class Name="TBoldSQLColumnDescription">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateBDEColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLForColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTableDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultDBValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Mandatory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLAllowNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Size">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLDescriptionElement">
+         <Methods>
+            <Method Name="MappedSQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OwningSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="SQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLDescriptionList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemBySQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsBySQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxDBIdentifierLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLIndexDescription">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateBDEIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GeneratedName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexedFieldsForSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTableDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForPrimaryKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForSecondaryKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IndexOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IndexedFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IndexedFieldsForSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLIndexDescriptionList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemsByIndexFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ItemsByIndexFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLSystemDescription">
+         <Methods>
+            <Method Name="CleanPersistentStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ContinueClearPS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistentStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithTablePrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EffectiveGenerationMode">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EffectiveUseTransactions">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDatabaseScript">
+               <Summary>Generates a SQL script for the schema of the database</Summary>
+               <Desc>Generates a SQL script that can be used to create the schema described by the SQLSystemDescription.
+                  <Warning>This script does not contain all initialization required to be used by a PersistenceMapper. Also required is the information from a <See Class="TBoldSQLMappingInfo"/>-object</Warning>
+               </Desc>
+               <Params>
+                  <Param Name="Script">
+                     <Desc>Pass an instance of (a subclass of) TStrings in which you want the script to be generated</Desc>
+                  </Param>
+                  <Param Name="Separator">
+                     <Desc>If the separator is not the empty string, it will be added to the script between each SQL-statement</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="InitializeKnownSystemtables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemTablesPrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Counter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLDatabaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLTablesList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTablesPrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLTableDescription">
+         <Methods>
+            <Method Name="AddColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTableBDE">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTableSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDatabaseScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveSelectIdAndTypeStatement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveSelectSingleIdAndTypeStatement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForCreateTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForDropTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TableExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ColumnsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContainsStopTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IndexList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PrimaryIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Versioned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLTableDescriptionList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemBySQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsBySQLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="IDCOLUMN_TYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TYPECOLUMN_TYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldSQLQuotifyString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="BoldCleanDatabaseForced">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldMaxDatabaseMetaDataChangesInTransaction">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldSQLQuoteCharacters">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

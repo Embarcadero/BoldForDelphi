@@ -1,0 +1,83 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>New Page 2</title>
+
+<script language="javascript">
+<!-- hide me>
+
+/* Company.allInstances->select(companyName.sqlLikeCaseInsensitive('%Bold%'))*/
+
+re = /%s/g;
+var AllInstances = new String("%s.allInstances");
+var Select = new String("->select(%s)");
+
+function SearchPerson(FirstName, LastName)
+{
+  var OCLExpr;
+  if ((FirstName=="") && (LastName==""))
+  {
+    OCLExpr= AllInstances.replace(re, "Person");
+  }
+  else {
+    var c1=new String("firstName.sqlLIkeCaseInsensitive('%%s%')");
+    var c2=new String("lastName.sqlLIkeCaseInsensitive('%%s%')");
+    var cond = c1.replace(re, FirstName)+ " and " + c2.replace(re, LastName);
+    OCLExpr= AllInstances.replace(re, "Person") + Select.replace(re, cond);    
+  }
+  window.document.frmPerson.OCL.value=OCLExpr;
+}
+function SearchCompany(CompanyName)
+{
+  var OCLExpr="";
+  if (CompanyName == "") 
+  {
+    OCLExpr = AllInstances.replace(re, "Company");
+  }
+  else {
+    var c1 = new String("companyName.sqlLIkeCaseInsensitive('%%s%')");
+    var cond=c1.replace(re, CompanyName);
+    OCLExpr = AllInstances.replace(re, "Company") + Select.replace(re, cond);
+  }
+  window.document.frmCompany.OCL.value=OCLExpr;
+}
+
+// end hiding-->
+</script>
+
+</head>
+
+<body>
+
+<h1>XML Example</h1>
+<p>The model used in this example is called OrgChart.mdl, models an organization
+structure... bla bla bla </p>
+<h3><span style="background-color: #33CCCC">Search
+Person&nbsp;&nbsp;&nbsp;&nbsp;</span></h3>
+<form name="frmPerson" method="post" action="OrgChartISAPI.dll/home">
+  <h4>&nbsp; First Name&nbsp; <input type="text" name="TfirstName" size="20">&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Last Name&nbsp;&nbsp; <input type="text" name="TlastName" size="20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </h4>
+  <h4><input type="submit" value="Search" name="BSearchPerson" onClick="SearchPerson(window.document.frmPerson.TfirstName.value, window.document.frmPerson.TlastName.value);"><input type="reset" value="Clear" name="BClearPerson">
+  </h4>
+  <input type="hidden" name="OCL" value="">
+  <input type="hidden" name="Action" value="EvaluateOCL">
+</form>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3><span style="background-color: #33CCCC">Search Company&nbsp;&nbsp;&nbsp;&nbsp;</span></h3>
+<form name="frmCompany" method="post" action="OrgChartISAPI.dll/home">
+  <h4>&nbsp;Company Name&nbsp; <input type="text" name="TcompanyName" size="20">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  </h4>
+  <h4><input type="submit" value="Search" name="BSearchCompany" onClick="SearchCompany(window.document.frmCompany.TcompanyName.value);"><input type="reset" value="Clear" name="BClearCompany"></h4>
+  <input type="hidden" name="OCL" value="">	  
+  <input type="hidden" name="Action" value="EvaluateOCL">
+</form>
+
+</body>
+
+</html>

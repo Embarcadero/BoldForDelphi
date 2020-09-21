@@ -1,0 +1,61 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/HTTP/BoldHTTPPersistenceControllerClient.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldHTTPPersistenceControllerClient">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getWebConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setWebConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="WebConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldHTTPSOAPService">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="WebConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

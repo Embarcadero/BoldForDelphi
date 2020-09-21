@@ -1,0 +1,43 @@
+package SampAttrPackD6;
+
+{$R *.RES}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Bold Sample Attribute types from BoldSoft'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  Vcldb,
+  Bold31D6;
+
+contains
+  BoldPMString25 in 'BoldPMString25.pas',
+  BABudgetStatus in 'BABudgetStatus.pas',
+  BAName in 'BAName.pas',
+  BAShortString in 'BAShortString.pas',
+  BASwedishSocSec in 'BASwedishSocSec.pas',
+  BACoordinate in 'BACoordinate.pas',
+  BACoordinateInterface in 'BACoordinateInterface.pas',
+  BACoordinatePMapper in 'BACoordinatePMapper.pas';
+
+end.

@@ -1,0 +1,50 @@
+package BoldXMILink;
+
+{$R *.res}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (XMI Link)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  Bold,
+  BoldUml,
+  DesignIDE;
+
+contains
+  BoldDTDParser in 'Source\UMLModel\ModelLinks\XMI\BoldDTDParser.pas',
+  BoldMOFInterfaces in 'Source\UMLModel\ModelLinks\XMI\BoldMOFInterfaces.pas',
+  BoldUMLDTDData in 'Source\UMLModel\ModelLinks\XMI\BoldUMLDTDData.pas',
+  BoldUMLModelMOFAdapters in 'Source\UMLModel\ModelLinks\XMI\BoldUMLModelMOFAdapters.pas',
+  BoldUMLXMICommon in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMICommon.pas',
+  BoldUMLXMIImporter in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMIImporter.pas',
+  BoldUMLXMILink in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMILink.pas',
+  BoldUMLXMILinkSupport in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMILinkSupport.pas',
+  BoldUMXMILinkreg in 'Source\UMLModel\ModelLinks\XMI\BoldUMXMILinkreg.pas',
+  BoldXMI10Exporter in 'Source\UMLModel\ModelLinks\XMI\BoldXMI10Exporter.pas';
+
+end.

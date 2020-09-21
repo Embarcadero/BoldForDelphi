@@ -1,0 +1,453 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldListBoxCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldCustomListBoxCom">
+         <Methods>
+            <Method Name="CNDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSetFontAndColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MeasureItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAlignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_BeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_DeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_InsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_RowAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldListBoxCom">
+         <Events>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMeasureItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Alignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BorderStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Columns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExtendedSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IntegralHeight">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="itemHeight">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,102 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldFilteredHandle.UnitDoc 6     01-11-06 17:16 Aniv $">
+   <Classes>
+      <Class Name="TBoldFilter">
+         <Events>
+            <Event Name="OnFilter">
+               <Summary>This event should decide for a given item, whether it should be in the filtered list or not.</Summary>
+               <Desc>This event should decide for a given item, whether it should be in the filtered list or not.</Desc>
+            </Event>
+            <Event Name="OnSubscribe">
+               <Summary>This event should place subscriptions to all values that were used in the OnFilter-event.</Summary>
+               <Desc>This event should place subscriptions to all values that were used in the <See Event="OnFilter"/>-event.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Filter">
+               <Summary>Triggers the <InlineCode>OnFilter</InlineCode>-event with the Element.</Summary>
+               <Desc>
+                  <P>The <InlineCode>Filter</InlineCode> method is invoked for each element in the list to determine if it shall go into the filtered list.</P>
+                  <P>If the <See Event="OnFilter"/> event has not been implemented, the <InlineCode>Filter</InlineCode> method will return <InlineCode>True</InlineCode>.</P>
+               </Desc>
+            </Method>
+            <Method Name="FilterList">
+               <Summary>Filters the list passed as argument using Filter.</Summary>
+               <Desc>Call <InlineCode>FilterList</InlineCode> to filter a <See Class="TBoldList" Text="BoldList"/> utilizing the code written in the <See Event="OnFilter"/>-event</Desc>
+            </Method>
+            <Method Name="GetPreFetchRoles">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetPreFetchRoles">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="StorePreFetchRoles">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Subscribe">
+               <Summary>Invokes the OnSubscribe event handler.</Summary>
+               <Desc><InlineCode>Subscribe</InlineCode> checks if the <See Event="OnSubscribe"/> event handler is set, and if so invokes it.</Desc>
+            </Method>
+            <Method Name="create">
+               <Summary>Creates an instance of TBoldFilter</Summary>
+               <Desc>use <InlineCode>Create</InlineCode> to create an instance of <InlineCode>TBoldFilter</InlineCode>.</Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary>Destroys an instance of TBoldFilter.</Summary>
+               <Desc>Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> instead.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OnSubscribe">
+               <Summary></Summary>
+               <Desc>(this is an event)</Desc>
+            </Property>
+            <Property Name="PreFetchRoles">
+               <Summary>List of roles of which other end is fetched on filtering</Summary>
+               <Desc>PreFetchedRoles is used by the invoker, typically a TBoldFilteredHandle aggregated into a TBoldListHandle. The roles shall be listed using the ExpressionName.
+                  <P>The purpose of this is of course to speed up access to objects that will be used "soon", as the fetch operation perfomed can be batched by the internal mechanisms.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>Provides filtering of lists to TBoldListHandle components</Summary>
+         <Desc>Connect the BoldFilter-property of a TBoldListHandle to a TBoldFilter to use this component. It can be placed on a common datamodule and reused for multiple listhandles.</Desc>
+      </Class>
+      <Class Name="TBoldFilteredHandle">
+         <Methods>
+            <Method Name="DeriveAndSubscribe">
+               <Summary>Overrides TBoldRootedHandle.DeriveAndSubscribe</Summary>
+               <Desc>Overrides <See Class="TBoldRootedHandle" Method="DeriveAndSubscribe"/></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary>Overrides TBoldElementHandle.GetStaticBoldType</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticBoldType"/></Desc>
+            </Method>
+            <Method Name="SetBoldFilter">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldFilter">
+               <Summary>Defines which filter to use.</Summary>
+               <Desc>The <InlineCode>BoldFilter</InlineCode> property is used to connect the <InlineCode>TBoldFilteredHandle</InlineCode> to a <See Class="TBoldFilter"/>.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Used internally by TBoldListHandle</Summary>
+         <Desc>The <InlineCode>TBoldFilteredHandle</InlineCode> is used in the chained evaluation of a <See Class="TBoldListHandle"/>, if it's filtered.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines TBoldFilter and TBoldFilteredHandle</Summary>
+   <Desc>This unit defines the classes TBoldFiler and TBoldFilteredHandle. They provide filtering capabilities for Bold handles.</Desc>
+   <Types>
+      <Type Name="TBoldElementFilter">
+         <Summary>The event type used by TBoldFilter.OnFilter</Summary>
+         <Desc>An implementation of this event should return true if <InlineCode>Element</InlineCode> passes the filter and false if it does not pass.</Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

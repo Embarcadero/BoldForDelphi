@@ -1,0 +1,121 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/CodeGenerator/BoldGeneratorTemplatesDelphi.UnitDoc 4     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldDelphiTemplateManager">
+         <Methods>
+            <Method Name="AddQualifierParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateInheritedCall">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataModule">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultIncFileExtension">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDelphiSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerivedMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIncFileHeaderTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReverseDeriveMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSearchStringfromMethodHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeCOMTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InstallTemplates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToCodeHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringContainsMethodHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AccessMembersByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DataModule">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDelphiTemplateManagerNameBound">
+         <Methods>
+            <Method Name="InitializeTemplateList">
+               <Summary></Summary>
+               <Desc>Modifies the original template to ask for members using their name instead of their index in the object.</Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This small class changes the access behaviur of the generated code to use name instead of using a hardcoded index. Use this code generator if you want to use the same model snippet in more than one application. Accessing members by name is slower than accessing them with an index since it requires a lookup in a hashtable.
+<BH>Usage</BH>
+Install this generator with the following code:
+<code>
+unit xxx;
+interface
+
+uses
+  BoldGeneratorTemplatesDelphi;
+  
+implementation
+  
+initialization
+  TBoldDelphiTemplateManagerNameBound.InstallTemplates;
+end.</code>
+Add this unit to a package that you install in delphi. This will replace the normal templates. 
+ </Desc>
+      </Class>
+      <Class Name="TBoldGeneratorTemplatesDelphiDM">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+   </Types>
+</DLUnitDoc>

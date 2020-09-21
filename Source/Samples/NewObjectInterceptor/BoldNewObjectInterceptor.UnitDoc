@@ -1,0 +1,71 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/NewObjectInterceptor/BoldNewObjectInterceptor.UnitDoc 3     11/21/01 11:18a Jeho $">
+   <Classes>
+      <Class Name="TBoldNewObjectInterceptor">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="EnsureStringList">
+               <Summary>private</Summary>
+               <Desc>Loads the file specified in <See Property="FileName"/> into memory.</Desc>
+            </Method>
+            <Method Name="GetRandomWord">
+               <Summary>Gets a random string from theWordList.</Summary>
+               <Desc>Gets a random string from the <See Property="WordList"/></Desc>
+            </Method>
+            <Method Name="GetWordList">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="InitializeAttribute">
+               <Summary>Performs the setting of random data.</Summary>
+               <Desc><InlineCode>InitializeAttribute</InlineCode> determines the type of the attribute and sets a proper random value.</Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary>Receives subscription event.</Summary>
+               <Desc>The receive method is called to indicate a relevant subscription event has occurred.</Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetRandomAttributes">
+               <Summary>Sets random values of attributes of the newly created object.</Summary>
+               <Desc>Sets random values of attributes of the newly created object.</Desc>
+            </Method>
+            <Method Name="SubscribeToElement">
+               <Summary>Subscribes to the root class' class list.</Summary>
+               <Desc>The subscription is places on the first class list, which is the class list of the root class. Since the class lists contain the objects of their subclasses, this class list will contain all objects.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>Control if the randomization should be active or not.</Summary>
+               <Desc>Control if the randomization should be active or not.</Desc>
+            </Property>
+            <Property Name="Filename">
+               <Summary>Specifies the file to load words from.</Summary>
+               <Desc><Note>FileName</Note> specifies the filename to use as random data source. It should be a plain text file.</Desc>
+            </Property>
+            <Property Name="OverrideInitialValue">
+               <Summary>Control if initial values should be overwritten.</Summary>
+               <Desc>If this property is set to <InlineCode>false</InlineCode> attributes modeled with an InitialValue are not filled with random data from <See Property="wordlist"/>.</Desc>
+            </Property>
+            <Property Name="WordList">
+               <Summary>The contents of the file specified in FileName</Summary>
+               <Desc>The contents of the file specified in <See Property="FileName"/></Desc>
+            </Property>
+         </Properties>
+   <Summary>A subscribes that traps creation of objects.</Summary>
+   <Desc>This component shows the possibilities to intercept system events using subscriptions.
+      <P>Here, it is used to intercept creation of new objects, and fill them with random data from a text file. While nothing for production systems, it's a very non-intrusive way to populate prototypes.</P>
+   </Desc>
+      </Class>
+   </Classes>
+   <Summary>A subscribes that traps creation of objects.</Summary>
+   <Desc>This component shows the possibilities to intercept system events using subscriptions.
+      <P>Here, it is used to intercept creation of new objects, and fill them with random data from a text file. While nothing for production systems, it's a very non-intrusive way to populate prototypes.</P>
+   </Desc>
+</DLUnitDoc>

@@ -1,0 +1,101 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/Core/BoldMetaElementList.UnitDoc 3     01-09-17 16:20 Jeho $">
+   <Classes>
+      <Class Name="TBoldElementTypeInfoList">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds a <See Class="TBoldElementTypeInfo"/> to the collection.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary>Returns the <See Class="TBoldElementTypeInfo"/> on the index position.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByDelphiName">
+               <Summary>Returns a <See Class="TBoldElementTypeInfo"/> for the Delphi name.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByExpressionName">
+               <Summary>Returns a <See Class="TBoldElementTypeInfo"/> for the expression name.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByModelName">
+               <Summary>Returns a <See Class="TBoldElementTypeInfo"/> for the model name.</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMetaElementList">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds a <See Class="TBoldMetaElement"/> to the collection.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary>Returns the <See Class="TBoldMetaElement"/> of the index position.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByDelphiName">
+               <Summary>Returns a <See Class="TBoldMetaElement"/> given a Delphi name.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByExpressionName">
+               <Summary>Returns a <See Class="TBoldMetaElement"/> given an expression name.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByModelName">
+               <Summary>Returns a <See Class="TBoldMetaElement"/> given a model name.</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>List class for <See Class="TBoldMetaElement"/></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines list classes for internal use</Summary>
+   <Desc>This unit defines two list classes designed to hold collections of <See Class="TBoldMetaElement"/> and <See Class="TBoldElementTypeInfo"/>.</Desc>
+</DLUnitDoc>

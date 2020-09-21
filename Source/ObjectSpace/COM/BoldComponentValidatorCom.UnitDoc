@@ -1,0 +1,17 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/COM/BoldComponentValidatorCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldComponentValidatorCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldValidateableComponentCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

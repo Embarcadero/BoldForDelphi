@@ -1,0 +1,127 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/TaggedValues/BoldTaggedValueList.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldTaggedValueDefinition">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Tag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTaggedValueDefinitionIndex">
+         <Methods>
+            <Method Name="ItemASKeyString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTaggedValueList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultValueForTag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefinitionForTag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultValueForTag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Definition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefinitionForTag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTaggedValuePerClassList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultForClassAndTag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListForClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultForClassAndTag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListForClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

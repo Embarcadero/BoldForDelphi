@@ -1,0 +1,93 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ConcurrencyControl/COM/BoldLockManagerAdminHandleCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldLockManagerAdminHandleCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoConnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoDisconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLockManagerAdmin">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

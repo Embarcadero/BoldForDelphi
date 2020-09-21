@@ -1,0 +1,13 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Default/BoldPSParamsDefault.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldPSDefaultParams">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

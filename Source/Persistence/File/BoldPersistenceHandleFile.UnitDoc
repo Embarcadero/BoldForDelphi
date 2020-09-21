@@ -1,0 +1,133 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/File/BoldPersistenceHandleFile.UnitDoc 5     02-01-09 11:43 Jano $">
+   <Classes>
+      <Class Name="TBoldPersistenceControllerFile">
+         <Methods>
+            <Method Name="EnsureValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultilinksAreStoredInObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMExactifyIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchIDListWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMSetReadonlyness">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToGlobalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToLocalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveNewIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnloadLocalValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CacheData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LocalValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldAbstractPersistenceHandleFile">
+         <Methods>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCacheData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary></Summary>
+               <Desc>Set this property to point to the same model component as your TBoldSystemHandle</Desc>
+            </Property>
+            <Property Name="CacheData">
+               <Summary></Summary>
+               <Desc>If this property is true, the persistence handle will only read the datafile once and cache all data in a FreeStandingValueSpace. If set to false, it will discard the file after each time it has retrieved an object (and thus release all the memory). </Desc>
+            </Property>
+            <Property Name="FileName">
+               <Summary></Summary>
+               <Desc>The file where your objects should be stored.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This component is deprecated. Please use <See Class="TBoldPersistenceHandleFileXML"/> instead! </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

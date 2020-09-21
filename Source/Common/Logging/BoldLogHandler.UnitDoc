@@ -1,0 +1,166 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Logging/BoldLogHandler.UnitDoc 4     01-10-15 13:55 Jeho $">
+   <Classes>
+      <Class Name="TBoldLogHandler">
+         <Methods>
+            <Method Name="Clear">
+               <Summary><InlineCode>Clear</InlineCode> clears the logfile. </Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldLogHandler</Summary>
+               <Desc>There is no need to create instances of <InlineCode>TBoldLogHandler</InlineCode>. The singleton instance required for logging shall be accessed by <See Routine="BoldLog"/>.</Desc>
+            </Method>
+            <Method Name="Dedent">
+               <Summary></Summary>
+               <Desc>Dedent decreases the indent level by one.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of the class.</Summary>
+               <Desc>There is no need to destroy the singleton instance of <InlineCode>TBoldLogHandler</InlineCode>. The instance retrieved by <See Routine="BoldLog"/> is maintained internally.</Desc>
+            </Method>
+            <Method Name="EndLog">
+               <Summary></Summary>
+               <Desc>EndLog is interpreted by each log-receiver. </Desc>
+            </Method>
+            <Method Name="Hide">
+               <Summary></Summary>
+               <Desc><InlineCode>Hide</InlineCode> is interpreted by each log-receiver. It most likely will only have effect on visible log-receivers </Desc>
+            </Method>
+            <Method Name="Indent">
+               <Summary><InlineCode>Indent</InlineCode> increases the indent level by one. </Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndentSpaces">
+               <Summary>A string of spaces used for indentation.</Summary>
+               <Desc><InlineCode>IndentSpaces</InlineCode> returns a string of spaces suitable for the current indentation level. Two spaces are added per level.</Desc>
+            </Method>
+            <Method Name="InterruptProcess">
+               <Summary>Sends out a message requesting the process to be interrupted</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Log">
+               <Summary><InlineCode>Log</InlineCode> adds the string s to the log.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LogDedent">
+               <Summary><InlineCode>LogDedent</InlineCode> adds the string s to the log after decreasing the indentlevel by one.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LogFmt">
+               <Summary><InlineCode>LogFmt</InlineCode> adds the string s to the log, as expanded using Format and the arguments contained in Args. </Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LogFmtDedent">
+               <Summary></Summary>
+               <Desc><InlineCode>LogFmtDedent</InlineCode> adds the string s to the log, as expanded using Format and the arguments contained in Args. Before the expanded string is added, the indent-level is decreased by one. </Desc>
+            </Method>
+            <Method Name="LogFmtIndent">
+               <Summary></Summary>
+               <Desc><InlineCode>LogFmtIndent</InlineCode> adds the string s to the log, as expanded using Format and the arguments contained in Args. The indent level is subsequently increased by one. </Desc>
+            </Method>
+            <Method Name="LogIndent">
+               <Summary><InlineCode>LogIndent</InlineCode> adds the string s to the log and then increases the indentlevel by one.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessInterruption">
+               <Summary>Yield cycles to update GUI</Summary>
+               <Desc>ProcessInterruption is called every now and then to allow log receivers to update their GUI, and to allow flagging that a cancellation has been requested.</Desc>
+            </Method>
+            <Method Name="ProgressStep">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterLogReceiver">
+               <Summary>Registers a new log receiver</Summary>
+               <Desc>The log receiver passed as parameter will now receive all messages (which will be received as the invocation of methods on the interface) generated as part of logging.</Desc>
+            </Method>
+            <Method Name="Separator">
+               <Summary>Logs a sequence of statements indicating a separator</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgressMax">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Show">
+               <Summary></Summary>
+               <Desc><InlineCode>Show</InlineCode> is interpreted by each log-receiver. It will only have effect on log-receivers that has a form or a panel to show</Desc>
+            </Method>
+            <Method Name="StartLog">
+               <Summary><InlineCode>Startlog</InlineCode> is interpreted by each log-receiver. The session name parameter may or may not be used by the log-receivers. </Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnregisterLogReceiver">
+               <Summary>Removes a receiver from the message loop</Summary>
+               <Desc>When a log receiver shall no longer receive log messages, it shall be unregistered.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LogHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Progress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ProgressMax">
+               <Summary>The maximum value progress will be set to.</Summary>
+               <Desc>Setting this property will set the ProgressMax </Desc>
+            </Property>
+         </Properties>
+         <Summary>Handler for logging things in the product</Summary>
+         <Desc>The <InlineCode>TBoldLogHandler</InlineCode> handles all the logging that bold performs. Most logging is performed in design time by operations such as creating database schemas, generating source code etc, but logging can be done for any purpose. The functionality is globally available by calling the method <See Method="BoldLog"/>.
+            <P>You are free to use this mechanism in code. You can implement your own <See Interface="IBoldLogReceiver"/> or utilize any of the existing.</P>
+            <P>It is unlikely you will interfere with any of the logging done by the product, as most of this is typically used at design time.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldLogReceiverSubscriber">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandlesExtendedEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveExtended">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldLog">
+         <Summary>Global access method to the log handler</Summary>
+         <Desc>Returns an instance of <See Class="TBoldLogHandler"/>. If it has been called previously, it will reuse the last LogHandler. </Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldLogHandlerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

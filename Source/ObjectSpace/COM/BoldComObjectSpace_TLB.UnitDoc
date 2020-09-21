@@ -1,0 +1,1274 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/COM/BoldComObjectSpace_TLB.UnitDoc 5     02-06-26 14:55 Isje $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BoldComObjectSpaceMajorVersion">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldComObjectSpaceMinorVersion">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldAttribute">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldAttributeTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldBlob">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldClassTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldDomainElement">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldElement">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldElementHandle">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldElementTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldListCore">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldListTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldMember">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldMemberList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldMetaElement">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldNilTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldObject">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldObjectList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldObjectReference">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldSystem">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldSystemTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldTypeTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="LIBID_BoldComObjectSpace">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldAttribute">
+         <Methods>
+            <Method Name="Get_BoldAttributeRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanSetToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldAttributeRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanSetToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldAttribute"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldAttributeTypeInfo">
+         <Methods>
+            <Method Name="Get_SuperAttributeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="SuperAttributeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldBlob">
+         <Summary>COM/DCOM interface that exposes a <See Class="TBABlob"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldClassTypeInfo">
+         <Methods>
+            <Method Name="Get_Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_FirstOwnMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_HasSubClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsAbstract">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsImported">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SuperClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeastCommonSuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FirstOwnMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasSubClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsAbstract">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsImported">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SuperClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldDomainElement">
+         <Methods>
+            <Method Name="Get_BoldDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_OwningElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldDomainElement"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldElement">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateAndSubscribeToExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsSessionIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsSessionIdListAndStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionsAsStringLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_HasAdaptee">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Mutable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_StringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get__NewEnum">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEqualAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeImmutable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiEvaluateExpressionAsStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_AsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_StringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasAdaptee">
+               <Summary>Indicates whether the interface is still a valid interface</Summary>
+               <Desc>If multiple clients are accessing the same objectspace, it is possible for one client to hold an interface reference to an object that is destroyed in the objectspace. The interface adapter will detect this and clear its potential space-pointer. Any reference to properties or methods of this interface from a client can result in the exception "TBoldObjectAdapter: No Adaptee". Checking this property however is safe, and will indicate if the interface is valid.</Desc>
+            </Property>
+            <Property Name="Mutable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="_NewEnum">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldElement"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldElementHandle">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldElementTypeInfo">
+         <Methods>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanInsert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRAnge">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Elements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Includes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_Elements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Elements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldList"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldListCore">
+         <Methods>
+            <Method Name="AddList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanClear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanRemove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanCreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DuplicateMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_DuplicateMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStringListWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CanCreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DuplicateMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldListTypeInfo">
+         <Methods>
+            <Method Name="Get_ListElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ListElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldMember">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChanges">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureContentsCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanRead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Derived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsPartOfSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_OwningObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Invalidate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldMemberRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanRead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Derived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsPartOfSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldMember"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldMemberList">
+         <Methods>
+            <Method Name="Get_BoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldMetaElement">
+         <Methods>
+            <Method Name="Get_DelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldNilTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldObject">
+         <Methods>
+            <Method Name="BoldMakePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckLinks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Delete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChanges">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SessionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Invalidate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldMemberValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldMemberCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldMemberValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SessionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldObject"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldObjectList">
+         <Methods>
+            <Method Name="Get_BoldObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldRoleRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SubscribeToObjectsInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_SubscribeToObjectsInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldRoleRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubscribeToObjectsInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldObjectList"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldObjectReference">
+         <Methods>
+            <Method Name="CanSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldRoleRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldRoleRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldSystem">
+         <Methods>
+            <Method Name="CreateNewMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewObjectWithMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Discard">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectBySessionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ClassByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DirtyObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_LoadedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDatabase">
+               <Summary>Method exposed by the interface.</Summary>
+               <Desc>Exposing the method of <See Class="TBoldComSystemAdapter" Method="UpdateDatabase" Text="TBoldComSystemAdapter.UpdateDatabase"/>.</Desc>
+            </Method>
+            <Method Name="UpdateDatabaseWithList">
+               <Summary>Method exposed by the interface.</Summary>
+               <Desc>Exposing the method of <See Class="TBoldComSystemAdapter" Method="UpdateDatabaseWithList" Text="TBoldComSystemAdapter.UpdateDatabaseWithList"/>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DirtyObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LoadedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>COM/DCOM interface that exposes a <See Class="TBoldSystem"/> from the object layer</Summary>
+         <Desc>Most properties and methods in this interface are just exposing the methods and properties of the underlying object</Desc>
+         <SeeAlso><Jump ID="mech_ComClient"/></SeeAlso>
+      </Interface>
+      <Interface Name="IBoldSystemTypeInfo">
+         <Methods>
+            <Method Name="Get_AttributeTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AttributeTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ClassTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ClassTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ElementTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsRunnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListTypeInfoByElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_MethodsInstalled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_NilTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_RootClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TopSortedClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TypeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_UseGeneratedCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ValueTypeNameList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AttributeTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AttributeTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ElementTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsRunnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListTypeInfoByElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MethodsInstalled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NilTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopSortedClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseGeneratedCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueTypeNameList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldTypeTypeInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

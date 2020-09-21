@@ -1,0 +1,113 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldNamedValueList.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldNamedValueList">
+         <Methods>
+            <Method Name="AddEntry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddFromStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddToStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCommaText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueByname">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCommaText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetObjectByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetValueByname">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CommaText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNamedValueListEntry">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="aObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,218 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldThreadSafeQueue.UnitDoc 5     02-03-18 23:03 Johosos $">
+   <Classes>
+      <Class Name="TBoldThreadSafeInterfaceQueue">
+         <Methods>
+            <Method Name="Dequeue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Enqueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldThreadSafeObjectQueue">
+         <Methods>
+            <Method Name="Create">
+               <Params>
+                  <Param Name="OwnsObjects">
+                     <Desc>Set to true (the default) if queue takes over responsibility for the lifetome control of the objects. <See Property="OwnsObjects"/>. </Desc>
+                  </Param>
+               </Params>
+               <Summary>Constructor</Summary>
+               <Desc> </Desc>
+            </Method>
+            <Method Name="Dequeue">
+               <Summary>Dequeue object.</Summary>
+               <Desc>Removes the object from the head of the queue and returns it. If the queue is empty, <InlineCode>nil</InlineCode> is returned.
+                  <Note>Even if <See Method="Empty"/> has just been called, you can never be sure to actually get an object, since it may have been dequed by another thread.</Note>
+               </Desc>
+            </Method>
+            <Method Name="DequeueList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Enqueue">
+               <Summary>Enqueue object.</Summary>
+               <Desc>Adds object anObject at the head of the queue. If the Queue was empty, <See Event="OnQueueNotEmpty"/> will be called if set. If <See Property="OwnsObjects"/> is <InlineCode>true</InlineCode> the queue assumes ownership of the objects, this implies that all objects on the queue will be destroyed if <See Method="Clear"/> is called, or if the queue is destroyed when not empty.</Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary>Overrides the inherited implementation to return the current size of the queue</Summary>
+               <Desc>The ObjectQueue has an internal count that is faster to return than to cound the number of entries in the queue</Desc>
+            </Method>
+            <Method Name="GetMaxCount">
+               <Summary>Returns the highest number of entries in the queue so far</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnsafeDequeue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnsafeEnqueue">
+               <Summary>Enqueue-method that does not enforce any locks internally</Summary>
+               <Desc>This method can be used to optimize enqueueing of multiple items in a subclass. The caller must ensure that the appropriate calls to Lock/UnLock is made. For more details, see <See Method="Enqueue"/>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MaxCount">
+               <Summary>The highest number of entries in the queue so far</Summary>
+               <Desc>This property returns the higest number of entries the queue has ever contained. It is intended for performance meassurement.</Desc>
+            </Property>
+            <Property Name="OwnsObjects">
+               <Summary>Are objects owned by queue?</Summary>
+               <Desc>If OwnsObjects is true (the default) the enqueuer is assumed to have passed ownership on to the queue. In general this also implies that the dequer resumes responsibility for an object after having dequeued it.
+			   The property can only be set from <See Method="Create" Text="the constructor"/></Desc>
+            </Property>
+         </Properties>
+         <Summary>Thread safe queue for objects.</Summary>
+         <Desc>Use this class if you need a tread-safe queue for objects.</Desc>
+      </Class>
+      <Class Name="TBoldThreadSafeQueue">
+         <Events>
+            <Event Name="OnQueueNotEmpty">
+               <Summary>Occurs when queue is no longer empty.</Summary>
+               <Desc>If this event is set, the event handler will be called whenever an item is enqued to an empty queue.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Clear">
+               <Summary>Clear the Queue</Summary>
+               <Desc>Remove all entries from queue.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary>Get method for Count property.</Summary>
+               <Desc>This function has to loop through the entries in the queue to count them (so the execution time is linear to the size of the queue), subclasses may override this function to give a more efficient calculation of the size of the queue</Desc>
+            </Method>
+            <Method Name="GetEmpty">
+               <Summary>Get method for Empty property.</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Lock">
+               <Summary>Lock Queue.</Summary>
+               <Desc>This method is used internally to ensure that only one thread at a time is accessing the queue. It should be called in all methods that depend on a stable queue. the use of Lock/Unlock should always be used in a try/finally block, as in the example.</Desc>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>function TBoldThreadSafeQueue.GetEmpty: Boolean;
+begin
+  Lock;
+  try
+    result := fMarker.Next = fMarker;
+  finally
+    UnLock;
+  end;
+end;  </Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Method>
+            <Method Name="NotifyQueueNotEmpty">
+               <Summary>Call OnQueueNotEmpty</Summary>
+               <Desc>This method should be called by all methods that enqueue an element, if the queue is empty when the method is called.</Desc>
+            </Method>
+            <Method Name="Unlock">
+               <Summary>Unlock Queue.</Summary>
+               <Desc><See Method="Lock"/></Desc>
+            </Method>
+            <Method Name="UnsafeIsEmpty">
+               <Summary>Fast test for empty queue.</Summary>
+               <Desc>This method provides a fast for empty queue. Since it doesn't call <See Method="Lock"/> it should only be called inside methods that do.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary># of items in queue.</Summary>
+               <Desc>Use this property to get the number of items in the queue.</Desc>
+            </Property>
+            <Property Name="Empty">
+               <Summary>Is queue empty?</Summary>
+               <Desc>This property is true if <InlineCode><see property="Count">=0</InlineCode>.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract superclass for threadsafe queue classes.</Summary>
+         <Desc>This class is the abstract base class for threadsfe queues. There are a number of concrete subclasses supplied with Bold.</Desc>
+      </Class>
+      <Class Name="TBoldThreadSafeQueueEntry">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="CreateAfter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateAsMarker">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Prev">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract superclass for entries in <See Class="TBoldThreadSafeQueue"/>.</Summary>
+         <Desc>This class is only of concern it you need to create additional subclasses to TBoldThreadSafeQueue.</Desc>
+      </Class>
+      <Class Name="TBoldThreadSafeQueueMarker">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Constructor.</Summary>
+               <Desc>The contructor will link the marker to itself, providing and empty queue to start with.</Desc>
+            </Method>
+         </Methods>
+         <Summary>Class for marker</Summary>
+         <Desc>The queue is implemented as a closed ring with a marker for the gap. An object of this class is used as the marker in the queue.</Desc>
+      </Class>
+      <Class Name="TBoldThreadSafeStringQueue">
+         <Methods>
+            <Method Name="AppendToStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Dequeue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Enqueue">
+               <Summary>Enqueue string.</Summary>
+               <Desc>Adds object anObject at the head of the queue. If the Queue was empty, <See Event="OnQueueNotEmpty"/> will be called if set. If <See Property="OwnsObjects"/> is <InlineCode>true</InlineCode> the queue assumes ownership of the objects, this implies that all objects on the queue will be destroyed if <See Method="Clear"/> is called, or if the queue is destroyed when not empty.</Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldQueueEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

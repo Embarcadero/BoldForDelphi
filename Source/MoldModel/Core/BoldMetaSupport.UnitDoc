@@ -1,0 +1,50 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/Core/BoldMetaSupport.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldMetaSupport">
+         <Methods>
+            <Method Name="ParameterTypeToCOMType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParameterTypeToIDLType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParameterTypeToInterfaceType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This class contains supportfunctions to do string-conversions in the model.
+Many attributes found in the classes of BoldMeta are not standard UML-attributes. Instead they are stored in the UML model as tagged values. Before the runtime model is build, the many of the tagged values known internally by Bold are converted to native delphi attributes.
+</Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldObjectSpaceInterfacenames">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldWideStringTypeName">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldWordBoolTypeName">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains various support methods to convert strings to enums and vice versa.
+</Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldNamePairRecord">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

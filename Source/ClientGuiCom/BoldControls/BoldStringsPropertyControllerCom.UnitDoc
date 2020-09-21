@@ -1,0 +1,161 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldStringsPropertyControllerCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldStringsPropertyControllerCom">
+         <Events>
+            <Event Name="OnItemAfterMakeUpToDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnItemBeforeMakeUpToDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListAfterDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListAfterInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListBeforeDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListBeforeInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListBeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringsProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ItemAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ItemBeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListAfterDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListAfterInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListBeforeDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListBeforeInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListBeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PropertyName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StringsProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldControlFollowerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldControlSubFollowerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

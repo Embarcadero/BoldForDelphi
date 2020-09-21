@@ -1,0 +1,139 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Core/BoldAbstractObjectUpgrader.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractObjectUpgrader">
+         <Methods>
+            <Method Name="EndTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NeedsManualUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpgradeObjectById">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Config">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectUpgraderConfiguration">
+         <Methods>
+            <Method Name="GetConfigOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ConfigOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemByName">
+               <Summary></Summary>
+               <Desc>The conf iguration item for the class with the expression name ExpressionName.</Desc>
+            </Property>
+            <Property Name="items">
+               <Summary></Summary>
+               <Desc>The configuration items of the collection.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The TBoldObjectUpgraderConfiguation is a collection of <see class=TBoldObjectUpgraderConfigurationItem>, which holds the configuration of which classes needs to be upgraded manually by a <see class=TBoldObjectUpgrader>.
+</Desc>
+      </Class>
+      <Class Name="TBoldObjectUpgraderConfigurationItem">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUpgradeOlderThanVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Config">
+               <Summary></Summary>
+               <Desc>The configuration collection this item belongs to.</Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc>The expression name of the class that this configuration item holds information on how to upgrade.
+</Desc>
+            </Property>
+            <Property Name="UpgradeOlderThanVersion">
+               <Summary></Summary>
+               <Desc>The class that this configuration item refers only needs manual upgrading if is was written by an application with a model version older than this.
+</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>A TBoldObjectUpgraderConfigurationItem holds the upgrading configuration of a class that needs manual upgrading between model versions.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldObjectUpgraderConfigClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldObjectUpgraderConfigItemClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,39 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldDerivedValueSet.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBADerivedValueSetValueList">
+         <Methods>
+            <Method Name="AddMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc>The parameters define which values will be allowed for the derived value set.
+The ClassToFollow is the expression name of a class in the model that will define the valid values for the derived value set. </Desc>
+               <Params>
+                  <Param Name="IntValueAttribute">
+                     <Desc>is the name of an attribute of type integer (or possibly a subclass) that will hold the unique integer representation for each value in the value set.</Desc>
+                  </Param>
+                  <Param Name="StrValueAttributes">
+                     <Desc>is a (nonempty) list of attributes that will be the string-representations of the value set</Desc>
+                  </Param>
+               </Params>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc> </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>A derived value set is a value set that uses the instances of a specific cass in the model to derive the valid values. This way, a value set can be dynamic, and grow over time.
+Such a derived valueset uses a TBADerivedValueSetValueList as the holder of the valid values (a subclass of TBAValueSetValueList used by normal static value sets). In other respects, they behave the same.
+The class used to derive the valueset must have at least two attributes:
+      <UL>
+         <LI>An integer attribute which will be the integer-representation of the valueset (and also the database representation). This must be unique in all instances of the class.</LI>
+         <LI>A string attribute which will be the default string representation of the value set values.</LI>
+      </UL>
+Once a derived attribute has been taken into use and objects/attributes in the database refers to the integer representation, it is not recommended to remove that value (instance in the controlling class) from the object layer (just as it is not recommended to remove values from static value sets once in use). </Desc>
+</DLUnitDoc>

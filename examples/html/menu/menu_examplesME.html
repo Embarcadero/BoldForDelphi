@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <title>Examples menu</title>
+  <link href="../style.css" type="text/css" rel="stylesheet">
+  <base target="content">
+
+<script language="Javascript">
+<!-- Begin
+function openMenuDiv(div)
+{
+	document.all[div].style.display == 'inline'?document.all[div].style.display = 'none':document.all[div].style.display = 'inline';
+}
+// End -->
+</script>
+
+  <style>
+  .parent{font-weight: bold;
+  			font-color: #444444;
+  			cursor: hand;}
+  .childParent{font-color: #444444;
+  				cursor: hand;}
+  .childContainer{display: none;
+  			position: relative;
+  			left: 10;}
+</style>
+
+
+</head>
+
+<body class="noright">
+
+<table class="left" cellspacing="0">
+  <tr><td align="center"><img src="../images/logo_bfd.gif" width="150" height="150"></td></tr>
+  <tr><td><img src="../images/top_190x15.gif" width="190" height="15"></td></tr>
+  <tr><td class="menuwide">
+  
+<!-- Menu starts -->
+   	<div><a href="../../../index.html" target="_top" style="color:#444444;text-decoration:none;" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';"><img border="0" src="../../../Doc/images/arrowback.jpg" width="5" height="9"> <b>Release Documentation</b></a>
+   	</div>
+   	
+   	<div><a href="../examples.html" style="color:#444444;text-decoration:none;" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';"><b>Examples</b></a>
+   	</div>
+   	   
+    <div><span class="parent" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';" onmousedown="javascript:openMenuDiv('simpleExamDiv');"><img src="../../../doc/images/arrowdown.jpg"  border="0" width="9" height="5"> Simple Examples</span><br>
+    <div id="simpleExamDiv" style="display:none;position:relative;left:10;">
+		<span class="childParent" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';" onmousedown="javascript:openMenuDiv('guicontrolsDiv');"><img src="../../../doc/images/arrowdown.jpg"  border="0" width="9" height="5"> GUI Controls</span><br>
+    		<div id="guicontrolsDiv" class="childContainer">
+			<a href="../boldimage.html">BoldImage</a><br>
+    		<a href="../combobox.html">ComboBox</a><br>
+    		<a href="../multilanguage.html">MultiLanguage</a><br>
+    		<a href="../renderers.html">Renderers</a><br>
+    		<a href="../treeview.html">TreeView</a><br>
+    		<a href="../treeview_simple.html">Simple TreeView</a><br>
+			</div>
+    	   	
+		<span class="childParent" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';" onmousedown="javascript:openMenuDiv('objectspaceDiv');"><img src="../../../doc/images/arrowdown.jpg"  border="0" width="9" height="5"> ObjectSpace</span><br>
+    		<div id="objectspaceDiv" class="childContainer">	
+  			<a href="../association_class.html">Association Class</a><br>
+    		<a href="../bold_handles.html">Bold Handles</a><br>
+    		<a href="../constraints.html">Constraints</a><br>
+    		<a href="../custom_attributes.html">Custom Attributes</a><br>
+    		<a href="../dataset_quickreport.html">DataSet &amp; QuickReport</a><br>
+    		<a href="../data_validation.html">Data Validation</a><br>
+    		<a href="../derived_attributes.html">Derived Attributes</a><br>
+    		<a href="../derived_handle.html">Derived Handle</a><br>
+    		<a href="../derived_relations.html">Derived Relations</a><br>
+   			<a href="../object_versioning.html">Object Versioning</a><br>
+   			<a href="../ocl_variables.html">OCL Variables</a><br>
+    		<a href="../optimistic_locking.html">Optimistic Locking</a><br>
+    		<a href="../query.html">Query</a><br>
+    		<a href="../reverse_derived_attributes.html">Reverse Derived Attr.</a><br>
+    		<a href="../sql_handle.html">SQL Handle</a><br>
+    		<a href="../transactions.html">Transactions</a><br>
+    		</div>
+    	 	
+		<span class="childParent" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';" onmousedown="javascript:openMenuDiv('persistenceDiv');"><img src="../../../doc/images/arrowdown.jpg" border="0" width="9" height="5"> Persistence</span><br>
+    		<div id="persistenceDiv" class="childContainer">
+    		<a href="../CheckInOut.html">Check-In/Out - OLLE</a><br>	
+   	 	   	<a href="../objectspace_synchronization.html">ObjectSpace Synchron</a><br>
+    		<a href="../parent_child_mapping.html">Parent and Child Mapping</a><br>
+    		</div>
+   </div>
+   </div> 
+
+   <div><span class="parent" onMouseOver="this.style.color='#666666';" onMouseOut="this.style.color='#444444';" onmousedown="javascript:openMenuDiv('compoundExamDiv');"><img src="../../../doc/images/arrowdown.jpg" border="0" width="9" height="5"> Compound Examples</span><br>
+   <div id="compoundExamDiv" class="childContainer">
+   <a href="../ASP.html">ASP</a><br>
+   <a href="../bios_client.html">BIOS Client</a><br>
+   <a href="../bios_server.html">BIOS Server</a><br>
+   <a href="../bios2_client.html">BIOS2 Client</a><br>
+   <a href="../bios2_server.html">BIOS2 Server</a><br>
+   <a href="../buildings_owners.html">Buildings &amp; Owners</a><br>
+   <a href="../concurrency_management.html">Concurrency Management</a><br>
+   <a href="../conway.html">Conway's Game of Life</a><br>
+   <a href="../ExternalPersistence.html">ExternalPersistence</a><br>
+   <a href="../http_pmapper.html">HTTP PMapper</a><br>
+   <a href="../model_evolution.html">Model Evolution</a><br>
+   <a href="../product_structure.html">Product Structure</a><br>
+   <a href="../xmldispatcher.htm">XML Dispatcher</a><br>
+   <a href="../xml2.htm">XML 2</a>
+ 	</div>
+	</div> 	   
+    
+ <!-- Menu ends -->
+
+  </td></tr>
+  <tr><td><img src="../images/bottom_190x15.gif" width="190" height="15"></td></tr>
+</table>
+
+</body>
+</html>
+

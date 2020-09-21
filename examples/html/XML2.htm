@@ -1,0 +1,379 @@
+<html>
+
+<head>
+  <title>XML 2</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu\menu_examples_compound.html" target="menu">Compound Examples</a> &gt;
+      <a href="XML2.htm">XML 2</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">XML example</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<p><a href="../Delphi/Compound/XML2/XMLExample.bpg">Launch Delphi-projectgroup for
+XML2 example</a></p>
+
+<p>This example shows how to use the XML components in $(PRODUCT_BASE_NAME) to
+build web applications. The model used in this example is OrgChart.mdl which is
+a simplified model of a corporate structure. In addition to the XML components
+the example also illustrates how to extend the .. to export the business objects
+in XML.&nbsp;</p>
+
+<p>&nbsp;The example consists of two components:&nbsp;</p>
+
+<ul>
+  <li>An ISAPI application (OrgChartISAPI.dll) which handles calls from the
+    web server.&nbsp;</li>
+  <li>A server applcation (OrgChart.exe)&nbsp;&nbsp;</li>
+</ul>
+<p>It offers users the possibility to search for a person or a company and
+view/modify the details of a given person or a company from their web browser.</p>
+
+    <hr size="1">
+	<p class="head2">Running the example</p>
+<p>Install <font face="Courier New">OrgChartISAPI.dll </font>is an ISAPI dll,
+hence it must be properly installed in IIS(Set the virtual web directory to
+point to the <b><font face="Courier New">/examples/XML2</font> </b>folder). For
+more information on how to properly install an ISAPI dll see <a href="xmldispatcher.htm">XMLDispatcher
+example</a>.</p>
+
+<p><font face="Courier New">OrgChart.exe</font> is a DCOM server that will be invoked
+by <font face="Courier New">OrgChartISAPI</font>, hence it must be
+properly registered and configured:&nbsp;</p>
+
+<ul>
+  <li>To register <font face="Courier New">OrgChart.exe</font>  type the
+    following at the command prompt:&nbsp;<font face="Courier New">OrgChart /regserver</font></li>
+  <li>Use the <font face="Courier New">dcomcnfg</font> utility to configure the
+    security settings if necessary, the account under which the ISAPI
+    application is running should have launch and access rights to the OrgChart Com server.</li>
+</ul>
+<p>To run the example you should:</p>
+<ul>
+  <li>Run the OrgChart application.</li>
+  <li>Use the Create button to create a database, the application will also
+    populate the database&nbsp;with some data. &nbsp;</li>
+  <li>Open your browser, browse to the virtual directory you set up for the
+    example and click on the page <a href="../Delphi/Compound/XML2/OrgChart.htm">OrgChart.htm</a>
+    (located in the <font face="Courier New"><b>/examples/XML2</b></font>
+    folder).</li>
+</ul>
+<p class="head2">OrgChartISAPI</p>
+
+<p>OrgChartISAPI is an ISAPI dll. The
+important points to note in this application are the following:&nbsp;</p>
+
+<ul>
+  <li>It uses a TWebModule to handle communication with the web
+    server: WebModule1 in unit WebModule.pas.</li>
+  <li>The web module has a TWebActionItem called <b>OrgChart</b>. The pathinfo property
+    of this action item is set to <code>/home</code>. In the OnAction event handler we examine the
+    Request argument in order to build the XML request to be sent to the <font face="Courier New">OrgChart
+    server</font>.
+    The XML request should contain a proper Action-element that will help the
+    XMLDispatcher determine what action to take to generate the
+    requested page.</li>
+  <li>Here's what happens when a user tries to search for a Person or Company:<br>
+    <b>1)</b>  Create and initialize a TBoldXMLRequest instance.<br>
+    <b>2)</b> Define an Action element called EvaluateOCL and set its parameters: i.e. the
+    &nbsp;&nbsp;&nbsp;&nbsp;OCL parameter which represents	the OCL expression
+    that results in the objects that match the user's search criteria. The XML
+    request will be similar to this:</li>
+</ul>
+
+<blockquote>
+
+<div class="e">
+  <font face="Courier New"><span class="b">&nbsp;</span> <span class="m">&lt;?</span><span class="pi">xml
+  version=&quot;1.0&quot; </span><span class="m">?&gt;</span></font>
+</div>
+<div class="e">
+  <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+    <font face="Courier New">&nbsp;&nbsp;&nbsp; <a class="b" href="#" onclick="return false" onfocus="h()">-</a>
+    <span class="m">&lt;</span><span class="t">BoldDocument</span><span class="m">&gt;</span></font>
+  </div>
+  <div>
+    <div class="e">
+      <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+        <font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="b" href="#" onclick="return false" onfocus="h()">-</a>
+        <span class="m">&lt;</span><span class="t">SOAP:Envelope</span><span class="ns">
+        xmlns:SOAP</span><span class="m">=&quot;</span><b class="ns">urn:schemas-xmlssoap-org:soap.v1</b><span class="m">&quot;&gt;</span></font>
+      </div>
+      <div>
+        <div class="e">
+          <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+            <font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="b" href="#" onclick="return false" onfocus="h()">-</a> <span class="m">&lt;</span><span class="t">SOAP:Body</span><span class="m">&gt;</span></font>
+          </div>
+          <div>
+            <div class="e">
+              <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+                <font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a class="b" href="#" onclick="return false" onfocus="h()">-</a>
+                <span class="m">&lt;</span><span class="t">EvaluateOCL</span><span class="m">&gt;</span></font>
+              </div>
+              <div>
+                <div class="e">
+                  <div style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+                    <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;</span> <span class="m">&lt;</span><span class="t">OCL</span><span class="m">&gt;</span><span class="tx">Person.allInstances-&gt;select(firstName=
+                    'John')</span><span class="m">&lt;/</span><span class="t">OCL</span><span class="m">&gt;</span></font>
+                  </div>
+                </div>
+                <div>
+                  <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;</span> <span class="m">&lt;/</span><span class="t">EvaluateOCL</span><span class="m">&gt;</span></font>
+                </div>
+              </div>
+            </div>
+            <div>
+              <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;</span> <span class="m">&lt;/</span><span class="t">SOAP:Body</span><span class="m">&gt;</span></font>
+            </div>
+          </div>
+        </div>
+        <div>
+          <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp; &nbsp;</span>
+          <span class="m">&lt;/</span><span class="t">SOAP:Envelope</span><span class="m">&gt;</span></font>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="b"><font face="Courier New">&nbsp;</font></span><font face="Courier New">
+      <span class="m">&lt;/</span><span class="t">BoldDocument</span><span class="m">&gt;&nbsp;&nbsp;&nbsp;&nbsp;</span></font>
+    </div>
+  </div>
+</div>
+</blockquote>
+    <b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3)</b> Send the XML
+request to the OrgChart server. We are using a TBoldComClientObjectHandle
+object, bohDispatcher, to establish a connection with the TBoldXMLdispatcher
+object present the OrgChart server. The call to the dispatcher looks like:&nbsp;
+<p class="code">(bcohDispatcher.ComObject as IBoldSOAPService).Get(XMLRequest.DomDocument.xml, res);&nbsp;</p>
+<p> The first argument passed to the Get-method is our XML request, the second is an out parameter that holds the
+response returned by the OrgChart server.</p>
+<p class="head2">OrgChart</p>
+
+<p>The OrgChart application is just a standard Bold application, with a
+BoldSystem, a persistence layer, and a Model. In addition it also exports via
+COM/DCOM a TBoldXMLDispatcher object, thus functioning as the gateway between
+the web server and the business layer.&nbsp;</p>
+
+<p>The <font face="Courier New">XMLDispatcher </font>component(dmServer.pas) receives
+the incoming XML requests and dispatches them to the relevant party. The <font face="Courier New">Actions</font>
+property&nbsp; contains a list of <font face="Courier New">TBoldXMLActionItem</font>
+objects. The dispatcher uses the tag name of XML request's action element to select
+the TBoldXMLActionItem- with a matching ActionName property- to handle the
+request.&nbsp;&nbsp;</p>
+
+<p>Our <font face="Courier New">XMLDispatcher</font> defines the following
+action items:</p>
+
+<ol>
+  <li>EvaluteOCL - evaluates an OCL expression and retuns the result in XML
+    format.&nbsp; </li>
+  <li>Fetch - fetches an object given its BoldID and returns the result in XML
+    format.</li>
+  <li>Update - takes a list of (BoldId, NewValue) pairs and updates the value of
+    the BoldElement corresonding to the BoldId using NewValue.</li>
+</ol>
+<p>To facilitate the exporting of Bold objects in XML format the example uses
+the <font face="Courier New">TBoldXMLExporter</font> class.</p>
+
+<h3>TBoldXMLExporter</h3>
+
+<p>The methods of the TBoldXMLExporter take a Bold object or a list of Bold
+objects as parameters and produce an XML tree out of them. E.g. suppose you have
+an object of class Person, with attributes FirstName, LastName, FullName and
+Employer, exporting this object with the TBoldXMLExporter would produce XML
+similar to this:</p>
+
+<font SIZE="1" COLOR="#0000ff">
+<p class="code">&lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+XML.id</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">8</font><font SIZE="1" COLOR="#0000ff">&quot;&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">FirstName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">John</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">FirstName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">LastName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">Smith</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">LastName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">FullName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">John
+Smith</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">FullName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">Employer</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Company</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">1</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp; &lt;/</font><font SIZE="1" COLOR="#800000">Employer</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font>
+
+<h4>Documentation</h4>
+
+<p>The TBoldXMLExporter class (unit <font face="Courier New">BoldXMLExporter</font>.pas
+located in <font face="Courier New">/XML2/XMLExporter</font>) used in this
+example is merely for demonstrative purposes, to show users how they can go
+about implementing their own custom XML exporters and&nbsp; offers plenty of
+room for improvement. Following is a list of TBoldXMLExporter's important
+properties and methods:</p>
+
+<ul>
+  <li><b>ExportObjects</b>: takes a TBoldObjectList as its first argument, <font face="Courier New">BoldObjectList</font>,&nbsp;
+    and returns an XML tree exporting the objects in the list. The XML tree is
+    returned as a subnode of the second argument, <font face="Courier New">XMLElement</font>,
+    which should be a valid XMLDomElement. The third argument, <font face="Courier New">ExportedReferencedObjectsClasses</font>,
+    is taken into consideration only if the <font face="Courier New">ExportLinks</font>
+    property is set to True; in which case this array of string should contain
+    the class names (as found in the Model) of those objects that SHOULD be
+    exported if referenced by the main objects in <font face="Courier New">BoldObjectList</font>.
+    E.g. iw we take the above example, if the Person object references a
+    company, and the class name for Company is not found in the array then the
+    referenced Company object would not be exported.&nbsp;</li>
+  <li><b>ExportObject</b>: same as ExportObjects but instead of a
+    TBoldObjectList takes a TBoldObject.</li>
+  <li><b>UseBoldId</b>: if set to True it will create a XML.id attribute for
+    each element in the XML tree corresponding to a Bold element. E.g. if we
+    take the above example for a Person object, the XML produced would look like
+    this:<font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+    XML.boldID</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">Person.8</font><font SIZE="1" COLOR="#0000ff">&quot;&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">FirstName</font><font SIZE="1" COLOR="#ff0000">
+    XML.boldID</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">Person.8:firstName</font><font SIZE="1" COLOR="#0000ff">&quot;&gt;</font><font SIZE="1">Henrik</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">FirstName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">LastName</font><font SIZE="1" COLOR="#ff0000">
+    XML.boldID</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">Person.8:lastName</font><font SIZE="1" COLOR="#0000ff">&quot;&gt;</font><font SIZE="1">Jondell</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">LastName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">Employer</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;
+    &lt;</font><font SIZE="1" COLOR="#800000">Company</font><font SIZE="1" COLOR="#ff0000">
+    XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">Company.1</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp; &lt;/</font><font SIZE="1" COLOR="#800000">Employer</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">Employment</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;
+    &lt;</font><font SIZE="1" COLOR="#800000">Employment</font><font SIZE="1" COLOR="#ff0000">
+    XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">Employment.12</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp; &lt;/</font><font SIZE="1" COLOR="#800000">Employment</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+    </font><font SIZE="1">
+    <p class="code"></font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#0000ff">&gt;</font></li>
+  <li><b>BoldManipulator</b>: the TBoldManipulator used to get the BoldIds in
+    case case the UseBoldId property is set to True.</li>
+  <li><b>ExportDerivedAttributes</b>: if set to True it will export the derived
+    attributes of the main Bold objects.</li>
+  <li><b>ExportLinks</b>: if set to True it will export all the Bold objects
+    referenced by the main Bold objects that are being exported. E.g if we take
+    our above example of a Person object, the XML produced would look like
+    this:&nbsp;</li>
+</ul>
+<font SIZE="1" COLOR="#0000ff">
+<p class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+XML.id</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">8</font><font SIZE="1" COLOR="#0000ff">&quot;&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">FirstName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">John</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">FirstName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">LastName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">Smith</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">LastName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">FullName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">John
+Smith</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">FullName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Employer</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Company</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">1</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/</font><font SIZE="1" COLOR="#800000">Employer</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#0000ff">&gt;</font></p>
+<font SIZE="1" COLOR="#0000ff">
+<p class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;</font><font SIZE="1" COLOR="#800000">Company</font><font SIZE="1" COLOR="#ff0000">
+XML.id</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">1</font><font SIZE="1" COLOR="#0000ff">&quot;&gt;</font></p>
+<p class="code"><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">CompanyName</font><font SIZE="1" COLOR="#0000ff">&gt;</font><font size="1">John
+Smith and Co.</font><font SIZE="1" COLOR="#0000ff">&lt;/</font><font SIZE="1" COLOR="#800000">CompanyName</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Employees</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">6</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">8</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">11</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Person</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">14</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/</font><font SIZE="1" COLOR="#800000">Employees</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Offices</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;</font><font SIZE="1" COLOR="#800000">Office</font><font SIZE="1" COLOR="#ff0000">
+XML.idref</font><font SIZE="1" COLOR="#0000ff">=&quot;</font><font SIZE="1">2</font><font SIZE="1" COLOR="#0000ff">&quot;/&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/</font><font SIZE="1" COLOR="#800000">Offices</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font><font SIZE="1">
+<p class="code"></font><font SIZE="1" COLOR="#0000ff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/</font><font SIZE="1" COLOR="#800000">Company</font><font SIZE="1" COLOR="#0000ff">&gt;</p>
+</font>
+<p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+   button before attempting to open the system for the first time. Once the database and
+   alias is established you only have to use the &quot;Open system&quot; button when running
+   the example program.
+</p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

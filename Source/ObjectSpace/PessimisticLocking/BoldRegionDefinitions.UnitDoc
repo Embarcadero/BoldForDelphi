@@ -1,0 +1,285 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/PessimisticLocking/BoldRegionDefinitions.UnitDoc 4     01-12-20 19:02 Joho $">
+   <Classes>
+      <Class Name="TBoldConcreteRegionDefinition">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CopyFromDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CoreDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Elements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subregions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldConcreteRegionDefinitionList">
+         <Methods>
+            <Method Name="FindByRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionCoreDefinition">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsuredConcreteDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpandDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ConcreteDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Owner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UsedBy">
+               <Summary></Summary>
+               <Desc>Internal</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionDefinitions">
+         <Methods>
+            <Method Name="AddConcreteRegionDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddCoreDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionElementInclusion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsuredCoreDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpandDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConcreteRegionDefinitionsByRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCoreDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionInclusionsByMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ConcreteRegionDefinitionsByRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CoreDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CoreDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RegionInclusionsByMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionElementInclusion">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Member">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Region">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionElementInclusionList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldSubregionReference">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IsDependent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubregionCoreDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubregionRootNavigation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldSubregionReferenceList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="beRegionDefinitionClearing">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>The components defined in this unit are part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.
+      <P>This feature set is licensed separately.</P>
+   </Desc>
+</DLUnitDoc>

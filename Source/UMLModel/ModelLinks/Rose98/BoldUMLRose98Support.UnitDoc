@@ -1,0 +1,87 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/Rose98/BoldUMLRose98Support.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldUMLRose98Properties">
+         <Methods>
+            <Method Name="ClearEffectiveDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldDefaultsForClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValuesForTool">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetToolProps">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTaggedValuesAsDefaultProps">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTaggedValuesForTool">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTaggedValuesForToolAsDefaultProps">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripToolName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TaggedValueToElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EffectiveDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUMLRose98Support">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BOLDSTDUMLTOOLNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BOLDTOOLNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

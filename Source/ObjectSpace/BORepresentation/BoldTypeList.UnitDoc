@@ -1,0 +1,81 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldTypeList.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldTypeList">
+         <Methods>
+            <Method Name="AddElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AllocateData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IncludesElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOfElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTypeListFactory">
+         <Methods>
+            <Method Name="CreateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

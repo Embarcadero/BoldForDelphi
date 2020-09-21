@@ -1,0 +1,76 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Connection/BoldClient.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldClient">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>The constructor will register the instance in the TBoldClientApplication singleton object.
+</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>The destructor will unregister the instance from the TBoldClientApplication singleton object.
+</Desc>
+            </Method>
+         </Methods>
+         <Summary>Common base class.</Summary>
+         <Desc> Serves as a common base class for different client types. </Desc>
+      </Class>
+      <Class Name="TBoldClientApplication">
+         <Methods>
+            <Method Name="AddClient">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>You should not create instances of this class. Use <see method=Instance> instead.
+</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClientByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClientCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Instance">
+               <Summary></Summary>
+               <Desc>Provides access to the global singleton object.
+</Desc>
+            </Method>
+            <Method Name="RemoveClient">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClientCount">
+               <Summary></Summary>
+               <Desc>Number of client instances in this application.
+</Desc>
+            </Property>
+            <Property Name="Clients">
+               <Summary></Summary>
+               <Desc>Provides access to the client instances.
+</Desc>
+            </Property>
+         </Properties>
+         <Summary>Client application object.
+
+</Summary>
+         <Desc>This is a singleton class. It maintains a list of all TBoldClient instances.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains common client classes.</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

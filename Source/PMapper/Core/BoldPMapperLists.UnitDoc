@@ -1,0 +1,233 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Core/BoldPMapperLists.UnitDoc 4     11/14/01 7:21a Jeho $">
+   <Classes>
+      <Class Name="TBoldMemberPersistenceMapperDescriptor">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberPersistenceMapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AbstractionLevel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberPersistenceMapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberPersistenceMapperDescriptorList">
+         <Methods>
+            <Method Name="AddDescriptor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DescriptorForModelNameWithDefaultSupport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorBydelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveDescriptorByClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DescriptorByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Descriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectPersistenceMapperDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectPersistenceMapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectPersistenceMapperDescriptorList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveDescriptorByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DescriptorByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Descriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPersistenceMapperDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceMapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSystemPersistenceMapperDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemPersistenceMapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="SystemPersistenceMapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSystemPersistenceMapperDescriptorList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveDescriptorByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DescriptorByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Descriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldMemberPersistenceMappers">
+         <Summary>Returns the list with all registered MemberPersistenceMappers.</Summary>
+         <Desc>Returns the list with all registered MemberPersistenceMappers.
+            <P>The list is created when it is first accessed. To find out if the global singleton variable holding the list is assigned, use <See Routine="BoldMemberPersistenceMappersAssigned"/></P>
+         </Desc>
+      </Routine>
+      <Routine Name="BoldMemberPersistenceMappersAssigned">
+         <Summary>Returns true if the list with registered MemberPersistenceMappers is assigned.</Summary>
+         <Desc>Returns <InlineCode>true</InlineCode> if the list with registered MemberPersistenceMappers is assigned. This might not be the case if the execution of the program is in the <InlineCode>finalization</InlineCode> stage.</Desc>
+      </Routine>
+      <Routine Name="BoldObjectPersistenceMappers">
+         <Summary>Returns the list with all registered ObjectPersistenceMappers.</Summary>
+         <Desc>Returns the list with all registered ObjectPersistenceMappers.
+            <P>The list is created when it is first accessed. To find out if the global singleton variable holding the list is assigned, use <See Routine="BoldObjectPersistenceMappersAssigned"/></P>
+         </Desc>
+      </Routine>
+      <Routine Name="BoldObjectPersistenceMappersAssigned">
+         <Summary>Returns true if the list with registered ObjectPersistenceMappers is assigned.</Summary>
+         <Desc>Returns <InlineCode>true</InlineCode> if the list with registered ObjectPersistenceMappers is assigned. This might not be the case if the execution of the program is in the <InlineCode>finalization</InlineCode> stage.</Desc>
+      </Routine>
+      <Routine Name="BoldSystemPersistenceMappers">
+         <Summary>Returns the list with all registered SystemPersistenceMappers.</Summary>
+         <Desc>Returns the list with all registered SystemPersistenceMappers.
+            <P>The list is created when it is first accessed. To find out if the global singleton variable holding the list is assigned, use <See Routine="BoldSystemPersistenceMappersAssigned"/></P>
+         </Desc>
+      </Routine>
+      <Routine Name="BoldSystemPersistenceMappersAssigned">
+         <Summary>Returns true if the list with registered SystemPersistenceMappers is assigned.</Summary>
+         <Desc>Returns <InlineCode>true</InlineCode> if the list with registered SystemPersistenceMappers is assigned. This might not be the case if the execution of the program is in the <InlineCode>finalization</InlineCode> stage.</Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

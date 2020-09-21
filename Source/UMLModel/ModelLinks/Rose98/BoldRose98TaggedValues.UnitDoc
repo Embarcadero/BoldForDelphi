@@ -1,0 +1,49 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/Rose98/BoldRose98TaggedValues.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="TAG_CHANGEABILITY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_CONSTRAINTS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_ISCLASSMETHOD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_MODELNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_PTY_VERSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_CHANGEABILITY_ADDONLY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_CHANGEABILITY_CHANGEABLE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_CHANGEABILITY_FROZEN">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="Rose98TaggedValueList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

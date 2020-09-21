@@ -1,0 +1,121 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesPropagation/BoldSnooperHandle.UnitDoc 7     02-03-12 9:56 Johosos $">
+   <Classes>
+      <Class Name="TBoldSnooperHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetControllerClassType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsLoaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSnooper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteMachineNameProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCheckDatabaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLockManagerHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropagatorHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceivePropagatorHandleEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CheckDatabaseLock">
+               <Summary></Summary>
+               <Desc>Before performing an update operation, the snooper will, if this property is true, check with the Lock Manager that the client calling update holds the exclusive database lock. This lock should be obtained on the client, by calling <InlineCode>TBoldLockHolder.LockDatabase</InlineCode>. If the client does not hold the lock, the update will not be permitted, and an exception will be raised. See <Jump ID="mech_CMS" Text="Concurrency Management Server"/>.
+                  <P>For this to work, the snooper must have the <InlineCode>LockManagerHandle</InlineCode> property set to a <InlineCode>TBoldAbstactLockManagerHandle</InlineCode> that provides a connection to the Lock Manager.</P>
+               </Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc><InlineCode>True</InlineCode> if the snooper has a connection to the propagator.</Desc>
+            </Property>
+            <Property Name="IsLoaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LockManagerHandle">
+               <Summary></Summary>
+               <Desc>Connects the snooper to the Lock Manager service. This is used to check the database lock, if <InlineCode>CheckDatabaseLock</InlineCode> is <InlineCode>true</InlineCode>. If <InlineCode>CheckDatabaseLock</InlineCode> is <InlineCode>false</InlineCode>, this property need not be set. </Desc>
+            </Property>
+            <Property Name="PropagatorHandle">
+               <Summary></Summary>
+               <Desc>Connects the snooper to the propagator, so that it can send messages when changes are written to the database.</Desc>
+            </Property>
+            <Property Name="Snooper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldSnooper is an <Jump ID="Mech_OSS" Text="Object Space Synchronization"/> component. It informs the propagator of modificaitons taking place in the object space of a client. </Summary>
+         <Desc> <InlineCode>TBoldSnooperHandle</InlineCode> snoops the calls originated by the BoldSystemHandle to the persistence handle, examines the data passed along and notifies the propagator of changes made to the object space, which can consist of modifications made to the objects that are in the system, as well as new objects fetched into the system.
+            <BH>Usage</BH>
+Connect the <InlineCode>TBoldSnooperHandle</InlineCode> to a <See Class="TBoldIDAdderHandle"/> by setting the IDAdderHandle's <InlineCode>NextPersistenceHandle</InlineCode> property. The <InlineCode>NextPersistenceHandle</InlineCode> of the SnooperHandle should be set to the identifier of a real persistence handle, e.g. <InlineCode>TBoldPersistenceHandleBDE</InlineCode>.
+            <P>For more information on using the object space synchronization components, see <Jump ID="Mech_OSS" Text="Object Space Synchronization"/>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>
+      <P>For more information on using the Object Space Synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization Server Overview"/>.</P>
+   </Desc>
+</DLUnitDoc>

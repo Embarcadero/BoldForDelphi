@@ -1,0 +1,63 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldRedoAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Redoes the last undone changes to a Bold system</Summary>
+         <Desc>Redoes the last undone changes to a Bold system</Desc>
+      </Class>
+      <Class Name="TBoldSetCheckPointAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Sets an undo-checkpoint</Summary>
+         <Desc>Sets an undo-checkpoint. A subsequent undo will restore the state to the way it is when the checkpoint is set.</Desc>
+      </Class>
+      <Class Name="TBoldUndoAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Undoes changes since the last checkpoint</Summary>
+         <Desc>Undoes all changes since the last checkpoint. Undone changes can later be redone.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains actions related to the undo mechanism</Summary>
+   <Desc>Contains actions related to the undo mechanism</Desc>
+</DLUnitDoc>

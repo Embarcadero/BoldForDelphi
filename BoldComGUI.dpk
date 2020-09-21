@@ -1,0 +1,100 @@
+package BoldComGUI;
+
+{$R *.res}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (COM GUI controls)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  VclJpg,
+  Bold,
+  BoldCom,
+  DesignIDE;
+
+contains
+  BoldCaptionControllerCom in 'Source\ClientGuiCom\BoldControls\BoldCaptionControllerCom.pas',
+  BoldCheckBoxCom in 'Source\ClientGuiCom\BoldControls\BoldCheckBoxCom.pas',
+  BoldComboBoxCom in 'Source\ClientGuiCom\BoldControls\BoldComboBoxCom.pas',
+  BoldEditCom in 'Source\ClientGuiCom\BoldControls\BoldEditCom.pas',
+  BoldGridCom in 'Source\ClientGuiCom\BoldControls\BoldGridCom.pas',
+  BoldGridRTColEditorCom in 'Source\ClientGuiCom\BoldControls\BoldGridRTColEditorCom.pas',
+  BoldImageBitmapCom in 'Source\ClientGuiCom\BoldControls\BoldImageBitmapCom.pas',
+  BoldImageCom in 'Source\ClientGuiCom\BoldControls\BoldImageCom.pas',
+  BoldImageJPEGCom in 'Source\ClientGuiCom\BoldControls\BoldImageJPEGCom.pas',
+  BoldLabelCom in 'Source\ClientGuiCom\BoldControls\BoldLabelCom.pas',
+  BoldListBoxCom in 'Source\ClientGuiCom\BoldControls\BoldListBoxCom.pas',
+  BoldMemoCom in 'Source\ClientGuiCom\BoldControls\BoldMemoCom.pas',
+  BoldNavigatorCom in 'Source\ClientGuiCom\BoldControls\BoldNavigatorCom.pas',
+  BoldPageControlCom in 'Source\ClientGuiCom\BoldControls\BoldPageControlCom.pas',
+  BoldProgressBarCom in 'Source\ClientGuiCom\BoldControls\BoldProgressBarCom.pas',
+  BoldPropertiesControllerCom in 'Source\ClientGuiCom\BoldControls\BoldPropertiesControllerCom.pas',
+  BoldRichEditCom in 'Source\ClientGuiCom\BoldControls\BoldRichEditCom.pas',
+  BoldStringsPropertyControllerCom in 'Source\ClientGuiCom\BoldControls\BoldStringsPropertyControllerCom.pas',
+  BoldTrackBarCom in 'Source\ClientGuiCom\BoldControls\BoldTrackBarCom.pas',
+  BoldTreeViewCom in 'Source\ClientGuiCom\BoldControls\BoldTreeViewCom.pas',
+  BoldTreeViewConfigCom in 'Source\ClientGuiCom\BoldControls\BoldTreeViewConfigCom.pas',
+  BoldXCVTreeViewCom in 'Source\ClientGuiCom\BoldControls\BoldXCVTreeViewCom.pas',
+  BoldCheckboxStateControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldCheckboxStateControlPackCom.pas',
+  BoldControllerListControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldControllerListControlPackCom.pas',
+  BoldControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldControlPackCom.pas',
+  BoldDateTimeControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldDateTimeControlPackCom.pas',
+  BoldElementHandleFollowerCom in 'Source\ClientGuiCom\ControlPacks\BoldElementHandleFollowerCom.pas',
+  BoldFloatControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldFloatControlPackCom.pas',
+  BoldGenericListControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldGenericListControlPackCom.pas',
+  BoldListControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldListControlPackCom.pas',
+  BoldListHandleFollowerCom in 'Source\ClientGuiCom\ControlPacks\BoldListHandleFollowerCom.pas',
+  BoldListListControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldListListControlPackCom.pas',
+  BoldNodeControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldNodeControlPackCom.pas',
+  BoldNumericControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldNumericControlPackCom.pas',
+  BoldStringControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldStringControlPackCom.pas',
+  BoldViewerControlPackCom in 'Source\ClientGuiCom\ControlPacks\BoldViewerControlPackCom.pas',
+  BoldExceptionHandlersCom in 'Source\ClientGuiCom\Core\BoldExceptionHandlersCom.pas',
+  BoldGuiResourceStringsCom in 'Source\ClientGuiCom\Core\BoldGuiResourceStringsCom.pas',
+  BoldAwareGuiComReg in 'Source\ClientGuiCom\IDE\BoldAwareGuiComReg.pas',
+  BoldCOMPropertyEditors in 'Source\ClientGuiCom\IDE\BoldCOMPropertyEditors.pas',
+  BoldGridPropertyEditorsCom in 'Source\ClientGuiCom\IDE\BoldGridPropertyEditorsCom.pas',
+  BoldPropertiesControllerPropertyEditorsCom in 'Source\ClientGuiCom\IDE\BoldPropertiesControllerPropertyEditorsCom.pas',
+  BoldAbstractListHandleCom in 'Source\ClientHandlesCom\Core\BoldAbstractListHandleCom.pas',
+  BoldClientElementSupport in 'Source\ClientHandlesCom\Core\BoldClientElementSupport.pas',
+  BoldComHandlesConst in 'Source\ClientHandlesCom\Core\BoldComHandlesConst.pas',
+  BoldCursorHandleCom in 'Source\ClientHandlesCom\Core\BoldCursorHandleCom.pas',
+  BoldDerivedHandleCom in 'Source\ClientHandlesCom\Core\BoldDerivedHandleCom.pas',
+  BoldExpressionHandleCom in 'Source\ClientHandlesCom\Core\BoldExpressionHandleCom.pas',
+  BoldHandlesCom in 'Source\ClientHandlesCom\Core\BoldHandlesCom.pas',
+  BoldListHandleCom in 'Source\ClientHandlesCom\Core\BoldListHandleCom.pas',
+  BoldPlaceableSubscriberCom in 'Source\ClientHandlesCom\Core\BoldPlaceableSubscriberCom.pas',
+  BoldReferenceHandleCom in 'Source\ClientHandlesCom\Core\BoldReferenceHandleCom.pas',
+  BoldRootedHandlesCom in 'Source\ClientHandlesCom\Core\BoldRootedHandlesCom.pas',
+  BoldSQLHandleCom in 'Source\ClientHandlesCom\Core\BoldSQLHandleCom.pas',
+  BoldSystemHandleCom in 'Source\ClientHandlesCom\Core\BoldSystemHandleCom.pas',
+  BoldVariableDefinitionCom in 'Source\ClientHandlesCom\Core\BoldVariableDefinitionCom.pas',
+  BoldVariableHandleCom in 'Source\ClientHandlesCom\Core\BoldVariableHandleCom.pas',
+  ComHandlesConst in 'Source\ClientHandlesCom\Core\ComHandlesConst.pas',
+  BoldHandleComReg in 'Source\ClientHandlesCom\IDE\BoldHandleComReg.pas';
+
+end.

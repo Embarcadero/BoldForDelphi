@@ -1,0 +1,169 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/TaggedValues/BoldTaggedValueSupport.UnitDoc 5     02-03-28 9:33 Johosos $">
+   <Classes>
+      <Class Name="TBoldTaggedValueSupport">
+         <Methods>
+            <Method Name="AttributeKindToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ChangeabilityKindToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ChangeableKindToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteActionToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DelphiFunctionTypeToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DelphiPropertyAccessKindToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToAttributeKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToChangeabilityKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToChangeableKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToDefaultRegionMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToDelphiFunctionType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToDelphiPropertyAccessKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToNationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToOptimisticLockingMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToStorage">
+               <Summary>Converts a string to TBoldStorage-enum</Summary>
+               <Desc>Used to convert the tagged value "storage" to the corresponding <see type=TBoldStorage> value. If the value is not recognized, the result will be bsInternal</Desc>
+            </Method>
+            <Method Name="StringToTableMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TableMappingToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldAssociationEndDefaultRegionMode">
+         <Summary></Summary>
+         <Desc>For details of how the values are interpreted, see <Jump ID="Mech_Regiondefinitions" Text="RegionDefinitions"/></Desc>
+      </Type>
+      <Type Name="TBoldAttributeKind">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDefaultMultiplicity">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldEvolutionState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNationalCharConversion">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldOptimisticLockingMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TDeleteAction">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TDelphiFunctionType">
+         <Summary></Summary>
+         <Desc>This enumerated type is used for the various delphi functions types.
+It is not really global, and will be moved to BoldMeta.
+Values </Desc>
+         <Enumeration>
+            <EnumItem Name="dfNormal">
+               <Desc>Normal method with no additional directives.</Desc>
+            </EnumItem>
+            <EnumItem Name="dfVirtual">
+               <Desc>Method declared as virtual</Desc>
+            </EnumItem>
+            <EnumItem Name="dfOverride">
+               <Desc>Overridden virtual or dynamic method.</Desc>
+            </EnumItem>
+            <EnumItem Name="dfDynamic">
+               <Desc>Method declared as dynamic</Desc>
+            </EnumItem>
+            <EnumItem Name="dfAbstractVirtual">
+               <Desc>Method declared as virtual; abstract;</Desc>
+            </EnumItem>
+         </Enumeration>
+      </Type>
+      <Type Name="TDelphiPropertyAccessKind">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TTableMapping">
+         <Summary>This enumerated type is used to indicate how the table mapping of a class is done.</Summary>
+         <Desc> Its primary use is within the BoldMeta hierarchy.
+Values </Desc>
+         <Enumeration>
+            <EnumItem Name="tmOwn">
+               <Desc>The class has its own table to store data.</Desc>
+            </EnumItem>
+            <EnumItem Name="tmParent">
+               <Desc>The class maps its data to its parent's data table.</Desc>
+            </EnumItem>
+            <EnumItem Name="tmChildren">
+               <Desc>The class maps its data to its children's data tables. This mapping is only allowed for abstract classes.</Desc>
+            </EnumItem>
+            <EnumItem Name="tmImported">
+               <Desc>The class gets its data from a table not maintained by bold.
+                  <Note>Not Supported</Note>
+               </Desc>
+            </EnumItem>
+         </Enumeration>
+      </Type>
+   </Types>
+</DLUnitDoc>

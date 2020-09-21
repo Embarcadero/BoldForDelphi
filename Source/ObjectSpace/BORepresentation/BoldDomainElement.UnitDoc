@@ -1,0 +1,167 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldDomainElement.UnitDoc 4     01-10-24 15:22 Aniv $">
+   <Classes>
+      <Class Name="TBoldDomainElement">
+         <Methods>
+            <Method Name="CanCommit">
+               <Summary>If the element allows the current system-transaction to commit.</Summary>
+               <Desc> This method is called on each involved domain element when a system-transaction is committed. If the result is false, the transaction is not allowed to commit. The user can veto the commit by overriding <See Method="MayCommit"/> or by subscribing to the bqMayCommit query. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>Since TBoldDomainElement is abstract, there is no point in calling this constructor. It will be called by subclasses to set the owner of the object. </Desc>
+            </Method>
+            <Method Name="GetBoldDirty">
+               <Summary>Get-method for the BoldDirty property</Summary>
+               <Desc>Get-method for the <See Property="BoldDirty"/> property</Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary>Get-method for the DisplayName property</Summary>
+               <Desc>Get-method for the <See Property="DisplayName"/> property</Desc>
+            </Method>
+            <Method Name="MayCommit">
+               <Summary>Return false to prohibit a transaction from committing.</Summary>
+               <Desc>A user may override this method and return false to affect the result of <See Method="CanCommit"/>.</Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary>Bold-internal equivalent of QueryInterface</Summary>
+               <Desc>This method is used internally in bold as an alternative to QueryInterface. Custom attribute classes may need to override it.</Desc>
+            </Method>
+            <Method Name="ReceiveEventFromOwned">
+               <Summary>Event sent from owned element</Summary>
+               <Desc>This method receives events sent by an owned element. See <See Method="SendEvent"/>.</Desc>
+            </Method>
+            <Method Name="ReceiveQueryFromOwned">
+               <Summary>Query sent from owned element</Summary>
+               <Desc>This method receives queries sent by an owned element. See <See Method="SendQuery"/>.</Desc>
+            </Method>
+            <Method Name="SendEvent">
+               <Summary>Sends events to subscribers and owner</Summary>
+               <Desc>This is an override of <See Class="TBoldSubscribableObject" Method="SendEvent"/> and sends the event to the <See Method="ReceiveEventFromOwned"/> method of the <See Property="OwnedElement"/>. The normal sending, as per the subscription mechanism, still takes place. </Desc>
+            </Method>
+            <Method Name="SendExtendedEvent">
+               <Summary>Sends extended events to subscribers and owner</Summary>
+               <Desc>This is an override of <See Class="TBoldSubscribableObject" Method="SendExtendedEvent"/> and sends the extended event to the <See Method="ReceiveEventFromOwned"/> method of the <See Property="OwnedElement"/>. The normal sending, as per the subscription mechanism, still takes place.</Desc>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary>Sends queries to subscribers and owner</Summary>
+               <Desc>This is an override of <See Class="TBoldSubscribableObject" Method="SendQuery"/> and sends the event to the <See Method="ReceiveQueryFromOwned"/> method of the <See Property="OwnedElement"/>. The normal sending, as per the subscription mechanism, still takes place.</Desc>
+            </Method>
+            <Method Name="StateError">
+               <Summary>Bold internal</Summary>
+               <Desc>Bold internal</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldDirty">
+               <Summary></Summary>
+               <Desc>This flag indicates whether the element has changes relative to the persistent storage, and is in need to be updated. </Desc>
+            </Property>
+            <Property Name="BoldPersistent">
+               <Summary></Summary>
+               <Desc>This flag indicates whether the element is persistent. This flag is derived from settings in the model.
+A system is persistent if the model is marked as persistent, and the system has a persistence controller.
+An object is persistent if it is marked as persistent, and the system is persistent
+An attribute is persistent if it is marked as persistent, and belongs to an object that is persistent.
+A relation is persistent if it is marked as persistent and it connects two persistent objects. </Desc>
+            </Property>
+            <Property Name="DisplayName">
+               <Summary></Summary>
+               <Desc>Name of the model element of the element
+
+The display name is a string representing the model element of the domain element. For instance, an attribute might have the display name 'MyClass.MyAttribute'. It is primarily useful for debugging purposes. </Desc>
+            </Property>
+            <Property Name="OwningElement">
+               <Summary>The owner of the element</Summary>
+               <Desc> Domain elements can have an owner. For instance, Bold objects (TBoldObject) will be owned by the system, and attributes will be owned by their Bold objects. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Superclass of all objects that represent business data</Summary>
+         <Desc>TBoldDomainElement is the superclass of all objects that represent business data, such as objects, attributes and associations. </Desc>
+      </Class>
+      <Class Name="TBoldDomainElementCollection">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTraverser">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Includes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TraverserClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDomainElementCollectionTraverser">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Item">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDomainElement_Proxy">
+         <Methods>
+            <Method Name="QueryInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnsupportedMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Mode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ProxedElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Unit containing the class TBoldDomainElement</Summary>
+   <Desc>This unit contains the class <See Class="TBoldDomainElement"/>, together with a few related classes. <InlineCode>TBoldDomainElement</InlineCode> is the abstract superclass for elements representing business data.</Desc>
+   <Types>
+      <Type Name="TBoldDomainElementClass">
+         <Summary>Class type for TBoldDomainElement</Summary>
+         <Desc>Class type for TBoldDomainElement</Desc>
+      </Type>
+      <Type Name="TBoldDomainElementProxyMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

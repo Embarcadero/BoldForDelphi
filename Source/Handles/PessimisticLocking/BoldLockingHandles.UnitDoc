@@ -1,0 +1,99 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/PessimisticLocking/BoldLockingHandles.UnitDoc 6     01-10-23 22:14 Jeho $">
+   <Classes>
+      <Class Name="TBoldLockingHandle">
+         <Events>
+            <Event Name="OnActivityEnd">
+               <Summary>Called when a time consuming operation is completed</Summary>
+               <Desc><InlineCode>OnActivityEnd</InlineCode> is called when a time consuming operation is completed. Use this to implement some kind of user feedback, such as a progress bar. See also <See Event="OnActivityStart"/> and <See Event="OnProgress"/> </Desc>
+            </Event>
+            <Event Name="OnActivityStart">
+               <Summary>Called when a time consuming operation is started.</Summary>
+               <Desc><InlineCode>OnActivityStart</InlineCode> is called when a time consuming operation is started. Use this to implement some kind of user feedback, such as a progress bar. See also <See Event="OnActivityEnd"/> and <See Event="OnProgress"/></Desc>
+            </Event>
+            <Event Name="OnProgress">
+               <Summary>Called periodically during a time consuming operation</Summary>
+               <Desc><InlineCode>OnProgress</InlineCode> is called periodically during a time consuming operation. Use this to implement some kind of user feedback, such as a progress bar. See also <See Event="OnActivityStart"/> and <See Event="OnActivityEnd"/></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Activate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AdjustActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Deactivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLockHolder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetListener">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLockManager">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>If pessimistic locking is active </Summary>
+               <Desc> This is a read-only property. The locking handle will activate itself when the system it is connected to is activated.</Desc>
+            </Property>
+            <Property Name="Listener">
+               <Summary>The TBoldListenerHandle component that receives propagation messages for the system.</Summary>
+               <Desc> This should be connected to the same <See Class="TBoldListenerHandle"/> that is responsible for receiving propagation messages for the system. The pessimistic locking uses it for two purposes. First, the listener is responsible for registering the client with the propagator, and holds the client id. Second, the Lock Manager server, which is built into the propagator, ensures that all propagation messages for the client have been sent, so that it is properly synchronized with the database. </Desc>
+            </Property>
+            <Property Name="LockHandler">
+               <Summary></Summary>
+               <Desc>The object responsible for doing most of the actual work. </Desc>
+            </Property>
+            <Property Name="LockHolder">
+               <Summary>The lock holder is responsible for keeping tracks of which locks the client holds </Summary>
+               <Desc> The lock holder is responsible for keeping tracks of which locks the client holds. Normally, the only reason for adeveloper to access this object directly, is to call the LockDatabase method.</Desc>
+            </Property>
+            <Property Name="LockManager">
+               <Summary>Connects the locking mechanism to the Lock Manager server </Summary>
+               <Desc> The lock manager handle that is responsible for providing a connection to the Lock Manager server.</Desc>
+            </Property>
+            <Property Name="SystemHandle">
+               <Summary>The system that will have pessimistic locking </Summary>
+               <Desc> This system will automatically use pessimistic locking. The objects will request locks when being modified, and fail if the locks could not be obtained.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Can be used to connect a pessimistic locking mechanism to a Bold system.</Summary>
+         <Desc> Connect this component to a <InlineCode>TBoldSystemHandle</InlineCode> to make it automatically require pessimistic locks when objects are modified. This will in turn connect to a Lock Manager server.
+            <P>See the document <Jump ID="Mech_CMS" Text="Concurrency Management Server"/>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains the TBoldLockingHandle component.</Summary>
+   <Desc>This unit contains the <InlineCode>TBoldLockingHandle</InlineCode> component.
+      <P>It is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+   </Desc>
+</DLUnitDoc>

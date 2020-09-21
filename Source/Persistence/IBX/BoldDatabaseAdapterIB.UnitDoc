@@ -1,0 +1,70 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldDatabaseAdapterIB">
+         <Methods>
+            <Method Name="CreateInterbaseDatabase">
+               <Summary>Creates an interbase .gdb-file</Summary>
+               <Desc>This method creates an empty interbase database (no schema). It will create it according to the settings in <See Property="Database"/>. It will first try to delete the existing file.
+                  <Warning>This will remove any existing file and any data in it</Warning>
+				  <note>This operation is also available from the Delphi/BCB IDE by rightclicking the component</note>
+               </Desc>
+            </Method>
+            <Method Name="EnsureInterbaseDatabase">
+               <Summary>Ensures the existence of an interbase .gdb-file</Summary>
+               <Desc>If the file indicated by <See Property="Database"/> is missing it will created by calling <See Method="CreateInterbaseDatabase"/>. If it already exists, nothing else will happen.
+				  <note>This operation is also available from the Delphi/BCB IDE by rightclicking the component</note>
+</Desc>
+            </Method>
+            <Method Name="GetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseBoldDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBaseEngine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataBase">
+               <Summary>The database connection</Summary>
+               <Desc>You must connect the adapter to an instance of TIBDatabase. The TIBDatabase component is where you configure the InterbaseExpress-specific details such as which database server/file to use, username, password etc</Desc>
+            </Property>
+            <Property Name="DatabaseEngine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Adapter component to allow connections to databases through InterbaseExpress</Summary>
+         <Desc>Use this component to allow the persistence mechanism to connect to your database through InterbaseExpress.
+		 				  <note>It is possible to create a database-file (*.gdb) directly using this component, either in runtime by calling <see method=CreateInterbaseDatabase> or <see method=EnsureInterbaseDatabase>, or in designtime by rightclicking the component</note>
+						  
+						   </Desc>
+
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

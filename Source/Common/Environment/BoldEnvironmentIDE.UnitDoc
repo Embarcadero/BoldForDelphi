@@ -1,0 +1,9 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>IDE environment</Summary>
+   <Desc>This unit is included when building the Bold designtime packages. It should not be included anywhese else.</Desc>
+</DLUnitDoc>

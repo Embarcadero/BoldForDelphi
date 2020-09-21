@@ -1,0 +1,77 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Logging/BoldLogHandlerForm.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldLogHandlerReceiver">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hide">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Log">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessInterruption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProgressStep">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgressMax">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Show">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LogForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,95 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldVariableHandle.UnitDoc 6     01-10-22 22:55 Jeho $">
+   <Classes>
+      <Class Name="TBoldVariableHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateVariableElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitialvaluesChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInitialValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetValueTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StaticBoldTypeChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="InitialValues">
+               <Summary>A list of initial values for the <See Class="TBoldElementHandle" Property="Value"/> owned by the handle.</Summary>
+               <Desc> If the type of handle is a simple type (such as <InlineCode>String</InlineCode> or <InlineCode>integer</InlineCode>) it is initialized to the value of the first string in the list.
+                  <P>If the list is a collection type (such as <InlineCode>Collection(String)</InlineCode>) the list will be initialized with the same number of elements as there are rows in the list, and each will be assigned a value from the list.</P>
+                  <P>Initialization is done by setting the <InlineCode>AsString</InlineCode> property.</P>
+                  <P>If the list is empty, no initial value is asigned.</P>
+               </Desc>
+            </Property>
+            <Property Name="ObjectList">
+               <Summary>The value typed as TBoldObjectList</Summary>
+               <Desc>If the <See Property="ValueTypeName"/> is the typename of an objectlist, then this property will be the objectlist owned by the variablehandle, otherwise it will be <InlineCode>nil</InlineCode>. </Desc>
+            </Property>
+            <Property Name="ValueTypeName">
+               <Summary></Summary>
+               <Desc>The variable handle owns an element of the type specified by this string. The string must be a valid type name in the context of StaticSystemHandle. It may not the the name of a Class in the UML model.
+                  <P>Typical values are <InlineCode>string</InlineCode>, <InlineCode>integer</InlineCode>, <InlineCode>Collection(String)</InlineCode>, <InlineCode>Collection(Integer)</InlineCode> and <InlineCode>Collection(Person)</InlineCode>.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>A TBoldVariableHandle is used for holding a value which is owned by the handle, and may be manipulated by the user.</Summary>
+         <Desc>The value must always be a subclass of <InlineCode>TBoldMember</InlineCode>. The type of the value is defined by the property <See Property="ValueTypeName"/>. This must be a valid type name in the context of <See Class="TBoldNonSystemHandle" Property="StaticSystemHandle"/>.
+            <P>When the handle is constructed, an element of the indicated type will be created.</P>
+            <P><InlineCode>TBoldVariableHandle</InlineCode> is a subclass of <See Class="TBoldElementHandle"/>. Everything in its description applies and is for the most part not repeated here.</P>
+            <BH>Value</BH>
+The <See Class="TBoldElementHandle" Property="Value"/> property will refer to a <See Class="TBoldMember"/> of the type indicated by <InlineCode>ValueTypeName</InlineCode>. The property will always refer to the same element except if <InlineCode>ValueTypeName</InlineCode> or <InlineCode>StaticSystemHandle</InlineCode> is changed.
+            <BH>Typing</BH>
+Both the <InlineCode>StaticBoldType</InlineCode> and <InlineCode>DynamicBoldType</InlineCode> types for the handle will always be the type defined by <InlineCode>ValueTypeName</InlineCode>.
+            <BH>Common usage</BH>
+            <P>There are several common usage cases for <InlineCode>TBoldVariableHandle</InlineCode>.</P>
+            <P>One common case is to define a handle with a simple type, such as <InlineCode>string</InlineCode> or <InlineCode>integer</InlineCode>, and connect it to a bold-aware control such as a <See Class="TBoldEdit"/> or <See Class="TBoldTrackbar"/>.</P>
+            <P>This gives a placeable variable whose contents can be set directly from the GUI.
+The handle may then be used in a <InlineCode>TBoldVariableDefinition</InlineCode>, to allow the value to be used in an OCL-expression.</P>
+            <P>Another use is to have a handle with the type <InlineCode>Collection(string)</InlineCode>, and initialize it with a list of string values. It can then be used as a fixed set of values e.g. in a <See Class="TBoldComboBox"/>. In this case it is used more as a placeable constant than a placeable variable.</P>
+            <BH>Bold events</BH>
+            <InlineCode>TBoldVariableHandle</InlineCode> is a subclass of <InlineCode>TBoldSubscribableComponent</InlineCode>, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldElementHandle</InlineCode> can send the following events:
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>. This can only happen if <InlineCode>ValueTypeName</InlineCode> or <InlineCode>StaticSystemHandle</InlineCode> is changed</LI>
+            </UL>
+            <P>The <InlineCode>beValueIdentityChanged</InlineCode> event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+            <Note>The <InlineCode>beValueIdentityChanged</InlineCode> event is not send when the contents of <InlineCode>Value</InlineCode> is changed. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</Note>
+            <Note>If you need to refer to an element rather that have an element owned by the handle a <See Class="TBoldReferenceHandle"/> should be used instead.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Defines TBoldVariableHandle</Summary>
+   <Desc>This unit defines <InlineCode>TBoldVariableHandle</InlineCode>.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,37 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="ReConnectToPropagator">
+         <Summary></Summary>
+         <Desc>This function allows a system that has been disconnected from a propagator to resume contact again. Subscriptions for all currently loaded objects will be added to the propagator, and any future changes to these objects by another client (that is connected to the propagator) will cause a notification to the listener handle.
+            <Note>While the object layer has been disconnected from the propagator, changes may have been made to objects that the object layer is aware of. Since the notifications about these objects have not reached the object layer, the client can not be sure to always have the current information. The alternative to reconnecting to the propagator is to shut down the system handle and start it again.</Note>
+         </Desc>
+         <Params>
+            <Param Name="SystemHandle">
+               <Desc>The system handle of the objectlayer that should be reconnected</Desc>
+            </Param>
+         </Params>
+         <Params>
+            <Param Name="ListenerHandle">
+               <Desc>The listener handle of the objectlayer that should be reconnected</Desc>
+            </Param>
+         </Params>
+         <Params>
+            <Param Name="ComConnectionHandle">
+               <Desc>The ComConnection of the listenerhandle of the objectlayer that should be reconnected</Desc>
+            </Param>
+         </Params>
+         <Params>
+            <Param Name="SnooperHandle">
+               <Desc>The snooper handle of the objectlayer that should be reconnected</Desc>
+            </Param>
+         </Params>
+      </Routine>
+   </Routines>
+   <Summary>Utility unit for propagator issues</Summary>
+   <Desc>This unit contains utilities to deal with problems with a propagator</Desc>
+</DLUnitDoc>

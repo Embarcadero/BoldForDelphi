@@ -1,0 +1,187 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Propagation/BoldListenerThread.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldListenerThread">
+         <Events>
+            <Event Name="OnExtendLeaseFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnPropagatorFailure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DebugGetQueueContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoExtendLeaseFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoExtendLeaseFailedSynchronized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoPropagatorFailure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoPropagatorFailureSynchronized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMessageQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterWithPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetQueueNotEmptyNotifyEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SignalInitialized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TerminateThread">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnMarshalInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnRegister">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnRegisterWithPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitUntilInitialized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitUntilInterfaceUnmarshaled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitUntilRegistered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitUntilUnregistered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getBoldClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setAutoExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setClientIdentifierString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setLeaseDuration">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setPollingInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClientIdentifierString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LeaseDuration">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PollingInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Propagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Queue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Registered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,1309 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/COM/BoldComObjectSpaceAdapters.UnitDoc 3     02-06-26 14:56 Isje $">
+   <Classes>
+      <Class Name="TBoldComAttributeAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldAttributeRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanSetToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComAttributeTypeInfoAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsAttributeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SuperAttributeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsAttributeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComBlobAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoldBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBoldBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComClassTypeInfoAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_FirstOwnMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_HasSubClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsAbstract">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsImported">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SuperClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeastCommonSuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComCursorHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCursorHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsCursorHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComDerivedHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDerivedHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDerivedHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComDomainElementAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDomainElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_OwningElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDomainElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComElementAdapter">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateAndSubscribeToExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsSessionIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsSessionIdListAndStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvaluateExpressionsAsStringLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Mutable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_StringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get__NewEnum">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEqualAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeImmutable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiEvaluateExpressionAsStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_AsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_StringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComElementHandleAdapter">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsElementHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsElementHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComElementTypeInfoAdapter">
+         <Methods>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComExpressionHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsExpressionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsExpressionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComListAdapter">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanClear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanInsert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanRemove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariantCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariantItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanCreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DuplicateMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Elements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Includes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_DuplicateMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_Elements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStringListWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComListHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComListTypeInfoAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsListTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsListTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComMemberAdapter">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChanges">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureContentsCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanRead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Derived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsPartOfSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_OwningObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Invalidate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComMemberListAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsMemberList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsMemberList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComMetaElementAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsMetaElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsMetaElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComNilTypeInfoAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsNilTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsNilTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComObjectAdapter">
+         <Methods>
+            <Method Name="BoldMakePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckLinks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Delete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChanges">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_CanUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SessionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Invalidate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldMemberValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComObjectListAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsObjectList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldRoleRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_SubscribeToObjectsInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_SubscribeToObjectsInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsObjectList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComObjectReferenceAdapter">
+         <Methods>
+            <Method Name="CanSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsObjectReference">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldRoleRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="QueryInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Set_BoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsObjectReference">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComReferenceHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsReferenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsReferenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComSQLHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsSQLHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsSQLHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComSystemAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewObjectWithMemberValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Discard">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectBySessionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_BoldSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ClassByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_DirtyObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_LoadedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDatabase">
+               <Summary>Update database with all objects that have changed in memory.</Summary>
+               <Desc>Calls <See Class="TBoldSystem" Method="UpdateDatabase" Text="TBoldSystem.UpdateDatabase"/>.</Desc>
+            </Method>
+            <Method Name="UpdateDatabaseWithList">
+               <Summary>Write selected objects to persistent storage.</Summary>
+               <Desc>Calls <See Class="TBoldSystem" Method="UpdateDatabaseWithList" Text="TBoldSystem.UpdateDatabaseWithList"/>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComSystemHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComSystemTypeInfoAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AttributeTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_AttributeTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ClassTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ClassTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ElementTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_IsRunnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListTypeInfoByElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ListTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_MethodsInstalled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_NilTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_RootClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TopSortedClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_TypeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_UseGeneratedCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ValueTypeNameList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComTypeTypeInfoAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsTypeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsTypeTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComVariableHandleAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariableHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsVariableHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

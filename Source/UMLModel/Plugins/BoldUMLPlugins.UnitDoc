@@ -1,0 +1,215 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/Plugins/BoldUMLPlugins.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TUMLLinkExporter">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLLinkImporter">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLLinkImporterExporter">
+         <Methods>
+            <Method Name="Initialize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLModelSaver">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultModelSaver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLModelUpdaterPlugIn">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLPlugInFunction">
+         <Methods>
+            <Method Name="CreateAndInstall">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultModelSaver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInstance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Install">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultModelSaver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Instance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Options">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

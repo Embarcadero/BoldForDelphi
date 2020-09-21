@@ -1,0 +1,37 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/UtilsGuiBde/BoldQueryAliasDialog.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldQueryAliasDialog">
+         <Methods>
+            <Method Name="BtnBrowseClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BtnOKClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ComboBoxAliasChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AliasName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

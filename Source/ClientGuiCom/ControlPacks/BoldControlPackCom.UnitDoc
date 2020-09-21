@@ -1,0 +1,809 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/ControlPacks/BoldControlPackCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldFollowerCom">
+         <Methods>
+            <Method Name="Apply">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckIfInHierarchy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CollectMatching">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CollectMatchingDownwards">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ControlledValueChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateSubFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Display">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Displayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDisplayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExistInOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollowerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkSubscriptionOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkValueOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetElementValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ControlData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Controller">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Element">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ElementValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RendererData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="State">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubFollowerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubFollowers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="index">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFollowerControllerCom">
+         <Events>
+            <Event Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="BeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAssign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableListAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HoldsChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUntypedRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApplyPolicy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CleanOnEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DropMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InternalDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Popup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Representation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UntypedRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFollowerDataCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureSubfollowersDisplayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentSubFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollowerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentSubFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MayModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFollowerSubscriberCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPopup">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Delete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InsertNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldRendererCom">
+         <Events>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnHoldsChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMayModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnReleaseChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultHoldsChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultMayModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultReleaseChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultRepresentationStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpressionAsDirectElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRepresentations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HoldsChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRepresentations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StoreRepresentations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="RendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Representations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSingleFollowerControllerCom">
+         <Methods>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApplyPolicy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CleanOnEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Representation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSingleRendererCom">
+         <Methods>
+            <Method Name="MakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="bfdNeedResubscribe">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfsActive">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfsDisplayable">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfsOutOfDate">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldTestType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldApplyPolicy">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldClientableList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDragDrop">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDragMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDragOver">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDropMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldEndDrag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldFollowerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldFollowerState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldGetContextTypeEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldHoldsChangedValueCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldMayModifyCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldPopupDeleteType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldReleaseChangedValueCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldRendererDataClassCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldStartDrag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSubFollowerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSubscribeCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,161 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldExternalObjectSpaceEventHandler.UnitDoc 9     02-05-28 18:13 Joho $">
+   <Classes>
+      <Class Name="TBoldExternalObjectSpaceEventHandler">
+         <Events>
+            <Event Name="OnClassChanged">
+               <Summary>Use OnClassChanged to implement custom behavior when a class is modified in another object space.</Summary>
+               <Desc> The <InlineCode>OnClassChanged</InlineCode> event occurs when an event of type <InlineCode>ClassChangedEvent</InlineCode> is dequeued (or received by the <InlineCode>BoldListenerHandle</InlineCode>). Use the <InlineCode>TheClass</InlineCode> parameter to determine the business class that was modified. The default handling is to mark the modified class invalid so it's refetched into the object space (by the system). Write an <InlineCode>OnClassChanged</InlineCode> event handler to implement custom behavior when a class is modified in another object space. </Desc>
+            </Event>
+            <Event Name="OnConflict">
+               <Summary>Use this event to implement custom handling of conflicts during synchronization.</Summary>
+               <Desc> This event occurs when a locally modified object is simultaneously modified in another object space during synchronization. Use the <InlineCode>BoldObject</InlineCode> parameter to determine the business object that is causing the conflict. The default behavior is to invalidate the object thus loosing the modifications made to it locally.
+                  <BH>Usage</BH>
+Write an <InlineCode>OnConflict</InlineCode> event handler to customize handling of conflicts. This would be a good place to display some kind of conflict dialog. </Desc>
+            </Event>
+            <Event Name="OnDoDisconnect">
+               <Summary>Event that is fired if the propagator requests the client to disconnect</Summary>
+               <Desc>The propagator can ask the client to disconnect (perhaps the propagator server needs to be rebooted). The parameters informs of the reason, and for how long the client should stay away (in milliseconds). If the client wants to reconnect after the time has passed, it will need to replace all subscriptions using the method <see method=ReConnectToPropagator></Desc>
+            </Event>
+            <Event Name="OnEmbeddedStateChanged">
+               <Summary>Event indicating an embedded state change has occured</Summary>
+               <Desc>Use the <InlineCode>OnEmbeddedStateChangedEvent</InlineCode> to implement custom behavior when the embedded state of an object gets modified in another object space, during synchronization. This event occurs when <InlineCode>BoldListenerHandle</InlineCode> receives an <InlineCode>EmbeddedStateChangedEvent</InlineCode> from the propagator.
+                  <BH>Usage</BH>
+Use <InlineCode>BoldObject</InlineCode> to determine the object whose embedded state has been modified. The default behavior is to mark the object invalid so that it's refetched. </Desc>
+            </Event>
+            <Event Name="OnLockLost">
+               <Summary></Summary>
+               <Desc>This event is called when the client receives notification that it has lost one of its locks. This happens when the lock is released by someone calling the Lock Manager's admin interface. </Desc>
+            </Event>
+            <Event Name="OnNonEmbeddedStateChanged">
+               <Summary>Event indicating an non-embedded state change has occured</Summary>
+               <Desc>Use the <InlineCode>OnNonEmbeddedStateChangedEvent</InlineCode> to implement custom behavior when the non-embedded state of an object gets modified in another object space, during synchronization. This event occurs when <InlineCode>BoldListenerHandle</InlineCode> receives an <InlineCode>NonEmbeddedStateChangedEvent</InlineCode> from the propagator.
+                  <BH>Usage</BH>
+Use <InlineCode>BoldMember</InlineCode> to determine the non-embedded member that has been modified. The default behavior is to mark the member as invalid so that it's refetched. </Desc>
+            </Event>
+            <Event Name="OnObjectDeleted">
+               <Summary>This event will be called when ever a loaded object has been deleted by another client</Summary>
+               <Desc>If this eventhandler is not implemented then the default behaviour will be to mark the object as deleted.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="ClassChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Conflict">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EmbeddedStateOfObjectChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectByID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LockLost">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NonEmbeddedStateOfObjectChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjectDeleted">
+               <Summary>Default handler for messages with deleted objects</Summary>
+               <Desc>The default action will be to mark the object as deleted</Desc>
+            </Method>
+            <Method Name="SetBoldSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropagatorHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Subscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SystemHandleDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleNilObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PropagatorHandle">
+               <Summary>Should be set to propagatorhandle of the application</Summary>
+               <Desc>This property is used internally if the propagator requests the client to disconnect. If it is not set up, the client will not react to the disconnect-request. For an example, see the Synchronization-example</Desc>
+            </Property>
+         </Properties>
+         <Summary>Use this component to customize the propagation event handling.</Summary>
+         <Desc> <InlineCode>TBoldExternalObjectSpaceEventHandler</InlineCode> is an <Jump ID="Mech_OSS" Text="Object Space Synchronization"/> component. It dequeues the event-queue of the <InlineCode>BoldListenerHandle</InlineCode> connected to it (see <See Class="TBoldListenerHandle" Property="Dequeuer"/>) and interprets them.
+            <BH>Usage</BH>
+The propagation events are: <InlineCode>ClassChangedEvent</InlineCode>, <InlineCode>EmbeddedStateChangedEvent</InlineCode>, <InlineCode>ObjectDeleted</InlineCode> and <InlineCode>NonEmbeddedStateChangedEvent</InlineCode>. For each of these events, the <InlineCode>TBoldExternalObjectSpaceEventHandler</InlineCode> triggers the corresponding event handler. For more details on object space synchronization events and their handling, see TBoldExternalObjectSpaceEventHandler_EventsByObject.
+            <P>For more information on using the Object Space Synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization Server Overview"/>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Types>
+      <Type Name="TBoldClassChangedEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldConflictEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDoDisconnectEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldEmbeddedStateChangedEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldLockLostEvent">
+         <Summary></Summary>
+         <Desc>See <See Class="TBoldExternalObjectSpaceEventHandler" Event="OnLockLost"/>. <InlineCode>LockName</InlineCode> is a string identifying the lock. </Desc>
+      </Type>
+      <Type Name="TBoldNonEmbeddedStateChangedEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary></Summary>
+   <Desc>
+      <P>For more information on using the Object Space Synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization Server Overview"/>.</P>
+   </Desc>
+</DLUnitDoc>

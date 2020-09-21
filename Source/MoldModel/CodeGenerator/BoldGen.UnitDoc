@@ -1,0 +1,299 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/CodeGenerator/BoldGen.UnitDoc 5     02-02-05 9:19 Johosos $">
+   <Classes>
+      <Class Name="TBoldCodeGenInitializer">
+         <Methods>
+            <Method Name="EnsureComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDependency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureInheritanceDependencies">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc>If you have installed your own CodeGenInitializer, this method will be called prior to codegeneration. </Desc>
+            </Method>
+            <Method Name="FilterLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveClassToComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveClassToComponentByClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveClassTreeToComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveClassesToComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RenameComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateFileNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This class is used to make modifications to the model before the codegenerator is executed. Examples of changes:
+            <UL>
+               <LI>move link-classes to a separate package</LI>
+               <LI>move a class with its subclasses to a separate package</LI>
+               <LI>set up inc-files for each class</LI>
+            </UL>
+Override the Execute method and install your new class by setting the BoldCodeGenInitializerClass variable. Your new class must be installed as a designtime package. </Desc>
+      </Class>
+      <Class Name="TBoldGenerator">
+         <Methods>
+            <Method Name="AddIncFileHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddSuperClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddVarList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMethod">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMethodImplementations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureSafeIDLType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindInCurrentFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateComInterfaces">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNativeDelphiTypeForModelNameNoDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMethodIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeTemplateForComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToCOMCall">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToCOMHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToDelphiHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToIDLHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PutInterfaceFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentFileHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetGenerateBold1CompatibleCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BaseFilePath">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldFilehandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerateBold1CompatibleCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerateIDLVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerateMIDLCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MethodIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeNameDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypesWithoutNative">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UnMappedTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseTypedLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This is the Codegenerator of Bold. It will generate the source files to The Delphi IDE if Delphi is running, otherwise the files are generated directly to disk. </Desc>
+         <Examples>
+            <Example>
+               <Body>To run the codegenerator in runtime, use the following code: 
+                  <Code>uses
+  BoldGen,
+  BoldgeneratorTemplatesDelphi,
+  BoldModel,
+  BoldGeneratorTemplates,
+  BoldFileHandler;
+  
+var
+  Generator: TBoldGenerator;
+  aBoldModel: TBoldModel;
+begin
+  aBoldModel := < your model >;
+  BoldGeneratorTemplateManagerClass := TBoldDelphiTemplateManager;
+  Generator := TBoldGenerator.Create(aBoldModel.TypeNameDictionary);
+  Generator.BaseFilePath := ''; // will generate in the directory of your exe-file
+  Generator.UseTypedLists := true;
+  Generator.MoldModel := aBoldModel.MoldModel;
+  Generator.PutInterfaceFile;
+  Generator.EnsureMethodImplementations;
+  generator.Free;
+  BoldCloseAllFilehandlers;
+end;</Code>
+               </Body>
+            </Example>
+         </Examples>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="AddVisitorSupport">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEBUGGERWORKAROUNDINTERVAL">
+         <Summary></Summary>
+         <Desc>There is a bug in the Delphi compiler that makes it crash if a unit contains too many classes. Every now and then the code generator inserts an extra class to confuse the compiler, and make it forget that it should crash. </Desc>
+      </Const>
+      <Const Name="INDENTSIZE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="GetNewGUID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldCodeGenInitializerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldEnsureFlag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldFunctionContent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldGeneratorClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TMoldClassFilterFunction">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldCodeGenInitializerClass">
+         <Summary></Summary>
+         <Desc>If you want to make any "manual" initialization to the model before codegeneration (such as move all link-classes to a separate unit), subclass <See Class="TBoldCodeGenInitializer"/>, and set this variable to your new class. An instance will be created by the codegenerator, and the virtual Execute-method will be executed. </Desc>
+      </Var>
+      <Var Name="BoldGeneratorClass">
+         <Summary></Summary>
+         <Desc>If you want to have your own code generator, subclass <See Class="TBoldGenerator"/>, and set this variable to your new class </Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

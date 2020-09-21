@@ -1,0 +1,45 @@
+package BoldDBIsam;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (DBIsam Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  vcldb,
+  Bold,
+  db317D8r;
+
+contains
+  BoldDatabaseAdapterDBIsam in 'Source\Persistence\DBIsam\BoldDatabaseAdapterDBIsam.pas',
+  BoldDBISAMInterfaces in 'Source\Persistence\DBIsam\BoldDBISAMInterfaces.pas',
+  BoldPersistenceHandleDBISAM in 'Source\Persistence\DBIsam\BoldPersistenceHandleDBISAM.pas',
+  BoldPersistenceHandleDBISAMReg in 'Source\Persistence\DBIsam\BoldPersistenceHandleDBISAMReg.pas',
+  DBISAMConsts in 'Source\Persistence\DBIsam\DBISAMConsts.pas';
+
+end.

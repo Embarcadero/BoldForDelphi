@@ -1,0 +1,195 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldUnDoHandler">
+         <Methods>
+            <Method Name="CanRedoBlock">
+               <Summary>Can block be redone</Summary>
+               <Desc>Returns true if Name is the name of a block in <See Property="RedoList"/> and it can be redone.  A block can be redone if none of the members in the block have been modified by a later ReDo-block, i.e. if RedoList.<See Interface="IBoldUndoList" Method="CanMoveToTop"/> is true.</Desc>
+            </Method>
+            <Method Name="CanUndoBlock">
+               <Summary>Can block be undone</Summary>
+               <Desc>Returns true if Name is the name of a block in <See Property="UndoList"/> and it can be undone.  A block can be undone if none of the members in the block have been modified by a later Undo-block, i.e. if UndoList.<See Interface="IBoldUndoList" Method="CanMoveToTop"/> is true.</Desc>
+            </Method>
+            <Method Name="ClearAllUndoBlocks">
+               <Summary>Clears all existing undo (and redo) blocks in the undohandler</Summary>
+               <Desc>As objects are modified in memory they are copied to the undohandler. When they are persisted (saved to database) they will be removed from the undohandler and the memory allocated there will be reclaimed. If you perform large operations, and know that you will not be needing the possibility to undo the changes, you may call <InlineCode>ClearAllUndoBlocks</InlineCode> at will to reclaim memory from the undohandler. The changes stored in undo blocks at the time of calling will of course not be undoable in the future. </Desc>
+            </Method>
+            <Method Name="GetNonUndoableBlock">
+               <Summary>Reader for property <See Property="NonUndoableBlock"/>.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRedoList">
+               <Summary>Reader for property <See Property="RedoList"/>.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUndoList">
+               <Summary>Reader for property <See Property="UndoList"/>.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueBlockName">
+               <Summary>Get unique block name</Summary>
+               <Desc>Use this method to get a unique name for the block about to be created. The method will check the names <See Property="UndoList"/> and <See Property="RedoList"/>. If a collision is found it will try appending " 1", " 2", etc until a unique name is found. </Desc>
+            </Method>
+            <Method Name="RedoBlock">
+               <Summary>Redo block</Summary>
+               <Desc>This will Redo the block Name. The changes in the block will be applied, the ReDo-block removed from ReDo-list and the old values be saved in a new UnDo-block with the same name. 
+The method is transactional so if the redo fails for some reason, everything will be left exactly as before the call.</Desc>
+            </Method>
+            <Method Name="Redolatest">
+               <Summary>Redo latest Redo area</Summary>
+               <Desc>Redo the latest Redo block in <See Property="ReDoList"/>. There is always at least one (possibly empty) Undoblock.</Desc>
+            </Method>
+            <Method Name="SetCheckPoint">
+               <Summary>Create a checkpoint</Summary>
+               <Desc>For each checkpoint there is a corresponding Undo block. Calling this method will close the top Undo block and start a new empty block. The new block will receive an arbitrary unique block name. All new changes will be made to this area until the system is updated or a new checkpoint is set.</Desc>
+            </Method>
+            <Method Name="SetNamedCheckPoint">
+               <Summary>Create a checkpoint</Summary>
+               <Desc>For each checkpoint there is a corresponding Undo block. Calling this method will close the top Undo block and start a new empty block with block name CheckPointName. All new changes will be made to this area until the system is updated or a new checkpoint is set.</Desc>
+            </Method>
+            <Method Name="UnDoLatest">
+               <Summary>UnDo latest UnDo area</Summary>
+               <Desc>UnDo the latest UnDo block in <See Property="UnDoList"/>. If the list is empty, an Exception will be raised.</Desc>
+            </Method>
+            <Method Name="UndoBlock">
+               <Summary>Undo block</Summary>
+               <Desc>This will UnDo the block Name. The changes in the block will be applied, the ReDo-block removed from ReDo-list and the old values be saved in a new UnDo-block with the same name. 
+The method is transactional so if the redo fails for some reason, everything will be left exactly as before the call.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="NonUndoableBlock">
+               <Summary>Block containing Non-undoable changes.</Summary>
+               <Desc>This block contains changes that can not be undone. This block can only become non-empty if a subset of the objects are updated to the persistence mechanism. In this case, any other values in all UnDo-areas that contain the values updated will become non-undoable, and placed in this block</Desc>
+            </Property>
+            <Property Name="RedoList">
+               <Summary>List of Redo-blocks</Summary>
+               <Desc>This list contains the UnDo-blocks in the order they were created. Note that this list is cleared as soon as any change is made after the last UnDo.</Desc>
+            </Property>
+            <Property Name="UndoList">
+               <Summary>List of Undo-blocks</Summary>
+               <Desc>This list contains the UnDo-blocks in the order they were created. Note that blocks can disapear from this list when data is updated to persistence-mechansim, in which case the changes no longer are undoable.</Desc>
+            </Property>
+         </Properties>
+      </Interface>
+      <Interface Name="IBoldUndoBlock">
+         <Summary>Interface to UndoHandler</Summary>
+         <Desc>This is the interface provided to the UnDo/ReDo mechanism in Bold. The basic stategy is that as changes are made, the old values are collected in the most recent UnDo-block. A new Undo-block may be started at any time with <See Method="NewUndoBlock"/>. Undo-list maintains a list of the UnDo-blocks in order. The most current Undo-block can be undone with <See Method="UndoLatest"/>. When this is done, a new Redo-block is added to <See Property="RedoList"/>. In the same way the lastest RodeBlock can be redone with <See Method="RedoLatest"/>.Undo-blocks must have unique names (<See Method="GetUniqueBlockName"/>). The lists may be inspected, but should not be modifed by user code.
+            <P>It is possible to move blocks in the list, and to UnDo/Redo other blocks than the latest, provied that there are no collisions, i.e. that a block is not moved past a block that contains changes to the same members.</P>
+         </Desc>
+         <Methods>
+            <Method Name="GetContainsChanges">
+               <Summary>Get method for <See Property="ContainsChanges"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary>Get method for <See Property="Name"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueSpace">
+               <Summary>Get method for <See Property="ValueSpace"/></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContainsChanges">
+               <Summary>Is block non-empty</Summary>
+               <Desc>This property is true if <See Property="ValueSpace"/> is non-empty.</Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary>Name of Block</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary>Valuespace with changes</Summary>
+               <Desc>An Undo-block is essentially a named <See Interface="IBoldValue"/> which contains a set of changes.</Desc>
+            </Property>
+         </Properties>
+      </Interface>
+      <Interface Name="IBoldUndoList">
+         <Methods>
+            <Method Name="CanMoveBlock">
+               <Summary>Can block be moved to?</Summary>
+               <Desc>Returns true if the block <See Property="Items"/>[CurIndex] can be moved to position NewIndex in the list.This is possible if none of intervening blocks in the list contains changes to any of the values in the block to be moved.</Desc>
+            </Method>
+            <Method Name="CanMoveToTop">
+               <Summary>Can block be moved to top?</Summary>
+               <Desc>Returns true if the block with <See Interface="IBoldUndoBlock" Property="Name"/> BlockName can be moved to the top of the list, i.e. made the most recent. This is possible if none of the blocks above it in the list contain changes to any of the values in the block to be moved.
+                  <P>If there is no block with that name, an exception is raised.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary>Get method for <See Property="Items"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemsByName">
+               <Summary>Get method for <See Property="ItemsByName"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTopBlock">
+               <Summary>Get method for <See Property="TopBlock"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary>Index of block with given name.</Summary>
+               <Desc>Returns Index of block with <See Interface="IBoldUndoBlock" Property="Name"/> BlockName. If there is no block with that name in the list, -1 is returned.</Desc>
+            </Method>
+            <Method Name="MergeBlocks">
+               <Summary>Merge Blocks</Summary>
+               <Desc>The contents of the block with Name SourceBlockName is merged into the block with Name DestinationBlockName. This is possible if the Source block can first be moved adjacent to the Destination block <See Method="CanMoveBlock"/>. If this is not so, or if any of the blocks don't exist, an exception is raised. </Desc>
+            </Method>
+            <Method Name="MoveBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveToTop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveBlock">
+               <Summary>Remove block with <See Property="Name"/> BlockName</Summary>
+               <Desc>Removes the block with <See Property="Name"/> BlockName if it has no dependant blocks. RemoveBlock returns True if the block with <See Property="Name"/> BlockName was successfully removed and False otherwise.</Desc>
+            </Method>
+            <Method Name="RenameBlock">
+               <Summary>Change name of block.</Summary>
+               <Desc>Use this method to rename a block. To ensure that the name is unique, <See Interface="IBoldUnDoHandler" Method="GetUniqueBlockName"/></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary>Blocks in list.</Summary>
+               <Desc>Use this property to access a block in the list by its place in the list</Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary>Block by name.</Summary>
+               <Desc>Use this property to access a block in the list by its <See Interface="IBoldUndoBlock" Property="Name"/></Desc>
+            </Property>
+            <Property Name="TopBlock">
+               <Summary>Topmost Block</Summary>
+               <Desc>This is the topmost (most recently created) block in the list.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldUndoState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

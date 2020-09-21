@@ -1,0 +1,1203 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/DB/BoldDBInterfaces.UnitDoc 7     02-05-10 15:14 Joho $">
+   <Classes>
+      <Class Name="TBoldDataSetWrapper">
+         <Methods>
+            <Method Name="Append">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Close">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Createparam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Edit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FieldByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="First">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEof">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldWrapperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImplementor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Locate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveBy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Post">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFieldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DatabaseWrapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDatabaseWrapper">
+         <Methods>
+            <Method Name="SupportsDefaultColumnValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EmptyStringMarker">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDbParameter">
+         <Methods>
+            <Method Name="AssignFieldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBCD">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsMemo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParameter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBCD">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsMemo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsSmallInt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsWord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Parameter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFieldWrapper">
+         <Methods>
+            <Method Name="GetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataSetWrapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Field">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldParameterWrapper">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DatasetWrapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldDataBase">
+         <Methods>
+            <Method Name="AllTableNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Close">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Commit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsSQLBased">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetKeepConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogInPrompt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseCachedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RollBack">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetKeepConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetlogInPrompt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SupportsDefaultColumnValues">
+               <Summary>Indicates whether the underlying database supports default values when creating columns using SQL-statements</Summary>
+               <Desc>When a database schema is generated, columns can be assigned default values. This is an important feature when using the model evolution mechanism if old applications should be allowed to access new database schemas. Not all databases/database engines supports this feature. The underlying implementation should in this case return false.</Desc>
+            </Method>
+            <Method Name="SupportsTableCreation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsCustomConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsSqlBased">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="KeepConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LogInPrompt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldDataSet">
+         <Methods>
+            <Method Name="Append">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Close">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Edit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FieldByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="First">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEof">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImplementor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Locate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveBy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Post">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFieldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Eof">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Fields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Implementor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="State">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldField">
+         <Methods>
+            <Method Name="GetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Field">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldParameter">
+         <Methods>
+            <Method Name="AssignFieldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBCD">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsMemo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBCD">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsMemo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsSmallInt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsWord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBCD">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsMemo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsSmallInt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsWord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Text">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="asVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldQuery">
+         <Methods>
+            <Method Name="AssignParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignSQLText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Createparam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParamCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRecordCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequestLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRowsAffected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParamByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRequestLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ParamCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Params">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RecordCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RequestLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RowsAffected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Text">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldTable">
+         <Methods>
+            <Method Name="AddIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Exclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Exists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IndexDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Tablename">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldLogSQL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc>This unit contains the interfaces that must be implemented to support a database back end. The Persistence mapper of Bold does not know anything about BDE, InterBase or ADO, All it requires is that there are classes that implement IBoldDatabase, IBoldQuery, IBoldTable and IBoldParameter. </Desc>
+   <Types>
+      <Type Name="TBoldCustomConnection">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldFieldWrapperClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldSQLLogCount">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldSQLLogHandler">
+         <Summary></Summary>
+         <Desc>This global variable can be used to log all SQL statements that are sent to the database</Desc>
+         <Examples>
+            <Example>
+               <Body>Add the following code to your application to see the SQL-statements sent from your application: 
+                  <Code>uses
+  BoldLogHandler,
+  BoldLogHandlerForm,
+  BoldDbInterfaces,
+
+begin
+  BoldSQLLogHandler := BoldLog;
+  BoldLog.Show;
+end;</Code>
+               </Body>
+            </Example>
+         </Examples>
+         <SeeAlso><See Unit="BoldPMappers" Var="BoldPMLogHandler"/></SeeAlso>
+      </Var>
+   </Variables>
+</DLUnitDoc>

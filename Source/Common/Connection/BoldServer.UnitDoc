@@ -1,0 +1,67 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Connection/BoldServer.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldServer">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldServerApplication">
+         <Methods>
+            <Method Name="AddServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetServerByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetServerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Instance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ServerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Servers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Contains common server classes.</Desc>
+</DLUnitDoc>

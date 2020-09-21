@@ -1,0 +1,159 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Subscription/BoldSubscribableCollection.UnitDoc 4     02-08-05 12:27 Johosos $">
+   <Classes>
+      <Class Name="TBoldSubscribableCollection">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSmallSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreePublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendEvent">
+               <Summary>SendEvent notifies all subscribers holding a subscription matching Event by calling their <See Class="TBoldSubscriber" Method="Receive" Text="Receive"/> method.</Summary>
+               <Desc> If a subscriber holds multiple subscriptions matching the same event, but with different requested events, Receive will be called multiple times, once for each requested event.
+                  <P>This method is virtual to allow the concrete subclasses to perform other actions when sending an event.</P>
+               </Desc>
+            </Method>
+            <Method Name="SendExtendedEvent">
+               <Summary>Sends an extended event to all subscribers.</Summary>
+               <Desc>An extended event can pass any arguments to the subscribers. Each event should send a well defined set of arguments that the subscribers can extract additional information from.</Desc>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary>Sends a query to all subscribers</Summary>
+               <Desc>A subscriber can subscribe to a query event. Call SendQuery to query all subscribers to the particular query event to see if any subscriber has any objection to the query. If the result of SendQuery is false, this should be interpreted as a veto from one of the subscribers. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HasSubscribers">
+               <Summary>Returns true if the collection has any subscribers</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Publisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Generic class that adds subscription-mechanism to the VCL TCollection class</Summary>
+         <Desc>This class allows for a collection to send events, and for subscribers to subscribe to these events.
+            <P>A concrete subclass can call <See Method="SendEvent"/>, <See Method="SendExtendedEvent"/> or <See Method="SendQuery"/> to notify/query subscribers.</P>
+            <P>The collection items of a subscribable collection should inherit from <See Class="TBoldSubscribableCollectionItem"/></P>
+            <P>Concrete subclasses should normally implement their own constructor and call the inherited constructor with their CollectionItem class type as the parameter: 
+               <Code>type
+  TMyCollectionItem = class(TBoldSubscribableCollectionItem)
+  published
+    // your published properties here
+  end;
+  
+  TMyCollection = class(TBoldSubscribableCollection)
+  private
+    function GetItems(i: integer): TMyCollectionItem;
+	procedure SetItems(i: integer; value: TMyCollectionItem);
+  public
+    constructor create;
+	property Items[i: integer]: TMyCollectionItem read GetItems write SetItems;
+  end;
+  
+...
+
+constructor TMyCollection.create;
+begin
+  inherited create(TMyCollectionItem);
+end;
+  
+function TMyCollection.GetItems(i: integer): TMyCollectionItem;
+begin
+  result := (inherited items[i]) as TMyCollectionItem;
+end;
+
+procedure TMyCollection.SetItems(i: integer; value: TMyCollectionItem);
+begin
+  inherited Items[i] := value;
+end;</Code>
+            </P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldSubscribableCollectionItem">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSmallSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreePublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendEvent">
+               <Summary>SendEvent notifies all subscribers holding a subscription matching Event by calling their <See Class="TBoldSubscriber" Method="Receive" Text="Receive"/> method.</Summary>
+               <Desc> If a subscriber holds multiple subscriptions matching the same event, but with different requested events, Receive will be called multiple times, once for each requested event.
+                  <P>This method is virtual to allow the concrete subclasses to perform other actions when sending an event.</P>
+               </Desc>
+            </Method>
+            <Method Name="SendExtendedEvent">
+               <Summary>Sends an extended event to all subscribers.</Summary>
+               <Desc>An extended event can pass any arguments to the subscribers. Each event should send a well defined set of arguments that the subscribers can extract additional information from.</Desc>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary>Sends a query to all subscribers</Summary>
+               <Desc>A subscriber can subscribe to a query event. Call SendQuery to query all subscribers to the particular query event to see if any subscriber has any objection to the query. If the result of SendQuery is false, this should be interpreted as a veto from one of the subscribers. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HasSubscribers">
+               <Summary>Returns true if the collection item has any subscribers</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Publisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Generic class that adds subscription-mechanism to the VCL TCollection class</Summary>
+         <Desc>This class allows for a collection to send events, and for subscribers to subscribe to these events.
+            <P>A concrete subclass can call <See Method="SendEvent"/>, <See Method="SendExtendedEvent"/> or <See Method="SendQuery"/> to notify/query subscribers.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

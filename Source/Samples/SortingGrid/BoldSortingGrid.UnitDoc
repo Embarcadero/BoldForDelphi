@@ -1,0 +1,172 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/SortingGrid/BoldSortingGrid.UnitDoc 5     02-04-23 3:42p Jeho $">
+   <Classes>
+      <Class Name="TBoldSortingGrid">
+         <Events>
+            <Event Name="OnPrepareSorting">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AdjustStringForNumericCompare">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="ComparerCompare">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="ComparerSubscribe">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="DrawCell">
+               <Summary>Extended to draw sort indicator.</Summary>
+               <Desc>DrawCell is redefined to draw the sort indicator bitmap on the title cell of the <See Property="OrderCol"/>.</Desc>
+            </Method>
+            <Method Name="DrawSortIndicator">
+               <Summary>Draws the actual sort indicator.</Summary>
+               <Desc>Defines the drawing of the sort indicator (arrow up or arrow down).</Desc>
+            </Method>
+            <Method Name="FetchIntelligently">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetComparer">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetEffectiveSortMethod">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetListHandle">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetSortMode">
+               <Summary>The default sort method of the grid.</Summary>
+               <Desc>The default sort method of the grid.</Desc>
+            </Method>
+            <Method Name="GetStringFromElement">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary>Overridden to detect sort requests.</Summary>
+               <Desc>Overridden to detect sort requests.</Desc>
+            </Method>
+            <Method Name="MouseUp">
+               <Summary>Overridden to handle sort requests.</Summary>
+               <Desc>Overridden to handle sort requests.</Desc>
+            </Method>
+            <Method Name="PrepareSort">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Resort">
+               <Summary>Resorts the grid.</Summary>
+               <Desc>Invoking this method resorts the grid (No, it has nothing to do with palm trees and white beaches :) ).</Desc>
+            </Method>
+            <Method Name="SetDefaultSortMethod">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetEnableSorting">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetOrderCol">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetOrderDescending">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetUnsavedObjectsLast">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="_AfterMakeListUptoDate">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Method>
+            <Method Name="create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Comparer">
+               <Summary>Internal property which holds the comparer.</Summary>
+               <Desc>The comparer is created on demand and is the component that does the actual sorting job.</Desc>
+            </Property>
+            <Property Name="DefaultSortMethod">
+               <Summary>The default sorting method to use when sorting the grid.</Summary>
+               <Desc>The default sorting method to use when sorting the grid. If this value is smElement then the elements displayed in the grid must implement the virtual method <See Class="TBoldElement" Method="CompareToAs"/> (attributes in general do this, but for business objects this has to be added to the model and implemented).
+                  <P>Setting this value to <InlineCode>smString</InlineCode> will use the cell contents of the column and sort the rows alphabetically. This will behave good for most values, but can sometimes behave less good for numeric values (sorting will be made on string-representation, and not the numeric value).</P>
+               </Desc>
+            </Property>
+            <Property Name="EffectiveSortMethod">
+               <Summary>The sort method for the column. If this property is set to default, the <See Property="DefaultSortMethod"/> will be used.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EnableSorting">
+               <Summary>Controls if sorting is enabled.</Summary>
+               <Desc>Use this property to control if clicking a title cell resorts the grid data.</Desc>
+            </Property>
+            <Property Name="ListHandle">
+               <Summary>A type cast of the BoldHandle property.</Summary>
+               <Desc>Since the grid can be connected to several handle types, but only <See Class="TBoldListHandle"/> supports sorting, this property is used to determine if sorting is at all possible.
+                  <P>If the <See Class="TBoldGrid" Property="BoldHandle"/> handle is not a <InlineCode>TBoldListHandle</InlineCode>, the return value is <InlineCode>nil</InlineCode>.</P>
+               </Desc>
+            </Property>
+            <Property Name="OrderCol">
+               <Summary>The number of the column currently being sorted.</Summary>
+               <Desc><InlineCode>OrderCol</InlineCode> is the column number of the column used for sorting. If the grid is currently not sorted, this property returns <InlineCode>-1</InlineCode>.</Desc>
+            </Property>
+            <Property Name="OrderDescending">
+               <Summary>Determines if the sorting is ascending or descending.</Summary>
+               <Desc>Determines if the sorting is ascending or descending.</Desc>
+            </Property>
+            <Property Name="UnsavedObjectsLast">
+               <Summary>Determine if unsaved objects should be sorted inline or last in list.</Summary>
+               <Desc>Determine if unsaved objects should be sorted inline or last in list.</Desc>
+            </Property>
+            <Property Name="UseIntelligentFetching">
+               <Summary>Controls if the grid should batch load all required data.</Summary>
+               <Desc>Controls if the grid should batch load all required data.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Bold aware grid with automatic sorting capabilities.</Summary>
+         <Desc>The <InlineCode>TBoldSortingGrid</InlineCode> is a subclass of <See Class="TBoldGrid"/>, and adds functionality to resort the grid data by user clicking on title cells.
+            <Note>The default behaviour of the grid is to ask the elements to sort themselves. This relies upon the implementation of the virtual method <See Class="TBoldElement" Method="CompareToAs"/>. Attributes in general implement this method, but business objects do not. If a grid displays business-elements (with their default string representation), you must either change the <See Property="DefaultSortMethod"/> to <InlineCode>smString</InlineCode> or implement <InlineCode>CompareToAs</InlineCode> on your business classes..</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Types>
+      <Type Name="TSortMethod">
+         <Summary>Enumeration for how to compare elements</Summary>
+         <Enumeration>
+            <EnumItem Name="smElement">
+               <Desc>Compares the elements using the <InlineCode>CompareTo</InlineCode> function.</Desc>
+            </EnumItem>
+            <EnumItem Name="smString">
+               <Desc>Compares the string representation of the element</Desc>
+            </EnumItem>
+            <EnumItem Name="smDefault">
+               <Desc>Same as <InlineCode>smElement</InlineCode></Desc>
+            </EnumItem>
+         </Enumeration>
+         <Desc>Various sort methods for the grid.</Desc>
+      </Type>
+   </Types>
+   <Summary>Sample grid with sorting capabilities.</Summary>
+   <Desc>This unit defines an extended grid with sorting capabilities by clicking on the title cells.</Desc>
+</DLUnitDoc>

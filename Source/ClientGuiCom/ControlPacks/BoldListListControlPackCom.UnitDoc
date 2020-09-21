@@ -1,0 +1,155 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/ControlPacks/BoldListListControlPackCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractListAsFollowerListControllerCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAssign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveListAsFollowerListRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ListIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ListIndexToIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNilElementMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DropMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveListAsFollowerListRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InternalDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NilElementMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Renderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldListAsFollowerListControllerCom">
+         <Properties>
+            <Property Name="DefaultDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DropMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InternalDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NilElementMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Renderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldListAsFollowerListRendererCom">
+         <Methods>
+            <Method Name="DefaultDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUptodate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActiveRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldNilElementMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

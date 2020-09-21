@@ -1,0 +1,69 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldOLLEHandle">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary>destructor</Summary>
+               <Desc>destructor</Desc>
+            </Method>
+            <Method Name="GetForeignObjectHandler">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Method>
+            <Method Name="GetOLLEController">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwnObjectHandler">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistent">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Method>
+            <Method Name="SetPersistent">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApplicationPersistenceHandle">
+               <Summary>Persistence handle to the database that should have OLLE functionality</Summary>
+               <Desc>This persistence handle should point to the database that OLLE should be used for.</Desc>
+            </Property>
+            <Property Name="ForeignObjectHandler">
+               <Summary>The TBoldForeignObjectHandler that implements the methods to manipulate objects 'lended' from other Bold databases</Summary>
+               <Desc>The TBoldForeignObjectHandler that implements the methods to manipulate objects 'lended' from other Bold databases</Desc>
+            </Property>
+            <Property Name="OLLEController">
+               <Summary>The actual OLLE controller object</Summary>
+               <Desc>This is the OLLE Controller object that this handle is a handle for.</Desc>
+            </Property>
+            <Property Name="OwnObjectHandler">
+               <Summary>The TBoldOwnObjectHandler that implements the methods to manipulate objects 'owned' by this Bold database</Summary>
+               <Desc>The TBoldOwnObjectHandler that implements the methods to manipulate objects 'owned' by this Bold database</Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary>If OLLE should persist its data</Summary>
+               <Desc>If this property is set to False, then OLLE will not save its state to the database, and thus there will be no need for the extra OLLE tables. However, this also means that the information about which objects are checked out by which client, etc, is not saved between sessions. It is not recommended to set this property to false for most normal uses of OLLE.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Handle to the main OLLE object</Summary>
+         <Desc>Handle to the main OLLE object. This is where OLLE is configured.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

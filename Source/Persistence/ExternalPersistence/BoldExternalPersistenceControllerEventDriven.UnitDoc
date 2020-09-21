@@ -1,0 +1,106 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceControllerEventDriven">
+         <Methods>
+
+            <Method Name="AssignKeyToObject">
+               <Summary>Assignes an external object Id to it's respective members</Summary>
+               <Desc>
+                 <P>Bold objects stored in external databases have their object Id formed from the external key fields from the external database.
+                    This routine sets the members of the <InlineCode>TBoldObject</InlineCode> to refelect the key.</P>
+               </Desc>            
+            </Method>
+
+            <Method Name="ConfigItemByObjectContents">
+               <Summary>Finds the appropriate config item for the provided object contents</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldExternalPersistenceControllerEventDriven</Summary>
+               <Desc>
+                 <P>This constructor is called from the CreatePersistenceController method in <See Class="TBoldExternalPersistenceHandleEventDriven"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="CreateObjects">
+               <Summary>Creates objects in the external database</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteObjects">
+               <Summary>Deletes objects in the external database</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExternalKeyExistsInExternalStorage">
+               <Summary>Returnes True if the external key exists in the external persistence store, else it returnes False</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExternalKeysToInternalSQL">
+               <Summary>Generates a suitable condition for <InlineCode>WHERE</InlineCode> clauses in SQL scripts</Summary>
+               <Desc>
+                 <P>This routine generates a condition for use in <InlineCode>WHERE</InlineCode> clauses in SQL.</P>
+                 <P>Example:</P>
+                 <code>SQLText := 'SELECT * FROM ' + BoldExpandName(MoldClass.TableName, MoldClass.name, xtSQL, -1, nccFalse) + ' WHERE ' + ExternalKeysToInternalSQL(MoldClass, ExternalKeys);</code>
+               </Desc>
+            </Method>
+            <Method Name="FetchObject">
+               <Summary>Fetches one object</Summary>
+               <Desc>
+                 <P>This routine fetches one object based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetExternalKeyFromObject">
+               <Summary>Returns a TBoldObjectId based on the provided ObjectContents</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExternalKeys">
+               <Summary>Creates a <InlineCode>TBoldObjectId</InlineCode></Summary>
+               <Desc>
+               
+                 <P>Creates a <See Class="TBoldObjectId"/> based on the contents of the <InlineCode>ObjectContents</InlineCode> parameter.
+               </Desc>
+            </Method>
+            <Method Name="GetMaxFetchBlockSize">
+               <Summary>Returns a maximum amount of objects to fetch at once</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesClass">
+               <Summary>Returns <InlineCode>True</InlineCode> if this controller handles the class, else it returnes  <InlineCode>False</InlineCode></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PersistentObjectFromObjectContents">
+               <Summary>Returnes the associated IPersistentBoldObject for the provided ObjectContents</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostFetch">
+               <Summary>Called after a fetch batch has completed</Summary>
+               <Desc>See also: <See Method="PrepareFetchExternal"/>, <See Method="FetchObject"/></Desc>
+            </Method>
+            <Method Name="PrepareFetchExternal">
+                 <Summary>This routine is called prior to subsequent calls to <See Method="FetchObject"/>.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToPeristenceEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateObjects">
+               <Summary>Saves a list of objects in the external database</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Config">
+               <Summary>Link to TBoldExternalPersistenceConfigItems collection</Summary>
+               <Desc>Mapping information to the external database.  See <See Class="TBoldExternalPersistenceConfigItems"/></Desc>
+            </Property>
+
+         </Properties>
+         <Summary>Persistence controller for TBoldExternalPersistenceHandleEventDriven</Summary>
+         <Desc>This class is used internally by <See Class="TBoldExternalPersistenceHandleEventDriven"/></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

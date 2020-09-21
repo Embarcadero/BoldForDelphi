@@ -1,0 +1,231 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldFileHandler.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldDiskFileHandler">
+         <Methods>
+            <Method Name="DoFlushFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFileHandler">
+         <Events>
+            <Event Name="OnInitializeFileContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AddString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckWriteable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloseFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ContentsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Dedent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoFlushFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FlushFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Format">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormatLn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLineFromStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Indent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndentSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModifyContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewLine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TextFoundInFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteLn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Content">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileFilter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Filename">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastWasNewLine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ModuleType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StringListModified">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldCloseAllFilehandlers">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldFileHandlerForFile">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldFileHandlerList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldRemoveUnchangedFilesFromEditor">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldFileHandlerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldInitializeFileContents">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BOLD_INDENTSIZE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldFilehandlerLog">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldPrefferedFileHandlerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

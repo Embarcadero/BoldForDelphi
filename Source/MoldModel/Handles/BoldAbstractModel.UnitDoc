@@ -1,0 +1,129 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/Handles/BoldAbstractModel.UnitDoc 5     01-10-22 23:02 Jeho $">
+   <Classes>
+      <Class Name="TBoldAbstractModel">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeMoldModels">
+               <Summary>Frees memory allocated by MoldModel and RawMoldModel</Summary>
+               <Desc>When the <See Property="MoldModel"/> and <See Property="RawMoldModel"/> are not needed anymore, they can be freed by calling this method. Make sure no one has any pointers to these structures any more.</Desc>
+            </Method>
+            <Method Name="GetMoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRawMoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTypeNameDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadIsDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadToBeRemovedInfoFromFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromModel">
+               <Summary>Set internal model from a TMoldModel</Summary>
+               <Desc><InlineCode>SetFromModel</InlineCode> will set the internal representation of the model from a <See Class="TMoldModel"/>. It is primarily intended for the use of the component editor for <InlineCode>TBoldModel</InlineCode>. </Desc>
+            </Method>
+            <Method Name="SetModelAsStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToBeRemovedInfoFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTypeNameHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDesigner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteToBeRemovedInfoToFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ModelAsStrings">
+               <Summary></Summary>
+               <Desc>This property contains the internal textual representation of the model. It is not intended to be modified by the developer, and will probably not be published in future versions of Bold. </Desc>
+            </Property>
+            <Property Name="MoldModel">
+               <Summary>Intermediate model format</Summary>
+               <Desc>This is the intermediate format of the model stored in the component. If any part of the model has been marked "Removed", these parts will have been removed from the <InlineCode>MoldModel</InlineCode>. </Desc>
+               <SeeAlso><See Property="RawMoldModel"/></SeeAlso>
+            </Property>
+            <Property Name="RawMoldModel">
+               <Summary>Model representation used when creating schemas</Summary>
+               <Desc>This is similar to the <See Property="MoldModel"/> property, but the RawMoldModel will also contain the parts of the model marked as "Removed". This version of the model is intended to be used when creating database schemas</Desc>
+            </Property>
+            <Property Name="ToBeRemovedInfoFileName">
+               <Summary>Name of file that contains details of model parts that are to be removed</Summary>
+               <Desc>To be able to see if an application that has already been deployed refers to model parts that will be removed, it can be fed a file with the details in runtime. The format of this file is simple; Each line contains either a classname, or the name of an attribute or association-end, qualified with the defining class: 
+                  <Code>MyClass
+MyClass.MyAttribute
+MyClass.aRolename</Code>
+ </Desc>
+               <SeeAlso><See Class="TBoldObject" Method="ToBeRemovedMemberAccessed"/></SeeAlso>
+               <SeeAlso><See Class="TBoldObject" Method="ToBeRemovedMemberModified"/></SeeAlso>
+               <SeeAlso><See Class="TBoldObject" Method="ToBeRemovedClassAccessed"/></SeeAlso>
+            </Property>
+            <Property Name="TypeNameDictionary">
+               <Summary></Summary>
+               <Desc>This is the type name dictionary that will be used when creating the run time model. If the component has a <See Property="TypeNameHandle"/>, then this will be used, otherwise the default type name dictionary of Bold will be used. </Desc>
+            </Property>
+            <Property Name="TypeNameHandle">
+               <Summary>Connection to a TBoldTypeNameHandle</Summary>
+               <Desc>If you have added a <InlineCode>TBoldTypeNameHandle</InlineCode> to your application (because you have custom attributes in your model), set this property to point to your TypeNameHandle. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="beModelChanged">
+         <Summary></Summary>
+         <Desc>This event will be sent by <InlineCode>TBoldModel</InlineCode> if the model has changed </Desc>
+      </Const>
+   </Constants>
+   <Summary>Defines TBoldAbstractModel</Summary>
+   <Desc>The <InlineCode>TBoldAbstractModel</InlineCode> is a superclass of <InlineCode>TBoldModel</InlineCode>, introduced to allow a cleaner separation between the core product and the UML modeling part.</Desc>
+</DLUnitDoc>

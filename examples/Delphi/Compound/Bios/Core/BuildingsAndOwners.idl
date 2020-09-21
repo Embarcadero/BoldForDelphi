@@ -1,0 +1,138 @@
+[
+  uuid(531EB87A-ED99-463D-9500-5EFCD99A4C1D),
+  version(1.0),
+  helpstring("BuildingsAndOwners Library")
+]
+library BuildingsAndOwners
+{
+
+  importlib("BoldComObjectSpace.dll");
+  importlib("stdole2.tlb");
+  importlib("STDVCL40.DLL");
+
+
+  [
+    uuid(731E8B64-CF46-4EC0-9BD3-8AD4C3187758),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IBusinessClassesRoot: IBoldObject
+  {
+  };
+
+
+  [
+    uuid(716EE41A-12DA-4B71-A36F-C533FCE8BBC3),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IBuilding: IBusinessClassesRoot
+  {
+    [propget, id(0x00000400)]
+    HRESULT _stdcall ZipCode([out, retval] LONG * Value );
+    [propput, id(0x00000400)]
+    HRESULT _stdcall ZipCode([in] LONG Value );
+    [propget, id(0x00000401)]
+    HRESULT _stdcall Address([out, retval] BSTR * Value );
+    [propput, id(0x00000401)]
+    HRESULT _stdcall Address([in] BSTR Value );
+    [propget, id(0x00000402),
+     helpstring("Real type of Role: IBoldObjectList")]
+    HRESULT _stdcall Owners([out, retval] IBoldObjectList ** Value );
+    [propget, id(0x00000403),
+     helpstring("Real type of Role: IBoldObjectList")]
+    HRESULT _stdcall Ownership([out, retval] IBoldObjectList ** Value );
+  };
+
+
+  [
+    uuid(02663CB2-8873-4362-9DA6-3F7BC1D49122),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IOwnership: IBusinessClassesRoot
+  {
+    [propget, id(0x00000400),
+     helpstring("Real type of Role: IPerson")]
+    HRESULT _stdcall Owners([out, retval] IBusinessClassesRoot ** Value );
+    [propget, id(0x00000401),
+     helpstring("Real type of Role: IBuilding")]
+    HRESULT _stdcall OwnedBuildings([out, retval] IBusinessClassesRoot ** Value );
+  };
+
+
+  [
+    uuid(859600BD-8B4F-48AD-BDB4-D419A40597DA),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IPerson: IBusinessClassesRoot
+  {
+    [propget, id(0x00000400)]
+    HRESULT _stdcall FirstName([out, retval] BSTR * Value );
+    [propput, id(0x00000400)]
+    HRESULT _stdcall FirstName([in] BSTR Value );
+    [propget, id(0x00000401)]
+    HRESULT _stdcall LastName([out, retval] BSTR * Value );
+    [propput, id(0x00000401)]
+    HRESULT _stdcall LastName([in] BSTR Value );
+    [propget, id(0x00000402)]
+    HRESULT _stdcall Assets([out, retval] CURRENCY * Value );
+    [propput, id(0x00000402)]
+    HRESULT _stdcall Assets([in] CURRENCY Value );
+    [propget, id(0x00000403)]
+    HRESULT _stdcall IsMarried([out, retval] VARIANT_BOOL * Value );
+    [propput, id(0x00000403)]
+    HRESULT _stdcall IsMarried([in] VARIANT_BOOL Value );
+    [propget, id(0x00000404),
+     helpstring("Real type of Role: IResidential_Building")]
+    HRESULT _stdcall Home([out, retval] IBusinessClassesRoot ** Value );
+    [propput, id(0x00000404),
+     helpstring("Real type of Role: IResidential_Building")]
+    HRESULT _stdcall Home([in] IBusinessClassesRoot * Value );
+    [propget, id(0x00000405),
+     helpstring("Real type of Role: IBoldObjectList")]
+    HRESULT _stdcall OwnedBuildings([out, retval] IBoldObjectList ** Value );
+    [propget, id(0x00000406),
+     helpstring("Real type of Role: IBoldObjectList")]
+    HRESULT _stdcall Ownership([out, retval] IBoldObjectList ** Value );
+    [id(0x00000800)]
+    HRESULT _stdcall BorrowFrom([in] IPerson* Lender, [in] LONG Amount);
+  };
+
+
+  [
+    uuid(5F4901A9-950D-4A6A-8CE1-13D715A895A7),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IResidential_Building: IBuilding
+  {
+    [propget, id(0x00000404)]
+    HRESULT _stdcall TotalRent([out, retval] CURRENCY * Value );
+    [propput, id(0x00000404)]
+    HRESULT _stdcall TotalRent([in] CURRENCY Value );
+    [propget, id(0x00000405),
+     helpstring("Real type of Role: IBoldObjectList")]
+    HRESULT _stdcall Residents([out, retval] IBoldObjectList ** Value );
+    [id(0x00000800)]
+    HRESULT _stdcall ChargeRent(void);
+  };
+
+
+
+};
+
+
+
+
+ 
+ 
+ 
+ 
+

@@ -1,0 +1,15 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="Register">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

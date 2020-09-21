@@ -1,0 +1,89 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/CodeGenerator/BoldGeneratorTemplatesCPP.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldCPPTemplateManager">
+         <Methods>
+            <Method Name="AddQualifierParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateInheritedCall">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCPPSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataModule">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultIncFileExtension">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerivedMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIncFileHeaderTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReverseDeriveMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSearchStringfromMethodHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeCOMTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InstallCPPTemplates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToCodeHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringContainsMethodHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataModule">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGeneratorTemplateCPPDM">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

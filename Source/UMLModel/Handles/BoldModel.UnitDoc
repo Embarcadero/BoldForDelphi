@@ -1,0 +1,209 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/Handles/BoldModel.UnitDoc 7     02-08-06 18:28 Jano $">
+   <Classes>
+      <Class Name="TBoldModel">
+         <Methods>
+            <Method Name="AssertDesignTime">
+               <Summary>Assert that component is being accessed at desigtime </Summary>
+               <Desc>Internal</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary>Overridden</Summary>
+               <Desc>This method is overridden to implement the .dfm streaming of UMLModelAsString.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMoldModelCurrent">
+               <Summary>Overidden</Summary>
+               <Desc>This is a hotspot defined in the superclass.</Desc>
+            </Method>
+            <Method Name="EnsureTypes">
+               <Summary>Ensure Types</Summary>
+               <Desc>Add all types defined in <See Class="TBoldAbstractModel" Property="TypeNameDictionary"/> to <See Property="EnsuredUMLModel"/> unless they are already present.</Desc>
+            </Method>
+            <Method Name="EnsureUMLModel">
+               <Summary>Ensure that UMLModel is instantiated.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredUMLModel">
+               <Summary>Get method for <See Property="EnsuredUMLModel"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLModel">
+               <Summary>Get method for <See Property="UMLModel"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLModelAsString">
+               <Summary>Get method for <See Property="UMLModelAsString"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLModelMoreCurrent">
+               <Summary>Get method for <See Property="UMLModelMoreCurrent"/>&lt;</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkUMLModelExposed">
+               <Summary>internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadUMLModelAsString">
+               <Summary>internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldify">
+               <Summary>internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUMLModelAsString">
+               <Summary>Set method for <See Property="UMLModelAsString"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToUMLModel">
+               <Summary>Subscribe To UMLModel</Summary>
+               <Desc>Internal Subscribe to model in order to ensure that corrcet value for <See Property="UMLModelMoreCurrent"/></Desc>
+            </Method>
+            <Method Name="UMLModelChangedRecieve">
+               <Summary>internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLModelFromString">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLModelToString">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnSubscribeToUMLModel">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteUMLModelAsString">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Boldify">
+               <Summary>Holds some details about how UML-models are Boldified</Summary>
+               <Desc>See <See Class="TBoldUMLBoldify"/> for details on the sub properties.</Desc>
+            </Property>
+            <Property Name="EditableModel">
+               <Summary>Pseoduproperty to start model editor.</Summary>
+               <Desc>This is a pseudo property added to allow starting the component editor, i.e. the Bold model editor, from the object inspector.</Desc>
+            </Property>
+            <Property Name="EnsuredUMLModel">
+               <Summary>Ensured UML model.</Summary>
+               <Desc>Ensure that the component has a UML-model instansiated, and return it.</Desc>
+            </Property>
+            <Property Name="UMLModel">
+               <Summary>UML Model if component has one</Summary>
+               <Desc>This property will return the UML model stored in the component if it has been instansiated, otherwise nil. It is mainly for internal use, in most cases <See Property="EnsuredUMLModel"/> is more apropriate.</Desc>
+            </Property>
+            <Property Name="UMLModelAsString">
+               <Summary>String represenation of UML model, for streaming only</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UMLModelExposed">
+               <Summary>Has outside world seen UMLModel</Summary>
+               <Desc>This flag is sett if UMLModel has ever been passed to the outside world, by accessing the property UMLModel or EnsuredUMLModel.</Desc>
+            </Property>
+            <Property Name="UMLModelMode">
+               <Summary>How should component handle UML model.</Summary>
+               <Desc><See Type="TUMLModelModelMode"/> </Desc>
+            </Property>
+            <Property Name="UMLModelMoreCurrent">
+               <Summary>UML model is more current that MoldModel.</Summary>
+               <Desc>Internal</Desc>
+            </Property>
+         </Properties>
+         <Summary>Placeable component holding the UML model</Summary>
+         <Desc>
+            <P><InlineCode>TBoldModel</InlineCode> is a non-visual component used to hold the model for a Bold system. It holds an internal string representation of the model, and has methods for creating the intermediate (<See Class="TMoldModel"/>) representation of the model.</P>
+            <P>It will in most cases be placed on a data module together with the corresponding <See Class="TBoldSystemTypeInfoHandle"/> and <See Class="TBoldSystemHandle"/>.</P>
+            <P>The component editor for <InlineCode>TBoldModel</InlineCode> is a model browser/inspector/editor.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldModelList">
+         <Methods>
+            <Method Name="AddModel">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ComponentForUML">
+               <Summary>Internal, to be deprecated</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DictionaryForUML">
+               <Summary>Internal, to be deprecated</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary>Get method for <See Property="Count"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveModel">
+               <Summary>Internal</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary>Count</Summary>
+               <Desc>Number of models in list.</Desc>
+            </Property>
+            <Property Name="Item">
+               <Summary>Items in list</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="TheModelList">
+         <Summary>List of all models</Summary>
+         <Desc>This function returns a list of all currently instantiated TBoldModel objects</Desc>
+      </Routine>
+   </Routines>
+   <Summary>This unit defines the concrete UML model.</Summary>
+   <Desc>The component that is used in design time to represent the UML model of the system is defined herein.</Desc>
+   <Types>
+      <Type Name="TUMLModelMode">
+         <Summary></Summary>
+         <Desc> </Desc>
+         <Enumeration>
+            <EnumItem Name="ummNone">
+               <Desc>Don't store the actual UML model. The model will be stored in an internal format that only contains the information acually used by Bold, and the UML model will be reconstructed at design time if the model editor is opened. This alternative will reduce the size of the .dfm-file for the form/datamodule holding the component.</Desc>
+            </EnumItem>
+            <EnumItem Name="ummDesignTime">
+               <Desc>Store the full UML model in the component, but only make it available att design time. This will increase the size of the .dfm-file (and thus the application), but will not increase the size of the running applicatio. Note that most relevant metainformation is still available at runtime e.g. through <See Class="TBoldObject" Property="BoldClassTypeInfo"/> though
+not in actual UML format.</Desc>
+            </EnumItem>
+            <EnumItem Name="ummRunTime">
+               <Desc>Store the full UML model in the component, and make it available both at runtime and designtime. This allows full access to the UML model as runtime through <See Property="EnsuredUMLModel"/></Desc>
+            </EnumItem>
+         </Enumeration>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,119 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldCollections.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldCollectionWithUniquelyNamedItems">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUniqueNameItemIndex">
+         <Methods>
+            <Method Name="ItemASKeyString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUniquelyNamedCollectionItem">
+         <Methods>
+            <Method Name="EnsureNameUnique">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCollection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNamePath">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Collection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUniquelyNamedCollectionItemWithNameStorage">
+         <Methods>
+            <Method Name="GetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldUniquelyNamedCollectionItemClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

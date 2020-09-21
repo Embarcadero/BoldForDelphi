@@ -1,0 +1,19 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldCreateGUIDAsString">
+         <Summary>Create a new GUID.</Summary>
+         <Desc>Generates and returns a new GUID (Globally Unique IDentifier) after converting it to a string.</Desc>
+      </Routine>
+      <Routine Name="IsEqualGUID">
+         <Summary>Test GUID:s for equality.</Summary>
+         <Desc>This routine is provided in the Delphi5 version only, in order to break the dependecy of ActiveX in many units in Bold</Desc>
+      </Routine>
+   </Routines>
+   <Summary>Support routines for handling GUID:s</Summary>
+   <Desc>This unit contains support routines for handling GUID:s. It's main purpouse is to allow the various parts of Bold handle GUID:s without including platform spcific units.</Desc>
+</DLUnitDoc>

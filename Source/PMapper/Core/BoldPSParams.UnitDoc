@@ -1,0 +1,20 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Core/BoldPSParams.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldPSParams">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>TBoldPSParams works as an abstract class for all PSParams. It is generally not instantiated, but merely used as a placeholder-class to be typecast in the various usage situations.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

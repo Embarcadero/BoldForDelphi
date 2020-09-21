@@ -1,0 +1,55 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExceptionHandlerCom">
+         <Events>
+            <Event Name="OnApplyException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDisplayException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindExceptionHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleApplyException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleDisplayException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldApplyExceptionEventCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDisplayExceptionEventCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

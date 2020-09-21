@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Handles/BoldHandle.UnitDoc 5     02-02-21 10:37a Jeho $">
+   <Classes>
+      <Class Name="TBoldHandle">
+         <Methods>
+            <Method Name="GetHandledObject">
+               <Summary>Get method for <See Property="HandledObject"/></Summary>
+               <Desc>This method is abstract virtual, and must be overridden in all subclasses.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor.</Summary>
+               <Desc>Constructor.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor.</Summary>
+               <Desc>Destructor. The destructor will call <See Method="FreePublisher" Class="TBoldSubscribableComponent"/> early in the process.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HandledObject">
+               <Summary></Summary>
+               <Desc>This is the object handled by the handle. It will normally be allocated eith by the constructor of the concrete subclass, or by the overriden <See Method="GetHandledObject"/> in the case of lazy creation. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract superclass for wrapping making clases IDE-manipulatable.</Summary>
+         <Desc>The Delphi/BCB/Kylix IDE allows efficent designtime manipulation of classes decending from TComponent. Subclassing TBoldHandle way for providing access from the IDE to classes that don't decend from TComponent. Since subscriptions are used extensivley in Bold THandle inherits from <See Class="TBoldSubscribableComponent"/>. A TBoldHandle is simply a component holding a reference to a handled object. Handles are used extensively in Bold to provide placeable IDE access to various parts of Bold.
+            <Note>A somewhat confusing fact is that not all placeable nonvisual components in Bold descend from <InlineCode>TBoldHandle</InlineCode>. This is particularly true of <See Class="TBoldElementHandle"/> and its subclasses.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="BoldHandleList">
+         <Summary>Global list of all BoldHandles.</Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

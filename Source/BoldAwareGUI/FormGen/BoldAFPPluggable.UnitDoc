@@ -1,0 +1,242 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/FormGen/BoldAFPPluggable.UnitDoc 5     02-04-30 9:28a Jeho $">
+   <Classes>
+      <Class Name="TBoldInstallableAFP">
+         <Methods>
+            <Method Name="FindHandleByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindHandleByType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldInstallableFormsDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BOClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleLocatorStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldInstallableFormsRegistry">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorsByBOClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterInstallableFormsDescriptor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnRegisterInstallableFormsDescriptor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DescriptorsByBOClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPlaceableAFP">
+         <Events>
+            <Event Name="OnGetFormClass">
+               <Summary></Summary>
+               <Desc>Returns the class type of the form that must be used as an autoform for displaying the TBoldElement passed as the Element parameter.
+Example </Desc>
+               <Examples>
+                  <Example>
+                     <Body>In the following example we wish to use the TPersonForm custom form as autoforms for objects of type TPerson: 
+                        <Code>function TForm1.BoldPlaceableAFP1GetFormClass(Element: TBoldElement): TFormClass;
+begin
+  result := nil ;
+  if (Element is TPerson) then
+    Result := TPersonForm;
+end;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Event>
+            <Event Name="OnMemberShouldBeDisplayed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnRetrieveHandle">
+               <Summary></Summary>
+               <Desc>Should return the TBoldReferenceHandle component used by the autoform for maitaining a handle to the object that should be displayed.
+Example </Desc>
+               <Examples>
+                  <Example>
+                     <Body>In the following example brhPerson is the identifier of the TBoldReferenceHandle@BoldHandles.hlp component which is used by the form TPersonForm for accessing the current Person. 
+                        <Code>function TForm1.BoldPlaceableAFP1RetrieveHandle(Form: TForm): TBoldReferenceHandle;
+begin
+  Result := nil;
+  if (form is TPersonForm) then
+    Result := (Form as TPersonForm).brhPerson;
+end;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MemberShouldBeDisplayed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Use this component to provide custom autoforms for the business objects.</Summary>
+         <Desc> Autoforms are the forms that are displayed when you double click on any BoldAware GUI component that displays a list of objects. Default autoform functionality in Bold is enabled by adding the BoldAFPDefault unit to a uses clause in your project.
+            <P>Use the TBoldPlaceableAFP to provide custom autoforms for displaying and editing the business objects in the Bold system.</P>
+            <BH>Usage</BH>
+Create the event handles <See Event="OnGetFormClass"/> and <See Event="OnRetrieveHandle"/> to return the class type of the custom form to be used and the <See Class="TBoldReferenceHandle"/> used to maintain a handle to the business object to be displayed in the autoform. </Desc>
+      </Class>
+      <Class Name="TBoldPluggableAFP">
+         <Methods>
+            <Method Name="EnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostEnsureForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultBehaviour">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldRegisterAFP">
+         <Methods>
+            <Method Name="MemberShouldBeDisplayed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="InstallableFormsRegistry">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary>Component based pluggable auto forms. </Summary>
+   <Desc>This unit contains the BoldAFP component, allowing plugging in default forms based on the type of object it is requested for. The mechanism is event based.</Desc>
+   <Types>
+      <Type Name="TBoldGetFormClassEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldHandleLocatorStyle">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldMemberShouldBeDisplayedEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldRetrieveHandleEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="AllowDefaultForm">
+         <Summary>This variable helps control the behaviour of the pluggable auto form provider. </Summary>
+         <Desc>When no form class is returned from <See/><See Class="TBoldPlaceableAFP" Event="OnGetFormClass"/> <InlineCode>AllowDefaultForm</InlineCode> can either allow or prohibit the creation of a framework generated form.
+            <P>This can be used when custom forms are plugged for some classes, and for the other classes there should be no auto forms. This variable makes is simple to change this behaviour when it's time for deployment.</P>
+         </Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

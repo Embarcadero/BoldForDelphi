@@ -1,0 +1,15 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/SupportWin/BoldWinUtils.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="GetTaskBarHeigth">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

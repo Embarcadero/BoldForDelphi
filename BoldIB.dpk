@@ -1,0 +1,46 @@
+package BoldIB;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (IBX Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  vcldb,
+  ibxpress,
+  DesignIDE,
+  Bold;
+
+contains
+  BoldDatabaseAdapterIB in 'Source\Persistence\IBX\BoldDatabaseAdapterIB.pas',
+  BoldIBDatabaseAction in 'Source\Persistence\IBX\BoldIBDatabaseAction.pas',
+  BoldIBInterfaces in 'Source\Persistence\IBX\BoldIBInterfaces.pas',
+  BoldPersistenceHandleIB in 'Source\Persistence\IBX\BoldPersistenceHandleIB.pas',
+  BoldPersistenceHandleIBReg in 'Source\Persistence\IBX\BoldPersistenceHandleIBReg.pas';
+
+end.

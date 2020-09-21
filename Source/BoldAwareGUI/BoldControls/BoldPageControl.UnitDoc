@@ -1,0 +1,78 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldPageControl.UnitDoc 3     01-11-09 14:45 Aniv $">
+   <Classes>
+      <Class Name="TBoldPageControl">
+         <Methods>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Display">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Since TBold PageControl is a single-value control it will follow the Value property of the handle. Note that for a TBoldListHandle this means the current element in the list. </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+                  Since this is a display only control, this sub-property has no effect.
+                  <BH>CleanOnEqual</BH>
+                  Since this is a display only control, this sub-property has no effect.
+                  <BH>DragMode</BH>
+                  This sub-property has no effect on this control.
+                  <BH>DropMode</BH>
+                  This sub-property has no effect on this control.
+                  <BH>Expression</BH>
+                  The interpretation of this sub-property depends on the value of the Renderer sub-property. If Renderer is (default) then Expression will be interpreted as an OCL expression to be applied to BoldHandle.Value.
+If an explicit renderer has been given, Expression is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.
+                  <BH>Renderer</BH>
+This property identifies a TBoldAsStringRenderer that is used do define the mapping from TBoldCustomCaptionController_BoldHandle.Value to the string displayed in the control. The default renderer will apply Expression to the value, and then take TBoldElement.StringRepresentation on the result. A custom renderer may perform any mapping.
+                  <BH>Representation</BH>
+                  The interpretation of this sub-property depends on the value of the Renderer sub-property. If Renderer is (default) then Representation will be interpreted as the StringRepresentation to be used on the element resulting from evaluating expression.
+                  <P>If an explicit renderer has been given, Representation is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A Bold-aware page control.</Summary>
+         <Desc> The active page of a TBoldPageControl is controlled in the normal Bold fashion. The BoldHandle + BoldProperties should give a string, which will be interpreted as the Name property of one of the tab sheets. This tab sheet will be set as the active page. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the Bold-aware page control</Summary>
+   <Desc>This unit defines the Bold-aware page control.</Desc>
+</DLUnitDoc>

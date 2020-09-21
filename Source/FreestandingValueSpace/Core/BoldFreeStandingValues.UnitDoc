@@ -1,0 +1,926 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/FreestandingValueSpace/Core/BoldFreeStandingValues.UnitDoc 4     02-04-02 17:14 Johosos $">
+   <Classes>
+      <Class Name="TBFSBlob">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSBlobAbstract">
+         <Methods>
+            <Method Name="GetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract super class for TBFSBlob and TBFSBlobContent.</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSBoolean">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Boolean value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSCurrency">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Currency value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSDate">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Date value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSDateTime">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a DateTime value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSDateTimeAbstract">
+         <Methods>
+            <Method Name="GetContentAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Super class for TBFSDateTime, TBFSDate and TBFSTime.</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSFloat">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Float value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSInteger">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Integer value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSObjectIDRefAbstract">
+         <Methods>
+            <Method Name="GetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSObjectIdListRef">
+         <Methods>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSObjectIdListRefPair">
+         <Methods>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIdLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IdList1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdList2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSObjectIdRef">
+         <Methods>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Id">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSObjectIdRefPair">
+         <Methods>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetId1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetId2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Id1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Id2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSString">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a string value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSTime">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Time value</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBFSTypedBlob">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a Typed blob</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFSObjectContentList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindObjectContentById">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFreeStandingElement">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Common superclass for all freestanding classes ( TBoldFreeStandingValueSpace, TBoldFreeStandingObjectContents, TBoldFreeStandingValue ). </Summary>
+         <Desc>Introduces the streaming capabilities.</Desc>
+      </Class>
+      <Class Name="TBoldFreeStandingNullableValue">
+         <Methods>
+            <Method Name="GetContentIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToNonNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Superclass for the different free standing attribute classes. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFreeStandingObjectContents">
+         <Methods>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldMemberCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsModified">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueByMemberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveMemberByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIsReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This is the lightweight version of TBoldObject. </Summary>
+         <Desc>The TBoldFreestandingObjectContents represents the data part of a object. It has a sparse list of members that corresponds to the members defined in the model. The memberlist may have nil-pointers for members that doesn't have a value.
+            <P>The freestanding values are used for a number of different reasons such as persistencemapping on remote servers, temporary storage of a streamed valuespace.</P>
+            <P>The freestanding object content class implements the BoldObjectPersistenceState property, but none of the state machinery that the ObjectSpace implements.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldFreeStandingValue">
+         <Methods>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContentName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This class is a lightweight version of TBoldMember. </Summary>
+         <Desc> It implements the BoldValuePersistenceState, but no statemachine. It also implements the null-flag. A FreeStandingValue does not know its own context/owner, and has no modelinformation.</Desc>
+      </Class>
+      <Class Name="TBoldFreeStandingValueSpace">
+         <Methods>
+            <Method Name="AllObjectIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyStreamedValueSpace">
+               <Summary>This will stream all objects that are in the object id list to the stream parameter. </Summary>
+               <Desc>If the member id list is assigned, only the members in the list will be streamed. If the list of objects is heterogen (contains objects of various subclasses), the members in the member id list should be present in each class (ie come from a common superclass).</Desc>
+            </Method>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureObjectContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExactifyIDs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFSObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasContentsForId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveDeletedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFSObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StreamOut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This is the lightweight version of TBoldSystem.</Summary>
+         <Desc>It can be used for any purpose, but was originally designed to be used in a persistence mapper on a remote server. A future plan for this and related classes is to implement undo-layers. Creating instances of the freestainding classes does not have any sideeffects (as opposed to creating instances of the corresponding ObjectSpace classes)</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary> </Summary>
+   <Desc>This unit contains the smallest possible implementations of the interfaces in BoldValueSpaceInterfaces and BoldValueInterfaces. They can be used as light weight data carriers instead of the more heavy weight classes found in BoldSystem.</Desc>
+   <Types>
+      <Type Name="TBoldFreeStandingElementClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

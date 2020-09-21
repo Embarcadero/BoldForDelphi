@@ -1,0 +1,94 @@
+package BoldVCLGUI;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (VCL GUI)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  DesignIDE,
+  VclJpg,
+  Bold;
+
+contains
+  BoldCaptionController in 'Source\BoldAwareGUI\BoldControls\BoldCaptionController.pas',
+  BoldCheckBox in 'Source\BoldAwareGUI\BoldControls\BoldCheckBox.pas',
+  BoldComboBox in 'Source\BoldAwareGUI\BoldControls\BoldComboBox.pas',
+  BoldDataSet in 'Source\BoldAwareGUI\BoldControls\BoldDataSet.pas',
+  BoldDragDropTarget in 'Source\BoldAwareGUI\BoldControls\BoldDragDropTarget.pas',
+  BoldEdit in 'Source\BoldAwareGUI\BoldControls\BoldEdit.pas',
+  BoldGrid in 'Source\BoldAwareGUI\BoldControls\BoldGrid.pas',
+  BoldGridRTColEditor in 'Source\BoldAwareGUI\BoldControls\BoldGridRTColEditor.pas',
+  BoldImage in 'Source\BoldAwareGUI\BoldControls\BoldImage.pas',
+  BoldImageBitmap in 'Source\BoldAwareGUI\BoldControls\BoldImageBitmap.pas',
+  BoldImageJPEG in 'Source\BoldAwareGUI\BoldControls\BoldImageJPEG.pas',
+  BoldLabel in 'Source\BoldAwareGUI\BoldControls\BoldLabel.pas',
+  BoldListBox in 'Source\BoldAwareGUI\BoldControls\BoldListBox.pas',
+  BoldMemo in 'Source\BoldAwareGUI\BoldControls\BoldMemo.pas',
+  BoldNavigator in 'Source\BoldAwareGUI\BoldControls\BoldNavigator.pas',
+  BoldPageControl in 'Source\BoldAwareGUI\BoldControls\BoldPageControl.pas',
+  BoldProgressBar in 'Source\BoldAwareGUI\BoldControls\BoldProgressBar.pas',
+  BoldPropertiesController in 'Source\BoldAwareGUI\BoldControls\BoldPropertiesController.pas',
+  BoldRichEdit in 'Source\BoldAwareGUI\BoldControls\BoldRichEdit.pas',
+  BoldStringsPropertyController in 'Source\BoldAwareGUI\BoldControls\BoldStringsPropertyController.pas',
+  BoldTrackBar in 'Source\BoldAwareGUI\BoldControls\BoldTrackBar.pas',
+  BoldTreeView in 'Source\BoldAwareGUI\BoldControls\BoldTreeView.pas',
+  BoldTreeViewConfig in 'Source\BoldAwareGUI\BoldControls\BoldTreeViewConfig.pas',
+  BoldXCVTreeView in 'Source\BoldAwareGUI\BoldControls\BoldXCVTreeView.pas',
+  BoldCheckboxStateControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldCheckboxStateControlPack.pas',
+  BoldControllerListControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldControllerListControlPack.pas',
+  BoldControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldControlPack.pas',
+  BoldDateTimeControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldDateTimeControlPack.pas',
+  BoldElementHandleFollower in 'Source\BoldAwareGUI\ControlPacks\BoldElementHandleFollower.pas',
+  BoldFloatControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldFloatControlPack.pas',
+  BoldGenericListControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldGenericListControlPack.pas',
+  BoldListControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldListControlPack.pas',
+  BoldListHandleFollower in 'Source\BoldAwareGUI\ControlPacks\BoldListHandleFollower.pas',
+  BoldListListControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldListListControlPack.pas',
+  BoldMLRenderers in 'Source\BoldAwareGUI\ControlPacks\BoldMLRenderers.pas',
+  BoldNodeControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldNodeControlPack.pas',
+  BoldNumericControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldNumericControlPack.pas',
+  BoldStringControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldStringControlPack.pas',
+  BoldViewerControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldViewerControlPack.pas',
+  BoldExceptionHandlers in 'Source\BoldAwareGUI\Core\BoldExceptionHandlers.pas',
+  BoldGUI in 'Source\BoldAwareGUI\Core\BoldGUI.pas',
+  BoldGuiResourceStrings in 'Source\BoldAwareGUI\Core\BoldGuiResourceStrings.pas',
+  BoldAFP in 'Source\BoldAwareGUI\FormGen\BoldAFP.pas',
+  BoldAFPDefault in 'Source\BoldAwareGUI\FormGen\BoldAFPDefault.pas',
+  BoldAFPPluggable in 'Source\BoldAwareGUI\FormGen\BoldAFPPluggable.pas',
+  BoldAFPPluggableReg in 'Source\BoldAwareGUI\FormGen\BoldAFPPluggableReg.pas',
+  BoldAFPUser in 'Source\BoldAwareGUI\FormGen\BoldAFPUser.pas',
+  BoldAwareGuiReg in 'Source\BoldAwareGUI\IDE\BoldAwareGuiReg.pas',
+  BoldComboBoxPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldComboBoxPropertyEditors.pas',
+  BoldControlPackPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldControlPackPropertyEditors.pas',
+  BoldDataSetPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldDataSetPropertyEditors.pas',
+  BoldGridPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldGridPropertyEditors.pas',
+  BoldNodeDescriptionEditor in 'Source\BoldAwareGUI\IDE\BoldNodeDescriptionEditor.pas',
+  BoldPropertiesControllerPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldPropertiesControllerPropertyEditors.pas';
+
+end.

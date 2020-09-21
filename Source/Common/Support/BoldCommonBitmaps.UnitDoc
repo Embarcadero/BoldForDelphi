@@ -1,0 +1,63 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldCommonBitmaps.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="bmpBOLDEDIT_ELLIPSIS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldGridConstraint_false">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldGridConstraint_true">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldGridCurrent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldGridSelected">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorDelete">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorFirst">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorInsert">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorLast">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorMoveDown">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorMoveUp">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorNext">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="bmpBoldNavigatorPrior">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

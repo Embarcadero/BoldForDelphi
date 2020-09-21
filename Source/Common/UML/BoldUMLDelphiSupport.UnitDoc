@@ -1,0 +1,27 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/UML/BoldUMLDelphiSupport.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldUMLDelphiSupport">
+         <Methods>
+            <Method Name="ExtractIsConst">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtractKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParameterModifier">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

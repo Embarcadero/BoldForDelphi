@@ -1,0 +1,117 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/DbEvolutor/BoldDbEvolutorForm.UnitDoc 4     02-03-04 8:23 Johosos $">
+   <Classes>
+      <Class Name="TfrmBoldDbEvolutor">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EvolveDB">
+               <Summary>Evolves a database using the same GUI-support as the model editor</Summary>
+               <Desc>This class method is a convenient way to add model-evolution capabilities to your application in runtime. It will first the detect the changes needed and show a form detailing the  proposed actions. The user can then decide to execute the changes or not.</Desc>
+            </Method>
+            <Method Name="FormClose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormDestroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMappingInfoScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetWarnings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hide">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Log">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessInterruption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProgressStep">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgressMax">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Show">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Sync">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateWarningCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MappingInfoScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Warnings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+</DLUnitDoc>

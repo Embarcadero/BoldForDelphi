@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldAbstractDequeuer.UnitDoc 3     02-01-11 9:40 Aniv $">
+   <Classes>
+      <Class Name="TBoldAbstractDequeuer">
+         <Methods>
+            <Method Name="DequeueAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DequeueMessages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="QueueNotEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Queue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

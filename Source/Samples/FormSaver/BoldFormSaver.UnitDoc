@@ -1,0 +1,228 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/FormSaver/BoldFormSaver.UnitDoc 6     02-07-15 15:01 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractDirtyList">
+         <Methods>
+            <Method Name="FreeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHostSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToCleanedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_MakeValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_NotifyOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HostSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDirtyObjectListWithHandle">
+         <Methods>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHostSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHostSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_RecieveHostSystemHandleEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFormSaver">
+         <Events>
+            <Event Name="OnUpdateException">
+               <Summary>Event that is raised if any exception occurs during UpdateDatabase</Summary>
+               <Desc>Event that is raised if any exception occurs during <See class=TBoldSystem method=UpdateDatabaseWithList text=UpdateDatabase/></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Apply">
+               <Summary></Summary>
+               <Desc>Calling Apply will save the objects to the database, if the property <See Property="SaveToDBOnOk"/>) is true, otherwise it will do nothing. </Desc>
+            </Method>
+            <Method Name="Cancel">
+               <Summary>Discards the objects modified by the form</Summary>
+               <Desc>Calling Cancel will discard the objects modified by the form. Any changes to the objects will be discarded (compared to the value in the database), even if they were made in another form. If the <See Property="CloseOnAction"/> is <InlineCode>true</InlineCode>, then the form will be closed.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDirtyObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OK">
+               <Summary>Saves the objects modified by the form</Summary>
+               <Desc>Calling OK will either save the objects to the database, or just remove them from the list of dirty objects (depending of the setting of <See Property="SaveToDBOnOk"/>). If the <See Property="CloseOnAction"/> is <InlineCode>true</InlineCode>, then the form will be closed.</Desc>
+            </Method>
+            <Method Name="PostAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveMyDirtyListFromSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCloseFormOnAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDirtyListInSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnlyFirstDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSaveToDBOnOk">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTargetFormSaver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Activate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_DeActivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_SystemHandleReceive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_TargetFormSaverReveice">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoRemoveCleanObjects">
+               <Summary>Remove objects from the dirty list if they become clean</Summary>
+               <Desc>An object can become clean because someone else either discards it or saves it to the database. If this property is true, then clean objects will automatically be removed from the <See property=dirtyObjects/></Desc>
+            </Property>
+            <Property Name="CloseFormOnAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DirtyObjects">
+               <Summary></Summary>
+               <Desc>The list of objects collected by the component</Desc>
+            </Property>
+            <Property Name="OnlyFirstDirty">
+               <Summary></Summary>
+               <Desc>If this property is <InlineCode>true</InlineCode>, then objects will not be collected by the formsaver if they were already dirty when they were modified in this form (ie they have been modified in another form already, and hopefully taken care of by a formsaver in that form</Desc>
+            </Property>
+            <Property Name="SaveToDBOnOk">
+               <Summary></Summary>
+               <Desc>If this property is <InlineCode>true</InlineCode>, then the <See Method="OK"/> method will update the collected objects in the database, otherwise they will just be removed from the list of objects (so that they will not be discarded by a call to the <See Method="Discard"/> method</Desc>
+            </Property>
+            <Property Name="SystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TargetFormSaver">
+               <Summary></Summary>
+               <Desc>If you set this to point to
+another form saver, when you call OK the dirty list of objects will be added
+to the list in the target form saver, INSTEAD of being saved to the DB.
+</Desc>
+            </Property>
+         </Properties>
+         <Summary>This component collects a list of objects that are modified in the form where it is placed</Summary>
+         <Desc>This component uses a mechanism in <see class=TBoldSystem> to install a local object list to collect any object that is modified while the form with the form saver is active. It can either detect objects that are becoming dirty (was unmodified before), or any object that is touched while the form is active. It provides simple actions to save or discard the objects that are collected by the component.
+            <P>The granularity of the <InlineCode>TBoldFormSaver</InlineCode> component is always a whole object. If you want finder granularity, then you could use the Undo/Redo mechanism provided by <See Class="TBoldSystem" Property="UndoHandlerInterface"/></P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Types>
+      <Type Name="TBoldFormSaverExceptionEvent">
+         <Summary>Prototype for OnUpdateException</Summary>
+         <Desc>See <See Class="TBoldFormSaver" Event="OnUpdateException"/>.</Desc>
+      </Type>
+   </Types>
+   <Summary>Sample component implementing local dirty lists.</Summary>
+   <Desc>Sample component implementing local dirty lists.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,77 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldExpressionHandleCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldExpressionHandleCom">
+         <Methods>
+            <Method Name="ClearAllValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEvaluateInPS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerHandleClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEvaluateInPS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesFromServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesToServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EvaluateInPS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

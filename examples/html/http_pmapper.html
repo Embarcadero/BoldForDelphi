@@ -1,0 +1,142 @@
+<html>
+
+<head>
+  <title>HTTPPMapper</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_compound.html" target="menu">Compound Examples</a> &gt;
+      <a href="http_pmapper.html">HTTP PMapper</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">HTTP PMapper<font size="4"> - HTTPClient
+      &amp; BoldHTTPServer</font></td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!--Content cell starts -->
+    <a href="../Delphi/Compound/HTTP_PMapper/Client/HTTPClient.dpr">Launch Delphi-example HTTPClient</a> |
+    <a href="../Delphi/Compound/HTTP_PMapper/HTTPServerDll/BoldHTTPServer.dpr">Launch Delphi-example for BoldHTTPServer</a>
+    <p>This example shows how to use the HTTP persistence mapping components in
+    $(PRODUCT_BASE_NAME). It is based on the classic example of Buildings and owners.
+    It consists of a client and a server. The UML model used in the application
+    is the Buildings and Owners model. The client application has a GUI
+    identical to the BldOwn example. Whereas in the Building and Owners example
+    the UI layer, business objects' layer and persistence layer all reside in
+    the same physical location (i.e. application), in this example the UI and
+    business objects' layer reside in the client application and the persistence
+    layer resides in the server application. The server application consists of
+    an ISAPI dll, and the client communicates with it over HTTP.
+    <h3>Running the example</h3>
+    <h4>Generating the database and setting remote interbase</h4>
+<p>To be able run the example you must first run <font face="Courier New">DBGen.exe</font>
+(located in the DBGenerator directory) and use the 'Create Database' button to
+generate an interbase database (<font face="Courier New">\HTTPPMapper\DBGenerator\httpPMapper.gdb</font>)
+and create a BDE alias for it named <font face="Courier New">HTTPPMapper</font>.&nbsp;</p>
+<p>It is very important to remember that in order to allow our server, which
+consists of an ISAPI dll, to connect to this Interbase database we <b>MUST</b>
+use <b>REMOTE</b> interbase. For&nbsp; this you must edit the <font face="Courier New">HTTPPMapper</font>
+ alias configuration and modify the Server name so that the path is preceded by
+the machine name where the database is located:</p>
+    <p class="code">localhost:C:\Work\BfD\Examples\Compound\HTTPPMapper\DBGenerator\HTTPPMAPPER.GDB
+    <h4>Installing the server</h4>
+    <p>As mentioned earlier the server (<font face="Courier New">BoldHTTPServer.exe</font>)
+    consists of an ISAPI dll and hence to be able to use it you must first
+    intall it in IIS (for more details refer to the appendix in the
+    <a href="xmldispatcher.htm">XMLDispatcher example documentation</a>).&nbsp;
+    <p>The example assumes that your default web site (IIS) contains a virtual
+    directory with alias name 'Bold' and local path <font face="Courier New">'C:\Work\BFD\examples\Delphi\Compound\HTTPPMapper\HTTPServerDll</font>'. You should
+    then be able
+    to browse it (the local path) using the url '<font face="Courier New">http://localhost/Bold</font>'.
+    If you chose to have another alias name or place the server in some other
+    location, remember to change the url property of the <i> BoldWebConnection1</i>
+    component in the DataModUnit unit of the HTTPClient application.&nbsp;
+    <h4>Running the client</h4>
+<p>Run the <font face="Courier New">HTTPClient</font>, use the '<font face="Courier New">Open
+System</font>' button to connect to the server. Right click in the persons' grid
+or the buildings' grid to display the pop up menus for creating/deleting
+objects.&nbsp;</p>
+    <h4>A word about security</h4>
+<p>If you haven't configured the security settings for your ISAPI dll or virtual
+directory properly,&nbsp; you might encounter problems when trying to open the
+system (from the client). If you get a message saying
+'TBoldPersistenceControllerDefault.PMFetchIdListWithCondition: not Active' then
+you can be certain that you have some security issues, the server was not able
+to connect to the database because it did not have enough rights. A tip would be
+to check the Identity under which the server dll is run (Component Services). If
+you're a beginner with IIS it's usually a good idea to set the identity to the <font face="Courier New">&lt;LocalMachine&gt;\IWAM_&lt;LocalMachine&gt;</font>
+user account that's created by IIS and make sure you set a password for it.
+<p class="note"><b>NOTE!</b> The HTTP PMapping components are documented in the
+Reference Guide.
+    <h3>BoldHTTPServer</h3>
+    The important points to note in the server are:
+    <ul>
+      <li>The server does not need a system.</li>
+      <li>The server needs a persistence mapper:<br>
+        BoldPersistenceHandleBDE1,
+        connected to the <font face="Courier New">HTTPPMapper</font> interbase alias.</li>
+      <li>The server and the client should use the same model (not necessarily
+        the same model component). In this case they use the same model component
+        located in the unit <i> dmCoreUnit.pas</i> (in \HTTP_PMapper\Client): BoldModel1.</li>
+      <li>The server uses a TWebModule component to handle web connections:<br>
+        WebModule1 in <i>MainUnit.pas</i>.</li>
+      <li>The server uses a BoldHTTPPersistenceHandlePassthrough component:<br>
+        httpPMapper. The BoldHTTPPersistenceHandlePassthrough is used to interpret the
+        request data in SOAP format and interpret it. It then uses a real persistence
+        handle to handle persistency. Properties:<br>
+        &nbsp;&nbsp;&nbsp;<img src="images/grey_dot.gif" width="5" height="5"> "PersistenceHandle: for
+        connecting the passthrough handle to the BDE<br>
+        &nbsp;&nbsp;&nbsp;persistence handle BoldPersistenceHandleBDE1.<br>
+        &nbsp;&nbsp;&nbsp;<img src="images/grey_dot.gif" width="5" height="5"> BoldModel: dmCore.BoldModel1.</li>
+      <li>A WebActionItem is defined: PMapper, with its <i> pathInfo</i> property set to
+        '/BuildingsAndOwners'.
+        In the OnAction event handler of this action item a call is made to the Get
+        method of httpPMapper. The first argument passed to this method is the content of
+        the Request (received from the web server); the second argument that should be
+        passed is an out parameter that will hold the reply that should be returned back
+        to the web server.</li>
+    </ul>
+    <p class="note"><b>Note!</b> all data flowing between the client and the server are in SOAP format.
+    <h3>HTTPClient</h3>
+    The <font face="Courier New">HTTPClient</font> is almost identical to the Buildings
+    and Owners example, except that it does not directly connect to a persistence storage,
+    but instead to a web server: BoldHTTPServer, which handles the persistence mapping.
+    <p>The important components used by the client are (unit <i>DataModUnit.pas</i>):
+    <ul>
+      <li>BoldWebConnection1: handles the connection with the web server. Properties:<br>
+        &nbsp;&nbsp;&nbsp;<img src="images/grey_dot.gif" width="5" height="5"> Url: this corresponds to the URL of the PMapper web action item defined in the
+        BoldHTTPServer. Value is set to <font face="Courier New">http://localhost/Bold/BoldHTTPServer.dll/BuildingsAndOwners</font>
+      </li>
+      <li>BoldHTTPClientPersistenceHandle1:<br>
+        &nbsp;&nbsp;&nbsp;<img src="images/grey_dot.gif" width="5" height="5"> BoldModel: dmCore.BoldModel1<br>
+        &nbsp;&nbsp;&nbsp;<img src="images/grey_dot.gif" width="5" height="5"> WebConnection: BoldWebConnection1</li>
+    </ul>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

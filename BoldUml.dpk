@@ -1,0 +1,81 @@
+package BoldUml;
+
+{$R *.res}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (Model editor)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  Bold,
+  BoldVCLGUI,
+  DesignIDE;
+
+contains
+  BoldUMLAbstractModelValidator in 'Source\UMLModel\Core\BoldUMLAbstractModelValidator.pas',
+  BoldUMLAttributes in 'Source\UMLModel\Core\BoldUMLAttributes.pas',
+  BoldUMLModel in 'Source\UMLModel\Core\BoldUMLModel.pas',
+  BoldUMLModelConverter in 'Source\UMLModel\Core\BoldUMLModelConverter.pas',
+  BoldUMLModelDataModule in 'Source\UMLModel\Core\BoldUMLModelDataModule.pas',
+  BoldUMLModelSupport in 'Source\UMLModel\Core\BoldUMLModelSupport.pas',
+  BoldUMLModelUpdater in 'Source\UMLModel\Core\BoldUMLModelUpdater.pas',
+  BoldUMLModelValidator in 'Source\UMLModel\Core\BoldUMLModelValidator.pas',
+  BoldUMLOCLValidator in 'Source\UMLModel\Core\BoldUMLOCLValidator.pas',
+  BoldUMLUtils in 'Source\UMLModel\Core\BoldUMLUtils.pas',
+  UMLConsts in 'Source\UMLModel\Core\UMLConsts.pas',
+  BoldDerivationExpressionsEditor in 'Source\UMLModel\Editor\BoldDerivationExpressionsEditor.pas',
+  BoldDragObject in 'Source\UMLModel\Editor\BoldDragObject.pas',
+  BoldUMLAddTV in 'Source\UMLModel\Editor\BoldUMLAddTV.pas',
+  BoldUMLConstraintEditor in 'Source\UMLModel\Editor\BoldUMLConstraintEditor.pas',
+  BoldUMLModelEdit in 'Source\UMLModel\Editor\BoldUMLModelEdit.pas',
+  BoldUMLModelEditForm in 'Source\UMLModel\Editor\BoldUMLModelEditForm.pas',
+  BoldUMLModelValidationForm in 'Source\UMLModel\Editor\BoldUMLModelValidationForm.pas',
+  BoldUMLOCLEditor in 'Source\UMLModel\Editor\BoldUMLOCLEditor.pas',
+  BoldUMLTaggedValuesEditor in 'Source\UMLModel\Editor\BoldUMLTaggedValuesEditor.pas',
+  BoldUMLUsesEditorForm in 'Source\UMLModel\Editor\BoldUMLUsesEditorForm.pas',
+  BoldModel in 'Source\UMLModel\Handles\BoldModel.pas',
+  BoldUMLModelStreamer in 'Source\UMLModel\Handles\BoldUMLModelStreamer.pas',
+  BoldUMLModelEditReg in 'Source\UMLModel\IDE\BoldUMLModelEditReg.pas',
+  BoldUMLModelHandleReg in 'Source\UMLModel\IDE\BoldUMLModelHandleReg.pas',
+  BoldUMLModelLink in 'Source\UMLModel\ModelLinks\Core\BoldUMLModelLink.pas',
+  BoldUMLModelLinkSupport in 'Source\UMLModel\ModelLinks\Core\BoldUMLModelLinkSupport.pas',
+  BoldRose98ptyCreator in 'Source\UMLModel\ModelLinks\Rose98\BoldRose98ptyCreator.pas',
+  BoldRose98TaggedValues in 'Source\UMLModel\ModelLinks\Rose98\BoldRose98TaggedValues.pas',
+  BoldUMLRose98Link in 'Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Link.pas',
+  BoldUMLRose98Linkreg in 'Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Linkreg.pas',
+  BoldUMLRose98MappingUtils in 'Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98MappingUtils.pas',
+  BoldUMLRose98Support in 'Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Support.pas',
+  BoldUMLBldLink in 'Source\UMLModel\ModelLinks\Bld\BoldUMLBldLink.pas',
+  BoldCodePlugins in 'Source\UMLModel\Plugins\BoldCodePlugins.pas',
+  BoldDbPlugins in 'Source\UMLModel\Plugins\BoldDbPlugins.pas',
+  BoldModelOCLValidatorPlugIn in 'Source\UMLModel\Plugins\BoldModelOCLValidatorPlugIn.pas',
+  BoldUMLModelEditPlugIn in 'Source\UMLModel\Plugins\BoldUMLModelEditPlugIn.pas',
+  BoldUMLPluginCallBacks in 'Source\UMLModel\Plugins\BoldUMLPluginCallBacks.pas',
+  BoldUMLModelToEcoIIIGenerator in 'Source\UMLModel\Plugins\BoldUMLModelToEcoIIIGenerator.pas',
+  BoldUMLPlugins in 'Source\UMLModel\Plugins\BoldUMLPlugins.pas';
+
+end.

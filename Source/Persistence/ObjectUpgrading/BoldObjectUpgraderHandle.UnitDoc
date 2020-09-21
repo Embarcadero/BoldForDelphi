@@ -1,0 +1,91 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/ObjectUpgrading/BoldObjectUpgraderHandle.UnitDoc 6     01-11-09 16:21 Aniv $">
+   <Classes>
+      <Class Name="TBoldObjectUpgraderHandle">
+         <Events>
+            <Event Name="OnUpgradeObject">
+               <Summary></Summary>
+               <Desc>This event will be called for each object to be updated, for which there is no matching Config item. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="ConfigClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObjectUpgrader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectUpgrader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOnUpgradeObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PlaceComponentSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnUpgradeObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemTypeInfoHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveComponentEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectUpgrader">
+               <Summary></Summary>
+               <Desc>The actual upgrader that does the work.</Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>
+               <Desc>The persistence handle is the persistence handle that should be used by the upgrader to read and write objects. </Desc>
+            </Property>
+            <Property Name="SystemTypeInfoHandle">
+               <Summary></Summary>
+               <Desc>This is the type info of the model the upgrader should upgrade to.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Allows the plug-in of methods to perform conversion when objects are fetched from the db</Summary>
+         <Desc>The <InlineCode>TBoldObjectUpgraderHandle</InlineCode> is part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set, which allows an application to gracefully switch to a newer model version.
+            <P>When a model is changed, it is sometimes necessary to perform manipulations on the individual objects to convert them to the new model. The <InlineCode>TBoldObjectUpgraderHandle</InlineCode> allows the plug-in of methods to perform this conversion, either when objects are fetched from the db or in a batch operation.</P>
+         </Desc>
+         <SeeAlso><See Class="TBoldDBPersistenceHandle" Property="UpgraderHandle"/></SeeAlso>
+         <SeeAlso><See Class="TBoldBatchUpgrader" Property="Upgrader"/></SeeAlso>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>The components/classes herein are part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</Desc>
+</DLUnitDoc>

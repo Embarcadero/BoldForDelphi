@@ -1,0 +1,165 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldDragDropTarget.UnitDoc 6     02-02-18 5:44 Johosos $">
+   <Classes>
+      <Class Name="TBoldDropTarget">
+         <Methods>
+            <Method Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanAcceptDraggedObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentNodeDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDraggedObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetImageList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIsDragSource">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIsDropTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeSelectionExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRepresentations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Note that the handle must be of the type <See Class="TBoldReferenceHandle"/>. In order for the component to allow drops the refrence handle must be set up with a <See Class="TBoldReferenceHandle" Property="TBoldStaticValueTypeName"/>, otherwise the "typecorrectness" of a drag/drop event can not be determined. Also, the <See Property="IsDropTarget"/> of the target must be set to <InlineCode>true</InlineCode> </Desc>
+            </Property>
+            <Property Name="DraggedObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Element">
+               <Summary>For internal use</Summary>
+               <Desc>This proptected property is used internally (and by subclasses) to access the element that is refered by the <see property=BoldHandle></Desc>
+            </Property>
+            <Property Name="EmptyImageIndex">
+               <Summary>the image index that is used if the value of <See Property="BoldHandle"/> is nil</Summary>
+               <Desc>the image index that is used if the value of <See Property="BoldHandle"/> is nil. It refers to the index in the <See Property="ImageList"/></Desc>
+            </Property>
+            <Property Name="ImageList">
+               <Summary>List of images to be used by the component for visualizations</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsDragSource">
+               <Summary>Set to true if the component should act as a drag source</Summary>
+               <Desc>If this property is true, it will be possible to drag the object of the <See Property="BoldHandle"/> from the component</Desc>
+            </Property>
+            <Property Name="IsDropTarget">
+               <Summary>Set to true if the component should act as a drop target</Summary>
+               <Desc>If this property is true, it will be possible to drop objects on the component and make them the value of the <See Property="BoldHandle"/></Desc>
+            </Property>
+            <Property Name="NodeSelectionExpression">
+               <Summary>OCL expression that should give the name of a node in the Representations </Summary>
+               <Desc>OCL expression that should give the name of a node in the Representations. the default expression results in a list of names starting with the name of the concrete class of the object, and then all super classes finally ending with the string &lt;default> </Desc>
+            </Property>
+            <Property Name="Representations">
+               <Summary>Collection of node descriptions used to calculate the image index for different objects</Summary>
+               <Desc>This property behaves similar to the mechanisms in the <See Class="TBoldTreeView"/>, but only a small set of this mechanism is used here. The <InlineCode>Representations</InlineCode> property is only used to calculate the image index to be used by the <InlineCode>DragDropTarget</InlineCode>.
+                  <P>Define a set of node descriptions (sub property of <InlineCode>Representations</InlineCode>, and for each node description define the <See Class="TBoldNodeDescription" Property="Name"/> and <See Class="TBoldIntegerFollowerController" Property="Expression" Text="IconController.Expression"/></P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>Model aware drop target and drag source</Summary>
+         <Desc>It is used as a model aware drop target and drag source. The most important properties to set up are:
+            <UL>
+               <LI><See Property="Representations"/></LI>
+               <LI><See Property="BoldHandle"/></LI>
+               <LI><See Property="IsDragSource"/> and <See Property="IsDropTarget"/></LI>
+            </UL>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the BoldDragDropTarget. </Summary>
+   <Desc>This unit defines the component TBoldDropTarget. </Desc>
+</DLUnitDoc>

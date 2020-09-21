@@ -1,0 +1,154 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldCaptionController.UnitDoc 16    01-11-13 11:42 Joho $">
+   <Classes>
+      <Class Name="TBoldCaptionController">
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Since <InlineCode>TBoldCaptionController</InlineCode> is a single-value control it will follow the <InlineCode>Value</InlineCode> property of the handle. Note that for a <See Class="TBoldListHandle"/> this means the current element in the list. </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+Since this is a display only control, this sub-property has no effect.
+                  <BH>CleanOnEqual</BH>
+Since this is a display only control, this sub-property has no effect.
+                  <BH>DragMode</BH>
+This sub-property has no effect on this control.
+                  <BH>DropMode</BH>
+This sub-property has no effect on this control.
+                  <BH>Expression</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Expression</InlineCode> will be interpreted as an OCL expression to be applied to <InlineCode>BoldHandle.Value</InlineCode>.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Expression</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+                  <BH>Renderer</BH>
+This property identifies a <See Class="TBoldAsStringRenderer"/> that is used do define the mapping from <See Class="TBoldCustomCaptionController" Property="BoldHandle" Text="BoldHandle"/><InlineCode>.Value</InlineCode> to the string displayed in the control. The default renderer will apply <InlineCode>Expression</InlineCode> to the value, and then take <InlineCode>TBoldElement.StringRepresentation</InlineCode> on the result. A custom renderer may perform any mapping.
+                  <BH>Representation</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Representation</InlineCode> will be interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating expression.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Representation</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="TrackControl">
+               <Summary>This property should be set to the control that should have its caption controlled.</Summary>
+               <Desc>Note that you can specify a <InlineCode>TForm</InlineCode> here, to control the caption of the same. <InlineCode>TForms</InlineCode> do however not show up in the object inspector. </Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldCaptionController allows setting the caption of any TWinControl to a string value from the Business Object tier of Bold.</Summary>
+         <Desc>
+            <P><See Class="TBoldCustomCaptionController" Property="BoldHandle" Text="BoldHandle"/> specifies what to display, and the sub-properties of <See Class="TBoldCustomCaptionController" Property="BoldProperties" Text="BoldProperties"/> specify how the value is to be displayed. <See Class="TBoldCustomCaptionController" Method="TrackControl" Text="TBoldCustomCaptionController.TrackControl"/> specifies the controls that will have its caption controlled.</P>
+            <P>The <InlineCode>TBoldCaptionController</InlineCode> exposes things implemented in <InlineCode>TBoldCustomCaptionController</InlineCode>. No additional functionality is introduced.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldCustomCaptionController">
+         <Methods>
+            <Method Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldCustomCaptionController</Summary>
+               <Desc>Call <InlineCode>Create</InlineCode> to create and initialize an instance of <InlineCode>TBoldCustomCaptionController</InlineCode>.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldCustomCaptionController.</Summary>
+               <Desc>Do not call <InlineCode>Destroy</InlineCode> directly in an application. Instead, call <InlineCode>Free</InlineCode>. <InlineCode>Free</InlineCode> verifies that the <InlineCode>TBoldCustomCaptionController</InlineCode> reference is not <InlineCode>nil</InlineCode>, and only then calls <InlineCode>Destroy</InlineCode>.</Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTrackedCaption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldDisplay">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCaption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTrackControl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTrackedCaption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow.</Summary>
+               <Desc>Since <InlineCode>TBoldCustomCaptionController</InlineCode> is a single-value control it will follow the <InlineCode>Value</InlineCode> property of the handle. Note that for a <See Class="TBoldListHandle"/> this means the current element in the list.</Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary>Set of sub properties to fine tune bold aware aspects of the control</Summary>
+               <Desc>
+                  <P>This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:</P>
+                  <P><Strong>ApplyPolicy</Strong></P>
+                  <P>Has no effect as this is a read-only control.</P>
+                  <P><Strong>CleanOnEqual</Strong></P>
+                  <P>Has no effect as this is a read-only control.</P>
+                  <P><Strong>DragMode</Strong></P>
+                  <P>Has no effect on a CaptionController.</P>
+                  <P><Strong>DropMode</Strong></P>
+                  <P>Has no effect on a CaptionController.</P>
+                  <P><Strong>Expression</Strong></P>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Expression</InlineCode> will be interpreted as an OCL expression to be applied to <InlineCode>BoldHandle.Value</InlineCode>.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Expression</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+                  <P><Strong>NilStringRepresentation</Strong></P>
+                  <P>The string value used for display purposes in case <InlineCode>BoldHandle.Value</InlineCode> evaluates to <InlineCode>nil</InlineCode>. The default <InlineCode>NilRepresentation</InlineCode> is an empty string.</P>
+                  <P><Strong>Renderer</Strong></P>
+                  <P>This property identifies a <See Class="TBoldAsStringRenderer"/> that is used do define the mapping from <See Class="TBoldCustomCaptionController" Property="BoldHandle" Text="BoldHandle"/><InlineCode>.Value</InlineCode> to the string displayed in the control. The default renderer will apply <InlineCode>Expression</InlineCode> to the value, and then take <See Class="TBoldElement" Property="StringRepresentation"/> on the result. A custom renderer may perform any mapping.</P>
+                  <P><Strong>Representation</Strong></P>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Representation</InlineCode> will be interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating expression.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Representation</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="Caption">
+               <Summary>Current caption string used</Summary>
+               <Desc>This is a read-only property indicating the caption currently displayed. It will be valid even if <See Property="TrackControl"/> is not assigned. </Desc>
+            </Property>
+            <Property Name="TrackControl">
+               <Summary>Control to track</Summary>
+               <Desc>Specifies the control that will have its caption controlled. Note that it doesn't matter if the control has a <InlineCode>Caption</InlineCode> or a <InlineCode>Text</InlineCode> property.</Desc>
+            </Property>
+            <Property Name="TrackedCaption">
+               <Summary>The actual caption of the tracked control.</Summary>
+               <Desc>This is the caption of the tracked control, as it looks on screen. In most cases it will be the same as the <See Property="Caption"/> property.</Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldCustomCaptionController allows setting the caption of any TWinControl to a string value from the Business Object tier of Bold.</Summary>
+         <Desc>
+            <BH>Implementation</BH>
+            <InlineCode>TBoldCustomCaptionController</InlineCode> keeps most of its properties protected. It is not intended to be used directly, but rather to be subclassed, where the subclasses publish and/or override the behaviour implemented by <InlineCode>TBoldCustomCaptionController</InlineCode> </Desc>
+      </Class>
+   </Classes>
+   <Summary>Defines the Bold aware CaptionController</Summary>
+   <Desc>
+      <P>The <InlineCode>BoldCaptionController</InlineCode> unit defines the <InlineCode>TBoldCustomCaptionController</InlineCode> class and its concrete subclass <InlineCode>TBoldCaptionController</InlineCode>. The <InlineCode>TBoldCaptionController</InlineCode> is registered on the palette.</P>
+      <P><InlineCode>TBoldCustomCaptionController</InlineCode> implements the <See Interface="IBoldOCLComponent"/> interface, allowing it to be validated at design time.</P>
+   </Desc>
+</DLUnitDoc>

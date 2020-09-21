@@ -1,0 +1,93 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldAggeregates.UnitDoc 2     02-02-18 12:34 Jano $">
+   <Classes>
+      <Class Name="TBoldAggregateableObject">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>The controller reference is optional, a nil value is allowed. </Desc>
+            </Method>
+            <Method Name="GetController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NonDelegatingAddRef">
+               <Summary>Increases the reference count.</Summary>
+               <Desc> Implements the actual reference counting. </Desc>
+            </Method>
+            <Method Name="NonDelegatingQueryInterface">
+               <Summary></Summary>
+               <Desc>Implements QueryInterface. </Desc>
+            </Method>
+            <Method Name="NonDelegatingRelease">
+               <Summary>Decreases the reference count. </Summary>
+               <Desc>When <See Class="TBoldRefCountedObject" Property="RefCount" Text="RefCount"/> reaches zero the object will destroy itself. </Desc>
+            </Method>
+            <Method Name="QueryInterface">
+               <Summary></Summary>
+               <Desc>If a controller object exists calls that object's <InlineCode>QueryInterface</InlineCode> and if not calls <See Method="NonDelegatingQueryInterface"/>. </Desc>
+            </Method>
+            <Method Name="_AddRef">
+               <Summary></Summary>
+               <Desc>If a controller object exists calls that object's _AddRef and if not calls <See Method="NonDelegatingAddRef"/>. </Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc>If a controller object exists calls that object's _Release and if not calls <See Method="NonDelegatingRelease"/>. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Controller">
+               <Summary>Reference to the object's controller (owner).</Summary>
+               <Desc> Returns a reference to the controller's IInterface.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class for objects that can be part of dynamic composition or blind aggregation. </Summary>
+         <Desc> Dynamic composition is when one object, the outer object, aggregates another completly unknown object called the inner object. The inner object must support this by having two implementations of <InlineCode>IInterface</InlineCode>.
+            <P>One <InlineCode>IInterface</InlineCode>, the non-delegating unknown, is only for the outer object to use. It is through this unknown that the outer object controls the lifetime of the inner object. The other unknown, the delegating unknown, is the <InlineCode>IInterface</InlineCode> part of all other interfaces implemented by the inner object. This second unknown delegates all calls to the outer objects <InlineCode>IInterface</InlineCode>, which controlles the lifetime of the composition. All of this is completely transparent to the clients.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldAggregatedObject">
+         <Methods>
+            <Method Name="QueryInterface">
+               <Summary></Summary>
+               <Desc>Calls to QueryInterface are delegated to the controller. </Desc>
+            </Method>
+         </Methods>
+         <Summary>Base class for objects who are meant to be part of static aggregation.</Summary>
+         <Desc> Inherits the behavior for reference counting from <See Class="TBoldContainedObject"/> and extends that by delegating calls to <See Method="QueryInterface"/> as well. </Desc>
+      </Class>
+      <Class Name="TBoldContainedObject">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AddRef">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Controller">
+               <Summary>Reference to the controller (owner).</Summary>
+               <Desc> Returns a reference to the controller's IInterface. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class for objects that are meant to be "contained".</Summary>
+         <Desc> Overrides <InlineCode>_AddRef</InlineCode> and <InlineCode>_Release</InlineCode> to implement delegated or shared reference counting. Delegated or shared reference counting means that the class does not maintain a reference count of its own but shares one with its owner, this is achived by delegating calls to <InlineCode>_AddRef</InlineCode> and <InlineCode>_Release</InlineCode> to the owner's implementation of <InlineCode>IUnk</InlineCode>nown.
+            <P>Instances of this class must deallocated by calling the destructor. The owner is responsible for doing that.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Classes for COM-style aggregation</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

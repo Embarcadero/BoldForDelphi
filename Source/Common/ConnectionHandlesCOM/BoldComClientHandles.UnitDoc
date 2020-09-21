@@ -1,0 +1,266 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/ConnectionHandlesCOM/BoldComClientHandles.UnitDoc 4     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldComClientObjectHandle">
+         <Methods>
+            <Method Name="ConnectionClosing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ComObject">
+               <Summary>The IUnkown interface of the imported COM object.</Summary>
+               <Desc> Provides access to IUnknown interface of the COM object in the server. Use QueryInterface on ComObject to access any custom interface implemented by the server object. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Used to import a COM object from the server. </Summary>
+         <Desc> Use this component to import a custom COM object exported by a TBoldComServerObjectHandle.
+            <BH>Usage</BH>
+The AccountClient demo located under \\examples\\bios2 demonstrates the usage of a TBoldComClientObjectHandle to access the services of a COM object implemented by the AccountServer.</Desc>
+      </Class>
+      <Class Name="TBoldComConnectionHandle">
+         <Events>
+            <Event Name="AfterConnect">
+               <Summary>Occurs after a connection is established.</Summary>
+               <Desc> Write an AfterConnect event handler to take application-specific actions immediately after the connection component opens a connection to the server. </Desc>
+            </Event>
+            <Event Name="AfterDisconnect">
+               <Summary>Occurs after the connection has been closed. </Summary>
+               <Desc> Write an AfterDisconnect event handler to take application-specific actions immediately after the connection component closes the connection to the server. </Desc>
+            </Event>
+            <Event Name="BeforeConnect">
+               <Summary>Occurs shortly before the connection is established.</Summary>
+               <Desc> Write a BeforeConnect event handler to take application-specific actions immediately before the connection component opens a connection to the server. </Desc>
+            </Event>
+            <Event Name="BeforeDisconnect">
+               <Summary>Occurs shortly before the connection is closed</Summary>
+               <Desc>Write a BeforeDisconnect event handler to take application-specific actions immediately before the connection component closes the connection to the server. </Desc>
+            </Event>
+            <Event Name="OnConnectFailed">
+               <Summary>Occurs if the connection attempt fails.</Summary>
+               <Desc> Write an OnConnectFailed event handler to take application-specific actions if the connection component fails to open a connection to the server. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>Will close the connection if it is open. </Desc>
+            </Method>
+            <Method Name="GetBoldProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetServerCLSID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerCLSID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerHost">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetThreaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoConnect">
+               <Summary>Controls if the component should connect automatically.</Summary>
+               <Desc> If AutoConnect is True the TBoldComConnectionHandle will automatically connect to the server when the component is created. If AutoConnect is False you can still connect later by setting the <See Property="Connected"/> property.
+The property is only meaningful at design-time. Setting AutoConnect at run-time has no effect. </Desc>
+            </Property>
+            <Property Name="BoldProvider">
+               <Summary>The server's provider interface.</Summary>
+               <Desc> Use BoldProvider to import objects from the server. </Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary>Indicates whether a connection with the server is established.</Summary>
+               <Desc> Set Connected to True to establish a connection. Set Connected to False to close the connection. </Desc>
+            </Property>
+            <Property Name="ServerCLSID">
+               <Summary>Specifies the GUID of the BIOS/DCOM server CoClass to be used</Summary>
+               <Desc> Use ServerCLSID to specify the server CoClass which should be used by the client. A server CoClass corresponds to a TBoldComClass. CoClasses are defined using the TBoldComServerHandle component's Classes property. It should match the TBoldComClass_CLSID (see also <See Class="TBoldComServerHandle"/> ).
+If the value assigned to the ServerCLSID property specifies a valid GUID for a CoClass residing in a registered server application, setting ServerCLSID changes the value of the <See Property="ServerName"/> to the ProgID (programmatic ID) of the corresponding CoClass. </Desc>
+            </Property>
+            <Property Name="ServerEvents">
+               <Summary>Controls if the client should receive any callbacks.</Summary>
+               <Desc> Set ServerEvents to False if you don't want any callbacks from the server. </Desc>
+            </Property>
+            <Property Name="ServerHost">
+               <Summary>The host (machine) where the server is installed and registered.</Summary>
+               <Desc> Set ServerHost if you want to explicitly specify where the server is located. </Desc>
+            </Property>
+            <Property Name="ServerName">
+               <Summary>Specifies the ProgID of the server class with which to connect.</Summary>
+               <Desc> Use ServerName to specify the name of the server class(connection factory class) to which the client application should connect. By default this will be &lt;exename&gt;.&lt;classname&gt;. You don't need to set this if you have set a ServerCLSID. </Desc>
+            </Property>
+            <Property Name="Subscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Threaded">
+               <Summary>Controls if a background thread should be used to establish the connection.</Summary>
+               <Desc> If Threaded is True the connection will be established using a background thread. This will allow your GUI to still be responsive to the user events while connection is under way. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Handles a client's connection to a BIOS/DCOM server.</Summary>
+         <Desc> The TBoldComConnectionHandle is used to establish a connection with a BIOS/DCOM server.
+            <BH>Usage</BH>
+For an illustration of client and server component interconnections refer to BoldComClientServerConnectionIllustration@BoldHandles.hlp. </Desc>
+      </Class>
+      <Class Name="TBoldComImportHandle">
+         <Methods>
+            <Method Name="ConnectionClosing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConnectionOpened">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConnectionSubscriber_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoConnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoDisconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetObjectName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary>Determines whether a connection with the server is established.</Summary>
+               <Desc>
+
+Set Connected to true to establish a connection with the server, set it to False to close the connection.
+</Desc>
+            </Property>
+            <Property Name="ConnectionHandle">
+               <Summary>Specifies the TBoldComConnectionHandle component used for connecting to a Bold Com server. </Summary>
+               <Desc> Specifies the TBoldComConnectionHandle component used for connecting to a BIOS/DCOM server.
+For an illustration of the interconnections between client and server components refer to BoldComClientServerConnectionIllustration@BoldHandles.hlp. </Desc>
+            </Property>
+            <Property Name="ConnectionSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectName">
+               <Summary>The name of the Com object that should be imported.
+
+</Summary>
+               <Desc>
+The name of the Com object that should be imported. The ObjectName should match the ObjectName property of a TBoldComServerObjectHandle.</Desc>
+			   <SeeAlso><see class=TBoldComExportHandle property=ObjectName></SeeAlso>
+
+            </Property>
+         </Properties>
+         <Summary>Base class of components used to import domain or server objects from BIOS/DCOM servers. </Summary>
+         <Desc> The base class of components used to import domain or server objects from a BIOS/DCOM server.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Contains handle classes used in a COM client application.</Desc>
+</DLUnitDoc>

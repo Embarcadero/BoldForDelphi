@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/Handles/BoldTypeNameHandle.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldTypeNameHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Dictionary">
+               <Summary></Summary>
+               <Desc>This is the dictionary of the TypeNameHandle.
+</Desc>
+            </Property>
+         </Properties>
+         <Summary>A TypeNameHandle is a component that holds a TypeNameDictionary.</Summary>
+         <Desc>
+If you have custom attribute types in your model then you must add a TypeNameHandle to your project, set the TypeNameHandle-property of your TBoldModel, and add the new type to the dictionary of the Handle.
+Certain types are required by the OCL-evaluator (string, numeric, integer, date, datetime, time, constraint, boolena, float). Most of these you can subclass, and install the subclass instead of the default BoldAttribute, others are mandatory, and may not be changed.
+Below is a screenshot of the component editor for the TypeNameDictionary.
+In the Edit menu there is a menu item that restores the defaults that ship with Bold.
+<Img Src="TypeNameEditor">
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains the component that stores the type name dictionary for an application.
+</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

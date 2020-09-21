@@ -1,0 +1,345 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/ConnectionHandlesCOM/BoldComServerHandles.UnitDoc 5     11/16/01 8:37a Jeho $">
+   <Classes>
+      <Class Name="TBoldComClass">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDesignTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsLoading">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCLSID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>Controls if the CoClass is active.</Summary>
+               <Desc> if <InlineCode>Active</InlineCode> is <InlineCode>False</InlineCode> no objects will be exported through the CoClass. </Desc>
+            </Property>
+            <Property Name="CLSID">
+               <Summary>The class identifier of the CoClass.</Summary>
+               <Desc> This information is used when generating server code. </Desc>
+            </Property>
+            <Property Name="Description">
+               <Summary>Descriptive text. </Summary>
+               <Desc> This information is used when generating server code.</Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary>Readable class identifier.</Summary>
+               <Desc> The <InlineCode>Name</InlineCode> will form the second part of the ProgID.
+This information is used when generating server code. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Represents a CoClass at design-time.</Summary>
+         <Desc>Every <InlineCode>TBoldComClass</InlineCode> will have a corresponding CoClass at run-time.</Desc>
+      </Class>
+      <Class Name="TBoldComClasses">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds a new object.</Summary>
+               <Desc> Creates and adds a new <InlineCode>TBoldComClass</InlineCode> object to the collection. </Desc>
+            </Method>
+            <Method Name="ClassByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClassExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates a new instance.</Summary>
+               <Desc>Creates a new collection. <InlineCode>ServerHandle</InlineCode> is the handle component that will own the collection. </Desc>
+            </Method>
+            <Method Name="FirstClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassNames">
+               <Summary>Retrieves the names of all TBoldComClass objects in the collection. </Summary>
+               <Desc> The procedure will add the names to the string list. </Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary>Provides access to the collection's items. </Summary>
+               <Desc> Use Items to access the individual <InlineCode>TBoldComClass</InlineCode> objects.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Collection class. </Summary>
+         <Desc> Holds and maintains a collection of <InlineCode>TBoldComClass</InlineCode> objects.</Desc>
+      </Class>
+      <Class Name="TBoldComExportHandle">
+         <Methods>
+            <Method Name="CanProvideThroughClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RevokeHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateServerClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectName">
+               <Summary>The name under which COM object is exported. </Summary>
+               <Desc><InlineCode>ObjectName</InlineCode> is the name under which the COM object is exported. <InlineCode>ObjectName</InlineCode> is a user defined string literal which defaults to &lt;ClassInstanceName&gt;. </Desc>
+               <SeeAlso><See Class="TBoldComImportHandle" Property="ObjectName"/></SeeAlso>
+            </Property>
+            <Property Name="ServerClass">
+               <Summary>The CoClass that handles the COM/DCOM calls made to the objects exported by this handle.</Summary>
+               <Desc> The CoClass handling the COM/DCOM calls made to the objects exported by this handle.
+                  <BH>Usage</BH>
+First, set the <See Property="ServerHandle"/> property, and then use the dropdown combo box of the <See Property="ServerClass"/> property to select from the CoClasses (or <InlineCode>TBoldComClass</InlineCode> objects) available in the server. </Desc>
+            </Property>
+            <Property Name="ServerHandle">
+               <Summary></Summary>
+               <Desc>The <InlineCode>TBoldComServerHandle</InlineCode> containing the <See Property="ServerClass"/> used for COM/DCOM connections. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class of components for exporting domain or server objects located in a BIOS/DCOM server. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComObjectProvider">
+         <Methods>
+            <Method Name="AddHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ServerHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Classes">
+               <Summary>The server classes contained in the server.</Summary>
+               <Desc> Holds the server classes contained in the server. Use the Classes property editor to create a server class (TBoldComClass). The system will generate a ServerCLSID for each new server class created. Double clicking on the <InlineCode>TBoldComServerHandle</InlineCode> component will generate code that registers the connection factories corresponding to the server classes with the Registry.
+                  <BH>Usage</BH>
+One server class is usually sufficient for exporting all domain and server objects. One reason to create seperate server classes would be in case you want to group the objects according to some common functionality. </Desc>
+            </Property>
+            <Property Name="ObjectProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldComServerHandle is used to create BIOS/DCOM servers. </Summary>
+         <Desc>Use a <InlineCode>TBoldComServerHandle</InlineCode> to create a BIOS/DCOM server.
+            <BH>Usage</BH>
+A BIOS/DCOM server contains one or more CoClasses or COM objects. These CoClasses are the COM objects which allow clients to use the services of the server. The user does not directly declare a CoClass, instead the TBoldComServerHandle_Classes property is used to indirectly create them. Each TBoldComClass will have a corresponding CoClass at runtime.</Desc>
+      </Class>
+      <Class Name="TBoldComServerObjectHandle">
+         <Events>
+            <Event Name="OnGetComObject">
+               <Summary>Returns a reference to the IUnknown interface of the COM object that should be exported.</Summary>
+               <Desc> Implement this event handler to return a reference to the <InlineCode>IUnknown</InlineCode> interface of the COM object it exports. This is done by assigning the <InlineCode>IUnknown</InlineCode> interface of the custom COM object to the Obj (out) parameter of the event handler.
+Example </Desc>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>type
+  TComObject1 = class(TInterfacedObject, IInterface1)
+    ...
+  end;
+
+procedure TDataModule2.BoldComServerObjectHandle1GetComObject(Sender: TObject; out Obj: IUnknown);
+begin
+  Obj := TComObject1.Create as IUnknown;
+end;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Used to export any COM object. </Summary>
+         <Desc> Use this component to export a COM object. Use a <InlineCode>TBoldComClientObjectHandle</InlineCode> to access the exported Com object from client applications.
+            <BH>Usage</BH>
+Use this component to export service oriented COM objects that implement custom interfaces, these type of objects are referred to as 'Server objects' as opposed to 'Domain objects' used to refer to the objects present in a Bold system. For an example of a 'Server object' server, check the AccountServer demo located under <InlineCode>BfD\examples\bios2</InlineCode>.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains handle classes used in a COM server application. </Summary>
+   <Desc>Contains handle classes used in a COM server application.</Desc>
+   <Types>
+      <Type Name="TBoldComGetComObjectEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

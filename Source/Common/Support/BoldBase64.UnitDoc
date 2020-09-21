@@ -1,0 +1,71 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldBase64.UnitDoc 3     02-06-26 15:01 Isje $">
+   <Classes>
+      <Class Name="TBase64">
+         <Methods>
+            <Method Name="CharacterToValue">
+               <Summary></Summary>
+               <Desc>Converts a character to a value in the range of 0..AlphabetLength-1. Returns <inlinecode>true</inlinecode> if the character exists in the alphabet.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="DecodeData">
+               <Summary>Decodes a base64 representation in ASCII format into a string</Summary>
+               <Desc>Decodes a base64 representation in ASCII format into a string. Returns BASE64_OK if conversion was done without errors.</Desc>
+            </Method>
+            <Method Name="EncodeData">
+               <Summary>Encodes a string to its base64 representation in ASCII Format</Summary>
+               <Desc>Encodes a string to its base64 representation in ASCII Format. Returns BASE64_OK if conversion was done without errors, else BASE64_ERROR.</Desc>
+            </Method>
+            <Method Name="ValueToCharacter">
+               <Summary></Summary>
+               <Desc>Converts a value in the range of 0..AlphabetLength-1 to the corresponding base64 alphabet representation returns true if the value is in the alphabet range.</Desc>
+            </Method>
+            <Method Name="filterLine">
+               <Summary></Summary>
+               <Desc>Ignores all characters not in base64 alphabet and returns the filtered string.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="FilterdecodeInput">
+               <Summary>Internal use</Summary>
+               <Desc>Delete all forbidden characters in input stream: Default=true</Desc>
+            </Property>
+         </Properties>
+         <Summary>Simple Base64 encoding/decoding class.</Summary>
+         <Desc>Freeware unit, Dennis D. Spreen (dennis@spreendigital.de).</Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BASE64_DATALEFT">
+         <Summary>Internal use</Summary>
+         <Desc>Too much input data left (receveived 'end of encoded data' but not end of input string).</Desc>
+      </Const>
+      <Const Name="BASE64_ERROR">
+         <Summary>Internal use</Summary>
+         <Desc>Unknown error (e.g. can't encode octet in input stream) -> error in implementation.</Desc>
+      </Const>
+      <Const Name="BASE64_INVALID">
+         <Summary>Internal use</Summary>
+         <Desc>Invalid characters in input string (may occur only when filterdecodeinput=false).</Desc>
+      </Const>
+      <Const Name="BASE64_LENGTH">
+         <Summary>Internal use</Summary>
+         <Desc>Input data length is not a Base64 length (mod 4).</Desc>
+      </Const>
+      <Const Name="BASE64_OK">
+         <Summary>Internal use</Summary>
+         <Desc>No errors, conversion successful.</Desc>
+      </Const>
+      <Const Name="BASE64_PADDING">
+         <Summary>Internal use</Summary>
+         <Desc>Wrong padding (input data isn't closed with correct padding characters).</Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

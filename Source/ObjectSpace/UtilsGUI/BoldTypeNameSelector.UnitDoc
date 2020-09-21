@@ -1,0 +1,61 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/UtilsGUI/BoldTypeNameSelector.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TfrmBoldTypeNameSelector">
+         <Methods>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateNodes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Select">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectCurrentNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btCancelClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btOKClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="mnSortClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="tvMetaTypesChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="tvMetaTypesDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TNodeType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

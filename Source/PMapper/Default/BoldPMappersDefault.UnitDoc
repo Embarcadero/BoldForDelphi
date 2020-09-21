@@ -1,0 +1,692 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Default/BoldPMappersDefault.UnitDoc 5     02-02-08 9:35 Johosos $">
+   <Classes>
+      <Class Name="EBoldCantGetID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="EBoldOptimisticLockingFailed">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGlobalIdMember">
+         <Methods>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindDefiningTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInvalid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberDefaultMapper">
+         <Methods>
+            <Method Name="CheckEitherNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindDefiningTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllowNullAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChangePoints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RequiresMemberMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SupportsComparingWithoutValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberInfoCondition">
+         <Properties>
+            <Property Name="FetchMemberInfoObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldModelVersionMember">
+         <Methods>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindDefiningTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInvalid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="VersionFromQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="VersionNumber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectDefaultMapper">
+         <Methods>
+            <Method Name="CompareFieldsToMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DetectLinkClassDuplicates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DistributableInfoFromQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DistributableTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchPreviousSingleLinkValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChangePoints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleCompareData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleFetchData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsOldVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="JoinSQLTableByKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeIDsExact">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NextExternalObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMCompareExactIDList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchExactIDList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMMultiPurposeRetrieveExactIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTemporalUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdateStopTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PortObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForDistributed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdatesMembersInTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ModelVersionMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubClassesID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldReadOnlynessMember">
+         <Methods>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindDefiningTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInvalid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSingleColumnMember">
+         <Methods>
+            <Method Name="EnsureFirstColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSystemDefaultMapper">
+         <Methods>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePSParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWCFForIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureOptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsurePrecondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchDeletedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChangePointsQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListUsingQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootClassObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeBolddbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewGlobalIdFromQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewIdFromQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchClassWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMSetReadonlyness">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToGlobalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToLocalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClockLogTableLastClockColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClockLogTableLastTimeStampColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClockLogTableThisClockColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClockLogTableThisTimeStampColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasMemberInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastClockTableLastClockColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastClockTableLastTimeStampColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastReservedDBID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NextDBID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReservedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootClassObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TimeStampTableTimeStampColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="XFilesGlobalIdColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="XFilesTimeStampColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTimeStampMember">
+         <Methods>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindDefiningTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInvalid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SupportsComparingWithoutValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXFilesMembers">
+         <Methods>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RequiresMemberMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BOLDTIMESTAMPFIELDTYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="MEMBERIDCOLUMN_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="MEMBERINFOIDCOLUMN_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="MEMBERINFOTABLE_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Types>
+      <Type Name="TExternalIdGenerator">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="ExternalIDGenerator">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

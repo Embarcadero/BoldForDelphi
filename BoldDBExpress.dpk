@@ -1,0 +1,44 @@
+package BoldDBExpress;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (DBExpress Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  vcldb,
+  Bold,
+  dbExpress;
+
+contains
+  BoldDatabaseAdapterDBX in 'Source\Persistence\DBExpress\BoldDatabaseAdapterDBX.pas',
+  BoldDBXInterfaces in 'Source\Persistence\DBExpress\BoldDBXInterfaces.pas',
+  BoldPersistenceHandleDBX in 'Source\Persistence\DBExpress\BoldPersistenceHandleDBX.pas',
+  BoldPersistenceHandleDBXReg in 'Source\Persistence\DBExpress\BoldPersistenceHandleDBXReg.pas';
+
+end.

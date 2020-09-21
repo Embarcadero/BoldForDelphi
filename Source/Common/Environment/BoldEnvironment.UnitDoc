@@ -1,0 +1,117 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldEnvironmentConfiguration">
+         <Methods>
+            <Method Name="AskUser">
+               <Summary>Ask user a questinon</Summary>
+               <Desc>Display <InLineCode>Text</InLineCode> to user, ask yes/no query in some form, and return reply.</Desc>
+            </Method>
+            <Method Name="BringToFront">
+               <Summary>Bring application to front.</Summary>
+               <Desc>Bring application to front if this is a meaningful operation in the current environment, otherwise ignore.</Desc>
+            </Method>
+            <Method Name="FocusMainForm">
+               <Summary>Focus Main Form.</Summary>
+               <Desc>Focus main form of application if this is a meaningful operation in the current environment, otherwise ignore.</Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary>Get method for <See Property="Name"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootComponent">
+               <Summary>Get method for <See Property="RootComponent"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRunningInIDE">
+               <Summary>Get method for <See Property="RunningInIDE"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleDesigntimeException">
+               <Summary>Handle an exception at designtime.</Summary>
+               <Desc>Will call <InLineCode>Forms.Application.HandleException</InLineCode> under VCL, and QForms.Application.HandleException under CLX.</Desc>
+            </Method>
+            <Method Name="IsFormOrDataModule">
+               <Summary>Is sender For or Data module.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessMessages">
+               <Summary>Process Messages</Summary>
+               <Desc>Will call <InLineCode>Forms.Application.ProcessMessages</InLineCode> under VCL, and <InlineCode>QForms.Application.ProcessMessages</InlineCode> under CLX.</Desc>
+            </Method>
+            <Method Name="UpdateDesigner">
+               <Summary>Locate designer for <InLineCode>Sender</InLineCode> and update it.</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Name">
+               <Summary>Name of environment</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootComponent">
+               <Summary>Root component for applicaiton</Summary>
+               <Desc>This is <InlineCode>Forms.Application</InlineCode> in VCL, <InlineCode>QForms.Application</InlineCode> in CLX.</Desc>
+            </Property>
+            <Property Name="RunningInIDE">
+               <Summary>Is Bold running in IDE?</Summary>
+               <Desc>This is set by including <see unit=BoldEnvironmentIDE>. It is included in the Bold designtime pacakges, and should not be included anywhere else.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Environmet for Bold applcations</Summary>
+         <Desc>This unit is used for managing the enviroment a Bold application runs in. It is mainly indtended to take up the difference between a CLX and VCL application, but also handles the freestanding case running without either (or to be more precise without an application object), mostly by raising exceptions if you try to use any of the methods.
+
+It is configured by including one or more of the units <See unit=BoldEnvironmentCLX />, <See unit=BoldEnvironmentVCL />, <See unit=BoldEnvironmentIDE />, <See unit=BoldEnvironmentAllowBothUseVCL />, <See unit=BoldEnvironmentAllowBothUseCLX />.</Desc>
+      </Class>
+      <Class Name="TBoldFreestandingEnvironmentConfiguration">
+         <Methods>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldEffectiveEnvironment">
+         <Summary>Current effective environment</Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="BoldInternalAllowBothUseCLX">
+         <Summary>Use CLX in mixed project.</Summary>
+         <Desc>Set of both VCL and CLX components are used in a CLX application. Is set by including the unit <See unit=BoldEnvironmentAllowBothUseCLX/> in the project.</Desc>
+      </Var>
+      <Var Name="BoldInternalAllowBothUseVCL">
+         <Summary>Use VCL in mixed project.</Summary>
+         <Desc>Set of both VCL and CLX components are used in a VCL application. Is set by including the unit <See unit=BoldEnvironmentAllowBothUseVCL/> in the project.</Desc>
+      </Var>
+      <Var Name="BoldInternalCLXConfiguration">
+         <Summary>Configuration for CLX, if installed.</Summary>
+         <Desc>Set by including the unit <See unit=BoldEnvironmentCLX/> in the project.</Desc>
+      </Var>
+      <Var Name="BoldInternalCustomConfiguration">
+         <Summary>Custom configuration, if installed.</Summary>
+         <Desc>Set by subclassing <See class=TBoldEnvironmentConfiguration/> and installing an instaces of it. See the source of e.g. <See unit=BoldEnvironmentCLX/>.</Desc>
+      </Var>
+      <Var Name="BoldInternalFreestandingConfiguration">
+         <Summary>Configuration for freestanding application (e.g. a console application)</Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldInternalRunningInIDE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldInternalVCLConfiguration">
+         <Summary>Configuration for CLX, if installed.</Summary>
+         <Desc>set by including the unit <See unit=BoldEnvironmentCLX/> in the project./Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

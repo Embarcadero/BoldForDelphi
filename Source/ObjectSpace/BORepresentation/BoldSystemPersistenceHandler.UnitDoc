@@ -1,0 +1,111 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldSystemPersistenceHandler.UnitDoc 4     02-06-26 14:57 Isje $">
+   <Classes>
+      <Class Name="TBoldSystemPersistenceHandler">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoPreUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchLinksWithObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchObjectById">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllInClassWithSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimeStampOfLatestUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDatabaseWithList">
+               <Summary>Save list of objects to the database.</Summary>
+               <Desc>Called from <See Class="TBoldSystem" Method="UpdateDatabaseWithList" Text="TBoldSystem.UpdateDatabaseWithList"/></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="PersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTimeMappingCache">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

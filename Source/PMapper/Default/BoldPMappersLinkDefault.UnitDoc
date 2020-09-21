@@ -1,0 +1,393 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Default/BoldPMappersLinkDefault.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldDirectMultiLinkDefaultmapper">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareValuesToLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StuffValuesFromLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDirectSingleLinkDefaultmapper">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareValuesToLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StuffValuesFromLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldEmbeddedSingleLinkDefaultMapper">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllowNullAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInitialColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMainColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNonEmbeddedChangePoints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOrderColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEndMemberPMIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEndObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewDefaultId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IsInherited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MainColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OrderColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherEndExact">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherEndMemberPMIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherEndObjectPMIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIndirectMultiLinkDefaultmapper">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareValuesToLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StuffValuesFromLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIndirectSingleLinkDefaultmapper">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareValuesToLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StuffValuesFromLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldLinkDefaultMapper">
+         <Methods>
+            <Method Name="GetObjectPersistenceMappers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEndObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectPersistenceMappers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherEndObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMultiLinkDefaultMapper">
+         <Methods>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsOrdered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNonEmbeddedLinkDefaultMapper">
+         <Methods>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareValuesToLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EmbeddingMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChangePoints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClosestColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClosestOtherEndMemberMapperIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClosestOtherEndObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsOrdered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEndObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRemoteInnerLinkMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessResult">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StuffValuesFromLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClosestColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClosestOtherEndMemberMapperIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClosestOtherEndObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClosestOtherEndObjectMapperIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsIndirect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClassTablename">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ordered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RemoteInnerLinkMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RemoteOtherEndObjectMapperIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSingleLinkDefaultMapper">
+         <Methods>
+            <Method Name="FirstIdInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsOrdered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

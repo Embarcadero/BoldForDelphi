@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="BE_BoldImage.exe"/>
+    <OBJFILES value="BE_BoldImage.obj fMain.obj fViewAutoSize.obj fViewClipboardFmt.obj 
+      fViewStretch.obj ImageDemoClasses.obj"/>
+    <RESFILES value="BE_BoldImage.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) fMain.dfm fViewAutoSize.dfm fViewClipboardFmt.dfm 
+      fViewStretch.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="dbexpress.lib cds.lib"/>
+    <SPARELIBS value="rtl.lib vcl.lib vclx.lib ibxpress.lib dbrtl.lib vcldb.lib bdertl.lib cds.lib dsnap.lib 
+      dbexpress.lib Bold40BCB6.lib Bold40BCB6BDE.lib Bold40BCB6IB.lib 
+      Bold40BCB6VCLGUI.lib Bold40BCB6Uml.lib"/>
+    <PACKAGES value="rtl.bpi vcl.bpi vclx.bpi bcbsmp.bpi dbrtl.bpi vcldb.bpi adortl.bpi 
+      ibsmp.bpi bdertl.bpi vcldbx.bpi qrpt.bpi teeui.bpi teedb.bpi tee.bpi 
+      dss.bpi teeqr.bpi ibxpress.bpi dsnap.bpi vclie.bpi inetdb.bpi inet.bpi 
+      nmfast.bpi webdsnap.bpi bcbie.bpi dclocx.bpi bcb2kaxserver.bpi 
+      Bold40BCB6.bpi Bold40BCB6Utils.bpi Bold40BCB6Ado.bpi Bold40BCB6BDE.bpi 
+      Bold40BCB6Com.bpi Bold40BCB6ComGUI.bpi Bold40BCB6DBExpress.bpi 
+      Bold40BCB6IB.bpi Bold40BCB6MMLink.bpi Bold40BCB6UDPProp.bpi 
+      Bold40BCB6Uml.bpi Bold40BCB6VCLGUI.bpi Bold40BCB6XMILink.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="BE_BoldImage.cpp"/>
+    <INCLUDEPATH value="C:\VSS\DEV\Stage\BCB6\Lib;C:\VSS\DEV\Stage\BCB6\Include;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;&quot;C:\Program Files\Borland\CBuilder6\Lib\Obj&quot;;&quot;C:\Program Files\Borland\CBuilder6\Lib&quot;"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-IC:\VSS\DEV\Stage\BCB6\Lib -IC:\VSS\DEV\Stage\BCB6\Include 
+      -IP:\Common\Support -IP:\Samples\Actions -IP:\Common\Handles 
+      -IP:\Common\Subscription -IP:\UMLModel\Handles -IP:\MoldModel\Handles 
+      -IP:\Handles\Core -IP:\BoldAwareGUI\BoldControls 
+      -IP:\ValueSpace\Interfaces -IP:\Common\Core -IP:\ValueSpace\Id 
+      -IP:\ObjectSpace\BORepresentation -IP:\Common\MsXml 
+      -IP:\ObjectSpace\RTModel -IP:\ObjectSpace\Core -IP:\Common\TaggedValues 
+      -IP:\Common\UML -IP:\MoldModel\TypeNameDictionary -IP:\MoldModel\Core 
+      -IP:\FreestandingValueSpace\Core -IP:\ObjectSpace\Interfaces 
+      -IP:\Persistence\Core -IP:\ValueSpace\Condition 
+      -IP:\ObjectSpace\PessimisticLocking -IP:\BoldAwareGUI\ControlPacks 
+      -IP:\Common\Queue -IP:\Common\Environment -IP:\Handles\Actions 
+      -IP:\Persistence\DB -IP:\Common\Logging -IP:\PMapper\SQL -IP:\PMapper\Core 
+      -IP:\PMapper\Default -IP:\Persistence\ObjectUpgrading -IP:\UMLModel\Core 
+      -IP:\Persistence\BDE -IP:\Persistence\IBX -IP:\Persistence\Propagation 
+      -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=c:\PROGRA~1\borland\CBUILD~2\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 
+      -b- -k -y -v -vi- -c -tW -tWM"/>
+    <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-lC:\VSS\DEV\Stage\BCB6\Lib -D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="BE_BoldImage.cpp" FORMNAME="" UNITNAME="BE_BoldImage" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="BE_BoldImage.res" FORMNAME="" UNITNAME="BE_BoldImage" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fMain.cpp" FORMNAME="frmMain" UNITNAME="fMain" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fViewAutoSize.cpp" FORMNAME="frmImageViewer" UNITNAME="fViewAutoSize" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fViewClipboardFmt.cpp" FORMNAME="frmViewClipboardFmt" UNITNAME="fViewClipboardFmt" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="fViewStretch.cpp" FORMNAME="frmStretch" UNITNAME="fViewStretch" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ImageDemoClasses.cpp" FORMNAME="" UNITNAME="ImageDemoClasses" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1053
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[Excluded Packages]
+C:\VSS\DEV\Stage\BCB6\Bin\Bold40BCB6ExPe.bpl=Bold Package (12)
+
+[HistoryLists\hlIncludePath]
+Count=30
+Item0=C:\VSS\DEV\Stage\BCB6\Lib;C:\VSS\DEV\Stage\BCB6\Include;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation;$(BCB)\include;$(BCB)\include\vcl
+Item1=C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation;$(BCB)\include;$(BCB)\include\vcl
+Item2=C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation;$(BCB)\include\vcl;$(BCB)\include
+Item3=C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation
+Item4=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation
+Item5=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX
+Item6=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE
+Item7=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core
+Item8=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading
+Item9=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default
+Item10=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core
+Item11=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL
+Item12=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging
+Item13=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB
+Item14=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions
+Item15=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment
+Item16=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue
+Item17=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks
+Item18=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking
+Item19=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition
+Item20=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core
+Item21=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces
+Item22=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core
+Item23=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core
+Item24=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary
+Item25=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML
+Item26=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues
+Item27=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core
+Item28=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\Core
+Item29=$(BCB)\include;$(BCB)\include\vcl;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml
+
+[HistoryLists\hlLibraryPath]
+Count=11
+Item0=C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;C:\Program Files\Borland\CBuilder6\Lib\Obj;C:\Program Files\Borland\CBuilder6\Lib
+Item1=C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls
+Item2=..\..\..\..\..\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;$(BCB)\lib\obj;$(BCB)\lib
+Item3=..\..\..\..\..\Stage\BCB6\Lib;C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;$(BCB)\lib\obj;$(BCB)\lib
+Item4=C:\VSS\DEV\Stage\BCB6\Lib;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;$(BCB)\lib\obj;$(BCB)\lib
+Item5=..\..\..\..\..\Stage\BCB6\Lib;..\TreeView;..;C:\Program Files\Borland\CBuilder5\Projects;..\..\..\..\..\Stage\BCB5\Lib;P:\Common\Support;P:\Samples\Actions;P:\PersistenceControllers\Handles;P:\PersistenceControllerCore\Handles;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;$(BCB)\lib\obj;$(BCB)\lib
+Item6=..\..\..\..\..\Stage\BCB6\Lib;..\TreeView;..\;C:\Program Files\Borland\CBuilder5\Projects\;..;..\..\..\..\..\Stage\BCB5\Lib;P:\Common\Support\;P:\Samples\Actions\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\Common\Subscription\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\BoldAwareGUI\BoldControls\;$(BCB)\lib\obj;$(BCB)\lib
+Item7=C:\Program Files\Borland\CBuilder5\Projects;..\;..;C:\VSS\DEV\Stage\BCB5\Lib;P:\Common\Support\;P:\Samples\Actions\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\Common\Subscription\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\BoldAwareGUI\BoldControls\;$(BCB)\lib\obj;$(BCB)\lib
+Item8=C:\Program Files\Borland\CBuilder5\Projects;..\;..;..\..\..\..\..\Stage\BCB5\Lib;P:\Common\Support\;P:\Samples\Actions\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\Common\Subscription\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\BoldAwareGUI\BoldControls\;C:\Stage\BCB5\Lib\;C:\Lib\BCB5\;$(BCB)\lib\obj;$(BCB)\lib
+Item9=..\..\..\..\Lib\BCB5;$(BCB)\lib\obj;$(BCB)\lib
+Item10=..\..\..\..\Lib\BCB5;..\..\..\..\LibBCB5;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=3
+Item0=c:\program files\borland\cbuilder6\source\vcl
+Item1=c:\program files\borland\cbuilder5\source\vcl;C:\VSS\DEV\Source\ObjectSpace\BORepresentation\
+Item2=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[HistoryLists\hIBPIOutputDir]
+Count=1
+Item0=C:\VSS\DEV\Stage\BCB6\Lib
+
+[Debugging]
+DebugSourceDirs=c:\program files\borland\cbuilder6\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

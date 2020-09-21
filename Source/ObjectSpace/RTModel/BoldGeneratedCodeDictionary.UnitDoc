@@ -1,0 +1,144 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/RTModel/BoldGeneratedCodeDictionary.UnitDoc 3     01-09-21 16:57 Jeho $">
+   <Classes>
+      <Class Name="TBoldGeneratedClassDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TheClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGeneratedClassList">
+         <Methods>
+            <Method Name="AddEntry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddObjectEntry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EntryByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGeneratedCodeDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InstallBusinessClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InstallObjectListClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGeneratedCodeList">
+         <Methods>
+            <Method Name="AddGeneratedCodeDescriptorWithFunc">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldGeneratedCodeList</Summary>
+               <Desc>There is no need to create an instance of this class, as the singleton instance required by the system is created and destroyed by the framework.</Desc>
+            </Method>
+            <Method Name="GetDescriptorByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModelDescriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DescriptorByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ModelEntries">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Routines>
+      <Routine Name="BoldGeneratedCodesAssigned">
+         <Summary>Determine if the singleton object of TBoldGeneratedCodeList is assigned.</Summary>
+         <Desc><InlineCode>BoldGeneratedCodesAssigned</InlineCode> returns <InlineCode>true</InlineCode> if the singleton instance of <See Class="TBoldGeneratedCodeList"/> is assigned.</Desc>
+      </Routine>
+      <Routine Name="GeneratedCodes">
+         <Summary>Returns the singleton instance of TBoldGeneratedCodeList.</Summary>
+         <Desc>GeneratedCodes returns the singleton instance of <See Class="TBoldGeneratedCodeList"/>. If it has not yet been created, this routine will create it.
+            <Warning>Destroying the object returned by this function will render the system unstable.</Warning>
+         </Desc>
+      </Routine>
+   </Routines>
+   <Summary>Defines the classes and routines to add modelled classes into the system.</Summary>
+   <Desc>To allow the Bold system to create objects and object lists of the correct type, the system needs to be informed of what your model has introduced.
+      <P>This unit defines the classes holding that information, as well as access methods to the singleton instances of the object that holds information about the code generated for your model.</P>
+      <P>The classes and routines in this unit are used internally by the framework, and there should not be any need for a developer to use any of it directly.</P>
+   </Desc>
+   <Types>
+      <Type Name="TInstallBusinessClasses">
+         <Summary>Prototype for the procedure that installs the object  classes.</Summary>
+         <Desc>A procedure matching this prototype will be generated during source code generation. That procedure adds the classes of your model together with their expression names to the system's list of known classes.
+            <P>The procedure is fully auto-generated, and you do not need to worry about it.</P>
+         </Desc>
+      </Type>
+      <Type Name="TInstallObjectListClasses">
+         <Summary>Prototype for the procedure that installs the object list classes.</Summary>
+         <Desc>A procedure matching this prototype will be generated during source code generation. That procedure adds the typed lists of your model together with their expression names to the system's list of known typed lists.
+            <P>The procedure is fully auto-generated, and you do not need to worry about it.</P>
+         </Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,270 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/Rose98/BoldUMLRose98Link.UnitDoc 6     01-11-09 16:32 Aniv $">
+   <Classes>
+      <Class Name="TBoldUMLRose98Link">
+         <Summary>Rose9 link for backwards compatibility</Summary>
+         <Desc>Supclass to TBoldUMLRoseLink to maintain compatibility with older versions.</Desc>
+      </Class>
+      <Class Name="TBoldUMLRoseLink">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultLogicalPackage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureandExportAssociations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportAssociation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportInheritance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportOperation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportQualifier">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExportSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindInCache">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindPackage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanExport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredUMLDataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIncludeSubPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogicalPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportAssociation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportOperation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportPackage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportQualifier">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoletMultiplicityForRoles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteMultiplicityForNonNavigableRoles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoletePluralSuffix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefreshCache">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIncludeSubPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogicalPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTools">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AdjustEmbedFlag">
+               <Summary>Clears the embed flag for multiassociations</Summary>
+               <Desc>By default embed will be true for all association ends, but this flag is meaningless for multi associations. If this property is true, it will be cleared for multiassociations, otherwise hints will be generated by the model-validation</Desc>
+            </Property>
+            <Property Name="BoldModel">
+               <Summary>The BoldModel component to import to/export from</Summary>
+               <Desc>Set this to point to the model-component that holds your model</Desc>
+            </Property>
+            <Property Name="BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileName">
+               <Summary>Filename of the Rose model</Summary>
+               <Desc>This should be a fully qualified filename of your rose-model</Desc>
+            </Property>
+            <Property Name="GetToolIdOnExport">
+               <Summary>Grab the ToolID of items that are added during export?</Summary>
+               <Desc>All model items in Rose have a ToolID. This is used when exporting the model to match the correct elements in the Bold model and the Rose model. When new elements have been added to the Bold model they do not have any ToolID. If this property is true, then the model-export will grab the ToolID they get when they are exported to Rose for future references. If this property is false, you must import the model after each export to make sure all elements have the correct ToolID</Desc>
+            </Property>
+            <Property Name="IgnoreBrokenAssociations">
+               <Summary>Skip associations that are invalid</Summary>
+               <Desc>In Rose, it is possible to get associations where only one end is connected to a class, if this property is true, then these associations will not be imported to Bold</Desc>
+            </Property>
+            <Property Name="IgnoreUseCaseAssociations">
+               <Summary>Skip associations between classes and UseCases</Summary>
+               <Desc>UML does not make a difference between an association between classes and associations between a class and a UseCase. If you have usecases in your model that are not business classes, then you should set this property to true </Desc>
+            </Property>
+            <Property Name="ImplicitRolesUMLCompliant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IncludeSubPackages">
+               <Summary>Indicates if subpackages to the LogicalPackages should be imported as well</Summary>
+               <Desc>If this property is true, then subpackages to the packages listed in <See Property="LogicalPackages"/> will be imported even if they are not listed, otherwise all pacakges that should be imported must be explicitly listed</Desc>
+            </Property>
+            <Property Name="LogicalPackages">
+               <Summary>Specifies the logical packages of the model to import</Summary>
+               <Desc>If your model contains classes that should not be imported, place them in separate logical packages, and list names of the packages to import in this property</Desc>
+               <SeeAlso><See Property="IncludeSubPackages"/></SeeAlso>
+            </Property>
+            <Property Name="MakeClassesPersistent">
+               <Summary></Summary>
+               <Desc>In Rational Rose, classes are transient by default. If all your classes are persistent, this property should be true, otherwise, you must set the correct value on your classes in your modelling tool, and set this property to false</Desc>
+            </Property>
+            <Property Name="RoseModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Tools">
+               <Summary>Specifies additional tools/tagged values that should be imported</Summary>
+               <Desc>By default, Bold imports the tagged values with the tool name "Bold" and "BoldStdUML". If you have added your own pty-file to your model, and you want these tagged values to be imported, you must list the name of the tool(s) here.</Desc>
+            </Property>
+            <Property Name="UMLModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Connects a TBoldModel to a Rose model file</Summary>
+         <Desc>The <InlineCode>TBoldUMLRoseLink</InlineCode> is used for connecting a <See Class="TBoldModel"/> component to a Rose model file. It holds properties controlling the behaviour of import/export</Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="ROSE_LINKDESC">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ROSE_LINKEXTENSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TRoseLinkPass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

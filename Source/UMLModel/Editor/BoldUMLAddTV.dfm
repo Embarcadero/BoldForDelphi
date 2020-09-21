@@ -1,0 +1,123 @@
+object frmBoldUMLAddTV: TfrmBoldUMLAddTV
+  Left = 305
+  Top = 402
+  BorderStyle = bsDialog
+  Caption = 'Bold UML tagged values editor'
+  ClientHeight = 140
+  ClientWidth = 272
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  Icon.Data = {
+    0000010001002020100000000000E80200001600000028000000200000004000
+    0000010004000000000080020000000000000000000000000000000000000000
+    000000008000008000000080800080000000800080008080000080808000C0C0
+    C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF001111
+    1111111111111111111111111111111111111111111111111111111111111111
+    1111111111111111111111111111111111111111111111111111111111111111
+    1111111111111111111111111111111111111111111111111111111111111111
+    1111111111111111111111111111111111111111111111111111111111111111
+    1111111111111111111111111111111111111111111111111111111111111111
+    1111111111111111111111111111111111111111111111111111111111111111
+    1111111111111111111111111111111111111111111111111111111111111111
+    11111111111111111111111111111111111111111111111111111111111111FF
+    FFF11111FFF111FF711FFF1FF71111FFFFFF111FFFFF11FF81FFFFFFF81111FF
+    11FFF1FF818FF1FF71FF91FFF71111FF111FF1FF119FF1FF98FF111FF81111FF
+    111FF1FF111FF1FF7FF8111FF71111FF111FF1FF111FF1FF9FF8111FF81111FF
+    FFFF11FF119FF1FF78FF111FF71111FFFFF111FF81FFF1FF99FF118FF81111FF
+    11FF111FFFFF11FF71FFFFFFF71111FF111FF111FFF111FF917FFF1FF81111FF
+    111FF111111111FF7111111FF71111FF91FF9111111111FF9111111FF81111FF
+    FFFF1111111111FF7111111FF71111FFFF991111111111FF9111111FF8111111
+    1111111111111111111111111111111111111111111111111111111111110000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    000000000000000000000000000000000000000000000000000000000000}
+  OldCreateOrder = False
+  Position = poDefault
+  OnClose = FormClose
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object GroupBox1: TGroupBox
+    Left = 8
+    Top = 4
+    Width = 256
+    Height = 97
+    Caption = ' Add tagged value '
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 16
+      Top = 19
+      Width = 40
+      Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Tool'
+    end
+    object Label2: TLabel
+      Left = 16
+      Top = 67
+      Width = 40
+      Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Value'
+    end
+    object Label3: TLabel
+      Left = 16
+      Top = 43
+      Width = 40
+      Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Name'
+    end
+    object edTool: TEdit
+      Left = 64
+      Top = 16
+      Width = 182
+      Height = 21
+      TabOrder = 0
+    end
+    object edValue: TEdit
+      Left = 64
+      Top = 64
+      Width = 182
+      Height = 21
+      TabOrder = 2
+    end
+    object edName: TEdit
+      Left = 64
+      Top = 40
+      Width = 182
+      Height = 21
+      TabOrder = 1
+    end
+  end
+  object btOK: TButton
+    Left = 96
+    Top = 108
+    Width = 81
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'OK'
+    Default = True
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object btCancel: TButton
+    Left = 184
+    Top = 108
+    Width = 81
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 2
+  end
+end

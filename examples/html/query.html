@@ -1,0 +1,117 @@
+<html>
+
+<head>
+  <title>Query</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt;
+      <a href="query.html"> Query</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Query</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Simple/ObjectSpace/Query/QueryDemoProject.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/ObjectSpace/Query/BE_Query.bpr">Launch CBuilder-example</a>
+	<p>This example illustrates how different kind of queries can be implemented to control the
+    update behaviour in $(PRODUCT_BASE_NAME).
+    </p>
+    <hr size="1">
+	<p class="head2">How to run</p>
+	<p>Enter <i>Things</i> in the grid using the navigator. Every <i>Thing</i> you create also shows up
+	in the listbox above.
+	</p>
+<ol>
+  <li>Try to save an instance of a Thing without giving it a name.</li>
+  <li>Try to name an instance of a Thing to &quot;It&quot;.</li>
+  <li>Try to drag and drop more than four Things from the grid into the
+    Parts-listbox for a selected Thing in the All things-listbox.</li>
+  <li>Try to drag and drop a Thing as a Part of itself.</li>
+  <li>Select a Thing in the
+	listbox and click the button Lock Name. Now try to change the
+	name of the Thing in the grid. To release the lock use
+	the button Release All.</li>
+</ol>
+	<p class="head2">Control updates</p>
+<p>We have used two ways of controlling the updates. The locking-control is
+implemented through the use of the component <code>TBoldPassthroughSubscriber </code>and
+the other controls are implemented in the overridden framework method <code>ReceiveQueryFromOwned</code> on
+	the class <code>TThing</code>.
+	</p>
+<h3>Use of TBoldPassthroughSubscriber</h3>
+<p>The component <code>TBoldPassthroughSubscriber</code> is implemented in this example
+	as a private variable called LockSubscriber in the main unit of the project.
+The variable is created on the
+	event FormCreate.&nbsp;
+	</p>
+<p> When you select an object in the All things-listbox and
+	click the button Lock Name the LockSubscriber is added as a
+subscription to the name
+	attribute of the selected object. From now on the update possibility
+	of the name of this object will be prevented until the lock is released with
+the button Release All.
+	</p>
+<p class="head3">Use of ReceiveQueryFromOwned</p>
+<p>The other update controls in this example are implemented in <code>ReceiveQueryFromOwned</code>.
+	</p>
+	<p>In this example the method <code>ReceiveQueryFromOwned</code> implements the following
+	constraints:
+	</p>
+    <ul>
+      <li>A Thing may not have more than four Parts.</li>
+      <li>A Thing may not be a Part of itself.</li>
+      <li>A Thing may not be called &quot;It&quot;.</li>
+      <li>A Thing may not be saved to the database if it has an empty name.</li>
+    </ul>
+	
+	<p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_OverrideFWMethods.htm" target="self">
+			How to override framework methods</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_Subscribe.htm" target="self">
+			Where to use subscriptions</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+  		<li>
+			<a href="../../Help/BfD.hlp" target="self">Programmers Reference</a> 
+            (<font size="1">[BfDInstallDir]/help/Bfd.hlp</font>) for an explanation of the method ReceiveQueryFromOwned 
+            and of the component BoldPassthroughSubscriber</li>
+	</ul>
+
+	<br>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and alias is
+    established you only have to use the &quot;Open system&quot; button when running the example
+    program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks are
+      properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

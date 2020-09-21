@@ -1,0 +1,61 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Validator/BoldDbStructureValidator.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldDbStructureValidator">
+         <Methods>
+            <Method Name="DeActivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Validate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateColumnsForTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateIndicesForTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateNotNullForColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CurrentTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

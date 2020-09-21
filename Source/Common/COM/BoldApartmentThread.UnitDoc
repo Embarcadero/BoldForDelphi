@@ -1,0 +1,113 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/COM/BoldApartmentThread.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldApartmentThread">
+         <Events>
+            <Event Name="CreateInstanceProc">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Init">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitServerWindow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarshalInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnmarshalInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApartmentType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CreateResult">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectCreatedEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ServerWindow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UnkOuter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="WM_CREATEOBJECTINTHREAD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="CreateApartmentThreadWindow">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="PCreateInstanceInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldApartmentType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TCreateInstanceInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TCreateInstanceProc">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

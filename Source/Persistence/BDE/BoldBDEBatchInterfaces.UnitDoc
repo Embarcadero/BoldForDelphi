@@ -1,0 +1,87 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Handles/BoldBDEBatchInterfaces.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldBDEBatchQuery">
+         <Methods>
+            <Method Name="BatchExecSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAccumulatedParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAccumulatedSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasCachedStatements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InstallBatchQueries">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AccumulatedParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AccumulatedSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasCachedStatements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="BOLDBATCHQUERYMAXSIZE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BOLDBATCHQUERYSEPARATOR">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

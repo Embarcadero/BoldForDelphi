@@ -1,0 +1,129 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldVariableDefinitionCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldVariableDefinitionCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariableTupleList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="VariablesChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldVariableTupleCom">
+         <Methods>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUseListElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveHandleEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseListElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VariableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldVariableTupleListCom">
+         <Methods>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameIsUnique">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameIsValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Owner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

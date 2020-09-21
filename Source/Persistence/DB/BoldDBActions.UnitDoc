@@ -1,0 +1,189 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Actions/BoldDBActions.UnitDoc 4     02-05-06 18:03 Johosos $">
+   <Classes>
+      <Class Name="TBoldIBAliasAction">
+         <Events>
+            <Event Name="OnAliasCreated">
+               <Summary>Event triggered when the alias has been created.</Summary>
+               <Desc>Plug into this event to perform GUI updates or something.</Desc>
+            </Event>
+            <Event Name="OnSchemaGenerated">
+               <Summary>Event triggered when the schema has been generated.</Summary>
+               <Desc>Plug into this event to perform GUI updates or something.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AliasCreated">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="CheckAllowEnable">
+               <Summary>Determine if the action is enabled.</Summary>
+               <Desc>This action is only allowed to execute if the system is closed.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ForceAlias">
+               <Summary>Determine if an existing alias should be overwritten.</Summary>
+               <Desc>This method allows the user to intercept when the requested alias has been found to exist.</Desc>
+            </Method>
+            <Method Name="ForceRegenerateAliasAndSchema">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateSchema">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetEffectivePassword">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetEffectiveServerName">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetEffectiveUserName">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetPersistenceHandleBDE">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetPersistenceHandleDB">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SchemaGenerated">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetPHandleDBName">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetPageSize">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetSQLDialect">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="getEffectiveAliasName">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EffectiveAliasName">
+               <Summary>The actual alias used.</Summary>
+               <Desc>If the persistence handle connected to the handle has a databasename set, it will be used as first choice. If not, the name of the application, less the extension, will be used.</Desc>
+            </Property>
+            <Property Name="EffectivePassword">
+               <Summary>The actual password used for DB access.</Summary>
+               <Desc>If the persistence handle connected to the handle has a password set, it will be used as first choice. If not, the <See Property="Password"/> will be used.</Desc>
+            </Property>
+            <Property Name="EffectiveServerName">
+               <Summary>The actual path to and name of the database file.</Summary>
+               <Desc>If the variable <See Var="BoldPreferedDbPath"/> has been set to an existing directory, it will be used as the first choice. If not, the database file will reside in the same directory as the application, with the name <See Property="EffectiveAliasName"/> and extension .GDB.</Desc>
+            </Property>
+            <Property Name="EffectiveUserName">
+               <Summary>The actual user name used for DB access.</Summary>
+               <Desc>If the persistence handle connected to the handle has a username set, it will be used as first choice. If not, the <See Property="UserName"/> will be used.</Desc>
+            </Property>
+            <Property Name="OnAliasCreated">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnSchemaGenerated">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PageSize">
+               <Summary>Page size to use for the database.</Summary>
+               <Desc>Refer to the interbase documentation for an elaboration of the purpose of pagesize.</Desc>
+            </Property>
+            <Property Name="Password">
+               <Summary>Password used to access DB</Summary>
+               <Desc>Password used to access DB</Desc>
+            </Property>
+            <Property Name="PersistAlias">
+               <Summary>Determines the life span of the alias.</Summary>
+               <Desc>The alias will be saved or discarded depending on this poperty.
+                  <UL>
+                     <LI><InlineCode>paYes</InlineCode> - alias is saved for future use.</LI>
+                     <LI><InlineCode>paNo</InlineCode> - alias is discarded when the application is terminated.</LI>
+                     <LI><InlineCode>paQuery</InlineCode> - User decides what happens to the alias.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="PersistenceHandleBDE">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Property>
+            <Property Name="PersistenceHandleDB">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Property>
+            <Property Name="SQLDialect">
+               <Summary>Determine which SQL dialect to use for the database.</Summary>
+               <Desc><InlineCode>SQLDialect</InlineCode> determines which SQL dialect to use when creating the database.
+                  <Note>Only values 1 and 3 are legal. 3 corresponds to Interbase v6.x.</Note>
+               </Desc>
+            </Property>
+            <Property Name="SetPMapperDBName">
+               <Summary>Controls if the persistence handle should be updated with new alias info.</Summary>
+               <Desc>If this property is <InlineCode>true</InlineCode>, the persistence handle connected to the system handle will get its <See Class="TBoldPersistenceHandleBDE" Property="DatabaseName"/> set to the newly generated alias.</Desc>
+            </Property>
+            <Property Name="Username">
+               <Summary>The user name used to connect to the DB.</Summary>
+               <Desc>The user name used to connect to the DB.</Desc>
+            </Property>
+         </Properties>
+         <Summary>This action can be used to generate an alias and an interbase schema.</Summary>
+         <Desc>This alias allows you to completely forget about the persistenec layer, as it can set up an alias, create a database file and generate the schema to persist data - all in run time!
+            <P>This is a great time saver during the prototype phase.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="DEFAULTPASSWORD">
+         <Summary>Default password to access DB.</Summary>
+         <Desc>Default password to access DB. Shh, don't tell anyone, but this is the default password for InterBase.</Desc>
+      </Const>
+      <Const Name="DEFAULTUSERNAME">
+         <Summary>Default user name to access DB.</Summary>
+         <Desc>Default user name used to access DB. Shh, don't tell anyone, but this is the default user name of Interbase.</Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Action for generating an interbase database.</Summary>
+   <Desc>This unit defines an action that sets up a BDE alias, an interbase database file and generates the schema in the database.</Desc>
+   <Types>
+      <Type Name="TPersistAlias">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldPreferedDbPath">
+         <Summary>Global variable for the default path of the database file.</Summary>
+         <Desc>This variable can be set to specify the path to the generated database file.
+            <P>Note how blazing fast DB access gets if you place it on a RAM drive.</P>
+         </Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

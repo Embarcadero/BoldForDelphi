@@ -1,0 +1,81 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesPropagation/BoldIDAdderHandle.UnitDoc 5     02-03-13 12:50 Johosos $">
+   <Classes>
+      <Class Name="TBoldIdAdderHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ListenerDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteAutoExtendLeaseProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteAutoStartProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteLeaseDurationProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteMachineNameProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteOnRegistrationFailedEventHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoletePollingIntervalProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObsoleteProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setBoldListenerHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldListener">
+               <Summary></Summary>
+               <Desc>The <InlineCode>BoldListener</InlineCode> property is a reference to a <InlineCode>TBoldListenerHandle</InlineCode> object. It receives the <InlineCode>BoldClientID</InlineCode> assigned by the propagator and passes it along to the BoldIDAdderHandle. </Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldIDAdderHandle is an <Jump ID="Mech_OSS" Text="Object Space Synchronization"/> component. It ensures that the correct BoldClientID is passed along with the notifications sent to the propagator.</Summary>
+         <Desc> The <InlineCode>TBoldIDAdder</InlineCode> derives from <See Class="TBoldPersistenceHandlePassthrough"/>. It intercepts the calls received from a <See Class="TBoldSystemHandle"/> object, sets the value of the BoldClientID passed as parameter to the ID assigned by the propagator, and delegates them to its <See Class="TBoldPersistenceHandlePassthrough" Property="NextPersistenceHandle"/>.
+            <BH>Usage</BH>
+            <InlineCode>TBoldIDAdderHandle</InlineCode> should be connected to a object space by setting the BoldSystem's PersistenceHandle property. The <InlineCode>NextPersistenceHandle</InlineCode> property should be set to the identifier of a <See Class="TBoldSnooperHandle"/> component.
+            <P>For more information on using the object space synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization"/>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc>
+      <P>For more information on using the Object Space Synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization Server Overview"/>.</P>
+   </Desc>
+</DLUnitDoc>

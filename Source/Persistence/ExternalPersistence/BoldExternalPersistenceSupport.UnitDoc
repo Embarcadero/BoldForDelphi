@@ -1,0 +1,67 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldObjectPersistenceAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindRegisteredPersistenceInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsObjectContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterPersistenceInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AdaptedInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IPersistentBoldObject">
+         <Methods>
+            <Method Name="GetAsObjectContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsObjectContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Super interface for the persistence interfaces that can be generated from the model editor</Summary>
+         <Desc>Persistence handles are not allowed to see the true face of objects. They must always operate on the interfaces defined by <see interface=IBoldValueSpace>/<see interface=IBoldObjectContents>. In order to allow for easier access for developers implementing the events of the eventdriven external persistence handle, it is possible to generate a set of model lookalike interfaces (using the model editor). These descents from IPersistentBoldObject, and will define access properties for attributes and associations. </Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldObjectPersistenceAdapterClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,37 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/TaggedValues/BoldUMLTaggedValues.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="TAG_DERIVED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DOCUMENTATION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_PERSISTENCE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_PERSISTENCE_PERSISTENT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_PERSISTENCE_TRANSIENT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="UMLTaggedValueList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

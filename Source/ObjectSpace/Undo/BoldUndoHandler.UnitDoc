@@ -1,0 +1,463 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/Undo/BoldUndoHandler.UnitDoc 6     02-08-09 16:24 Johosos $">
+   <Classes>
+      <Class Name="TBoldUndoBlock">
+         <Methods>
+            <Method Name="AllIdsInClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyToValueSpaceAndReplaceOwnValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplytranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNamedBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContainsChanges">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDependantBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFSValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinksToObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HasObjectContentsForAnyObjectInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDependantOn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Merge">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Redo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFSValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Undo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BlockName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContainsChanges">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FSValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Previous">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUndoBlockList">
+         <Methods>
+            <Method Name="AddBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplytranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssertedIndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanMergeBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanMoveBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanMoveToTop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAssertedBlocksByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAssertedBlocksByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBlocksByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBlocksByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDependantBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTopBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalRemoveBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MergeAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MergeBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveToTop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RenameBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AssertedBlocksByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AssertedBlocksByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BlocksByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BlocksbyIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUndoHandler">
+         <Methods>
+            <Method Name="ApplytranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanExchangeBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanRedoBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanUndoBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckForInitialized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearAllUndoBlocks">
+               <Summary>Implementation of IBoldUndoHandler.ClearAllUndoBlocks</Summary>
+               <Desc>For details, see <see interface=IBoldUndoHandler method=ClearAllUndoBlocks></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoUndo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoUndoInTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExchangeBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBasicBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFetchedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFetchedValueOfDirectMultiLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFetchedValueOfIndirectMultiLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNonUndoableBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRedoBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRedoList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUndoBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUndoList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueBlockName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MergeBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PrepareUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RedoBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RedoCurrentBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Redolatest">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCheckPoint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInitialized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNamedCheckPoint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnDoLatest">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UndoBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UndoCurrentBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BasicBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Initialized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NonUndoableBlock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RedoBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UndoBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UndoState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="C_BASIC_BLOCK_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="C_UNDOABLE_BLOCK_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

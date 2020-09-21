@@ -1,0 +1,148 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/ADO/BoldPersistenceHandleADO.UnitDoc 5     02-08-07 17:48 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandleADO">
+         <Methods>
+            <Method Name="AddExtendedProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetADOConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataSource">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExtendedProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHostName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInitialCatalog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNetWorkProtocol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPassword">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPersistSecurityInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUserName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateInternalConnectionString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getEffectiveConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ADOConnection">
+               <Summary></Summary>
+               <Desc>If this property is set to a TADOConnection, then the connection details will be taken from there when the handle tries to connect to the database</Desc>
+            </Property>
+            <Property Name="DataSource">
+               <Summary></Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+            <Property Name="EffectiveConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExtendedProperties">
+               <Summary></Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+            <Property Name="HostName">
+               <Summary>The hostname of the ADO database</Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+            <Property Name="InitialCatalog">
+               <Summary></Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+            <Property Name="NetWorkProtocol">
+               <Summary></Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+            <Property Name="PersistSecurityInfo">
+               <Summary></Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+            <Property Name="Provider">
+               <Summary></Summary>
+               <Desc>This property is used when building the connection string to the ADO database if the <See Property="ADOConnection"/>-property is not specified</Desc>
+            </Property>
+         </Properties>
+         <Summary>This handle allows objects to be stored in/retrieved from a database using the ADO protocol</Summary>
+         <Desc>
+            <Warning>This component is deprecated! Please use TBoldPersistenceHandleDB and a database-adapter instead. For details on how to migrate to the new architecture, please read <Jump ID="PersistenceHandleUpgrade" Text="Upgrade PersistenceHandle"/></Warning>
+
+This component is used to connect an object layer to an ADO database.
+            <P>The easiest way to use it is to connect it to a TADOConnection, and specify the connection details there, but it can also be configured using its own properties. In the later case, a connectionstring will be built using the specified settings.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldNetWorkProtocolStringRep">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldStringToNetworkProtocol">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldNetWorkProtocol">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,198 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/Core/BoldUMLModelLink.UnitDoc 3     01-11-13 11:42 Joho $">
+   <Classes>
+      <Class Name="TBoldUMLModelLink">
+         <Methods>
+            <Method Name="ExportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanExport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanExport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract class. Intended for subclassing to implement a concrete link to a modelling tool</Summary>
+         <Desc>To support an external modelling tool, the conversion to and from the model format of this tool must be implemented.
+            <P>Subclass this component and implement the <See Method="ImportModel"/> and optionally the <See Method="ExportModel"/> methods (if you implement <InlineCode>ExportModel</InlineCode>, you should also implement <See Method="GetCanExport"/> and return <InlineCode>True</InlineCode>. <BH>Registration</BH>A concrete model link must be registered by calling <see routine= BoldUMLModelLinkList>.<see class=TBoldUMLModelLinkList method=add text=add> in the initialization of the unit. It is also good manors to unregister the link in the finalization:
+<code>
+finalization
+  if BoldUMLModelLinkListAssigned then
+    BoldUMLModelLinkList.RemoveLink(TMyModelLink);
+end.
+</code>
+
+         </Desc>
+      </Class>
+      <Class Name="TBoldUMLModelLinkDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFilterString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Description">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FilterString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ModelLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Suffix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUMLModelLinkList">
+         <Methods>
+            <Method Name="AddLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorByLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorBySuffix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileFilter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Descriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileFilter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkDescriptorByLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkDescriptorBySuffix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldGetUMLModelLinkForComponent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldUMLModelLinkList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldUMLModelLinkListAssigned">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldUMLModelLinkClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,140 @@
+<html>
+
+<head>
+  <title>BIOS Client</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_compound.html" target="menu">Compound Examples</a> &gt;
+      <a href="bios_client.html">BIOS Client</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">BIOS Client</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell ends -->
+    <a href="../Delphi/Compound/Bios/Client.dpr">Launch Delphi-example</a>
+    <p>This example of how to use the COM based components in $(PRODUCT_BASE_NAME) is based on the
+    classic example of Buildings and owners. Some parts have been reused completely unmodified, some
+    parts ported using the Clientifier tool, and some parts are new for the example.
+    </p>
+    <p class="note"><b>NOTE!</b> To run this example, you must register two DLLs that ship with
+    $(PRODUCT_BASE_NAME) (BoldComObjectSpace.dll and BoldComConnection.dll). They contain the
+    typelibraries to use the com-support in $(PRODUCT_BASE_NAME). You must also register the TLB-file
+    that is in the bios/core catalog (BuildingsAndOwners.tlb)
+    </p>
+    <hr size="1">
+    
+    <p class="head2">How to register the dll's</p>
+    <p>To do the registration, use the following:</p>
+    <ul>
+      <li>regsvr32.exe<br>
+        &quot;c:\program files\BoldSoft\&lt;installation dir&gt;\bin\BoldComObjectSpace.dll&quot;
+      <li>regsvr32.exe<br>
+        &quot;c:\program files\BoldSoft\&lt;installationdir&gt;\bin\BoldComConnection.dll&quot;
+      <li> BuildingsAndOwners.tlb<br>
+        &quot;c:\program files\Borland\DelphiX\bin\tregsvt.exe&quot;
+    </ul>
+<p class="head2">Clientify the model</p>
+    First of all, the original GUI unit (and the new renderer unit which collects all the renderers of the
+    old example on a single datamodule) was converted using the clientifier program, and stored in the
+    directory ClientGui. The Clientifier will change all Bold aware components into their COM equivalents
+    (TBoldEdit -&gt; TBoldEditCom etc). It will also change a number of type references into the COM
+    equivalents (TBoldElement -&gt; IBoldElement, TBoldObject -&gt; IBoldObject etc). It will modify the
+    uses statement of the units to include the correct units with the COM declarations. We also loaded the
+    UML-model into the clientifier and got references to the business layer converted (TPerson -&gt; IPerson etc).
+    <p>Then we added a datamodule to handle the connection to the server, Client\DMClient, with the following components:
+    </p>
+<ul>
+  <li>BoldComConnectionHandle1 - The client side gateway to handle all communication with the
+    server:<br><br>ServerCLSID = the same guid as is found in the ServerCode.pas unit</li>
+  <li>SystemHandle - The COM client of the SystemHandle found on DMCore in the server:<br><br>
+    ConnectionHandle = BoldComConnectionHandle1 - specifies the gateway to use when talking to the server.<br>
+    ObjectName = System - The objectname of the ServerElementHandle to connect to on the server.</li>
+</ul>
+	<p>Now, the components on ClientGui\MainForm.pas can be connected to the SystemHandle of Client\DMClient.
+	Some uses statements has to be manually corrected, this could be avoided if the datamodule of the
+    client had the same name as the original datamodule with the TBoldSystemHandle (ie DMCore).
+    </p>
+<p class="head2">Code modifications</p>
+    <p>The program needs some further manual changes:</p>
+<ul>
+  <li>Objects can not be created using <code>TPerson.Create(nil)</code>
+    any more since there is no TPerson on the Client, and interfaces (IPerson) doesn't have constructors.
+    Instead we must call a method on IBoldSystem (Delete still works as usual though):<br>
+    &nbsp;&nbsp; <code>DMClientSystem.SystemHandle.System.CreateNewObject('Person', True );</code></li>
+  <li>TBoldSystemHandleCom.Active is not the same as TBoldSystemHandle.Active. Active on the client system
+    handle refers to whether the handle is connected or not, whereas Active on the normal system handle
+    means whether there is a system with objects or not. The property on the client system handle that
+    corresponds to the Active property on the normal system handle is called SystemActive.</li>
+  <li>The Client can not activate or deactivate the system handle on the server.</li>
+  <li>Autoforms are not yet supported on the client side.</li>
+  <li>The equivalent of &quot;<font face="Courier New">is</font>&quot; on interfaces is called
+    <font face="Courier New">QueryInterface</font>:<br>
+   <code><b>if</b> element <b>is</b> TPerson <b>then</b> -&gt; <b>if</b>
+    element.QueryInterface(IPerson, result) = S_OK <b>then</b></code>
+  </li>
+  <li>
+    <p class="close">&quot;<font face="Courier New">as</font>&quot; can be used as usual with interfaces and works like
+    an implicit QueryInterface with no checking of the result.</li>
+  <li>The &quot;M_&quot;-properties are not exposed in the COM-interfaces, subscription must be done by
+    calling SubscribeToExpression on the business objects.</li>
+  <li>Filters and comparers are not supported on the client side (but listhandles on the server side can
+    have filters and sorters and be exposed with a name to the client).</li>
+  <li>There is no locking mechanism of attributes from the clients (ie HoldsChangedValue,
+    ReleaseChangedValue, ObservermayModify).</li>
+</ul>
+
+<p class="head3">Placing of subscriptions</p>
+<p>
+
+  Placing subscriptions looks a little bit different on the client side that we are used to.
+    The signature for <code>IBoldElement.SubscribeToExpression</code> looks like this:
+    <code>procedure SubscribeToExpression(const Expression: WideString;&nbsp;<br>
+    &nbsp;&nbsp;const ClientId: WideString;<br>
+    &nbsp;&nbsp;SubscriberId: Integer;<br>
+    &nbsp;&nbsp;Resubscribe: WordBool;<br>
+    &nbsp;&nbsp;CancelOld: WordBool);</code>
+ 	<br>
+    <br>The expression is what we are used to, an OCL expression that we want to subscribe to. The
+    ClientId identifies the client placing the subscription, and the SubscriberID identifies the
+    subscriber. All subscribers on the clientside will be of the class TBoldComClientSubscriber, and
+    fortunately, this has the properties ClientId and SubscriberID which satisfies our purposes.
+    <br>The Resubscribe parameter is the same as for normal subscriptions, Force the requested event
+    breResubscribe for all subscriptions that are placed.
+    <br>CancelOld is a shortcut to reduce the number of network calls. instead of calling
+    CancelAllSubscriptions and then call SubscribeToExpression, the CancelOld parameter can be sent as
+    true. Otherwise it should always be false.
+
+<!-- Content cell ends -->
+  
+</p>
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

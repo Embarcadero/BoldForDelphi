@@ -1,0 +1,121 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/Core/BoldUpdatePrecondition.UnitDoc 4     02-01-30 15:08 Jano $">
+   <Classes>
+      <Class Name="TBoldOptimisticLockingPrecondition">
+         <Methods>
+            <Method Name="AddFailedObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignOutValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearValueSpace">
+               <Summary>Clears the valuespace of the condition</Summary>
+               <Desc>Clears the contents of the valuespace. This can be used to optimize the streaming of the condition when the contents of the valuespace has already been used</Desc>
+            </Method>
+            <Method Name="GetFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFailureList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFailureReason">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFreeStandingValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasOptimisticLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="FailureList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FreeStandingValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasOptimisticLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUpdatePrecondition">
+         <Methods>
+            <Method Name="AssignOutValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFailureReason">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Failed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FailureReason">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,73 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Propagation/BoldPersistenceControllerPassthrough.UnitDoc 3     02-03-13 12:45 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceControllerPassthrough">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMExactifyIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchIDListWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMSetReadOnlyness">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToGlobalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToLocalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveNewIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToPeristenceEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getNextPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="NextPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

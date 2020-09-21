@@ -1,0 +1,250 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldUtils.UnitDoc 7     02-07-03 16:20 Isje $">
+   <Classes>
+      <Class Name="TBoldPassThroughNotifier">
+         <Methods>
+            <Method Name="CreateWithEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldAnsiEqual">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldAppendToStrings">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldCaseIndependentPos">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldCaseIndpendentEqual">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldIsPrefix">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldNamesEqual">
+         <Summary>Compare two string values</Summary>
+         <Desc>Compares two string values without case sensitivity and return <inlinecode>True</inlinecode> if they are equal, else <inlinecode>False</inlinecode>.
+<P>BoldNamesEqual makes use of <inlinecode>SysUtils.AnsiCompareText</inlinecode>.</Desc>
+      </Routine>
+      <Routine Name="BoldParseFormattedDate">
+         <Summary>This function tries to parse a date according to a set of formats</Summary>
+         <Desc>The function takes a set of formats and tries to parse the value as one of the formats, if it succeeds to parse as one of the formats, it returns true, and set the date-parameter to the parsed value. 
+The format-parameter takes an array of date-formats. The formats can contain any characters, the characters "y", "m" and "d" will be parsed as the year, month and date of the value-parameter, any other character must match exactly for the format to be OK.</Desc>
+         <Examples>
+            <Example>
+               <Body>This function could be used to get a date-attribute that accepts a wide range of date-formats. 
+                  <Code>procedure TBANiceDate.SetStringRepresentation(
+  Representation: TBoldRepresentation; 
+  Value: string);
+var
+  Date: TDateTime;
+begin
+  if BoldParseDate(Value, [
+    'yyyy-mm-dd', 'yy-mm-dd', 'yymmdd', 'ddmmyy',
+    'dd/mm-yy', 'd/mm-yy', 'dd/m-yy', 'd/m-yy',
+    'dd/mm-yyyy', 'd/mm-yyyy', 'dd/m-yyyy', 'd/m-yyyy',
+    'dd/mm -yy', 'd/mm -yy', 'dd/m -yy', 'd/m -yy',
+    'dd/mm -yyyy', 'd/mm -yyyy', 'dd/m -yyyy', 'd/m -yyyy'
+    ], Date) then
+    AsDate := Date
+  else
+    raise Exception.Create('Invalid date : ' + value):
+end;</Code>
+               </Body>
+            </Example>
+         </Examples>
+      </Routine>
+      <Routine Name="BoldParseFormattedDateList">
+         <Summary>Parses a date according to a list of formats</Summary>
+         <Desc>For details, see <see routine=BoldParseFormattedDateList></Desc>
+      </Routine>
+      <Routine Name="BoldRootRegistryKey">
+         <Summary>Returns the product's root registry key. </Summary>
+         <Desc> Returns a string similar to this: "Software\\BoldSoft\\BfD31D5Ent\\3.1". </Desc>
+      </Routine>
+      <Routine Name="BoldSeparateStringList">
+         <Summary>Returns a separated string list</Summary>
+         <Desc>The function takes the string list argument and extract each string from it. It places each string in the string result output and separates them with the separator argument. To the resulting string the PreString and PostString arguments are added.
+		<code>MyStringList.Strings[0] := 'Henry';
+MyStringList.Strings[1] := 'Ann';
+MyStringList.Strings[1] := 'Philip';
+MyString := BoldSeparateStringList(MyStringList, ', ', '[', ']');
+
+MyString = '[Henry, Ann, Philip]'</code></Desc>
+      </Routine>
+      <Routine Name="BoldSeparatedAppend">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldStrAnsiEqual">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldStrCaseIndpendentEqual">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldStrEqual">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldStrStringEqual">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldTrim">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldVariantToStrings">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BooleanToString">
+         <Summary>Returns a boolean as string</Summary>
+         <Desc>This function takes a boolean argument and returns it as a string value, i.e "True" or "False".</Desc>
+      </Routine>
+      <Routine Name="CapitalisedToSpaced">
+         <Summary>Return a spaced string</Summary>
+         <Desc>Takes the string argument and splits it to a spaced string by each capitalised letter that is preceded by a lower-case letter.
+		<code>MyString := 'MySpacedString';
+ResultString := CapitalisedToSpaced(MyString);
+
+ResultString = 'My Spaced String'</code></Desc>
+      </Routine>
+      <Routine Name="CharCount">
+         <Summary>Count number of stated chars in a string.</Summary>
+         <Desc>Returns number of stated chars (case sensitive) in a string.
+		<code>MyString := 'All my special chars';
+MyInteger := CharCount('a', MyString);
+
+MyInteger = 2;</code></Desc>
+      </Routine>
+      <Routine Name="DateToStrFmt">
+         <Summary>Return a date value as a string according to stated format.</Summary>
+         <Desc>The function takes a date value, a format specification and a constant separator charachter, set to '\', and returns a string value of the date.
+		<code>MyString := DateToStr(now);
+MyDateString := DateToStrFmt(now, 'dd mmm, yyyy');
+
+MyString = '2002-06-11'
+MyDateString = '11 jun, 2002'</code></Desc>
+      </Routine>
+      <Routine Name="DirectoryExists">
+         <Summary>Checks if directory exists.</Summary>
+         <Desc>Returns true if the supplied name corresponds to an existing directory in the filesystem. </Desc>
+      </Routine>
+      <Routine Name="EnsureTrailing">
+         <Summary>Ensure trailing char.</Summary>
+         <Desc>Ensure that the specified string is terminated with the specified char.
+		<code>MyString := 'a b c ... ';
+EnsureTrailing(MyString, 'z');
+		
+MyString = 'a b c ... z'</code></Desc>
+      </Routine>
+      <Routine Name="EnumToStrings">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="ForceDirectories">
+         <Summary> Checks if the directory exists.</Summary>
+         <Desc>If the directory does not exist, it creates the the missing parent-directories and finally the directory.</Desc>
+      </Routine>
+      <Routine Name="GetComputerNameStr">
+         <Summary>Get local computer name</Summary>
+         <Desc>Returns the name of the local computer. If the computers OS is Linux this function just returns the string 'MyMachine'. If the OS is Windows the function uses the Windows function GetComputerName to get the result.</Desc>
+      </Routine>
+      <Routine Name="GetLowerLimitForMultiplicity">
+         <Summary></Summary>
+         <Desc>Returns the lower limit in a multiplicity statement. If the specified multiplicity statement is empty the function returns 0.
+		<code>MyInteger := GetLowerLimitForMultiplicity('');
+MyInteger = 0
+
+MyInteger := GetLowerLimitForMultiplicity('1..5');
+MyInteger = 1
+
+MyInteger := GetLowerLimitForMultiplicity('n');
+MyInteger = 0</code></Desc>
+      </Routine>
+      <Routine Name="GetModuleFileNameAsString">
+         <Summary>Returns the modules file name.</Summary>
+         <Desc>If inparam IncludePath is set to <inlinecode>true</inlinecode> the path to the file is also included in the result string, if not only the name of the file is returned. The function makes use of Windows.GetModuleFileName.</Desc>
+      </Routine>
+      <Routine Name="GetUpperLimitForMultiplicity">
+         <Summary></Summary>
+         <Desc>Returns the upper limit in a multiplicity statement. If the specified multiplicity statement is empty the function returns 1. If the statement isn't a valid integer the value of the system constant <inlinecode>MaxInt</inlinecode> is returned
+		<code>MyInteger := GetUpperLimitForMultiplicity('');
+MyInteger = 1
+
+MyInteger := GetUpperLimitForMultiplicity('0..5');
+MyInteger = 5
+
+MyInteger := GetUpperLimitForMultiplicity('0..n');
+MyInteger = 2147483647 // MaxInt</code></Desc>
+      </Routine>
+      <Routine Name="IsLocalMachine">
+         <Summary></Summary>
+         <Desc>Takes a string and determines whether the string is the name of the local computer or not. If the string is empty or if it is the name of the local computer <inlinecode>True</inlinecode> is returned, else <inlinecode>False</inlinecode>.</Desc>
+      </Routine>
+      <Routine Name="Sleep">
+         <Summary>Bold for Delphi 5 method.</Summary>
+         <Desc>Calls the <inlinecode>Windows.Sleep</inlinecode> method with specified milliseconds. The <inlinecode>Windows.Sleep</inlinecode> method suspends the execution of the current thread.</Desc>
+      </Routine>
+      <Routine Name="SpacedToCapitalised">
+         <Summary>Return a string with no spaces</Summary>
+         <Desc>Takes the string argument and removes all the spaces.
+		<code>MyString := 'My not Spaced String';
+ResultString := SpacedToCapitalised(MyString);
+
+ResultString = 'MynotSpacedString'</code></Desc>
+      </Routine>
+      <Routine Name="StrToDateFmt">
+         <Summary></Summary>
+         <Desc></Desc>
+     </Routine>
+      <Routine Name="StringListToVarArray">
+         <Summary></Summary>
+         <Desc>Takes a string list as argument and returns it as a variant array.</Desc>
+      </Routine>
+      <Routine Name="StringToBoolean">
+         <Summary>Returns a string as boolean</Summary>
+         <Desc>This function takes a string argument and returns it as a boolean value, i.e. <inlinecode>True</inlinecode> or <inlinecode>False</inlinecode>.
+		<P>If the string argument is 'Y', 'T' or 'TRUE' <inlinecode>True</inlinecode> is returned else <inlinecode>False</inlinecode>. Note! The case of the letters in the string doesn't matter.</P></Desc>
+      </Routine>
+      <Routine Name="TimeStampComp">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldNotificationEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldRunningAsDesignTimePackage">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

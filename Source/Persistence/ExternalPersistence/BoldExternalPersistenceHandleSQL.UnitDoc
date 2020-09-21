@@ -1,0 +1,84 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceHandleSQL">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of <InlineCode>TBoldExternalPersistenceHandleSQL</InlineCode></Summary>
+               <Desc>
+                  <P>Use create to create an instance of <InlineCode>TBoldExternalPersistenceHandleSQL</InlineCode>.</P>
+                  <P>Note that it needs some information to do its thing, most notably the <See Property="DatabaseAdapter"/> must be set.</P>
+               </Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary>Creates an instance of <See Class="TBoldExternalPersistenceControllerSQL"/></Summary>
+               <Desc>
+                  <P>There is no need to call this method manually, as it is called automatically by the Bold framework.</P>
+                  <P>If you need to access the persistence controller, use <See Method="GetPersistenceController"/></P>
+               </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>
+                  <P>Destroys the <InlineCode>TBoldExternalPersistenceHandleSQL</InlineCode>, freeing all resources</P>
+               </Desc>
+            </Method>
+            <Method Name="GetClassesToHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary>Returnes a <See Class="TBoldExternalPersistenceControllerSQL"/></Summary>
+               <Desc>
+                  <P>When the Bold framework calls <See Method="CreatePersistenceController"/>, the result is stored and can be retrieved
+                    with this method.</P>
+               </Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary>Changes the active state of the handle</Summary>
+               <Desc>This method is accessed via the <See Property="Active"/> property.</Desc>
+            </Method>
+            <Method Name="SetClassesToHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DatabaseAdapter">
+               <Summary>Link to a TBoldDatabaseAdapter component</Summary>
+               <Desc>
+                  <P>This property must point to a database adapter that connects the persistence handle to a data store holding the external data.</P>
+               </Desc>
+            </Property>
+          
+            <Property Name="PersistenceController">
+               <Summary>Returnes the <See Class="TBoldExternalPersistenceControllerEventDriven" Text="persistence controller"/> for the handle</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassesToHandle">
+               <Summary>Lists the classes this persistence handle will handle</Summary>
+               <Desc>
+                  <P>The Bold framework allows you to use more than one external database by chaining several external persistence handles.
+                    You will however need to inform each persistence handle of which classes it is supposed to handle.  By double clicking the
+                    property in the Object Inspector you will see a dialog where you can select which classes you wish this persistence handle
+                    to manage.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>This is a persistence handle that allows you to connect your application to external "non bold" data.</Summary>
+         <Desc>
+            <P>This is accomplished by inserting this handle between the <See Class="TBoldSystemHandle"/> and the <See Class="TBoldPersistenceHandle"/> that 
+             connects the system to the Bold database.</P>
+            <P>You can chain several of these handles if you need to connect to more than one external data store.</P>
+            <P>To get this mechanism up and running you will need to connect the PersistenceHandle property of your <See Class="TBoldSystemHandle"/> to this component
+             and then the <See Property="NextPersistenceHandle"/> to either another external persistence handle or the persistence handle that connects the
+             system to the Bold database.  You will also need to place a <See Class="TBoldAbstractDatabaseAdapter" Text="DatabaseAdapter"/> component to connect the handle to an external database.
+             And configure the property <See Property="ClassesToHandle"/> to which classes this specific external persistence handle is to handle.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

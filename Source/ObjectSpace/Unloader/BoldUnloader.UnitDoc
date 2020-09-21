@@ -1,0 +1,95 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/Unloader/BoldUnloader.UnitDoc 4     01-11-20 11:42 Jano $">
+   <Classes>
+      <Class Name="TBoldUnLoader">
+         <Events>
+            <Event Name="OnMayInvalidate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMayUnload">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Scan">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ScanObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartScan">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartWait">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Tick">
+               <Summary>Perform one tick</Summary>
+               <Desc>Call this method to inform the unloader that one tick of time has passed.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>Activate/Deactivate scan/unload.</Summary>
+               <Desc>Set Active to true to activate scan/unload.</Desc>
+            </Property>
+            <Property Name="BoldSystem">
+               <Summary>System to unload from.</Summary>
+               <Desc>Set BoldSystem to the TBoldSystem from which to Unload.
+                  <Note>Setting serveral unloaders to point at the same system can lead to objects and members being unloaded before <See Property="MinAgeToUnload"/>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="UnloadDelayedFetch">
+               <Summary>Should attributes with delayed fetch be unloaded.</Summary>
+               <Desc>If this property is set to true, persistent attributes with delayed fetch will be unloaded individually if they meet the criteria. If it is false, they will only be unloaded if the entire object is unloaded. </Desc>
+            </Property>
+            <Property Name="MinAgeForUnload">
+               <Summary>Minumum age beofre unloading.</Summary>
+               <Desc>This is the minimum time (in ticks) that must pass from the last time a member is accessed until it is eligable for unloading.</Desc>
+            </Property>
+            <Property Name="ScanPerTick">
+               <Summary>Number of objects to scan per tick.</Summary>
+               <Desc>This is the number of objects that will be scanned for each tick.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Class for unloading unused objects and members</Summary>
+   <Desc>This class contains the basic functions for unloading unused objects and members. There is normally no reason to use this class directly, use <See Class="TBoldUnloaderHandle"/>.
+      <P>Strategy. Create a traverser to BoldSystem.Locators, scan ScanPerTick locators for each call to Tick, wait MinAgeForUnload Ticks and start over. The Unloader will Unload objects and invalidate members that have no subscribers, and have not been touched since the previous scan.</P>
+      <P>The unloader will always unload derived members and whole persistent objects that meet the criteria. If <See Property="UnloadDelayedFetch"/> is true it will also unload persistent members with delayed fetch which meet the criteria.</P>
+      <Note>In order for unloading to be safe, the code using Bold must never hold a reference to a TBoldObject within <See Property="BoldSystem"/> or any of its members, without also subscribing to the object or some part of it.</Note>
+   </Desc>
+   <Types>
+      <Type Name="TBoldInvalidateMemberEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldUnloadObjectEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

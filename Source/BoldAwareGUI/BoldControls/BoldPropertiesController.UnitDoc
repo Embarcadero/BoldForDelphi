@@ -1,0 +1,227 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldPropertiesController.UnitDoc 7     02-08-14 15:41 Isje $">
+   <Classes>
+      <Class Name="TBoldDrivenProperty">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConvertRelativeProp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoOnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureValidPropertyName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPropertiesController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HookOnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropertyName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropertyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRelativePropValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnhookOnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DrivenProperties">
+               <Summary>The collection to which the item belongs</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PropertiesController">
+               <Summary>The component to which the item belongs</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PropertyName">
+               <Summary>Name of property to control</Summary>
+               <Desc>Specify the name of the property of <See Property="VCLComponent"/> you want to control.
+                  <Note>The type of the property must be the same (at least type compatible) with the result value of the <InlineCode>TBoldPropertiesController</InlineCode>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="ReadOnly">
+               <Summary>Indicates the property is read only</Summary>
+               <Desc>Set read only is set to False if the property should not only be for display, but also change. Writable properties are implemented by chaining into the <InlineCode>OnExit</InlineCode> event. Thus, only components that have an <InlineCode>OnExit</InlineCode> event can be made writable using this machanism.
+                  <Note>Chaining into the <InlineCode>OnExit</InlineCode> event is possible only if there is exactly one controlled property in the collection</Note>
+               </Desc>
+            </Property>
+            <Property Name="VCLComponent">
+               <Summary>The component of which to control a property</Summary>
+               <Desc>Set VCL component to the component of which you want to control a property.
+                  <P>The property editor in the object inspector will list the components on the same form as the <InlineCode>TBoldPropertiesController</InlineCode>.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>Control a VCL component.</Summary>
+         <Desc>TBoldDrivenProperties is used in conjunction with the <see class="TBoldPropertiesController"/>. For each property you want to control you create a TBoldDrivenProperty that you connect to the component and the property you want to control.</Desc>
+		 <SeeAlso><Jump ID="HowTo_BoldPropertiesController" Text="How to use TBoldPropertiesController"/></SeeAlso>
+      </Class>
+      <Class Name="TBoldDrivenPropertyCollection">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PropertiesController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Collection subclass to hold the driven properties</Summary>
+         <Desc>The <InlineCode>TBoldDrivenPropertyCollection</InlineCode> is a collection of <See Class="TBoldDrivenProperty"/>.</Desc>
+      </Class>
+      <Class Name="TBoldPropertiesController">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDrivenProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropertyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Since <InlineCode>TBoldPropertiesController</InlineCode> is a single-line control it will follow the <InlineCode>Value</InlineCode> property of the handle. Note that for a <InlineCode>TBoldListHandle</InlineCode> this means the current element in the list.</Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+                  <P>Since <InlineCode>TBoldPropertiesController</InlineCode> is not a visible control, this sub-property has no effect.</P>
+                  <BH>CleanOnEqual</BH>
+                  <P>Since <InlineCode>TBoldPropertiesController</InlineCode> is not a visible control, this sub-property has no effect.</P>
+                  <BH>DragMode</BH>
+                  <P>Since <InlineCode>TBoldPropertiesController</InlineCode> is not a visible control, this sub-property has no effect.</P>
+                  <BH>DropMode</BH>
+                  <P>Since <InlineCode>TBoldPropertiesController</InlineCode> is not a visible control, this sub-property has no effect.</P>
+                  <BH>Expression</BH>
+                  <P><InlineCode>Expression</InlineCode> is the OCL expression to be applied to <InlineCode>BoldHandle.Value</InlineCode>.</P>
+                  <BH>NilStringRepresentation</BH>
+                  <P>The string value used for display purposes in case <InlineCode>BoldHandle.Value</InlineCode> evaluates to <InlineCode>nil</InlineCode>. The default <InlineCode>NilStringRepresentation</InlineCode> is an empty string.</P>
+                  <BH>Renderer</BH>
+                  <P>This control does not make use of a renderer even if it's set. Much of the rendering capabilities can be achieved using derived attributes.</P>
+                  <BH>Representation</BH>
+                  <P><InlineCode>Representation</InlineCode> is interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating <InlineCode>expression</InlineCode>.</P>
+               </Desc>
+            </Property>
+            <Property Name="DrivenProperties">
+               <Summary>A collection of component/property pairs to be controlled</Summary>
+               <Desc><InlineCode>DrivenProperties</InlineCode> is a collection of <See Class="TBoldDrivenProperty"/>.</Desc>
+            </Property>
+            <Property Name="HandleFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Used for controlling the value of any delphi component's property in the normal Bold fashion.</Summary>
+         <Desc>Use <InlineCode>TBoldProperiesController</InlineCode> to control the value of any Delphi component's property in the normal Bold fashion.
+            <P>The <InlineCode>TBoldPropertyController</InlineCode> can be used to control a collection of properties on one or many VCL components. The properties will all get the same value. For each property you want to control you create a <InlineCode>TBoldDrivenProperty</InlineCode> (see <See Property="DrivenProperty"/> that you connect to the component and the property you want to control. The value of the &lt;<InlineCode>PropertyName</InlineCode>&gt; property is determined by evaluating <InlineCode>BoldHandle</InlineCode> + <InlineCode>BoldProperties.Expression</InlineCode>. The type of this value should be compatible with the type of the property referenced by PropertyName.</P>
+            <Note>If the value you want to have set is a BLOB, and the target property is a string-property, then you must first convert the value to a string by using the ocl-operation .asString. This is because the PropertiesController uses the GetAsVariant-method, and for blobs this returns a VariantArray.</Note>
+         </Desc>
+         <SeeAlso><Jump ID="HowTo_BoldPropertiesController" Text="How to use TBoldPropertiesController"/></SeeAlso>
+         <Examples>
+            <Example>
+               <Body>Suppose we have a modelled class <InlineCode>Item</InlineCode>, with an attribute <InlineCode>ItemSize</InlineCode> of type integer. <InlineCode>BlhItem</InlineCode> is a <InlineCode>TBoldListHandle</InlineCode> that keeps a handle to the list <InlineCode>Item.allinstances</InlineCode>. Let's set a <InlineCode>TBoldPropertiesController</InlineCode> component that will dynamically change the font size of a <InlineCode>TBoldEdit</InlineCode> control, <InlineCode>Edit1</InlineCode>, according to the <InlineCode>ItemSize</InlineCode> attribute of the current item in the <InlineCode>blhItem</InlineCode> list.
+                  <P>Add a <InlineCode>TBoldPropertiesController</InlineCode> and set the properties as follows:</P>
+                  <Code>BoldPropertiesController1.BoldHandle: blhItem
+BoldPropertiesController1.BoldProperties.Expression: itemSize</Code>
+                  <P>Now add a driven property (it is a collection property on the property controller component, and set the properties as follows:</P>
+                  <Code>BoldPropertiesController1.DrivenProperties[0].PropertyName: font.size
+BoldPropertiesController1.DrivenProperties[0].VCLComponent: Edit1</Code>
+               </Body>
+            </Example>
+         </Examples>
+      </Class>
+   </Classes>
+   <Summary>Defines the VCL adapter TBoldPropertiesController</Summary>
+   <Desc>This unit defines the <InlineCode>TBoldPropertiesController</InlineCode>. It is a VCL adapter in the sense it can make any [published] property of any VCL component react to changes in the business object tier.</Desc>
+</DLUnitDoc>

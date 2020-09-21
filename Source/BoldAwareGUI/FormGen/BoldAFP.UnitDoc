@@ -1,0 +1,214 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/FormGen/BoldAFP.UnitDoc 4     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAutoFormProvider">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoGenerateForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateAutoForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementIsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandleIsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelNameOrDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostEnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostGenerateAutoForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PreEnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PreGenerateAutoForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Element">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ElementIsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Form">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleIsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Target">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldAutoFormProvider creates an abstract platform on which to build auto form providers (AFPs).</Summary>
+         <Desc>Most methods in this class are virtual, and some are abstract. All to allow severe customization of the descendant classes.
+</Desc>
+      </Class>
+      <Class Name="TBoldAutoFormProviderHolder">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ElementClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsListProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ProviderClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldAutoFormProviderRegistry">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormForElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHolders">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMatchingProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterListProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnregisterProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Holders">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="AutoFormProviderRegistry">
+         <Summary></Summary>
+         <Desc>
+This is the access point to the registry of AutoFormProviders. All AutoFormProviders need to be made known to the system in order for the functionality to work. This function returns an object that allows for TBoldAutoFormProviderRegistry_RegisterProvider and internally for looking up which provider to use.
+</Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc>Foundation for auto form provider
+This unit contains the abstract classes + frame work classes that make up the foundation for the auto form provider mechanisms.
+</Desc>
+   <Types>
+      <Type Name="TBoldAutoFormProviderClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

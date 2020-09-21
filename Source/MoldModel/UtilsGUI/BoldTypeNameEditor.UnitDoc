@@ -1,0 +1,63 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/UtilsGUI/BoldTypeNameEditor.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldTypeNameEditorForm">
+         <Methods>
+            <Method Name="Copyrow1Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromFile1Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MergeDefaultsmappings1Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToFile1Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnAddClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnDeleteClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnDownClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnUpClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

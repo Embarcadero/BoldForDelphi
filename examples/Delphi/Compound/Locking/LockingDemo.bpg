@@ -1,0 +1,30 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = LockingDemo.exe LockingPServer.exe DbGen.exe \
+  LockManagerAdminClient.exe
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+LockingDemo.exe: LockingDemo.dpr
+  $(DCC)
+
+LockingPServer.exe: Server\LockingPServer.dpr
+  $(DCC)
+
+DbGen.exe: Server\DbGen.dpr
+  $(DCC)
+
+LockManagerAdminClient.exe: LockManagerAdminClient\LockManagerAdminClient.dpr
+  $(DCC)
+
+

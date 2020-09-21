@@ -1,0 +1,122 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractNotificationPropagator">
+         <Events>
+            <Event Name="OnReceiveEvent">
+               <Summary>Event that is called everytime an event is received through the broadcast channel</Summary>
+               <Desc>Implement this event if you want to handle the incoming events manually</Desc>
+			   <SeeAlso><see property=Dequeuer></SeeAlso>
+            </Event>
+			
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnqueEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OnReceiveQueueNotEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OnSendQueueNotEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClientId">
+               <Summary>This is the id of the client</Summary>
+               <Desc>In a broadcast environment the client id is not very important. All clients get all the messages. This property is normally 0</Desc>
+            </Property>
+            <Property Name="Controller">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Dequeuer">
+               <Summary>The component that should react to the notification received though the broadcast channel</Summary>
+               <Desc>This property should point to a <see class=TBoldExternalObjectSpaceEventHandler> component that knows how to take the required actions in the object layer, and possibly detect any conflicts.</Desc>
+<SeeAlso><see event=OnReceiveEvent></SeeAlso>
+            </Property>
+            <Property Name="NextPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SendQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemHandle">
+               <Summary>Must be set to the same systemhandle as it is used by</Summary>
+               <Desc>This component is normally inserted in the chain between a system handle and a persistence handle. Make sure this property points to the same system handle</Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract class that implements basic broadcast functionality for Object space synchronization</Summary>
+         <Desc>This component does not implement the actual communication protocalls, this is left for subclasses (which might use any network protocol that allows two-way communication such as UDP or TCP/IP</Desc>
+      </Class>
+      <Class Name="TBoldNotificationPropagatorPersistenceControllerPassthrough">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TransmitEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldNotificationPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClientId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="SPropagatorIdentification">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TReceivePropagatorEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

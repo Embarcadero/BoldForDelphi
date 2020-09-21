@@ -1,0 +1,91 @@
+<html>
+
+<head>
+  <title>Transactions</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt; 
+      <a href="transactions.html">Transactions</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Transactions</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Simple/ObjectSpace/Transaction/Transaction.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/ObjectSpace/Transaction/BE_Transaction.bpr">Launch CBuilder-example</a>
+    <p>This example shows how to use the in-memory transactions in $(PRODUCT_BASE_NAME).
+    It implements a simple banking system, where the user issues a batch of requests.
+    The different kinds of requests are:
+    </p>
+    <ul>
+      <li>Transfer money from one account to another.</li>
+      <li>Change the credit limit for an account.</li>
+      <li>Close an account.</li>
+    </ul>
+	<hr size ="1">
+	<p class="head2">How to run</p>
+<p>Add a couple of accounts and create requests on them. The requests are stored and
+	won't be runned until you explicitly ask them to by clicking the Run button.
+	</p>
+<p>
+    The requests must either be carried out in total or not at all. There are different
+    rules that may cause the transaction to fail, such as:&nbsp;</p>
+<ul>
+  <li> An account cannot be closed unless
+    the total is 0</li>
+  <li>At the end of a transaction no account may be below its credit limit.</li>
+</ul>
+	<p class="head2">Control transactions</p>
+	<p>To control the transaction of data to the database you implement the
+	starting, committing and rolling back of transactions on the system handle. You
+	can see how it's done in this example in the on-click event on the Run
+    button.	
+	</p>
+<p class="head3">Use of ReceiveQueryFromOwned</p>
+	<p>This example also make use of the overridden framework method
+	<code>ReceiveQueryFromOwned</code>. Open the implementation classfile to see it.
+	</p>
+    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_OverrideFWMethods.htm" target="self">
+			How to override framework methods</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+<br>
+   <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and
+    alias is established you only have to use the &quot;Open system&quot; button when running
+    the example program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks are
+      properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

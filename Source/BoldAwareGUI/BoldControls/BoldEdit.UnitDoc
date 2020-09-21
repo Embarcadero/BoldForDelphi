@@ -1,0 +1,356 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldEdit.UnitDoc 11    11/23/01 1:23p Jeho $">
+   <Classes>
+      <Class Name="TBoldCustomEdit">
+         <Events>
+            <Event Name="OnButtonClick">
+               <Summary>Event triggered by clicking aggregated butto</Summary>
+               <Desc><InlineCode>OnButtonClick</InlineCode> is triggered when the <See Property="Button"/> is clicked. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ButtonClick">
+               <Summary>ButtonClick calls any event handler attached to the OnButtonClick event. </Summary>
+               <Desc>
+                  <P>Override <InlineCode>ButtonClick</InlineCode> to provide other responses in addition to the inherited event-handler call when the user clicks the control.</P>
+                  <P>A control calls <InlineCode>ButtonClick</InlineCode> whenever the button on the right hand side of the area is clicked.</P>
+                  <P>See the <See Event="OnButtonClick"/> event for a description of all occurrences that trigger <InlineCode>ButtonClick</InlineCode> events.</P>
+               </Desc>
+            </Method>
+            <Method Name="ButtonCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ButtonDestroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ButtonSetGlyph">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CMEnabledChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CMEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CMExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Change">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>In the destruction phase the component will handle unapplied data depending on the setting of <InlineCode>BoldProperties.ApplyPolicy</InlineCode>:
+                  <UL>
+                     <LI><InlineCode>bapChange, bapExit</InlineCode> - The value will be applied. If an exception is raised, the value will be discarded.</LI>
+                     <LI><InlineCode>bapDemand</InlineCode> - The value will be discarded.</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="DestroyWnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetButton">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTextMargins">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InvalidKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldDisplay">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetButtonStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEditRect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEffectiveColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFocused">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMPaint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_FontChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary>Set Alignment to specify how the text is aligned within the ClientRect of the control. </Summary>
+               <Desc>Alignment specifies the alignment of the text in the control.</Desc>
+            </Property>
+            <Property Name="BeepOnInvalidKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Since <InlineCode>TBoldCustomEdit</InlineCode> is a single-value control it will follow the <InlineCode>Value</InlineCode> property of the handle. Note that for a <See Class="TBoldListHandle"/> this means the current element in the list. </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+                  <P>Determines when changes to the control will be applied to the underlying business objects.</P>
+                  <UL>
+                     <LI><InlineCode>bapChange</InlineCode> - means that changes will be applied after each change, i.e. after each character typed by the user.</LI>
+                     <LI><InlineCode>bapExit</InlineCode> - means that changes will be applied when focus leaves the control. Please note that some operations that seem to leave the control, e.g. selecting a menu-item do not actually move focus, and thus do not trigger apply.</LI>
+                     <LI><InlineCode>bapDemand</InlineCode> - means that the changed value will continue to reside in the GUI until it is explicitly applied by calling <See Class="TBoldQueueable" Method="ApplyAll" Text="TBoldQueueable.ApplyAll"/> or <See Class="TBoldQueueable" Method="ApplyAllMatching" Text="TBoldQueueable.ApplyAllMatching"/>. This will in general be done by an OK button on the form. The changes can also be discarded by calling <See Class="TBoldQueueable" Method="DiscardChangeAll" Text="TBoldQueueable.DiscardChangeAll"/> or <See Class="TBoldQueueable" Method="DiscardChangeAllMatching" Text="TBoldQueueable.DiscardChangeAllMatching"/>.</LI>
+                  </UL>
+                  <BH>CleanOnEqual</BH>
+                  <P>If <InlineCode>CleanOnEqual</InlineCode> is <InlineCode>true</InlineCode> then if the value of the control is changed, and then subsequently changed back to the original value before it has been applied to the business objects, then it will be regarded as unchanged, and removed form the Apply list.</P>
+                  <BH>DragMode</BH>
+                  <P>Determines what will happen if the user attempts to drag from the control.</P>
+                  <UL>
+                     <LI><InlineCode>bdgNone</InlineCode> - No drag will be performed.</LI>
+                     <LI><InlineCode>bdgSelection</InlineCode> - If <InlineCode>BoldHandle.Value</InlineCode> is a <InlineCode>TBoldObject</InlineCode> (or one of its subclasses) then it will be placed in the dragged objects list, <InlineCode>BoldGUIHandler.DraggedObjects</InlineCode>, otherwise no drag will be initiated.</LI>
+                  </UL>
+                  <P>If <InlineCode>OnStartDrag</InlineCode> has been set, this property is ignored altogether.</P>
+                  <BH>DropMode</BH>
+                  <P>Determines what will happen if the user attempts to drop on the control. This property only has an effect if <InlineCode>BoldHandle.Value</InlineCode> is a single-link role of an object. In this case the property has the following meaning:</P>
+                  <UL>
+                     <LI><InlineCode>bdpNone</InlineCode> - No action.</LI>
+                     <LI><InlineCode>bdpInsert</InlineCode>, <InlineCode>bdpAppend</InlineCode> - If a single object is being dragged, and the link is nil, and the dragged object is of the correct type the link will be set to the dragged object.</LI>
+                     <LI><InlineCode>bdpReplace</InlineCode> - If a single object is being dragged and the dragged object is of the correct type the link will be set to the dragged object.</LI>
+                  </UL>
+                  <BH>Expression</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Expression</InlineCode> will be interpreted as an OCL expression to be applied to <InlineCode>BoldHandle.Value</InlineCode>.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Expression</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+                  <BH>NilStringRepresentation</BH>
+                  <P>The string value used for display purposes in case <InlineCode>BoldHandle.Value</InlineCode> evaluates to <InlineCode>nil</InlineCode>. The default <InlineCode>NilRepresentation</InlineCode> is an empty string.</P>
+                  <BH>Renderer</BH>
+                  <P>This property identifies a <See Class="TBoldAsStringRenderer"/> that is used do define the mapping from <See Class="TBoldCustomEdit" Property="BoldHandle" Text="BoldHandle.Value"/> to the string displayed in the control. The default renderer will apply <InlineCode>Expression</InlineCode> to the value, and then take <See Class="TBoldElement" Property="StringRepresentation"/> on the result. A custom renderer may perform any mapping.</P>
+                  <BH>Representation</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Representation</InlineCode> will be interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating expression.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Representation</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="Button">
+               <Summary>The aggregated button</Summary>
+               <Desc>The button-property is used to to retrieve the button in the right hand area of the edit-control. It is controlled by the <See Property="ButtonStyle"/>.</Desc>
+            </Property>
+            <Property Name="ButtonControl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ButtonStyle">
+               <Summary></Summary>
+               <Desc>The <InlineCode>ButtonStyle</InlineCode> property determines how the button on the left hand side of the control shall look. See definition of <See Type="TBoldEditButtonStyle"/> for details</Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc>This property may be set at design-time to indicate the desired background color of the control.
+                  <P>The actual runtime color of the background will be determined by the <See Class="TBoldAsStringRenderer" Method="SetColor" Text="SetColor"/> method of the <See Class="TBoldStringFollowerController" Property="Renderer" Text="Renderer"/> used.</P>
+                  <P>The actual color currently used can be obtained from the <See Property="EffectiveColor"/> property.</P>
+               </Desc>
+            </Property>
+            <Property Name="EffectiveColor">
+               <Summary>This is a read-only property that for the current actual background color of the control.</Summary>
+               <Desc> The value of the property will be determined by the <See Class="TBoldAsStringRenderer" Method="SetColor" Text="SetColor"/> method of the <See Class="TBoldStringFollowerController" Property="Renderer" Text="Renderer"/> used, based on the <See Property="Color"/> property. The default renderer will simply use the value of <InlineCode>Color</InlineCode>. </Desc>
+            </Property>
+            <Property Name="EffectiveFont">
+               <Summary>This is a read-only property that for the current actual font used by the control.</Summary>
+               <Desc> The actual runtime font will be determined by the <See Class="TBoldAsStringRenderer" Method="SetFont" Text="SetFont"/> method of <See Class="TBoldStringFollowerController" Property="Renderer" Text="Renderer"/> used, based on the <See Property="Font"/> property. The default renderer will simply use the value of <InlineCode>Font</InlineCode>. </Desc>
+            </Property>
+            <Property Name="EffectiveReadOnly">
+               <Summary>This is a read-only property that indicates weather the value shown in the control can be modified by the user.</Summary>
+               <Desc> The value is determined by the a combination of the <See Property="ReadOnly"/> property, and the <See Class="TBoldRenderer" Event="OnMayModify" Text="OnMayModify"/> event of the <See Class="TBoldStringFollowerController" Property="Renderer" Text="renderer"/> used. To restrict the control to display only, set the <InlineCode>ReadOnly</InlineCode> property to <InlineCode>True</InlineCode>. Setting <InlineCode>ReadOnly</InlineCode> to <InlineCode>True</InlineCode> ensures that the text can not be altered, while still allowing the user to select text. The selected text can then be manipulated by the application, or copied to the Clipboard.
+                  <Note>Even if <InlineCode>ReadOnly</InlineCode> is <InlineCode>False</InlineCode>, it may still not be possible to edit the text of the control. See <See Property="ReadOnly"/></Note>
+               </Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary>This property may be set at design-time to indicate the desired font of the control. </Summary>
+               <Desc>The actual runtime font will be determined by the <See Class="TBoldAsStringRenderer" Method="SetColor" Text="SetColor"/> method of <See Class="TBoldStringFollowerController" Property="Renderer" Text="Renderer"/> used. The default renderer will simply use the font set at design-time.
+                  <P>The font currently used can be obtained from the <See Property="EffectiveFont"/> property.</P>
+               </Desc>
+            </Property>
+            <Property Name="MaxLength">
+               <Summary>Limits the number of characters that can be entered in the edit box</Summary>
+               <Desc>The maximum number of characters that can be entered is determined from this property, and the length of the attribute (if the value is a string attribute of a business object). The smallest value will be used.</Desc>
+            </Property>
+            <Property Name="ReadOnly">
+               <Summary>To restrict the control to display only, set the ReadOnly property to True.</Summary>
+               <Desc> Setting <InlineCode>ReadOnly</InlineCode> to <InlineCode>True</InlineCode> ensures that the text can not be altered, while still allowing the user to select text. The selected text can then be manipulated by the application, or copied to the Clipboard.
+                  <Note>Even if <InlineCode>ReadOnly</InlineCode> is <InlineCode>False</InlineCode>, it may still not be possible to edit the text of the control. See <See Property="EffectiveReadOnly"/>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="Text">
+               <Summary></Summary>
+               <Desc>This property is overridden from <InlineCode>TCustomEdit.Text</InlineCode> in order to add the Bold-aware properties of the control. </Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldCustomEdit allows displaying and optionally editing a string value from the Business Object tier of Bold.</Summary>
+         <Desc> <See Property="BoldHandle"/> specifies what to display, and the sub-properties of TBoldCustomEdit_BoldProperties specify how the value is to be displayed/edited.
+            <BH>Implementation</BH>
+            <InlineCode>TBoldCustomEdit</InlineCode> keeps most of its properties protected. It is not intended to be used directly, but rather to be subclassed, where the subclasses publish and/or override the behaviour implemented by <InlineCode>TBoldCust</InlineCode>omEdit.
+            <BH>Advanced information</BH>
+            <InlineCode>TBoldCustomEdit</InlineCode> allows all aspects of the displayed text, i.e. the font, color and editability to be controlled by the underlying value.
+            <P>In order to do this <InlineCode>TBoldCustomEdit</InlineCode> overrides the <InlineCode>Font</InlineCode>, <InlineCode>Color</InlineCode> and <InlineCode>ReadOnly</InlineCode> properties inherited from <InlineCode>TCustomEdit</InlineCode>. For each of these properties there is a pair of properties where e.g. <InlineCode>Color</InlineCode> is the value set at design-time, while <InlineCode>EffectiveColor</InlineCode> is the actual color currently displayed.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldEdit">
+         <Events></Events>
+         <Properties>
+         </Properties>
+         <Summary>TBoldEdit allows displaying and optionally editing a string value from the Business Object tier of Bold.</Summary>
+         <Desc> <See Class="TBoldCustomEdit" Property="BoldHandle"/> specifies what to display, and the sub-properties of <See Class="TBoldCustomEdit" Property="BoldProperties"/> specify how the value is to be displayed/edited.
+            <BH>Advanced information</BH>
+            <InlineCode>TBoldEdit</InlineCode> allows all aspects of the displayed text, i.e. the font, color and editability to be controlled by the underlying value.
+            <P>In order to do this <InlineCode>TBoldEdit</InlineCode> overrides the <InlineCode>Font</InlineCode>, <InlineCode>Color</InlineCode> and <InlineCode>ReadOnly</InlineCode> properties inherited from <InlineCode>TCustomEdit</InlineCode>. For each of these properties there is a pair of properties where e.g. <InlineCode>Color</InlineCode> is the value set at design-time, while <InlineCode>EffectiveColor</InlineCode> is the actual color currently displayed.</P>
+            <P>All behaviour is actually implemented by <InlineCode>TBoldCustomEdit</InlineCode>. <InlineCode>TBoldEdit</InlineCode> publishes many of the properties inherited from <InlineCode>TBoldCustomEdit</InlineCode> but does not introduce any new behavior.</P>
+            <Note>If the value of the <InlineCode>Charcase</InlineCode> property is different from <InlineCode>ecNormal</InlineCode> the control will effectively be read only.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the bold aware editbox. </Summary>
+   <Desc>The <InlineCode>BoldEdit</InlineCode> unit defines the <InlineCode>TBoldCustomEdit</InlineCode> class and its concrete subclass <InlineCode>TBoldEdit</InlineCode>. The <InlineCode>TBoldEdit</InlineCode> is registered on the palette.</Desc>
+   <Types>
+   </Types>
+</DLUnitDoc>

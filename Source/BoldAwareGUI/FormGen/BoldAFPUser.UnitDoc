@@ -1,0 +1,30 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/FormGen/BoldAFPUser.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldUserFormProvider">
+         <Methods>
+            <Method Name="EnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>The TBoldUserFormProvider is an intermediate level added to be a good starting point when creating your own custom AFPs. It adds little functionality over its abstract superclass; it implements a few abstract methods.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains intermediate layer of classes for auto form provider
+
+</Summary>
+   <Desc>This unit contains an intermediate class used in the auto form provider mechanisms.</Desc>
+</DLUnitDoc>

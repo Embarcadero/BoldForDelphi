@@ -1,0 +1,255 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/ControlPacks/BoldStringControlPackCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAsStringRendererCom">
+         <Events>
+            <Event Name="OnGetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnIsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnSetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnSetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnSetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DefaultGetAsStringAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultIsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultMakeUptodateAndSetMayModifyAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawStringOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsStringAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUpToDateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiMakeUpToDateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldStringFollowerControllerCom">
+         <Methods>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveAsStringRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNilStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EffectiveAsStringRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NilStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Renderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldStringRendererDataCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CurrentStringValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxStringLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OldStringValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldGetAsString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetAsString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetColor">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetFont">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldStringIsChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValidateString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

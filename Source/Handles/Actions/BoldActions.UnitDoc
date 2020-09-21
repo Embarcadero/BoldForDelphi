@@ -1,0 +1,172 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Actions/BoldActions.UnitDoc 3     11/21/01 1:28p Jeho $">
+   <Classes>
+      <Class Name="TBoldActivateSystemAction">
+         <Events>
+            <Event Name="OnSystemClosed">
+               <Summary>Event triggered after the system has been closed.</Summary>
+               <Desc>This event is triggered after the system has been closed, allowing for some clean up code to execute.</Desc>
+            </Event>
+            <Event Name="OnSystemOpened">
+               <Summary>Event triggered after the system has been opened.</Summary>
+               <Desc>This event is triggered after the system has been opened, allowing for some initialization code to execute.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary>Toggles the active state of the system.</Summary>
+               <Desc>Toggles the active state of the system.</Desc>
+            </Method>
+            <Method Name="SetBoldSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCloseCaption">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetOpenCaption">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SystemActivated">
+               <Summary>Controls the triggering of OnSystemOpened.</Summary>
+               <Desc>If <See Event="OnSystemOpened"/> is defined, it will be invoked from here.
+                  <P>This will happen  after the system has been opened.</P>
+               </Desc>
+            </Method>
+            <Method Name="SystemClosed">
+               <Summary>Controls the triggering of OnSystemClosed.</Summary>
+               <Desc>If <See Event="OnSystemClosed"/> is defined, it will be invoked from here.
+                  <P>This will happen  after the system has been closed.</P>
+               </Desc>
+            </Method>
+            <Method Name="TriggerSwitchEvent">
+               <Summary>Delegates to SystemActivated or SystemClosed.</Summary>
+               <Desc>Depending on the state of the system, either <See Method="SystemActivated"/> or <See Method="SystemClosed"/> will be invoked. These, in turn, will trigger either <See Event="OnSystemOpened"/> or <See Event="OnSystemClosed"/></Desc>
+            </Method>
+            <Method Name="UpdateCaption">
+               <Summary>Updates the caption of the action.</Summary>
+               <Desc>Updates the caption of the action to indicate what the next invocation will do (either open or close the system).</Desc>
+            </Method>
+            <Method Name="_HandleSubscriberReceive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CloseCaption">
+               <Summary>Caption to indicate system will be closed.</Summary>
+               <Desc>This is the caption of the action when the system is opened, i.e. next execution will close the system.</Desc>
+            </Property>
+            <Property Name="OpenCaption">
+               <Summary>Caption to indicate system will be opened.</Summary>
+               <Desc>This is the caption of the action when the system is closed, i.e. next execution will open the system.</Desc>
+            </Property>
+            <Property Name="SaveOnClose">
+               <Summary>Determine action on closing of system.</Summary>
+               <Desc>When the system is closed using this action, this propery determines which what will happen with the dirty objects.
+                  <UL>
+                     <LI><InlineCode>saAsk</InlineCode> - the user is asked if the objects are to be saved, discarded or the close operation should cancel.</LI>
+                     <LI><InlineCode>saYes</InlineCode> - The objects are saved.</LI>
+                     <LI><InlineCode>saNo</InlineCode> - The objects are discarded.</LI>
+                     <LI><InlineCode>saFail</InlineCode> - An exception is raised.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="SaveQuestion">
+               <Summary>The question asked on closing the system.</Summary>
+               <Desc>If <See Property="SaveOnClose"/> set to <InlineCode>saAsk</InlineCode> this is the question the user is confronted with.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Action to activate/deactivate a system.</Summary>
+         <Desc>Connect this action to a <See Class="TBoldSystemHandle"/> and a button or menu item. The functionality offered is toggling the active status of the system.</Desc>
+      </Class>
+      <Class Name="TBoldFailureDetectionAction">
+         <Methods>
+            <Method Name="HandlesTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Action to display the latest BoldFailure.</Summary>
+         <Desc>This action is used to automatically display the latest <See Class="TBoldFailureReason"/>.</Desc>
+      </Class>
+      <Class Name="TBoldSystemHandleAction">
+         <Methods>
+            <Method Name="GetBoldSystemHandle">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetBoldSystemHandle">
+               <Summary>Set method for BoldSystemHandle.</Summary>
+               <Desc>Set method for <See Property="BoldSystemHandle"/>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldSystemHandle">
+               <Summary>The handle the action is connected to.</Summary>
+               <Desc>This is the TBoldSystemHandle the action is connected to, and thus acts on.</Desc>
+            </Property>
+         </Properties>
+         <Summary>A super class for actions connected to a system handle.</Summary>
+         <Desc>A super class for actions connected to a system handle.</Desc>
+      </Class>
+      <Class Name="TBoldUpdateDBAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary>Returns true if there are dirty objects in the system.</Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if there are dirty objects in the system.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary>Updates database</Summary>
+               <Desc>This method does the hard work of invoking UpdateDatabase on the <See Class="TBoldSystemHandle" Property="BoldSystemHandle"/>.</Desc>
+            </Method>
+         </Methods>
+         <Summary>An action to update the database.</Summary>
+         <Desc>Convenient way of updating the database without requiring a single line of code. Actually, it saves you exactly one line of code :)</Desc>
+      </Class>
+   </Classes>
+   <Types>
+      <Type Name="TBoldSaveAction">
+         <Summary>Enumeration used by TBoldActivateSystemAction.</Summary>
+         <Enumeration>
+            <EnumItem Name="saAsk">
+               <Desc>User is asked if dirty objecvts should be saved or not.</Desc>
+            </EnumItem>
+            <EnumItem Name="saYes">
+               <Desc>Dirty objects are saved without questions</Desc>
+            </EnumItem>
+            <EnumItem Name="saNo">
+               <Desc>Dirty objects are discarded without questions.</Desc>
+            </EnumItem>
+            <EnumItem Name="saFail">
+               <Desc>An exception is raised if the system is closed with dirty objects.</Desc>
+            </EnumItem>
+         </Enumeration>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary>Defines a couple of actions operating on system level.</Summary>
+   <Desc>The actions defined in this unit act on system level.</Desc>
+</DLUnitDoc>

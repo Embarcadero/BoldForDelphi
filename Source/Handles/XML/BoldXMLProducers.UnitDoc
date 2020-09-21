@@ -1,0 +1,118 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/XML/BoldXMLProducers.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractXMLProducer">
+         <Methods>
+            <Method Name="AddDomElement">
+               <Summary></Summary>
+               <Desc>Use this function to add a Dom element to the produced Dom document. The function returns the IXMLDomElement interface of the generated Dom element. Use XMLTag to specify the TagName and XMLValue to specify the value of the Dom element. Use the XMLAttributes parameter to set attribute nodes in the Dom element. XMLAttributes must hold strings of the form AttributeName=Value, where AttributeName specifies the name and Value specifies the value of an attribute node. </Desc>
+            </Method>
+            <Method Name="AddDomElementForBoldElement">
+               <Summary>AddDomElementForBoldElement adds a Dom element from the value of a TBoldElement to the produced Dom document. </Summary>
+               <Desc> Use this function to add a Dom element from the value of a TBoldElement to the produced Dom document. Use BoldElement to specify the TBoldElement object that should be used. Use Mapping to specify the mapper for rendering the element's text representation. Uset Tag to specify the Dom element's tagname. Options defines the information that should be included in the Dom element.</Desc>
+            </Method>
+            <Method Name="AddDomElementsForBoldObjectAttributes">
+               <Summary>AddDomElementsForBoldObjectAttributes adds Dom elements to the produced Dom document using the values of a TBoldObject's members. </Summary>
+               <Desc> Use this method to add Dom elements to the produced Dom document using the members' values of a TBoldObject object. Use BoldObject to specify the TBoldObject object. Use the BoldMemberNames to specify the members of the object for which Dom elements should be added. BoldMemberNames must hold a list of strings in the form Mapping.MemberName, where Mapping is the mapper used for rendering the member's value and MemberName is the name of the object's member. The Dom element's for the members will be siblings and subnodes of DomParentElement.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Produce">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldManipulator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getDocument">
+               <Summary>Returns an empty Dom document. </Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getDocumentAsString">
+               <Summary>Produces an XML string to be sent as an XML response.</Summary>
+               <Desc> Call GetDocumentAsString to get back an XML string that should be sent as an XML response. The paramList holds a list of strings in the form ParamName=Value that can be interpreted as parameters required for producing the XML content. This method fires the OnProduce event handler to construct the XML document. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldManipulator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="XMLElementBoldIDName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldAbstractXMLProducer is the abstract base class for all XML producer components. </Summary>
+         <Desc> TBoldAbstractXMLProducer introduces methods for generating XML content from values in the object space. Descendants must override the Produce method to populate the DomDoc argument passed to it.
+Do not create instances of TBoldAbstractXMLProducer. Use a descendant of TBoldAbstractXMLProducer to add the ability to generate XML content. <See Class="TBoldXMLProducer"/> provides an OnProduce event handler that users could implement to produce XML content.</Desc>
+      </Class>
+      <Class Name="TBoldXMLProducer">
+         <Events>
+            <Event Name="OnProduce">
+               <Summary>Occurs when the XML producer needs to return an XML string. </Summary>
+               <Desc> The OnProduce event handler occurs whenever the producer's GetDocumentAsString method is invoked.
+Write an OnProduce event handler to produce the data that is sent as an XML response string. In most cases the ParamList object should be examined. Each string in the ParamList object has the form ParamName=Value. Use the Names and Values properties of the TBoldStringList object to parse these parameters and interpret the values to query the data needed for populating the DomDoc Dom document.
+If an OnProduce event handler is not supplied the empty XML document is returned.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Produce">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldManipulator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldXMLProducer produces an XML string based on input parameters. </Summary>
+         <Desc> Use the TBoldXMLProducer to generate an XML string that can be sent to a client application such as a web browser or a web application. The producer is passed a list of parameters consisting of strings in the form Name=Value. These parameters to customize the XML content in the implementation of the OnProduce event handler. </Desc>
+         <SeeAlso>See the XML (XMLDispatcher.dpr) demo for an example of how to use the TBoldXMLProducer. </SeeAlso>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="DEFAULT_XMLELEMENT_BOLDIDNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="xpoDefault">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains declarion and implementation of the XML producer classes.</Summary>
+   <Desc> </Desc>
+   <Types>
+      <Type Name="TBoldProduceEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldXMLProducerOption">
+         <Summary></Summary>
+         <Desc>
+</Desc>
+<Enumeration><EnumItem Name="xpoIncludeIdString"><Desc>Include the IdString of the TBoldElement as an attribute node of the generated Dom element. Include this option to allow the modification of an element's text representation outside the object space to be applied back to the object space.</Desc></EnumItem><EnumItem name="xpoIncludeValue"><Desc>Set the value of the generated Dom element from the text representation of the TBoldElement.</Desc></EnumItem></Enumeration>
+      </Type>
+      <Type Name="TBoldXMLProducerOptions">
+         <Summary>TBoldXMLProducerOptions defines the information that should be included to the Dom element generated from a TBoldElement.
+</Summary>
+<desc>
+The TBoldXMLProducerOptions type defines a set of options used for generating the Dom element for a TBoldElement. 
+</Desc>
+<SeeAlso><see type=TBoldXMLProducerOption></SeeAlso>
+<SeeAlso><see const=xpoDefault></SeeAlso>
+      </Type>
+   </Types>
+</DLUnitDoc>

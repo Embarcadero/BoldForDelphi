@@ -1,0 +1,48 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Propagator/Common/BoldAbstractPropagatorHandle.UnitDoc 3     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractPropagatorHandle">
+         <Methods>
+            <Method Name="DoPropagatorCallFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClientHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEventPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClientHandler">
+               <Summary></Summary>
+               <Desc>The interface to the actual ClientHandler service of the propagator. The Client Hander handles the registering of clients. Normally, there is no need for a deveoper to call this interface directly. It will be used by the listener to register the client.
+</Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EventPropagator">
+               <Summary></Summary>
+               <Desc>The interface to the event-sending service of the propagator. Normally, there is no need for a developer to call this interface directly. It will be called by the snooper to send appropriate messages.
+</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The communication-technology independent superclass of the handles providing a connection to the propagator.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

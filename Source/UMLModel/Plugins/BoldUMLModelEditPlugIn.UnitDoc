@@ -1,0 +1,133 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/Plugins/BoldUMLModelEditPlugIn.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TUMLPlugIn">
+         <Events>
+            <Event Name="OnExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GuardedExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnGuardedExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultModelSaver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageMaskColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageResourceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Instance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MenuItemName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Options">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PlugInType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PluginClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLPlugInMenuItem">
+         <Properties>
+            <Property Name="PlugIn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TUMLPlugInToolButton">
+         <Properties>
+            <Property Name="PlugIn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IUMLModelPlugInContext">
+         <Methods>
+            <Method Name="GetCurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsExecutingPlugin">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIsExecutingPlugin">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IsExecutingPlugin">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldUMLPluginOption">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldUMLPluginOptions">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TPlugInType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TUMLPluginExecuteEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

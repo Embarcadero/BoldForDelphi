@@ -1,0 +1,81 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Default/BoldCustomBlobMapper.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldPMBlobWithSeparateTable">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBlobValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInitialColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IdListToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>A persistencemapper for blobs to be used with Oracle</Summary>
+         <Desc>Oracle has a limitation (at least some versions) that you can only have one blob column per table. This persistence mapper solves that by storing all blobs in a single table, that will be indexed by the object id and the member name. 
+<BH>Usage></BH>
+To use this mapper, you must include the unit BoldCustomBlobMapper in your application/persistence server, and modify the dictionary in the <see class=TBoldTypeNameHandle text=TypeNameHandle> so that the persistence mapper for the blob type is TBoldPMBlobWithSeparateTable. 
+<note>
+It is possible to use the ordinary blob mapper (that stores the blob in the table of the object) for the first blob in each class. You must them set up two different blob-entries in the typename dictionary, that has different modelname, expressionname and persistencemapper. You must then make sure that the second blob (and third etc) in each class gets the type that uses this mapper
+</note> 
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains a persistencemapper for blobs to be used with Oracle</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

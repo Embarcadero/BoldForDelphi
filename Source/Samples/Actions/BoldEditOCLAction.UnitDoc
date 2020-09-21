@@ -1,0 +1,99 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Actions/BoldEditOCLAction.UnitDoc 2     02-08-06 8:58a Jeho $">
+   <Classes>
+      <Class Name="TBoldEditOCLAction">
+         <Events>
+            <Event Name="OnPostExecute">
+               <Summary>Called after the OCL editor has been shown.</Summary>
+               <Desc>This event fires after the OCL expression editor has been shown. It will always fire, regardless if OK or Cancel was used to close the editor.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditOCL">
+               <Summary>Returns the new expression</Summary>
+               <Desc>EditOCL returns the newly contructed OCL expression if the OK buttopn was pressed, otherwise the old expression is returned.</Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldProperties">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOCLExpression">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary>VCL specific</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldComponent">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOCLExpression">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldComponent">
+               <Summary>The component to edit the expression for.</Summary>
+               <Desc>The BoldComponent property is a very losely typed property that should point to a component that is either a Bold aware component or a Bold handle.</Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary>Retrieves the bold handle to use.</Summary>
+               <Desc>If <See Property="BoldComponent"/> is a BoldAware component, the BoldHandle it is linked to is returned by this property. If the <InlineCode>BoldComponent</InlineCode> is a subclass of <See Class="TBoldElementHandle"/> the <InlineCode>BoldComponent</InlineCode> itself is returned.</Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary>Returns the BoldProperties of the BoldComponent.</Summary>
+               <Desc>If the <See Property="BoldComponent"/> has a BoldProperties property, it is returned here. It is later used to retrieve the <See Property="Expression"/>.</Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary>The OCL expression to operate on.</Summary>
+               <Desc>The <InlineCode>Expression</InlineCode> is the expression edited in the OCL editor. It's either the expression of the component's BoldProperties or of the component itself - if the component is a subclass of <InlineCode>TBoldElementHandle</InlineCode>.</Desc>
+            </Property>
+            <Property Name="OCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OCLExpression">
+               <Summary>The Expression property of the connected component.</Summary>
+               <Desc>The OCL Expression is the same as OCLComponent.Expression. If there is no OCLComponent set, reading the property will yield an empty string, whereas writing will raise an exception.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Action that can be used to manipulate an expression of a component or handle</Summary>
+   <Desc>Use this action to simplify building dynamic GUIs. Simply connect it to a component that's either a TBoldElementHandle or part of the Bold aware GUI component suite, and the action will find out what it needs to provide a context sensitive OCL editor.</Desc>
+</DLUnitDoc>

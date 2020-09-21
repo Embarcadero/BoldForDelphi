@@ -1,0 +1,5 @@
+/****************************************************************************
+Elongated logotype for use in left pane of wizzards.
+*****************************************************************************/
+BOLDLEFTPANELOGO BITMAP "BoldLeftPaneLogo.bmp"
+

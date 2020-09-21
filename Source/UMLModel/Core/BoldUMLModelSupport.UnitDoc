@@ -1,0 +1,267 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldCopyAndClone">
+         <Methods>
+            <Method Name="BoldClone">
+               <Summary>Makes a clone of the object passed as parameter.</Summary>
+               <Desc>This method creates a new instance of the same type as <InlineCode>SourceObject</InlineCode> and then calls <See Class="BoldCopy"/> with the newly created object as desitnation.</Desc>
+            </Method>
+            <Method Name="BoldCopy">
+               <Summary>Copies information from one object to another.</Summary>
+               <Desc>This method copies information from <InlineCode>DestinationObject</InlineCode> to <InlineCode>SourceObject</InlineCode>.
+                  <P>The depth of the information to copy is controlled by <InlineCode>Mode</InlineCode>.</P>
+               </Desc>
+            </Method>
+         </Methods>
+         <Summary>Helper object to copy/clone BoldObjects</Summary>
+         <Desc>This class is used internally to duplicate (either copying or cloning. Both methods are class methods, so there is no reason to instantiate this class.</Desc>
+      </Class>
+      <Class Name="TBoldUMLBoldify">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Boldify">
+               <Summary></Summary>
+               <Desc>Adds Bold-specific things to a UML-model such as implicit link-classes, default names, etc. This must be done prior to using the model in the framework (and is usually</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FullTag">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetBoldifyTaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultLinkSuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultSuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsAutoCreated">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsBoldified">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveBoldifyTaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldifyTaggedValue">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetRootClassname">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnBoldify">
+               <Summary>Reverses the Boldify process</Summary>
+               <Desc>By calling UnBoldify, all the automatic changes that were done by the Boldify process will be reverted. This must be done prior to exporting the model to a modelling tool (and is usually done automatically)</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultNavigableMultiplicity">
+               <Summary>Default multiplicity for navigable association ends</Summary>
+               <Desc>All naviganble association ends that have an unspecified multiplicity will get this multiplicity</Desc>
+            </Property>
+            <Property Name="DefaultNonNavigableMultiplicity">
+               <Summary>Default multiplicity for non navigable association ends</Summary>
+               <Desc>All non naviganble association ends that have an unspecified multiplicity will get this multiplicity. Non-navigable derived association ends does not really exist, and will not get any multiplicity.</Desc>
+            </Property>
+            <Property Name="EnforceDefaultUMLCase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MakeDerivedTransient">
+               <Summary>Marks derived attributes and roles as transient</Summary>
+               <Desc>Derived attributes and roles are not allowed to be persistent. If this property is true, they will automatically be marked as transient when the model is Boldified</Desc>
+            </Property>
+            <Property Name="PluralSuffix">
+               <Summary>Default suffix for non named multi association ends</Summary>
+               <Desc>Association ends that are not named normally gets the name of the class they are attached to. If they have a multiplicity that allows more than one object in the association, this plural suffix will be added to the name. If you model in english, it is convenient to set this value to "s", since this is the plural ending of nouns in english. An association between Order and Orderitem classes that allow many orderitems to be associated with an association will then get the names "order" and "orderitems" instead of "order" and "orderitem"</Desc>
+            </Property>
+            <Property Name="UnembedMulti">
+               <Summary>Should the Embed-flag be cleared for multi-relations</Summary>
+               <Desc>The Embed-flag is true by default for all association ends, but it meaningless when the multiplicity is "0..*". If this property is true then the embed flag will be automatically cleared for such association ends, otherwise they will generate a hint during model-validation.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUMLOperationSupport">
+         <Methods>
+            <Method Name="ClassHasOperation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OverrideInAllSubclasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OverrideInClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParameterTypesToList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUMLSupport">
+         <Methods>
+            <Method Name="AddQualifier">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddToNamespace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddToolId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AllModelParts">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ElementForToolId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureBoldTaggedValuesInModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsuredTaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Flatten">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredPackage">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetToolId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsFlattened">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ManipulateAllOwnedElements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameInListExceptElement">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="RelinkSpecializations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveTaggedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripToolId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToAllMembers">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SubscribeToEntireModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLModelNameToUMLName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnFlatten">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BOLDINTERALTVPREFIX">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_FLATTENED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_TOOLID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_UNFLATTENEDNAMESPACE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldCopyMode">
+         <Summary>Used by TBoldCopyAndClone.</Summary>
+         <Desc>
+            <UL>
+               <LI><InlineCode>bcmAttributes</InlineCode> - Copies attributes only.</LI>
+               <LI><InlineCode>bcmShallow</InlineCode> - All that is included in <InlineCode>bcmAttributes</InlineCode>. In addition to that, relations that end in a multiple cardinality and are not composites get their objects added to the destination role.</LI>
+               <LI><InlineCode>bcmDeep</InlineCode> - All that is included in <InlineCode>bcmShallow</InlineCode>. In addition to that, relations that are composites get their objects cloned and added to the destination role.</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TUMLModelElementManipulator">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

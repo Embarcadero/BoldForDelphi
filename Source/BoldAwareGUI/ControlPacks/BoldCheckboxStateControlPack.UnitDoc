@@ -1,0 +1,170 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldCheckboxStateControlPack.UnitDoc 5     01-11-22 12:06 Aniv $">
+   <Classes>
+      <Class Name="TBoldAsCheckBoxStateRenderer">
+         <Events>
+            <Event Name="OnGetAsCheckBoxState">
+               <Summary>This event shall implement the rendering of values in object space to a TCheckBoxState.</Summary>
+               <Desc>The result may be derived from the element passed as parameter, or from other elements known to the code, either from the object space or other arbitrary sources.
+It is triggered by TBoldAsCheckBoxStateRenderer_GetAsCheckBoxStateAndSubscribe. </Desc>
+            </Event>
+            <Event Name="OnIsChanged">
+               <Summary></Summary>
+               <Desc>This event shall return whether the value in the NewValue parameter has changed relative to the value known to the followercontroller.
+It is triggered by TBoldAsCheckBoxStateRenderer_IsChanged. </Desc>
+            </Event>
+            <Event Name="OnSetAsCheckBoxState">
+               <Summary>Propagate a change in check box state in the GUI to values in the object space</Summary>
+               <Desc>The implementation of this event shall propagate a change in check box state in the GUI to values in the object space. It may be considered the inverse of <See Event="OnGetAsCheckBoxState"/></Desc>
+            </Event>
+            <Event Name="OnValidateCheckBoxState">
+               <Summary>Whether Value is a valid value in this context or not</Summary>
+               <Desc>The implementation of this event shall return whether <InlineCode>Value</InlineCode> is a valid value in this context or not.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DefaultGetAsCheckBoxStateAndSubscribe">
+               <Summary></Summary>
+               <Desc>This method will invoke the TBoldRenderer_OnSubscribe if it has been assigned and subsequently invoke TBoldAsCheckBoxStateRenderer_OnGetAsCheckBoxState if it has been assigned.
+If OnGetAsCheckBoxState has not been assigned, the TBoldAsCheckBoxStateRenderer_DefaultGetAsCheckBoxStateAndSubscribe will be invoked. </Desc>
+            </Method>
+            <Method Name="DefaultIsChanged">
+               <Summary></Summary>
+               <Desc>DefaultIsChanged will be invoked if TBoldAsCheckBoxStateRenderer_OnIsChanged has not been assigned.
+Default behaviour is to check the NewValue differs from the OldValue contained in the RendererData. </Desc>
+            </Method>
+            <Method Name="DefaultRenderer">
+               <Summary></Summary>
+               <Desc>An instance of TBoldAsCheckBoxStateRenderer is created at initialization of the unit. This instance is returned from this class method. </Desc>
+               <SeeAlso><See Class="TBoldFollowerController" Method="EffectiveRenderer"/></SeeAlso>
+            </Method>
+            <Method Name="DefaultSetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc>The default setting of the checkbox state evaluates the expression and if it evaluates to a TBABoolean it will be set to true or false depending on the checked state passed in the NewValue parameter.
+If NewValue is cbGrayed, the result of the evaluation will set it to null (still under the condition it is a TBABoolean).
+This method will only be invoked if TBoldAsCheckBoxStateRenderer_OnSetAsCheckBoxState has not been assigned. </Desc>
+            </Method>
+            <Method Name="DefaultValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc>The DefaultValidateCheckBoxState validates the value passed in the Value parameter. It will always return true.
+This method will only be invoked if TBoldAsCheckBoxStateRenderer_OnValidateCheckBoxState has not been assigned. </Desc>
+            </Method>
+            <Method Name="GetAsCheckBoxStateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsChanged">
+               <Summary></Summary>
+               <Desc>IsChanged invokes TBoldAsCheckBoxStateRenderer_OnIsChanged if it has been assigned, else it will invoke TBoldAsCheckBoxStateRenderer_DefaultIsChanged.
+The result indicates if the value passed as parameter is different from the value held in RendererData. </Desc>
+            </Method>
+            <Method Name="MakeUpToDateAndSubscribe">
+               <Summary></Summary>
+               <Desc>MakeUptoDateAndSubscribe invokes TBoldAsCheckBoxStateRenderer_GetAsCheckBoxStateAndSubscribe and sets the RendererData to hold the current value. </Desc>
+            </Method>
+            <Method Name="SetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>The TCheckBoxStateRenderer is used to control the display of a checkbox. </Summary>
+         <Desc>It can produce the three values accepted by a checkbox (unchecked, checked and grayed) </Desc>
+      </Class>
+      <Class Name="TBoldCheckBoxRendererData">
+         <Properties>
+            <Property Name="CurrentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Oldvalue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldCheckBoxStateFollowerController">
+         <Methods>
+            <Method Name="GetCurrentAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveAsCheckBoxStateRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EffectiveAsCheckBoxStateRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Renderer">
+               <Summary>The renderer to be used</Summary>
+               <Desc>The renderer to be used</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines supporting classes to render checkbox values. </Summary>
+   <Desc>This unit defines the TBoldAsCheckBoxStateRenderer, TBoldCheckBoxStateFollowerController and TBoldCheckBoxRendererData used in conjuntion with moving checkbox data to and from the presentation layer.</Desc>
+   <Types>
+      <Type Name="TBoldCheckBoxIsChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldGetAsCheckBoxState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetAsCheckBoxState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValidateCheckBoxState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

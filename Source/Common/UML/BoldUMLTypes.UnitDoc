@@ -1,0 +1,158 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/UML/BoldUMLTypes.UnitDoc 4     02-02-08 11:56 Aniv $">
+   <Classes>
+      <Class Name="TBoldUMLMultiplicity">
+         <Methods>
+            <Method Name="AddRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormatAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Range">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUMLRange">
+         <Methods>
+            <Method Name="FormatAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUpper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUpperUnlimited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Lower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Upper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UpperUnlimited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TAggregationKind">
+         <Summary>Indicates aggregation kind</Summary>
+         <Desc>
+            <UL>
+               <LI><B>akNone</B> - normal relation</LI>
+               <LI><B>akAggregate</B> - relation is an aggregation</LI>
+               <LI><B>akComposite</B> - relation is a composition</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TBoldParameterDirectionKind">
+         <Summary>Indicates direction of a parameter</Summary>
+         <Desc>
+            <UL>
+               <LI><B>pdIn</B></LI>
+               <LI><B>pdOut</B></LI>
+               <LI><B>pdInout</B></LI>
+               <LI><B>pdReturn</B> - the return value of a function.</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TChangeableKind">
+         <Summary>Indicates changeability</Summary>
+         <Desc>
+		    <UL>
+               <LI><B>ckChangeable</B> - No restrictions on modification</LI>
+               <LI><B>ckFrozen</B> - May not be modified after creation</LI>
+               <LI><B>ckAddOnly</B> - Items may be added, but not removed</LI>
+            </UL>
+		 </Desc>
+      </Type>
+      <Type Name="TOrderingKind">
+         <Summary>Indicates ordering</Summary>
+         <Desc><UL><LI><Strong>okUnordered</Strong> - The order of the elements is unimportant  </LI><LI><Strong>okOrdered</Strong> - The order of the elements is important</LI></UL></Desc>
+      </Type>
+      <Type Name="TScopeKind">
+         <Summary>Indicates owner scope</Summary>
+         <Desc>
+            <UL>
+               <LI><B>skInstance</B> - Owned by an object instance</LI>
+               <LI><B>skClassifier</B> - Owned by a classifier</LI>
+            </UL>
+            <P>An example of owner scope <InlineCode>skClassifier</InlineCode> is class methods.</P>
+         </Desc>
+      </Type>
+      <Type Name="TVisibilityKind">
+         <Summary>Indicates visibility</Summary>
+         <Desc>
+            <UL>
+               <LI><B>vkPrivate</B> - Private. Visible within the class and classes in same unit/package</LI>
+               <LI><B>vkProtected</B> - Protected. Visible as vkPrivate plus in sub classes.</LI>
+               <LI><B>vkPublic</B> - Public. Fully visible.</LI>
+            </UL>
+         </Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

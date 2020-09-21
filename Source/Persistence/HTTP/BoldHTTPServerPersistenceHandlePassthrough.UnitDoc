@@ -1,0 +1,49 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesHTTP/BoldHTTPServerPersistenceHandlePassthrough.UnitDoc 7     01-10-23 13:53 Joho $">
+   <Classes>
+      <Class Name="TBoldHTTPServerPersistenceHandlePassthrough">
+         <Methods>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc>Use this method to forward the request of an HTTP content to the <InlineCode>TBoldHTTPServerPersistenceHandlePassthrough</InlineCode> object.
+                  <P><InlineCode>Get</InlineCode> will call the persistence handle and return the response from the persistence handle in the <InlineCode>reply</InlineCode> parameter. The reply is an XML string that should be sent back to the as the content of the HTTP request.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetAdapterCore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AdapterCore">
+               <Summary>Internal object that handles the unpacking of incoming requests</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldModel">
+               <Summary></Summary>
+               <Desc>Specifies the model component used by the handle. This must be the same model-component that the systemhandle in the client uses.</Desc>
+            </Property>
+            <Property Name="PersistenceController">
+               <Summary>The persistence controller of the connected PersistenceHandle</Summary>
+               <Desc>The persistence controller of the connected <see property=PersistenceHandle></Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>	
+               <Desc>Specifies the persistence handle component managing persistency. This should normally either be a <see class=TBoldSnooperHandle> (if you use the propagator) or a subclass of <see class=TBoldPersistenceHandleDB></Desc>
+            </Property>
+         </Properties>
+         <Summary>Implements the server side of remote persistence over HTTP</Summary>
+         <Desc>See the HTTPMapper example for details on how to implement and deploy the server.</Desc>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc>Use the HTTP PersistenceHandle components to build distributed applications where the persistence storage is located on a remote server, and allow the client application to connect to the persistence server by using HTTP.</Desc>
+</DLUnitDoc>

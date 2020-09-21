@@ -1,0 +1,134 @@
+<html>
+
+<head>
+  <title>Object Versioning</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt;
+      <a href="object_versioning.html"> Object Versioning</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Object Versioning</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+    <a href="../Delphi/Simple/ObjectSpace/Temporal/DocVersions.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/ObjectSpace/Temporal/BE_ObjectVersioning.bpr">Launch CBuilder-example</a>
+	<p class="note"><b>Note!</b>&nbsp; This example demonstrates features of the <b>Object Versioning
+	Extension</b>. This is an extension product to $(PRODUCT_BASE_NAME). A
+	license key for the extension is required to try the example. Use the License Manager to request
+	an evaluation key.
+	</p>
+	<p>The example implements a small document-versioning system, where users are only allowed to see the published
+    version of other users' documents.
+    </p>
+    <hr size="1">
+    <p class="head2">How to run</p>
+    <p>
+    Users in this example application are only allowed to see the <b> published</b>
+    version of other users' documents. Observe that you can only publish saved
+    documents.
+    </p>
+	<ol>
+      <li>Create a user and select it as the current user in the combobox.
+        Create a project and add a document to it. Add a part to the document
+        with header and text.</li>
+      <li>Without doing anything else create a new user and select it as the
+        current user. You will only see the project you created for the first
+        user, no document. That is because you haven't published that document
+        and as long as it isn't published only the user that created the
+        document will see it.</li>
+      <li>Now update the database and select your first user as current user.
+        Change the text you entered for the part you added to the document. When
+        you've done that click the button View history. You will see the first
+        version of your document, the version you saved to the database before
+        updating the text in the part. Publish that version.&nbsp;</li>
+      <li>Now select your second person as current person. The version of the
+        document you just published will now be visible for this person as well.
+        Choose View current and the published part will be seen. Observe the
+        text of the part.</li>
+    </ol>
+    <p class="head2">Use of object versioning</hr3>
+    </p>
+    <p>
+    Classes becomes versioned by setting the tagged value <code>Versioned</code> to
+    <code>&lt;&lt;True&lt;&lt;</code>
+    either in the model editor or in the Rose model.
+    </p>
+    <ul>
+      <li>In the Rose model open the class you want to version and set the <code>Versioned</code> attribute to <code>&lt;&lt;True&lt;&lt;</code>
+    		under the Bold tab.</li>
+      <li>In the model editor select the class you want to version
+    		and either press &lt;ctrl&gt;T or choose the Edit tagged values option under
+    		the Tools menu. In the form that opens select the <code>Versioned</code> attribute under
+    		the Bold tab and set it to <code>&lt;&lt;True&lt;&lt;</code>.</li>
+    </ul>
+    <p>It is also necessary for the flag <code>UseTimestamp</code>
+    to be set to <code>&lt;&lt;True&lt;&lt;</code> for versioning to work.
+    This can be done either on the Bold tab in Rose, under Tools | Model
+    Properties | Edit, or in the Model Editor.
+    </p>
+    <p>The classes <code>TBoldObject</code>, <code>TBoldObjectLocator</code>,
+    and <code>TBoldMember</code> all have a method <code>AtTime</code>.
+    This will return the same object, locator or member at the time specified by
+    the Time argument.
+    </p>
+    <p>Note that the class lists are subclasses of <code>TBoldMember</code>,
+    and thus it is possible to get the list of which instances existed at a
+    previous point in time by using the <code>AtTime</code>
+    method.
+    </p>
+    <p class="head2">Points of interest in this example</p>
+    <ul>
+      <li>The Document and DocumentPart classes are versioned.</li>
+      <li>The use of derived attributes and associations to create different views for different
+        users. See <code>Document.ViewVersion</code>, <code>Document.LastPublished</code> and <code>Project.ViewContains</code>.</li>
+      <li>The code for retrieving the history of documents, and their parts, is located in
+        the derived handles <code>bdhDocVersions</code> and <code>bdhPartVersions</code>.</li>
+    </ul>
+    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_DeriveAttributes.htm" target="self">
+			How to derive attributes</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_DeriveAssociations.htm" target="self">
+			How to derive associations</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/Mech_OVE.htm" target="self">
+			Object Versioning Extension</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <br>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and
+    alias is established you only have to use the &quot;Open system&quot; button when running
+    the example program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

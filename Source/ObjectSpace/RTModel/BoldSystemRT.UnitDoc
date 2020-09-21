@@ -1,0 +1,1305 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/RTModel/BoldSystemRT.UnitDoc 20    02-08-06 18:11 Johosos $">
+   <Classes>
+      <Class Name="TBoldAttributeRTInfo">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllowNull">
+               <Summary>True if the attribute is allowed to contain NULL-values</Summary>
+               <Desc> <InlineCode>True</InlineCode> if the attribute is allowed to contain NULL-values </Desc>
+            </Property>
+            <Property Name="HasInitialValue">
+               <Summary>The attribute has an initial value</Summary>
+               <Desc> If this property is <InlineCode>true</InlineCode>, then an initial value is defined for the attribute by the model. This means that the attribute will receive this value upon object creation. </Desc>
+            </Property>
+            <Property Name="InitialValue">
+               <Summary>The initial value of the attribute</Summary>
+               <Desc> The initial value is defined in the model, and is the value the attribute will receive upon object creation. </Desc>
+            </Property>
+            <Property Name="Length">
+               <Summary>Maximum length of (string) attribute</Summary>
+               <Desc>This property is only valid for string attributes, and gives the maximum allowed length (number of characters) of the attribute. This is checked by <See Class="TBAString" Method="ValidateString"/>, but can also be used by visual components to enforce a maximum length already during editing. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Model information for attributes</Summary>
+         <Desc><InlineCode>AttributeRTInfo</InlineCode> is the model information for each attribute. This should not be confused with the class <See Class="TBoldAttributeTypeInfo"/> which is the type information for attributes. To clarify this; the FirstName and LastName of a person will have different <InlineCode>AttributeRTInfo</InlineCode>, but the same <InlineCode>AttributeTypeInfo</InlineCode> (the typeinfo for strings).
+            <P>Each attribute of a bold object will have a property <See Class="TBoldAttribute" Property="BoldAttributeRtInfo" Text="BoldAttributeRTInfo"/> that points to an instance of this class. The <InlineCode>BoldType</InlineCode> of an <InlineCode>AttributeRTInfo</InlineCode> is always a <See Class="TBoldAttributeTypeInfo"/>.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldAttributeTypeInfo">
+         <Methods>
+            <Method Name="BoldIsA">
+               <Summary>Determines type similarity</Summary>
+               <Desc>This function will return true if the parameter represents an attribute type that is the same or a superclass if the AttributeTypeInfo itself. </Desc>
+            </Method>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc>This function will return true if the compare element represents either the attribute type info of an attribute type which we inherit from, or a list class of such an attribute type.
+                  <UL>
+                     <LI>Word conforms to Word</LI>
+                     <LI>Word conforms to Integer since TBAWord inherits from TBAInteger</LI>
+                     <LI>Word conforms to WordList</LI>
+                     <LI>Word conforms to IntegerList</LI>
+                     <LI>Integer does not conform to Word or WordList</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AttributeClass">
+               <Summary>The delphi class implementing the attribute type</Summary>
+               <Desc>The delphi class of the corresponding attribute type. This will always of type <InlineCode>TBoldAttributeClass</InlineCode>, but due to circular dependancies it can not be typed as that. This property can be used to create an instance of the corresponding attribute type. </Desc>
+            </Property>
+            <Property Name="IsAbstract">
+               <Summary>Determine if the type is abstract</Summary>
+               <Desc>If this property is true, the attribute type is abstract, and should not be used in the model.</Desc>
+            </Property>
+            <Property Name="SuperAttributeTypeInfo">
+               <Summary></Summary>
+               <Desc>The <InlineCode>AttributeTypeInfo</InlineCode> of the Attribute type that the current attribute inherits from.
+                  <UL>
+                     <LI><InlineCode>SuperAttributeTypeInfo</InlineCode> of <InlineCode>Word</InlineCode> is <InlineCode>Integer</InlineCode></LI>
+                     <LI><InlineCode>SuperAttributeTypeInfo</InlineCode> of <InlineCode>Boolean</InlineCode> is <InlineCode>ValueSet</InlineCode></LI>
+                  </UL>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>Type information for attributes</Summary>
+         <Desc>This is the type information for an attribute class. There will be one instance for each installed subclass of <See Class="TBoldAttribute"/>. </Desc>
+      </Class>
+      <Class Name="TBoldClassTypeInfo">
+         <Methods>
+            <Method Name="BoldIsA">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if <InlineCode>C2</InlineCode> is another <InlineCode>TBoldClassTypeInfo</InlineCode> and represents a superclass of the ClassTypeInfo itself. </Desc>
+            </Method>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if the <InlineCode>CompareElement</InlineCode> is a <InlineCode>TBoldClassTypeInfo</InlineCode> that represents a superclass of itself, or if it is a listclass where the element type is a superclass of itself.
+                  <P>This method is mainly used by the ocl evaluator.</P>
+               </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberIndexByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberRTInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberRTInfoByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQualifiedName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Initialize">
+               <Summary>Internal</Summary>
+               <Desc>Internal method used when setting up the meta-information</Desc>
+            </Method>
+            <Method Name="InitializeMultiplicityConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeastCommonSuperClass">
+               <Summary></Summary>
+               <Desc>Returns the most specific class that is superclass of both the class itself and the parameter. If either class inherits from the other, the superclass will be returned.
+                  <UL>
+                     <LI>B inherits from A, C inherits from A: B.LeastCommonSuperClass(C) = A</LI>
+                     <LI>B inherits from A, C inherits from B: B.LeastCommonSuperClass(C) = B</LI>
+                     <LI>B inherits from A, C inherits from B: C.LeastCommonSuperClass(B) = B</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="SetObjectClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc>The <InlineCode>TypeInfo</InlineCode> and <InlineCode>RTInfo</InlineCode> classes are destroyed by freeing the <InlineCode>SystemTypeInfo</InlineCode>. Do never call the destructors separately! </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllMembers">
+               <Summary></Summary>
+               <Desc>This list of all members has the member model info in the same order as their respective members are in the bold object. Inherited members come first, then own attributes, and last the relations. Any indirect relation will have two <InlineCode>MemberRTinfo</InlineCode> objects, the first is the true role, and the second is the linkrole (pointing to link-objects). </Desc>
+            </Property>
+            <Property Name="AllMembersCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultStringRepresentation">
+               <Summary>The string representation of the class</Summary>
+               <Desc>This OCL expression is used to derive the default string representation for the class.
+                  <P>The default string representation of an object is retrieved by querying the object's <InlineCode>AsString</InlineCode> property.</P>
+               </Desc>
+            </Property>
+            <Property Name="EmbeddedSingleLinkCount">
+               <Summary>Number of embedded single links</Summary>
+               <Desc>For internal use</Desc>
+            </Property>
+            <Property Name="FirstOwnMemberIndex">
+               <Summary></Summary>
+               <Desc>This is the index of the first non inherited member in the <See Property="AllMembers"/> -property. if the class has no attributes of its own, it will be equal to <InlineCode>AllMembers.Count</InlineCode>. </Desc>
+            </Property>
+            <Property Name="GenerateDefaultRegion">
+               <Summary></Summary>
+               <Desc>Indicates if there will be a default region generated for the class</Desc>
+               <SeeAlso><Jump ID="Mech_CMS" Text="Concurrency Management Server"/></SeeAlso>
+            </Property>
+            <Property Name="HasSubclasses">
+               <Summary>Indicates if the class has any subclasses</Summary>
+               <Desc><InlineCode>True</InlineCode> if the class has any subclasses in the model</Desc>
+            </Property>
+            <Property Name="IsAbstract">
+               <Summary>Indicates if the class is abstract</Summary>
+               <Desc><InlineCode>True</InlineCode> if the class has been marked as Abstract in the model. It is not possible to create instances of abstract classes.</Desc>
+            </Property>
+            <Property Name="IsImported">
+               <Summary>Has no meaning</Summary>
+               <Desc>This property will most likely be removed in future versions of Bold. It has no meaning.</Desc>
+            </Property>
+            <Property Name="IsLinkClass">
+               <Summary></Summary>
+               <Desc><InlineCode>True</InlineCode> if the class is used as a linkclass for an association. Objects of such a class should never be created manually. They will be created as a result of creating a relation between two objects. </Desc>
+            </Property>
+            <Property Name="ListTypeInfo">
+               <Summary></Summary>
+               <Desc>Returns the type information for the listtype that can contain the class.
+                  <P>The <InlineCode>ClassTypeInfo</InlineCode> for the Person class will return the <InlineCode>ListTypeInfo</InlineCode> for the PersonList.</P>
+               </Desc>
+            </Property>
+            <Property Name="MemberIndexByExpressionName">
+               <Summary>Returns the index of the member with the given expression name</Summary>
+               <Desc>Returns the index of the member with the given name</Desc>
+            </Property>
+            <Property Name="MemberRTInfoByExpressionName">
+               <Summary>Returns the MemberRTInfo object of the member with the given expression name</Summary>
+               <Desc>Returns the model information for the member with the corresponding expression name. If there is no such member, the result is <InlineCode>nil</InlineCode>. </Desc>
+            </Property>
+            <Property Name="MemberRTInfoByModelName">
+               <Summary>Returns the MemberRTInfo object of the member with the given model name</Summary>
+               <Desc>Returns the model information for the member with the corresponding model name. If there is no such member, the result is <InlineCode>nil</InlineCode>. </Desc>
+            </Property>
+            <Property Name="Methods">
+               <Summary>List of methods for the type</Summary>
+               <Desc>This is a list of modelled methods for the class.</Desc>
+            </Property>
+            <Property Name="ObjectClass">
+               <Summary></Summary>
+               <Desc>This is the Delphi class of the objects that uses this model information. For an application with generated code, this is one of the classes in the generated code. If there is no generated code, this will always be <See Class="TBoldObject"/>.
+                  <P>This property can safely be type casted to a <See Type="TBoldObjectClass"/>.</P>
+               </Desc>
+            </Property>
+            <Property Name="OptimisticLocking">
+               <Summary>Indicates if the object is handled by the optimistic locking mechanisms</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary>Indicates if class is persistent</Summary>
+               <Desc>Signals whether the class can be stored in a persistent storage (db).
+                  <P>This is determined from the modelled information.</P>
+               </Desc>
+            </Property>
+            <Property Name="QualifiedName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SuperClassTypeInfo">
+               <Summary>Pointer to ClassTypeInfo of direct ancestor.</Summary>
+               <Desc>The <InlineCode>ClassTypeInfo</InlineCode> of the superclass.</Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc>The <See Class="TBoldSystemTypeInfo" Text="SystemTypeInfo"/> to which this ClassTypeInfo belongs.</Desc>
+            </Property>
+            <Property Name="ToBeRemoved">
+               <Summary>Indicator of deprecation</Summary>
+               <Desc>A class can be flagged as <InlineCode>ToBeRemoved</InlineCode> in the model, indicating it is likely to disappear in future versions of the model/application. </Desc>
+               <SeeAlso><Jump ID="mech_Modelevolution" Text="Model Evolution"/></SeeAlso>
+            </Property>
+            <Property Name="TopSortedIndex">
+               <Summary></Summary>
+               <Desc>This is the index of the <InlineCode>ClassTypeInfo</InlineCode> in the <See Class="TBoldSystemTypeInfo" Property="TopSortedClasses"/> property of the <See Property="SystemTypeInfo"/>. </Desc>
+            </Property>
+            <Property Name="Versioned">
+               <Summary>Indicates the class is versioned.</Summary>
+               <Desc>A class flagged as versioned keeps its change history. See <Jump ID="Mech_OVE" Text="Object Versioning Extension"/>.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This class represents the model information for objects. It has a list of all members (attributes and roles), and a list of all methods. It also has most of the flags and specifications imported from the UML-model (some that are only relevant to codegeneration and persistence is not copied to the run time model information) </Desc>
+      </Class>
+      <Class Name="TBoldClassTypeInfoList">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByObjectClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByObjectClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This subclass of <InlineCode>TBoldElementTypeInfoList</InlineCode> only downcasts the properties from <InlineCode>TBoldElementTypeInfo</InlineCode> to <InlineCode>TBoldClassTypeInfo</InlineCode>. </Desc>
+      </Class>
+      <Class Name="TBoldConstraintRTInfo">
+         <Methods>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary>Creates an instance of a constraint</Summary>
+               <Desc>Normally, constraints are derived from the model, and should not be created manually. If they are created manyally you may provide a name, an expression (normally an OCL-expression) and a description. The description should be something that informs a user why the constraint is broken (so he knows what to change to fulfill the constraint.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ConstraintExpression">
+               <Summary>OCL expression for the constraint</Summary>
+               <Desc>See <See Class="TBAConstraint"/> for details on how to access the constraint expression from the user-interface.</Desc>
+            </Property>
+            <Property Name="ConstraintMessage">
+               <Summary>A description of the constraint</Summary>
+               <Desc>See <See Class="TBAConstraint"/> for details on how to access the description from the user-interface.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldConstraintRTInfoList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>List class that can hold a list of TBoldConstraintRTInfo objects</Summary>
+         <Desc>List class that can hold a list of TBoldConstraintRTInfo objects</Desc>
+      </Class>
+      <Class Name="TBoldElementTypeInfoWithConstraint">
+         <Methods>
+            <Method Name="AddConstraint">
+               <Summary>Adds a constraint to the element</Summary>
+               <Desc>The ownership of the constraint-instance will be assumed by the element. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConstraintByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConstraintCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedvalueCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Constraint">
+               <Summary>List of all constraints for the object</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConstraintByIndex">
+               <Summary>Retrieves a constraint by index</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConstraintCount">
+               <Summary>Number of constraints</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TaggedValueByIndex">
+               <Summary>Returns a tagged value</Summary>
+               <Desc>The result will be in the form "tag=value"</Desc>
+            </Property>
+            <Property Name="TaggedValueCount">
+               <Summary>Returns the number of tagged values defined for the element.</Summary>
+               <Desc>Use this property if you want to loop over all the tagged values. Access each tagged value with <see property=TaggedValueByIndex>
+</Desc>
+            </Property>
+            <Property Name="TaggedValues">
+               <Summary>Returns the tagged value for a given tag</Summary>
+               <Desc>If the tag is not defined, the result will be the empty string</Desc>
+            </Property>
+
+         </Properties>
+         <Summary>Generic super class for subclasses of TBoldElementTypeInfo that has tagged values and can be constrained</Summary>
+         <Desc>This class introduces tagged values and constraints.</Desc>
+      </Class>
+      <Class Name="TBoldListTypeInfo">
+         <Methods>
+            <Method Name="ConformsTo">
+               <Summary>Determine conformance</Summary>
+               <Desc>A ListTypeInfo conforms to another ListTypeInfo if the ListElement conforms to the ListElement of the other list or if the ListElement of the other list is <InlineCode>nil</InlineCode>. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ListClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListElementTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The <InlineCode>TBoldListTypeInfo</InlineCode> is the BoldType of subclasses to TBoldList. </Desc>
+      </Class>
+      <Class Name="TBoldListTypeInfoList">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetItemByElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ItemByElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberRTInfo">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="CreateWithoutMoldMember">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>The TypeInfo and RTInfo classes are destroyed by freeing the SystemTypeInfo. Do never call the destructors separately! </Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanHaveOldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEncouragesOptimisticLockingOnDeletedOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CanHaveOldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfo">
+               <Summary></Summary>
+               <Desc>This is the <InlineCode>ClassTypeInfo</InlineCode> that the member belongs to. Note that it is not necessarily the class where the member is defined in the model since the MemberRTInfo is duplicated in each subclass (each instance pointing to different ClassTypeInfos). </Desc>
+            </Property>
+            <Property Name="DelayedFetch">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if the member will not be fetched as a part of a standard fetch-operation of the object it belongs to. This is normally used for large attributes such as blobs to speed up database operations. Also, multilinks have an implicit delayed fetch.
+                  <P>Normally, all members of an object will be fetched when any member of the object is requested.</P>
+                  <Note>The member will be fetched in a separate fetch operation when required.</Note>
+               </Desc>
+            </Property>
+            <Property Name="DeriveExpression">
+               <Summary>Expression used for member derivation</Summary>
+               <Desc>This property contains the OCL expression used to derive the attribute. It is only used if the member is <See Property="IsDerived"/></Desc>
+            </Property>
+            <Property Name="DispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EmbeddedLinkIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EncouragesOptimisticLockingOnDeletedOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsAttribute">
+               <Summary>Indicates member type is attribute</Summary>
+               <Desc>This property will be <InlineCode>true</InlineCode> if the member is an attribute, otherwise false. It is safe to cast such a MemberRTInfo to a <See Class="TBoldAttributeRTInfo"/>. </Desc>
+            </Property>
+            <Property Name="IsDerived">
+               <Summary>Indicates derived member</Summary>
+               <Desc>If <InlineCode>IsDerive</InlineCode> is <InlineCode>true</InlineCode>, the member content is synthesized/derived by the <See Property="DeriveExpression"/> </Desc>
+            </Property>
+            <Property Name="IsMultiRole">
+               <Summary>Indicates member is multi role</Summary>
+               <Desc>This property will be <InlineCode>true</InlineCode> if the member is a role wih cardinality 0..n, otherwise <InlineCode>false</InlineCode>. It is safe to cast such a MemberRTInfo to a <See Class="TBoldRoleRTInfo"/> </Desc>
+            </Property>
+            <Property Name="IsNonVersionedInVersionedClass">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+            <Property Name="IsReverseDerived">
+               <Summary>Indicates the member is two-way derived</Summary>
+               <Desc>If a member is reverse derived, it will call user defined code when it has been changed. This allows derived members to be modified, and transform the data into one or several other members.
+                  <P>An example is to derive fullName from firstName + lastName, and reverse derive fullName back into firstName and lastName.</P>
+               </Desc>
+            </Property>
+            <Property Name="IsRole">
+               <Summary>Indicates member is a role</Summary>
+               <Desc>This property will be <InlineCode>true</InlineCode> if the member is a role, otherwise <InlineCode>false</InlineCode>. It is safe to cast such a MemberRTInfo to a <See Class="TBoldRoleRTInfo"/>. </Desc>
+            </Property>
+            <Property Name="IsSingleRole">
+               <Summary>Indicates the member is a single role</Summary>
+               <Desc>This property will be <InlineCode>true</InlineCode> if the member is a role wih cardinality 0..1, otherwise <InlineCode>false</InlineCode>. It is safe to cast such a MemberRTInfo to a <See Class="TBoldRoleRTInfo"/>. </Desc>
+            </Property>
+            <Property Name="IsStoredInObject">
+               <Summary></Summary>
+               <Desc> If this property is <InlineCode>true</InlineCode>, the member will be stored in the persistent storage as a result of storing the object it belongs to. A multilink on the other hand is not stored by itself, but is fetched as a derived result of checking the singlelinks of the other end. </Desc>
+            </Property>
+            <Property Name="MemberClass">
+               <Summary></Summary>
+               <Desc>This is the delphiclass of the corresponding member. It is always safe to cast this to a TBoldMemberClass.
+                  <P>For singlelinks this will always be <See Class="TBoldObjectReference"/>, for multilinks it will be <See Class="TBoldObjectList"/> or a subclass (if there is genererated code for objectlists), for attributes it will be a subclass of <See Class="TBoldAttribute"/>.</P>
+               </Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary>Indicates the member is persistent</Summary>
+               <Desc>Persistent members are stored in the persistent storage, provided their containing class is persistent and the system is persistent.</Desc>
+            </Property>
+            <Property Name="Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ToBeRemoved">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visibility">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="index">
+               <Summary></Summary>
+               <Desc>This is the index of the MemberRTInfo in the <See Class="TBoldClassTypeInfo" Property="AllMembers"/> property of the owning <See Property="ClassTypeInfo"/>. It is also the index of a corresponding instance of <See Class="TBoldMember"/> in the <InlineCode>BoldMembers</InlineCode>-property of its owning <See Class="TBoldObject"/>. </Desc>
+            </Property>
+         </Properties>
+         <Summary> </Summary>
+         <Desc>Each member (attribute and role) will have exactly one instance of a <See Class="TMoldMember"/>, but possibly multiple instances of <InlineCode>TBoldMemberRTInfo</InlineCode>. The reason for this is that the <InlineCode>TBoldMemberRTInfo</InlineCode> is duplicated for each subclass that the member exists in.</Desc>
+      </Class>
+      <Class Name="TBoldMemberRTInfoList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>List class that can hold a list of TBoldMemberRTInfo objects</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMetaElementWithConstraint">
+         <Methods>
+            <Method Name="AddConstraint">
+               <Summary>Adds a constraint to the element</Summary>
+               <Desc>The ownership of the constraint-instance will be assumed by the element </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConstraintByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConstraintCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedvalueCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Constraint">
+               <Summary>Retrieves a constraint by name. The constraint is normally defined in a modelling tool.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConstraintByIndex">
+               <Summary>Retrieves a constraint by index</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConstraintCount">
+               <Summary> Returns the number of constraints on the element</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TaggedValueByIndex">
+               <Summary>Returns a tagged value</Summary>
+               <Desc>The result will be in the form "tag=value"</Desc>
+            </Property>
+            <Property Name="TaggedValueCount">
+               <Summary>Returns the number of tagged values defined for the element.</Summary>
+               <Desc>Use this property if you want to loop over all the tagged values. Access each tagged value with <see property=TaggedValueByIndex>
+</Desc>
+            </Property>
+            <Property Name="TaggedValues">
+               <Summary>Returns the tagged value for a given tag</Summary>
+               <Desc>If the tag is not defined, the result will be the empty string</Desc>
+            </Property>
+         </Properties>
+         <Summary>Generic super class for meta-elements that has tagged values and can be constrained</Summary>
+         <Desc>This class introduces tagged values and constraints.</Desc>
+      </Class>
+      <Class Name="TBoldMethodRTInfo">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureParameterLIst">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParameterList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getIsInherited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getNumberOfParameters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getParameterTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getParameters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FuncType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Inheritedfrom">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsClassmethod">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsInherited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NumberOfParameters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParameterTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Parameters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReturnType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Signature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Model information for methods</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMethodRTInfoList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>List for items of type TBoldMethodRTInfo</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNilTypeInfo">
+         <Methods>
+            <Method Name="BoldIsA">
+               <Summary>Returns true if the argument is a ClassTypeInfo</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConformsTo">
+               <Summary>Returns true if the argument is a ClassTypeInfo</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Initialize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>This is a special case to handle the constant "nil" in OCL. </Summary>
+         <Desc>There is exactly one instance of this class in a system, and it will conform to every instance of <See Class="TBoldClassTypeInfo"/>.</Desc>
+      </Class>
+      <Class Name="TBoldRTEvaluator">
+         <Methods>
+            <Method Name="RTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldRoleRTInfo">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="CreateInnerLinkRole">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="CreateLinkObjectRole">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetCanHaveOldValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultRegionMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEncouragesOptimisticLockingOnDeletedOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexOfLinkObjectRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexOfMainRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsQualified">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQualifiers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitQualifiers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetForceOtherEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPass2InfoForAssociation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Aggregation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AssociationStereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Changeability">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfoOfOtherEnd">
+               <Summary></Summary>
+               <Desc>This is the type of the objects on the other end of the role. </Desc>
+            </Property>
+            <Property Name="DefaultRegionMode">
+               <Summary>Specifies how the relation is handled by the default region mechanism</Summary>
+               <Desc>Specifies how the relation is handled by the default region mechanism</Desc>
+               <SeeAlso><Jump ID="mech_CMS" Text="Concurrency Management Server"/></SeeAlso>
+               <SeeAlso><Jump ID="Mech_Regiondefinitions"/></SeeAlso>
+            </Property>
+            <Property Name="DeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ForceOtherEnd">
+               <Summary></Summary>
+               <Desc>Indicates if the other end must be loaded in order to create a link of this type. An example of a situation where this property is <InlineCode>true</InlineCode> is if this link is not embedded, but the other end is. </Desc>
+            </Property>
+            <Property Name="IndexOfLinkObjectRole">
+               <Summary></Summary>
+               <Desc>If the association is indirect, and this is the main role, then this property points out the index of the role with link objects (in the same class/object as the role itself), otherwise this property is <InlineCode>-1</InlineCode>. </Desc>
+            </Property>
+            <Property Name="IndexOfMainRole">
+               <Summary></Summary>
+               <Desc>If the association is indirect, and this is the role with link objects, then this property points out the index of the main role (in the same class/object as the role itself), otherwise this property is <InlineCode>-1</InlineCode>. </Desc>
+            </Property>
+            <Property Name="IndexOfOtherEnd">
+               <Summary></Summary>
+               <Desc>This is the index of the <InlineCode>RoleRTInfo</InlineCode> of the other end, in the <InlineCode>ClassTypeInfo</InlineCode> of the other end </Desc>
+            </Property>
+            <Property Name="IsIndirect">
+               <Summary></Summary>
+               <Desc>Indicates if the association that this role is a part of uses a link object. </Desc>
+            </Property>
+            <Property Name="IsNavigable">
+               <Summary>Indicates if this role is navigable. </Summary>
+               <Desc>Nonnavigable roles should never be used for other purposes than internal (they might be needed if the other end is not embedded)</Desc>
+            </Property>
+            <Property Name="IsOrdered">
+               <Summary>Indicates if this role is ordered. Only applicable if the multiplicity is 0..n. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsQualified">
+               <Summary>Indicates if the role is qualified </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsQualifiedMulti">
+               <Summary>Indicates if this is a qualified multi role</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClassTypeInfo">
+               <Summary></Summary>
+               <Desc>If the role is indirect, then this will be the <InlineCode>classtypeinfo</InlineCode> of the linkclass. </Desc>
+            </Property>
+            <Property Name="Mandatory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Multiplicity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherEndOrdered">
+               <Summary>Indicates whether the other end of the role is ordered. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherIndexInLinkClass">
+               <Summary></Summary>
+               <Desc>If the role is indirect, then this will be the index of the single-role in the linkclass pointing to the other end. </Desc>
+            </Property>
+            <Property Name="OwnIndexInLinkClass">
+               <Summary></Summary>
+               <Desc>If the role is indirect, then this will be the index of the single-role in the linkclass pointing back to the role. </Desc>
+            </Property>
+            <Property Name="Qualifiers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RoleRTInfoOfOtherEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RoleType">
+               <Summary></Summary>
+               <Desc>This can be one of three values:
+                  <UL>
+                     <LI><B>rtRole</B>: used for ordinary roles, also called main roles.</LI>
+                     <LI><B>rtLinkRole</B>: used for roles that point to linkobjects</LI>
+                     <LI><B>rtInnerLinkRole</B>: used for the singlelinks in linkobjects pointing to the two related objects.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc><InlineCode>TBoldRoleRTInfo</InlineCode> is the model info for each role in an object (<See Class="TBoldObjectList"/> or <See Class="TBoldObjectReference"/>). </Desc>
+      </Class>
+      <Class Name="TBoldSystemTypeInfo">
+         <Methods>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc>The <InlineCode>SystemTypeInfo</InlineCode> only conforms to itself. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>Normally, the <InlineCode>TBoldSystemTypeInfo</InlineCode> is created, and destroyed by a <See Class="TBoldSystemTypeInfoHandle"/>, but if you create it yourself, you should also destroy it. Make sure there are no elements left referring to the meta-information found inside the <InlineCode>SystemTypeInfo</InlineCode> </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>Normally, the <InlineCode>TBoldSystemTypeInfo</InlineCode> is created and destroyed by a <See Class="TBoldSystemTypeInfoHandle"/>, but if you create it yourself, you should also destroy it. Make sure there are no elements left referring to the meta-information found inside the <InlineCode>SystemTypeInfo</InlineCode> </Desc>
+            </Method>
+            <Method Name="GetAttributeTypeInfoByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAttributeTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassTypeInfoByModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementTypeInfoByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEvaluator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInitializationLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListTypeInfoByElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueTypeNameList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueTypeNames">
+               <Summary></Summary>
+               <Desc>This function will fill a <InlineCode>TStrings</InlineCode> with the expression names of the various meta information elements found in a <InlineCode>SystemTypeInfo</InlineCode>. The additional parameters decide which subclasses to include in the list. </Desc>
+            </Method>
+            <Method Name="InitializationError">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InstallAttributeType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseEvaluator">
+               <Summary></Summary>
+               <Desc>Each <InlineCode>SystemTypeInfo</InlineCode> has its own instance of an OCL-evaluator. Since the Evaluator caches some results, it might hold pointer references to elements that are removed before the <InlineCode>systemTypeInfo</InlineCode> is removed. This call deletes the evaluator and all cached expressions (a new one will be created if needed). </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AttributeTypeInfoByDelphiName">
+               <Summary></Summary>
+               <Desc>Finds the first <InlineCode>AttributeTypeInfo</InlineCode> that is registered for a delphi class with the same name as the parameter. Note that a delphi class can be mapped to several expression names, and get several instances of <InlineCode>TBoldAttributeTypeInfo</InlineCode>.
+                  <P>Returns <InlineCode>nil</InlineCode> if there is no such mapping.</P>
+               </Desc>
+            </Property>
+            <Property Name="AttributeTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc>Returns the <InlineCode>AttributeTypeInfo</InlineCode> that has same expression name as the parameter, or <InlineCode>nil</InlineCode>, if there is no such attribute mapping. </Desc>
+            </Property>
+            <Property Name="AttributeTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc>Returns the <InlineCode>ClassTypeInfo</InlineCode> that has same expression name as the parameter, or <InlineCode>nil</InlineCode>, if there is no such class. </Desc>
+            </Property>
+            <Property Name="ClassTypeInfoByModelName">
+               <Summary></Summary>
+               <Desc>Returns the <InlineCode>ClassTypeInfo</InlineCode> that has same model name as the parameter, or <InlineCode>nil</InlineCode>, if there is no such class. </Desc>
+            </Property>
+            <Property Name="ElementTypeInfoByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ElementTypeInfoByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerateDefaultRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><Jump ID="Mech_CMS" Text="Concurrency Management Server"/></SeeAlso>
+            </Property>
+            <Property Name="GenerateMultiplicityConstraints">
+               <Summary>Determine of constraints for multiplicity should be generated</Summary>
+               <Desc>If this property is <InlineCode>True</InlineCode> constraints will be generated for the multiplicity bounds.
+                  <P>If the multiplicity is specified as 4..7, there will be two constraints generated; <InlineCode>size >= 4</InlineCode> and <InlineCode>size <= 7</InlineCode>.</P>
+               </Desc>
+            </Property>
+            <Property Name="InitializationLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListTypeInfoByElement">
+               <Summary></Summary>
+               <Desc>There is a <InlineCode>TBoldListTypeInfo</InlineCode> for each class in the model, and each attribute type in the type system. This property will return the corresponding list type for the parameter (or <InlineCode>nil</InlineCode> if there is no such list type). </Desc>
+            </Property>
+            <Property Name="ListTypes">
+               <Summary></Summary>
+               <Desc>This is the list of all list types in the <InlineCode>SystemTypeInfo</InlineCode> </Desc>
+            </Property>
+            <Property Name="MethodsInstalled">
+               <Summary></Summary>
+               <Desc>This property is for future use. </Desc>
+            </Property>
+            <Property Name="NilTypeInfo">
+               <Summary></Summary>
+               <Desc>Returns the singleton instance of the <See Text="NilTypeInfo" Class="TBoldNilTypeInfo"/> in the system. </Desc>
+            </Property>
+            <Property Name="OptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary></Summary>
+               <Desc><InlineCode>True</InlineCode> if the model is flagged as persistent in the model.</Desc>
+            </Property>
+            <Property Name="RootClassTypeInfo">
+               <Summary></Summary>
+               <Desc>This is the model information for the class that all other domain classes inherit from (default called <InlineCode>BusinessClassesRoot</InlineCode>, but could be renamed). </Desc>
+            </Property>
+            <Property Name="Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemIsRunnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopSortedClasses">
+               <Summary></Summary>
+               <Desc>This is a list of all classes in the model. It is sorted topologically, meaning that a class always comes after its super class. The <See Property="RootClassTypeInfo"/> is always the first class in this list (since it has no super class). </Desc>
+            </Property>
+            <Property Name="TypeTypeInfo">
+               <Summary></Summary>
+               <Desc>Returns the singleton instance of the <See Class="TBoldTypeTypeInfo"/> in the system. </Desc>
+            </Property>
+            <Property Name="UpdateWholeObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseClockLog">
+               <Summary>Indicates whether the application is using a ClockLog or not</Summary>
+               <Desc>A ClockLog is used to be able to translate object timestamps to physical date/times. Normally this clocklog is stored in the database, and is maintained by the persistencemapper. If this property is false, then the operations <See Class="TBoldSystem" Method="TimestampForTime"/> and <See Class="TBoldSystem" Method="TimeForTimeStamp"/> (and their corresponding OCL-operations timeStampToTime and timeToTimeStamp) will not work.
+                  <P>The property originates from a tagged value in the model called "UseClockLog". Set this tagged value to True to activate the ClockLog.</P>
+               </Desc>
+            </Property>
+            <Property Name="UseGeneratedCode">
+               <Summary>Indicates whether the application is using generated code or not</Summary>
+               <Desc>Read only attribute indicating whether the application is using generated code or not. Is set to true or false depending on the runtime information hold by the <See Class="TBoldSystemTypeInfoHandle"/>.<See Class="TBoldSystemTypeInfoHandle" Property="UseGeneratedCode"/>.
+                  <P>Upon creation, if the property is set to true, a verification is done that the generated code agrees against the model.</P>
+               </Desc>
+            </Property>
+            <Property Name="ValueTypeNameList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>When a <See Class="TBoldSystemHandle"/> is activated it will create a <InlineCode>TBoldSystemTypeInfo</InlineCode> that will represent the model information of the system. This is created from the meta-information found in the classes in the <See Unit="BoldMeta"/> unit.
+            <P>The SystemTypeInfo contains meta information about all the classes, types, attributes and roles used by the model.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldTypeTypeInfo">
+         <Methods>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc>The TypeTypeInfo only conforms to itself. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Internal</Summary>
+               <Desc>Do not call this constructor yourself. Instances of this class are created by <See Class="TBoldSystemTypeInfoHandle"/>-components. </Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This is the <InlineCode>BoldType</InlineCode> for each instance of subclasses to <See Class="TBoldElementTypeInfo"/>. It represents the meta-meta-layer... There will always be exactly one instance of this class in each system. </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="CLASS_TYPE_INFO_MEM_SIZE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="LITE_VERSION_CLASS_LIMIT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="LicenseControl">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary>This unit defines all the classes used to represent the model in runtime. </Summary>
+   <Desc>The three main classes are <See Class="TBoldSystemTypeInfo"/>, <See Class="TBoldClassTypeInfo"/> and <See Class="TBoldMemberRTInfo"/>, which are the model informtion for <See Class="TBoldSystem"/>, <See Class="TBoldObject"/> and <See Class="TBoldMember"/> respectively.
+      <P>This information is used extensively by the bold framework, especially the OCL evaluator, but can also be used by any developer interested in traversing the meta-information to do model driven components or any other model driven logic.</P>
+      <P>The information is constructed using the information found in the classes of the BoldMeta unit, and should be considered read only when application isrunning. Making changes to these objects will have most unpredictable effects on the application</P>
+   </Desc>
+</DLUnitDoc>

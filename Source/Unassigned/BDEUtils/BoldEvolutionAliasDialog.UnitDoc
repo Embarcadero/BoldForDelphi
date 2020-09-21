@@ -1,0 +1,49 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/DbEvolutor/BoldEvolutionAliasDialog.UnitDoc 3     01-10-24 9:18 Jeho $">
+   <Classes>
+      <Class Name="TBoldEvolutionAliasDialog">
+         <Methods>
+            <Method Name="BtnOKClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ComboBoxAliasChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGenericScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HideAlias">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AliasName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenericScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+</DLUnitDoc>

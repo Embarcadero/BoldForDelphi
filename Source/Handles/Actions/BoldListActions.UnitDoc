@@ -1,0 +1,185 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Actions/BoldListActions.UnitDoc 3     11/21/01 1:28p Jeho $">
+   <Classes>
+      <Class Name="TBoldListHandleAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class for actions connected to a TBoldListHandle.</Summary>
+         <Desc>Base class for actions connected to a <See Class="TBoldListHandle"/>.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleAddNewAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Adds a new element to the list.</Summary>
+         <Desc>Adds a new element to the list.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleDeleteAction">
+         <Methods>
+            <Method Name="AllowDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldDeleteMode">
+               <Summary>Controls what deletion means.</Summary>
+               <Desc>See <See Class="TBoldCustomNavigator" Method="BoldDeleteMode"/>.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Deletes the current element in the list.</Summary>
+         <Desc>Deletes the current element in the list.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleFirstAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Sets the first element in the list as current.</Summary>
+         <Desc>Moves the current index to the first element.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleLastAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Sets the last element in the list as current.</Summary>
+         <Desc>Moves the current index to the last element.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleMoveDownAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Moves the current element down in the list.</Summary>
+         <Desc>This action reorders the list in the sense that the current element is moved closer to the end of the list. This is mostly useful if the list holds an ordered relation.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleMoveUpAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Moves the current element up in the list.</Summary>
+         <Desc>This action reorders the list in the sense that the current element is moved closer to the beginning of the list. This is mostly useful if the list holds an ordered relation.</Desc>
+      </Class>
+      <Class Name="TBoldListHandleNextAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Sets the next element as current.</Summary>
+         <Desc>Moves the current index to the next element in the list.</Desc>
+      </Class>
+      <Class Name="TBoldListHandlePrevAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Sets the previous element as current.</Summary>
+         <Desc>Moves the current index to the previous element in the list.</Desc>
+      </Class>
+   </Classes>
+   <Summary>Actions corresponding to the buttons on a navigator.</Summary>
+   <Desc>The actions in this unit corresponds to the buttons on a <See Class="TBoldNavigator"/>.</Desc>
+</DLUnitDoc>

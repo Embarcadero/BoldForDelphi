@@ -1,0 +1,109 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldPerformanceCounter.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldPerformanceCounter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChildByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChildCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPercentOfOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSeconds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Reset">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Start">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartFromChild">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Stop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StopFromChild">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteToFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ChildByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ChildCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Children">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PercentOfOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Seconds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldMainPerformanceCounter">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldPerformanceCounterState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

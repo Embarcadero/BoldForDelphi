@@ -1,0 +1,513 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/TaggedValues/BoldDefaultTaggedValues.UnitDoc 7     02-06-10 18:20 Isje $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BOLDBOLDIFYPREFIX">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BOLDINTERALTVPREFIX">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BOLDTVREV">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULTTABLEMAPPINGSTRING">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ENUM_TAG_ASSOCIATION_STORAGE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ENUM_TAG_ATTRIBUTE_STORAGE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ENUM_TAG_CLASS_STORAGE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_ALLOWNULL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_ATTRIBUTEKIND">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_AUTOCREATED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_BOLDIFIED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_COLUMNNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_COPYRIGHTNOTICE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_CPPNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DEFAULTDBVALUE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DEFAULTLINKCLASSSUPERCLASS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DEFAULTMULTIPLICITY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DEFAULTREGIONMODE_ASSOCIATIONEND">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DEFAULTSTRINGREPRESENTATION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DEFAULTSUPERCLASS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DELAYEDFETCH">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DELETEACTION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DELPHIFIELD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DELPHINAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DELPHIOPERATIONKIND">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DERIVATIONEXPRESSIONS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DERIVATIONOCL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DPREAD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_DPWRITE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_EMBED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_EVOLUTIONSTATE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_EXPRESSIONNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_FORMERNAMES">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_GENERATEDEFAULTREGIONS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_GENERATEDEFAULTREGION_CLASS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_GENERATEMULTIPLICITYCONSTRAINTS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_GUID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_IMPLEMENTATIONUSES">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_IMPORTED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_INCFILENAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_INTERFACENAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_INTERFACEUSES">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_ISCONST">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_LENGTH">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_LINKCLASSNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_LISTGUID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_MODELVERSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_NATIONALCHARCONVERSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_NONAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_OPTIMISTICLOCKING">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_ORDERED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_OVERRIDEINALLSUBCLASSES">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_PMAPPERNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_REGIONDEFINITIONS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_REVERSEDERIVE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_ROOTCLASS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_STORAGE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_TABLEMAPPING">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_TABLENAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_TYPELIBVERSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_UNITNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_UPDATEWHOLEOBJECTS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_USECLOCKLOG">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_USEGLOBALID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_USEMODELVERSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_USEREADONLY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_USETIMESTAMP">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_USEXFILES">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_VERSIONED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_VIRTUALDERIVE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_WASEMBEDED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TAG_WASPERSISTENT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TVDEFAULTMEMBERINFOCLASSNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TVMEMBERINFOCLASSNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_ATTRIBUTEKIND_BOLD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_ATTRIBUTEKIND_DELPHI">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DEFAULTREGIONMODE_ASSOCIATIONEND_CASCADE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DEFAULTREGIONMODE_ASSOCIATIONEND_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DEFAULTREGIONMODE_ASSOCIATIONEND_EXISTENCE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DEFAULTREGIONMODE_ASSOCIATIONEND_INDEPENDENTCASCADE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DEFAULTREGIONMODE_ASSOCIATIONEND_NONE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELETEACTION_ALLOW">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELETEACTION_CASCADE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELETEACTION_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELETEACTION_PROHIBIT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELPHIOPERATIONKIND_DYNAMIC">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELPHIOPERATIONKIND_NORMAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELPHIOPERATIONKIND_OVERRIDE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DELPHIOPERATIONKIND_VIRTUAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DPFIELD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DPNONE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DPPRIVATEMETHOD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_DPPROTECTEDVIRTUALMETHOD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_EVOLUTIONSTATE_NORMAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_EVOLUTIONSTATE_REMOVED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_EVOLUTIONSTATE_TOBEREMOVED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_FALSE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_MODELERRORS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_NAME_Length">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_NAME_UPPERCASE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_NATIONALCHARCONVERSION_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_NATIONALCHARCONVERSION_FALSE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_NATIONALCHARCONVERSION_TRUE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_ALLMEMBERS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_ALLMEMBERS_OLDNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_MODIFIEDMEMBERS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_MODIFIEDMEMBERS_OLDNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_OFF">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_OPTIMISTICLOCKING_TIMESTAMP">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_PERSISTENT_OLD">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_STORAGE_EXTERNAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_STORAGE_EXTERNALKEY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_STORAGE_INTERNAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_STORAGE_PARTIALLYEXTERNAL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_TABLEMAPPING_CHILDREN">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_TABLEMAPPING_IMPORTED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_TABLEMAPPING_OWN">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_TABLEMAPPING_PARENT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="TV_TRUE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldDefaultTaggedValueList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="TVIsFalse">
+         <Summary>Check tagged value</Summary>
+         <Desc>Checks if the tagged value is set to False.</Desc>
+      </Routine>
+      <Routine Name="TVIsTrue">
+         <Summary>Check tagged value</Summary>
+         <Desc>Checks if the tagged value is set to True.</Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

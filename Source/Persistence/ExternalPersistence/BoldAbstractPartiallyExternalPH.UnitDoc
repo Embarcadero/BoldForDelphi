@@ -1,0 +1,87 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractpartiallyExternalPH">
+         <Methods>
+            <Method Name="GetDeletedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDeletedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasNewObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectIdByExternalKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectIdByExternalKeyInteger">
+               <Summary>Helper function to get the internal ID of a known external object</Summary>
+               <Desc>If you know the external key (of type integer) of an object, you can use this function to locate the internal object id for the same object. The internal ID will allow you to use <See Class="TBoldSystem" Property="EnsuredLocatorByID"/> to get the actual object. </Desc>
+            </Method>
+            <Method Name="GetObjectIdByExternalKeyString">
+               <Summary>Helper function to get the internal ID of a known external object</Summary>
+                <Desc>If you know the external key (of type string) of an object, you can use this function to locate the internal object id for the same object. The internal ID will allow you to use <See Class="TBoldSystem" Property="EnsuredLocatorByID"/> to get the actual object. </Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMultiLink">
+               <Summary>Helper function to set a multilink that is loaded from an external data store</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSingleLink">
+               <Summary>Helper function to set a singlelink that is loaded from an external data store</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DeletedObjects">
+               <Summary>List of objects that have been deleted in the external datastore, but not in the internal database.</Summary>
+               <Desc>When objects are deleted from the external data store using an application that has no knowledge of the bold database, they will be added to this list when referenced by the object layer. The object should be deleted when appropriate. Possibly this should not be left to the normal clients, but a server application that cleans the internal database from "dead" objects.
+                  <P>This list can be cleared at any time, and is only provided as information to the developer of the application, it is not used internally</P>
+               </Desc>
+            </Property>
+            <Property Name="HasDeletedObjects">
+               <Summary>This property is true if the list of the DeletedObjects property is not empty</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasNewObjects">
+               <Summary>This property is true if the list of the NewObjects property is not empty</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewObjects">
+               <Summary>This list contains objects that have been "created" in the internal database</Summary>
+               <Desc>When objects are added to the external data store using an application that has no knowledge of the bold database, then they will be added to the bold database upon first reference by a Bold application. When this happens, that client will store a reference to that object in this list. If the application needs to perform some action to these new objects, it is free to do so.
+                  <P>This list can be cleared at any time, and is only provided as information to the developer of the application, it is not used internally.</P>
+               </Desc>
+            </Property>
+            <Property Name="PersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Persistence handle that implements the basic functionallyity needed to handle objects that are "partially external"</Summary>
+         <Desc>A partially external object is an object that exists in both the internal "bold database" and an external datastore. In the external store the object has some identifying key that is stored in the bold database along with any additional data that is not available in the external store.
+            <P>This mechanism allows the developer to extend the definition of an externally defined class (additional attributes/relations). The extensions will be stored in the internal database.</P>
+            <P>The persistence handle will handle the synchronization of existence of objects between the two databases. When an object is created by an external application in the external data store and loaded in the "bold application", the persistence handle will detect that the object does not exist in the internal database. The object will be created there, and added to the list of <See Property="NewObjects"/>. If the internal (extended) aspects of the object needs to be modified when the object is internally created, the application should check for new objects in this list.</P>
+            <P>Similarly when an object is deleted in the external database by an external application, this will be noticed by the persistence handle, but the object stored in the internal database will not be deleted. It will just be added to the <See Property="DeletedObjects"/> list, and the application should take proper actions (delete the object under controlled circumstances).</P>
+            <P>Modifications done within the object layer (such as creation, modification, deletion of partially external objects) will be performed in both the internal and external database at the same time, so these changes does not need to be synchronized according to the above.</P>
+            <Note>The ocl operation "AClassName.allInstances" will synchronize the whole class between the internal database and the external data store when evaluated in memory. If it evaluated in with "EvaluateInPS" set to true, synchronization will not be performed. This is true for any operation that is evaluated with EvaluateInPS set to true (for example: "Customer.allInstances->select(customerNumber = 12344)". If the object has already been synchronized the object will be found in the internal database (as external keys are duplicated to the internal database, but if the external object has not been synchronized to the internal database, it will not be found. To force the synchronization of an object with known external key, use the helper functions <See Method="GetObjectIdByExternalKeyInteger"/> and <See Method="GetObjectIdByExternalKeyString"/>, or the more generic helper function <See Class="TBoldAbstractPartiallyExternalPC" Method="TranslateExternalKeysToInternalIds"/>.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,200 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/ConnectionHandlesCOM/BoldXMLDispatcher.UnitDoc 6     01-09-21 14:42 Jeho $">
+   <Classes>
+      <Class Name="TBoldXMLActionItem">
+         <Events>
+            <Event Name="OnAction">
+               <Summary>Implement this event handler if the <InlineCode>Producer</InlineCode> property of the action item is not set. The request argument holds the XML request. The response argument should return an XML string. </Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DispatchAction">
+               <Summary>Dispatches an XML request to the TBoldXMLActionItem. </Summary>
+               <Desc>
+                  <P>The request argument holds the XML request dispatched, the response argument must return an XML string.</P>
+                  <BH>Usage</BH>
+                  <P>This method is called internally by the <InlineCode>TBoldXMLDispatcher</InlineCode> to dispatch an XML request to action item.</P>
+               </Desc>
+            </Method>
+            <Method Name="SetDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getActionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setActionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setProducer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ActionName">
+               <Summary>A string identifier uniquely that uniquely identifies a TBoldXMLActionItem within a TBoldXMLActions collection. </Summary>
+               <Desc>This property is also used by the <InlineCode>TBoldXMLDispatcher</InlineCode> to select an <InlineCode>TBoldXML</InlineCode> <InlineCode>ActionItem</InlineCode> for handling an XML request.</Desc>
+            </Property>
+            <Property Name="Default">
+               <Summary>Indicates whether the action item should handle any request that is not handled by another available action item. </Summary>
+               <Desc> Set <InlineCode>Default</InlineCode> to <InlineCode>True</InlineCode> to make this action item the default action in the list of action items maintained by the <InlineCode>TBoldXMLDispatcher</InlineCode> object. <InlineCode>TBoldXMLDispatcher</InlineCode> attempts to match XML requests to action items by matching the <InlineCode>ActionName</InlineCode> of the name of the XML request's <InlineCode>Action</InlineCode> element. If no match can be found, the <InlineCode>TBoldXMLDispatcher</InlineCode> invokes the default action item, regardless of it's <InlineCode>ActionName</InlineCode> property's value.</Desc>
+            </Property>
+            <Property Name="Producer">
+               <Summary> </Summary>
+               <Desc>If the <InlineCode>OnAction</InlineCode> event handler is not implemented, the action item will use the <InlineCode>TBoldXMLProducer</InlineCode> component reference by the <InlineCode>Producer</InlineCode> property to generate the response XML string.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Use this class to provide a mapping from a user action to an application specific action. </Summary>
+         <Desc>The <InlineCode>TBoldXMLDispatcher</InlineCode> will try to map an <InlineCode>Action</InlineCode> element defined in the XML request onto a <InlineCode>TBoldXMLActionItem</InlineCode> by matching the class' <InlineCode>ActionName</InlineCode> property and the <InlineCode>Action</InlineCode> element's name.</Desc>
+      </Class>
+      <Class Name="TBoldXMLActions">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLDispatcher">
+         <Events>
+            <Event Name="OnDispatchError">
+               <Summary>Occurs when an error occurs while dispatching the XML request. </Summary>
+               <Desc> Write an <InlineCode>OnDispatchError</InlineCode> event to return a customized XML string back.</Desc>
+            </Event>
+            <Event Name="OnGetXMLRequest">
+               <Summary>Occurs when the dispatcher receives an XML string as request but has not yet initialized a TBoldXMLRequest object to hold the request. </Summary>
+               <Desc> Write an <InlineCode>OnGetXMLRequest</InlineCode> event handler to provide your own custom <See Class="TBoldXMLRequest"/> subclass for holding the XML request string.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DispatchAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleDispatchError">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Action">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Actions">
+               <Summary>Represents the collection of action items managed by the TBoldXMLDispatcher object. </Summary>
+               <Desc> Use the methods of <InlineCode>Actions</InlineCode> to add action items for use by the dispatcher, to clear the set of action items managed by the dispatcher, or to access the attributes of the action items.</Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldXMLDispatcher passes an XML request on to the appropriate action items that assemble a response. </Summary>
+         <Desc>
+            <P><InlineCode>TBoldXMLDispatcher</InlineCode> is a dispatcher of XML requests. It receives XML requests and maps them onto a <InlineCode>TBoldXMLActionItem</InlineCode> component. It searches <See Property="Actions"/> for a <See Class="TBoldXMLActionItem"/> whose <InlineCode>ActionName</InlineCode> property's value matches the name of the <InlineCode>Action</InlineCode> element. A default <InlineCode>TBoldXMLActionItem</InlineCode> can be defined to handle any XMLRequest.</P>
+            <BH>Usage</BH>
+            <P>The <InlineCode>TBoldXMLDispatcher</InlineCode> is a COM object that is exported under an ObjectName, client applications that wish to connect to a dispatcher must use a <See Class="TBoldComClientObjectHandle"/> that imports a <See Class="TBoldXMLDispatcher"/> object, request its <See Interface="IBoldSOAPService"/> interface and its <InlineCode>Get</InlineCode> method. This method takes two parameters: <InlineCode>Request</InlineCode> which is the XML request to send and <InlineCode>Reply</InlineCode> which is the XML reply back from the dispatcher.</P>
+            <P>The <InlineCode>TBoldXMLDispatcher</InlineCode> object manages a colleciton of action items which know how to respond to an XML request. View, add and delete the action items managed by the dispatcher using the <InlineCode>Actions</InlineCode> editor.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldXMLSOAPService">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Owner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Implements the IBoldSOAPService interface. </Summary>
+         <Desc>
+            <P>The <InlineCode>ISOAPService</InlineCode> is an interface published by classes to allow SOAP communication.</P>
+            <BH>Usage</BH>
+            <P>This class is internally used by the <See Class="TBoldXMLDispatcher"/> to provide a SOAP interface for communications.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains TBoldXMLDispatcher component and auxiliary classes. </Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldGetXMLRequestEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldXMLDispatchErrorEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

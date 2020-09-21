@@ -1,0 +1,23 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldIsoDateTime.UnitDoc 5     02-06-10 18:20 Isje $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="ParseISODate">
+         <Summary>Decodes a date in the format YYYY-MM-DD</Summary>
+         <Desc>Takes a string of the format YYYY-MM-DD and performs a check that the month value of the string is a number between 1 and 12 and that the day value of the string is a number between 1 and total days of the month (depending on the month value). Returns the string as a TDateTime.</Desc>
+      </Routine>
+      <Routine Name="ParseISODateTime">
+         <Summary>Decodes a DateTime in the format YYYY-MM-DD HH:MM[:SS]</Summary>
+         <Desc>Takes a string of the format YYYY-MM-DD HH:MM[:SS] and performs a check of the <see routine="ParseISODate" text="date"/> and the <see routine="ParseISOTime" text="time"/> values of the string. Returns the string as a TDateTime.</Desc>
+      </Routine>
+      <Routine Name="ParseISOTime">
+         <Summary>Decodes a Time in the format HH:MM[:SS]</Summary>
+         <Desc>Takes a string of the format HH:MM[:SS] and performs a check that the hour value of the string doesn't exceed 23, and that the minutes and seconds values doesn't exceeds 59. Returns the string as a TDateTime.</Desc>
+      </Routine>
+   </Routines>
+   <Summary>This unit contains functions to convert ISO-formated dates and times to delphi equivalents </Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,45 @@
+package BoldDOA;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (DOA Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  Bold,
+  vcldb,
+  doa34D7;
+
+contains
+  BoldDatabaseAdapterDOA in 'Source\Persistence\DOA\BoldDatabaseAdapterDOA.pas',
+  BoldDOAInterfaces in 'Source\Persistence\DOA\BoldDOAInterfaces.pas',
+  BoldPersistenceHandleDOA in 'Source\Persistence\DOA\BoldPersistenceHandleDOA.pas',
+  BoldPersistenceHandleDOAReg in 'Source\Persistence\DOA\BoldPersistenceHandleDOAReg.pas',
+  DOAConsts in 'Source\Persistence\DOA\DOAConsts.pas';
+
+end.

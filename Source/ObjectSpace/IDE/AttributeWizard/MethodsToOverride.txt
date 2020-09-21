@@ -1,0 +1,81 @@
+/////////////////////////////////////////////////////
+//      methods to override                        //
+/////////////////////////////////////////////////////
+
+
+
+          Lines.Strings = (
+            'interface'
+            ''
+            ''
+            '  TBoldElement = class( TObject)'
+            '  protected'
+            
+              '   function GetStringRepresentation(Representation: TBoldReprese' +
+              'ntation): string; virtual;'
+            
+              '   procedure SetStringRepresentation(Representation: TBoldRepres' +
+              'entation; Value:string); virtual;'
+            '  public'
+            
+              '   procedure DefaultSubscribe(Subscriber:TBoldSubscriber; Reques' +
+              'tedEvent:TBoldEvent); virtual; abstract;'
+            
+              '   function CompareToAs(CompareType:TBoldCompareType; BoldElemen' +
+              't:TBoldElement): Integer; virtual;'
+            
+              '   function IsEqualAs(CompareType:TBoldCompareType; BoldElement:' +
+              'TBoldElement): Boolean; virtual;'
+            '   procedure Assign(Source:TBoldElement); virtual;'
+            
+              '   function ValidateCharacter(C:AnsiChar; Representation:TBoldRe' +
+              'presentation): Boolean; virtual;'
+            
+              '   function ValidateString(Value: string;Representation:TBoldRep' +
+              'resentation): Boolean;virtual;'
+            
+              '   procedure SubscribeToStringRepresentation(Representation: TBo' +
+              'ldRepresentation;Subscriber: TBoldSubscriber;RequestedEvent: TBo' +
+              'ldEvent);virtual;'
+            '  end;'
+            ''
+            '  TBoldDomainElement = class(TObject)'
+            '  protected'
+            
+              '   procedure ReceiveEventFromOwned(Originator: TObject; Original' +
+              'Event: TBoldEvent);virtual;'
+            
+              '   function ReceiveQueryFromOwned(Originator: TObject; OriginalE' +
+              'vent: TBoldEvent;const Args: array of const; Subscriber:TBoldSub' +
+              'scriber) : Boolean; virtual;'
+            '  end;'
+            ''
+            '  TBoldMember = class(TObject)'
+            '  protected'
+            '   procedure AssignValue( Source: IBoldValue ); virtual;'
+            '   procedure CompleteModify; virtual;'
+            
+              '   procedure InitializeMember(AOwningElement: TBoldDomainElement' +
+              '; ElementTypeInfo: TBoldElementTypeInfo); virtual;'
+            '   function MayModify: Boolean; virtual;'
+            '   function MayUpdate: Boolean; virtual;'
+            '   procedure PrepareModify; virtual;'
+            
+              '   procedure ReadFromStream(Stream: TBoldInputStream; IgnorePers' +
+              'istenceState: Boolean); virtual;'
+            '   procedure SaveToStream(Stream: TBoldOutputStream); virtual;'
+            '  end;'
+            ''
+            '  TBoldAttribute = class(TObject)'
+            '  protected'
+            '   function GetAsVariant: Variant; virtual;'
+            '   procedure SetAsVariant(const Value: Variant); virtual;'
+            '  end;'
+            ''
+            ''
+            ''
+            ''
+            ''
+            ''
+            ''
+            '')

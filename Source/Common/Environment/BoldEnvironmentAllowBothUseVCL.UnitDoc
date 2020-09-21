@@ -1,0 +1,9 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Use VCL in mixed project.</Summary>
+   <Desc>If both <See unit=BoldEnvironmentVCL/> and <See unit=BoldEnvironmentCLX/> are included in a project (usually because the project uses both VCL and CLX components) including this unit will enusre that the VCL version of the environment is used.</Desc>
+</DLUnitDoc>

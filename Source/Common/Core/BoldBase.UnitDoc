@@ -1,0 +1,223 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldBase.UnitDoc 6     02-02-18 12:34 Jano $">
+   <Classes>
+      <Class Name="TBoldFlaggedObject">
+         <Methods>
+            <Method Name="GetElementFlag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInternalState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetElementFlag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInternalState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Base class for objects needing multiple binary flags and/or enums (states) with relatively few values. The flags/states are packed into a single integer in the base class, preserving space. The use of the flags and states must be coordinated with all supclasses.<Note>The flags and states used in Bold are regarded as internal to Bold, and the actual bits, and number of bits used may change in future versions.</Note></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldInterfacedObject">
+         <Methods>
+            <Method Name="QueryInterface">
+               <Summary>Requestes/queries for an an interface.</Summary>
+               <Desc> Returns a reference to the requested interface if it is supported. </Desc>
+            </Method>
+            <Method Name="SupportsInterface">
+               <Summary>Checks if an interface is supported.</Summary>
+               <Desc> Use this function if you want to know if an interface is supported. Note that if the interface is to be used if it is supported, it is more efficient to call <see method=QueryInterface> instead.</Desc>
+            </Method>
+            <Method Name="_AddRef">
+               <Summary>Abstract</Summary>
+               <Desc>The method is meant to be overriden by sub classes. </Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary>Abstract</Summary>
+               <Desc>The method is meant to be overriden by sub classes. </Desc>
+            </Method>
+         </Methods>
+         <Summary>Abstract base class for classes that implement interfaces. </Summary>
+         <Desc>A standard implementation of <InlineCode>QueryInterface</InlineCode> is provided. Classes that are intended to contain or aggregate other interfaceable classes and want them to be part of the mechanism should override this implementation. Implementation of reference counting, through <InlineCode>_AddRef</InlineCode> and <InlineCode>_Release</InlineCode>, is deferred to sub classes.
+            <Note>If you derive sub classes directly from this class you must implement reference counting yourself. In most cases you are better of deriving from <see Class=TBoldRefCountedObject> or <see Class=TBoldNonRefCountedObject></Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldMemoryManagedObject">
+         <Methods>
+            <Method Name="FreeInstance">
+               <Summary>Overrides TObject.FreeInstace.</Summary>
+               <Desc>Overrides TObject.FreeInstace, providing Bold memory management.</Desc>
+            </Method>
+            <Method Name="NewInstance">
+               <Summary>Overrides TObject.NewInstance.</Summary>
+               <Desc>Overrides TObject.NewInstance, providing Bold memory management.</Desc>
+            </Method>
+         </Methods>
+         <Summary>Abstract class adding Bold memory management. </Summary>
+         <Desc>Any object that derives from this class will be allocated using the <InlineCode>BoldMemoryManager</InlineCode> instead of the normal Delphi memory manager. This saves 4 bytes per instance. Most classes within Bold are derived from this class.<Note>Due to problems with virtual</Note></Desc>
+      </Class>
+      <Class Name="TBoldNonRefCountedObject">
+         <Methods>
+            <Method Name="_AddRef">
+               <Summary></Summary>
+               <Desc>Simply returns -1 indicating that this object is not reference counted. </Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc>Simply returns -1 indicating that this object is not reference counted. </Desc>
+            </Method>
+         </Methods>
+         <Summary>Base class for objects implementing interfaces while retaining regular Delphi lifetime control.</Summary>
+         <Desc>Use this class as a base class for objects that implement interfaces, but don't use then for lifetime control. Overrides <InlineCode>_AddRef</InlineCode> and <InlineCode>_Release</InlineCode> but does not provide any reference counting.
+            <P>Instances of this class must deallocated by calling the destructor.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldRefCountedObject">
+         <Methods>
+            <Method Name="AfterConstruction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BeforeDestruction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewInstance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AddRef">
+               <Summary></Summary>
+               <Desc>Increases the <See Property="RefCount"/>. </Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc>Decreases the reference count. When <See Class="TBoldRefCountedObject" Property="RefCount" Text="_RefCount"/> reaches zero the object will destroy itself. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="RefCount">
+               <Summary>Reference count.</Summary>
+               <Desc>Maintained by calls to <See Method="_AddRef"/> and <See Method="_Release"/>. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class for objects whose lifetime is controlled through reference counting. </Summary>
+         <Desc>Overrides <InlineCode>_AddRef</InlineCode> and <InlineCode>_Release</InlineCode> to implement true reference counting.
+            <P>You should never call the destructor directly on instances of this class. The object will be deallocated when the last reference is released.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldElementFlag0">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag1">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag10">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag11">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag12">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag13">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag14">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag15">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag16">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag17">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag18">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag19">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag2">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag20">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag21">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag22">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag23">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag3">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag4">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag5">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag6">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag7">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag8">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldElementFlag9">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Types>
+      <Type Name="TBoldElementFlag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary>Contains common base classes.</Summary>
+   <Desc>This unit contains high level base classes used throughout Bold. The top class of the hiearchy is TBoldMemoryManagedObject. There are then two base classes for objects that implement Delphi interfacfes. One of them (TBoldRefCounted object) uses the reference counting of the interfaces to control the lifetime of the objects, while the other (TBoldNonRefcountedObject) just adds the ability to have interfaces, but still uses the regular Delphi lifetime control, i.e. calling the destructor.</Desc>
+</DLUnitDoc>

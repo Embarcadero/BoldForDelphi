@@ -1,0 +1,266 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldHashIndexes.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldCardinalHashIndex">
+         <Methods>
+            <Method Name="FindByCardinal">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemAsKeyCardinal">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc>Index based on cardinals.</Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldCardinalKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc>Hash returns the hash value for the key.</Desc>
+            </Method>
+            <Method Name="HashCardinal">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>Used internally by TBoldCardinalHashIndex.</Desc>
+      </Class>
+      <Class Name="TBoldCaseSensitiveStringHashIndex">
+         <Methods>
+            <Method Name="FindByString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemASKeyString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc>Index based on case sensitive strings.</Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldCaseSensitiveStringKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>Used internally by TBoldCaseSensitiveHashIndex</Desc>
+      </Class>
+      <Class Name="TBoldClassHashIndex">
+         <Methods>
+            <Method Name="FindByClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemASKeyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldClassKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc>Hash returns the hash value for the key.</Desc>
+            </Method>
+            <Method Name="HashClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>Used internally by TBoldClassHashIndex</Desc>
+      </Class>
+      <Class Name="TBoldGUIDHashIndex">
+         <Methods>
+            <Method Name="FindByGUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GuidEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemASKeyGUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGUIDKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc>Hash returns the hash value for the key.</Desc>
+            </Method>
+            <Method Name="HashGUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>Used internally by TBoldGUIDHashIndex</Desc>
+      </Class>
+      <Class Name="TBoldObjectHashIndex">
+         <Methods>
+            <Method Name="FindAllByObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemASKeyObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Index based on instance. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc>Hash returns the hash value for the key.</Desc>
+            </Method>
+            <Method Name="HashObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="KeyObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Used internally by TBoldObjectHashIndex</Desc>
+      </Class>
+      <Class Name="TBoldStringHashIndex">
+         <Methods>
+            <Method Name="FindAllByString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemASKeyString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>Index based on strings.
+</Desc>
+      </Class>
+      <Class Name="TBoldStringKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc>Hash returns the hash value for the key.</Desc>
+            </Method>
+            <Method Name="HashString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StringValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Used internally by TBoldStringHashIndex</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,107 @@
+<html>
+
+<head>
+  <title>Optimistic Locking</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt;
+      <a href="optimistic_locking.html">Optimistic Locking</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Optimistic Locking</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell ends -->
+    <a href="../Delphi/Simple/ObjectSpace/OptimisticLocking/BE_OptimisticLocking.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/ObjectSpace/OptimisticLocking/BE_OptimisticLocking.bpr">Launch CBuilder-example</a>
+    <p>This example shows how to use optimistic locking in Bold.
+    </p>
+    <hr size="1">
+    <p class="head2">How to run</p>
+	<p>The example application uses two separate object spaces with their own
+	persistence mapper to &quot;fake&quot; concurrency between two applications.
+	Thus within the application you get two &quot;applications&quot;. From now on we
+	call them App 1 and App 2. It's the same name used in the main form in the
+	example.<p>If you open the project and displays the main form you can see that
+	both App 1 and App 2 has their own system handle and their own persistence
+	handle.&nbsp;
+    <p>If an object is loaded in both &quot;applications&quot; and the same attribute is
+    changed in both applications, the application that updates the database first will
+    succeed, but the second application will get an exception that indicates that the
+    optimistic locking failed. The listbox at the bottom of each application will show the
+    objects that failed optimistic locking. To resolve the locking, the failing objects must be discarded.
+<ol>
+  <li>Open
+	the system for App 1.&nbsp;</li>
+  <li> Add a person in the upper grid and enter name and value
+	for hasLicense.&nbsp;</li>
+  <li> Update the database.&nbsp;</li>
+  <li> Open the system for App 2. The person you
+	saved in App 1 shows in the grid for App 2. Change the name on the person in App
+	2.&nbsp;</li>
+  <li> Update the database in App 2.&nbsp;</li>
+  <li> Now change the name on the person in App 1 and
+	try to update the database. You will get an optimistic locking exception in App
+	1 because the value you tried to change is already updated in the database and
+	therefor it differs from the value you are trying to change.&nbsp;</li>
+  <li> Discard the update
+	by choosing the failed object in the listbox below the grids and discard it. The
+	value you are trying to change is now updated with the value residing in the
+	database.</li>
+</ol>
+	<p class="note"><b>Note!</b> When you enter an object in one of the applications you
+	must close and open the system in the other application to make the new object
+	visible there too.
+	</p>
+	<p class="head2">Use of optimistic locking</p>
+	<p>Optimistic locking is turned on in the model editor by selecting locking
+	mode for the entire model or for each class.
+	</p>
+	<p>Open the model editor and select a class. If you can't see a combobox named
+    Optimistic Locking go to the main menu and check the Advanced option under View. Now you should get
+	additional fields and one of them should be the Optimistic Locking
+	combobox. In this combobox you can select locking mode.
+    </p>
+    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/Mech_OptimisticLocking.htm" target="self">
+			Optimistic Locking</a> - for a description of the modes (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <br>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and
+    alias is established you only have to use the &quot;Open system&quot; button when running
+    the example program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

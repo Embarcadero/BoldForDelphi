@@ -1,0 +1,235 @@
+//**********************************************************}
+//                                                          }
+//       BOLD (Business Object Layer for Delphi)            }
+//                                                          }
+//       Copyright (c) 1996 Software Architects AB, SWEDEN  }
+//                                                          )
+//                                                          }
+//**********************************************************}
+
+// Visual Parse++ Rulefile for NEL/OCL - Navigational Expression Language
+
+// Jonas Högström
+
+// Log: 
+// 970924 Started
+
+
+%expression Main
+'[ \t\n]' %ignore;
+'[0-9]+'	               INTEGER;
+'[0-9]+\.[0-9]+'        FLOAT;
+'[a-z][a-zA-Z0-9_]*'	   NAME;
+'[A-Z][a-zA-Z0-9_]*'	   TYPENAME;
+'[A-Z][a-zA-Z0-9_]*'	   TYPENAME;
+'#[0-9][0-9][0-9][0-9]\-[0-9][0-9]\-[0-9][0-9]' DATE;
+'#[0-9][0-9]\:[0-9][0-9](\:[0-9][0-9])?' TIME;
+
+''''			StringSt,	'STRINGstart', %push StringLiteral;
+
+//'"[^\"\n]*"'	      	STRING;
+'\['			LBrack, 	   '[';
+'\]'			RBrack, 	   ']';
+'\('			LParen,		'(';
+'\)'			RParen,		')';
+'\{'			LBrace,		'{';
+'\}'			RBrace,		'}';
+
+'>'			Greater, 	'>';
+'<'			Less,	 	   '<';
+'='			Equal,		'=';
+'>='			GTEqual,	   '>=';
+'<='			LTEqual,	   '<=';
+'<>'			NEqual,		'<>';
+'\+'			Plus, 		'+';
+'\-'			Minus,		'-';
+'\*'			Mult,		   '*';
+'/'			Div,	   	'/';
+'\.'			Dot,	   	'.';
+'\-\>'                  Arrow,		'->';
+'\,'			Comma, 		',';
+'\@'			CommercialAt,	'@';
+'if'			IF,		'if';
+'then'			THEN,		'then';
+'else'			ELSE,		'else';
+'endif'			ENDIF,		'endif';
+'enum'			ENUM, 		'enum';
+'\#'			HASH,		'#';
+'\|'			BAR,		'|';
+'\:\:'			DOUBLECOLON,	'::';
+'\.\.'			DOUBLEDOT	'..';
+'\:'			COLON,		':';
+'Bag'			BAG,		'Bag';
+'Set'			SET,		'Set';
+'Sequence'		SEQUENCE,	'Sequence';
+'Collection'		COLLECTION,	'Collection';
+
+
+
+
+// Reserved Words
+
+'div'			IntDIV;
+'mod'			MOD;
+'and'			AND;
+'or'			OR;
+'not'			NOT;
+'xor'			XOR;
+'implies'		IMPLIES;
+
+%expression StringLiteral
+'([^\n'']|"\\"[ntbrf\\''\"])*'	String, 	'STRINGliteral';
+''''				StringEnd,	'STRINGend', %pop;
+
+
+// Precedences:
+
+%prec
+
+7, '+', %left;
+7, '-', %left;
+8, '*', %left;
+8, '/', %left;
+8, MOD, %left;
+8, IntDIV, %left;
+3, '=', %left;
+3, '>', %left;
+3, '<', %left;
+3, '<=', %left;
+3, '>=', %left;
+3, '<>', %left;
+
+5, OR, %left;
+5, AND, %left;
+10, NOT, %right;
+4, IMPLIES, %left;
+5, XOR, %left;
+10, '|', %left;
+
+
+%production Goal
+
+Goal		Goal -> expression;
+
+expressionPost	expression -> postFixExpression;
+expressionAnd	expression -> expression AND expression;
+expressionOr	expression -> expression OR expression;
+expressionXor	expression -> expression XOR expression;
+expressionImp	expression -> expression IMPLIES expression;
+expressionEQ	expression -> expression '=' expression;
+expressionLT	expression -> expression '<' expression;
+expressionGT	expression -> expression '>' expression;
+expressionLE	expression -> expression '<=' expression;
+expressionGE	expression -> expression '>=' expression;
+expressionNE	expression -> expression '<>' expression;
+expressionAdd	expression -> expression '+' expression;
+expressionSub	expression -> expression '-' expression;
+expressionDiv	expression -> expression '/' expression;
+expressionMul	expression -> expression '*' expression;
+expressionDivI	expression -> expression IntDIV expression;
+expressionMod	expression -> expression MOD expression;
+
+expressionNeg	expression -> '-' expression;
+expressionNOT	expression -> NOT expression;
+
+ifExpression	ifExpression -> 'if' expression
+		'then' expression
+		'else' expression
+		'endif';
+
+postFixFirst		postFixExpression -> primaryExpression;
+postFixMember		postFixExpression -> postFixExpression '.'
+				pathName timeExpression qualifier;
+postFixMethod		postFixExpression -> postFixExpression '.'
+				pathName timeExpression qualifier featureCallParameters;
+
+postFixOperation	postFixExpression -> postFixExpression '->'
+                                pathName timeExpression qualifier;
+postFixOperationParams	postFixExpression -> postFixExpression '->'
+                     	  	pathName timeExpression qualifier featureCallParameters;
+
+
+primaryExpLittCollection	primaryExpression -> literalCollection;
+primaryExpLitt 	   		primaryExpression -> literal;
+primaryExpParen		   	primaryExpression -> '(' expression ')';
+primaryExpIf		      	primaryExpression -> ifExpression;
+
+// These will always stand first in a chain of "." and "->"
+// The rest is done by 'postfixexpression'
+// This is always a member (or perhaps a variable), but never an operation. (according to 
+PrimaryNoParams		      primaryExpression -> pathName timeExpression qualifier;
+// This is a method of the class
+PrimaryWithParams          primaryExpression -> pathName timeExpression qualifier featureCallParameters;
+
+//featureCallParameters      featureCallParameters -> '(' declarator actualParameterList ')';
+
+featureCallParameters1      featureCallParameters -> '(' actualParameterList ')';
+featureCallParameters2      featureCallParameters -> '(' NAME '|' actualParameterList ')';
+featureCallParameters3      featureCallParameters -> '(' NAME ':' simpleTypeSpecifier '|' actualParameterList ')';
+
+literal_String			literal -> STRINGstart STRINGliteral STRINGend;
+literal_EmptyString		literal -> STRINGstart STRINGend;
+literal_Number			literal -> INTEGER;
+literal_float                   literal -> FLOAT;
+literal_Date			literal -> DATE;
+literal_Time                    literal -> TIME;
+literal_Name			literal -> '#' anyName;
+
+simpleTypeSpecifier_Ety		simpleTypeSpecifier ->;
+simpleTypeSpecifier_Path	simpleTypeSpecifier -> pathTypeName;
+simpleTypeSpecifier_Enum	simpleTypeSpecifier -> enumerationType;
+
+literalCollection	      	literalCollection -> collectionKind '{' expressionListOrRange '}';
+
+expressionListOrRange_List 	expressionListOrRange -> expressionList;
+expressionList		         	expressionList -> expression;
+expressionList_Rec	      	expressionList -> expression ',' expressionList;
+expressionListOrRange_Range	expressionListOrRange -> expression '..' expression;
+
+enumerationType			enumerationType -> 'enum' '{' enumTypeList '}';
+enumTypeList		   	enumTypeList -> '#' anyName;
+enumTypeList_Rec	   	enumTypeList -> '#' anyName ',' enumTypeList;
+
+qualifiers_Ety 			qualifier -> ;
+qualifiers	      		qualifier -> '[' actualParameterList ']';
+
+//declarator_Ety		   	declarator -> ;
+//declarator_Type			declarator -> NAME ':' simpleTypeSpecifier '|';
+
+//declarator_Name			declarator -> NAME '|';
+
+//declarator_Type			declarator -> declaratorNameList simpleTypeSpecifier '|';
+
+//declarator_Name			declaratorNameList -> NAME;
+//declarator_NameList		declaratorNameList -> NAME ',' declaratorNameList;
+
+pathTypeName			pathTypeName -> typeNameList;
+
+typeNameList			typeNameList -> TYPENAME;
+typeNameList_Rec		typeNameList -> TYPENAME '::' typeNameList;
+
+pathName 		   	pathName -> anyName;
+pathName_Rec			pathName -> anyName '::' pathName;
+
+anyName_Type 			anyName -> TYPENAME;
+anyName_Name			anyName -> NAME;
+
+timeExpression			timeExpression -> '@' anyName;
+timeExpression_Ety		timeExpression -> ;
+
+actualParameterList_ety         actualParameterList -> ;
+ActualParameterlist_nonEty      actualParameterList -> NonEmptyActualParameterList;
+NonEmptyactualParameterList 	NonEmptyActualParameterList -> expression;
+NonEmptyactualParameterList_Rec	NonEmptyActualParameterList -> expression ',' NonEmptyActualParameterList;
+
+collectionKind_Set   		collectionKind -> 'Set';
+collectionKind_Bag   		collectionKind -> 'Bag';
+collectionKind_Sequence		collectionKind -> 'Sequence';
+collectionKind_Collection	collectionKind -> 'Collection';
+
+
+
+
+
+
+

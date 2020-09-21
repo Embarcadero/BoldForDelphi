@@ -1,0 +1,87 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceHandleDataSet">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldExternalPersistenceHandleDataSet</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary>Creates an instance of TBoldExternalPeristenceControllerDataSet</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceControllerDataSet"/></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys the instance and frees up all resources</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary>Returns a TBoldExternalPersistenceControllerDataSet</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceControllerDataSet"/></Desc>
+            </Method>
+           
+            <Method Name="SetConfig">
+               <Summary>Assigns a TBoldExternalPersistenceConfigDataSetItems collection to the Config property</Summary>
+               <Desc>See also: <See Property="Config"/></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary>Link to the TBoldModel component</Summary>
+               <Desc>This property must point to a <See Class="TBoldModel"/> that holds the UML model for the system to be used.</Desc>
+            </Property>
+            <Property Name="Config">
+               <Summary>Collection of mapping items for classes to DataSets</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceConfigDataSetItems"/></Desc>
+            </Property>
+            <Property Name="MaxFetchBlockSize">
+               <Summary>Maximum number of objects to fetch in one batch</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NextPersistenceHandle">
+               <Summary>Link to the next persistence handle in the chain (if any)</Summary>
+               <Desc>
+                  <P>This property must point to a <See Class="TBoldPersistenceHandle"/></P>
+                  <P>The property allows you to chain persistence handles so that your application can manage data in more than one database.</P>
+                  <P>Other mechanisms that can be inserted into the persistence chain are for example the propagator services</P>
+                  <P>To connect your application to more than one external database, you need to chain the external persistence handles and set the property <See Property="ClassesToHandle"/>.</P>
+               </Desc>
+            </Property>
+            <Property Name="OnActivate">
+               <Summary>Called after the handle has been activated</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnAfterUpdates">
+               <Summary>Called after any updates to the external persistence store</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnBeforeUpdates">
+               <Summary>Called before any updates to the external persistence store</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDeActivate">
+               <Summary>Called after the handle has been deactivated</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceController">
+               <Summary>Returns a TBoldExternalPersistenceControllerDataSet</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceControllerDataSet"/></Desc>
+            </Property>
+         </Properties>
+         <Summary>This is a persistence handle that allows you to connect your application to external "non bold" data.</Summary>
+         <Desc>
+            <P>This is accomplished by inserting this handle between the <See Class="TBoldSystemHandle"/> and the <See Class="TBoldPersistenceHandle"/> that 
+            connects the system to the Bold database.</P>
+            <P>You can chain several of these handles if you need to connect to more than one external data store.</P>
+            <P>To get this mechanism up and running you will need to connect the PersistenceHandle property of your <See Class="TBoldSystemHandle/"/> to this component
+            and then the <See Property="NextPersistenceHandle"/> to either another external persistence handle or the persistence handle that connects the
+            system to the Bold database.  You will also need to place a <See Class="TBoldDatabaseAdapter"/> component to connect the handle to an external database.
+            And configure the property <See Property="ClassesToHandle"/> to which classes this specific external persistence handle is to handle.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

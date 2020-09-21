@@ -1,0 +1,161 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/ControlPacks/BoldCheckboxStateControlPackCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAsCheckBoxStateRendererCom">
+         <Events>
+            <Event Name="OnGetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnIsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnSetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DefaultGetAsCheckBoxStateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultIsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCheckBoxStateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUpToDateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldCheckBoxRendererDataCom">
+         <Properties>
+            <Property Name="CurrentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Oldvalue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldCheckBoxStateFollowerControllerCom">
+         <Methods>
+            <Method Name="GetCurrentAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveAsCheckBoxStateRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EffectiveAsCheckBoxStateRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Renderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldCheckBoxIsChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldGetAsCheckBoxState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetAsCheckBoxState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValidateCheckBoxState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

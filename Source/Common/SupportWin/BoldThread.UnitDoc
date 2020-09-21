@@ -1,0 +1,71 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldThread.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldNotifiableThread">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoTerminate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMessageQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Quit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SignalReady">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TerminateThread">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitUntilReady">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitUntilSignaled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="QuitWaitTimeOut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="TerminateThread">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

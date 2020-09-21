@@ -1,0 +1,33 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Misc/BoldObjectRetriever.UnitDoc 4     02-06-04 11:03 Johosos $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldRetrieveObjectByIdString">
+         <Summary>Utility function to retrieve an object from the persistent storage (database)</Summary>
+         <Desc>If you have access to the <See Class="tBoldObjectlocator" Text="locator"/> of an object, it is easy to get hold of the object, but if you only have the ID of the object perhaps retrieved with a handcrafted SQL-query to the datbase, you can use this function to return the object. You must provide the system that the object belongs to, and the string-representation of the ID.</Desc>
+         <Examples>
+            <Example>
+               <Body>
+                  <Code>uses
+  BoldObjectRetriever,
+  BoldSystem;
+var
+  anObject: TBoldObject;
+begin
+  ...
+  // find the object 12345 and rename him Peter...
+  anObject := BoldRetrieveObjectByIdString(aBoldSystem, '12345');
+  if anObject is TPerson then
+    (anObject as TPerson).firstName := 'Peter';
+end;</Code>
+               </Body>
+            </Example>
+         </Examples>
+      </Routine>
+   </Routines>
+     <Summary>Contains utility routine to get an object given its string-id</Summary>
+         <Desc></Desc>
+</DLUnitDoc>

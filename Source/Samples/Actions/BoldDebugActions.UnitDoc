@@ -1,0 +1,161 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Actions/BoldDebugActions.UnitDoc 2     02-06-12 2:53p Jeho $">
+   <Classes>
+      <Class Name="TBoldLogAction">
+         <Methods>
+            <Method Name="Create">
+               <Summary>constructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary>Toggles logging.</Summary>
+               <Desc>Logging of </Desc>
+            </Method>
+            <Method Name="GetLogHandler">
+               <Summary>Get method for LogHandler.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogType">
+               <Summary>Get method for LogType</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesTarget">
+               <Summary>Always returns true</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHandler">
+               <Summary>Set method for LogHandler</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateTarget">
+               <Summary>Returns the state of logging.</Summary>
+               <Desc>Actually returns <InlineCode>Assigned(LogHandler)</InlineCode>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LogHandler">
+               <Summary>LogHandler to control.</Summary>
+               <Desc>Subclasses map this property to the global loghandler they control.</Desc>
+            </Property>
+            <Property Name="LogType">
+               <Summary>Text indicating type of log controlled.</Summary>
+               <Desc>Used in the caption of the action and the log mesages indicating log has toggled.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldLogFormAction">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Contructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary>Shows or Hides the log form</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesTarget">
+               <Summary>Returns True</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Action to show/hide the log form.</Summary>
+         <Desc>Using <See Routine="BoldLog" Unit="BoldLogHandler"/>, it's possible to log things that happen in the framework, or custom log entries as well. This actions shows/hides the log form.</Desc>
+      </Class>
+      <Class Name="TBoldLogOCLAction">
+         <Methods>
+            <Method Name="GetLogHandler">
+               <Summary>Returns BoldOCLLogHandler.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogType">
+               <Summary>Returns 'OCL'</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHandler">
+               <Summary>Sets BoldOCLLogHandler.</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Toggles logging of evaluated OCL statements.</Summary>
+         <Desc>This action toggles the logging of evaluated OCL statements. This is useful to debug complex GUI scenarios, or just to get a feel of what's happening in the GUI, derived members etc.</Desc>
+      </Class>
+      <Class Name="TBoldLogPMAction">
+         <Methods>
+            <Method Name="GetLogHandler">
+               <Summary>Returns BoldPMLogHandler</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogType">
+               <Summary>Returns 'PMCalls'</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHandler">
+               <Summary>Sets the BoldPMLogHandler</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldLogSQLAction">
+         <Methods>
+            <Method Name="GetLogHandler">
+               <Summary>Returns BoldSQLLogHandler.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogType">
+               <Summary>Returns 'SQL'</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHandler">
+               <Summary>Sets BoldSQLLogHandler.</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSystemDebuggerAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary>Determine if the action is enabled</Summary>
+               <Desc>The action is enabled if the <See Property="BoldSystemHandle" Class="TBoldSystemHandleAction"/> is active.</Desc>
+            </Method>
+            <Method Name="CloseDebugForm">
+               <Summary>Close the debug form.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteTarget">
+               <Summary>Toggles the debug form.</Summary>
+               <Desc>If the debug form is visible, it will be freed. If not, it will be created if necessary, and then shown and brought to front. The <InlineCode>Checked</InlineCode> status of the action will indicate if the debug form is available.</Desc>
+            </Method>
+            <Method Name="GetDebugForm">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary>Monitors the debug form's existence.</Summary>
+               <Desc>If the debug form is closed and freed, the action will be notified.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DebugForm">
+               <Summary>The debugger form.</Summary>
+               <Desc>The action maintains an instance variable referencing the debug form.</Desc>
+            </Property>
+         </Properties>
+         <Summary>An action to bring up the System Debug Form.</Summary>
+         <Desc>This action simplifies gaining access to the System debugger form. It is a form that can be used to inspect objects, the state of the system and some other internal states.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Actions to help in debugging.</Summary>
+   <Desc>The actions in this unit pertain to debugging.</Desc>
+</DLUnitDoc>

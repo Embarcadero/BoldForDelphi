@@ -1,0 +1,19 @@
+/* Grid bitmaps */
+BOLDGRID_CURRENT BITMAP LOADONCALL "BoldGrid Current.bmp"
+BOLDGRID_SELECTED BITMAP LOADONCALL "BoldGrid Selected.bmp"
+BOLDGRID_CONSTRAINT_TRUE BITMAP LOADONCALL "BoldGrid Constraint True.bmp"
+BOLDGRID_CONSTRAINT_FALSE BITMAP LOADONCALL "BoldGrid Constraint False.bmp"
+
+/* Navigator bitmaps */
+BOLDNAV_DELETE BITMAP LOADONCALL "BoldNavigator Delete.bmp"
+BOLDNAV_FIRST BITMAP LOADONCALL "BoldNavigator First.bmp"
+BOLDNAV_LAST BITMAP LOADONCALL "BoldNavigator Last.bmp"
+BOLDNAV_INSERT BITMAP LOADONCALL "BoldNavigator Insert.bmp"
+BOLDNAV_NEXT BITMAP LOADONCALL "BoldNavigator Next.bmp"
+BOLDNAV_PRIOR BITMAP LOADONCALL "BoldNavigator Prior.bmp"
+BOLDNAV_MOVEUP BITMAP LOADONCALL "BoldNavigator MoveUp.bmp"
+BOLDNAV_MOVEDOWN BITMAP LOADONCALL "BoldNavigator MoveDown.bmp"
+
+/* Editbox bitmaps */
+BOLDEDIT_ELLIPSIS BITMAP LOADONCALL "BoldEdit Ellipsis.bmp"
+

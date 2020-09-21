@@ -1,0 +1,93 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldControllerListControlPack.UnitDoc 3     02-06-19 7:31a Jeho $">
+   <Classes>
+      <Class Name="TBoldControllerList">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds a TBoldFollowerController to the list.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Contructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Delete">
+               <Summary>Deletes the item on position index.</Summary>
+               <Desc><InlineCode>Delete</InlineCode> will free the instance on position <InlineCode>index</InlineCode> and delete it from the list.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDisplayPropertyListRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubController">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary>Moves item on position CurIndex to ToIndex.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary>Removes the BoldFollowerController from the list.</Summary>
+               <Desc>If <InlineCode>BoldFollowerController</InlineCode> is not in the list, no exception will be raised.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary>Returns the number of items in the list.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DropMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary>Returns items from the list.</Summary>
+               <Desc>This is the default property of the class.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldControllerListAsFollowerListRenderer">
+         <Methods>
+            <Method Name="DefaultRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUptodate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines classes for lists of controllers.
+
+</Summary>
+   <Desc>This unit defines classes used to present lists of values.</Desc>
+</DLUnitDoc>

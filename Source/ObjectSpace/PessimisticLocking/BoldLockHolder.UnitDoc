@@ -1,0 +1,179 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/PessimisticLocking/BoldLockHolder.UnitDoc 4     01-10-24 9:17 Jeho $">
+   <Classes>
+      <Class Name="TBoldAbstractLockHolder">
+         <Methods>
+            <Method Name="EnsureLocks">
+               <Summary></Summary>
+               <Desc>Re-checks with the Lock Manager that the client does indeed hold the locks it thinks it does, i.e. that no locks have been lost. This method is called automatically before an update, and there is normally no need for a developer to call it directly. </Desc>
+            </Method>
+            <Method Name="GetHeldExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHeldShared">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPropagationEvents">
+               <Summary></Summary>
+               <Desc>Internal.</Desc>
+            </Method>
+            <Method Name="Lock">
+               <Summary></Summary>
+               <Desc>Requests locks from the Lock Manager. There is normally no need for a developer to call this method directly.</Desc>
+            </Method>
+            <Method Name="Release">
+               <Summary></Summary>
+               <Desc> Returns locks to the Lock Manager. There is normally no need for a developer to call this method directly.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HeldExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HeldShared">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The lock holder is responsible for keeping track of what locks the client holds, as well as acting as a proxy for the Lock Manager.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldLock">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc>The string that uniquely identifies the lock.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>A lock is a unique string that is sent to the Lock Manager. The <InlineCode>TBoldLock</InlineCode> class wraps these strings and is used with the <InlineCode>TBoldLockHolder</InlineCode>.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldLockHolder">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHeldExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHeldShared">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPropagationEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Lock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LockDatabase">
+               <Summary></Summary>
+               <Desc>Attempt to reserve the so-called exclusive database lock. Returns <InlineCode>true</InlineCode> if successful, false if not. See <Jump File="Mech_CMS" Text="Concurrency Based Server"/>. </Desc>
+            </Method>
+            <Method Name="Release">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WaitForWakeup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WakeUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListenerMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LockManager">
+               <Summary></Summary>
+               <Desc>Internal. The interface to the actual service</Desc>
+            </Property>
+            <Property Name="TimeOut">
+               <Summary></Summary>
+               <Desc>Unused.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The lock holder is responsible for keeping track of what locks the client holds, as well as acting as a proxy for the Lock Manager.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldLockList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AsOLEVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Includes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemASKeyString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>A list of locks. For internal use.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc>The components defined in this unit are part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.
+      <P>This feature set is licensed separately.</P>
+   </Desc>
+</DLUnitDoc>

@@ -1,0 +1,57 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldXCVTreeViewCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldXCVTreeViewCom">
+         <Events>
+            <Event Name="OnCopy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnCut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnPaste">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Copy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Cut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PassToEditor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Paste">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMCopy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMCut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMPaste">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

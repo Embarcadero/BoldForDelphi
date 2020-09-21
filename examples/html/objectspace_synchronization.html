@@ -1,0 +1,106 @@
+<html>
+
+<head>
+  <title>ObjectSpace Syncronization</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_persistence.html" target="menu">Persistence</a> &gt;
+      <a href="objectspace_synchronization.html">ObjectSpace Syncronization</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">ObjectSpace Synchronization</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Simple/Persistence/Synchronization/BldOwnSynchronized.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/Persistence/Synchronization/BE_Synchronization.bpr">Launch CBuilder-example</a>
+	<p class="note"><b>Note!</b>&nbsp; This example demonstrates features of the
+    <b> ObjectSpace Synchronization Extension</b>. This is an extension product to $(PRODUCT_BASE_NAME). A
+	license key for the extension is required to try the example. Use the License Manager to request
+	an evaluation key.
+	</p>
+	<p class="note"> To run the example, you have to register a propagator. To register a propagator you need
+    to run the binary 'BoldPropagator.exe' (found under \bin) with the command line parameter '/regserver'.
+    </p>
+    <p class="note">You must also register the type library BoldComConnection. Execute regdlls.bat under
+	the bin\ directory.
+	</p>
+	<p>This is an example on of how to synchronize several object spaces. The example will help you understand:
+	</p>
+    <ul>
+      <li>How to synchronize a BoldSystem with other BoldSystems running in different applications.</li>
+      <li>The ObjectSpace Synchronization Server components and their usage.</li>
+    </ul>
+    <br>
+    <hr size="1">
+	<p class="head2">How to run</p>
+	<p>
+	To run the examples you could either start the propagator manually (this will ensure that the
+    propagator is not terminated when no BoldSystems are registered with it) or let the application
+    start it automatically (in this case when all clients are closed the propagator is automatically
+    terminated).
+    </p>
+    <p>After having registered the propagator, start two instances of
+    BldOwnSynchronized.exe. Now
+    if you change an object in one instance of the application (i.e. in one BoldSystem), the object
+    is also modified in the other BoldSystem.
+    </p>
+    <p class="head2">Synchronize</p>
+    <p>To make an object space synchronizable we need to insert in between the BoldSystemHandle and
+    its PersistenceHandle a small chain of interconnected components, these components are:
+    </p>
+    <ul>
+      <li>TBoldIDAdderHandle</li>
+      <li>TBoldSnooperHandle</li>
+      <li>TBoldListenerHandle</li>
+      <li>TBoldExternalObjectSpaceEventHandler</li>
+    </ul>
+	<p>The Buildings &amp; Owners example has been extended so that when several instances of the
+    application are running (i.e. several object spaces active), all will be notified when an object
+    is modified in any of the object spaces. Each object space is informed of all changes (in other
+    object spaces) made to any of the loaded objects. When object space A lets say receives a
+    notification that the object with ID 10 has been modified, the default behavior is to mark
+    object 10 as invalid and refetch that object again. Users can write event handlers to implement
+    the desired behavior for when an object is modified, a class is modified or a conflict occurs.
+    </p>
+	    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/Mech_OSS.htm" target="self">
+			ObjectSpace Synchronization Server</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+	<br>
+    <p class="note"><b> Note!</b> You must create a database manually (from the Model Editor)
+    and inform the PersistenceHandle about your choice of alias!
+    </p>
+<!-- Content frame ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks are
+      properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

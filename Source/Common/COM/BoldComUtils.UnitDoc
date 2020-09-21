@@ -1,0 +1,236 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/COM/BoldComUtils.UnitDoc 4     02-02-11 15:24 Jano $">
+   <Classes>
+      <Class Name="EBoldCom">
+         <Summary>Base class for COM related exceptions.</Summary>
+         <Desc> Exceptions raised in the COM parts of Bold will be of this type. </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BOLD_DEFAULT_SERVER_CONTEXT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EOAC_ANY_AUTHORITY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EOAC_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EOAC_DYNAMIC_CLOAKING">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EOAC_MUTUAL_AUTH">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EOAC_NONE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EOAC_STATIC_CLOACKING">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHNZ_DCE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHNZ_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHNZ_NONE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_CALL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_CONNECT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_NONE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_PKT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_PKT_INTEGRITY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_LEVEL_PKT_PRIVACY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_AUTHN_WINNT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_IMP_LEVEL_ANONYMOUS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_IMP_LEVEL_DEFAULT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_IMP_LEVEL_DELEGATE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_IMP_LEVEL_IDENTIFY">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RPC_C_IMP_LEVEL_IMPERSONATE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alCall">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alConnect">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alDefault">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alNone">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alPacket">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alPacketIntegrity">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="alPacketPrivacy">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ilAnonymous">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ilDefault">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ilDelegate">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ilIdentiry">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="ilImpersonate">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldCreateComObject">
+         <Summary>Creates an instance of a COM object.</Summary>
+         <Desc> The function creates an instance of a CoClass identified by ClsId and requests the interface indentified by IId. If the function succeeds the resulting interface pointer is returned in Obj and the function returns true. If the CoClass doesn't exist or if it doesn't support the requested interface the function returns false. </Desc>
+         <SeeAlso><See Routine="BoldCreateRemoteComObject"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldCreateGUID">
+         <Summary>Creates a GUID.</Summary>
+         <Desc>Generates and returns a new GUID (Globally Unique IDentifier). </Desc>
+         <SeeAlso><See Routine="BoldCreateGUIDAsString"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldCreateNamedValues">
+         <Summary>Creates an OleVariant that contains name-value pairs.</Summary>
+         <Desc> There must be the same number of items in the two arrays. Every name must have a value and every value must have a name.
+The resulting variant will be a variant array that contains two other arrays, one string array with names and one variant array with values. </Desc>
+         <SeeAlso><See Routine="BoldVariantIsNamedValues"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldCreateRemoteComObject">
+         <Summary>Creates an instance of a COM object on a specified machine.</Summary>
+         <Desc> The function creates an instance of a CoClass identified by ClsId and requests the interface indentified by IId. If the function succeeds the resulting interface pointer is returned in Obj and the function returns true. If the CoClass doesn't exist or if it doesn't support the requested interface the function returns false. </Desc>
+         <SeeAlso><See Routine="BoldCreateComObject"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldGetNamedValue">
+         <Summary>Retrieves a named value. </Summary>
+         <Desc> Data must be a variant that contains named values.
+The function returns Unassigned if the named value doesn't exist in the variant.</Desc>
+         <SeeAlso><See Routine="BoldSetNamedValue"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldInitializeComSecurity">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldMemoryToVariant">
+         <Summary>Copies data from a memory buffer into an OleVariant.</Summary>
+         <Desc> Creates a variant byte array and copies BufSize bytes from Buffer into the array. </Desc>
+         <SeeAlso><See Method="BoldStreamToVariant"/></SeeAlso>
+         <SeeAlso><See Method="BoldStringsToVariant"/></SeeAlso>
+         <SeeAlso><See Method="BoldVariantToMemory"/></SeeAlso>
+         <SeeAlso><See Method="BoldVariantToStream"/></SeeAlso>
+         <SeeAlso><See Method="BoldVariantToStrings"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldSetNamedValue">
+         <Summary>Changes a named value.</Summary>
+         <Desc> Data must be a variant that contains named values.
+The function does nothing if the named value doesn't exist.</Desc>
+         <SeeAlso><See Routine="BoldGetNamedValue"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldSetSecurityForInterface">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldStreamToVariant">
+         <Summary>Copies data from a TStream object into an OleVariant.</Summary>
+         <Desc> Creates a variant byte array and copies data from a stream into the array. </Desc>
+      </Routine>
+      <Routine Name="BoldStringsToVariant">
+         <Summary>Copies strings from a TStrings objects into an OleVariant.</Summary>
+         <Desc> Creates a variant string array and copies all strings into the array. </Desc>
+      </Routine>
+      <Routine Name="BoldVariantArrayOfArraysOfStringToStrings">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldVariantIsNamedValues">
+         <Summary>Checks if variant contains named values. </Summary>
+         <Desc> Use this function to determine if the variant contains name value pairs.</Desc>
+         <SeeAlso><See Routine="BoldCreateNamedValues"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldVariantIsType">
+         <Summary>Type check. </Summary>
+         <Desc> Use this function to check if variant is of a specific type.</Desc>
+      </Routine>
+      <Routine Name="BoldVariantToMemory">
+         <Summary>Copies data from variant into memory buffer. </Summary>
+         <Desc> The function returns the number of bytes copied. </Desc>
+      </Routine>
+      <Routine Name="BoldVariantToStream">
+         <Summary>Copies data from variant into a TStream object. </Summary>
+         <Desc> The function returns the number of bytes copied. </Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc>Contains support/utility functions. </Desc>
+</DLUnitDoc>

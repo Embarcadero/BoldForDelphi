@@ -1,0 +1,89 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/Id/BoldDefaultId.UnitDoc 6     02-01-08 18:50 Jano $">
+   <Classes>
+      <Class Name="TBoldDefaultID">
+         <Methods>
+            <Method Name="CloneWithClassId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloneWithClassIdAndTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloneWithTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHash">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsInteger">
+               <Summary>This is the integer representing the object in the database.</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The <InlineCode>TBoldDefaultID</InlineCode> is used to represent Object identities in the default database mapping of Bold. Each object will have a unique integer that is meaningful in the context of a database. </Desc>
+      </Class>
+      <Class Name="TBoldTimestampedDefaultId">
+         <Methods>
+            <Method Name="CloneWithClassId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="createWithTimeAndClassId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="TimeStamp">
+               <Summary></Summary>
+               <Desc>The time stamp that identifies an old version of a Bold object. </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc> This class represent object id's with time stamps. The time stamp is used to identify an old version of a Bold object.
+            <Note>This feature is only available in the Object Versioning Extension add-on to Bold for Delphi.</Note>
+         </Desc>
+         <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

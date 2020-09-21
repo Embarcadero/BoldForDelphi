@@ -1,0 +1,159 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldNavigatorDefs.UnitDoc 3     02-08-12 13:19 Isje $">
+   <Classes>
+      <Class Name="TBoldNavigateBtnImageIndex">
+         <Methods>
+            <Method Name="SetnbDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbFirst">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbInsert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbLast">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbMoveDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbMoveUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbNext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetnbPrior">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="nbDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbFirst">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbInsert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbLast">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbMoveDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbMoveUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbNext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="nbPrior">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Internal use.</Summary>
+         <Desc>Is intended for the internal use of TBoldCustomNavigator only.</Desc>
+      </Class>
+      <Class Name="TBoldNavigateBtnImageIndexOwner">
+         <Methods>
+            <Method Name="FixButtonGlyphs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>This is an abstract class that the Navigators inherits from</Summary>
+         <Desc>This class only defines the FixButtonGlyphs method that can be called from the TBoldNavigateBtnImageIndex when an imageindex changes</Desc>
+      </Class>
+      <Class Name="TBoldNavButton">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Paint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TimerExpired">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Index">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NavStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Internal use.</Summary>
+         <Desc>This class is for the internal use of TBoldNavigator only.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldButtonSet">
+         <Summary>Internal use.</Summary>
+         <Desc>Defines visible buttons in a navigator. Set of <See type="TBoldNavigateBtn"/>.</Desc>
+      </Type>
+      <Type Name="TBoldDeleteMode">
+         <Summary>This type defines the action for a TBoldCustomNavigator when the delete button is pressed.</Summary>
+         <Desc> Note that the difference is really only relevant when BoldHandle.List is a list of business objects. For lists of values (e.g. TBAString s) removing an element from the list always destroys it, since they have value semantics rather than reference semantics.
+If the list is a multilink of an object removing the element from the list will also remove it from the multilink.
+If the list represents an entire class, removing an object from the list implies deleting the object. </Desc>
+      </Type>
+      <Type Name="TBoldNavButtonStyle">
+         <Summary>Internal use.</Summary>
+         <Desc>Defines how mouse down is to be performed on the button.</Desc>
+      </Type>
+      <Type Name="TBoldNavClick">
+         <Summary>Internal use.</Summary>
+         <Desc>Defines on-click event.</Desc>
+      </Type>
+      <Type Name="TBoldNavigateBtn">
+         <Summary>Internal use.</Summary>
+         <Desc>Is intended for the internal use of TBoldCustomNavigator only.</Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

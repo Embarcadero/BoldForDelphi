@@ -1,0 +1,47 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/Actions/BoldHandleAction.UnitDoc 3     11/21/01 1:28p Jeho $">
+   <Classes>
+      <Class Name="TBoldHandleAction">
+         <Methods>
+            <Method Name="CheckAllowEnable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="HandlesTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldElementHandle">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="UpdateTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_HandleSubscriberReceive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldElementHandle">
+               <Summary>Handle the action is connected to.</Summary>
+               <Desc>This is a base handle the action is connected to. Subclasses will restrict the type of this property.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Base action for all Bold actions.</Summary>
+         <Desc>This is a base action that can be used to create various bold-enabled actions.</Desc>
+      </Class>
+   </Classes>
+   <Summary>Defines an action from which useful subclasses can be derived.</Summary>
+   <Desc>Defines an action from which useful subclasses can be derived. This level introduces a connection to a handle, and manages that connection.</Desc>
+</DLUnitDoc>

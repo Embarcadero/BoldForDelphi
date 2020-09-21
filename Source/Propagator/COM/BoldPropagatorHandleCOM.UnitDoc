@@ -1,0 +1,103 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Propagator/COM/BoldPropagatorHandleCOM.UnitDoc 5     23.11.01 14:10 Maan $">
+   <Classes>
+      <Class Name="TBoldPropagatorHandleCOM">
+         <Events>
+            <Event Name="OnPropagatorCallFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoConnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoDisconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoPropagatorCallFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClientHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClientHandlerObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEventPropagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEventPropagatorObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetConnectionHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnPropagatorCallFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc>What is says; set to true to connect to the propagator; set to false to disconnect. Note that this only sets up the physical connection. To properly use propagation you'll need to use a <See Class="TBoldListenerHandle"/> </Desc>
+            </Property>
+            <Property Name="ClientHandlerObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc>If the client has a physical connection to the propagator. </Desc>
+            </Property>
+            <Property Name="ConnectionHandle">
+               <Summary></Summary>
+               <Desc>The <InlineCode>ConnectionHandle</InlineCode> property is a reference to a <See class="TBoldComConnectionHandle"/> component that handles the Com connection with the Propagator server. The <InlineCode>ServerName</InlineCode> property of this ConnectionHandle component should be set to <EM>BoldPropagator.EnterprisePropagator.PropagatorConnection</EM> if you're using the BoldPropagator server included in the <Strong>ObjectSpace Synchronization Server</Strong> extension.</Desc>
+            </Property>
+            <Property Name="EventPropagatorObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This handle gives a connection to the Propagator. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

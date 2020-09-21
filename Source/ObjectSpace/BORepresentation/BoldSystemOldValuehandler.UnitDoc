@@ -1,0 +1,43 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldSystemOldValuehandler.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldOldValueHandler">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOldValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MemberPersistenceStatePreChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MemberValuePreChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjectExistenceChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjectExistencePersistenceStateChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,515 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldTreeViewCom.UnitDoc 3     11/22/01 12:04p Jeho $">
+   <Classes>
+      <Class Name="TBoldCustomTreeViewCom">
+         <Methods>
+            <Method Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BeginUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanCollapse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEdit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanExpand">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Change">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Collapse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DestroyWnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayIcon">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoInsertHiddenNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoInsertVisibleNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Edit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Expand">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementAt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollowerAt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAutoExpandLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMaxLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelectedIndexDelta">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTreeController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoExpandLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeExpansion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectInserted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedIndexDelta">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTreeNode">
+         <Methods>
+            <Method Name="ExistsInParent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHideNodeIfNoVisibleChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNodeDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideNodeIfNoVisibleChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTreeViewCom">
+         <Events>
+            <Event Name="OnChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnChanging">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnCollapsed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnCollapsing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDeletion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEdited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEditing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExpanded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExpanding">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetSelectedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AutoExpandLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BorderStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Images">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Indent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeExpansion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RightClickSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectInserted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedIndexDelta">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowLines">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowRoot">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StateImages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

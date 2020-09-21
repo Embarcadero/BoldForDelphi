@@ -1,0 +1,139 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldSQLHandle.UnitDoc 7     01-11-13 9:33 Joho $">
+   <Classes>
+      <Class Name="TBoldSQLHandle">
+         <Methods>
+            <Method Name="ClearList">
+               <Summary>Clear the list comprising the result. </Summary>
+               <Desc>Call this method to manually remove all objects in the result-list</Desc>
+               <SeeAlso><See Property="ClearBeforeExecute"/></SeeAlso>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldSQLHandle</Summary>
+               <Desc>Use <InlineCode>Create</InlineCode> to create an instance of <InlineCode>TBoldSQLHandle</InlineCode>.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldSQLHandle.</Summary>
+               <Desc><InlineCode>Destroy</InlineCode> destroys an instance of <InlineCode>TBoldSQLHandle</InlineCode> and releases the resources it has used. Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> instead.</Desc>
+            </Method>
+            <Method Name="EnsureList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteSQL">
+               <Summary>Execute the SQL statement(s) defined by <See Property="ClassExpressionName"/>, <See Property="SQLOrderByClause"/> and <See Property="SQLWhereClause"/></Summary>
+               <Desc>
+                  <P>The generated SQL statement will vary depending on the table mapping of the class indicated by <InlineCode>ClassExpressionName</InlineCode>.</P>
+                  <P>The examples below finds objects of type Residential_Building from the example Building and Owners model. If the property <See Property="JoinInheritedTables"/> is <InlineCode>false</InlineCode>, then only the main table of an object (the one storing the attributes of the concrete subclass) is added to the query. This can improve performance.</P>
+                  <BH>TableMapping=OWN</BH>
+                  <P>The following single statement will be generated:</P>
+                  <Code>SELECT RESIDENTIAL_BUILDING.BOLD_ID, RESIDENTIAL_BUILDING.BOLD_TYPE
+FROM RESIDENTIAL_BUILDING, BUILDING, BOLD_OBJECT
+WHERE (BUILDING.BOLD_ID=RESIDENTIAL_BUILDING.BOLD_ID) AND (RESIDENTIAL_BUILDING.BOLD_ID=BOLD_OBJECT.BOLD_ID)
+[AND <<SQLWhereClause>>]
+[ORDERBY <<SQLOrderByClause>>].</Code>
+                  <BH>TableMapping=PARENT</BH>
+                  <P>The following single statement will be generated:</P>
+                  <Code>SELECT BOLD_ID, BOLD_TYPE
+FROM BUILDING, BOLD_OBJECT
+WHERE BOLD_TYPE IN (12)  // if 12 is the dbtype for Residential buildings
+[AND <<SQLWhereClause>>]
+[ORDERBY <<SQLOrderByClause>>]</Code>
+                  <BH>TableMapping=CHILD</BH>
+                  <P>Several SQL-statements like those for <InlineCode>TableMapping=OWN</InlineCode> will be generated, one for the first subclass in each inheritance branch that introduces its own table.</P>
+                  <Note>If the <See Property="JoinInheritedTables"/> is false, only the main table of the class will be added to the query!</Note>
+               </Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClassExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClearBeforeExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetListMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassExpressionName">
+               <Summary>The property is a string, which must be a valid name for a class in <See Class="TBoldElementHandle" Property="StaticSystemTypeInfo"/>.</Summary>
+               <Desc>
+                  <BH>Bold events</BH>
+                  <P>Setting <InlineCode>ClassExpressionName</InlineCode> gives rise to the following events:</P>
+                  <UL>
+                     <LI><InlineCode>beValueIndentityChanged</InlineCode>: Will be send if the value of the property is changed. Setting the property to its current value will not trigger an event.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="ClearBeforeExecute">
+               <Summary></Summary>
+               <Desc>If this property is <InlineCode>true</InlineCode>, <InlineCode>TBoldElementHandle.Value</InlineCode> will be cleared before each <See Method="ExecuteSQL"/>. If it is <InlineCode>false</InlineCode>, the result of each <InlineCode>ExecuteSQL</InlineCode> will be merged into the existing <InlineCode>Value</InlineCode>, as specified by <See Property="ListMode"/>. </Desc>
+            </Property>
+            <Property Name="JoinInheritedTables">
+               <Summary>Defines if inherited tables should be automatically added to the query</Summary>
+               <Desc>If the condition in the <InlineCode>WhereClause</InlineCode> refers to any inherited attributes, this property should be set to <InlineCode>true</InlineCode>, but if only attributes/roles defined on the class itself is used, this will lead to unnessesary complex SQL-statements, and reduced performance on large tables.</Desc>
+            </Property>
+            <Property Name="ListMode">
+               <Summary></Summary>
+               <Desc>Governs the behavior if duplicate objects are found for multiple calls to <See Method="ExecuteSQL"/>. Only meaningful if <See Property="ClearBeforeExecute"/> is <InlineCode>false</InlineCode>. </Desc>
+            </Property>
+            <Property Name="MaxAnswers">
+               <Summary>Restricts the number of resulting objects</Summary>
+               <Desc>If you are not sure how many objects will be returned by your query, you can restrict the number with this property.</Desc>
+            </Property>
+            <Property Name="Offset">
+               <Summary>Skip the first part of a result</Summary>
+               <Desc>Setting this property makes the result skip the first objects in the original database-result. This is useful if you have previously executed the same query with a restriction in the <see property=MaxAnswers> property</Desc>
+            </Property>
+            <Property Name="Params">
+               <Summary> </Summary>
+               <Desc>If you need to send data that can not be expressed as a string in the SQL fragements, then you can create an entry in the <InlineCode>Params</InlineCode>, and set the value. Refer to the parameter from the SQL fragment the same way as normal for params (":paramname").</Desc>
+            </Property>
+            <Property Name="SQLOrderByClause">
+               <Summary></Summary>
+               <Desc>This string must be an SQL fragment that can be used in an <InlineCode>ORDERBY</InlineCode> clause in the SQL statement generated by handle. The SQL statement(s) generated are described under <See Method="ExecuteSQL"/>. </Desc>
+            </Property>
+            <Property Name="SQLWhereClause">
+               <Summary> </Summary>
+               <Desc>This string must be an SQL fragment that can be used in an <InlineCode>WHERE</InlineCode> clause in the SQL statement generated by handle. The SQL statement(s) generated are described under <See Method="ExecuteSQL"/>.</Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldSQLHandle provides a "back door" to the database, allowing the database to be used as a search engine. </Summary>
+         <Desc>
+            <P>Objects in the system defined by <See Property="StaticSystemHandle"/> will be fetched using SQL. This assumes that the system has a <See Class="TBoldSystemHandle" Property="PersistenceHandle" Text="Persistencehandle"/> that uses an SQL-capable database as a persistence mechanism.</P>
+            <Note>This handle is not a subclass to <See Class="TBoldAbstractListHandle"/>. If the result is to be displayed in a multiline control an additional <See Class="TBoldCursorhandle"/> (or <See Class="TBoldListHandle"/>) must be used.</Note>
+            <BH>Value</BH>
+            <P>The <See Class="TBoldElementHandle" Property="Value"/> of the handle is a list of objects of class <See Property="ClassExpressionName"/>. The contents of <InlineCode>Value</InlineCode> will recalculated each time <See Method="ExecuteSQL"/> is called. The SQL statement(s) generated are described under <See Method="ExecuteSQL"/>.</P>
+            <BH>Typing</BH>
+            <P>The <See Class="TBoldElementHandle" Property="StaticBoldType"/> of the handle is a list where the type of the elements is defined by <See Property="ClassExpressionName"/>.</P>
+            <BH>Bold events</BH>
+            <P><InlineCode>TBoldSQLHandle</InlineCode> is a subclass of <InlineCode>TBoldSubscribableComponent</InlineCode>, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldSQLHandle</InlineCode> can send the following events:</P>
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent when anything influencing <See Class="TBoldElementHandle" Property="StaticBoldType"/>, such <See Property="ClassExpressionName"/>, is changed.</LI>
+            </UL>
+            <P>The event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+            <Note>The <InlineCode>beValueIdentityChanged</InlineCode> event is not send when <InlineCode>ExecuteSQL</InlineCode> is called, since this only changes the <I>contents</I> of <InlineCode>Value</InlineCode>. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines TBoldSQLHandle</Summary>
+   <Desc>This unit defines the TBoldSQLHandle.</Desc>
+</DLUnitDoc>

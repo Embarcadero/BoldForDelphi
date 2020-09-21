@@ -1,0 +1,77 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldDirectoryTraverser.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldDirectoryTraverser">
+         <Events>
+            <Event Name="OnDirectory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteDirectory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteRecursive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TraverseFiles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Mask">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Path">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TraverseAlgorithm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldOnDirectoryEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldOnFileEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldTraverseAlgorithm">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

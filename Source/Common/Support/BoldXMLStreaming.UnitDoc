@@ -1,0 +1,435 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldXMLStreaming.UnitDoc 4     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldXMLInterfaceStreamer">
+         <Methods>
+            <Method Name="ReadInterface">
+               <Summary>This method should read from the XML node Node and stuff the values into Item.</Summary>
+               <Desc> </Desc>
+            </Method>
+            <Method Name="WriteInterface">
+               <Summary>This method should write the contents of Item to the XML node Node.</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This is the superclass for all streamers used to stream interfaces. It will be used when <See Class="TBoldXMLNode" Method="WriteInterface"/> or <See Class="TBoldXMLNode" Method="ReadInterface"/> is called. </Desc>
+      </Class>
+      <Class Name="TBoldXMLNode">
+         <Methods>
+            <Method Name="AddStateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>Normally there is no need to call Create directly. New nodes can be obtained from <See Method="NewSubNode"/>, <See Method="GetSubNode"/>, <See Method="MakeNodeForElement"/>, <See Class="TBoldXMLStreamManager" Method="GetRootNode"/>, <See Class="TBoldXMLStreamManager" Method="GetSOAP"/>, <See Class="TBoldXMLStreamManager" Method="NewRootNode"/> and <See Class="TBoldXMLStreamManager" Method="NewSOAP"/>. </Desc>
+            </Method>
+            <Method Name="EnsureType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAccessor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDocument">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubNode">
+               <Summary>Find an XML node that is an immediate child of the node.</Summary>
+               <Desc> Finds an existing XML node that is an immediate child of the node, and has the accessor accessor. This method creates a new TBoldXMLNode instance and relinquishes ownership of it to the caller. </Desc>
+            </Method>
+            <Method Name="GetType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEmpty">
+               <Summary>True if the node is empty</Summary>
+               <Desc> Returns true if the node has no child nodes, and contains no data. An empty node may still have attributes. </Desc>
+            </Method>
+            <Method Name="MakeNodeForElement">
+               <Summary></Summary>
+               <Desc> This is the preferred way to create a new TBoldXMLNode for an IXMLDOMElement. </Desc>
+            </Method>
+            <Method Name="NewSubNode">
+               <Summary>Create new sub node in the XML document.</Summary>
+               <Desc> Creates a new node in the XML document. The new node will be an immediate child, and will get the accessor accessor. This method creates a new TBoldXMLNode instance and relinquishes ownership of it to the caller. </Desc>
+            </Method>
+            <Method Name="ReadBoolean">
+               <Summary>Read a boolean value. </Summary>
+               <Desc> Reads the contents of the node as a boolean value. If the node was not written as a boolean value the behaviour is undefined.</Desc>
+            </Method>
+            <Method Name="ReadCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadData">
+               <Summary>Read arbitrary data. </Summary>
+               <Desc> Reads the contents of the node as an arbitrary data value. If the node was not written as a data value the behaviour is undefined.</Desc>
+            </Method>
+            <Method Name="ReadDate">
+               <Summary>Read a date </Summary>
+               <Desc> Reads the contents of the node as a date value. If the node was not written as a date value the behaviour is undefined.</Desc>
+            </Method>
+            <Method Name="ReadDateTime">
+               <Summary>Read a TDateTime. </Summary>
+               <Desc> Reads the contents of the node as a TDateTime value. If the node was not written as a TDateTime value the behaviour is undefined.</Desc>
+            </Method>
+            <Method Name="ReadFloat">
+               <Summary>Read a floating point value. </Summary>
+               <Desc>Reads the contents of the node as a floating point value. If the node was not written as a floating point value the behaviour is undefined. </Desc>
+            </Method>
+            <Method Name="ReadInteger">
+               <Summary>Read an integer value </Summary>
+               <Desc> Reads the contents of the node as an integer value. If the node was not written as an integer value the behaviour is undefined.</Desc>
+            </Method>
+            <Method Name="ReadInterface">
+               <Summary>Read into an interface </Summary>
+               <Desc> Reads into an interface. ReadInterface is similar to ReadObject, except that instead of returning a new object, the caller supplies an existing interface.</Desc>
+            </Method>
+            <Method Name="ReadObject">
+               <Summary>Read an object.</Summary>
+               <Desc> Reads an object. The contents of the no de must have been written with <See Method="WriteObject"/>. StreamName should be the stream name corresponding to the expected type of the object. It should be the same as the StaticStreamName parameter to the corresponding WriteObject call. ReadObject creates a new instance and relinquishes ownership of it to the caller. </Desc>
+            </Method>
+            <Method Name="ReadString">
+               <Summary>Read a string value</Summary>
+               <Desc> Reads the contents of the node as a string value. </Desc>
+            </Method>
+            <Method Name="ReadSubNodeBoolean">
+               <Summary>Read a boolean value from a sub node.</Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadBoolean"/> on the sub node. </Desc>
+            </Method>
+            <Method Name="ReadSubNodeData">
+               <Summary>Read a data value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadData"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeDate">
+               <Summary>Read a date value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadDate"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeDateTime">
+               <Summary>Read a TDateTime value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling TBoldXMLNode_GetSubNode>main and then calling <See Method="ReadDateTime"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeFloat">
+               <Summary>Read a floating point value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadFloat"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeInteger">
+               <Summary>Read an integer value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadInteger"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeObject">
+               <Summary>Read a n object from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadObject"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeString">
+               <Summary>Read a string value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadString"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadSubNodeTime">
+               <Summary>Read a time value from a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="GetSubNode"/> and then calling <See Method="ReadTime"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="ReadTime">
+               <Summary>Read a time value. </Summary>
+               <Desc> Reads the contents of the node as a time value. If the node was not written as a time value the behaviour is undefined. </Desc>
+            </Method>
+            <Method Name="RemoveStateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToNull">
+               <Summary> Set the node to represent a NULL value. </Summary>
+               <Desc> Sets the node to represent a NULL value. In the XML document this is represented with the attribute xsi:null = 1, in compliance with the SOAP standard.</Desc>
+            </Method>
+            <Method Name="WriteBoolean">
+               <Summary>Write a boolean value.</Summary>
+               <Desc> Writes a boolean value to the XML node. </Desc>
+            </Method>
+            <Method Name="WriteCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteData">
+               <Summary>Write an aribtrary data value. </Summary>
+               <Desc> Writes an arbitrary data value to the XML node. If the Value string contains characters that are illegal in XML, the string is encoded as Base64.</Desc>
+            </Method>
+            <Method Name="WriteDate">
+               <Summary>Write a date value. </Summary>
+               <Desc> Writes a date value to the XML node.</Desc>
+            </Method>
+            <Method Name="WriteDateTime">
+               <Summary>Write a TDateTime. </Summary>
+               <Desc> Writes a TDateTime to the XML node.</Desc>
+            </Method>
+            <Method Name="WriteFloat">
+               <Summary>Write a floating point value. </Summary>
+               <Desc> Writes a floating point value to the XML node.</Desc>
+            </Method>
+            <Method Name="WriteInteger">
+               <Summary>Write an integer value. </Summary>
+               <Desc> Writes an integer value to the XML node.</Desc>
+            </Method>
+            <Method Name="WriteInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteObject">
+               <Summary>Write an object. </Summary>
+               <Desc> Writes an object. There must be a streamer registered for the stream name of the object. In order to be able to be streamed, an object must implement the IBoldStreamable interface, and return its stream name in the GetStreamName method. If the StaticStreamName supplied is different from the actual stream name of the object the actual stream name will be written to the XML node, thus allowing polymorphic handling of objects.</Desc>
+            </Method>
+            <Method Name="WriteString">
+               <Summary>Write a string value. </Summary>
+               <Desc> Writes a string value to the XML node.</Desc>
+            </Method>
+            <Method Name="WriteSubNodeBoolean">
+               <Summary>Write a boolean value to a sub node.
+ node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteBoolean"/> on the sub</Desc>
+            </Method>
+            <Method Name="WriteSubNodeData">
+               <Summary>Write a data value to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteData"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="WriteSubNodeDate">
+               <Summary>Write a date value to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteDate"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="WriteSubNodeDateTime">
+               <Summary>Write a TDateTime to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteDateTime"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="WriteSubNodeFloat">
+               <Summary>Write a floating point value to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteFloat"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="WriteSubNodeInteger">
+               <Summary>Write an integer value to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/>n and then calling <See Method="WriteInteger"/> on the sub node.</Desc>
+            </Method>
+            <Method Name="WriteSubNodeObject">
+               <Summary>Write an object to a sub node.
+ node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteObject"/> on the sub</Desc>
+            </Method>
+            <Method Name="WriteSubNodeString">
+               <Summary>Write a string value to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/> and then calling <See Method="WriteString"/> on the sub node. </Desc>
+            </Method>
+            <Method Name="WriteSubNodeTime">
+               <Summary>Write a time value to a sub node. </Summary>
+               <Desc> This method is supplied for convenience. The effect is the same as first calling <See Method="NewSubNode"/>main and then calling <See Method="WriteTime"/>main on the sub node.</Desc>
+            </Method>
+            <Method Name="WriteTime">
+               <Summary>Write a time value.</Summary>
+               <Desc> Writes a time value to the XML node. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Accessor">
+               <Summary></Summary>
+               <Desc>The accessor of a TBoldXMLNode is the 'tag' string in &lt;tag&gt;...&lt;/tag&gt;. </Desc>
+            </Property>
+            <Property Name="Document">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsNull">
+               <Summary>True if the node contains a NULL value </Summary>
+               <Desc> This property is true if the node is marked as NULL. In the XML document this is represented with the attribute xsi:null = 1, in compliance with the SOAP standard.</Desc>
+            </Property>
+            <Property Name="Manager">
+               <Summary>The TBoldXMLStreamManager that the node is connected to.</Summary>
+               <Desc> </Desc>
+            </Property>
+            <Property Name="XMLDomElement">
+               <Summary>The IXMLDOMElement of the XML node.</Summary>
+               <Desc> The implementation of TBoldXMLNode is based on the IXMLDOM-interfaces, standardised interfaces to manipulate XML documents. The property XMLDomElement allows direct access to the IXMLDOMElement of the XML node. This allows more complex manipulations than would be possible otherwise. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>TBoldXMLNode represents an element in an XML document, i.e. a &lt;tag&gt;...&lt;/tag&gt; pair. </Desc>
+      </Class>
+      <Class Name="TBoldXMLObjectStreamer">
+         <Methods>
+            <Method Name="CreateObject">
+               <Summary>Factory method </Summary>
+               <Desc> This is a factory method that should return a newly created instance of the class that the streamer handles.</Desc>
+            </Method>
+            <Method Name="ReadObject">
+               <Summary>Read object contents from XML node. </Summary>
+               <Desc> This method should read from the XML node Node and stuff the values into the Obj object.</Desc>
+            </Method>
+            <Method Name="WriteObject">
+               <Summary>Write object to XML node. </Summary>
+               <Desc> This method should write the contents of the Obj object to the XML node Node.</Desc>
+            </Method>
+         </Methods>
+         <Summary> This is the superclass for all streamers used to stream objects. It will be used when <See Class="TBoldXMLNode" Method="WriteObject"/> or <See Class="TBoldXMLNode" Method="ReadObject"/> is called. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLStreamManager">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSOAP">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewRootNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewSOAP">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Registry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLStreamStateManager">
+         <Methods>
+            <Method Name="AddObjectByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveObjectByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Empty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StreamName">
+               <Summary>The stream name that identifies the type of items that the streamer can handle.</Summary>
+               <Desc> </Desc>
+            </Property>
+         </Properties>
+         <Summary>This is the superclass of all XML streamers. Its sole purpose is to define the <See Property="StreamName"/> property. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLStreamerList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLStreamerRegistry">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInterfaceStreamer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectStreamer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MainStreamerRegistry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterStreamer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldSOAPNullAttributeName">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldSOAPTypeAttributeName">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains classes for handling streaming of XML data to and from various kinds of storage media.</Summary>
+   <Desc> </Desc>
+</DLUnitDoc>

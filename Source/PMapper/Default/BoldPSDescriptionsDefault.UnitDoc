@@ -1,0 +1,129 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Default/BoldPSDescriptionsDefault.UnitDoc 4     02-01-09 18:38 Joho $">
+   <Classes>
+      <Class Name="TBoldDefaultSystemDescription">
+         <Methods>
+            <Method Name="AddFirstClock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddFirstID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddFirstTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddTableNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistentStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDatabaseScript">
+               <Summary>Generates a SQL script for the schema of the database</Summary>
+               <Desc>for details, <see class=TBoldSQLSystemDescription method=GenerateDatabaseScript></Desc>
+            </Method>
+            <Method Name="GenerateScriptForFirstClock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateScriptForFirstID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateScriptForFirstTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateScriptForTableNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeKnownSystemtables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIdTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRootTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTabletable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTimeStamptable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTypeTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetXFilestable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllInstancesMappingTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClockLogTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastClockTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberMappingTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectStorageMappingTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Tabletable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TimeStampTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="XFilestable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

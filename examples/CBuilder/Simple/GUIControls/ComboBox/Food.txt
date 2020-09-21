@@ -1,0 +1,7 @@
+Pizza
+Pasta
+Fish
+Hamburger
+Steak
+Chicken
+Turkey

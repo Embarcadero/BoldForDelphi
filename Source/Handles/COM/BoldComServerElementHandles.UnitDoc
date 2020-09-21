@@ -1,0 +1,54 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/COM/BoldComServerElementHandles.UnitDoc 4     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldComServerElementHandle">
+         <Methods>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExportMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The Bold handle that should be exported.</Summary>
+               <Desc> TBoldComServerElementHandle is usually used to export a Bold system, thus it usually holds the TBoldSystemHandle of the Bold system that should be exported. </Desc>
+            </Property>
+            <Property Name="ExportMode">
+               <Summary>Specifies how the Bold handle is exported.</Summary>
+               <Desc> If the value of ExportMode is emValue, only the value of the Bold handle will be exported. If the value is emHandle the handle of the Bold handle will be exported as well. Use emValue in case you do not have the Bold Com client components available (e.g. writing clients in Visual Basic), in which case you just need the Value of the Bold handle. </Desc>
+            </Property>
+         </Properties>
+         <Summary>This component exports a Bold handle.</Summary>
+         <Desc> TBoldComServerElementHandle exports the Bold handle referenced by its <See Property="BoldHandle"/> property, i.e. the domain objects present in the handle will be available to clients through COM connections.
+            <BH>Usage</BH>
+Usually the Bold handle exported by TBoldComServerElementHandle is a <See Class="TBoldSystemHandle"/>, this means that all domain objects present in the system will be accessible by clients through COM connections. If the exported Bold handle is a TBoldSystemHandle use a <See Class="TBoldSystemHandleCom"/> component on the client to import the Bold system.
+For an illustration of client and server component interconnections refer to <Jump ID="Mech_ComClient" Text="Com Client Overview"/>. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldComServerElementExportMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

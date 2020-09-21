@@ -1,0 +1,70 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/Bld/BoldBld.UnitDoc 4     02-06-14 15:42 Isje $">
+   <Classes>
+      <Class Name="EBoldBLDParseError">
+         <Summary>The exception raised by the bld-reader/writer if something is wrong
+</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFormatLink">
+         <Methods>
+            <Method Name="ExportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanExport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelToFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelToStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringsToModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="FileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This is the reader and writer of the internal storage format of the class model (*.bld). It is used to store the model in the ModelAsStrings property of a TBoldModel, so that it can be streamed to the dfm-file.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BooleanToMultiplicityString">
+         <Summary>Return a boolean as a string value.</Summary>
+         <Desc>If True returns '*', if False returns '1'.</Desc>
+      </Routine>
+   </Routines>
+   <Summary>
+</Summary>
+   <Desc>This unit contains the reader and writer for the internal file format of the model (the *.bld format). This is also the format used for the property TBoldModel.ModelAsStrings.</Desc>
+</DLUnitDoc>

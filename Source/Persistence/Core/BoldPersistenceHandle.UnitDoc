@@ -1,0 +1,80 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/Handles/BoldPersistenceHandle.UnitDoc 3     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandle">
+         <Methods>
+            <Method Name="AddPersistenceSubscription">
+               <Summary></Summary>
+               <Desc>Call this method with a subscriber to be notified when things happen in the persistence handle/persistence controller. The events that can happen are also wrapped in a component <see class=TBoldAbstractPersistenceNotifier> that has two subclasses for easy use (<see class=TBoldPersistenceProgressNotifier> and <see class=TBoldPersistenceNotifier>).
+</Desc>
+            </Method>
+            <Method Name="CheckInactive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveExtendedEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleasePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc>Setting the persistence handle to active is normally done by the system handle when it is activated. Subclasses can perform actions when this is done such as logging in to a database, or opening some network connections.
+</Desc>
+            </Property>
+            <Property Name="HasPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceController">
+               <Summary></Summary>
+               <Desc>
+This property points out the persistence controller that is created by the persistence handle. The persistence controller is the object that will do the actual work</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This is the superclass of all persistence handles. A PersistenceHandle supplies persistence-services to a <see class=TBoldSystemHandle>. Various subclasses solves this task in different ways.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,113 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldAbstractListHandleCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractListHandleCom">
+         <Methods>
+            <Method Name="First">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasNext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasPrior">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Last">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Prior">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveCurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasNext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasPrior">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="List">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

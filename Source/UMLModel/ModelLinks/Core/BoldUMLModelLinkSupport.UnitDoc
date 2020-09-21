@@ -1,0 +1,31 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/Core/BoldUMLModelLinkSupport.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldUMLModelLinkSupport">
+         <Methods>
+            <Method Name="ConstraintsAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConstraintsToString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeadingSlashToDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringToConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

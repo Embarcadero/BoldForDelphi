@@ -1,0 +1,47 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/HandlesCOM/BoldSOAPServerPersistenceHandles.UnitDoc 4     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldSOAPServerPersistenceHandle">
+         <Methods>
+            <Method Name="GetComObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc>The persistence handle to pass on the persistence operation calls to.
+</Desc>
+            </Property>
+            <Property Name="BoldModel">
+               <Summary></Summary>
+               <Desc>The TBoldSOAP ServerPersistenceHandle needs a Bold Model for performing the SOAP streaming of objects. The BoldModel property should point to the BoldModel component of the application.
+See <Jump ID="Mech_RemotePersistenceServer" Text="Using Remote SOAP PersistenceHandles">
+</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This component lets you redirect the persistence mapping of an application to a remote server over the SOAP protocol. The client(s) should have a correponding <see class=TBoldSOAPClientPersistenceHandle>.
+See <Jump ID="Mech_RemotePersistenceServer" Text="Using Remote SOAP PersistenceHandles">
+
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

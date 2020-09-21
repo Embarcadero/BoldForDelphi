@@ -1,0 +1,114 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldControlPackDefs.UnitDoc 3     01-09-13 11:21 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BoldNodeFirstColumnIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldNodeIconIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldNodeListIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldNodeTextIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beListPartEnabledChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfdNeedResubscribe">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfsActive">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfsDisplayable">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bfsOutOfDate">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breHandleIndexChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breHandleNil">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breListIdentityChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breValueIdentityChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldApplyPolicy">
+         <Summary>The TBoldApplyPolicy is an enumeration of the apply modes in the framework.</Summary>
+         <Desc>
+            <UL>
+               <LI>bapChange - Changes in the GUI control are immediately applied to the object space.</LI>
+               <LI>bapExit - changes in the GUI control are applied when the control loses focus. This is the default behaviour in most controls.</LI>
+               <LI>bapDemand - changes in the GUI control is not applied until it is explicitly requested.</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TBoldDragMode">
+         <Summary>TBoldDragMode specifies the behaviour when a drag is initiated.</Summary>
+         <Desc> If set to bdgNone no drag operation is commenced. If set to bdgSelection the selected elements will be added to the framework's drag structure. </Desc>
+      </Type>
+      <Type Name="TBoldDropMode">
+         <Summary>TBoldDropMode specifies the behaviour when items are dropped. </Summary>
+         <Desc> </Desc>
+         <Enumeration>
+            <EnumItem Name="bdpNone">
+               <Desc>The drop operation is silently ignored. No change of state takes place.</Desc>
+            </EnumItem>
+            <EnumItem Name="bdpInsert">
+               <Desc>The dropped element is inserted in the list on the position of the drop.</Desc>
+            </EnumItem>
+            <EnumItem Name="bdpAppend">
+               <Desc>The dropped element is appended to the end of the list.</Desc>
+            </EnumItem>
+            <EnumItem Name="bdpReplace">
+               <Desc>The dropped element replaces the element that was under the drop location.</Desc>
+            </EnumItem>
+         </Enumeration>
+      </Type>
+      <Type Name="TBoldFollowerState">
+         <Summary></Summary>
+         <Desc>TBoldFollowerState indicates the state of a TBoldFollower with respect to the value to be displayed, where the value is defined by Element and DisplayProperties.
+The possible states and state transitions are described in the state diagram </Desc>
+      </Type>
+      <Type Name="TBoldNilElementMode">
+         <Summary>The TBoldNilElementMode is used to specify the handling of nil elements in lists. </Summary>
+         <Desc>Nil elements may be used in lists to remove a selection (clear a single link, for instance).
+<UL><LI>neNone No nil element is introduced to the list.</LI>
+<LI>neInsertFirst A nil element is placed in the beginning of the list.</LI>
+<LI> neAddLast A nil element is appended to the end of the list.</LI></UL>
+</Desc>
+      </Type>
+      <Type Name="TBoldPopupDeleteType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

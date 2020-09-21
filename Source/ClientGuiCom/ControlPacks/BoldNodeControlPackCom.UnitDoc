@@ -1,0 +1,287 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldNodeDescriptionCom">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldNodeFollowerControllerClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIconController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTextController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIconController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTextController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IconController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeFollowerController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TextController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNodeDescriptionsCom">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNodeControllerItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNodeDescriptionClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeControllerItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNodeFollowerControllerCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTreeFollowerControllerCom">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultGetNodeFollowerControllerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAssign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoGetFollowerController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoIconChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoTextChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldNodeDescriptionsClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultNodeDescriptionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDefaultNodeDescriptionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultNodeDescriptionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnGetFollowerController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnIconChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnTextChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldNodeDescriptionClassCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNodeDescriptionsClassCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNodeFollowerControllerClassCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldTreeFollowerControllerClassCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

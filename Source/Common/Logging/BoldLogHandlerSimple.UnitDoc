@@ -1,0 +1,73 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Logging/BoldLogHandlerSimple.UnitDoc 4     01-10-15 14:04 Jeho $">
+   <Classes>
+      <Class Name="TBoldSimpleLogReceiver">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogLines">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hide">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Log">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessInterruption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProgressStep">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgressMax">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Show">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LogLines">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Minimal implementation of <See Interface="IBoldLogReceiver"/> </Summary>
+   <Desc>This unit contains the smallest implementation of a log receiver. The class can be used to programmatically catch what is logged through calls to <See Class="TBoldLogHandler" Method="Log" Text="BoldLog.Log"/></Desc>
+</DLUnitDoc>

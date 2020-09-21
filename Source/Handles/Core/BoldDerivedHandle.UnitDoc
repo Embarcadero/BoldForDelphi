@@ -1,0 +1,74 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldDerivedHandle.UnitDoc 5     01-10-22 22:17 Jeho $">
+   <Classes>
+      <Class Name="TBoldDerivedHandle">
+         <Events>
+            <Event Name="OnDeriveAndSubscribe">
+               <Summary>Event handler for deriving the value of a handle, and subscribing to anything influencing in.</Summary>
+               <Desc> The <InlineCode>OnDeriveAndSubscribe</InlineCode> event is used to make derivations that are not easily described in OCL. They are not often needed, but there are occasions when they are truly required.
+                  <P>In order to be able to write this event handler, you need to understand Subscriptions and <See Class="TBoldIndirectElement" Text="Indirect elements"/>.</P>
+                  <P>When called the event handler shall calculate the derived value, and assign it to <InlineCode>ResultElement</InlineCode>, using either <See Method="SetReferenceValue"/> or <See Method="SetOwnedValue"/> as appropriate. The <InlineCode>RootValue</InlineCode> parameter will always be the <InlineCode>RootHandle.Value</InlineCode>.</P>
+                  <P>If <InlineCode>Subscriber <> nil</InlineCode> the event must also place subscriptions in such a way that a <InlineCode>breReEvaluate</InlineCode> and/or <InlineCode>breReSubscribe</InlineCode> are sent as apropriate.</P>
+                  <P>The event handles need not take care of subscriptions to <InlineCode>RootHandle</InlineCode>, or <InlineCode>Roothandle.Value</InlineCode>, this is handled by the component itself.</P>
+               </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnDeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetValueTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ValueTypeName">
+               <Summary>The typename of the value of the handle as it will be derived by the OnDeriveAndSubscribe-event</Summary>
+               <Desc>To allow the ocl-editor to be used on components attached to this handle, the developer must supply the type that the value will have. If the <InlineCode>OnDeriveAndSubscribe</InlineCode>-event will result in a Person-object, then this property should have the value "Person".</Desc>
+            </Property>
+         </Properties>
+         <Summary>This handle derives its value from the RootHandle using an event implemented by the programmer</Summary>
+         <Desc>Occasionally it is not possible to use OCL to calculate the value of a handle. The <InlineCode>TBoldDerivedHandle</InlineCode> uses an event (<See Event="OnDeriveAndSubscribe"/>) to calculate the <See Class="TBoldElementHandle" Property="value" Text="value"/> of the handle.
+            <P><InlineCode>TBoldDerivedHandle</InlineCode> is a subclass of <See Class="TBoldRootedHandle"/> and everything in its description applies and is for the most part not repeated here.</P>
+            <BH>Value</BH>
+The <InlineCode>Value</InlineCode> of the handle is defined by <See Event="OnDeriveAndSubscribe"/>.
+            <BH>Typing</BH>
+The <InlineCode>StaticBoldType</InlineCode> of the handle currently defined through the <See Property="ValueTypeName"/> property.
+            <BH>Bold Events</BH>
+            <InlineCode>TBoldDerivedHandle</InlineCode> is a subclass of <See Class="TBoldSubscribableComponent"/>, and can therefore by subscribed to using AddSmallSubscription. A <InlineCode>TBoldDerivedHandle</InlineCode> can send the following events:
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed.</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>. Also sent if anything influencing <InlineCode>StaticBoldType</InlineCode> has changed.</LI>
+            </UL>
+            <P>Due to the lazy evaluation, "has changed" has a very specific meaning. It means that the next time the <InlineCode>Value</InlineCode> property is accessed it may return a different value from the previous time. It does not imply that this value has actually been calculated yet.</P>
+            <P>For a <InlineCode>TDerivedHandle</InlineCode> the event will sent whenever a <InlineCode>breReevaluate</InlineCode> or <InlineCode>breResubscribe</InlineCode> is received as the requested event from the subscriptions placed by <See Event="OnDeriveAndSubscribe"/>.</P>
+            <P>If several things occur that would change <InlineCode>Value</InlineCode>, but the <InlineCode>Value</InlineCode> property is not accessed in between, only the first will give rise to a <InlineCode>beValueIdentityChanged</InlineCode> event.</P>
+            <Note>The <InlineCode>beValueIdentityChanged</InlineCode> is not send when the contents of <InlineCode>Value</InlineCode> is changed. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit defines the TBoldDerivedHandle component</Summary>
+   <Desc>The <InlineCode>TBoldDerivedHandle</InlineCode> can be used to derive the value of a handle using an event rather than an OCL expression</Desc>
+   <Types>
+      <Type Name="TBoldGetStaticBoldType">
+         <Summary>Currently not in use</Summary>
+         <Desc>Currently not in use</Desc>
+      </Type>
+      <Type Name="TBoldHandleDeriveAndSubscribe">
+         <Summary>Prototype for OnDeriveAndSubscribe event</Summary>
+         <Desc>This prototype is used in the eventhandler <See Class="TBoldDerivedHandle" Event="OnDeriveAndSubscribe"/>.</Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

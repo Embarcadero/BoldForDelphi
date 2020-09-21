@@ -1,0 +1,98 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/RTModel/BoldMemberTypeDictionary.UnitDoc 3     01-09-21 16:24 Jeho $">
+   <Classes>
+      <Class Name="TBoldMemberTypeDescriptor">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldMemberTypeDescriptor.</Summary>
+               <Desc>The member type descriptors are typically created by calling <See Class="TBoldMemberTypeList" Method="AddMemberTypeDescriptor" Text="TBoldMemberTypeList.AddMemberTypeDescriptor"/>. There is no need to create stand alone descriptors.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AbstractionLevel">
+               <Summary>Determining if the member class is abstract or concrete.</Summary>
+               <Desc>This property is used to determine if the member class of the descriptor is abstract or concrete. Abstract classes can not be instantiated and can thus not be used as the type of a modelled member.</Desc>
+            </Property>
+            <Property Name="MemberClass">
+               <Summary>Class pointer to the member type</Summary>
+               <Desc>The <InlineCode>MemberClass</InlineCode> is a delphi class pointer to a an attribute class.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Used to hold information about a single member type.</Summary>
+         <Desc>The member type descriptors are registered in the <See Routine="BoldMemberTypes"/> list.</Desc>
+      </Class>
+      <Class Name="TBoldMemberTypeList">
+         <Methods>
+            <Method Name="AddMemberTypeDescriptor">
+               <Summary>This method is used for registering a member type in the system.</Summary>
+               <Desc>AddMemberTypeDescriptor will create a descriptor with the class and abstraction level submitted as parameters. This is done to inform the system about the member type. 
+                  <Code>BoldMemberTypes.AddMemberTypeDescriptor(TMyCustomAttribute, alConcrete);</Code>
+ </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldMemberTypeList.</Summary>
+               <Desc>The system should contain only one instance of <InlineCode>TBoldMemberTypeList</InlineCode>. This instance is created and maintained by the system. Should you want to access it, do so using <See Routine="BoldMemberTypes"/>.</Desc>
+            </Method>
+            <Method Name="GetDescriptorByClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDescriptorByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberTypeDescriptors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveDescriptorByClass">
+               <Summary>Removes the descriptor for the member type implemented by "BoldMemberClass"</Summary>
+               <Desc>This method is used to remove a descriptor from the system. 
+                  <Code>  if BoldMemberTypesAssigned then
+    BoldMemberTypes.RemoveDescriptorByClass(TMyCustomAttribute);</Code>
+ </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DescriptorByClass">
+               <Summary>Return a descriptor for the member type implemented by "BoldMemberClass".</Summary>
+               <Desc>The indexed property <InlineCode>DescriptorByClass</InlineCode> returns the descriptor for the type implemented in <InlineCode>BoldMemberClass</InlineCode>.</Desc>
+            </Property>
+            <Property Name="DescriptorByDelphiName">
+               <Summary>Return a descriptor for the member type implemented by the class named "DelphiName".</Summary>
+               <Desc>The indexed property <InlineCode>DescriptorByDelphiName</InlineCode> returns the descriptor for the type implemented the the class with classname <InlineCode>DelphiName</InlineCode>.</Desc>
+            </Property>
+            <Property Name="Descriptors">
+               <Summary>Indexed property to retrieve descriptors by number.</Summary>
+               <Desc>The indexed property <InlineCode>Descriptors</InlineCode> returns the descriptor in the specified position in the list of descriptors.</Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldMemberTypeList holds the list of known member types in the system.</Summary>
+         <Desc><InlineCode>TBoldMemberTypeList</InlineCode> is a container class that holds and indexes <See Class="TBoldMemberTypeDescriptor" Text="TBoldMemberTypeDescriptors"/>. The list of descriptors make up the set of member types known to the system.</Desc>
+      </Class>
+   </Classes>
+   <Routines>
+      <Routine Name="BoldMemberTypes">
+         <Summary>Access function to the global singleton of TBoldMemberTypeList.</Summary>
+         <Desc><InlineCode>BoldMemberTypes</InlineCode> is the access routine for the singleton instance of <InlineCode>TBoldMemberTypeList</InlineCode>. This routine ensures the object created prior to returning it.
+            <Warning>Destroying this instance will render the system unstable.</Warning>
+         </Desc>
+      </Routine>
+      <Routine Name="BoldMemberTypesAssigned">
+         <Summary>Determine if the global singleton of <See Class="TBoldMemberTypeList"/> is assigned. </Summary>
+         <Desc>Since the finalization of this unit will free it, and other units may want to use it in their finalization, it is wise to condition that access by checking the return value of BoldMemberTypesAssigned.</Desc>
+         <Examples>
+            <Example>
+               <Body>
+                  <Code>finalization
+  if BoldMemberTypesAssigned then
+      BoldMemberTypes.RemoveDescriptorByClass(TMyCustomAttribute);
+end.	  </Code>
+               </Body>
+            </Example>
+         </Examples>
+      </Routine>
+   </Routines>
+   <Summary>Defines a list and descriptor class for attribute types.</Summary>
+   <Desc>The attributes in a Bold application are made known to the system by adding them into the global list of member types. This list and the descriptor class are defined in thus unit, together with some supporting routines.</Desc>
+</DLUnitDoc>

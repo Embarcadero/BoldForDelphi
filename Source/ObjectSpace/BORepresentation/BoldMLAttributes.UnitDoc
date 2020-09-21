@@ -1,0 +1,326 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldMLAttributes.UnitDoc 6     02-06-10 18:20 Isje $">
+   <Classes>
+      <Class Name="TBALanguage">
+         <Methods>
+            <Method Name="Getvalues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc> This is a derived valueset that can be used to represent the set of available languages in a multilingual application.
+It uses the variables <See Var="BoldMLLanguageClassName"/> <See Var="BoldMLLanguageNameAttributeName"/> and <See Var="BoldMLLanguageNumberAttributeName"/> to initialize the list of allowed values. If you prefer to have other names of the language class in your model, just change these variables in the before the <InlineCode>TBALanguage</InlineCode> is initialized. </Desc>
+      </Class>
+      <Class Name="TBAMLString">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc>Copies the entire contents of another MLString </Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc>Subscribing to an MLString also places subscriptions on the <InlineCode>BoldCurrentLanguage</InlineCode> and <InlineCode>BoldDefaultLanguage</InlineCode>. </Desc>
+            </Method>
+            <Method Name="GetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringBylanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveEventFromOwned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveQueryFromOwned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToLanguage">
+               <Summary></Summary>
+               <Desc>This will place a subscription only on the language value of the language specified in the parameter. </Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary></Summary>
+               <Desc>This will subscribe to the string value of the current language, and if that is not yet defined, the string value of the default language. </Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc>This will call the validation mechanism of the implementation type of the MLString (see <See Method="StringClass"/>) </Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc>This will call the validation mechanism of the implementation type of the MLString (see <See Method="StringClass"/>) </Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsStringByLanguage">
+               <Summary></Summary>
+               <Desc>Retrieves a specific language value by the name of the language. Note that the result is a <InlineCode>TBAString</InlineCode>, and not a string, this value can be subscribed to as any ordinary <InlineCode>TBoldElement</InlineCode> descendant. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This <InlineCode>TBAString</InlineCode> descendant is able to hold multiple string values, one for each language defined in <See Class="TBALanguage"/>. The <InlineCode>AsString</InlineCode> property will reflect the value of <See Routine="BoldPrimaryLangage"/>. If the attribute does not have any value for the current language, the <See Routine="BoldSecondaryLanguage"/> will be displayed, and as a last resort, the first language value found will be displayed. If the string value of the attribute is edited (or set programmatically) it will always be stored as the stringvalue for the primary language.
+            <P>The <See Class="TBoldAsMLStringRenderer"/> can be used to easily render (show and edit) a specific language value in a GUI component. To get a specific language value programmatically, call <See Property="AsStringByLanguage"/>.</P>
+            <P>The <InlineCode>TBAMLString</InlineCode> will be stored in the database as a blob, and when fetched, all language values will be fetched at the same time.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBAMLString_Proxy">
+         <Methods>
+            <Method Name="GetProxedMLString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ProxedMLString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBAMLSubString">
+         <Methods>
+            <Method Name="StartModify">
+               <Summary>Handles aggregated members</Summary>
+               <Desc>This method is reimplemented to handle the aggregated </Desc>
+            </Method>
+         </Methods>
+         <Summary>Implementation class for sub parts of a TBAMLString</Summary>
+         <Desc><InlineCode>TBAMLSubString</InlineCode> is used internally to represent the different laguage values inside a MLString.</Desc>
+      </Class>
+      <Class Name="TBAMLValueSet">
+         <Methods>
+            <Method Name="CompareToEnumLiteral">
+               <Summary>Compares the valueset to an enum literal string</Summary>
+               <Desc>Used internally by the OCL evaluator. It will compare the string-parameter to each of the language representations of the valueset value</Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringBylanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentationByLanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentationByLanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToLanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StringRepresentationByLanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This is the superclass for any multi lingual valueset (note that <See Class="TBALanguage"/> itself can not be a multilingual valueset. </Desc>
+      </Class>
+      <Class Name="TBAMLValueSetValue">
+         <Methods>
+            <Method Name="AddMLString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMLString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentationCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBAMLValueSetValueList">
+         <Methods>
+            <Method Name="Addmembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByStringAndLanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="brMLString">
+         <Summary></Summary>
+         <Desc>This is used to get all the string values of a multilanguage string. The format of this string is: 
+            <Code>#255 + languagename + #255 + languagevalue + #255 + languagename + #255 + languagevalue...</Code>
+            <P>This is format is used to store the string as a blob by a persistence mapper.</P>
+         </Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldLanguageList">
+         <Summary>List of languages</Summary>
+         <Desc>Function returning a valueset list of available languages in a multilingual application, i.e instances of the <see var="BoldMLLanguageClassName" text="language class"/> defined in the system.</Desc>
+      </Routine>
+      <Routine Name="BoldPrimaryLanguage">
+         <Summary></Summary>
+         <Desc>The <InlineCode>BoldMLAttributes</InlineCode> unit will maintain one primary language for each system in the application. If you want to set the primary language, use <See Routine="BoldSetPrimaryLanguageByName"/>.</Desc>
+      </Routine>
+      <Routine Name="BoldSecondaryLanguage">
+         <Summary></Summary>
+         <Desc>The <InlineCode>BoldMLAttributes</InlineCode> unit maintains one secondary language for each system in the application. If you want to set the secondary language, use <See Routine="BoldSetSecondaryLanguageByName"/>.</Desc>
+      </Routine>
+      <Routine Name="BoldSetPrimaryLanguageByName">
+         <Summary>Sets the primary language</Summary>
+         <Desc>Sets the <see routine="BoldPrimaryLanguage" text="primary language"/> used by the system. The LanguageName attribute must hold a language name that exists in you <see var="BoldMLLanguageClassName" text="language class"/>.</Desc>
+      </Routine>
+      <Routine Name="BoldSetSecondaryLanguageByName">
+         <Summary>Sets the secondary language</Summary>
+         <Desc>Sets the <see routine="BoldPrimaryLanguage" text="secondary language"/> used by the system. The LanguageName attribute must hold a language name that exists in you <see var="BoldMLLanguageClassName" text="language class"/>.</Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc>This unit contains attributes that implements multi language behaviour. These attributes can have one string-representation per language. </Desc>
+   <Types>
+      <Type Name="TBAStringClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldMLLanguageClassName">
+         <Summary>The language class</Summary>
+         <Desc>This variable represents the class that holds the languages used in the system, default "LanguageClass".
+		<P>If you use multilanguage in your system, you have to create a class holding instances of all the languages you want to use. Name your class "LanguageClass" (the name is optional, you can call it whatever you want but this name is clear and common). Add two attributes to the class, <see Var="BoldMLLanguageNumberAttributeName" text="LanguageNumber"/> and <see Var="BoldMLLanguageNameAttributeName" text="LanguageName"/>. Add instances for each language in your system.</P>
+		<P>In your application you then initialize the variable, BoldMLLanguageClassName, to the same name as your language class.</P>
+		<code>initialization
+  BoldMLLanguageClassName := 'LanguageClass';</code></Desc>
+      </Var>
+      <Var Name="BoldMLLanguageNameAttributeName">
+         <Summary>The language name</Summary>
+         <Desc>This variable represents the name of the attribute holding the language Name in the <see Var="BoldMLLanguageClassName" text="language class"/>.
+<P>Initialize the variable in your application to the name of the attribute holding the name of the language.</P>
+		<code>initialization
+  BoldMLLanguageClassName := 'LanguageClass';
+  BoldMLLanguageNameAttributeName := 'LanguageName';
+  BoldMLLanguageNumberAttributeName := 'LanguageNumber';</code> </Desc>
+      </Var>
+      <Var Name="BoldMLLanguageNumberAttributeName">
+         <Summary>The language number</Summary>
+         <Desc>This variable represents the name of the attribute holding the language Number in the <see Var="BoldMLLanguageClassName" text="language class"/>.
+<P>Initialize the variable in your application to the name of the attribute holding the number of the language.</P>
+		<code>initialization
+  BoldMLLanguageClassName := 'LanguageClass';
+  BoldMLLanguageNameAttributeName := 'LanguageName';
+  BoldMLLanguageNumberAttributeName := 'LanguageNumber';</code> </Desc>
+      </Var>
+      <Var Name="BoldMLStringSecondaryFallBack">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldMLStringUnknownFallback">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

@@ -1,0 +1,101 @@
+<html>
+
+<head>
+  <title>Bold Handles</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt;
+      <a href="bold_handles.html">Bold Handles</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Bold Handles</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell ends -->
+    This is a brief description of the different types of handles available in Bold. For each
+    handle there is also one or more links to examples using the handle.
+    <p>The handles are nonvisual components. The various types of handles are the developers
+    primary interface to the elements of an objectspace.
+    <p>The handles have a value which is a TBoldElement. TBoldElement is a superclass of all
+    parts or the objects representation in the ObjectsSpace. In most cases the value will be
+    a domain object (e.g. a TPerson).
+    <p>The Bold-aware visual controls are then in turn connected to handles. The handles can
+    be divided into two basic groups, the root handles, and the rooted handles.
+    <h3>Root handles</h3>
+    Root handles either own or refer to an element.
+    <h4>BoldSystemHandle</h4>
+    The owner of an entire object system. Most applications will have only one system handle.<br>
+    The TBoldSystemHandle is used in all examples.
+    <h4>BoldReferenceHandle</h4>
+    A handle that can be set to point at any element. It is often used as the first
+    handle on a form showing e.g a single person.<br>
+    See examples: <a href="treeview.html">TreeView</a> and <a href="multilanguage.html">MultiLanguage</a>
+    <h4>BoldVariableHandle</h4>
+    A handle that owns an element which is not an object e.g. a string, or a list of
+    persons. The handle acts as a placeable variable which can be connected to controls,
+    and used in variable definitions. The handle can also be used as a placeable constant
+    through the use of InitialValues.<br>
+    See examples: <a href="combobox.html">ComboBox</a> and <a href="derived_handle.html">Derived Handle</a>
+    <h4>BoldSQLHandle</h4>
+    A handle that uses the database for SQL searches. Its value is a list of objects
+    resulting from the search. It is often used as the first handle on a form showing a
+    list resulting from a search.<br>
+    See example: <a href="sql_handle.html">SQL Handle</a>
+    <h3>Rooted handles</h3>
+    Rooted handles derive their value from another handle. Rooted handles can be connected to
+    each other, allowing chained evaluation.
+    <h4>BoldExpressionHandle</h4>
+    Derives its value by applying an OCL-expression to the value of its root.<br>
+    See example: <a href="treeview.html">TreeView</a>
+    <h4>BoldCursorHandle</h4>
+    Takes the value of its root, and interprets it as a list. It holds a CurrentIndex,
+    and has a value which is the current index of the list. It has two properties that,
+    in a sense, are the value of the handle List, which is the list, and Value which is
+    the current element in the list. Multi-value controls such as grids, or the dropdown
+    of a combobox will display the List, while single-value controls, and rooted handes
+    will use the current element (the value property).<br>
+    See examples: <a href="combobox.html">ComboBox</a> and <a href="derived_handle.html">Derived Handle</a>
+    <h4>BoldListHandle</h4>
+    This is the handle first encountered by most developers. It actually has a complex
+    internal structure, extending a TBoldCursorHandle, containing an expressionhandle
+    and (optionally) sorters and filters. Like the TBoldCursorHandle is has List and
+    Value properties. It is often used for displaying an entire class (when connected to
+    a TBoldSystemHandle), or for following n-valued associations (when connected to
+    another handle who's value is an object).<br>
+    The TBoldListHandle is used in all examples.
+    <h4>BoldDerivedHandle</h4>
+    Allows completely custom derivation of its value through user written code in
+    an event-handler.<br>
+    See example: <a href="derived_handle.html">Derived Handle</a>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

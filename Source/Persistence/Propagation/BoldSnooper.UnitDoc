@@ -1,0 +1,49 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Propagation/BoldSnooper.UnitDoc 4     02-03-13 12:45 Johosos $">
+   <Classes>
+      <Class Name="TBoldSnooper">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDataBaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseDataBaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCheckDatabaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TransmitEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CheckDatabaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LockManager">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Propagator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

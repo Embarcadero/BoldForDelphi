@@ -1,0 +1,514 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/Notifier/BoldPersistenceNotifier.UnitDoc 3     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractPersistenceNotifier">
+         <Events>
+            <Event Name="OnAlertExcessiveFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AlertExcessiveFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CallIfAssigned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFetchLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LogFetchOneObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProgressEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProgressStart">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveExtendedEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="FetchLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnCreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDeleteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnFetchMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnFetchObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgressEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgressStart">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnUpdateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPersistenceNotifier">
+         <Events>
+            <Event Name="OnAlertExcessiveFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="OnCreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDeleteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnFetchMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnFetchObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgressEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgressStart">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnUpdateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>
+               <Desc>Set this property to point to the persistence handle you want to monitor activity in</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This component has a set of events that will be executed when there is activity in the persistence handle it is connected to. This can be used to perform any custom indication of database-activity. Normally it is easier to use the <see class=TBoldPersistenceProgressNotifier>
+These six events is called by the persistence controller before and after a whole batch of database stuff is performed. Use the pair if you want to time database work, change the cursor, etc. Count is an interesting property on ObjectIdList.
+
+<bh><see property=OnStartFetch> and <see property=OnEndFetch></bh>
+Called before and after persistence controller fetches a whole list ofobjects or members.
+<br>
+Arguments: SendExtendedEvent(bpeStartFetch, [ObjectIdList: TBoldObjectIdList, MemberIdList: TBoldMemberIdList]);
+<br>
+Arguments: SendEvent(bpeEndFetch); (no arguments)
+
+<bh><see property=OnStartFetchID> and <see property=OnEndFetchID></bh>
+Called before and after persistence controller fetches a list of IDs with a given condition
+<br>
+Arguments: SendExtendedEvent(bpeStartFetchId, [Condition: TBoldCondition]);<br>
+//TBoldCondition subclass gives search criteria
+<br>Arguments: SendEvent(bpeEndFetchId);
+<p>
+TBoldCondition is abstract and have several subclasses that is used tocontrol how data is fetched:
+<ul>
+<li><see class=TBoldConditionWithClass></li>
+<li><see class=TBoldSQLCondition></li>
+<li><see class=TBoldTimestampCondition></li>
+<li><see class=TBoldChangePointCondition></li>
+</ul>
+
+<bh><see property=OnStartUpdate> and <see property=OnEndUpdate></bh>
+Called before and after persistence controller updates/deletes/creates specified objects in database
+<br>
+Arguments: SendExtendedEvent(bpeStartUpdate, [ObjectIdList: TBoldObjectIdList, ValueSpace: IBoldValueSpace;]);
+<br>
+Arguments: SendEvent(bpeEndUpdate);
+
+<p>
+These six events is called by the persistence mapper for each operation on an object inside a batch.
+
+<bh><see property=OnUpdateObject></bh>
+Called for each object that is updated by the persistence mapper (from PMUpdate)
+<br>
+Arguments: SendExtendedEvent(bpeUpdateObject, [ObjectID: TBoldObjectId, ValueSpace: IBoldValueSpace, aQuery: IBoldExecQuery]);
+
+<bh><see property=OnDeleteObject></bh>
+Called for each object before it is deleted by the persistence mapper (from PMDelete)
+<br>
+Arguments: SendExtendedEvent(bpeDeleteObject, [ObjectID: TBoldObjectId, ValueSpace: IBoldValueSpace]);
+
+
+<bh><see property=OnCreateObject></bh>
+Called for each object that is updated by the persistence mapper (from PMUpdate)
+<br>
+Arguments: SendExtendedEvent(bpeCreateObject, [ObjectID: TBoldObjectId, ValueSpace: IBoldValueSpace]);
+
+<bh><see property=OnFetchObject></bh>
+Called for each object that is fetched by the persistence mapper (from PMMultiPurposeRetrieveExactIdList)
+<br>
+Arguments: SendExtendedEvent(bpeFetchObject, [NewId: TBoldObjectId, ValueSpace: IBoldValueSpace]);
+
+<bh><see property=OnFetchID></bh>
+Called for each ID that is fetched by the persistence mapper (from GetListUsingQuery and GetNonEmbeddedChangePoints)
+<br>
+Arguments: SendExtendedEvent(bpeFetchId, [ObjectId: TBoldObjectId]);
+
+<p>
+
+<see class=TBoldObjectID> is abstract and have several concrete subclasses that identifies objects in different ways:
+<ul>
+<li><see class=TBoldGlobalId> - Used by Object Lending Library (OLLE)</li>
+<li><see class=TBoldInternalObjectId> - When an object is created it is assigned an internal object id. This id is only meaningful (guaranteed to be unique) in the context of a program execution. If the object is ever stored in a database, this id will be replaced by an external object id.</li>
+<li><see class=TBoldExternalObjectID></li>
+<li><see class=TBoldDefaultID> -  The TBoldDefaultID is used to represent Object identities in the default database mapping of Bold. Each object will have a unique integer that is meaningful in the context of a database.</li>
+<li><see class=TBoldStringID> - Used by external persistence controllers</li>
+<li><see class=TBoldTimestampedDefaultId> - This class represent object id's with time stamps. The time stamp is used to identify an old version of a Bold object.</li>
+</ul>
+To the class from an ObjectId use the TopSortedIndex property which refers to the topological sorted list of classes in a model. (This is the index of the ClassTypeInfo in the TopSortedClasses property of the SystemTypeInfo.)
+Typecast ObjectId to a TBoldDefaultID and use the AsInteger property to get the id that is also stored in the BOLD_ID column in the database.
+<p>
+TBoldMemberID identifies an member with its MemberIndex property. 
+
+</Desc>
+      </Class>
+      <Class Name="TBoldPersistenceProgressNotifier">
+         <Events>
+            <Event Name="OnAlertExcessiveFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AnimationTurnOff">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAnimationInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAnimation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAnimationInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMsgLabel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgressBar">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetWinControl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartFetchID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StepAnimation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StepProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Animation">
+               <Summary></Summary>
+               <Desc>Set this property to point to a TAnimation. When the objects are fetched or updated, the animation will move.
+</Desc>
+            </Property>
+            <Property Name="AnimationInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MsgFetchObjects">
+               <Summary></Summary>
+               <Desc>
+This message will be displayed in the WinControl when objects are fetched</Desc>
+            </Property>
+            <Property Name="MsgLabel">
+               <Summary></Summary>
+               <Desc>Set this to point to a TLabel where information about the progress should be displayed.</Desc>
+            </Property>
+            <Property Name="MsgRetrieveIds">
+               <Summary></Summary>
+               <Desc>This message will be displayed in the label or WinControl when IDs are retrieved from the PersisteceHandle</Desc>
+            </Property>
+            <Property Name="MsgUpdateDatabase">
+               <Summary></Summary>
+               <Desc>This message will be displayed in the label or WinControl when objects are stored to the persistent storage
+</Desc>
+            </Property>
+            <Property Name="OnProgressEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgressStart">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ProgressBar">
+               <Summary></Summary>
+               <Desc>Set this property to point to a TProgressbar where progress will be indicated when there is activity in the persistence handle
+</Desc>
+            </Property>
+            <Property Name="WinControl">
+               <Summary></Summary>
+               <Desc>Set this property to point to any TWinControl where informational messages about the progress in database operations.
+</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This component can update a set of other visual components to show the activity in a persistence handle. It can be connected to a TProgressbar, a TAnimation, and any TWinControl that shows it caption (such as a TLabel, TButton etc.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldAlertExcessiveFetchEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,873 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldControlPack.UnitDoc 8     11/22/01 3:37p Jeho $">
+   <Classes>
+      <Class Name="TBoldFollower">
+         <Methods>
+            <Method Name="AddToDisplayList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Apply">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckIfInHierarchy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CollectMatching">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CollectMatchingDownwards">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="ControlledValueChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateSubFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Display">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Displayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDisplayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExistInOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActive">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetAssertedController">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetCurrentIndex">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetElementValid">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetRendererData">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetSubFollower">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetSubFollowerCount">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkSubscriptionOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkValueOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetCurrentIndex">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetElement">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetElementValid">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetState">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>Indicates whether the follower is active.</Summary>
+               <Desc>Set the follower to active to make it set up subscriptions that can keep its value up to date.</Desc>
+            </Property>
+            <Property Name="AssertedController">
+               <Summary>Returns controller or raises an exception if it's nil.</Summary>
+               <Desc>Asserted controller checks if the <See Property="controller"/> is assigned and if it is returns it. If <InlineCode>Controller</InlineCode> is <InlineCode>nil</InlineCode> an EBold exception is raised. </Desc>
+            </Property>
+            <Property Name="ControlData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Controller">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Element">
+               <Summary></Summary>
+               <Desc>Each <InlineCode>TBoldFollower</InlineCode> is set up to follow a <See Class="TBoldElement"/>. Setting this property to a new value will set the follower in state <InlineCode>bfsSubscriptionOutOfDate</InlineCode>. </Desc>
+            </Property>
+            <Property Name="ElementValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningFollower">
+               <Summary>The owning follower.</Summary>
+               <Desc>If the follower is a subfollower of another follower, this property will point to the owning follower.</Desc>
+            </Property>
+            <Property Name="RendererData">
+               <Summary>Storage area for the Controller/Renderer.</Summary>
+               <Desc>This is the storage area used by the Controller/Renderer to keep the rendered value that will be handed to the visual component to be displayed.</Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="State">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubFollowerCount">
+               <Summary>The number of followers that can be found in the SubFollowers property.</Summary>
+               <Desc>The number of followers that can be found in the <See Property="SubFollowers"/> property.</Desc>
+            </Property>
+            <Property Name="SubFollowers">
+               <Summary>The Subfollowers</Summary>
+               <Desc>Some components have hierarchies of followers to handle complex visualizations (such as <See Class="TBoldListBox"/>, <See Class="TBoldTreeView"/> and <See Class="TBoldGrid"/>). This property points to the subfollowers of a follower.</Desc>
+            </Property>
+            <Property Name="Subscriber">
+               <Summary>The subscriber of the follower.</Summary>
+               <Desc>The subscriber of the follower.</Desc>
+            </Property>
+            <Property Name="index">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldFollower is a central player in the Bold GUI architecture to keep components up to date</Summary>
+         <Desc>Followers keep track of the subscriptions for GUI components such as editboxes, grids and treeviews. Some simple components have only one follower such as <See Class="TBoldEdit"/>, others will have multiple followers (grids have one follower per cell, one per row and one for the whole component).
+            <P>The follower will keep track of changes in the underlying object layer and make sure that the component is notified of what to update when something happens. When the follower detects a change it will set its state as invalid, and ask to be redisplayed at a suitable time (by placing itself on the display-list of the <See Unit="BoldQueue"/> unit</P>
+            <P>Further information on how/when to use a <InlineCode>TBoldFollower</InlineCode> can be found in "doc/Creating Custom Bold-Aware Components"</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldFollowerController">
+         <Events>
+            <Event Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="BeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Assign">
+               <Summary>Part of the VCL Assign pattern.</Summary>
+               <Desc>Implements the Assign functionality as expected by the VCL. </Desc>
+            </Method>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CleanRendererData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAssign">
+               <Summary>Part of the VCL Assign pattern.</Summary>
+               <Desc><InlineCode>DoAssign</InlineCode> is used internally to extend the VCL Assign pattern. <InlineCode>DoAssign</InlineCode> implements the actual copying of properties. </Desc>
+            </Method>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary>Handles Drag Over operations</Summary>
+               <Desc>Delegates to <See Class="TBoldRenderer" Method="DragOver" Text="EffectiveRenderer.DragOver"/></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndDrag">
+               <Summary>Handles end drag operations.</Summary>
+               <Desc>Delegates to <See Class="TBoldRenderer" Method="EndDrag" Routine="EffectiveRenderer.EndDrag"/>.</Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetSupportsMulti">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetSupportsMultiEnsure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetVariableListAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleApplyException">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="HandleDisplayException">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="HoldsChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayModify">
+               <Summary>Determine if the follower allows modifications.</Summary>
+               <Desc>Queries the follower if the rendererdata allows modifications.</Desc>
+            </Method>
+            <Method Name="MultiMakeEnsure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseChangedValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resubscribe">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetRepresentation">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetUntypedRenderer">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetVariables">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="StartDrag">
+               <Summary>Handles startdrag operations.</Summary>
+               <Desc>Delegates to <See Class="TBoldRenderer" Method="StartDrag" Text="EffectiveRenderer.StartDrag"/>.</Desc>
+            </Method>
+            <Method Name="SubscribeToElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApplyPolicy">
+               <Summary>Specifies when values should be applied back from the control to the business object tier. </Summary>
+               <Desc>This property will normally be displayed as a sub-property of one of the Bold properties describing the entire component.
+                  <P>Determines when changes to the control will be applied to the underlying business objects.</P>
+                  <UL>
+                     <LI><InlineCode>bapChange</InlineCode> - means that changes will be applied after each change, i.e. after each character typed by the user.</LI>
+                     <LI><InlineCode>bapExit</InlineCode> - means that changes will be applied when focus leaves the control. Please note that some operations that seem to leave the control, e.g. selecting a menu-item do not actually move focus, and thus do not trigger apply.</LI>
+                     <LI><InlineCode>bapDemand</InlineCode> - means that the changed value will continue to reside in the GUI until it is explicitly applied by calling <See Class="TBoldQueueable" Method="ApplyAll" Text="TBoldQueueable.ApplyAll"/> or <See Class="TBoldQueueable" Method="ApplyAllMatching" Text="TBoldQueueable.ApplyAllMatching"/>. This will in general be done by an OK button on the form. The changes can also be discarded by calling <See Class="TBoldQueueable" Method="DiscardChangeAll" Text="TBoldQueueable.DiscardChangeAll"/> or <See Class="TBoldQueueable" Method="DiscardChangeAllMatching" Text="TBoldQueueable.DiscardChangeAllMatching"/>.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="CleanOnEqual">
+               <Summary>Determine action on reverting to original value.</Summary>
+               <Desc> This property will normally be displayed as a sub-property of one of the Bold properties describing the entire component.
+                  <P>If <InlineCode>CleanOnEqual</InlineCode> is <InlineCode>true</InlineCode> then if the value of the control is changed, and then subsequently changed back to the original value before it has been applied to the business objects, then it will be regarded as unchanged, and removed form the Apply list.</P>
+               </Desc>
+            </Property>
+            <Property Name="ContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary>Specifies the default action to be taken when dragging from the owning control. </Summary>
+               <Desc>This property will normally be displayed as a sub-property of one of the Bold properties describing the entire component.
+                  <P>Determines what will happen if the user attempts to drag from the owning control.</P>
+                  <UL>
+                     <LI><InlineCode>bdgNone</InlineCode> - No drag will be performed.</LI>
+                     <LI><InlineCode>bdgSelection</InlineCode> - The selected elements partake in the drag operation.</LI>
+                  </UL>
+                  <Note>The behaviour changes slightly if the owning component is a single value control, such as <InlineCode>TBoldEdit</InlineCode>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="DropMode">
+               <Summary>Specifies the default action to be taken when dropping on the component. </Summary>
+               <Desc>This property will normally be displayed as a sub-property of one of the Bold properties describing the entire component.
+                  <P>Determines what will happen if the user attempts to drop on the control.</P>
+                  <UL>
+                     <LI><InlineCode>bdpNone</InlineCode> - No action.</LI>
+                     <LI><InlineCode>bdpInsert</InlineCode> - The dragged elements will be inserted at the drop point.</LI>
+                     <LI>, <InlineCode>bdpAppend</InlineCode> - The dragged elements will be appended to the list of objects.</LI>
+                     <LI><InlineCode>bdpReplace</InlineCode> - The dragged elements will replace the elements selected, or the elements at the drop point.</LI>
+                  </UL>
+                  <Note>The behaviour changes slightly if the owning component is a single value control, such as <InlineCode>TBoldEdit</InlineCode>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="EffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary>Normally the OCL expression of the component.</Summary>
+               <Desc>This is an OCL expression that will normally be displayed as a sub-property on the visual component.
+                  <P>If no renderer is specified it will be interpreted as an OCL expression by the default renderer.
+If a renderer has been specified it will be passed as a string to the methods/event handlers of the renderer. In this case the interpretation is up to the renderer.</P>
+               </Desc>
+            </Property>
+            <Property Name="InternalDrag">
+               <Summary>Determine if internal drag is allowed.</Summary>
+               <Desc>This property indicates that internal drag-and-drop within the list shall be allowed. It is used on multi-row controls such as <See Class="TBoldGrid"/>, and indicates that the list can be reorder by drag-and-drop within the control. </Desc>
+            </Property>
+            <Property Name="OwningComponent">
+               <Summary>The component to which the followercontroller belongs.</Summary>
+               <Desc>The component to which the followercontroller belongs.</Desc>
+            </Property>
+            <Property Name="Popup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RendererDataClass">
+               <Summary></Summary>
+               <Desc>Each <See Class="TBoldRenderer"/> may specify the class is needs for the <See Class="TBoldFollower" Property="RendererData"/> of the TBoldFollowers it is controlling.
+                  <BH>Implementation</BH>
+The property gets its value from <See Class="TBoldRenderer" Text="EffectiveRenderer.RendererDataClass" Property="RendererDataClass"/>. </Desc>
+            </Property>
+            <Property Name="Representation">
+               <Summary></Summary>
+               <Desc>This property will normally be displayed as a sub-property on the visual component, displaying its value as a string.
+                  <P>The property will specify which <InlineCode>Representation</InlineCode> to use if the value to be displayed has more than one.</P>
+                  <P>If a renderer has been specified <InlineCode>Representation</InlineCode> will be passed as a parameter to the methods/event handlers of the renderer. In this case the interpretation is up to the renderer.</P>
+               </Desc>
+            </Property>
+            <Property Name="SupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SupportsMultiEnsure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UntypedRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>The TBoldFollowerController class is a central part of the Model-View implementation of the Bold-aware controls.</Summary>
+         <Desc>
+            <BH>Component User Description</BH>
+Users of Bold-aware components will find this class (or rather one of its subclasses) controlling some aspects of a Bold-aware control. The interesting parts in this context are the published properties of the class, which will in most cases be exposed as sub-properties in the object inspector.
+            <BH>Component Writer Description</BH>
+For information on how to "boldify" a component, see the document "Creating Boldaware components" </Desc>
+      </Class>
+      <Class Name="TBoldFollowerSubscriber">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPopup">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Delete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InsertNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldRenderer">
+         <Events>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnHoldsChangedValue">
+               <Summary></Summary>
+               <Desc>If set, this event will be triggered by <See Method="HoldsChangedValue"/>. Otherwise the <See Method="DefaultHoldsChangedValue"/> will be invoked.
+                  <P>The minimum implementation must invoke <See Class="TBoldElement" Method="RegisterModifiedValueHolder" Text="RegisterModifiedValueHolder"/> on all elements that will be modified. This places the appropriate locks.</P>
+               </Desc>
+            </Event>
+            <Event Name="OnMayModify">
+               <Summary></Summary>
+               <Desc>If set, this event will be triggered by <See Method="MayModify"/> . Otherwise the <See Method="DefaultMayModify"/> will be invoked.
+                  <P>The implementation of <InlineCode>OnMayModify</InlineCode> shall return if the element may be modified. The minimum implementation shall check if any locks are placed on the element.</P>
+               </Desc>
+            </Event>
+            <Event Name="OnReleaseChangedValue">
+               <Summary></Summary>
+               <Desc>If set, this event is triggered by <See Method="ReleaseChangedValue"/>. Otherwise the <See Method="DefaultReleaseChangedValue"/> will be invoked.
+                  <P>The minimum implementation must release all locks placed on the concerned element(s) by invoking <See Class="TBoldElement" Method="UnregisterModifiedValueHolder" Text="UnregisterModifiedValueHolder"/> on them.</P>
+               </Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnSubscribe">
+               <Summary></Summary>
+               <Desc>This event shall implement the subscription to all elements involved in the rendering. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Changed">
+               <Summary>The Changed method sends the event <InlineCode>beValueChanged</InlineCode>.</Summary>
+               <Desc> </Desc>
+            </Method>
+            <Method Name="DefaultDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultHoldsChangedValue">
+               <Summary>Default handling of registration of change locks.</Summary>
+               <Desc>If there is no event registered for the <See Event="OnHoldsChangedValue"/>, <See Method="HoldsChangedValue"/> will invoke this default method.
+                  <P>The default as implemented here is to invoke <See Class="TBoldElement" Method="RegisterModifiedValueHolder" Text="RegisterModifiedValueHolder"/> on the element retrieved by evaluating the <InlineCode>expression</InlineCode>.</P>
+               </Desc>
+            </Method>
+            <Method Name="DefaultMayModify">
+               <Summary>Default handling of MayModify requests</Summary>
+               <Desc>If no event is registered for <See Event="OnMayModify"/>, <See Method="MayModify"/> will invoke this default method.
+                  <P>The default as implemented here is to query <See Class="TBoldElement" Method="ObserverMayModify" Text="ObserverMayModify"/> of the element resulting from evaluating <InlineCode>Expression</InlineCode>.</P>
+               </Desc>
+            </Method>
+            <Method Name="DefaultReleaseChangedValue">
+               <Summary></Summary>
+               <Desc>If no event is registered for <See Event="OnReleaseChangedValue"/>, <See Method="ReleaseChangedValue"/> will invoke this default method. </Desc>
+            </Method>
+            <Method Name="DefaultStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc>Unless the Drop operation has been handled by the component, the renderer's <InlineCode>DragDrop</InlineCode> method will be invoked.
+                  <P><InlineCode>DragDrop</InlineCode> triggers <See Event="OnDragDrop"/> if it has been defined, otherwise it will invoke <See Method="DefaultDragDrop"/>. The default behaviour will do its very best to handle the drop operation according to model information and settings of the invoking <See Class="TBoldFollowerController"/>s <See Class="TBoldFollowerController" Property="DropMode"/>-property.</P>
+               </Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc>Unless the <InlineCode>DragOver</InlineCode> operation has been handled by the component, the renderer's <InlineCode>DragOver</InlineCode> method will be invoked.
+                  <P><InlineCode>DragDrop</InlineCode> invokes <See Event="OnDragOver"/> if it has been defined, otherwise it will invoke <See Method="DefaultDragOver"/>. The default behaviour will return <InlineCode>true</InlineCode> if the value is modifiable and the dragged value is assignable according to model information. This assigment compatibility check is delegated to <See Class="TBoldGUIHandler" Method="DraggedObjectsAssignable"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndDrag">
+               <Summary></Summary>
+               <Desc>Unless the <InlineCode>EndDrag</InlineCode> operation has been handled by the component, the renderer's <InlineCode>EndDrag</InlineCode> method will be invoked.
+                  <P><InlineCode>EndDrag</InlineCode> invokes <See Event="OnEndDrag"/> if it has been defined, otherwise it will invoke <See Method="DefaultEndDrag"/>. The default behaviour will clear the <InlineCode>BoldGUIHandler</InlineCode>'s list of dragged objects.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetDefaultRepresentationStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpressionAsDirectElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary>Get method for RendererDataClass property</Summary>
+               <Desc>This method needs to be subclassed by each renderer to provide the class used by the renderer to store its data. </Desc>
+            </Method>
+            <Method Name="GetRepresentations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HasEventOverrides">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HoldsChangedValue">
+               <Summary></Summary>
+               <Desc><InlineCode>HoldsChangedValue</InlineCode> will delegate to <See Event="OnHoldsChangedValue"/> if it has been defined, or else invoke <See Method="DefaultHoldsChangedValue"/>.
+                  <P>The purpose of this method is to ensure that the object space is made aware that an element is under modification, and place a lock on it. The lock is only valid within the object space.</P>
+               </Desc>
+            </Method>
+            <Method Name="MayModify">
+               <Summary></Summary>
+               <Desc><InlineCode>MayModify</InlineCode> will delegate to <See Event="OnMayModify"/> if it has been defined, or else invoke <See Method="DefaultMayModify"/>.
+                  <P>The purpose of this method is to query the object space if the value at hand may be modified. The default implementation uses <See Class="TBoldElement" Method="ObserverMayModify" Text="ObserverMayModify"/> to resolve this.</P>
+               </Desc>
+            </Method>
+            <Method Name="ReleaseChangedValue">
+               <Summary></Summary>
+               <Desc>Release changed value will delegate to <See Event="OnReleaseChangedValue"/> if it has been defined, or else invoke <See Method="DefaultReleaseChangedValue"/>.
+                  <P><InlineCode>ReleaseChangedValue</InlineCode> is invoked when a value is applied to object space.</P>
+               </Desc>
+            </Method>
+            <Method Name="SetOnSubscribe">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetRepresentations">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="StartDrag">
+               <Summary></Summary>
+               <Desc>This method is invoked by the graphical component, unless the graphical component implements the corresponding behaviour itself.
+                  <P><InlineCode>StartDrag</InlineCode> triggers <See Event="OnStartDrag"/> if it has been defined, otherwise it will invoke <See Method="DefaultStartDrag"/>.</P>
+                  <P>The purpose of the <InlineCode>StartDrag</InlineCode> operation is to make the framework aware that a drag operation has been started.</P>
+                  <P>The <InlineCode>DefaultStartDrag</InlineCode> asserts that no drag operation is in progress, and then adds the dragged element to <See Class="TBoldGUIHandler" Property="DraggedObjects" Text="BoldGUIHandler.DraggedObjects"/>. This assumes the dragged element is a <See Class="TBoldObject"/> or a <See Class="TBoldObjectReference"/>. In the latter case the referenced object will be added rather than the reference itself.</P>
+               </Desc>
+            </Method>
+            <Method Name="StoreRepresentations">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SubscribeToElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="RendererDataClass">
+               <Summary></Summary>
+               <Desc>Each <InlineCode>TBoldRenderer</InlineCode> need to specify the class used to cache data rendered by the renderer in question. This class is instantiated by <See Class="TBoldFollower"/>, which then holds it in the <See Class="TBoldFollower" Property="RendererData"/> property.
+                  <P>Subclasses shall specify this class by overriding the abstract function <See Method="GetRendererDataClass"/>.</P>
+               </Desc>
+            </Property>
+            <Property Name="Representations">
+               <Summary></Summary>
+               <Desc>The stringlist will contain the representations supported by the renderer. The format is
+                  <P><InlineCode>numeric_value=string_representation</InlineCode></P>
+                  <P>The default representations are <InlineCode>brDefault</InlineCode>, <InlineCode>brShort</InlineCode> and <InlineCode>brLong</InlineCode>.</P>
+               </Desc>
+            </Property>
+            <Property Name="SupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A renderer is a class that defines a mapping from the business object tier of Bold to a display representation. </Summary>
+         <Desc>The purpose of the renderer is to provide insulation between the business representation and a display representation. The mapping is achieved by a number of methods on the renderer.
+            <P>A renderer is not connected to a certain visual control, instead it can be shared by many visual controls. Each visual control has one or more <InlineCode>TBoldFollowerControllers</InlineCode>, that in turn use a renderer.</P>
+            <P>A renderer contains a set of methods, most of which that each take a <See Class="TBoldElement"/>, a string argument <InlineCode>Expression</InlineCode> and an integer argument <InlineCode>Representation</InlineCode>. The direct element is the element in the business object tier that shall be represented. The interpretation of the other two arguments is up to each individual renderer, although the names of the arguments are suggestive for the manner they are used by the default renderers.</P>
+            <P>The renderers are non-visual components that can be placed on a form or a datamodule. They have event-handlers corresponding to the interesting methods of the renderer, so that the behaviour of the renderer can be specified from the IDE.</P>
+            <BH>Subclassing existing renderers</BH>
+All important methods are virtual, so it is possible to provide a customized renderer by subclassing one of the existing renderers, and overriding some of the methods.
+            <BH>Creating custom renderers</BH>
+If a new visual representation is to be defined, a custom renderer must be created. This is done by subclassing <InlineCode>TBoldRenderer</InlineCode> directly. The default renderers are supplied as source, and can be used as templates. </Desc>
+      </Class>
+      <Class Name="TBoldRendererData">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Invoking create creates an instance of TBoldRendererData. </Summary>
+               <Desc>The follower is the follower owning the instance. It can later be accessed using the <See Property="OwningFollower"/> property. </Desc>
+            </Method>
+            <Method Name="EnsureSubfollowersDisplayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentSubFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollowerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentSubFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MayModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>The <InlineCode>TBoldRendererData</InlineCode> is an abstract class that serves as an ancestor for the concrete subclasses implemented for each renderable type.</Summary>
+         <Desc> </Desc>
+      </Class>
+      <Class Name="TBoldSingleFollowerController">
+         <Methods>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSingleRenderer">
+         <Methods>
+            <Method Name="MakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Routines>
+      <Routine Name="BoldTestType">
+         <Summary></Summary>
+         <Desc>This operation is used to test the type of an object, and is available in both <InlineCode>BoldControlPack</InlineCode> and <InlineCode>BoldControlPackCom</InlineCode> (in the com-case, it will check the type of an interface) </Desc>
+      </Routine>
+   </Routines>
+   <Summary>Abstract classes for rendering sub layer. </Summary>
+   <Desc>The classes contained in this unit make up the foundation for the visual architecture and model-view mechanisms of the framework. It defines the abstract <See Class="TBoldRenderer"/>, <See Class="TBoldFollowerController"/> and <See Class="TBoldRendererData"/>.</Desc>
+   <Types>
+      <Type Name="TBoldClientableList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDragDrop">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDragOver">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldEndDrag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldFollowerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldGetContextTypeEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldHoldsChangedValue">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldMayModify">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldReleaseChangedValue">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldRendererDataClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldStartDrag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSubFollowerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSubscribe">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

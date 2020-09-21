@@ -1,0 +1,141 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/ObjectUpgrading/BoldObjectUpgrader.UnitDoc 4     01-10-24 9:18 Jeho $">
+   <Classes>
+      <Class Name="TBoldObjectUpgrader">
+         <Events>
+            <Event Name="OnUpgradeObject">
+               <Summary></Summary>
+               <Desc>This event will be called for those classes that have a configuation item defined, but where the configuration item does not define an event itself. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="EndTransaction">
+               <Summary></Summary>
+               <Desc>End an upgrader transaction. This method is used in conjunction with <See Method="StartTransaction"/> and <See Method="FailTransaction"/> to perform multiple object upgrades smoothly at the same time. Calls to StartTransaction and EndTransaction can be nested, the effect being that changes to objects performed as a result of upgrading will only be written to the database on the outmost nesting level. </Desc>
+            </Method>
+            <Method Name="FailTransaction">
+               <Summary></Summary>
+               <Desc>Fail an upgrader transaction. This method is used in conjunction with <See Method="StartTransaction"/> and <See Method="EndTransaction"/> to perform multiple object upgrades smoothly at the same time. FailTransaction will cause any changes to be discarded. </Desc>
+            </Method>
+            <Method Name="FetchObjectForId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateAutoUpgradeScript">
+               <Summary></Summary>
+               <Desc>After a successful call to this method, the Script parameter will contain an SQL script that performs the upgrading of objects that does not require any data manipulation. </Desc>
+            </Method>
+            <Method Name="GetBoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjectMapperForId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseBoldSystem">
+               <Summary></Summary>
+               <Desc>For internal use only. </Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary></Summary>
+               <Desc>Start an upgrader transaction. This method is used in conjunction with <See Method="EndTransaction"/> and <See Method="FailTransaction"/> to perform multiple object upgrades smoothly at the same time. Calls to StartTransaction and EndTransaction can be nested, the effect being that changes to objects performed as a result of upgrading will only be written to the database on the outmost nesting level. </Desc>
+            </Method>
+            <Method Name="UpgradeObject">
+               <Summary></Summary>
+               <Desc>Perform the upgrading for a single instance. Normally there is no need to call this method directly. </Desc>
+            </Method>
+            <Method Name="UpgradeObjectById">
+               <Summary></Summary>
+               <Desc>Upgrade a single instance by giving the object id and a query containing the instance. This method is intended for internal use. </Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc>For normal usage it is not necessary to call this constructor. Instead, use a <See Class="TBoldObjectUpgraderHandle"/>. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldSystem">
+               <Summary></Summary>
+               <Desc> The TBoldSystem that the upgrader will load the object into when upgrading them. This TBoldSystem is owned by the upgrader. </Desc>
+            </Property>
+            <Property Name="PersistenceController">
+               <Summary></Summary>
+               <Desc>The persistence controller that the upgrader's Bold System should use to write upgraded objects back to the database. </Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc>The type information for the model that the upgrader should upgrade objects to.</Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary></Summary>
+               <Desc>The valuespace that the upgrader uses when upgrading objects. Intended for internal use only.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The TBoldObjectUpgrader makes it possible to plug in behaviour to make conversions in data between versions of an application. It provides a per-instance method to perform the changes in. See <See Class="TBoldObjectUpgraderHandle"/> for details on normal usage.
+            <P>This class is part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldObjectUpgraderConfigurationItemWithEvent">
+         <Events>
+            <Event Name="OnUpgradeObject">
+               <Summary></Summary>
+               <Desc>This event will be called to upgrade objects matching the ConfiguationItem's <See Property="Expressionname"/> and <See Property="UpgradeOlderThanVersion"/> properties. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNamePath">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This class is part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</Desc>
+      </Class>
+      <Class Name="TBoldObjectUpgraderConfigurationWithEvent">
+         <Methods>
+            <Method Name="GetItemClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This class is part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</Desc>
+      </Class>
+   </Classes>
+   <Types>
+      <Type Name="TBoldGetPersistenceControllerEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldGetSystemTypeInfoEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldUpgradeEvent">
+         <Summary></Summary>
+         <Desc>This event is a method that takes a <InlineCode>TBoldObject</InlineCode> as a parameter. Its inteded usage is for the events of the <See Class="TBoldObjectUpgraderHandle"/> that is called when an object is upgraded. </Desc>
+      </Type>
+   </Types>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>The components/classes herein are part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,61 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/ModelLoader/BoldModelLoader.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldModelLoader">
+         <Methods>
+            <Method Name="ConvertMoldToUML">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConvertUMLToMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureHasLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModelLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelFileToMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelFileToUML">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelLoadDialog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelToMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelToUML">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="ModelLoader">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

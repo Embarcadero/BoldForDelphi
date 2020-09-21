@@ -1,0 +1,75 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/COM/BoldSOAPPersistenceControllerProxy.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldSOAPPersistenceControllerProxy">
+         <Methods>
+            <Method Name="Connect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMExactifyIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchIDListWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMSetReadonlyness">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToGlobalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToLocalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveNewIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

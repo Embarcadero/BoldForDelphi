@@ -1,0 +1,78 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractDatabaseAdapter">
+         <Methods>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseBoldDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBaseEngine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInternalDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLDatabaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataBaseInterface">
+               <Summary>Returns the database interface for the database that the adapter is connected to. The concrete subclass of TBoldAbstractDatabaseAdapter controls what database protocol is supported (such as ADO, BDE, dbExpress).</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DatabaseEngine">
+               <Summary>Preconfigured settings for some common databases</Summary>
+               <Desc>Subclasses of <InlineCode>TBoldAbstractDatabaseAdapter</InlineCode> that supports multiple databases (such as BDE, ADO SQLDirect) can publish this property to allow the preconfiguration of some settings that are suitable for the various databases. <p>
+When the DatabaseEngine is set, some settings in <see property=SQLDatabaseConfig> will be change, these and others can later be changed freely to suit any needs.<p>  
+Some databases do not have preconfigured settings. In this case, the settings must be made manually in the subproperties of <see property=SQLDatabaseConfig>. See documentation for these subproperties for further details.
+</Desc>
+            </Property>
+            <Property Name="InternalDatabase">
+               <Summary>Untyped pointer to the actual database connection</Summary>
+               <Desc>If the actual database connection is a subclass of TComponent (such as TDatabase for a BDE connection) the concrete subclass of TBoldAbstractDatabaseAdapter can store the pointer as the internal Database to let the abstract class handle component notification if the database connection is destroyed/removed.</Desc>
+            </Property>
+            <Property Name="SQLDatabaseConfig">
+               <Summary>Subproperty to configure database specific details</Summary>
+               <Desc>Some databases have preconfigures settings that can be used by setting the <see property=DatabaseEngine>. Others have to be configured manually by setting the subproperties of SQLDatabaseConfig.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Abstract class to handle database connections in a generic way</Summary>
+         <Desc>This class primarily defines the property <see property=DatabaseInterface> to allow a <see class=TBoldPersistenceHandleDB> to connect to a database without knowing what protocol that database uses. Concrete subclasses of this class usually allows to connect to a Database-component from a specific database protocol such as BDE, dbExpress, ADO etc). This component also introduces the <see property=SQLDatabaseConfig> that allows the user to configure database specific settings needed by persistence mechanism.</Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="beDatabaseAdapterChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

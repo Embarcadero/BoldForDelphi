@@ -1,0 +1,48 @@
+package BoldOLLE;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (Object Lending Library Extension)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  Bold,
+  BoldUml,
+  DesignIDE;
+
+contains
+  BoldOLLEController in 'Source\Extensions\OLLE\Core\BoldOLLEController.pas',
+  BoldOLLEDistributableObjectHandlers in 'Source\Extensions\OLLE\Core\BoldOLLEDistributableObjectHandlers.pas',
+  BoldOLLEdmmain in 'Source\Extensions\OLLE\Core\BoldOLLEdmmain.pas',
+  BoldOLLEHandles in 'Source\Extensions\OLLE\Core\BoldOLLEHandles.pas',
+  DistributableInfo in 'Source\Extensions\OLLE\Core\DistributableInfo.pas',
+  OlleConsts in 'Source\Extensions\OLLE\Core\OlleConsts.pas',
+  BoldOLLEHandlesComponentEditor in 'Source\Extensions\OLLE\IDE\BoldOLLEHandlesComponentEditor.pas',
+  BoldOLLEHandlesReg in 'Source\Extensions\OLLE\IDE\BoldOLLEHandlesReg.pas';
+
+end.

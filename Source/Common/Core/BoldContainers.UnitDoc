@@ -1,0 +1,380 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldContainers.UnitDoc 4     02-02-19 10:46 Jano $">
+   <Classes>
+      <Class Name="EBoldContainerError">
+         <Summary>Base class for container related exceptions.</Summary>
+         <Desc> Exceptions raised in Bold container classes will be of this type. </Desc>
+      </Class>
+      <Class Name="TBoldArray">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddArray">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc>Clears the array, setting both Count and Capacity to zero. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>This constructor allows you to set an initial capacity as well as container option flags. </Desc>
+            </Method>
+            <Method Name="Delete">
+               <Summary></Summary>
+               <Desc> Delete removes the item at the specified Index.</Desc>
+            </Method>
+            <Method Name="DeleteRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Dispose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureCapacity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Exchange">
+               <Summary></Summary>
+               <Desc>Swaps the items at Index1 and Index2. This will cause the items to change places with each other. </Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCapacity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGrowDelta">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc>Moves the item at FromIndex to ToIndex.</Desc>
+            </Method>
+            <Method Name="MoveItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Pack">
+               <Summary></Summary>
+               <Desc>Releases unused memory. After a call to Pack the array's Capacity and Count will be equal.</Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCapacity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Slice">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Sort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Capacity">
+               <Summary></Summary>
+               <Desc>Capacity is the number of items that the array can currently hold without growing. Count, on the other hand, is the number of actual items in the array. </Desc>
+            </Property>
+            <Property Name="ItemSize">
+               <Summary></Summary>
+               <Desc>ItemSize is used to determine the amount of memory that needs to be allocated.
+Capacity * ItemSize is the total number of bytes currently allocated by the array. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class for array containers.</Summary>
+         <Desc> Implements memory management for a dynamic array.</Desc>
+      </Class>
+      <Class Name="TBoldContainer">
+         <Methods>
+            <Method Name="Clear">
+               <Summary>Use clear to remove all items in the container. </Summary>
+               <Desc>After a call to Clear the container's Count property will be zero. </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary>Use Count to determine the number of items that are currently stored in the container.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Options">
+               <Summary></Summary>
+               <Desc>The container options control how the container behaves in certain situations. The container option flags are passed as an argument to the constructor. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Introduces behavior and properties that are common to all container classes.</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIntegerArray">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Dispose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldInterfaceArray">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Dispose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectArray">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Dispose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPointerArray">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Contains container classes.</Desc>
+   <Types>
+      <Type Name="PByteArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldArraySortCompare">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldContainerOption">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldContainerOptions">
+         <Summary></Summary>
+         <Desc>Container option flags are passed to a container class in the constructor.</Desc>
+      </Type>
+      <Type Name="TByteArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

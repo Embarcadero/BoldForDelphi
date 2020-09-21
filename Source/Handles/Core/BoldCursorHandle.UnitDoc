@@ -1,0 +1,64 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldCursorHandle.UnitDoc 5     01-11-06 15:58 Aniv $">
+   <Classes>
+      <Class Name="TBoldCursorHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldCursorHandle</Summary>
+               <Desc>Use Create to create an instance of TBoldCursorHandle</Desc>
+            </Method>
+            <Method Name="DeriveAndSubscribe">
+               <Summary>Overrides TBoldRootedHandle.DeriveAndSubscribe</Summary>
+               <Desc>Overrides <See Class="TBoldRootedHandle" Method="DeriveAndSubscribe"/></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldCursorHandle</Summary>
+               <Desc>Do not call Destroy directly, use Free instead.</Desc>
+            </Method>
+            <Method Name="GetCurrentElement">
+               <Summary>Overrides TBoldAbstractListHandle.GetCurrentElement</Summary>
+               <Desc>Overrides <See Class="TBoldAbstractListHandle" Method="GetCurrentElement"/></Desc>
+            </Method>
+            <Method Name="GetCurrentIndex">
+               <Summary>Overrides TBoldAbstractListHandle.GetCurrentIndex</Summary>
+               <Desc>Overrides <See Class="TBoldAbstractListHandle" Method="GetCurrentIndex"/></Desc>
+            </Method>
+            <Method Name="GetList">
+               <Summary>Overrides TBoldAbstractListHandle.GetList</Summary>
+               <Desc>Overrides <See Class="TBoldAbstractListHandle" Method="GetList"/></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary>Overrides TBoldElementHandle.GetStaticBoldType</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticBoldType"/></Desc>
+            </Method>
+            <Method Name="SetAutoFirst">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetCurrentIndex">
+               <Summary>Overrides TBoldAbstractListHandle.SetCurrentIndex</Summary>
+               <Desc>Overrides <See Class="TBoldAbstractListHandle" Method="SetCurrentIndex"/></Desc>
+            </Method>
+            <Method Name="_ReceiveFromList">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoFirst">
+               <Summary>Controls <See Class="TBoldAbstractListHandle" Property="CurrentElement" Text="CurrentElement"/>.</Summary>
+               <Desc>If AutoFirst is set to True, the <See Class="TBoldAbstractListHandle" Property="CurrentElement" Text="CurrentElement"/> will be set to the first element in the list.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Handle acting as cursor. </Summary>
+         <Desc>
+            <P>TBoldCursorHandle is the minimal implementation of <See Class="TBoldAbstractListHandle"/>. It can be used to convert any non-listhandle (such as a <See Class="TBoldSQLHandle"/>) to a listhandle for use in a grid or listbox.</P>
+            <P>If RootHandle.Value is already a list, the List property will be set to this list. If not, a list (normally of one element) will be created by calling GetAsList on Value.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines TBoldCursorHandle</Summary>
+   <Desc>The BoldCursorHandle defines the <See Class="TBoldCursorHandle"/> class.</Desc>
+</DLUnitDoc>

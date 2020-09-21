@@ -1,0 +1,239 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/SOAP/BoldXMLRequests.UnitDoc 4     02-07-31 11:52a Jeho $">
+   <Classes>
+      <Class Name="TBoldXMLRequest">
+         <Methods>
+            <Method Name="AddIdentifiedValue">
+               <Summary> </Summary>
+               <Desc>Use this method to add a Dom element under the Action element representing a value identified by a literal identifier. The created Dom element will have an attribute and a value. AttributeTag is the tag of the Dom element's attribute, IdString is the value of the attribute, DomElementTag is the TagName of the Dom element, and Value is the value of the Dom element.
+                  <BH>Usage</BH>
+An exception is raised if the TBoldXMLRequest object is in ReadOnly mode. See also the help for the TBoldXMLRequest_IdentifiedValues property.</Desc>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>AddIdentifierValue('Person:23.firstname', 'David', 'PersonName', 'BoldID');</Code>
+ The above call will add the following node under the Action element's node: 
+                        <Code><PersonName BoldID="Person:23.firstname">David</PersonName></Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Method>
+            <Method Name="AddParam">
+               <Summary>Use this method to add a Dom element under the Action element representing a parameter for the Action element.
+                  <BH>Usage</BH>
+An exception is raised if the TBoldXMLRequest object is in ReadOnly mode. </Summary>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>AddParam('PersonID', '250770-1235');</Code>
+ The above call will add the following node under the Action element's node: 
+                        <Code><PersonID>250770-1235</PersonID></Code>
+                     </Body>
+                  </Example>
+               </Examples>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromXML">
+               <Summary>Creates a TBoldXMLRequest, and loads the DomDocument from the XML argument. </Summary>
+               <Desc>Calling this constructor will set the ReadOnly mode.
+                  <BH>Usage</BH>
+Use this constructor if you want to read the information in an XML request.</Desc>
+            </Method>
+            <Method Name="CreateInitialized">
+               <Summary>Creates a TBoldXMLRequest and initializes the DomDocument to an empty XML document. </Summary>
+               <Desc> Calling this constructor will set off the ReadOnly mode.
+                  <BH>Usage</BH>
+Use this constructor if you want to build an XML request.</Desc>
+            </Method>
+            <Method Name="DeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureRoot">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtractIdentifiedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtractParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActionElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadIdentifiedValues">
+               <Summary>IdentifiedValues holds a list of strings of form Name=Value. 
+</Summary>
+               <Desc>The list is constructed by extracting subnodes of the Action element which have the format
+			   <code> <elementTagName Attribute1=attributeValue>elementValue </elementTagName> </code>
+			   where attributeValue is the Name part and elementValue is the Value part of the string.
+<BH>Usage</BH>
+Use the IdentifiedValues to access the values previously added to the XML request by calling the <see method=SetIdentifiedValues> or <see method=AddIdentifiedValue> methods.</Desc>
+            </Method>
+            <Method Name="LoadParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReloadIdentifiedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAction">
+               <Summary>Use this method to add an Action element to a TBoldXMLRequest. </Summary>
+               <Desc>ActionName is the TagName of the Dom element representing the Action and ActionPath is the xpath of the Action's Dom element in the XML tree. If successful the function returns the IXMLDomElement interface of the Dom element representing the Action.
+                  <BH>Usage</BH>
+Calling this method raises an exception if the TBoldXMLRequest object is in ReadOnly mode.</Desc>
+            </Method>
+            <Method Name="SetIdentifiedValues">
+               <Summary>Use this method to add a list of Dom elements under the Action element, each representing a value identified by a literal identifier. 
+</Summary>
+               <Desc>The created Dom elements will each have an attribute and a value. AttributeTag is the tag of the Dom element's attribute. The strings in IdentiedValues should be of the form Name=Value, where Name is the value of the Dom element's attribute and Value is the value of the Dom element. See also TBoldXMLRequest_AddIdentifiedValue.
+<BH>Usage</BH>
+An exception is raised if the TBoldXMLRequest object is in ReadOnly mode. See also the help for the TBoldXMLRequest_IdentifiedValues property.</Desc>
+            </Method>
+            <Method Name="SetParams">
+               <Summary> </Summary>
+               <Desc>Use this method to add a list of Dom elements under the Action element each representing a parameter for the Action element. The strings in the Params list should be of the form Name=Value, where Name is the parameter name and Value is the parameter value. See also <See Method="AddParam"/>.
+                  <BH>Usage</BH>
+An exception is raised if the TBoldXMLRequest object is in ReadOnly mode.</Desc>
+            </Method>
+            <Method Name="getActionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getActionPath">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getIdentifiedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setActionPath">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ActionElement">
+               <Summary>The Dom element representing the Action element. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ActionName">
+               <Summary> The name of the Action element. </Summary>
+               <Desc>In ReadOnly mode this returns the TagName of the Dom element representing the Action, otherwise set the value of this property to specify the name of your Action element, the default value is 'BoldAction'. An exception is raised when attempting to set this property in ReadOnly mode.</Desc>
+            </Property>
+            <Property Name="ActionPath">
+               <Summary>The xpath of the Action element in the Dom document. </Summary>
+               <Desc> In ReadOnly mode, set the value of this property to specify how to look for an Action element in the XML tree (under which node). The default is to look for an Action element that is identical to a SOAP method call. In non-ReadOnly mode, set the ActionPath to specify where the Action element should be located in the XML tree.</Desc>
+            </Property>
+            <Property Name="DomDocument">
+               <Summary>The Dom document of the XML request. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdentifiedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Params">
+               <Summary>Params represents the parameters of an Action element. </Summary>
+               <Desc> It holds a list of strings of form Name=Value. The Params list is constructed by extracting subnodes of the Action element which have the format &lt;elementTagName&gt; aValue &lt;/elementTagName&gt;', where elementTagName is the Name part and aValue is the Value part of the string representation of the parameter.</Desc>
+            </Property>
+         </Properties>
+         <Summary> Auxiliary class for defining well structured XML requests, i.e. XML containing an Action element which can be matched unto a TBoldXMLActionItem. </Summary>
+         <Desc>Usage
+The TBoldXMLRequest could be used in two ways:
+            <OL>
+               <LI>In non-ReadOnly mode (i.e. writable mode), to build an XML request by setting the ActionPath, ActionName, and adding parameters and BoldIds. Note: if the default values are not altered the resulting Action element would be identical to a SOAP method call. To use the TBoldXMLRequest in write mode create it with the class' TBoldXMLRequest_CreateInitialized constructor.</LI>
+               <LI>In ReadOnly mode, to load an XML string and extract the Action information by setting the ActionPath and extracting the ActionName, Params or BoldIDs. Note: if the default value of the ActionPath is used, then TBoldXMLRequest will try to find an Action element in the same placement as a SOAP method call. To use the TBoldXMLRequest in read mode create it with the class' TBoldXMLRequest_CreateFromXML constructor.</LI>
+            </OL>
+            <BH>Action element</BH>
+An action element represents a method call, similar to a SOAP method call, except that it is mapped to a TBoldXMLActionItem component instead of resulting in an actual method call. It is represented by a Dom element contained in a Dom document. An Action element is defined by its three components:
+ActionName : equivalent to the TagName of the Dom element representing the Action.
+Params : these are subnodes of the Action element and are Dom elements themselves. A sub-element's TagName represents the ParamName and the Value represents the ParamValue (similar to the params of a SOAP method call). </Desc>
+         <Examples>
+            <Example>
+               <Body>
+                  <Code><BoldDocument>
+  <BOLD:Envelope xmlns:BOLD="http://www.yourserver.com/">
+  <BOLD:Body>
+  <GetPerson>
+    <firstName>John<firstName/>
+    <lastName>Smith<lastName/>
+  <GetPerson/>
+  </BOLD:Body>
+  </BOLD:Envelope>
+</BoldDocument></Code>
+ The above XML defines the 'GetPerson' Action element, which has two parameters firstName with value 'John' and lastName with value 'Smith'.
+BoldIDs : these are subnodes of the Action element and are Dom elements themselves. Each sub-element must have an attribute and a value. The attribute usually holds the BoldID of a business object and the Value holds the string representation of the business object. BoldIDs are used to represent the modified values of business objects returned by the web browser.</Body>
+            </Example>
+            <Example>
+               <Body>
+                  <Code><BoldDocument>
+  <BOLD:Envelope xmlns:BOLD="http://www.yourserver.com/">
+  <BOLD:Body>
+  <UpdatePerson>
+    <anObject BoldId='Person.24.firstName'>Jack<anObject/>
+    <anObject BoldId='Person.24.lastName'>Roberts<anObject/>
+  <UpdatePerson/>
+  </BOLD:Body>
+  </BOLD:Envelope>
+</BoldDocument></Code>
+ The above XML defines an 'UpdatePerson' Action element. This Action element has no parameters and two BoldIDs: the first has BoldID 'Person.24.firstName' and Value 'Jack' and the second has BoldID 'Person.24.lastName' and Value 'Roberts'</Body>
+            </Example>
+         </Examples>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="DEFAULT_ACTION_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_ACTION_PATH">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_DOCUMENT_ELEMENT_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_ENCODING">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_IDENTIFIEDVALUE_TAG">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_IDSTRING_TAG">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_STANDALONE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DEFAULT_VERSION_NO">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains the declaration and implementation for TBoldXMLRequest class.</Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldXMLMethodEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

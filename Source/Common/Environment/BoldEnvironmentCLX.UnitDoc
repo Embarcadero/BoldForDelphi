@@ -1,0 +1,10 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>CLX environment</Summary>
+   <Desc>Including this unit in a project will install the CLX environment. If <See unit=BoldEnvironmentVCL/> is also included, one of <See unit=BoldEnvironmentAllowBothUseCLX/> and <See unit 
+=BoldEnvironmentAllowBothUseVCL/> must also be included.<P>There is normally no reson to inlucde this unit manually, since all Bold aware visual CLX controls already include it.</P></Desc>
+</DLUnitDoc>

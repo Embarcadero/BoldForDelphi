@@ -1,0 +1,50 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceHandleEventDriven">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldExternalPersistenceHandleEventDriven</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary>Creates an instance of TBoldExternalPersistenceController</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceController"/></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys the instance and frees all resources</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary>Returnes the TBoldExternalPersistenceController for the handle</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceController"/></Desc>
+            </Method>
+            <Method Name="SetConfig">
+               <Summary>Assignes a TBoldExternalPersistenceConfigItems collection to the Config property</Summary>
+               <Desc>Used by the <See Property="Config"/> property.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Config">
+               <Summary>Mapping information for the external database</Summary>
+               <Desc>This is a collection of <See Class="TBoldExternalPersistenceConfigItem"/> that maps classes to events</Desc>
+            </Property>
+            <Property Name="MaxFetchBlockSize">
+               <Summary>Maximum number of objects to fetch in one batch</Summary>
+               <Desc></Desc>
+            </Property>
+           
+            <Property Name="PersistenceController">
+               <Summary>Returns a TBoldExternalPersistenceControllerEventDriven</Summary>
+               <Desc>See also: <See Class="TBoldExternalPersistenceControllerEventDriven"/></Desc>
+            </Property>
+         </Properties>
+         <Summary>This is an event driven persistence handle for non-bold controlled data in external databases</Summary>
+         <Desc>To configure this component, link it to the neccessary support components and set the <See Property="Config"/> property.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

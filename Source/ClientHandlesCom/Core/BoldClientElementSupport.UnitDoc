@@ -1,0 +1,59 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldClientElementSupport.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldExternalVariableList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldOCLComponentCom">
+         <Methods>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldElementCompareCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldElementFilterCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldElementSubscribeCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

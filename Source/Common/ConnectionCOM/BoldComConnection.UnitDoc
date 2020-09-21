@@ -1,0 +1,116 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/ConnectionCOM/BoldComConnection.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BoldComConnectionMajorVersion">
+         <Summary>Major version number. </Summary>
+         <Desc> Defines the major version of the BoldComConnection type library. </Desc>
+      </Const>
+      <Const Name="BoldComConnectionMinorVersion">
+         <Summary>Minor version number. </Summary>
+         <Desc> Defines the minor version of the BoldComConnection type library.</Desc>
+      </Const>
+      <Const Name="CATID_BoldServer">
+         <Summary>Category ID for Bold COM server applications.</Summary>
+         <Desc> Every Bold COM server is by default registered under this category. </Desc>
+      </Const>
+      <Const Name="EVENT_DISCONNECT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="EVENT_SUBSCRIPTION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldClient">
+         <Summary></Summary>
+         <Desc>GUID for the IBoldClient interface.</Desc>
+      </Const>
+      <Const Name="IID_IBoldProvider">
+         <Summary></Summary>
+         <Desc>GUID for the IBoldProvider interface. </Desc>
+      </Const>
+      <Const Name="IID_IBoldServer">
+         <Summary></Summary>
+         <Desc>GUID for the IBoldServer interface. </Desc>
+      </Const>
+      <Const Name="LIBID_BoldComConnection">
+         <Summary></Summary>
+         <Desc>GUID for the BoldComConnection type library. </Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldClient">
+         <Methods>
+            <Method Name="OnServerEvent">
+               <Summary>Receives events from the server.</Summary>
+               <Desc> The server uses this method to pass events. </Desc>
+            </Method>
+         </Methods>
+         <Summary>This interface is implemented by COM client applications.</Summary>
+         <Desc> The client registers a reference to this interface with the server so that the server can call the client. </Desc>
+      </Interface>
+      <Interface Name="IBoldProvider">
+         <Methods>
+            <Method Name="CreateObject">
+               <Summary>Requestes a new instance of ClassName.</Summary>
+               <Desc>
+
+Allows the client to create objects on the server.
+</Desc>
+            </Method>
+            <Method Name="GetObject">
+               <Summary>Requestes a reference to the object named ObjectName.</Summary>
+               <Desc>
+
+Allows the client to obtain exported objects.
+</Desc>
+            </Method>
+            <Method Name="Get_ObjectInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Implemented by server applications.</Summary>
+         <Desc>
+
+The client retrieves exported objects through this interface.
+</Desc>
+      </Interface>
+      <Interface Name="IBoldServer">
+         <Methods>
+            <Method Name="Connect">
+               <Summary></Summary>
+               <Desc>The client calls this method to connect/register itself.
+</Desc>
+            </Method>
+            <Method Name="Disconnect">
+               <Summary></Summary>
+               <Desc>The client calls this method to disconnect from the server.
+</Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Implemented by server applications.</Summary>
+         <Desc> The client uses this interface to connect and disconnect. </Desc>
+      </Interface>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldComConnectionTypeLibrary">
+         <Summary>Returns a reference to the type library.</Summary>
+         <Desc>Loads the type library into memory. The function will fail and raise an exception if the type library can't be found. </Desc>
+      </Routine>
+   </Routines>
+   <Summary>Contains connection interfaces.</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,105 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldPriorityQueue.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldPriorityQueue">
+         <Events>
+            <Event Name="OnHeadChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ChopHead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeftChild">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Lock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Parent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveAndFreeHead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveHead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RightChild">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SiftDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SiftUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="swap">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Head">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPriorityQueueItem">
+         <Methods>
+            <Method Name="HasHigherPriorityThan">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

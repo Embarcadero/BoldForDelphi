@@ -1,0 +1,308 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldNodeControlPack.UnitDoc 3     02-08-12 15:47 Isje $">
+   <Classes>
+      <Class Name="TBoldNodeDescription">
+         <Methods>
+            <Method Name="Assign">
+               <Summary>Copy the value of one node description into another. </Summary>
+               <Desc>The value of the source element will be copied into the element, provided the source element is a TBoldNodeDescription.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Creates an instance of TBoldNodeDescription.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor.</Summary>
+               <Desc>Destroys an instance of TBoldNodeDescription.</Desc>
+            </Method>
+            <Method Name="GetBoldNodeFollowerControllerClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextTypeName">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHideNodeWithNoChildren">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIconController">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListController">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTextController">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContextTypeName">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHideNodeWithNoChildren">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIconController">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetListController">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetName">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTextController">
+               <Summary>Internal use.</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextTypeName">
+               <Summary>Context of the node.</Summary>
+               <Desc>The expressions you enter in the properties IconController, TextController and ListController (added list fragments on the node) starts from this context.</Desc>
+            </Property>
+            <Property Name="HideNodeWithNoChildren">
+               <Summary>Show or hide node.</Summary>
+               <Desc>Show or hide nodes with no children, leafs, attached.</Desc>
+            </Property>
+            <Property Name="IconController">
+               <Summary>Set node-icon.</Summary>
+               <Desc>To show icons for the nodes you must add a TImageList component to your application and this image list must be added to the <See Class="TBoldTreeView"/>. To select an icon from this image list and connect it to a node you enter an index in the IconController.Expression property. You can either enter an index number or a more complex OCL expression such as "if confirmed then 6 else 7 endif", to display different icons depending on the object.</Desc>
+            </Property>
+            <Property Name="ListController">
+               <Summary>List of parts (fragments).</Summary>
+               <Desc>The ListController has a collection of Parts and every part describes a fragment of a list of elements, child nodes.</Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary>Name reflecting the context of the node.</Summary>
+               <Desc>Use the Name property to give the Node Description a name that reflects the context. The name property must be set to the same expression as is entered in the ControllerExpression property of the list fragment that extracted the node or else the treeview won't find the node description to use.</Desc>
+            </Property>
+            <Property Name="NodeFollowerController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TextController">
+               <Summary>Node text.</Summary>
+               <Desc>The TextController of the node description controls the text that is displayed at the node in the tree. If we want it to be the name of a department we could set the property to "name" if the context of the node was Department. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Defines nodes in an bold tree view.</Summary>
+         <Desc>
+            <BH>See also</BH>
+            <See Class="TBoldTreeView"/><Br/>
+            <Jump ID="HowTo_BoldTreeView" Text="How to use TBoldTreeView"/>. </Desc>
+      </Class>
+      <Class Name="TBoldNodeDescriptions">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNodeControllerItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNodeDescriptionClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeControllerItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A Bold tree views collection of nodes.</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNodeFollowerController">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideNodeWithNoChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTreeFollowerController">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultGetNodeFollowerControllerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAssign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoGetFollowerController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoIconChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoTextChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldNodeDescriptionsClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultNodeDescriptionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDefaultNodeDescriptionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DefaultNodeDescriptionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnGetFollowerController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnIconChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnTextChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldNodeFirstColumnIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldNodeIconIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldNodeListIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldNodeTextIndex">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldNodeDescriptionClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNodeDescriptionsClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNodeFollowerControllerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldTreeFollowerControllerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

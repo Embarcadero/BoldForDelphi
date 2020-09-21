@@ -1,0 +1,149 @@
+<html>
+
+<head>
+  <title>Buildings &amp; Owners</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_compound.html" target="menu">Compound Examples</a> &gt;
+      <a href="buildings_owners.html">Buildings &amp; Owners</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Buildings &amp; Owners</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Compound/Building/BldOwn.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Compound/Building/BldOwn.bpr">Launch CBuilder-example</a>
+    <p>This now classic example of buildings and owners shows several features of what can be accomplished
+    using the Bold technology.
+    </p>
+    <p>The application is based on the tutorial guide, which you may want to read prior to or while
+    studying the code in the example.
+    </p>
+    <p>It is worth pointing out that there are features in the example that are implemented in
+    code that
+    could very well have been achieved by adding more information to the model. Most notably derived
+    attributes could have been used instead of renderers but, then again, we would have missed a
+    chance to show you how renderers work...
+    </p>
+    <p>The model includes multi-multi relations, sub-typing of business classes, override of framework
+    methods, renderers and several Bold aware components. In addition to that there are several useful
+    snippets of code in there.
+    </p>
+    <hr size="1">
+	<p class="head2">How to run</p>
+<p><b>1)</b> Add new persons to the system by right-clicking the person grid and
+choosing the menu option New. Each new person is given a first name, last name
+and an asset automatically. This is done in the overridden method
+<code>CompleteCreate</code>, check the file <i>Person.inc</i>.</p>
+<p>If a persons asset is greater than 10,000 the person is considered to be
+rich. It's the renderer IsRichRenderer in the datamodule that controls the
+checkbox Rich. The assets editbox shows the asset value in either red or blue
+color. Red if the asset is less than 0 and blue if it's greater. The controller
+of this is the <i> NegativeRedRenderer</i> in the datamodule.</p>
+<p><b>2)</b> Next create buildings in the Buildings grid. The address is given
+automatically in the <code>CompleteCreate</code> method in the file <i>Building.inc</i> but
+it's writeable in the grid so you can update it. The textcolor of the buildings
+address can differ. If the name is composed of the word &quot;Rose&quot;,
+&quot;Bold&quot; or &quot;Select&quot; the color is changed. The controller of
+this is the renderer <i> bsrAddress</i> in the main form.&nbsp;</p>
+<p><b>3)</b> Drag a person from the persons grid to the owners listbox for the
+buildings.</p>
+<p><b>4)</b> Create residential buildings in the grid. The address and rent is
+set in the <code>CompleteCreate</code> method in <i>ResidentialBuilding.inc</i>. The
+text color of the address is controlled by the renderer <i> bsrAddress</i> here too.</p>
+<p>The Rent column in the grid shows the total rent cost of the building. The
+display of the value is controlled by the renderer <i>HighRentRendere</i>r. If the rent
+exceeds the value 1500 the background-color of the column is set to silver and
+the textcolor is set to red else the background-color i set to white and the
+textcolor to black.</p>
+<p><b>5)</b> Drag a person to the owners listbox.</p>
+<p><b>6</b><b>)</b> Drag one person or more the the residents listbox and see
+how that affects the display of the information in the residential buildings
+grid. The Rent/Resident column is controlled by the renderer <i>bsrRentPerResident</i>.</p>
+<p><b>7)</b> Charge rent by clicking the button. See how that affects the assets
+of the owners and the residents of the building. If the rent exceeds a residents
+assets the person will be evicted from the building.</p>
+<p><b>8)</b> Update the database.</p>
+<p><b>9)</b> Make some changes to you data and click the Undo button. You will
+see all you changes unmade. Click the Redo button and all you changes will come
+back. You can set a checkpoint to indicate how far back you want to be able to
+undo changes. Make some changes again, without saving, and set the checkpoint.
+Make some more changes and then click the Undo button. All your changes back to
+were you set the checkpoint will be unmade.</p>
+<p class="head2">Use of CompleteCreate</p>
+	<p>The <code>CompleteCreate</code> method is an overridden framework method. All the classes
+	in this example overrides it, you can see the implementation in the
+	implementation file for each class. The <code>CompleteCreate</code> framework method is
+	executed upon creation of a new instance of the class.</p>
+	<p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_OverrideFWMethods.htm" target="self">
+			How to override framework methods</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+	<p class="head2">Use of renderers</p>
+	<p>There are two ways to implement derived values in Bold.
+    First of all you have the opportunity to use OCL expressions to define the derived attribute
+    inside the model. This has the advantage of minimizing the amount of code
+	necessary. In some
+    cases you will find the need to use code to accomplish the task at hand. One
+	way to do that is to use renderers. With renderers you have the capability of not only writing code for derived
+	attributes but also to implement reverse derivation.
+	</p>
+	<p>You can also use renderers to control the display of the values. For example
+	the <code>TBoldAsStringRenderer</code> har methods to set font and color.
+	</p>
+	<p>We use several instances of the renderer <code>TBoldAsStringRenderer</code> and also an
+    instance of the <code>TBoldAsCheckBoxStateRenderer</code>. Two of the renderers resides in
+    the datamodule and the rest of them in the main form.
+	</p>
+    <p class="head4">See also</p>
+	<ul>
+  		<li><a href="../../Help/BfD.hlp" target="self">Programmers Reference</a> 
+            (<font size="1">[BfDInstallDir]/help/Bfd.hlp</font>) for explanation of the
+			properties on the classes <code>TBoldAsStringRenderer</code> and <code>TBoldAsCheckBoxStateRenderer</code>.</li>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_Subscribe.htm" target="self">
+			Where to use subscriptions</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <p class="head4">More examples</p>
+	<ul>
+  		<li><a href="renderers.html">Renderers</a> - Another example of how to use renderers.</li>
+	</ul>
+<br>
+    <p class="note">
+    <b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and alias is
+    established you only have to use the &quot;Open system&quot; button when running the example
+    program.
+    </p>    
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

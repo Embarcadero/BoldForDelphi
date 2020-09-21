@@ -1,0 +1,97 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractPartiallyExternalPC">
+         <Methods>
+            <Method Name="AssignKeyToObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateInternalObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExternalKeyExistsInExternalStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExternalKeysToInternalSQL">
+               <Summary>Helper function to generate SQL fragments for external keys</Summary>
+               <Desc>This helper function generates an SQL fragment that can be used to find an object in the internal database based on its external key</Desc>
+            </Method>
+            <Method Name="FetchExternalKeysForIDs">
+               <Summary>Loads external keys for objects into a value space</Summary>
+               <Desc>This function will populate the provided value space with the external keys (as stored in the internal database) for the objects requested.</Desc>
+            </Method>
+            <Method Name="FindMoldRoleByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExternalKeyFromObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExternalKeys">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandleAllInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MatchObjectsByKeys">
+               <Summary>Handles synchronization of the existence of objects in the internal and external data stores </Summary>
+               <Desc>Objects that are created or deleted in the external data store will be detected by this function, relevant object ids will be added to the <see property=DeletedExternalObjects> and <see property=NewExternalObjects> lists</Desc>
+            </Method>
+            <Method Name="PrepareFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PrepareFetchExternal">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMultiLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSingleLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TranslateExternalKeysToInternalIds">
+               <Summary>Translates external keys to internal object ids</Summary>
+               <Desc>This function allows you to find the corresponding internal object ids for objects with known external keys.</Desc>
+            </Method>
+            <Method Name="TranslateInternalIdsToExternal">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DeletedExternalObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewExternalObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

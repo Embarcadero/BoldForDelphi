@@ -1,0 +1,229 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldObjectListControllers.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldClassListController">
+         <Methods>
+            <Method Name="AtTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClosestLoadedClassList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillFromClassList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillFromSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAtTimeList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanCreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringrepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesAtTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveClassEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToObjectDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AtTimeList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldClassList_Proxy">
+         <Methods>
+            <Method Name="GetClassListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectListController">
+         <Methods>
+            <Method Name="AddLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DropSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocatorByQualifiersAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IncludesLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOfLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalRemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToObjectDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveObjectDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

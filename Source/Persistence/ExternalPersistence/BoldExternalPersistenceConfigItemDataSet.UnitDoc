@@ -1,0 +1,74 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceConfigDataSetItem">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldExternalPersistenceConfigDataSetItem</Summary>
+               <Desc>Do not call this method directly, use <See Class="TBoldExternalPersistenceConfigDataSetItems" Method="Add" Text="TBoldExternalPersistenceConfigDataSetItems.Add"/> </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys the instance and frees up all resources</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary>Returnes the text to display in the Object Inspector</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpressionName">
+               <Summary>Returnes the expression name</Summary>
+               <Desc>Used by the <See Property="ClassExpressionName"/> property.</Desc>
+            </Method>
+            <Method Name="SetExpressionName">
+               <Summary>Sets the expression name</Summary>
+               <Desc>Used by the <See Property="ClassExpressionName"/> property.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassExpressionName">
+               <Summary>The expression name of the class</Summary>
+               <Desc>This property referrs to the OCL Expression name of the class that this item will handle</Desc>
+            </Property>
+            <Property Name="DataSet">
+               <Summary>Link to external TDataSet</Summary>
+               <Desc>This property links to a <InlineCode>TDataSet</InlineCode> descendant that holds the data to import.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Collection item used by <See Class="TBoldExternalPersistenceHandleDataSet"/> to map a class to a DataSet</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldExternalPersistenceConfigDataSetItems">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds a new TBoldExternalPersistenceConfigDataSetItem to the collection</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldExternalPersistenceConfigDataSetItem</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindExpressionName">
+               <Summary>Finds a TBoldExternalPersistenceConfigDataSetItem in the collection by it's ClassExpressionName property</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary>Returns an item from the collection</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary>Collection of TBoldExternalPersistenceConfigDataSetItem</Summary>
+               <Desc></Desc>
+			   <SeeAlso><See Class="TBoldExternalPersistenceConfigDataSetItem"/></SeeAlso>
+            </Property>
+         </Properties>
+         <Summary>Collection of class to DataSet mappings</Summary>
+         <Desc>This is a collection of <See Class="TBoldExternalPersistenceConfigDataSetItem"/> objects that map one class to one DataSet</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

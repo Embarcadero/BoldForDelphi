@@ -1,0 +1,158 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldSystemHandle.UnitDoc 9     01-11-16 13:18 Joho $">
+   <Classes>
+      <Class Name="TBoldSystemHandle">
+         <Events>
+            <Event Name="OnPreUpdate">
+               <Summary>Occurs when UpdateDatabase is called, and before the changes are written to the persistent storage. </Summary>
+               <Desc> Occurs when <InlineCode>UpdateDatabase</InlineCode> is called, and before the changes are written to the persistent storage.</Desc>
+            </Event>
+            <Event Name="OnOptimisticLockingFailed">
+               <Summary>Event that will be called if optimistic locking fails</Summary>
+               <Desc>If the application has optimistic locking activated, it might detect a conflict during an update. If this happens this event will be called with the objects that failed optimistic locking.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>
+                  <P>Destroys the <InlineCode>TBoldSystemHandle</InlineCode>, freeing all resources, including the entire <See Class="TBoldSystem"/> if it is still active.</P>
+                  <BH>Bold events</BH>
+Calling <InlineCode>Destroy</InlineCode> can result in the following events:
+                  <UL>
+                     <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed, i.e. before any part of the destruction has been performed.</LI>
+                  </UL>
+                  <P>Don't call <InlineCode>Destroy</InlineCode> directly. Use <InlineCode>Free</InlineCode> instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAutoActivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InstallOclDefinitionLookUp">
+               <Summary>Used by a repository to provide a Lookup-function for the OCL evaluator</Summary>
+               <Desc>This method is intended to be used by the <see class=TBoldOCLRepository> to provide the OCL evaluator with a callback to perform a lookup of an expression in the repository</Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PanicShutDownSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadTrackBold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary>Determine if there is a relationship to the component passed as parameter.</Summary>
+               <Desc><InlineCode>RefersToComponent</InlineCode> determins  if there is a relationship between the <InlineCode>TBoldSystemHandle</InlineCode> and the component passed as parameter. It is used internally to avoid circular dependencies between components.</Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAutoActivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnOptimisticLockingFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnPreUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDatabase">
+               <Summary>Calling UpdateDatabase will update the database with all changes made in the objectspace belonging to the component. </Summary>
+               <Desc>
+                  <P>It is equivalent to calling <See Class="TBoldSystem" Method="UpdateDatabase" Text="BoldSystem.UpdateDatabase"/>.</P>
+                  <P>If there is no system, most likely because the <See class="TBoldAbstractSystemHandle" Property="Active"/> property is <InlineCode>False</InlineCode>, invoking this method will raise an exception.</P>
+               </Desc>
+            </Method>
+            <Method Name="_ReceivePersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveRegionDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary>Creates an instance of TBoldSystemHandle</Summary>
+               <Desc>
+                  <P>Use create to create an instance of <InlineCode>TBoldSystemHandle</InlineCode>.</P>
+                  <P>Note that it needs some information to do its thing, most notably the <See Property="SystemTypeInfoHandle"/> must be set. To be able to persist the object space, the <See Class="PersistenceHandle"/> needs to be set.</P>
+               </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoActivate">
+               <Summary>Indicates if the system should be autmatically started when the application starts. </Summary>
+               <Desc>If <InlineCode>AutoActivate</InlineCode> is <InlineCode>True</InlineCode>, <See Class="TBoldAbstractSystemHandle" Property="Active" Text="Active"/> will be set to <InlineCode>True</InlineCode> at runtime, otherwise <InlineCode>Active</InlineCode> will be <InlineCode>False</InlineCode> at start-up, and must be set to <InlineCode>True</InlineCode> programatically.</Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary>If a system is to be persistent it must be connected to a <See Class="TBoldPersistenceHandle"/>. </Summary>
+               <Desc>The persistence-handle defines all properties related to persistence. Persistence will only work properly if the <InlineCode>PersistenceHandle</InlineCode> is connected to the same model as the system-handle (or at least one containing an identical model).
+                  <BH>Advanced information</BH>
+The <InlineCode>PersistenceHandle</InlineCode> is stateless, so it is possible to connect multiple system-handles to the same persistence-handle.</Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary>This read-only property is true if PersistenceHandle is assigned. </Summary>
+               <Desc><InlineCode>Persistent</InlineCode> evaluates to <InlineCode>True</InlineCode> if the <See Property="PersistenceHandle"/> is assigned.</Desc>
+            </Property>
+            <Property Name="RegionFactory">
+               <Summary></Summary>
+               <Desc>Creates regions for the system, according to the region definitions supplied in the model. </Desc>
+            </Property>
+         </Properties>
+         <Summary>A TBoldSystemHandle component is used in the IDE of Delphi to represent an entire system of business elements, also known as an object-space. </Summary>
+         <Desc>In order to use it you must set <See Class="TBoldAbstractSystemHandle" Property="SystemTypeInfoHandle" Text="SystemTypeInfoHandle"/> to point at a <See Class="TBoldSystemTypeInfoHandle"/> which in turn must be connected to the <See Class="TBoldModel"/> for the system. If the system is to be persistent <See Property="PersistenceHandle"/> must also be connected. The <See Class="TBoldAbstractSystemHandle" Property="Active" Text="active"/> property decides whether the system is active or not. In most cases <InlineCode>Active</InlineCode> is left <InlineCode>false</InlineCode> at designtime, and <See Property="AutoActivate"/> is used instead.
+            <BH>Value</BH>
+The <See Class="TBoldElementHandle" Property="Value" Text="value"/> of the handle is the system owned by the handle. It will be nil if <See Class="TBoldAbstractSystemHandle" Property="Active" Text="active"/> is false.
+            <BH>Typing</BH>
+The <See Class="TBoldElementHandle" Property="StaticBoldType"/> is the type information for the entire system, which is held by <See Class="TBoldAbstractSystemHandle" Property="SystemTypeInfoHandle"/>.
+            <BH>Bold Events</BH>
+            <InlineCode>TBoldSystemHandle</InlineCode> is a subclass of <See Class="TBoldSubscribableComponent"/>, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldSystemHandle</InlineCode> can send the following events:
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed.</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent whenever <InlineCode>Active</InlineCode> or <InlineCode>TBoldAbstractSystemHandle.SystemTypeInfoHandle</InlineCode> is changed.</LI>
+            </UL>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the TBoldSystemHandle</Summary>
+   <Desc>This unit defines the class <See Class="TBoldSystemHandle"/>, which is the main access point to the object space</Desc>
+</DLUnitDoc>

@@ -1,0 +1,232 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/PessimisticLocking/BoldLockHandler.UnitDoc 7     01-10-24 9:17 Jeho $">
+   <Classes>
+      <Class Name="EBoldGetLocksFailed">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc> </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClientIds">
+               <Summary>List of clients preventing lock to be acquired</Summary>
+               <Desc>This string list holds the ids of the clients that held the locks that caused the GetLocks call to fail. Each string is on the format <InlineCode><clientId>=<clientIdentifierString></InlineCode>, where <InlineCode><clientId></InlineCode> is the integer assigned to the client by the Client Handler (propagator), and <InlineCode><clientIdentifierString></InlineCode> is the string that that client had set as <InlineCode>ClientIdentifierString</InlineCode> property on its <See Class="TBoldListenerHandle"/>. </Desc>
+            </Property>
+            <Property Name="ConflictingRegions">
+               <Summary>List of held regions blocking the lock request</Summary>
+               <Desc>This is a list of the regions that were already locked by another user(s) </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This exception is raised when an attempt to request pessimistic locks failed. Most likely, this is because another user already held one or more of the requested locks.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldEmptyLockHolder">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHeldExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHeldShared">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPropagationEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Lock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Release">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldFailureGetLocksFailed">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This failure signifies that the client was unable to retrieve the required locks from the Lock Manager. It is set when <See Class="TBoldPessimisticLockHandler" Method="LockElement"/> returns <InlineCode>false</InlineCode>.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldPessimisticLockHandler">
+         <Events>
+            <Event Name="OnActivityEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnActivityStart">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AddHeldLocksToRegionLookup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ArePropagationEventsInConflictWithRequiredRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithLockHolder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ElementListContainsDirtyElements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureAllRequiredRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFactory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequiredExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequiredLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequiredShared">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsElementInAnyRequiredRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsHeldAsExplicitOrParent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsRequiredAsExplicitOrParent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LockElement">
+               <Summary></Summary>
+               <Desc>This will attempt to lock all the regions in which the element is contained.  The regions will be converted into locks and a request for the locks sent to the Lock Manager server.</Desc>
+               <SeeAlso><Jump ID="Mech_Regiondefinitions" Text="Region Definition Language"/> </SeeAlso>
+            </Method>
+            <Method Name="ReleaseUnNeededRegions">
+               <Summary></Summary>
+               <Desc>Implementation of the method defined on <See Class="TBoldAbstractPessimisticLockHandler"/> </Desc>
+            </Method>
+            <Method Name="RequireAsParentRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RequireAsSubregion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RequireParentRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RequireRegionExplicit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RequireSubregions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SignalActivityEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SignalActivityStart">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AnswerMayCommit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveRolledBack">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_RegionChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Factory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RequiredExclusive">
+               <Summary></Summary>
+               <Desc>Internal. </Desc>
+            </Property>
+            <Property Name="RequiredShared">
+               <Summary></Summary>
+               <Desc>Internal. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Implementation of the TBoldAbstractPessimisticLockHandler. </Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc>The components defined in this unit are part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.
+      <P>This feature set is licensed separately.</P>
+   </Desc>
+</DLUnitDoc>

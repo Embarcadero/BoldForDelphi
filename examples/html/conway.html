@@ -1,0 +1,101 @@
+<html>
+
+<head>
+  <title>Conway's Game of Life</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_compound.html" target="menu">Compound Examples</a> &gt;
+      <a href="conway.html">Conway's Game of Life</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Conway's Game of Life</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell ends -->
+    <a href="../Delphi/Compound/Conway/Conway.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Compound/Conway/Conway.bpr">Launch CBuilder-example</a>
+    <p>Conway's Game of Life is a small &quot;machine&quot; or cell automata, that develops
+    according to some simple rules. Each cell on the grid may be active or inactive. Between
+    generations, the following might happen:
+    <ul>
+      <li>A cell dies. If the cell has more than 3 neighbours, it dies of overcrowding.
+        If it has fewer than 2 neighbours it dies of isolation.</li>
+      <li>A cell survives. If the cell has 2 or 3 neighbours, it survives.</li>
+      <li>A cell is born. If a cell on the grid has *exactly* three neighbours, it will be
+        active in the next generation.</li>
+    </ul>
+    <p>The example implementation uses a lot of derivations, both for
+    associations and attributes.
+    There is also a qualified association in there. There is surprisingly little code.
+    <p>The game is modelled as one &quot;game&quot; with two associations to &quot;cell&quot;.
+    One of these associations (coord) is qualified on x, y. The cells have derived
+    associations to
+    their neighbouring cells and a derived attribute for number of active neighbours.
+	<p>The representation, board, is a reverse derived string (BLOB) attribute on game. The derivation is two
+    way, changing it changes the cells.
+    <p>If you want to learn more about the Game of Life, there is plenty of information on
+    the Internet, like
+    <a href="http://www.cs.jhu.edu/~callahan/lifepage.html" target="_blank">Paul's Page of
+    Conway's Life Miscellany</a>.&nbsp;
+	<p class="head2">Derive associations</p>
+	<p>To see an example of one of the derived associations in this example open the
+	model editor. Select the role <code>cDown</code> in the
+    <code>Cell</code> class (association named <code>Vertical</code>). If you can't see an editfield named <code>Derivation OCL</code> go to the main menu and check the
+	Advanced option under View. Now you should get
+	additional fields and one of them should be the <code>Derivation OCL</code>
+	field. There you can see the OCL expression that is used to derive the value
+	of this role.
+	</p>
+	<p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_DeriveAssociations.htm" target="self">
+			How to derive associations</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <p class="head4">More examples</p>
+	<ul>
+  		<li> <a href="derived_relations.html">Derived Relations</a> - Another
+          example on derived associations.</li>
+	</ul> 
+	<p class="head2">Reverse derive attributes</p>
+<p>The attribute <code>board</code> in the class <code>Game</code> is a reverse
+derived attribute.&nbsp;</p>
+    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_ReverseDeriveAttributes.htm" target="self">
+			How to reverse derive attributes</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <p class="head4">More examples</p>
+	<ul>
+  		<li><a href="derived_attributes.html">Derived Attributes</a> - <b>Code free</b> Non-reverse derived attributes.</li>
+  		<li><a href="reverse_derived_attributes.html">Reverse Derived Attributes</a> - Another example on reverse derived attributes.</li>
+	</ul>
+
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

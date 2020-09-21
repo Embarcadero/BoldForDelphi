@@ -1,0 +1,125 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/Rose98/BoldUMLRose98MappingUtils.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldUMLRose98MappingUtils">
+         <Methods>
+            <Method Name="AssociationInLogicalPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssociationReverseRolesMatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssociationRolesMatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClassInLogicalPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearCaches">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindAssocation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindInCache">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefreshCache">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RoleMatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RoseAssociationForUMLAssociation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RoseAttributeForUMLAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RoseClassForUMLClassifier">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RoseOperationForUMLOperation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogicalPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUMLModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLAssociationForRoseASsociation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLAttributeForRoseAttribute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLClassifierForRoseClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UMLOperationForRoseOperation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IncludeSubPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LogicalPackages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UMLModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UMLModelreadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

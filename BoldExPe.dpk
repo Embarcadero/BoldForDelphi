@@ -1,0 +1,57 @@
+package BoldExPe;
+
+{$R *.res}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (External Persistence)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  vcldb,
+  VclX,
+  DesignIDE,
+  Bold;
+
+contains
+  BoldAbstractExternalPersistenceController in 'Source\Persistence\ExternalPersistence\BoldAbstractExternalPersistenceController.pas',
+  BoldAbstractExternalPersistenceHandle in 'Source\Persistence\ExternalPersistence\BoldAbstractExternalPersistenceHandle.pas',
+  BoldAbstractPartiallyExternalPC in 'Source\Persistence\ExternalPersistence\BoldAbstractPartiallyExternalPC.pas',
+  BoldAbstractPartiallyExternalPH in 'Source\Persistence\ExternalPersistence\BoldAbstractPartiallyExternalPH.pas',
+  BoldExternalPersistenceConfigItemDataSet in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceConfigItemDataSet.pas',
+  BoldExternalPersistenceControllerConfig in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerConfig.pas',
+  BoldExternalPersistenceControllerDataSet in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerDataSet.pas',
+  BoldExternalPersistenceControllerEventDriven in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerEventDriven.pas',
+  BoldExternalPersistenceControllerSQL in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerSQL.pas',
+  BoldExternalPersistenceHandleDataSet in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleDataSet.pas',
+  BoldExternalPersistenceHandleEventDriven in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleEventDriven.pas',
+  BoldExternalPersistenceHandleSQL in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQL.pas',
+  BoldExternalPersistenceHandleSQLPropEditor in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQLPropEditor.pas',
+  BoldExternalPersistenceHandlesReg in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandlesReg.pas',
+  BoldExternalPersistenceSupport in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceSupport.pas',
+  ExPeConsts in 'Source\Persistence\ExternalPersistence\ExPeConsts.pas';
+
+end.

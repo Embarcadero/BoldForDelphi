@@ -1,0 +1,173 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldListHandle.UnitDoc 11    02-08-08 9:21 Johosos $">
+   <Classes>
+      <Class Name="TBoldListHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of <InlineCode>TBoldListHandle</InlineCode></Summary>
+               <Desc>Use <InlineCode>Create</InlineCode> to create an instance of <InlineCode>TBoldListHandle.</InlineCode></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of <InlineCode>TBoldListHandle</InlineCode></Summary>
+               <Desc>Do not call <InlineCode>Destroy</InlineCode>, call <InlineCode>Free</InlineCode> instead.</Desc>
+            </Method>
+            <Method Name="FixupRoots">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetComparer">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetEvaluateInPS">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetFilter">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary>Overrides TBoldAbstractListHandle.GetMutableList</Summary>
+               <Desc>Overrides <See Class="TBoldAbstractListHandle" Method="GetMutableList"/></Desc>
+            </Method>
+            <Method Name="GetRootHandle">
+               <Summary>Overrides TBoldRootedHandle.GetRootHandle</Summary>
+               <Desc>Overrides <See Class="TBoldRootedHandle" Method="GetRootHandle"/></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetVariables">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary>Overrides TComponent.Loaded</Summary>
+               <Desc>Overrides TComponent.Loaded</Desc>
+            </Method>
+            <Method Name="MarkOutOfDate">
+               <Summary>Forces a refresh of the value</Summary>
+               <Desc>Call <InlineCode>MarkOutOfDate</InlineCode> to force the component to refresh its value.</Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary>Overrides TComponent.Notification</Summary>
+               <Desc>Overrides TComponent.Notification</Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary>Determines if this instance of TBoldListHandle in some way is referring to the component passed as parameter.</Summary>
+               <Desc>Determines if this instance of <InlineCode>TBoldListHandle</InlineCode> in some way is referring to the component passed as parameter.</Desc>
+            </Method>
+            <Method Name="SetComparer">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetEvaluateInPS">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetFilter">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetMutableListExpression">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetRootHandle">
+               <Summary>Overrides TBoldRootedHandle.SetRootHandle</Summary>
+               <Desc>Overrides <See Class="TBoldRootedHandle" Method="SetRootHandle"/></Desc>
+            </Method>
+            <Method Name="SetStaticSystemHandle">
+               <Summary>Overrides TBoldNonSystemHandle.SetStaticSystemHandle</Summary>
+               <Desc>Overrides <See Class="TBoldNonSystemHandle" Method="SetStaticSystemHandle"/></Desc>
+            </Method>
+            <Method Name="SetSubscribe">
+               <Summary>Overrides TBoldRootedHandle.SetSubscribe</Summary>
+               <Desc>Overrides <See Class="TBoldRootedHandle" Method="SetSubscribe"/></Desc>
+            </Method>
+            <Method Name="SetVariables">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldComparer">
+               <Summary>Optional reordering/sorting component</Summary>
+               <Desc>Setting the BoldComparer property will use the comparer to sort the list produced by Expression.
+                  <Note>Note that a sorted list is regarded as derived and may therefore not be modified. However, the <InlineCode>MutableList</InlineCode> property will understand the concept of comparers, and can be used for some list-manipulations</Note>
+                  <Note>In most cases sorting can be done directly in <InlineCode>Expression</InlineCode>, by using BoldSoft's extensions to OCL. This often more efficient convenient, and should be done whenever possible.</Note>
+               </Desc>
+            </Property>
+            <Property Name="BoldFilter">
+               <Summary>Optional filter component</Summary>
+               <Desc>Setting the <InlineCode>BoldFilter</InlineCode> property will apply the filter to the list produced by Expression.
+                  <Note>A filtered list is regarded as derived and may therefore not be modified.</Note>
+                  <Note>In most cases filtering can be done directly in <InlineCode>Expression</InlineCode>. This is often far more convenient, and should be done whenever possible.</Note>
+               </Desc>
+            </Property>
+            <Property Name="EvaluateInPS">
+               <Summary>If Expression should be evaluated in the database, or in memory.</Summary>
+               <Desc>
+                  <P>Normally Ocl expressions are evaluated in memory, but this can lead to great inefficiencies when numerous objects have to be loaded. If this property is set to true an attempt to execute the expression directly in the database will be made. If this fails, there will be an exception.</P>
+	<note>
+				If this property is true, the component will ignore the setting of <see class=TBoldRootedHandle property=Subscribe text=Subscribe>. </note>  
+                  <P>For further information, see <Jump ID="Mech_Ocl2Sql" Text="Ocl2Sql"/></P>
+               </Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary>OCL expression to evaluate the resulting list element</Summary>
+               <Desc>
+                  <P>Expression is a string containing an OCL expression. The <See Class="TBoldAbstractListHandle" Property="List" Text="list"/> of the handle is defined by evaluating <InlineCode>Expression</InlineCode> with <InlineCode>BoldHandle.Value</InlineCode> as the context, and then calling <InlineCode>AsList</InlineCode>.</P>
+                  <P>At design-time the property editor provides support in writing the expression.</P>
+               </Desc>
+            </Property>
+            <Property Name="MutableListExpression">
+               <Summary>List expression yielding mutable list</Summary>
+               <Desc>
+                  <P>The list as described by the <See Property="Expression"/> may be immutable, i.e. not possible to change. This is the case of any any kind of derived lists; <InlineCode>Person.allInstances->orderBy(firstName)</InlineCode>.</P>
+                  <P>If a <See Class="TBoldNavigator"/> is connected to the list handle, it will not be possible to add objects to the list by pressing the [+] button, nor delete objects by pressing the [-] button. To overcome this, specify an expression yielding a mutable list; <InlineCode>Person.allInstances</InlineCode>. This expression will be used if the list produced by the <InlineCode>Expression</InlineCode>-property is immutable.</P>
+                  <P>The resulting mutable list is accessible via the <See Property="MutableList"/> property.</P>
+               </Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary>Allows the expression to have more than one context</Summary>
+               <Desc>If the OCL expression requires more than one context, additional context must be imported using a <See Class="TBoldOclVariables"/> component</Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldListHandle is used to get a list from a root using an OCL expression</Summary>
+         <Desc>
+            <P>A <InlineCode>TBoldListHandle</InlineCode> is used to represent a list obtained by applying an OCL expression relative to the value of a <See Class="TBoldElementHandle"/> that is set using the <See Class="TBoldRootedHandle" Property="RootHandle"/>.</P>
+            <P>A handle can keep it's value current by using the subscription mechanism in Bold. This behavior is controlled by the <See Class="TBoldRootedhandle" Property="Subscribe"/> property.</P>
+            <P>The list is obtained by calling <See Class="TBoldElement" Method="GetAsList"/> on the value obtained by evaluating <See Property="Expression"/>. This means that if the result of the evaluation is an individual element rather than a List, a list of one element will be created.</P>
+            <P>The list may be further modified by a filtering and/or sorting. This is done by setting the <See Property="BoldFilter"/> and/or <See Property="BoldComparer"/> properties.</P>
+            <P>The list will in most cases be a list of Business Objects (<InlineCode>TBoldObject</InlineCode>), but can be a list of any <See Class="TBoldElement"/>, e.g. a list of strings (<InlineCode>TBAString</InlineCode>).</P>
+            <P>In addition to keeping a list, a <InlineCode>TBoldListHandle</InlineCode> also holds a current position in the list. The <InlineCode>Value</InlineCode> property will be this element, rather that the whole list. The list itself can be accessed through the <See Class="TBoldAbstractListHandle" Property="List" Text="list"/> property.</P>
+            <BH>Usage</BH>
+            <P>The most common use of the component is placing it on a form or datamodule, connecting its <InlineCode>RootHandle</InlineCode> to another handle, and setting the <InlineCode>expression</InlineCode>.</P>
+            <P>It can now be used by connecting Bold-aware controls to it. If it is connected to a multi-valued control, such as a <See Class="TBoldGrid"/>, the elements of its <InlineCode>List</InlineCode> will be displayed. If it is connected to a single-valued control, such as a <See Class="TBoldEdit"/>, <InlineCode>Value</InlineCode>, i.e. <InlineCode>CurrentElement</InlineCode>, will be displayed in the control.</P>
+            <P>It can also be used by other handles. In this case they will be evaluated relative to <InlineCode>Value</InlineCode>.</P>
+            <BH>Implementation notes</BH>
+            <P>Like all handles, <InlineCode>TBoldListHandle</InlineCode> acts as an adapter between the business object/server world and the IDE/Client world.</P>
+            <P><InlineCode>TBoldListHandle</InlineCode> has a rather complex internal structure. Depending on the properties it will internally aggregate other handles to perform OCL-evaluation, sorting and filtering.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines TBoldListHandle</Summary>
+   <Desc>This unit defines the <See Class="TBoldListHandle"/> class.</Desc>
+</DLUnitDoc>

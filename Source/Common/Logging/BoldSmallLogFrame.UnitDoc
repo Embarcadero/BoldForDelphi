@@ -1,0 +1,91 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Logging/BoldSmallLogFrame.UnitDoc 4     02-02-14 11:21 Johosos $">
+   <Classes>
+      <Class Name="TBoldLogFrame">
+         <Methods>
+            <Method Name="CalculateTimeLeft">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateSmallLogForm">
+               <Summary>Creates a small form that shows logstatus and progress</Summary>
+               <Desc>The function will create and show a form that contains a logframe. The caller is responsible to call release on this form when the operation that should be logged is completed</Desc>
+            </Method>
+            <Method Name="EndLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hide">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Log">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProcessInterruption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProgressStep">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLogHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetProgressMax">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Show">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Sync">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Timer1Timer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WarningIndicatorClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnStopClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>A frame implementing IBoldLogReceiver</Summary>
+         <Desc>This frame can be placed on a form. It will become visible on StartLog, and hide again after EndLog. If there were any errors or warnings during the session, then the frame will stay visible.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>A frame implementing IBoldLogReceiver</Summary>
+   <Desc>This  unit defines a frame that implements <See Interface="IBoldLogReceiver"/>, and defines a GUI suitable for receiving log information. </Desc>
+</DLUnitDoc>

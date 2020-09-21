@@ -1,0 +1,66 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldUDPModificationBroadcaster">
+         <Events>
+            <Event Name="OnActivationError">
+               <Summary>This event will be called if the activation of the compoennt fails</Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalUDPRead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OnSendQueueNotEmpty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Port">
+               <Summary>The port on which the UDP traffic should go</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A component that handles ObjectSpace Synchronization over UDP (without a server)</Summary>
+         <Desc>This component handles ObjectSpace Synchronization (OSS) by broadcasting all changes to the objects performed by a client over the network through a UDP port. Other clients that are listening will take action depending on whether the objects are loaded in their object space or not.
+            <P>Just like the server based OSS mechanism only notifies the server when the modified objects are saved to the persistent storage (DB), and become available to other clients, this component sits in between the object space (<See Class="TBoldSystemHandle"/>) and the persistence handle used to store objects in the persistent storage.</P>
+            <P>The UDP communication will take place on the port specified by the <See Property="port"/> property. This is 4098 by default.</P>
+            <P>UDP broadcasts are normally restricted to work within one network subnet, but can be extended with UDP-gateways to cover larger areas. There is currently no UDP gateway shipping with this product.</P>
+            <P>To use this component, set the <See Class="TBoldSystemHandle" Property="PersistenceHandle" Text="PersistenceHandle"/> of your Systemhandle to point to this component, and set the property <See Class="TBoldPersistenceHandlePassthrough" Property="NextPersistenceHandle" Text="NextPersistenceHandle"/> to the "real" persistence handle. Set the <See Class="TBoldAbstractNotificationPropagator" Property="SystemHandle" Text="SystemHandle"/> property to the system handle and set the <See Class="TBoldAbstractNotificationPropagator" Property="Dequeuer" Text="Dequeuer"/> to a <See Class="TBoldExternalObjectSpaceEventHandler"/>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TActivationErrorEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

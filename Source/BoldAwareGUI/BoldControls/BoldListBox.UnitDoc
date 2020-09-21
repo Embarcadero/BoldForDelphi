@@ -1,0 +1,511 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldListBox.UnitDoc 7     01-11-09 15:06 Jeho $">
+   <Classes>
+      <Class Name="TBoldCustomListBox">
+         <Methods>
+            <Method Name="CNDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSetFontAndColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MeasureItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAlignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_BeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_DeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_InsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_RowAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary>Set Alignment to specify how the text is aligned within the ClientRect of the control.</Summary>
+               <Desc> </Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc>If BoldHandleIndexLock is set to True the listbox' current row will reflect the CurrentIndex of its handle. Correspondingly, changing the current row of the listbox will update the CurrentIndex of the handle.
+                  <P>When BoldHandleIndexLock is set to false, changing the current of the listbox will not change the handle and changes to the handle will not propagate to the listbox.</P>
+               </Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary></Summary>
+               <Desc>This property returns the List-property of the <See Property="BoldHandle"/> of the listbox. It is equivalent to 
+                  <Code>if Assigned(BoldHandle) then
+  Result := BoldHandle.List
+else
+  Result := nil;</Code>
+ </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc> This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>DefaultDblClick</BH>
+                  <P>If this property is True and OnDblClick is not set, then double-clicking on a row in the list will create a form displaying the element in the list.</P>
+                  <BH>DragMode</BH>
+                  <P>Determines what will happen if the user attempts to drag from the control.</P>
+                  <UL>
+                     <LI><InlineCode>bdgNone</InlineCode> -  No drag will be performed.</LI>
+                     <LI><InlineCode>bdgSelection</InlineCode> - If the element selected in the list is a <InlineCode>TBoldObject</InlineCode> (or one of its subclasses) then it will be placed in the dragged objects list, <InlineCode>BoldGUIHandler.DraggedObjects</InlineCode>, otherwise no drag will be initiated.</LI>
+                  </UL>
+                  <P>If <InlineCode>OnStartDrag</InlineCode> has been set, this property is ignored altogether.</P>
+                  <BH>DropMode</BH>
+                  <P>Determines what will happen if the user attempts to drop on the control.</P>
+                  <UL>
+                     <LI><InlineCode>bdpNone</InlineCode> - No action.</LI>
+                     <LI><InlineCode>bdpInsert</InlineCode> - If the dragged elements are compatible with the list, and the list is modifiable, then the dragged elements will be inserted in the list before the element on which they are dropped.</LI>
+                     <LI><InlineCode>bdpAppend</InlineCode> - If the dragged elements are compatible with the list, and the list is modifiable, then the dragged elements will be appended to the end of the list.</LI>
+                     <LI><InlineCode>bdpReplace</InlineCode> This mode is not supported yet.</LI>
+                  </UL>
+                  <BH>InternalDrag</BH>
+                  <P>If this sub-property is <InlineCode>True</InlineCode>, and the list being displayed is ordered, then the list can be reordered by dragging within the listbox.</P>
+                  <BH>Renderer</BH>
+                  <P>This sub-property is not yet used for lists.</P>
+               </Desc>
+            </Property>
+            <Property Name="BoldRowProperties">
+               <Summary>Determines how each row is to be displayed</Summary>
+               <Desc> This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+Since this is a display only control, this sub-property has no effect.
+                  <BH>CleanOnEqual</BH>
+Since this is a display only control, this sub-property has no effect.
+                  <BH>DragMode</BH>
+There is currently no support for special handling for dragging from a specific row of the control, and thus this sub-property currently has no effect. Use <InlineCode>BoldProperties.DragMode</InlineCode> instead.
+                  <BH>DropMode</BH>
+There is currently no support for special handling for dropping on a specific row of the control, and thus this sub-property currently has no effect. Use <See Property="BoldProperties"/>.DropMode instead.
+                  <BH>Expression</BH>
+The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Expression</InlineCode> will be interpreted as an OCL expression to be applied to <See Property="BoldHandle"/>.Value.
+                  <P>If an explicit renderer has been given, <InlineCode>Expression</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+                  <BH>Renderer</BH>
+This property identifies a <See Class="TBoldAsStringRenderer"/> that is used do define the mapping from <See Property="BoldHandle"/>.Value to the string displayed in the control. The default renderer will apply Expression to the value, and then take <InlineCode>TBoldElement.StringRepresentation</InlineCode> on the result. A custom renderer may perform any mapping.
+                  <BH>Representation</BH>
+The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Representation</InlineCode> will be interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating expression.
+                  <P>If an explicit renderer has been given, <InlineCode>Representation</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc>This is a quick way to get hold of the element currently selected in the ListBox. </Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary></Summary>
+               <Desc><InlineCode>CurrentBoldBobject</InlineCode> calls <See Property="CurrentBoldElement"/> and casts it into a <InlineCode>TBoldObject</InlineCode> if possible. If not, the returned value is <InlineCode>nil</InlineCode>. </Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc>The follower connects internally to the <See Property="BoldHandle"/> of the control. It is responsible for propagating changes from the handle to the control. </Desc>
+            </Property>
+            <Property Name="ItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldCustomListBox allows displaying and optionally editing a list of TBoldElements</Summary>
+         <Desc><InlineCode>TBoldCustomListBox</InlineCode> allows displaying and optionally editing a list of <InlineCode>TBoldElements</InlineCode>. In most cases the list will be a list of Business Objects, but it can be any list.
+The <See Property="BoldHandle"/> property specifies a listhandle that defines the list to be displayed.
+            <P>The sub-properties of <See Property="BoldProperties"/> specify the behaviour of the control with respect to the whole list, e.g. the drag/drop behaviour.</P>
+            <P>The sub-properties of <See Property="BoldRowProperties"/> specify how each element shall be displayed in the list.</P>
+            <BH>Implementation notes</BH>
+            <P><InlineCode>TBoldCustomListBox</InlineCode> keeps most of its properties protected. It is not intended to be used directly, but rather to be subclassed, where the subclasses publish and/or override the behaviour implemented by <InlineCode>TBoldCustomListBox</InlineCode>.</P>
+            <BH>Advanced information</BH>
+            <P><InlineCode>TBoldCustomListBox</InlineCode> allows all aspects of the displayed text, i.e. the font and color of each row in the list to be controlled by the underlying value. In order to do this a custom renderer must be specified for <InlineCode>BoldRowProperties</InlineCode>.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldListBox">
+         <Events>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMeasureItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Alignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BorderStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Columns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExtendedSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IntegralHeight">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="itemHeight">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldListBox allows displaying and optionally editing a list of TBoldElements</Summary>
+         <Desc><InlineCode>TBoldListBox</InlineCode> allows displaying and optionally editing a list of <InlineCode>TBoldElements</InlineCode>. In most cases the list will be a list of Business Objects, but it can be any list.
+<P>The <See Property="BoldHandle"/> property specifies a listhandle that defines the list to be displayed.</P>
+            <P>The sub-properties of <See Property="BoldProperties"/> specify the behaviour of the control with respect to the whole list, e.g. the drag/drop behaviour.</P>
+            <P>The sub-properties of <See Property="BoldRowProperties"/> specify how each element shall be displayed in the list.</P>
+            <BH>Advanced information</BH>
+            <P><InlineCode>TBoldListBox</InlineCode> allows all aspects of the displayed text, i.e. the font and color of each row in the list to be controlled by the underlying value. In order to do this a custom renderer must be specified for <InlineCode>BoldRowProperties</InlineCode>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Defines the Bold aware listbox. </Summary>
+   <Desc>This unit defines the Bold aware listbox component, <InlineCode>TBoldListBox</InlineCode>. It is primarily used to present a list of objects.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,171 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/Core/BoldNameExpander.UnitDoc 4     02-03-13 14:02 Jeho $">
+   <Classes>
+      <Class Name="TBoldAbstractNameExpander">
+         <Methods>
+            <Method Name="ExpandName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLanguageIsCaseSensitive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMapCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValidCharacters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MapCharacters">
+               <Summary> This method will check the ValidCharacters property and map any non-valid character to the result of the MapCharacter property. </Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TruncateName">
+               <Summary></Summary>
+               <Desc>The default implementation does nothing, but if you override this method you can ensure that no names are longer than a given length. This is useful to truncate table and column names for a SQLNameExpander </Desc>
+            </Method>
+            <Method Name="ValidateName">
+               <Summary></Summary>
+               <Desc>This function will check the name against the set of reserved words for the language, and return a reason if the name is not valid </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LanguageIsCaseSensitive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MapCharacter">
+               <Summary></Summary>
+               <Desc>Maps invalid characters to '_'</Desc>
+            </Property>
+            <Property Name="ValidCharacters">
+               <Summary></Summary>
+               <Desc>The set of characters that are valid for an identifier in the language of the expander </Desc>
+            </Property>
+         </Properties>
+         <Summary>This is the abstract class for all name expanders </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDelphiNameExpander">
+         <Methods>
+            <Method Name="GetValidCharacters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MapCharacters">
+               <Summary></Summary>
+               <Desc>Returns the name with all invalid characters mapped to underscore </Desc>
+            </Method>
+            <Method Name="ValidateName">
+               <Summary></Summary>
+               <Desc>Checks if the name is a valid Delphi identifier </Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This is the default expander for Delphi Names </Desc>
+      </Class>
+      <Class Name="TBoldExpressionNameExpander">
+         <Methods>
+            <Method Name="GetValidCharacters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MapCharacters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>This is the default expander for expression names </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLNameExpander">
+         <Methods>
+            <Method Name="ExpandName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValidCharacters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This is the default name expander for database names. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldExpandName">
+         <Summary></Summary>
+         <Desc>The <InlineCode>BoldExpandName</InlineCode> function is used extensively through out Bold to allow for generic names. Most noteably is the expansion of source code, OCL and database names. The default expanders will take care of mapping illegal characters to legal characters, but custom expanders can be plugged in to trim names by other means. Many databases for example does not allow long table, column and index-names.
+            <P>The expander class to use is determined by the <InlineCode>ExpansionType</InlineCode> parameter.</P>
+         </Desc>
+      </Routine>
+      <Routine Name="BoldExpandPrefix">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary>This unit contains the default name expanders of bold.</Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldCharacterSet">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDelphiNameExpanderClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExpressionNameExpanderClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNameExpanderClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSQLNameExpanderClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TExpansionType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldDelphiNameExpanderClass">
+         <Summary></Summary>
+         <Desc>If you want to plug in your own name-expander to expand delphi-names, subclass <See Class="TBoldDelphiNameExpander"/> and set this variable to your new class </Desc>
+      </Var>
+      <Var Name="BoldExpressionNameExpanderClass">
+         <Summary></Summary>
+         <Desc>If you want to plug in your own name expander for expression names (OCL), subclass <See Class="TBoldExpressionNameExpander"/> and set this variable to your new class. </Desc>
+      </Var>
+      <Var Name="BoldNameExpanderMapAnsiCharacters">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldSQLNameExpanderClass">
+         <Summary></Summary>
+         <Desc>If you want to plug in a custom name expander for database names, subclass <See Class="TBoldSQLNameExpander"/> and set this variable to your new class. </Desc>
+      </Var>
+      <Var Name="BoldSQLNameExpanderNameLimit">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldSQLNameExpanderUpperCaseNames">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

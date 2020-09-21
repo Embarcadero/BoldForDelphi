@@ -1,0 +1,54 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/Condition/BoldCondition.UnitDoc 6     01-10-31 12:43 Jeho $">
+   <Classes>
+      <Class Name="TBoldChangePointCondition">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EndTime">
+               <Summary>Upper limit for which versions to retrieve </Summary>
+               <Desc>
+                  <Note>This feature is only available in the Product Extension Object Versioning Extension.</Note>
+               </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+            <Property Name="IdList">
+               <Summary>The ids for the objects to retrieve old versions for</Summary>
+               <Desc>
+                  <Note>This feature is only available in the Product Extension Object Versioning Extension.</Note>
+               </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+            <Property Name="MemberIdList">
+               <Summary>The non embedded members to get changes for</Summary>
+               <Desc> If this property is <InlineCode>nil</InlineCode>, then objects will only be retrieved at the points in time when any of the embedded members (roughly: all members except multilinks) changed. Add the member ids of any non-embedded members (roughly: multilinks) you also want to be taken into account. </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+            <Property Name="StartTime">
+               <Summary>Lower limit for which versions to retrieve</Summary>
+               <Desc></Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+         </Properties>
+         <Summary>A condition for fetching the old versions of objects</Summary>
+         <Desc> This condition will return the requested objects at the points in time when changes were made to them. Thus, this list will reflect the history of the objects, without loading the object versions where no changes were made compared to the previous time point.
+            <Note>This feature is only available in the Product Extension Object Versioning Extension.</Note>
+         </Desc>
+         <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc>See also <Jump ID="Mech_OVE" Text="Object Versioning Extension"/>.</Desc>
+</DLUnitDoc>

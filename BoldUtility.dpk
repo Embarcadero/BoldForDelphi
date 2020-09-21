@@ -1,0 +1,64 @@
+package BoldUtility;
+
+{$R *.res}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (Utils)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  VclX,
+  DesignIDE,
+  Bold,
+  BoldVCLGUI,
+  BoldUml;
+
+contains
+  BoldDebugActions in 'Source\Samples\Actions\BoldDebugActions.pas',
+  BoldEditOCLAction in 'Source\Samples\Actions\BoldEditOCLAction.pas',
+  BoldCheckListBox in 'Source\Samples\BoldCheckListBox\BoldCheckListBox.pas',
+  BoldCheckListBoxReg in 'Source\Samples\BoldCheckListBox\BoldCheckListBoxReg.pas',
+  BoldCustomCheckListBox in 'Source\Samples\BoldCheckListBox\BoldCustomCheckListBox.pas',
+  BoldSelectionListBox in 'Source\Samples\BoldCheckListBox\BoldSelectionListBox.pas',
+  BoldSelectionListBoxReg in 'Source\Samples\BoldCheckListBox\BoldSelectionListBoxReg.pas',
+  BoldFormSaver in 'Source\Samples\FormSaver\BoldFormSaver.pas',
+  BoldEditOCLActionPropEditor in 'Source\Samples\IDE\BoldEditOCLActionPropEditor.pas',
+  BoldSamplesReg in 'Source\Samples\IDE\BoldSamplesReg.pas',
+  BoldLockUtils in 'Source\Samples\Misc\BoldLockUtils.pas',
+  BoldObjectRetriever in 'Source\Samples\Misc\BoldObjectRetriever.pas',
+  BoldModelLoader in 'Source\Samples\ModelLoader\BoldModelLoader.pas',
+  BoldNewObjectInterceptor in 'Source\Samples\NewObjectInterceptor\BoldNewObjectInterceptor.pas',
+  BoldSortingGrid in 'Source\Samples\SortingGrid\BoldSortingGrid.pas',
+  BoldSystemComparer in 'Source\Samples\SystemComparer\BoldSystemComparer.pas',
+  BoldSystemDebuggerForm in 'Source\Samples\SystemDebugger\BoldSystemDebuggerForm.pas',
+  BoldUMLNameTrimmer in 'Source\Samples\UMLPlugins\BoldUMLNameTrimmer.pas',
+  BoldAttributeWideString in 'Source\Samples\Unicode\BoldAttributeWideString.pas',
+  BoldPMWideString in 'Source\Samples\Unicode\BoldPMWideString.pas',
+  BoldWideStringControlPack in 'Source\Samples\Unicode\BoldWideStringControlPack.pas',
+  BoldWideStringInterface in 'Source\Samples\Unicode\BoldWideStringInterface.pas';
+
+end.

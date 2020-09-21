@@ -1,0 +1,76 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/BDE/BoldPersistenceHandleBDE.UnitDoc 5     02-06-17 16:17 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandleBDE">
+         <Methods>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBasename">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDatabaseName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPassword">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSessionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUserName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getEffectiveDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataBase">
+               <Summary></Summary>
+               <Desc>If you have a TDatabase component, you can connect the Persistencehandle directly to this component. This will not require a BDE-alias.</Desc>
+            </Property>
+            <Property Name="DatabaseName">
+               <Summary></Summary>
+               <Desc>Set this property to the BDE-alias of your database. </Desc>
+            </Property>
+            <Property Name="EffectiveDataBase">
+               <Summary>The TDatabase component that will be used by the persistence handle</Summary>
+               <Desc>If the <See Property="Database"/> property is set, this will be used, otherwise an internally created database will be used. </Desc>
+            </Property>
+            <Property Name="SessionName">
+               <Summary></Summary>
+               <Desc>If you require the database communication to use a specific session, set this property to the session name of your choice </Desc>
+            </Property>
+         </Properties>
+         <Summary>Connects a BoldSystem to a database via BDE</Summary>
+         <Desc>
+            <Warning>This component is deprecated! Please use TBoldPersistenceHandleDB and a database-adapter instead. For details on how to migrate to the new architecture, please read <Jump ID="PersistenceHandleUpgrade" Text="Upgrade PersistenceHandle"/></Warning>
+This component is used to connect a BoldSystem to a database via BDE (Borland Database Engine). Set the PersistenceHandle property of a TBoldSystemHandle to point to a TBoldPersistenceHandleBDE, and set up the database name in the <See Property="DatabaseName"/> property of the persistence handle. The persistence handle also need model-information, so you must connect it to a <See Class="TBoldModel"/> component.
+You need to create a schema in the database. This can be done either in the ModelEditor, or by using the <See Class="TBoldIBAliasCreator"/> (it will create an empty InterBase database with a schema for the model and set up a BDE alias for you). </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

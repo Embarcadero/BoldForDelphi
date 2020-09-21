@@ -1,0 +1,1742 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldAttributes.UnitDoc 12    02-07-25 14:26 Johosos $">
+   <Classes>
+      <Class Name="EToLongName">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBABlob">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc>Copies data from another instance of <InlineCode>TBABlob</InlineCode>. The source is a blob with a <InlineCode>ContentType</InlineCode> but the target is a <InlineCode>TBABlob</InlineCode> (and not a subclass), the blobdata will be copied, but content type will be lost (no exception will occur). </Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateBlobStream">
+               <Summary></Summary>
+               <Desc>This will create a subclass of <InlineCode>TStream</InlineCode> that will read and write from the blob attribute. The mode-parameter indicates if the stream is readable, writeable or both. </Desc>
+            </Method>
+            <Method Name="FreeContent">
+               <Summary>Releases the content from the attribute.</Summary>
+               <Desc><InlineCode>FreeContent</InlineCode> resets the content of the blob attribute.</Desc>
+            </Method>
+            <Method Name="GetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEqualAs">
+               <Summary>Compares attribute content.</Summary>
+               <Desc><InlineCode>IsEqualAs</InlineCode> will compare the data content of the attribute with the content in the BoldElement submitted as parameter.
+                  <P>If the parameter is not a <InlineCode>TBABlob</InlineCode> the inherited method will be invoked.</P>
+                  <P>Comparison will yield <InlineCode>true</InlineCode> if both the Blob and the submitted blob are null or if their data content is equal.</P>
+               </Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBABlob</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyValue">
+               <Summary>SetEmptyValue will set the content to empty string.</Summary>
+               <Desc><InlineCode>SetEmptyValue</InlineCode> will set the <InlineCode>AsString</InlineCode> property of the <InlineCode>TBABlob</InlineCode> to en empty string.</Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToNull">
+               <Summary></Summary>
+               <Desc>Set the value of the attribute to Null. If Null is not an allowed value for the attribute, an exception will be raised. As an optimization, the data part of the attribute will be disposed. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContentType">
+               <Summary></Summary>
+               <Desc>This property will always be empty of the object is a <InlineCode>TBABlob</InlineCode>, but subclasses can use this to describe the type of the blob data. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Attribute type for Binary Large Objects (BLOB)</Summary>
+         <Desc> This attribute type can be used to store binary data of any kind (images, formatted text, sound...). Normally they will be stored as binary data in a persistent storage.
+            <P>The data value of the blob can be retrieved using either the <See Class="TBoldElement" Property="AsString" Text="AsString"/>-property, or using the method <See Method="CreateBlobStream"/>.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBABlobImageBMP">
+         <Methods>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>A .bmp image</Summary>
+         <Desc>The <See Property="ContentType" Class="TBABlob"/> of this blob is 'image/bitmap'.</Desc>
+      </Class>
+      <Class Name="TBABlobImageJPEG">
+         <Methods>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>A .jpeg image</Summary>
+         <Desc>The <See Property="ContentType" Class="TBABlob"/> of this blob is 'image/jpeg'.</Desc>
+      </Class>
+      <Class Name="TBABoolean">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsBoolean">
+               <Summary>Getter for the <See Property="AsBoolean"/> property</Summary>
+               <Desc><InlineCode>GetAsBoolean</InlineCode> checks if reading is permitted using <See Class="TBoldMember" Method="CanRead"/> before returning the value held by the attribute.</Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary>Returns the data state as a variant</Summary>
+               <Desc><InlineCode>GetAsVariant</InlineCode> simply returns the <See Property="AsBoolean"/> result as a variant.</Desc>
+            </Method>
+            <Method Name="GetContentAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValues">
+               <Summary>Returns the <See Class="TBAValueSetValueList"/> for the Boolean property</Summary>
+               <Desc>Since <InlineCode>TBABoolean</InlineCode> is implemented as a subclass of <See Class="TBAValueSet"/> it is related to a list of valid values. This method returns the list. The list is a singleton, not created until accessed and automatically destroyed on termination.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsBoolean">
+               <Summary>Set method for <See Property="AsBoolean"/></Summary>
+               <Desc><InlineCode>SetAsBoolean</InlineCode> is the set method for the <See Property="AsBoolean"/> property. It ensures the value can be set prior to altering it.</Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary>Sets the native value from a variant</Summary>
+               <Desc><InlineCode>SetAsVariant</InlineCode> sets the <See Property="AsBoolean"/> property with the variant passed as parameter.</Desc>
+            </Method>
+            <Method Name="SetContentAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsBoolean">
+               <Summary></Summary>
+               <Desc>This property is the actual delphi-representation of the boolean value stored in the attribute. </Desc>
+            </Property>
+         </Properties>
+         <Summary>The class of boolean attributes</Summary>
+         <Desc>This attribute type can store a boolean value. It has three different string representations:
+            <UL>
+               <LI>brDefault (1) - 'N', 'Y'</LI>
+               <LI>2 - 'F', 'T'</LI>
+               <LI>3 - 'False', 'True'</LI>
+            </UL>
+            <P>If you want other string-representations, the easiest way is to subclass <InlineCode>TBABoolean</InlineCode>, and override the <InlineCode>GetStringRepresentation</InlineCode>-method</P>
+         </Desc>
+      </Class>
+      <Class Name="TBAByte">
+         <Methods>
+            <Method Name="CheckRange">
+               <Summary></Summary>
+               <Desc>Raises an exception if the parameter is not a valid byte (0..255) </Desc>
+            </Method>
+            <Method Name="GetAsByte">
+               <Summary>Get method for <See Property="AsByte"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsByte">
+               <Summary>Set method for <See Property="AsByte"/></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsByte">
+               <Summary></Summary>
+               <Desc>The native delphi representation of the byte value. </Desc>
+            </Property>
+         </Properties>
+         <Summary>This attribute can store integer values in the range 0..255.</Summary>
+         <Desc>This attribute can store integer values in the range 0..255. </Desc>
+      </Class>
+      <Class Name="TBAConstraint">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CalculateConstraint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Initialize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Constraint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningElement">
+               <Summary>The element that has the constraint</Summary>
+               <Desc>Normally this will be a<see class=TBoldObject>, but could be any element that can have constraints. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc> Constraints that are specified in the model can be evaluated and the result is an instance of TBAConstraint. This class inherits from TBABoolean, so it will have a truth-value corresponding to whether the constrain holds or is broken.
+            <P>To indicate to a user what constraint is actually broken, each constraint has a number of string reperesentations:</P>
+            <UL>
+               <LI>1: (<See Const="brDefault"/>) N/Y</LI>
+               <LI>2: False/True</LI>
+               <LI>3: F/T</LI>
+               <LI>10: the model name of the constraint</LI>
+               <LI>11: the description of the constraint</LI>
+               <LI>12: the expression of the constraint</LI>
+               <LI>13: the <See Class="TBoldDomainElement" Property="displayname" Text="DisplayName"/> of the element that the constraint belongs to</LI>
+               <LI>14: the string representation of the element that the constraint belongs to</LI>
+            </UL>
+            <P>Given an object that has constraints, the following ocl expressions are useful:</P>
+            <UL>
+               <LI><InlineCode>anObject.constraints</InlineCode>: all constraints of the object</LI>
+               <LI><InlineCode>anObject.constraints->select(c|not c)</InlineCode>: all broken constraints of the object</LI>
+               <LI><InlineCode>anObject.constraints->select(c|not c)->isEmpty</InlineCode>: true if the object has no broken constraints</LI>
+            </UL>
+         </Desc>
+      </Class>
+      <Class Name="TBACurrency">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc>This will copy the numeric value of any <See Class="TBANumeric"/> subclass (using the <InlineCode>AsCurrency</InlineCode> value if the source is a <See Class="TBACurrency"/>). </Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc>This will compare the numeric values of the <InlineCode>TBACurrency</InlineCode> itself and the compare element.
+                  <P>These are the result codes:</P>
+                  <UL>
+                     <LI><InlineCode>self.AsCurrency < BoldElement</InlineCode> returns -1</LI>
+                     <LI><InlineCode>self.AsCurrency = BoldElement</InlineCode> returns 0</LI>
+                     <LI><InlineCode>self.AsCurrency > BoldElement</InlineCode> returns 1</LI>
+                  </UL>
+                  <P>If <InlineCode>BoldElement</InlineCode> is a <InlineCode>TBACurrency</InlineCode>, the <InlineCode>AsCurrency</InlineCode> (or subclass) will be used when comparing. If <InlineCode>BoldElement</InlineCode> is a <InlineCode>TBAFloat</InlineCode> (or subclass), the <InlineCode>AsFloat</InlineCode> property will be used.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBACurrency</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>True</InlineCode> if C is one of '0'..'9', '-', '+', 'e', 'E' or the decimal separator as specified by the OS. </Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc> Returns <InlineCode>true</InlineCode> if the string can be converted to a currency. The method uses Delphi's internal routines to determine this.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsCurrency">
+               <Summary></Summary>
+               <Desc>This is the native delphi represenation of the currency value, it is both read- and writeable. </Desc>
+            </Property>
+            <Property Name="AsFloat">
+               <Summary></Summary>
+               <Desc>This property is the currency value converted to a delphi float (<InlineCode>double</InlineCode>). It can be both read and written. Writing this property may introduce unwanted rounding effects. </Desc>
+            </Property>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc>This property is only writeable, since reading this property would loose all the decimals. If you want the integer value of a <InlineCode>TBACurrency</InlineCode>, you should use round(AsCurrency) or trunc(AsCurrency). </Desc>
+            </Property>
+         </Properties>
+         <Summary>A <InlineCode>currency</InlineCode> attribute</Summary>
+         <Desc>This attribute uses the delphi Currency type to represent a decimal point value. The advantages of Currency is better handling of rounding-effects in monetary calculations. It is stored as a 64-bit integer with the last 4 decimal digits representing decimal places. </Desc>
+      </Class>
+      <Class Name="TBADate">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>True</InlineCode> if C is one of '0'..'9' or the date separator </Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if the string can be converted to a date </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDate">
+               <Summary>Actual date value</Summary>
+               <Desc>This is the delphi native representation of the date value. It can be both read and written.</Desc>
+            </Property>
+            <Property Name="Days">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Months">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Years">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A date attribute</Summary>
+         <Desc>This attribute can be used to store a date. Note that even though the delphi type <InlineCode>TDate</InlineCode> is able to store hours and minutes, the bold attribute <InlineCode>TBADate</InlineCode> will remove this information before storing dates. </Desc>
+      </Class>
+      <Class Name="TBADateTime">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>True</InlineCode> if C is one of '0'..'9', space, time separator or date separator</Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if the string can be converted to a date, a time or both.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDate">
+               <Summary>The date portion of the attribute</Summary>
+               <Desc>This property holds the date portion of the attribute, in native delphi format. It can be both read and written.</Desc>
+            </Property>
+            <Property Name="AsDateTime">
+               <Summary>The actual datetime value of the attribute</Summary>
+               <Desc>This property holds the actual datetime value of the attribute. It can be both read and written.</Desc>
+            </Property>
+            <Property Name="AsTime">
+               <Summary>The time portion of the attribute</Summary>
+               <Desc>This property holds the time portion of the attribute</Desc>
+            </Property>
+            <Property Name="Days">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Hours">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Minutes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Months">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Seconds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Years">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A datetime attribute</Summary>
+         <Desc>This attribute can be used to store a date and a time. The date and time can be read and set speparately by using <InlineCode>AsDate</InlineCode> and <InlineCode>AsTime</InlineCode>, or together with the <InlineCode>AsDateTime</InlineCode>. Note that this differ somewhat from how delphi regards <InlineCode>TDate</InlineCode> and <InlineCode>TTime</InlineCode> (to Delphi they are just new names for <InlineCode>TDateTime</InlineCode>). </Desc>
+      </Class>
+      <Class Name="TBAFloat">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc>This will copy the numeric value from any subclass of <InlineCode>TBANumeric</InlineCode>. </Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc>This will compare the <InlineCode>TBAFloat</InlineCode> to any numeric value with the following result codes:
+                  <UL>
+                     <LI><InlineCode>self.AsFloat < TBAFloat(BoldElement).AsFloat</InlineCode> returns -1</LI>
+                     <LI><InlineCode>self.AsFloat = TBAFloat(BoldElement).AsFloat</InlineCode> returns 0</LI>
+                     <LI><InlineCode>self.AsFloat > TBAFloat(BoldElement).AsFloat</InlineCode> returns 1</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBAFloat</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>True</InlineCode> if C is one of '0'..'9', '-', '+', 'e', 'E' or the decimal separator. </Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if the string can be converted to a floating point value. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsFloat">
+               <Summary>The actual floating point value</Summary>
+               <Desc>This is the delphi native representation of the floating point value. It can be both read and written. </Desc>
+            </Property>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc>The integer value of a floating point can only be written. If you want to read the integer value you must use either <InlineCode>round(AsFloat)</InlineCode> or <InlineCode>trunc(AsFloat)</InlineCode>. </Desc>
+            </Property>
+         </Properties>
+         <Summary>A floating point attribute</Summary>
+         <Desc>This attribute type can be used to store floating point values. </Desc>
+      </Class>
+      <Class Name="TBAInteger">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc> This will copy the integer value from another integer value</Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CheckRange">
+               <Summary>Ensure the value is within the legal range</Summary>
+               <Desc>
+                  <Note>CheckRange</Note>
+will return <InlineCode>true</InlineCode> if the value is within (<InlineCode>Low(integer)..High(integer)</InlineCode>).</Desc>
+            </Method>
+            <Method Name="CheckRangeWithBounds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc>This will compare the <InlineCode>TBAInteger</InlineCode> to any numeric value with the following result codes:
+                  <UL>
+                     <LI><InlineCode>self.AsInteger < TBAInteger(BoldElement).AsInteger</InlineCode> returns -1</LI>
+                     <LI><InlineCode>self.AsInteger = TBAInteger(BoldElement).AsInteger</InlineCode> returns 0</LI>
+                     <LI><InlineCode>self.AsInteger > TBAInteger(BoldElement).AsInteger</InlineCode> returns 1</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBAInteger</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc> Returns <InlineCode>True</InlineCode> if C is one of '0'..'9', '-' or '+'</Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> if the string can be converted to an integer, and if the result is a valid value for the current subclass (subclasses mey restrict the valid range by overriding the <InlineCode>CheckRange</InlineCode> method) </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsInteger">
+               <Summary>The actual integer value</Summary>
+               <Desc>This is the native delphi representation of the integer value.</Desc>
+            </Property>
+         </Properties>
+         <Summary>An integer attribute</Summary>
+         <Desc>This attribute type is used to store integer values (-2147483648..2147483647) (<InlineCode>Low(integer)..High(integer)</InlineCode>). It is also the base type of all the other bold attribute types that represent values from the integer range. </Desc>
+      </Class>
+      <Class Name="TBAMoment">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc>This copies the data from another <InlineCode>TBAMoment</InlineCode>.</Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc>This will compare the internal value to the value of the <InlineCode>BoldElement</InlineCode> using the <InlineCode>CompType</InlineCode> as follows:
+                  <UL>
+                     <LI>ctDate: Compares dates only</LI>
+                     <LI>ctTime: Compares times only</LI>
+                     <LI>cdDefault: Compares dates and times</LI>
+                  </UL>
+The resultcodes used are:
+                  <UL>
+                     <LI><InlineCode>self.[AsDate|AsTime|AsDateTime] < TBAMoment(BoldElement).[AsDate|AsTime|AsDateTime]</InlineCode> returns -1</LI>
+                     <LI><InlineCode>self.[AsDate|AsTime|AsDateTime] = TBAMoment(BoldElement).[AsDate|AsTime|AsDateTime]</InlineCode> returns 0</LI>
+                     <LI><InlineCode>self.[AsDate|AsTime|AsDateTime] > TBAMoment(BoldElement).[AsDate|AsTime|AsDateTime]</InlineCode> returns 1</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="GetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDays">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHours">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMinutes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMonths">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSeconds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetYears">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBAMoment</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="SetAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Days">
+               <Summary>The day part of the date</Summary>
+               <Desc><InlineCode>Days</InlineCode> contains the day part of the date value. For a date 1970-03-17, <InlineCode>Days</InlineCode> will return 17.</Desc>
+               <SeeAlso><See Property="Years"/></SeeAlso>
+               <SeeAlso><See Property="Months"/></SeeAlso>
+            </Property>
+            <Property Name="Hours">
+               <Summary>The hour part of the time</Summary>
+               <Desc><InlineCode>Hours</InlineCode> contains the hours part of the time value. For a time 10:15:16, <InlineCode>Hours</InlineCode> will return 10.</Desc>
+               <SeeAlso><See Property="Minutes"/></SeeAlso>
+               <SeeAlso><See Property="Seconds"/></SeeAlso>
+            </Property>
+            <Property Name="Minutes">
+               <Summary>The minutes part of the time</Summary>
+               <Desc><InlineCode>Minutes</InlineCode> contains the minutes part of the time value. For a time 10:15:16, <InlineCode>Minutes</InlineCode> will return 15.</Desc>
+               <SeeAlso><See Property="Seconds"/></SeeAlso>
+               <SeeAlso><See Property="Hours"/></SeeAlso>
+            </Property>
+            <Property Name="Months">
+               <Summary>The month part of the date</Summary>
+               <Desc><InlineCode>Months</InlineCode> contains the month part of the date value. For a date 1970-03-17, <InlineCode>Months</InlineCode> will return 3.</Desc>
+               <SeeAlso><See Property="Days"/></SeeAlso>
+               <SeeAlso><See Property="Months"/></SeeAlso>
+            </Property>
+            <Property Name="Seconds">
+               <Summary>The seconds part of the time</Summary>
+               <Desc><InlineCode>Seconds</InlineCode> contains the seconds part of the time value. For a time 10:15:16, <InlineCode>Seconds</InlineCode> will return 16.</Desc>
+               <SeeAlso><See Property="Minutes"/></SeeAlso>
+               <SeeAlso><See Property="Hours"/></SeeAlso>
+            </Property>
+            <Property Name="Years">
+               <Summary>The year part of the date</Summary>
+               <Desc><InlineCode>Years</InlineCode> contains the year part of the date value. For a date 1970-03-17, <InlineCode>Years</InlineCode> will return 1970.</Desc>
+               <SeeAlso><See Property="Days"/></SeeAlso>
+               <SeeAlso><See Property="Months"/></SeeAlso>
+            </Property>
+         </Properties>
+         <Summary>Abstract superclass for date and time attributes</Summary>
+         <Desc>This is an abstract superclass of the three different classes that uses <InlineCode>TDateTime</InlineCode> internally to store their data (<See Class="TBADateTime"/>, <See Class="TBATime"/>, <See Class="TBADate"/>). It has no public data-properties. </Desc>
+      </Class>
+      <Class Name="TBANumeric">
+         <Methods>
+            <Method Name="GetAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsFloat">
+               <Summary>The value of the attribute, represented as a <InlineCode>Double</InlineCode></Summary>
+               <Desc>This is the numeric value of the attribute. Note that it can only be read, not written. </Desc>
+            </Property>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc>This property is write only. Since some numeric types contain decimals, you must do the rounding yourself if you need to read an integer value from a <InlineCode>TBANumeric</InlineCode>. Use either <InlineCode>round(asFloat)</InlineCode> or <InlineCode>trunc(asFloat)</InlineCode>. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This is an abstract superclass of all numeric attribute types in Bold. It can be read as a float value, and written as an integer value (not all numeric types can store float values). </Desc>
+      </Class>
+      <Class Name="TBAShortInt">
+         <Methods>
+            <Method Name="CheckRange">
+               <Summary></Summary>
+               <Desc>Returns true for values between (-128..127) (<InlineCode>Low(ShortInt)..High(ShortInt)</InlineCode>)</Desc>
+            </Method>
+            <Method Name="GetAsShortInt">
+               <Summary>Get method for <See Property="AsShortInt"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsShortInt">
+               <Summary>Set method for <See Property="AsShortInt"/></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsShortInt">
+               <Summary>The actual shortint value</Summary>
+               <Desc>The native delphi representation of a <InlineCode>shortint</InlineCode></Desc>
+            </Property>
+         </Properties>
+         <Summary>A shortint attribute</Summary>
+         <Desc>A <InlineCode>shortint</InlineCode> stores values between -128 and 127 (<InlineCode>Low(ShortInt)..High(ShortInt)</InlineCode>).</Desc>
+      </Class>
+      <Class Name="TBASmallInt">
+         <Methods>
+            <Method Name="CheckRange">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>true</InlineCode> for values between -32768..32767 (<InlineCode>Low(SmallInt)..High(SmallInt)</InlineCode>)</Desc>
+            </Method>
+            <Method Name="GetAsSmallInt">
+               <Summary>Get method for <See Property="AsSmallInt"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsSmallInt">
+               <Summary>Set method for <See Property="AsSmallInt"/></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsSmallInt">
+               <Summary>The actual smallint value</Summary>
+               <Desc>The native Delphi representation of a <InlineCode>smallint</InlineCode></Desc>
+            </Property>
+         </Properties>
+         <Summary>Attribute type corresponding to SmallInt</Summary>
+         <Desc>Stores values between -32768..32767 (<InlineCode>Low(SmallInt)..High(SmallInt)</InlineCode>)</Desc>
+      </Class>
+      <Class Name="TBAString">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc>This will compare the <InlineCode>TBAString</InlineCode> to any string value with the following result codes:
+                  <UL>
+                     <LI><InlineCode>self.AsString < BoldElement.AsString</InlineCode> returns -1</LI>
+                     <LI><InlineCode>self.AsString = BoldElement.AsString</InlineCode> returns 0</LI>
+                     <LI><InlineCode>self.AsString > BoldElement.AsString</InlineCode> returns 1</LI>
+                  </UL>
+The <InlineCode>CompType</InlineCode> will decide how the strings will be compared:
+                  <UL>
+                     <LI><InlineCode>ctDefault</InlineCode>, <InlineCode>ctAsAnsiText</InlineCode>: AnsiCompareText</LI>
+                     <LI><InlineCode>ctAsAnsiString</InlineCode>: AnsiCompareStr</LI>
+                     <LI><InlineCode>ctAsString</InlineCode>: CompareStr</LI>
+                     <LI><InlineCode>ctAsText</InlineCode>: CompareText</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="FreeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBAString</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>A string attribute</Summary>
+         <Desc>This attribute type is used to store strings.</Desc>
+      </Class>
+      <Class Name="TBATime">
+         <Methods>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsSeconds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc>Returns <InlineCode>True</InlineCode> if C is one of '0'..'9' or time separator.</Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc><InlineCode>True</InlineCode> if the string can be converted to a time.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsSeconds">
+               <Summary>The time expressed as seconds</Summary>
+               <Desc><InlineCode>AsSeconds</InlineCode> returns the time value expressed as seconds, using the formula 
+                  <DelphiCode>AsSeconds := Seconds + (Minutes * 60) + (Hours * 3600)</DelphiCode> 
+               </Desc>
+               <SeeAlso><See Property="Hours"/></SeeAlso>
+               <SeeAlso><See Property="Minutes"/></SeeAlso>
+               <SeeAlso><See Property="Seconds"/></SeeAlso>
+            </Property>
+            <Property Name="AsTime">
+               <Summary>The actual TTime value</Summary>
+               <Desc>This property holds the native Delphi representation of the attribute.</Desc>
+            </Property>
+            <Property Name="Hours">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Minutes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Seconds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A time attribute</Summary>
+         <Desc>This attribute can be used to store a time. Note that even though the delphi type <InlineCode>TTime</InlineCode> is able to store dates, the bold attribute <InlineCode>TBATime</InlineCode> will remove this information before storing times. </Desc>
+      </Class>
+      <Class Name="TBATrimmedString">
+         <Methods>
+            <Method Name="SetStringRepresentation">
+               <Summary>Sets the string representation</Summary>
+               <Desc>Before setting the string representation, the method trims the value, removing leading and trailing spaces.</Desc>
+            </Method>
+         </Methods>
+         <Summary>String attribute that trims leading and trailing spaces.</Summary>
+         <Desc><InlineCode>TBATrimmedString</InlineCode> ensures leading and trailing spaces are removed prior to setting the value.</Desc>
+      </Class>
+      <Class Name="TBATypedBlob">
+         <Methods>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetContentType">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsEqualAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentType2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetToNull">
+               <Summary></Summary>
+               <Desc>In addition to what is done by the inherited method (setting the attribute to null), it will also free the memory used by the content type string. </Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc> This subclass of <InlineCode>TBABlob</InlineCode> adds the possibility to set the content type of the data. The content type is any string that identifies the format of the data, such as the Mime-type identifiers:
+            <UL>
+               <LI>image/bmp</LI>
+               <LI>image/jpeg</LI>
+               <LI>image/x-wmf</LI>
+               <LI>audio/wav</LI>
+               <LI>text/html</LI>
+               <LI>text/xml</LI>
+            </UL>
+The attribute itself knows nothing about mimetypes, and will enforce no control of the correctness of data, this must be added by new subclasses. </Desc>
+      </Class>
+      <Class Name="TBAValueSet">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignContentValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanSetValue">
+               <Summary></Summary>
+               <Desc>Use this function to test if it is allowed to set the attribute to a specific value.
+                  <P>If a subscriber is sent to the function, this subscriber will be notified if the conditions have changed (so that an illegal value is now legal). It is OK to send a nilpointer instead.</P>
+               </Desc>
+            </Method>
+            <Method Name="CheckIllegalValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareToEnumLiteral">
+               <Summary>Compares the valueset to an enum literal string</Summary>
+               <Desc>This function is used internally by the OCL-evaluator</Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MaySetValue">
+               <Summary>Override to affect the result of <See Method="CanSetValue"/>.</Summary>
+               <Desc>A subclass of <InlineCode>TBAValueSet</InlineCode> may override this method to prohibit setting the attribute to a specific value. If the result value is <InlineCode>false</InlineCode>, the setting will be aborted. If it is <InlineCode>true</InlineCode>, there may still be other reasons why the changing of the value is not allowed.</Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Values">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Subclass <InlineCode>TBAValueSet</InlineCode> to create enumeration type attributes.</Summary>
+         <Desc>Subclass <InlineCode>TBAValueSet</InlineCode> to create enumeration type attributes. The attribute wizard (accessible through the "Bold | Bold Attribute Wizard" menu) is the easiest way to create custom attributes.</Desc>
+      </Class>
+      <Class Name="TBAValueSetValue">
+         <Methods>
+            <Method Name="AddString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringRepresentationCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StringRepresentationCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBAValueSetValueList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFirstValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueSetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVaueSetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStrings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToStringsWithNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSetValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBAWord">
+         <Methods>
+            <Method Name="CheckRange">
+               <Summary></Summary>
+               <Desc>returns <InlineCode>true</InlineCode> for values in the range 0..65535 (<InlineCode>Low(word)..High(Word)</InlineCode>)</Desc>
+            </Method>
+            <Method Name="GetAsWord">
+               <Summary>Get method for <See Property="AsWord"/></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsWord">
+               <Summary>Set method for <See Property="AsWord"/></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsWord">
+               <Summary>The native delphi representation of a word</Summary>
+               <Desc>This property is the native delphi representation of a word.</Desc>
+            </Property>
+         </Properties>
+         <Summary>A word attribute</Summary>
+         <Desc>Stores values in the range 0..65535 (Low(word)..High(Word))</Desc>
+      </Class>
+      <Class Name="TBoldBlobStream">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndModifyOfBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailModifyOfBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBlobSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSetSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Read">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Seek">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartModifyOfBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Truncate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Write">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="bqBaseAttributes">
+         <Summary>First reserved query</Summary>
+         <Desc>The queries reserved by <InlineCode>BoldAttributes</InlineCode> start from <InlineCode>bqBaseAttributes</InlineCode>.</Desc>
+      </Const>
+      <Const Name="bqMaxAttributes">
+         <Summary>Last reserved query</Summary>
+         <Desc><InlineCode>BoldAttributes</InlineCode> reserves no query larger than <InlineCode>bqMaxAttributes</InlineCode>.</Desc>
+      </Const>
+      <Const Name="bqMaySetContentType">
+         <Summary></Summary>
+         <Desc>The query sent be the <InlineCode>CanSetContentType</InlineCode> method of <InlineCode>TBAContentType</InlineCode>.
+            <P>The following list shows the types of the items in the <InlineCode>Args</InlineCode> parameter:</P>
+            <UL>
+               <LI>Originator - Args</LI>
+               <LI>TBATypedBlob - string</LI>
+            </UL>
+         </Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the standard attribute types</Summary>
+   <Desc>This unit defines standard attribute types. The set of attributes is roughly equivalent to that of the native types in Delphi - or the column types in SQL for that matter.</Desc>
+   <Types>
+      <Type Name="TBoldBlobStreamMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValueSetClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

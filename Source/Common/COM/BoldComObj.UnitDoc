@@ -1,0 +1,171 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/COM/BoldComObj.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAggregatedAutoInterfacedObject">
+         <Methods>
+            <Method Name="QueryInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldAutoInterfacedObject">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIDsOfNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTypeInfoCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariantCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariantItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InterfaceSupportsErrorInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Invoke">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SafeCallException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Implements the IDispatch interface. </Summary>
+         <Desc>Base class for objects that implement dual interfaces.</Desc>
+      </Class>
+      <Class Name="TBoldContainedAutoInterfacedObject">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AddRef">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Controller">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldVariantEnumerator">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Reset">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Skip">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldVariantCollection">
+         <Methods>
+            <Method Name="GetVariantCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariantItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="VariantCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VariantItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IEnumVariant">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Reset">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Skip">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary>Contains base COM classes.</Summary>
+   <Desc> </Desc>
+   <Types>
+      <Type Name="PLongWord">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

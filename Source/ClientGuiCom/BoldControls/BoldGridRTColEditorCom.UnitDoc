@@ -1,0 +1,85 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldGridRTColEditorCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldExposedGrid">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TfrmRTColEditorCom">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEGrid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGridColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PropertyChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PropertyKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetGridColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cmdAddColumnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cmdApplyClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cmdDeleteColumnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cmdOCLEditorClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="lbxColumnsClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CurrentGridColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EGrid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Grid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,105 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldExpressionHandle.UnitDoc 9     02-08-08 9:21 Johosos $">
+   <Classes>
+      <Class Name="TBoldExpressionHandle">
+         <Methods>
+            <Method Name="DeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary>Determine if there is a relationship to the component passed as parameter.</Summary>
+               <Desc><InlineCode>RefersToComponent</InlineCode> determins  if there is a relationship between the <InlineCode>TBoldExpressionHandle</InlineCode> and the component passed as parameter. It is used internally to avoid circular dependencies between components.</Desc>
+            </Method>
+            <Method Name="SetEvaluateInPS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_VariablesReceive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary>Creates an instanc of <InlineCode>TBoldExpressionHandle</InlineCode></Summary>
+               <Desc>Use <InlineCode>Create</InlineCode> to create an instance of <InlineCode>TBoldExpressionHandle</InlineCode>.</Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary>Destroys an instance of a TBoldExpressionHandle.</Summary>
+               <Desc>Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EvaluateInPS">
+               <Summary>If the expression should be evaluated in the database, instead of in memory</Summary>
+               <Desc>
+                  <P>Normally OCL expressions are evaluated in memory, but this can lead to great inefficiencies when numerous objects have to be loaded. If this property is set to true an attempt to execute the expression directly in the database will be made. If this fails, there will be an exception.</P>
+                  <P>Note that if the expression is executed directly against the database, the result will be determined by the contents of the database, and any uncommited data in the object space will be disregarded.</P>
+				<p>
+				<note>
+				If this property is true, the component will ignore the setting of <see class=TBoldRootedHandle property=Subscribe text=Subscribe>. </note>  
+                  <P>For further information, see <Jump ID="Mech_Ocl2Sql" Text="Ocl2Sql"/></P>
+               </Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary>Expression is a string containing an OCL expression.</Summary>
+               <Desc>
+                  <P>The <InlineCode>Value</InlineCode> of the Handle is defined by evaluating <InlineCode>Expression</InlineCode> with <InlineCode>RootHandle.Value</InlineCode> as the context.</P>
+                  <P>At design-time the property editor provides support in writing the expression, provided that either the handle is connected to another handle, or that <InlineCode>RootTypeName</InlineCode> (and optionally <InlineCode>StaticSystemHandle</InlineCode>) is set.</P>
+                  <BH>Bold Events</BH>
+Since changing <InlineCode>Expression</InlineCode> indirectly changes <InlineCode>Value</InlineCode> the following events can be sent when setting <InlineCode>Expression</InlineCode>
+                  <UL>
+                     <LI>beValueIndentityChanged: Sent if Expression is assigned a new value.</LI>
+                  </UL>
+                  <P>If the property is assigned with the same value as it already has the event will not be sent.</P>
+                  <P>Also, the event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+               </Desc>
+            </Property>
+
+            <Property Name="Variables">
+               <Summary>Allows the expression to have more than one context</Summary>
+               <Desc>If the OCL expression requires more than one context, additional context must be imported using a <See Class="TBoldOclVariables"/> component</Desc>
+            </Property>
+         </Properties>
+         <Summary>A handle that uses an OCL expression to evaluate a value from its root handle.</Summary>
+         <Desc><InlineCode>TBoldExpressionHandle</InlineCode> is a subclass of <See Class="TBoldRootedHandle"/> and everything in its description applies and is for the most part not repeated here.
+            <BH>Value</BH>
+The value of the handle is defined by evaluating <See Property="Expression"/> with <InlineCode>RootHandle.Value</InlineCode> as the context.
+            <BH>Typing</BH>
+The <InlineCode>StaticBoldType</InlineCode> of the handle is defined as the type of <InlineCode>Expression</InlineCode> in the context of <InlineCode>StaticRootType</InlineCode>. If the handle is connected to another handle <InlineCode>StaticRootType</InlineCode> will the the <InlineCode>StaticBoldType</InlineCode> of that handle, otherwise it will be determined through <InlineCode>RootTypeName</InlineCode>.
+            <BH>Bold Events</BH>
+            <InlineCode>TBoldExpressionHandle</InlineCode> is a subclass of <See Class="TBoldSubscribableComponent"/>, and can therefor by subscribed to using AddSmallSubscription. A <InlineCode>TBoldExpressionHandle</InlineCode> can send the following events:
+            <UL>
+               <LI>beDestroying: Sent when the handle is about to be destroyed.</LI>
+               <LI>beValueIdentityChanged: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>. Also sent if anything influencing <InlineCode>StaticBoldType</InlineCode> has changed.</LI>
+            </UL>
+            <P>Due to the lazy evaluation, "has changed" has a very specific meaning. It means that the next time the <InlineCode>Value</InlineCode> property is accessed it may return a different value from the previous time. It does not imply that this value has actually been calculated yet.</P>
+            <P>If several things occur that would change <InlineCode>Value</InlineCode>, but the <InlineCode>Value</InlineCode> property is not accessed in between, only the first will give rise to a <InlineCode>beValueIdentityChanged</InlineCode> event.</P>
+            <Note>The ValueIdentityChanged event is not sent when the contents of Value is changed. This is found out by subscribing to Value itself.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit defines the <InlineCode>TBoldExpressionHandle</InlineCode>.</Summary>
+   <Desc>A <InlineCode>TBoldExpressionHandle</InlineCode> is a handle that uses an OCL expression to evaluate a value from its root handle.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,83 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/IBX/BoldPersistenceHandleIB.UnitDoc 10    02-06-17 16:17 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandleIB">
+         <Methods>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBaseEngine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDatabaseName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIBDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPassword">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUserName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getEffectiveDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DatabaseName">
+               <Summary></Summary>
+               <Desc>The filename of an interbase Database-file (.gdb).<note> This property is not used if the <see property=IBDataBase>-property is set</note> </Desc>
+            </Property>
+            <Property Name="EffectiveDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IBDataBase">
+               <Summary></Summary>
+               <Desc>Set this property to the <InlineCode>TIBDataBase</InlineCode> component of your choice.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Connects a BoldSystem to a database via the InterBase Express drivers</Summary>
+         <Desc>
+		 		 <Warning>
+		 This component is deprecated! Please use TBoldPersistenceHandleDB and a database-adapter instead. For details on how to migrate to the new architecture, please read <Jump ID="PersistenceHandleUpgrade" Text="Upgrade PersistenceHandle"> 
+		 </Warning>
+
+This component is used to connect a BoldSystem to a database via the InterBase Express drivers. Set the PersistenceHandle property of your TBoldSystemHandle to point to a TBoldPersistenceHandleIB. Set either the <see property=DatabaseName> or the <see property=IBDatabase> property. The persistence handle also need model-information, so you must connect it to a TBoldModel component.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

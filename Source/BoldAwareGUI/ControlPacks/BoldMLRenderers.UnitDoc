@@ -1,0 +1,77 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAsMLStringRenderer">
+         <Events>
+            <Event Name="OnLanguageGetAsString">
+               <Summary>Event that should return the string to be displayed</Summary>
+               <Desc>Implement this event to override the default behaviour (which is to display the language representation indicated by <See Property="Language"/> </Desc>
+            </Event>
+            <Event Name="OnLanguageSetAsString">
+               <Summary>Event that should handle setting of the language string from the GUI</Summary>
+               <Desc>Implement this event to override the default behaviour (which is to store the value as the string representation for the language indicated by <See Property="Language"/> </Desc>
+            </Event>
+            <Event Name="OnLanguageSubscribe">
+               <Summary>Event that should subscribe to the proper values</Summary>
+               <Desc>Implement this event to override the default behaviour (which is to subscribe to the language representation indicated by <See Property="Language"/> </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DefaultGetAsStringAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultMakeUptodateAndSetMayModifyAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultSetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsStringAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLanguage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Language">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This renderer can be used to force a specific language representation from a Multilanguage attribute.</Summary>
+         <Desc>This renderer can be used to force a specific language representation from a MultiLanguage string-attribute (<See Class="TBoldMLString"/>) or a MultiLanugage valueset (<See Class="TBAMLValueSet"/>)
+            <P>The easiest way to use the MLRenderer is simply to set the <See Property="Language"/> property to the name of the language you want to display. If you want more control, it is possible to implement the events <See Event="OnLanguageGetAsString"/>, <See Event="OnLanguageSetAsString"/> and <See Event="OnLanguageSubscribe"/></P>
+            <P>Many of the inherited events are irrelevant in this subclass</P>
+         </Desc>
+		 <SeeAlso><Jump ID="mech_multilanguage" Text="MultiLanguage Support"/></SeeAlso>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldLanguageGetAsString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldLanguageSetAsString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldLanguageSubscribe">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

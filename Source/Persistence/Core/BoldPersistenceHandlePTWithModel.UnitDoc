@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldPersistenceHandlePassthroughWithModel">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ModelChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary>Connection to a TBoldModel-component</Summary>
+               <Desc>The identifier of the <InlineCode>TBoldModel</InlineCode> component used by the BoldSystem to which <InlineCode>persistence handle</InlineCode> is connected. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Generic PersistenceHandle PassThrough that adds the BoldModel-property</Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

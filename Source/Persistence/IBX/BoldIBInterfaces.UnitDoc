@@ -1,0 +1,293 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesIB/BoldIBInterfaces.UnitDoc 4     02-02-08 9:25 Johosos $">
+   <Classes>
+      <Class Name="TBoldIBDataBase">
+         <Methods>
+            <Method Name="AllTableNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Close">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Commit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsCustomConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsSQLBased">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetKeepConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLogInPrompt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseCachedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RollBack">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetKeepConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetlogInPrompt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SupportsTableCreation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIBQuery">
+         <Methods>
+            <Method Name="AssignParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignSQLText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Close">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParamCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRecordCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequestLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRowsAffected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParamByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRequestLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartSQLBatch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Query">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIBTable">
+         <Methods>
+            <Method Name="AddIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExclusive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Table">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>This unit contains the classes that implement IB connectivity in Bold for Delphi.</Desc>
+   <Types>
+      <Type Name="TBoldIBTransactionMode">
+         <Summary>For internal use</Summary>
+         <Desc>For internal use to keep track of the transaction status when accessing the database</Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="G_InterbaseSQLDialect">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

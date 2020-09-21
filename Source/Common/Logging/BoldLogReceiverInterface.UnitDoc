@@ -1,0 +1,73 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Logging/BoldLogReceiverInterface.UnitDoc 3     01-10-15 13:56 Jeho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldLogReceiver">
+         <Methods>
+            <Method Name="Clear">
+               <Summary>Clears the log</Summary>
+               <Desc>This method should be implemented to clear the log</Desc>
+            </Method>
+            <Method Name="EndLog">
+               <Summary>Marks the log as ended</Summary>
+               <Desc>This method should be implemented to (visually) indicate a log session is completed.</Desc>
+            </Method>
+            <Method Name="Hide">
+               <Summary>Hides visible log</Summary>
+               <Desc>This method can be implemented to hide the log window or equivalent.</Desc>
+            </Method>
+            <Method Name="Log">
+               <Summary>Reception of a log message</Summary>
+               <Desc>This method should be implemented to handle the reception of a log message. The second parameter indicates the class of message, see <See Class="TBoldLogType"/>.</Desc>
+            </Method>
+            <Method Name="ProcessInterruption">
+               <Summary>Yields cycles to GUI</Summary>
+               <Desc>This method should be implemented to allow log receiver to update itself. The method is called "every now and then" during a logged activity.</Desc>
+            </Method>
+            <Method Name="ProgressStep">
+               <Summary>Indicates progress has been made</Summary>
+               <Desc>This method is called when progress has been made in the logged activity. The implementor may want to indicate this graphically using a progress bar or similar.</Desc>
+            </Method>
+            <Method Name="SetLogHeader">
+               <Summary>Sets the header of the log session</Summary>
+               <Desc>This method should be implemented to indicate the name/header of the log session.<P>This is the set method of the <See Class="" Property="LogHeader"/> property.</P></Desc>
+            </Method>
+            <Method Name="SetProgress">
+               <Summary>Set method for Progress property</Summary>
+               <Desc>This is the set method for the <See Property="Progress"/> property.</Desc>
+            </Method>
+            <Method Name="SetProgressMax">
+               <Summary>Set method for the ProgressMax property</Summary>
+               <Desc>This is the set method for the <See Property="ProgressMax"/> property.</Desc>
+            </Method>
+            <Method Name="Show">
+               <Summary>Shows the log.</Summary>
+               <Desc>This method may be implemented to visually show the log.</Desc>
+            </Method>
+            <Method Name="StartLog">
+               <Summary>Starts the log</Summary>
+               <Desc>This method is typically invoked at the beginning of a logged activity. It may be implemented to initialize objects to be prepared to receive a log.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LogHeader">
+               <Summary>The heder of the logged session</Summary>
+               <Desc>LogHeader is set to indicate what activity is being logged.</Desc>
+            </Property>
+            <Property Name="Progress">
+               <Summary>Indication of progress.</Summary>
+               <Desc>Progress will be increaed through the logged activity, and when equal to <See Property="ProgressMax"/> the activity is most likely complete. At any rate, <InlineCode>Progress</InlineCode> will not increase further.</Desc>
+            </Property>
+            <Property Name="ProgressMax">
+               <Summary>The maximum value progress can ever reach.</Summary>
+               <Desc><InlineCode>ProgressMax</InlineCode> will be set at the beginning of the log session to allow calibration of progress indicators.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Required interface to participate in logging</Summary>
+         <Desc>To make an object allowed to participate in logging, it needs to implement <InlineCode>IBoldLogReceiver</InlineCode>.</Desc>
+      </Interface>
+   </Interfaces>
+   <Summary>Defines the interface log receivers must implement</Summary>
+   <Desc>Logging in bold is constructed by sending messages to a list of implementors of <InlineCode>IBoldLogReceiver</InlineCode>. That interface is defined in this unit</Desc>
+</DLUnitDoc>

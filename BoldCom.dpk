@@ -1,0 +1,88 @@
+package BoldCom;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (COM Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  Bold,
+  DesignIDE;
+
+contains
+  BoldPropagatorUtils in 'Source\Persistence\Propagation\BoldPropagatorUtils.pas',
+  BoldApartmentThread in 'Source\Common\COM\BoldApartmentThread.pas',
+  BoldComAdapter in 'Source\Common\COM\BoldComAdapter.pas',
+  BoldComConst in 'Source\Common\COM\BoldComConst.pas',
+  BoldComEventQueue in 'Source\Common\COM\BoldComEventQueue.pas',
+  BoldComObj in 'Source\Common\COM\BoldComObj.pas',
+  BoldComThreads in 'Source\Common\COM\BoldComThreads.pas',
+  BoldComUtils in 'Source\Common\COM\BoldComUtils.pas',
+  BoldThreadedComObjectFactory in 'Source\Common\COM\BoldThreadedComObjectFactory.pas',
+  BoldComClient in 'Source\Common\ConnectionCOM\BoldComClient.pas',
+  BoldComConnection in 'Source\Common\ConnectionCOM\BoldComConnection.pas',
+  BoldComServer in 'Source\Common\ConnectionCOM\BoldComServer.pas',
+  BoldComClientHandles in 'Source\Common\ConnectionHandlesCOM\BoldComClientHandles.pas',
+  BoldComServerHandles in 'Source\Common\ConnectionHandlesCOM\BoldComServerHandles.pas',
+  BoldXMLDispatcher in 'Source\Common\ConnectionHandlesCOM\BoldXMLDispatcher.pas',
+  BoldXMLDispatcherVB in 'Source\Common\ConnectionHandlesCOM\BoldXMLDispatcherVB.pas',
+  BoldComEditors in 'Source\Common\IDECOM\BoldComEditors.pas',
+  BoldComReg in 'Source\Common\IDECOM\BoldComReg.pas',
+  BoldObjectNamePropertyEditor in 'Source\Common\IDECOM\BoldObjectNamePropertyEditor.pas',
+  BoldXMLDispatcherEditor in 'Source\Common\IDECOM\BoldXMLDispatcherEditor.pas',
+  BoldXMLDispatcherReg in 'Source\Common\IDECOM\BoldXMLDispatcherReg.pas',
+  BoldXMLDispatcherVBReg in 'Source\Common\IDECOM\BoldXMLDispatcherVBReg.pas',
+  BoldComClientElementHandles in 'Source\Handles\COM\BoldComClientElementHandles.pas',
+  BoldComServerElementHandleFactory in 'Source\Handles\COM\BoldComServerElementHandleFactory.pas',
+  BoldComServerElementHandles in 'Source\Handles\COM\BoldComServerElementHandles.pas',
+  BoldComElementHandleReg in 'Source\Handles\IDECOM\BoldComElementHandleReg.pas',
+  BoldComObjectSpace_TLB in 'Source\ObjectSpace\COM\BoldComObjectSpace_TLB.pas',
+  BoldComObjectSpace in 'Source\ObjectSpace\COM\BoldComObjectSpace.pas',
+  BoldComObjectSpaceAdapters in 'Source\ObjectSpace\COM\BoldComObjectSpaceAdapters.pas',
+  BoldComponentValidatorCom in 'Source\ObjectSpace\COM\BoldComponentValidatorCom.pas',
+  BoldAbstractComClientPersistenceHandles in 'Source\Persistence\COM\BoldAbstractComClientPersistenceHandles.pas',
+  BoldAbstractComPersistenceControllerProxy in 'Source\Persistence\COM\BoldAbstractComPersistenceControllerProxy.pas',
+  BoldPersistenceControllerSOAPAdapterCore in 'Source\Persistence\SOAP\BoldPersistenceControllerSOAPAdapterCore.pas',
+  BoldPersistenceOperationXMLStreaming in 'Source\Persistence\SOAP\BoldPersistenceOperationXMLStreaming.pas',
+  BoldSOAPClientPersistenceHandles in 'Source\Persistence\SOAP\BoldSOAPClientPersistenceHandles.pas',
+  BoldSOAPPersistenceControllerProxy in 'Source\Persistence\SOAP\BoldSOAPPersistenceControllerProxy.pas',
+  BoldSOAPPersistenceControllerStub in 'Source\Persistence\SOAP\BoldSOAPPersistenceControllerStub.pas',
+  BoldSOAPServerPersistenceHandles in 'Source\Persistence\SOAP\BoldSOAPServerPersistenceHandles.pas',
+  BoldHTTPClientPersistenceHandle in 'Source\Persistence\HTTP\BoldHTTPClientPersistenceHandle.pas',
+  BoldHTTPPersistenceControllerClient in 'Source\Persistence\HTTP\BoldHTTPPersistenceControllerClient.pas',
+  BoldHTTPServerPersistenceHandlePassthrough in 'Source\Persistence\HTTP\BoldHTTPServerPersistenceHandlePassthrough.pas',
+  BoldComPersistenceHandleReg in 'Source\Persistence\IDECOM\BoldComPersistenceHandleReg.pas',
+  BoldHTTPClientPersistenceHandleReg in 'Source\Persistence\IDECOM\BoldHTTPClientPersistenceHandleReg.pas',
+  BoldHTTPServerPersistenceHandlePassthroughReg in 'Source\Persistence\IDECOM\BoldHTTPServerPersistenceHandlePassthroughReg.pas',
+  BoldLockManagerAdminHandleCom in 'Source\ConcurrencyControl\COM\BoldLockManagerAdminHandleCom.pas',
+  BoldLockManagerHandleCom in 'Source\ConcurrencyControl\COM\BoldLockManagerHandleCom.pas',
+  BoldConcurrencyControlReg in 'Source\ConcurrencyControl\IDECOM\BoldConcurrencyControlReg.pas',
+  BoldPropagatorHandleCOM in 'Source\Propagator\COM\BoldPropagatorHandleCOM.pas',
+  BoldPropagatorHandleCOMReg in 'Source\Propagator\IDECOM\BoldPropagatorHandleCOMReg.pas';
+
+end.

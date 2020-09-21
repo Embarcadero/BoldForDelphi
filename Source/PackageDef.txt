@@ -1,0 +1,523 @@
+;------------------------
+; Global stuff
+;------------------------
+[Global]
+PackageGroup=$(BUILD_TARGET)
+PackageGroup=T2H
+
+;------------------------------------------------------------
+; Stuff listed here is excluded from all packages in all sets
+;------------------------------------------------------------
+[Global.Exclude]
+File=$(SRCDIR)\ClientGuiCom\BoldControls\BoldDragDropTargetCom.pas
+File=$(SRCDIR)\Common\ConnectionCOM\BoldComServ.pas
+
+Dir=$(SRCDIR)\Unassigned
+Dir=$(SRCDIR)\MoldModelEditor
+Dir=$(SRCDIR)\Propagator\LowEnd
+Dir=$(SRCDIR)\Propagator\Enterprise
+Dir=$(SRCDIR)\BoldQAwareGUI
+
+Section=Exclude.$(BUILD_TARGET)
+
+[Exclude.D7]
+comment=There must be something in the section
+
+[Exclude.D8]
+comment=There must be something in the section
+
+[Exclude.BCB5]
+comment=There must be something in the section
+
+[Exclude.BCB6]
+comment=There must be something in the section
+
+[Global.ForceInclude]
+comment=No longer required
+;Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Protection.Include
+
+;------------------------------------------------------------
+; CLX support
+;------------------------------------------------------------
+[CLX.include]
+File=$(SRCDIR)\Common\Environment\BoldEnvironmentCLX.pas
+File=$(SRCDIR)\Common\Environment\BoldEnvironmentAllowBothUseVCL.pas
+File=$(SRCDIR)\Common\Environment\BoldEnvironmentAllowBothUseCLX.pas
+
+
+;------------------------------------------------------------
+; Attriubte wizard 
+;------------------------------------------------------------
+[AttributeWizard.include]
+Dir=$(SRCDIR)\ObjectSpace\IDE\AttributeWizard
+
+;**********************************************************************************
+; Package definition
+;**********************************************************************************
+
+[PackageGroup.$(BUILD_TARGET)]
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Ado
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Advantage
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)BDE
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Com
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ComGUI
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBExpress
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBIsam
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DOA
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)IB
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)MMLink
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)OLLE
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)SQLDirect
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)UDPProp
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)VCLGUI
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Uml
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Utils
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)XMILink
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ExPe
+
+Package=Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)AllFiles
+PackageExtension=.dpk
+
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - ALL FILES
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)AllFiles]
+Requires=$(RTL) $(VCL) $(VCLDB) $(CDS) $(VCLBDE) $(VCLJPG) $(VCLX) $(VCLADO) $(VCLIB) $(INDY) $(VCLDESIGNIDE) $(VCLVISUALCLX)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) - ALL FILES
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+;-----------------------
+; GENERIC Main Package BoldXX$(BUILD_TARGET) ALL FILES
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)AllFiles.Include]
+Dir=$(SRCDIR)
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)AllFiles.Exclude]
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)UDPProp.Include
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET)
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)]
+Requires=$(RTL) $(VCL) $(VCLDB) $(DBRTL) $(VCLJPG) $(VCLX) $(VCLDESIGNIDE) $(VCLVISUALCLX)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET).Include]
+Dir=$(SRCDIR)
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET).Exclude]
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Ado.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Advantage.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)BDE.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Com.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ComGUI.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBIsam.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBExpress.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DOA.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)IB.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)MMLink.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)OLLE.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)SQLDirect.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)UDPProp.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Utils.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Uml.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)XMILink.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ExPe.Include
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)VCLGUI.Include
+File=$(SRCDIR)\Common\IDE\BoldInstallation.pas
+File=$(SRCDIR)\Common\IDE\BoldLicenseTextForm.pas
+
+Section=Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Boot.Include
+File=$(CLXSUPPORT)
+
+; CLX support
+Section=CLX.include
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - Ado
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Ado]
+Requires=$(RTL) $(VCL) $(DBRTL) $(VCLADO) $(BOLDCORE) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (ADO Support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Ado.Include]
+dir=$(SRCDIR)\Persistence\ADO
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - ComGUI
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ComGUI]
+Requires=$(RTL) $(VCL) $(VCLJPG) $(BOLDCORE) $(BOLDCOM) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (COM GUI controls)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ComGUI.Include]
+Dir=$(SRCDIR)\ClientGuiCom
+Dir=$(SRCDIR)\ClientHandlesCom
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - Com
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Com]
+Requires=$(RTL) $(VCL) $(BOLDCORE) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (COM support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Com.Include]
+Dir=$(SRCDIR)\Common\COM
+Dir=$(SRCDIR)\Common\ConnectionCOM
+Dir=$(SRCDIR)\Common\ConnectionHandlesCOM
+Dir=$(SRCDIR)\Common\IDECOM
+Dir=$(SRCDIR)\Handles\COM
+Dir=$(SRCDIR)\Handles\IDECOM
+Dir=$(SRCDIR)\ObjectSpace\COM
+Dir=$(SRCDIR)\Persistence\COM
+Dir=$(SRCDIR)\Persistence\SOAP
+Dir=$(SRCDIR)\Persistence\HTTP
+Dir=$(SRCDIR)\Persistence\IDECOM
+Dir=$(SRCDIR)\ConcurrencyControl\COM
+Dir=$(SRCDIR)\ConcurrencyControl\IDECOM
+Dir=$(SRCDIR)\Propagator\COM
+Dir=$(SRCDIR)\Propagator\IDECOM
+File=$(SRCDIR)\Persistence\Propagation\BoldPropagatorUtils.pas
+
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - Uml
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Uml]
+Requires=$(RTL) $(VCL) $(BOLDCORE) $(BOLDVCLGUI) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (Model editor)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Uml.Include]
+Dir=$(SRCDIR)\UMLModel\Core
+Dir=$(SRCDIR)\UMLModel\Editor
+Dir=$(SRCDIR)\UMLModel\Handles
+Dir=$(SRCDIR)\UMLModel\IDE
+Dir=$(SRCDIR)\UMLModel\ModelLinks\Core
+Dir=$(SRCDIR)\UMLModel\ModelLinks\Rose2000
+Dir=$(SRCDIR)\UMLModel\ModelLinks\Rose98
+Dir=$(SRCDIR)\UMLModel\ModelLinks\Bld
+Dir=$(SRCDIR)\UMLModel\Plugins
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - XMILink
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)XMILink]
+Requires=$(RTL) $(VCL) $(BOLDCORE) $(BOLDUML) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (XMI Link)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)XMILink.Include]
+Dir=$(SRCDIR)\UMLModel\ModelLinks\XMI
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - DOA
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DOA]
+Requires=$(RTL) $(VCL) $(BOLDCORE) $(VCLDB) $(DBRTL) $(DOA)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (DOA support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DOA.Include]
+Dir=$(SRCDIR)\Persistence\DOA
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - MMLink
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)MMLink]
+Requires=$(RTL) $(VCL) $(BOLDCORE) $(BOLDUML) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (ModelMaker Link)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)MMLink.Include]
+Dir=$(SRCDIR)\UMLModel\ModelLinks\ModelMaker
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)MMLink.Exclude]
+File=$(SRCDIR)\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMExpert.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMTVEditor.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMTVMemo.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\ModelMaker\Support\BoldMMImporter.pas
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - OLLE
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)OLLE]
+Requires=$(RTL) $(VCL) $(BOLDCORE) $(BOLDUML) $(VCLDESIGNIDE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) Object Lending Library Extension (OLLE)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)OLLE.Include]
+Dir=$(SRCDIR)\Extensions\OLLE\Core
+Dir=$(SRCDIR)\Extensions\OLLE\IDE
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - Utils
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Utils]
+Requires=$(RTL) $(VCL) $(VCLX) $(DBRTL) $(VCLDESIGNIDE) $(BOLDCORE) $(BOLDVCLGUI) $(BOLDUML) 
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (Utils)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Utils.Include]
+Dir=$(SRCDIR)\Samples
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - IB
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)IB]
+Requires=$(RTL) $(VCL) $(CDS) $(VCLDB) $(DBRTL) $(VCLIB) $(VCLDESIGNIDE) $(BOLDCORE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (IBX support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)IB.Include]
+dir=$(SRCDIR)\Persistence\IBX
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - BDE
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)BDE]
+Requires=$(RTL) $(VCL) $(CDS) $(VCLDB) $(DBRTL) $(VCLBDE) $(VCLDESIGNIDE) $(BOLDCORE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (BDE support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)BDE.Include]
+dir=$(SRCDIR)\Persistence\BDE
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - UDPProp
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)UDPProp]
+Requires=$(RTL) $(VCL) $(INDY) $(BOLDCORE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (UDP Based Propagation)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)UDPProp.Include]
+dir=$(SRCDIR)\Persistence\UDPPropagator
+dir=$(SRCDIR)\Persistence\IDEUDP
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - Advantage
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Advantage]
+Requires=$(RTL) $(VCL) $(DBRTL) $(VCLDB) $(BOLDCORE) $(ADVANTAGE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (Advantage Support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Advantage.Include]
+dir=$(SRCDIR)\Persistence\Advantage
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - SQLDirect
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)SQLDirect]
+Requires=$(RTL) $(VCL) $(DBRTL) $(VCLDB) $(BOLDCORE) $(SQLDIRECT)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (SQLDirect Support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)SQLDirect.Include]
+dir=$(SRCDIR)\Persistence\SQLDirect
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - DBIsam
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBIsam]
+Requires=$(RTL) $(VCL) $(DBRTL) $(VCLDB) $(BOLDCORE) $(DBISAM)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (DBIsam Support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBIsam.Include]
+dir=$(SRCDIR)\Persistence\DBIsam
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - DBExpress
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBExpress]
+Requires=$(RTL) $(VCL) $(DBRTL) $(VCLDB) $(BOLDCORE) $(DBEXPRESS)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (DBExpress Support)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)DBExpress.Include]
+dir=$(SRCDIR)\Persistence\DBExpress
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - VCLGUI
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)VCLGUI]
+Requires=$(RTL) $(VCL) $(VCLDESIGNIDE) $(VCLJPG) $(BOLDCORE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (VCL GUI)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)VCLGUI.Include]
+dir=$(SRCDIR)\BoldAwareGUI
+
+;-----------------------
+; Package BoldXX$(BUILD_TARGET) - External Persistence
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ExPe]
+Requires=$(RTL) $(VCL) $(DBRTL) $(VCLDB) $(VCLX) $(VCLDESIGNIDE) $(BOLDCORE)
+Description=$(PRODUCT_BASE_NAME) $(PRODUCT_VERSION) (External Persistence)
+SourceType=$(BUILD_TARGET)
+BPKTemplate=$(BUILD_TEMP)\BCBPackageTemplateBPK.exp
+CPPTemplate=$(BUILD_TEMP)\BCBPackageTemplateCPP.exp
+
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)ExPe.Include]
+Dir=$(SRCDIR)\Persistence\ExternalPersistence
+
+
+;**********************************************************************************
+; Time2Help Group
+;**********************************************************************************
+
+[PackageGroup.T2H]
+Package=BfD
+PackageExtension=.T2HProject
+TemplateFile=$(BUILD_TEMP)/BfD.T2HTemplate.exp
+TargetFile=BfD
+ComponentImagesDir=$(LIBDIR)
+TopicFilesDir=$(BUILD_ROOT)/DocSource/Time2Help/TopicFiles
+TopicFilesDir=$(SRCDIR)
+
+
+;-----------------------
+; Time2Help Package
+;-----------------------
+[Package.T2H.BfD]
+SourceType=$(BUILD_TARGET)
+Extension=pas
+
+[Package.T2H.BfD.Include]
+Dir=$(SRCDIR)
+
+[Package.T2H.BfD.Exclude]
+Dir=$(SRCDIR)\BoldAwareGUI\IDE
+Dir=$(SRCDIR)\BoldAwareGUI\UtilsGUI
+Dir=$(SRCDIR)\ClientGuiCom\IDE
+Dir=$(SRCDIR)\ClientHandlesCom\IDE
+Dir=$(SRCDIR)\Common\Template
+Dir=$(SRCDIR)\Common\MsXml
+Dir=$(SRCDIR)\Common\IDE
+Dir=$(SRCDIR)\Common\Rose98
+Dir=$(SRCDIR)\Common\Rose2000
+dir=$(SRCDIR)\Common\Licensing
+dir=$(SRCDIR)\Common\ProductProtection
+Dir=$(SRCDIR)\Common\IDECOM
+Dir=$(SRCDIR)\Common\UtilsGUI
+Dir=$(SRCDIR)\ConcurrencyControl\IDECOM
+Dir=$(SRCDIR)\Handles\IDE
+Dir=$(SRCDIR)\Handles\IDECOM
+Dir=$(SRCDIR)\MoldModel\IDE
+Dir=$(SRCDIR)\ObjectSpace\IDE
+Dir=$(SRCDIR)\Persistence\IDE
+Dir=$(SRCDIR)\Persistence\IDECOM
+Dir=$(SRCDIR)\Persistence\IDEUDP
+Dir=$(SRCDIR)\Propagator\Enterprise
+Dir=$(SRCDIR)\Propagator\IDECOM
+Dir=$(SRCDIR)\Propagator\LowEnd
+Dir=$(SRCDIR)\Samples\IDE
+Dir=$(SRCDIR)\Samples\Unicode
+Dir=$(SRCDIR)\Unassigned
+Dir=$(SRCDIR)\UMLModel\Editor
+Dir=$(SRCDIR)\UMLModel\IDE
+Dir=$(SRCDIR)\UMLModel\ModelLinks\Rose2000
+
+
+File=$(SRCDIR)\common\Support\BoldMD5.pas
+File=$(SRCDIR)\common\SupportWin\BoldWinINet.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclClasses.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclError.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclEvaluator.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclLightWeightNodeMaker.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclLightWeightNodes.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclRTDebug.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclSemantics.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldOclSymbolImplementations.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldORed.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldRegularExpression.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldSSExcept.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldSSLexU.pas
+File=$(SRCDIR)\ObjectSpace\Ocl\BoldSSYaccU.pas
+File=$(SRCDIR)\PMapper\SQL\BoldSqlNodeMaker.pas
+File=$(SRCDIR)\PMapper\SQL\BoldSqlNodes.pas
+File=$(SRCDIR)\PMapper\SQL\BoldSqlNodesResolver.pas
+File=$(SRCDIR)\PMapper\SQL\BoldSQLQuery.pas
+File=$(SRCDIR)\PMapper\SQL\BoldSqlQueryGenerator.pas
+File=$(SRCDIR)\PMapper\SQL\BoldSqlSymbols.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLAbstractModelValidator.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLAttributes.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLModel.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLModelConverter.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLModelDataModule.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLModelUpdater.pas
+File=$(SRCDIR)\UMLModel\Core\BoldUMLModelValidator.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\Rose98\BoldUMLRose98LinkReg.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\Rose98\BoldRose98ptyCreator.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\XMI\BoldUMLXMILinkReg.pas
+File=$(SRCDIR)\UMLModel\ModelLinks\XMI\BoldUMLMMLinkReg.pas
+File=$(SRCDIR)\UMLModel\Plugins\BoldCodePlugins.pas
+File=$(SRCDIR)\UMLModel\Plugins\BoldDBPlugins.pas
+File=$(SRCDIR)\Propagator\Common\BoldObjectMarshaler.pas
+File=$(SRCDIR)\Propagator\Common\BoldPropagationLog.pas
+File=$(SRCDIR)\Propagator\Common\BoldPropagatorConstants.pas
+File=$(SRCDIR)\Propagator\Common\BoldPropagatorGUIDs.pas
+File=$(SRCDIR)\Propagator\Common\Log.pas
+File=$(SRCDIR)\Propagator\Common\BoldPropagatorInterfaces_TLB.pas
+File=$(SRCDIR)\Propagator\Common\BoldLockingSupportInterfaces_TLB.pas
+
+;**********************************************************************************
+; GENERIC
+;**********************************************************************************
+;-----------------------
+; File list for splash screen
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Boot.Include]
+file=$(SRCDIR)\Common\IDE\BoldBootIDE.pas
+
+;-----------------------
+; File list for product protection
+;-----------------------
+[Package.$(BUILD_TARGET).Bold$(PRODUCT_VERSION_NUM)$(BUILD_TARGET)Protection.Include]
+Dir=$(SRCDIR)\Common\ProductProtection

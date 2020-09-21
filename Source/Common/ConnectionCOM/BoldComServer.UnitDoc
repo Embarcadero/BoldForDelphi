@@ -1,0 +1,316 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/ConnectionCOM/BoldComServer.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldComServer">
+         <Methods>
+            <Method Name="AddConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionById">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Instance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterObjectProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RevokeObjectProvider">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendQueuedEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ConnectionCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connections">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerConnection">
+         <Methods>
+            <Method Name="CancelSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClientConnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClientDisconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Initialize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjQueryInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendQueuedEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClientId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClientInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EventQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerConnectionFactory">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateRegistry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerEventQueue">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Pop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerInterface">
+         <Methods>
+            <Method Name="Connect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerProvider">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Get_ObjectInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerSubscriber">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="SubscriberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComServerThreadedConnectionFactory">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateRegistry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="bseConnectionAdded">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bseConnectionRemoved">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldComServerObjectProvider">
+         <Methods>
+            <Method Name="CreateObject">
+               <Summary>Requests for a new instance of ClassName.</Summary>
+               <Desc>
+
+If the provider doesn't support ClassName it may return nil. ClassId identifies through which CoClass this request was made.
+</Desc>
+            </Method>
+            <Method Name="GetObject">
+               <Summary>Requests the object named ObjectName.</Summary>
+               <Desc>
+
+If the provider doesn't known about ObjectName it may return nil. ClassId identifies through which CoClass this request was made.
+</Desc>
+            </Method>
+            <Method Name="GetObjectInfo">
+               <Summary></Summary>
+               <Desc>Requestes information about which objects and classes the provider supports.
+</Desc>
+            </Method>
+         </Methods>
+         <Summary>This interface is implemented by object providers and used in server applications. </Summary>
+         <Desc> Object providers are registered with the TBoldComServer singleton object. It is through object providers that objects are exported.</Desc>
+      </Interface>
+   </Interfaces>
+   <Summary>Contains classes used in a COM server application.</Summary>
+   <Desc> </Desc>
+   <Types>
+      <Type Name="TBoldComServerConnectionClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

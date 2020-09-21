@@ -1,0 +1,164 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/UtilsGUI/BoldOclPropEditor.UnitDoc 3     02-08-16 13:10 Isje $">
+   <Classes>
+      <Class Name="TBoldOclPropEditForm">
+         <Methods>
+            <Method Name="CancelClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckOcl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CleanParserMsg">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Copymessagestoclipboard1Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditMemoChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditMemoEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditMemoKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditMemoKeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditMemoMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOclEvaluator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOclExpr">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InfoBrowserClick">
+               <Summary>Open OCL specification.</Summary>
+               <Desc>Opens up a html-file containing a link to OMG OCL specification residing in your Bold install directory.</Desc>
+            </Method>
+            <Method Name="MemberHelp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OKClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OperationHelp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveLastClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectBoxDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectBoxDrawItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectBoxKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectBoxKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOclExpr">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SyntaxcbClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TypescbClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMGetMinMaxInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="imgModelErrorsClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Context">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OclEvaluator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OclExpr">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>OCL Editor.</Summary>
+         <Desc>Editor for entering OCL expressions building on the model information. The editor is used by several Bold components, handels and GUI controls, that has properties that takes an OCL expression as value.<Br/>
+The editor appears, for example, when clicking the dotted button at a TBoldEdit's BoldProperties.Expression property.<Br/>
+            <BH>See Also</BH>
+Under [BoldInstallDir]\doc you'll find a document named 'Starting Bfd - Part 3 - OCL.pdf'.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

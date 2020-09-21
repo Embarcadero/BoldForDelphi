@@ -1,0 +1,550 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PMapper/Core/BoldPMappers.UnitDoc 5     02-06-10 12:58 Isje $">
+   <Classes>
+      <Class Name="TBoldMemberMapperIndex">
+         <Methods>
+            <Method Name="ItemASKeyString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberPersistenceMapper">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsDirty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInvalid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContentName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CustomCreateUpDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CustomFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DelayedFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsStoredInObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberPersistenceMapperList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberMapperByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberMapperByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectPersistenceMapper">
+         <Methods>
+            <Method Name="BoldIsA">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BuildMemberFetchLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistentStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureIDsExact">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillInMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassRole1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkClassRole2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberMapperIndexByMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LeastCommonSuperClassMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeIDsExact">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NextExternalObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchApproximateIDList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchExactIDList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasSubClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClassRole1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClassRole2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberMapperIndexByMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberPersistenceMappers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectIdClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Versioned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectPersistenceMapperList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSystemPersistenceMapper">
+         <Events>
+            <Event Name="OnPreparePSParams">
+               <Summary></Summary>
+               <Desc>This event is used by external actors who wants to control the way CreatePersistentStorage is executed. if assigned, it will be called by CreatePersistentStorage to set up the parameters sent to <see class=TBoldPSSystemDescription method=CreatePersistentStorage>.
+</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Commit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CommonSuperClassObjectMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc>This call will create a PersistenceMapper that is sufficient to map all objects/members described by the MoldModel. It will set up the needed object and members mappers, it will also create a PersistentStorageDescriptor.
+</Desc>
+            </Method>
+            <Method Name="CreatePSParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistentStorage">
+               <Summary></Summary>
+               <Desc>This method will create the external persistent storage (normally a database structure). It will also call CreatePersistentStorage in all ObjectMappers if any initialization is needed.
+</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsurePSDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsurePrecondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchDeletedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillPSParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCorrectTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsObjectUpgrading">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NextExternalObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchClassWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMSetReadonlyness">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToGlobalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToLocalIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveNewIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RollBack">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToPersistenceEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="fPMCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="fPMDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="fPMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClockLogGranularity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentTimeStamp">
+               <Summary></Summary>
+               <Desc>If the PersistenceMapper supports timestamping, this property will return the timestamp of the current (or last) transaction.
+</Desc>
+            </Property>
+            <Property Name="ModelVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectPersistenceMappers">
+               <Summary></Summary>
+               <Desc>A list of all ObjectPersistenceMappers that the system needs. The Objectmappers are stored in TopSorted order (the same order as the classlists in BoldSystem, MoldModel and SystemTypeInfo.
+Nonpersistent classes will not have an ObjectPersistenceMapper, and this list will have a nil-pointer in that location.
+</Desc>
+            </Property>
+            <Property Name="ObjectUpgrader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnGetCurrentTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootClassObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SupportsObjectUpgrading">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UpdateWholeObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseClockLog">
+               <Summary>Indicates whether the application is using a ClockLog or not</Summary>
+               <Desc>A ClockLog is used to be able to translate object timestamps to physical date/times. If this property is false, then the operations <see class=TBoldSystem method=TimestampForTime> and <see class=TBoldSystem method=TimeForTimeStamp> (and their corresponding OCL-operations timeStampToTime and timeToTimeStamp) will not work. 
+<p>
+The property originates from a tagged value in the model called "UseClockLog". Set this tagged value to True to activate the ClockLog.</Desc>
+            </Property>
+            <Property Name="UseGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseModelVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseXFiles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The TBoldSystemPersistenceMapper is a generic class to map valuespaces to persistent storages (normally a database). It uses a <see class=TBoldPSSystemDescription> that describes what the persistent storage looks like and a list of <see class=TBoldObjectPersistenceMapper> to do the work.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldPMLog">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldPMLogFmt">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldMemberPersistenceMapperClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldObjectPersistenceMapperClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldPreparePSParams">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSystemPersistenceMapperClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldPMLogHandler">
+         <Summary></Summary>
+                  <Desc>This global variable can be used to log all activity in the persistence mapper</Desc>
+		 <Examples><Example><Body>Add the following code to your application to see the activity in the persistence mapper:
+<code>
+uses
+  BoldLogHandler,
+  BoldLogHandlerForm,
+  BoldPMappers,
+
+begin
+  BoldPMLogHandler := BoldLog;
+  BoldLog.Show;
+end;
+</code>
+</Body></Example></Examples>
+<SeeAlso><see unit=BoldDBInterfaces var=BoldSQLLogHandler></SeeAlso>
+      </Var>
+   </Variables>
+</DLUnitDoc>

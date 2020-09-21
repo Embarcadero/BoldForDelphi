@@ -1,0 +1,400 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/FormGen/BoldAFPDefault.UnitDoc 5     02-07-30 14:30 Johosos $">
+   <Classes>
+      <Class Name="TBoldDefaultAttributeAutoFormProvider">
+         <Methods>
+            <Method Name="EnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDefaultAttributeListAutoFormProvider">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDefaultFormProvider">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultFormDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultFormOnClose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultReceiveObjectGone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoGenerateForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFormClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTarget">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostEnsureForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostGenerateAutoForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PreGenerateAutoForm">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApplyPolicy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Orientation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Reusing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDefaultObjectAutoFormProvider">
+         <Methods>
+            <Method Name="ActivateTabSheetHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyButtonClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BoldAsStringRenderer1SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CancelButtonClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ChangeNonEmbeddedLinksInclusion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloseButtonClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareObjectsOnTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateButtonPanel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateCaptionController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateDragSource">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateMethodButtonsForClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateScrollBox">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTabSheet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeriveObjectHistory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMultiRoleMemberControls">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureObjectVersionControls">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureSingleMemberControls">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGoodStringRepresentationForSingleLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLargestWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberRTInfoList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPageControl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeComponentName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MemberShouldBeDisplayed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OKButtonClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMemberRTInfoList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ApplyPolicy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ButtonPanel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassTypeInfoOverride">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DisplaySingleRoleButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragSource">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberRTInfoList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PageControl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDefaultObjectListAutoFormProvider">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDefaultSystemAutoFormProvider">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFormProviderForList">
+         <Methods>
+            <Method Name="EnsureHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetlistHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PreEnsureComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldGrid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldFormProviderForList is a class that can show elements that are lists. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFormProviderForSingle">
+         <Methods>
+            <Method Name="EnsureHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMethodButton">
+         <Methods>
+            <Method Name="Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MethodNumber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ResultEditBox">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueHolder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TRoleButton">
+         <Methods>
+            <Method Name="Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NavigateToSingleRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TRoleMenu">
+         <Methods>
+            <Method Name="AdjustEnabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Default auto form provider </Summary>
+   <Desc>This unit contains the classes that provide the auto forms that are generated on double clicks on listboxes and grids etc. This unit needs to be included in the project for autoforms to appear.</Desc>
+   <Variables>
+      <Var Name="BoldShowConstraintsInAutoFormGrids">
+         <Summary>Controls whether constraints indicators are to be shown in AutoForm grids</Summary>
+         <Desc>If this variable is true, then all grids that are displayed on AutoForms will have an extra column to the left of all data columns with a green or red indicator that shows if the objekct breaks any of its constraints or not. </Desc>
+<SeeAlso><see class=TBoldCustomGrid property=BoldShowConstraints></SeeAlso>
+      </Var>
+      <Var Name="BoldShowHistoryTabInAutoForms">
+         <Summary>Controls whether the History tab are to be shown in AutoForms</Summary>
+         <Desc>Versioned objects will always show the history tab, non versioned objects will show an empty tab (that says that the object is not versioned) if this variable is true, otherwise the tab will be suppressed</Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

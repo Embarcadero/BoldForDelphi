@@ -1,0 +1,374 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldHandles.UnitDoc 10    02-03-28 9:40a Jeho $">
+   <Classes>
+      <Class Name="TBoldAbstractSystemHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldAbstractSystemHandle</Summary>
+               <Desc>
+                  <P>Create creates an instance of <InlineCode>TBoldAbstractSystemHandle</InlineCode>.</P>
+                  <P>There is never any need to create an instance of the abstract class <InlineCode>TBoldAbstractSystemHandle</InlineCode>. <See Class="TBoldSystemHandle"/> is a more usable subclass.</P>
+               </Desc>
+            </Method>
+            <Method Name="DefaultBoldSystemHandle">
+               <Summary>The default TBoldSystemHandle if there is one</Summary>
+               <Desc>This class method returns the default <InlineCode>TBoldSystemHandle</InlineCode> if there is one. This is defined by the property <See Property="IsDefault"/>.</Desc>
+            </Method>
+            <Method Name="DefaultBoldSystemTypeInfo">
+               <Summary>Obsolete</Summary>
+               <Desc>
+                  <Warning>This property is not used, and will be removed in future releases.</Warning>
+               </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldAbstractSystemHandle</Summary>
+               <Desc><InlineCode>Destroy</InlineCode> destroys an instance of <InlineCode>TBoldAbstractSystemHandle</InlineCode>. Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> instead.</Desc>
+            </Method>
+            <Method Name="GetActive">
+               <Summary>Get-method for the Active property</Summary>
+               <Desc>Get-method for the <See Method="Active"/> property</Desc>
+            </Method>
+            <Method Name="GetIsDefault">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary>Overrides TBoldElementHandle.GetStaticBoldType</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticBoldType"/></Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary>Overrides TBoldElementHandle.GetStaticSystemTypeInfo</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticSystemTypeInfo"/></Desc>
+            </Method>
+            <Method Name="GetSystem">
+               <Summary>Get-method for the System property</Summary>
+               <Desc>Get-method for the <See Property="System"/> property</Desc>
+            </Method>
+            <Method Name="ModelChanged">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary>Overrides TBoldElementHandle.RefersToComponent</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="RefersToComponent"/> </Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary>Set-method for the Active property</Summary>
+               <Desc>Set-method for the <See Property="Active"/> property</Desc>
+            </Method>
+            <Method Name="SetSystemTypeInfoHandle">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="_Recieve">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="setIsDefault">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>Use to check or change the status of the SystemHandle</Summary>
+               <Desc>
+                  <P>This property decides if the objectspace owned by the handle is to be active or not. When <InlineCode>Active</InlineCode> is <InlineCode>True</InlineCode>, the <See Class="TBoldElementHandle" Property="Value" Text="value"/> of the handle is a <See Class="TBoldSystem"/> as defined by the <See Property="SystemTypeInfoHandle"/> and <See Class="TBoldSystemHandle" Property="PersistenceHandle"/> properties. When <InlineCode>Active</InlineCode> is <InlineCode>false</InlineCode>, <InlineCode>Value</InlineCode> is <InlineCode>nil</InlineCode>. The value is also available correctly typed as <See Property="System"/>.</P>
+                  <P>Setting <InlineCode>Active</InlineCode> to <InlineCode>true</InlineCode> results in the creation of the objectspace, and activation of the persistence mechanism (e.g. database logon).</P>
+                  <P>It is possible to set <InlineCode>Active</InlineCode> <InlineCode>true</InlineCode> at design-time. The utility of this varies depending on which features of Bold have been used. Basic types and OCL expressions always work at design time, while anything requiring user-written code such as members derived in code, methods on the domain objects and events on controls (particularly handles and renderers) work only at runtime.</P>
+                  <P>The recommended practice in most cases is to leave <InlineCode>Active</InlineCode> as <InlineCode>false</InlineCode>, and to set the <See Class="TBoldSystemHandle" Property="AutoActivate" Text="AutoActive"/> property instead. but if the applicaiton needs any kind of initialization before the system is activated, then it can be activated manually. The system will be deactivated automatically when the form/datamodule it belongs to is closed/destroyed, but can also be manually shut down by setting this property to false.</P>
+                  <BH>Bold Events</BH>
+Assigning to <InlineCode>Active</InlineCode> can result in the the following events:
+                  <UL>
+                     <LI><B>beValueIdentityChanged</B>: Will be sent whenever <InlineCode>Active</InlineCode> changes value, i.e. the system is created or destroyed.</LI>
+                  </UL>
+                  <Note>If the system has any dirty objects when it is shut down it will raise an exception. The correct thing to do is to either save the dirty objects, or discard the system (or ask the user what he prefers).</Note>
+               </Desc>
+            </Property>
+            <Property Name="IsDefault">
+               <Summary>The system is the default system.</Summary>
+               <Desc>
+                  <P>Set this property to <InlineCode>true</InlineCode> to specify that the system is the default system. The default system is used in all cases where no explicit system has been given. Note that the concept of default system can be ill-defined at designtime if several Bold projects are open in Delphi:s IDE.</P>
+                  <P>If a application contains several system handles with <InlineCode>IsDefault</InlineCode> <InlineCode>true</InlineCode>, one of them will be used as the default system.</P>
+                  <P>In general it is recomended that applications with only one system mark it as the default, while applications with several systems always give an explicit system, and never use a default.</P>
+                  <P>Changing the default system at runtime is definitely not recommended.</P>
+               </Desc>
+            </Property>
+            <Property Name="System">
+               <Summary>If TBoldAbstractSystemHandle.Active is true, System is the objectspace owned by the handle. </Summary>
+               <Desc>It has the same value as <See Class="TBoldElementHandle" Property="Value"/>, but is correctly typed. If <See Property="Active"/> is <InlineCode>false</InlineCode>, the <InlineCode>System</InlineCode> is <InlineCode>nil</InlineCode>.
+                  <BH>Bold events</BH>
+Since <InlineCode>System</InlineCode> is a read only property setting it can't directly give rise to events. The following event will however be sent when the system is created or destroyed:
+                  <UL>
+                     <LI><B>beValueIdentityChanged</B>: Sent when the system is created or destroyed, i.e. when <See Property="Active"/> changes its value.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="SystemTypeInfoHandle">
+               <Summary>The handle to the system type information to be used by the system</Summary>
+               <Desc>This property must refer to a <InlineCode>TBoldSystemTypeInfoHandle</InlineCode> which is in turn connected to the model for the system. Several handles can share the same <InlineCode>TBoldSystemTypeInfoHandle</InlineCode>, and will in that case be type compatible.
+This property may not be modified when the system is <See Property="Active"/>.
+                  <BH>Bold events</BH>
+Since changing <InlineCode>SystemTypeInfoHandle</InlineCode> will change <InlineCode>StaticSystemTypeInfo</InlineCode> and <InlineCode>StaticBoldType</InlineCode> it gives rise to the following events:
+                  <UL>
+                     <LI><B>beValueIdentityChanged</B>: Will be sent if <InlineCode>SystemTypeInfoHandle</InlineCode> is assigned a new value.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>Internal. </Summary>
+         <Desc>This is a pure implementation class in order to provide internal separation in Bold. It is of no interest to normal developers. The interesting information is found in <See Class="TBoldSystemHandle"/>.</Desc>
+      </Class>
+      <Class Name="TBoldElementHandle">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of a TBoldElementHandle</Summary>
+               <Desc><InlineCode>Destroy</InlineCode> destroys an instance of TBoldElementHandle. Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> instead.</Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetDynamicBoldType">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary>Get-method for the StaticBoldType property</Summary>
+               <Desc>Get-method for the <See Property="StaticBoldType"/> property</Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary>Get-method for the StaticSystemTypeInfo property</Summary>
+               <Desc>Get-method for the <See Property="StaticSystemTypeInfo"/> property</Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary>Get-method for the Value property</Summary>
+               <Desc>Get-method for the <See Property="Value"/> property</Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary>Used to determine relationships between a TBoldElementHandle and the component passed as parameter</Summary>
+               <Desc><InlineCode>RefersToComponent</InlineCode> is used internally to avoid circular relations between handles and other components.</Desc>
+            </Method>
+            <Method Name="StaticBoldTypeChanged">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldType">
+               <Summary>The type of the Value property, or the static type if Value is nil</Summary>
+               <Desc>
+                  <P>The type of the <See Property="Value"/> property, or the static type if <InlineCode>Value</InlineCode> is <InlineCode>nil</InlineCode>.</P>
+                  <P>It is primarily intended to be used e.g. by Bold-aware controls that have some dynamic behavior based on the type of the handle they are pointing at, such as the automatic column headers on a grid. <InlineCode>BoldType</InlineCode> is <InlineCode>DynamicBoldType</InlineCode> if <InlineCode>Value <> nil</InlineCode>, otherwise it is <InlineCode>StaticBoldType</InlineCode>.</P>
+                  <BH>Bold Events</BH>
+Since <InlineCode>BoldType</InlineCode> is a readonly property setting it can't directly give rise to events. The following event will however be sent when the value of the property has changed (or rather may have changed, since it may have "changed" to the same value):
+                  <UL>
+                     <LI><B>beValueIndentityChanged</B>: Since <InlineCode>BoldType</InlineCode> depends on <InlineCode>Value</InlineCode> and <InlineCode>StaticBoldType</InlineCode> this event will be sent whenever <InlineCode>BoldType</InlineCode> can have changed.</LI>
+                  </UL>
+                  <P>The event will not be sent if it has previously been sent, and the Value property has not been accessed since then.</P>
+               </Desc>
+            </Property>
+            <Property Name="DynamicBoldType">
+               <Summary>The type of Value, or nil if Value is  nil</Summary>
+               <Desc>
+                  <P>The type of <See Property="Value"/>, or <InlineCode>nil</InlineCode> if <InlineCode>Value</InlineCode> is currently <InlineCode>nil</InlineCode>. In most cases <See Property="BoldType"/> is more interesting.</P>
+                  <BH>Bold Events</BH>
+                  <P>Since <InlineCode>BoldType</InlineCode> is a read only property setting it can't directly give rise to events. The following event will however be sent when the value of the property has changed (or rather may have changed, since it may have "changed" to the same value):</P>
+                  <UL>
+                     <LI><B>beValueIndentityChanged</B>: Since Dynamic BoldType depends on Value this event will be sent whenever <InlineCode>DynamicBoldType</InlineCode> can have changed.</LI>
+                  </UL>
+The event may not be sent if it has previously been sent, and the Value property has not been accessed since then. </Desc>
+            </Property>
+            <Property Name="StaticBoldType">
+               <Summary>The type of Value, as defined at design-time.</Summary>
+               <Desc>
+                  <P>The type of <See Property="Value"/>, as defined at design-time. Different concrete subclasses of <InlineCode>TBoldElementHandle</InlineCode> get their static type in different ways. For each handle type this is described on the overview of the class.</P>
+                  <BH>Bold events</BH>
+                  <P>Since <InlineCode>StaticBoldType</InlineCode> is a read only property setting it can't directly give rise to events. The following event will however be sent when the value of the property has changed (or rather may have changed, since it may have "changed" to the same value):</P>
+                  <UL>
+                     <LI><B>beValueIndentityChanged</B>: Will be sent whenever the conditions defining <InlineCode>StaticBoldType</InlineCode> have changed.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="StaticSystemTypeInfo">
+               <Summary>Best static determination of which type system the Value will belong to. </Summary>
+               <Desc>For all <See Class="TBoldNonSystemHandle"/>s it is determined from <See Class="TBoldNonSystemHandle" Property="StaticSystemHandle" Text="StaticSystemHandle"/> if given, otherwise the SystemTypeInfo of the <See Class="TBoldAbstractSystemHandle" Method="DefaultBoldSystemHandle"/> is used.
+                  <P>This property is mainly intended for the internal use of the handle when defining <See Property="StaticBoldType"/> and for property-editors used in defining the type.</P>
+               </Desc>
+            </Property>
+            <Property Name="StrictType">
+               <Summary>Ensure checking of type for handle.</Summary>
+               <Desc>Enforce type on handle.
+If <InlineCode>StrictType</InlineCode> is <InlineCode>true</InlineCode>, an exception will be raised if <See Property="DynamicBoldType"/> of the handle is not a subtype of <See Property="StaticBoldType"/>.
+                  <Warning>This property has not been implemented yet</Warning>
+               </Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary>The value of the handle.</Summary>
+               <Desc>
+                  <P>The <InlineCode>Value</InlineCode> of the handle is always a <InlineCode>TBoldElement</InlineCode>. Different concrete subclasses of <InlineCode>TBoldElement</InlineCode> get their value in different ways. For each handle type this is described on the overview of the class.</P>
+                  <P>A <InlineCode>TBoldElementHandle</InlineCode> will always subscribe to <InlineCode>beDestroying</InlineCode> of its <InlineCode>Value</InlineCode> (regardless of how it is obtained), so that if the element is removed, <InlineCode>Value</InlineCode> will be set to <InlineCode>nil</InlineCode>, and a <InlineCode>beValueIdentityChanged</InlineCode> will be sent to all subscribers of the handle.</P>
+                  <BH>Bold events</BH>
+                  <P>Since <InlineCode>Value</InlineCode> is a read only property (for all subclasses except <See Class="TBoldReferenceHandle"/>), setting it can't directly give rise to events. The following event will however be sent when the value of the property has changed (or rather may have changed, since it may have "changed" to the same value):</P>
+                  <UL>
+                     <LI>beValueIndentityChanged: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>.</LI>
+                  </UL>
+                  <Note>Note that the event is not send when the contents of <InlineCode>Value</InlineCode> is changed. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</Note>
+                  <P>The event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>Super class to handles that hold a value</Summary>
+         <Desc>
+            <P>The element-handles in Bold (i.e. the subclasses to <InlineCode>TBoldElementHandle</InlineCode>) are the Delphi IDE programmer's main tool for accessing the domain objects in a system using Bold. The handles themselves have several main functions:</P>
+            <UL>
+               <LI>Holding a value</LI>
+               <LI>Allowing <Jump ID="Mech_ChainedEvaluation" Text="Chained Evaluation"/> of OCL-expressions</LI>
+               <LI>Holding a type, in the case when the value is <InlineCode>nil</InlineCode></LI>
+            </UL>
+            <BH>Value</BH>
+            <P>The most important property of a handle is <See Property="Value"/> which refers to a <See Class="TBoldElement"/> in the domain object layer of the system. The different types of handles get their value in different ways. The value can be <InlineCode>nil</InlineCode>.</P>
+            <BH>Typing</BH>
+Each handle also has a number of properties related to the (potential) type of <InlineCode>Value</InlineCode>. This type information is used both for design-time support (i.e. for the OCL-editor), and by components that change their behavior dynamically depending on the type, such as the grid with automatic columns. There are three basic type properties:
+            <UL>
+               <LI><See Property="StaticBoldType"/>: A type that is defined on the handle at design-time, and which therefore is known whether the handle has a value or not.</LI>
+               <LI><See Property="DynamicBoldType"/>: The type of Value, and thus <InlineCode>nil</InlineCode> if <InlineCode>Value</InlineCode> is <InlineCode>nil</InlineCode>.</LI>
+               <LI><See Property="BoldType"/>: "The best you can get", i.e. <InlineCode>DynamicBoldType</InlineCode> if (<InlineCode>Value <> nil</InlineCode>), otherwise <InlineCode>StaticBoldType</InlineCode></LI>
+            </UL>
+            <BH>Bold events</BH>
+            <P><InlineCode>TBoldElementHandle</InlineCode> is a subclass of <InlineCode>TBoldSubscribableComponent</InlineCode>, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldElementHandle</InlineCode> can send the following events:</P>
+            <UL>
+               <LI>beDestroying: Sent when the handle is about to be destroyed</LI>
+               <LI>beValueIdentityChanged: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>. Also sent if anything influencing <InlineCode>BoldStaticType</InlineCode> has changed.
+The event will not be sent if it has previously been sent, and the Value property has not been accessed since then.<Br/>
+Note that the event is not send when the contents of Value is changed. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</LI>
+            </UL>
+            <P>It is important to note that there is a difference between the fact that the <InlineCode>Value</InlineCode> property changes, and that the contents of the element referred to by <InlineCode>Value</InlineCode> changes.</P>
+            <P>Any event leading to a (possible) change in <InlineCode>Value</InlineCode> will lead to a <InlineCode>beValueIdentityChanged</InlineCode> event being sent to all the subscribers of the handle.</P>
+            <P>Any event leading to a possible change of the contents of <InlineCode>Value</InlineCode> will lead to the subscribers to <InlineCode>Value</InlineCode> being notified according to their subscriptions.</P>
+If a convenient way is needed to subscribe to the <InlineCode>Value</InlineCode> of a handle, without worrying about these two types of subscriptions, a <InlineCode>TBoldPlaceableSubscriber</InlineCode> should be used. </Desc>
+      </Class>
+      <Class Name="TBoldNonSystemHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor. <InlineCode>TBoldNonSystemHandle</InlineCode> is an abstract class, and thus not intended to be instansiated.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary>Overrides TBoldElementHandle.GetStaticSystemTypeInfo</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticSystemTypeInfo"/></Desc>
+            </Method>
+            <Method Name="SetStaticSystemHandle">
+               <Summary>Set-method for the StaticSystemHandle property</Summary>
+               <Desc>Set-method for the <See Class="StaticSystemHandle"/> property</Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StaticSystemHandle">
+               <Summary>SystemHandle used if no Value is available</Summary>
+               <Desc>Setting this handle will affect the way <See Class="TBoldElementHandle" Property="StaticSystemTypeInfo"/> and thus ultimately <See Class="TBoldElementHandle" Property="StaticBoldType"/> are calculated. Its use is described in the overview of the class for each handle. If the handle is not connected (recursively) to a system handle through some other property, this property should be set to point to the SystemHandle to which the handle "belongs". </Desc>
+            </Property>
+         </Properties>
+         <Summary>This class introduces the StaticSystemHandle property. It is an abstract class.</Summary>
+         <Desc>This class introduces the <See Property="StaticSystemHandle"/> property. It is an abstract class.</Desc>
+      </Class>
+      <Class Name="TBoldSystemTypeInfoHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldSystemTypeInfoHandle</Summary>
+               <Desc>Use <InlineCode>Create</InlineCode> to create an instance of <InlineCode>TBoldSystemTypeInfoHandle</InlineCode>.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldSystemTypeInfoHandle</Summary>
+               <Desc><InlineCode>Destroy</InlineCode> destroys an instance of a <InlineCode>TBoldSystemTypeInfoHandle</InlineCode>. Do not call <InlineCode>Destroy</InlineCode> directly, use Free instead.</Desc>
+            </Method>
+            <Method Name="GetRegionDefinitions">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary>Overrides TBoldElementHandle.GetStaticBoldType</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticBoldType"/></Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary>Overrides TBoldElementHandle.GetStaticSystemTypeInfo</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetStaticSystemTypeInfo"/></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary>Overrides TBoldElementHandle.GetValue</Summary>
+               <Desc>Overrides <See Class="TBoldElementHandle" Method="GetValue"/></Desc>
+            </Method>
+            <Method Name="InstallOclDefinitionLookUp">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+            <Method Name="ModelChanged">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary>Determines if the TBoldSystemTypeHandle refers to the component in the parameter.</Summary>
+               <Desc><InlineCode>RefersToComponent</InlineCode> is used internally to avoid circular references.</Desc>
+            </Method>
+            <Method Name="SetBoldModel">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="_Recieve">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary>Link to the TBoldModel component</Summary>
+               <Desc>This property must point to a <See Class="TBoldModel"/> that holds the UML model for the system to be used. </Desc>
+            </Property>
+            <Property Name="CheckCodeCheckSum">
+               <Summary>Decides if the checksum in the generated code is honoured</Summary>
+               <Desc>When code is generated, and <See Property="UseGeneratedCode"/> is checked, the checksum of the generated code is compared with the checksum of the model at system startup.
+                  <P>In some cases during the debug phase, you may want to do changes that you figure will not require regeneration of code, but nevertheless changes the checksum. Setting this property to <InlineCode>False</InlineCode> will prevent the checksums from being compared.</P>
+                  <Note>Changing this property to <InlineCode>False</InlineCode> is intended only as a debugging tool. Our recommendation is to check the checksum always, especially in production code!
+                     <P>You may even want to write some code that brings up a warning dialog if the <InlineCode>CheckCodeCheckSum</InlineCode> is false and execute this "sanity checker" at application startup.</P>
+                  </Note>
+               </Desc>
+            </Property>
+            <Property Name="RegionDefinitions">
+               <Summary>The internal representation of the regions defined in the model.</Summary>
+               <Desc>The internal representation of the regions defined in the model. See <Jump ID="Mech_Regiondefinitions"/> for a description of the region definition language. </Desc>
+            </Property>
+            <Property Name="UseGeneratedCode">
+               <Summary>Specifies if generated code is to be used.</Summary>
+               <Desc>If this property is true the system will expect the project to include a unit containing generated code for the business-classes, allowing the use of Delphi-types, and user-written code. This is the most common case.
+                  <P>If the property is set to false, all objects will be instantiated as <See Class="TBoldObject"/>s, and all lists of objects as <See Class="TBoldObjectList"/>s. In this case all evaluation must be done using OCL, or via methods and properties on the above classes only, such as TBoldObject.<See Class="TBoldObject" Property="BoldMemberByExpressionName" Text="BoldMemberByExpressionName"/>.</P>
+                  <P>New objects can be created with <See Class="tBoldSystem" Method="CreateNewObjectByExpressionName" Text="TBoldSystem.CreateNewObjectByExpressionName"/></P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>This handle holds the runtime information needed by a TBoldSystemHandle. </Summary>
+         <Desc>
+            <P>The information is a efficient representation of the information in the UML-model, heavily optimized for speed.</P>
+            <P>The type information is created from the model referenced by <See Property="BoldModel"/>.
+Several systems can share the same <InlineCode>TBoldSystemTypeInfoHandle</InlineCode>. In this case, they will be type compatible in the Bold sense of the word.</P>
+            <BH>Bold events</BH>
+            <InlineCode>TBoldSystemTypeInfoHandle</InlineCode> is a subclass of TBoldSubscribableComponent, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldSystemTypeInfoHandle</InlineCode>. can send the following events:
+            <UL>
+               <LI><B>beDestroying</B>: Sent when the handle is about to be destroyed</LI>
+               <LI><B>beValueChanged</B>: Sent if it receives any change from the <See Property="BoldModel"/> component</LI>
+            </UL>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines abstract super classes to the handles.</Summary>
+   <Desc>This unit defines abstract super classes to handles, as well as the concrete class <See Class="TBoldSystemTypeInfoHandle"/>.</Desc>
+</DLUnitDoc>

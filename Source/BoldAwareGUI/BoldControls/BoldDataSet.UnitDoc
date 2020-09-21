@@ -1,0 +1,556 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractDataSet">
+         <Methods>
+            <Method Name="AllocRecordBuffer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BoldElementToBuffer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BoldToBuffer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BookmarkValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BufferToBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Cancel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearCalcFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateBlobStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateDefaultFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNewElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteAllFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAfterOpen">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAfterScroll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoOnNewRecord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureRecordPosInValidRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeRecordBuffer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActiveRecBuf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBookmarkData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBookmarkFlag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBookmarkInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexForBookmark">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRecNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRecord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRecordCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRecordSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalAddRecord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalClose">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalEdit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalFirst">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalGotoBookmark">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalHandleException">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalInitFieldDefs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalInitFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalInitRecord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalLast">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalOpen">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalPost">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSetToRecord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsCursorOpen">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LayoutChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Locate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LocateRecord">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Lookup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAutoOpen">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBookmarkData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBookmarkFlag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFieldData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFieldDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRecNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TryToOpen">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TypeHasChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TypeMayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesInFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_BeforeMakeListUptodate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_DeleteRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_InsertRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveContext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoOpen">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary>A handle containing the list of objects that should be exposed as a Dataset</Summary>
+               <Desc>The objects in the <InlineCode>ListHandle</InlineCode> will make up the rows in the dataset</Desc>
+            </Property>
+            <Property Name="BoldRTInfo">
+               <Summary>Returns the model information for a field in the dataset</Summary>
+               <Desc>If the field refered to by the parameter exists, and contains an attribute or a role, the model information about this value is returned. If the field contains a calculated value (such as <InlineCode>aPerson.firstName + ' ' + aPerson.lastName</InlineCode>), the result is nil</Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldDescriptions">
+               <Summary></Summary>
+               <Desc>A collection of field descriptions that make up the dataset</Desc>
+            </Property>
+            <Property Name="List">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This version of the Bold Dataset is intended for subclassing</Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDataSet">
+         <Summary>Exposes a list of objects as a <InlineCode>TDataset</InlineCode> to be used with reporting tools or other Dataset aware components </Summary>
+         <Desc>This components allows a list of bold objects to be exposed as a TDataset so that they can be displayed/edited by the rich set of db aware components available in Delphi and as third party components. </Desc>
+         <Examples>
+            <Example>
+               <Body>There is an example in the example folder that shows how to use the <InlineCode>TBoldDataSet</InlineCode> component with a reporting tool (<InlineCode>QuickReport</InlineCode>)</Body>
+            </Example>
+         </Examples>
+      </Class>
+      <Class Name="TBoldDataSetFieldDescription">
+         <Methods>
+            <Method Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureValid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveFieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldOfs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequired">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseFieldSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Invalidate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>The BoldProperties contains the OCL expression that is used to calculate the value of the field </Desc>
+            </Property>
+            <Property Name="BufferSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Dataset">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveFieldName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary>Identical to BoldProperties.Expression</Summary>
+               <Desc>Identical to BoldProperties.Expression</Desc>
+            </Property>
+            <Property Name="FieldDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldName">
+               <Summary>The name of the field</Summary>
+               <Desc>The name of the field</Desc>
+            </Property>
+            <Property Name="FieldOfs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListelementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Required">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseFieldSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDataSetFieldDescriptions">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InvalidateFields">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Dataset">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FieldFollowers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="PBDSBookmarkInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBDSBookmarkInfo">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

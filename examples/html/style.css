@@ -1,0 +1,270 @@
+<!-- The whole page -->
+BODY
+{ margin: 10px;
+  background: #E3DCCE; <!-- 227/220/206 --> } 
+
+<!-- The frame pages -->
+BODY.frame
+{ margin: 0px;
+  background: #E3DCCE; <!-- 227/220/206 -->
+  font-size: 10pt; } 
+
+BODY.noright
+{ margin: 10px 0px 10px 10px; }
+
+<!-- White elements -->
+.white
+{ background: #FFFFFF; } 
+
+BODY, P, TD, H1, H2, H3
+{ font-family: Verdana,Arial,Helvetica,sans-serif;
+  color: #000000; }
+
+BODY, P, TD
+{ font-size: 10pt; }
+
+P.code
+{ margin-top: 2px;
+  margin-left: 15px;
+  margin-bottom: 2px;
+  font-family: "Courier new",monospace;
+  font-size: 8pt; }
+
+P.code+P
+{ margin-top: 8px; }
+
+P.close
+{ margin-top: 5px; }
+
+BLOCKQUOTE
+{ margin: 5px 20px; }
+
+.blue
+{ color: #000099; }
+
+<!-- Heading 1 (H1) doesn't exist, because that is the style of the title and shouldn't be used anywhere else. -->
+
+H2
+{ font-size: 14pt;
+  margin-bottom: 10px; }
+
+H3
+{ font-size: 12pt;
+  margin-bottom: 5px; }
+
+H4
+{ margin: 10px 0px 0px 0px;
+  font-size: 10pt;
+  font-weight: bold; }
+  
+H2+H4, H3+H4
+{ margin-top: 0px; }
+
+<!-- Ordered/unordered lists directly after headings -->
+H2+OL, H2+UL, H3+OL, H3+UL
+{ margin-top: 0px; }
+
+<!-- Ordered/unordered lists first in a cell -->
+TD+OL, TD+UL
+{ margin-top: 0px; }
+
+<!-- ordered lists -->
+OL
+{ margin-top: 5px;
+  margin-bottom: 0px; }
+
+<!-- Unordered lists -->
+UL
+{ margin-top: 5px;
+  margin-bottom: 0px;
+  list-style-image: url('images/red_dot.gif'); }
+  
+<!-- All list items -->
+LI
+{ margin-top: 5px; }
+
+<!-- First list item -->
+OL+LI, UL+LI
+{ margin-top: 0px; }
+
+<!-- Visited/unvisited links -->
+A:link, A:visited
+{ color: #990000;
+  text-decoration: none; }
+
+<!-- Links activade by mouse-over or tab -->
+A:hover, A:active
+{ color: #990000;
+  text-decoration: underline; }
+
+<!-- Small links -->
+A.small
+{ font-size: 8pt; }
+
+<!-- All tables -->
+TABLE
+{ padding: 0px; }
+
+<!-- Page table containing EVERYTHING else -->
+TABLE.page
+{ width: 780px; }
+
+<!-- Left-side table containing logo and menu -->
+TABLE.left
+{ width: 150px; }
+
+<!-- Right-side table containing bread crumb, title, content and copyright -->
+TABLE.right
+{ width: 620px; }
+
+<!-- ??? -->
+TABLE.List
+{ width: 100%;
+  background: #FFFFFF; }
+
+<!-- Heading cells with grey background -->
+TD.grey
+{ margin: 0px;
+  padding: 5px;
+  background: #666666;
+  color: #FFFFFF; 
+  font-weight: bold; }
+
+<!-- Table rows/cells with light beige background --> <!-- 236/231/221 -->
+.odd
+{ background: #F7F4F0;
+  padding: 3px 5px; }
+
+<!-- Table rows/cells with white background -->
+.even
+{ background: #FFFFFF;
+  padding: 3px 5px; }
+
+TD
+{ padding: 0px;
+  vertical-align: top; }
+
+TD.small
+{ font-size: 8pt; }
+
+<!-- Cells left/right of mini cells containing round corners -->
+TD.left, TD.right
+{ width: 10px;
+  height: 15px;
+  background: #E3DCCE; }
+
+TD.top_wide
+{ width: 620px;
+  height: 5px;
+  background: #E3DCCE; }
+
+TD.bottom_wide
+{ width: 620px;
+  height: 15px;
+  background: #E3DCCE; }
+
+
+<!-- Bread crumb and copyright cells -->
+TD.mini
+{ width: 600px;
+  height: 15px;
+  background: #FFFFFF;
+  margin: 0px;
+  padding: 0px;
+  vertical-align: middle;
+  font-size: 7pt; }
+
+<!-- Page title cell -->
+TD.title
+{ width: 620px;
+  background: #FFFFFF;
+  padding: 0px 10px;
+  vertical-align: middle;
+  font-size: 20pt;
+  font-weight: bold; }
+
+<!-- Doc-pages title cell -->
+TD.titlesmall
+{ width: 620px;
+  background: #FFFFFF;
+  padding: 0px 10px;
+  vertical-align: middle;
+  font-size: 13pt;
+  font-weight: bold; }
+
+<!-- Cell containing included menu-page -->
+TD.menu
+{ width: 150px;
+  background: #FFFFFF;
+  padding: 0px 10px;
+  font-size: 8pt; }
+
+<!-- Wide menu frame -->
+TD.menuwide
+{ width: 190px;
+  margin: 0px;
+  background: #FFFFFF;
+  padding: 0px 10px;
+  font-size: 8pt; }
+
+<!-- The big cell containing all info -->
+TD.content
+{ width: 620px;
+  padding: 5px 10px;
+  background: #FFFFFF; }
+
+TD.list
+{ padding: 0px 10px; }
+
+TD.listicons
+{ width: 25px;
+  padding: 0px 10px; }
+
+TD.listiconssmall
+{ width: 10px;
+  padding: 0px 10px; }
+
+IMG
+{ border: 0px; }
+
+.note
+{ font-style: oblique;
+  font-size: 8pt; }
+  
+code
+{ font-family: "Courier new",monospace;
+  font-size: 10pt; }
+
+P
+{
+	margin-top: 10px;
+	margin-bottom: 0px;
+}
+
+P.head1
+{ 
+	font-size: 16pt;
+	font-weight: bold;
+  	margin-top: 0px;
+  	margin-bottom: 10px;
+}
+P.head2           
+{ 
+	font-size: 14pt;
+	font-weight: bold;
+  	margin-top: 28px; 
+  	margin-bottom: 3px; 
+} 
+P.head3           
+{ 
+	font-size: 12pt;
+	font-weight: bold;
+  	margin-top: 24px; 
+  	margin-bottom: 3px; 
+} 
+P.head4
+{ 	font-size: 10pt;
+	font-weight: bold;
+   	margin-top: 20px;
+   	margin-bottom: 3px;
+}

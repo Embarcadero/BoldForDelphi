@@ -1,0 +1,89 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldGuard">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates a TBoldGuard</Summary>
+               <Desc>Use create passing up to 10 object references. Create will set them all to <InlineCode>nil</InlineCode> and free them on destruction.
+                  <P><InlineCode>TBoldGuard</InlineCode> implements <See Interface="IBoldGuard"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldGuard</Summary>
+               <Desc>This class is only intended to be accessed via interface references (See <See Interface="IBoldGuard"/>). There should be no need to manually free or destroy it.
+                  <P>The <InlineCode>Destroy</InlineCode> method will free all object references passed as parameters in <InlineCode>Create</InlineCode>.</P>
+               </Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>See <See Interface="IBoldGuard"/></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="MAXARRAY">
+         <Summary>Maximum amount of objects a TBoldGuard can guard</Summary>
+         <Desc><InlineCode>MAXARRAY+1</InlineCode> is the maximum amount of objects that can be guarded by a single <See Class="TBoldGuard"/>.</Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldGuard">
+         <Methods></Methods>
+         <Summary>Interface for local object guarding</Summary>
+         <Desc>Using <InlineCode>IBoldGuard</InlineCode>, many <InlineCode>try..finally</InlineCode> constructs can be avoided, allowing for more compact coding.
+            <P>The construct</P>
+            <Code>var
+   myObject: TMyClass;
+begin
+  myObject := TMyClass.Create;
+  try
+     ..something...
+  finally
+    myObject.Free;
+  end;</Code>
+            <P>can now be written</P>
+            <Code>var
+   Guard: IBoldGuard;
+   myObject: TMyClass;
+begin
+   Guard := TBoldGuard.Create(myObject)
+   myObject := TMyClass.Create;
+   ..something...
+end;</Code>
+ </Desc>
+      </Interface>
+   </Interfaces>
+   <Summary>This unit defines helper classes that helps constructs requiring local objects.</Summary>
+   <Desc>The <InlineCode>TBoldGuard/IBoldGuard</InlineCode> are used as guards for local object variables
+      <P>The construct</P>
+      <P>
+         <Code>var
+  myObject: TMyClass;
+begin
+  myObject := TMyClass.Create;
+  try
+     ..something...
+  finally
+    myObject.Free;
+  end;
+end;</Code>
+      </P>
+      <P>can now be written</P>
+      <P>
+         <Code>var
+   Guard: IBoldGuard;
+   myObject: TMyClass;
+begin
+   Guard := TBoldGuard.Create(myObject);
+   myObject := TMyClass.Create;
+   ..something...
+end;</Code>
+      </P>
+   </Desc>
+   <Types>
+      <Type Name="TBoldObjectVariableReference">
+         <Summary>Type used internally</Summary>
+         <Desc>A pointer to an object. Used by <See Class="TBoldGuard"/> to store references to objects guarded.</Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

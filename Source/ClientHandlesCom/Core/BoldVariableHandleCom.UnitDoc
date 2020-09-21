@@ -1,0 +1,77 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldVariableHandleCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldVariableHandleCom">
+         <Methods>
+            <Method Name="ClearAllValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInitialValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitialValuesChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerHandleClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInitialValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetValueTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesFromServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesToServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="InitialValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

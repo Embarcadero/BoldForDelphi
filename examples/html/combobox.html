@@ -1,0 +1,134 @@
+<html>
+
+<head>
+  <title>ComboBox</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu"> Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_gui.html" target="menu">GUI Controls</a> &gt;
+      <a href="combobox.html"> ComboBox</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">ComboBox</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content frame starts -->
+    <a href="../Delphi/Simple/GUIControls/ComboBox/BE_ComboBox.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/GUIControls/ComboBox/BE_ComboBox.bpr">Launch CBuilder-example</a>
+    <p>This example illustrates three different ways to use the BoldComboBox control. In addition to using the
+    <code>TBoldComboBox</code> to set a single relation, it can also be used to set a string property by selecting a value from a
+    stringlist or by retrieving a string from a list of objects. The latter is useful if you are content with setting
+    a string attribute to a string retrieved from another object and don't have to be able to navigate to it.
+    </p>
+    <hr size="1">
+    <p class="head2">How to run</p>
+<p>
+    When you open the system the main form shows two
+	listboxes showing instances of food and school. Add a person and select
+	additional information to that person from the comboboxes. The comboboxes School and
+    Preferred Food shows instances from the listboxes. 
+	</p>
+	<p>
+	The comboboxes Majors in and Favourite Music shows values from a variablehandle on the form.<p>The comboboxes are set up differently. To see the difference
+	follow these instructions:
+	</p>
+	<ol>
+  		<li>Add a person and select information from the
+			comboboxes.&nbsp;</li>
+  		<li> Save.&nbsp;</li>
+  		<li> Now change the names of the shool and the food you
+			selected for the person. Use the listboxes to do that.&nbsp;</li>
+  		<li> Save.&nbsp;</li>
+  		<li> Select the person
+			you created and see what's in the comboboxes for that person. The information
+          about preferred
+          food should consist of the new name of the food but the name of the shool should not have been updated. 
+			This is because the shool name is added as an attribute on the person and that attribute is 
+			not updated. The food information on the other hand is added to the person as a relation to 
+			the food object.</li>
+	</ol>
+	 <p class="head2">How to use BoldComboBox</p>
+<p>To control the functionality of the comboboxes in this example we used a
+couple of properties in the BoldComboBox control:&nbsp;
+   </p>
+	<ul>
+  		<li>BoldListHandle - provides the list of elements visible in the drop down list.</li>
+  		<li> BoldHandle - holds the handle that will be affected by changing current pointer in the
+    		drop down list.</li>
+  		<li> BoldProperties - holds the value to be changed.</li>
+  		<li> BoldRowProperties - properties for the elements in the list pointed
+          to by BoldListHandle.</li>
+  		<li> BoldSelectChangeAction - property to determine what happens when the selection changes.</li>
+  		<li> BoldSetValueExpression - expression to use when setting the value.<br>
+          &nbsp;</li>
+	</ul>
+	<p class="head4">See also</p>
+	<ul>
+  		<li>
+			<a href="../../Help/BfD.hlp" target="self">Programmers Reference</a> 
+            (<font size="1">[BfDInstallDir]/help/Bfd.hlp</font>) for explanation of the
+			properties on <code>TBoldComboBox</code>.</li>
+	</ul>
+	<p class="head3">Different settings</p>
+	<p>The example shows three different settings of the comboboxes.
+   	</p>
+<p>The combobox School holds a <i> BoldListHandle</i> containing a list of all instances
+	of <code>TShool</code>. The <i> BoldSelectChangeAction</i> is set to <code>&lt;&lt;bdscSetText&lt;&lt;</code> which indicates
+	that when the selection changes the AsString-property of the selected element is
+	set. Thus when you select a school in the combobox the name is added as an attribute
+	(specified under <i>BoldProperties</i>) on the person
+	and no relation is established between person and school.
+    </p>
+	<p>The preferred food-combobox holds a <i> BoldListHandle</i> containing a list of all
+	instances of <code>TFood</code>. In this combobox the <i> BoldSelectChangeAction</i> is set to
+    <code>&lt;&lt;bdcsSetValue&lt;&lt;</code>
+	and that means that when the selection changes a single-link is established from
+	the current element of the <i> BoldListHandle</i> to the selected element in the
+	combobox. The property <i> BoldSetValueExpression</i> holds the name of the link to
+	update. In this example, when you change the selection of food the link
+    <code>preferredFood</code>
+	is udated and connects a person with a food-object.
+    </p>
+	<p>The majors in- and favourite music-comboboxes both holds <i> BoldListHandles</i>
+	pointing to cursorhandles. The cursorhandles in turn holds&nbsp;variablehandles
+	containing string values to be shown in the comboboxes. The <i> BoldSelectChangeAction</i>
+	on the comboboxes is set to <code>&lt;&lt;bdcsSetText&lt;&lt;</code> so when the selection changes the
+	attribute specified under <i> BoldProperties</i> is updated with the selected string
+	value.
+    </p>
+    <br>
+    <p class="note">
+    <b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot; button before attempting
+    to open the system for the first time. Once the database and alias is established you only have to use the
+    &quot;Open system&quot; button when running the example program.
+    </p>
+<!-- Content frame ends -->
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

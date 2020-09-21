@@ -1,0 +1,42 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Handles/BoldPersistenceHandleSystem.UnitDoc 3     01-09-21 12:16 Joho $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandleSystem">
+         <Methods>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceControllerSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="PersistenceControllerSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemHandle">
+               <Summary>The server system where objects should be stored/retrieved from </Summary>
+               <Desc>This property must point to a TBoldSystemHandle that will act as the server system. This system might or might not be persistent itself.</Desc>
+            </Property>
+         </Properties>
+         <Summary>This persistence handle persists the objects of one system into another system</Summary>
+         <Desc>This handle is used persist the objects of one system (client system) into another system (server system). 
+<p>
+It could be used to create isolated playgrounds where the changes in one client system does not affect the other client systems until saved to the "database" (the server system). If two client systems are connected to a server system, changes that are saved to the server system will not propagate automatically to the other client system unless a propagator is used (this is the same as for other persistence handles)
+<p>
+The TBoldPersistenceHandleSystem could also be used with the remote persistence handles to create a local object cache that is shared with multiple physical clients.   
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

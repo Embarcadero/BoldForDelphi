@@ -1,0 +1,48 @@
+package BoldBDE;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (BDE Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  vcldb,
+  bdertl,
+  DesignIDE,
+  Bold;
+
+contains
+  BDEConsts in 'Source\Persistence\BDE\BDEConsts.pas',
+  BoldBDEBatchInterfaces in 'Source\Persistence\BDE\BoldBDEBatchInterfaces.pas',
+  BoldBDEInterfaces in 'Source\Persistence\BDE\BoldBDEInterfaces.pas',
+  BoldDatabaseAdapterBDE in 'Source\Persistence\BDE\BoldDatabaseAdapterBDE.pas',
+  BoldPersistenceHandleBDE in 'Source\Persistence\BDE\BoldPersistenceHandleBDE.pas',
+  BoldPersistenceHandleBDEPropertyEditors in 'Source\Persistence\BDE\BoldPersistenceHandleBDEPropertyEditors.pas',
+  BoldPersistenceHandleBdeReg in 'Source\Persistence\BDE\BoldPersistenceHandleBdeReg.pas';
+
+end.

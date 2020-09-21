@@ -1,0 +1,57 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/UtilsGuiBde/BoldAliasDialog.UnitDoc 4     01-11-13 11:42 Joho $">
+   <Classes>
+      <Class Name="TBoldAliasDialog">
+         <Methods>
+            <Method Name="BtnBrowseClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BtnOKClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ComboBoxAliasChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGenerationMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseTransactions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AliasName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerationMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseTransactions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This utility form can be used to ask the user for a BDE-alias</Summary>
+         <Desc>The form will let the user select a BDE-alias, and whether to use Queries or Tables. It is intended to be used by the model-editor when generating database schemas. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit defines the TBoldAliasDialog used by the model-editor when generating databases</Summary>
+   <Desc>This unit defines the TBoldAliasDialog used by the model-editor when generating databases</Desc>
+</DLUnitDoc>

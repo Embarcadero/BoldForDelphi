@@ -1,0 +1,85 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Validator/BoldDbValidator.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldDbValidator">
+         <Methods>
+            <Method Name="Activate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckTypeTableConsistency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeActivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemSQLMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEnabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TypeTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="validate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemSQLMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="remedy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

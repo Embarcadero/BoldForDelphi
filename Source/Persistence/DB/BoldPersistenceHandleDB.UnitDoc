@@ -1,0 +1,66 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/DB/BoldPersistenceHandleDB.UnitDoc 20    02-08-02 14:54 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandleDB">
+         <Methods>
+            <Method Name="AssertSQLDatabaseconfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLDatabaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PlaceComponentSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDatabaseAdapter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveComponentEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DatabaseAdapter">
+               <Summary>The database adapter connects the persistence handle to a database</Summary>
+               <Desc>The database adapter is the component that acts as a bridge between the database/connection component and the persistence handle. Select a database adapter that uses the database engine you want to use (BDE, Interbase Express, ADO, dbExpress etc). For details on how to configure the database adapter, refer to documentation for each concrete subclass.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Used to connect the object space to database based persistence</Summary>
+         <Desc>Most applications that need to store large amounts of objects will use a SQL database for the storage. This component represents the mapping betwen the object layer and an SQL database. The Object/Relational mapping is completely model driven and does usually not require any developer written code as long as the framework is allowed to be responsible for the database schema.
+<p>
+The schema can be generated from the Bold UML Model editor (Tools-menu - Generate Database), or by rightclicking this component. In runtime you can use either the action <see class=TBoldGenerateSchemaAction> or directly call the method <see class=TBoldAbstractPersistenceHandleDB method=CreateDataBaseSchema text=CreateDataBaseSchema>.
+<p>
+Many of the important properties of this component is inherited from the class <see class=TBoldAbstractPersistenceHandleDB> 
+<p>
+In order to access the actual database, the persistence handle needs access to a <InlineCode>TBoldDatabaseAdapter</InlineCode>. These come in many flavours; Installed with the product are at least adapters for accessing BDE, InterbaseExpress, ADO and dbExpress. There is also source code included that allows connection with Advantage, DBISAM, SQLDirect and Direct Oracle Access (DOA). They should all be located on the "Bold Persistence" component tab. Add a suitable DatabaseAdapter to your datamodule and connect it to the database component that comes with the particular flavor of database connection you selected (<InlineCode>TDatabase</InlineCode> for BDE, <InlineCode>TIBDatabase</InlineCode> for InterbaseExpress, <InlineCode>TADOConnection</InlineCode> for ADO, <InlineCode>TSQLConnection</InlineCode> for dbExpress etc) 
+<note>
+If you need to access data in a legacy database or some other form of external storage you can use the components <see class=TBoldExternalDataPersistenceHandleDatabase> or <see class=TBoldExternalDataPersistenceHandle>.
+</note></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,437 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/DbEvolutor/BoldDbEvolutorScript.UnitDoc 4     02-03-04 8:16 Johosos $">
+   <Classes>
+      <Class Name="TBoldAddColumn">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ColumnDesc">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldAddTable">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="TableDescr">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldColumnOperation">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldCopyInstances">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoveData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SourceDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldDataBaseEvolutorScript">
+         <Methods>
+            <Method Name="AddColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddSQLStatement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AdjustContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Comment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CopyInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DropColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DropIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DropTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtendSchema">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAddedColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAddedTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCopiedInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDeletedInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDroppedColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDroppedIndices">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDroppedTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMovedData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OptimizeScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReduceSchema">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AddedColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AddedTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CopiedInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DeletedInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DroppedColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DroppedIndices">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DroppedTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InternalLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MovedData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldDeleteInstances">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldDropColumn">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDropIndex">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IndexName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldDropTable">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldMoveData">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AlsoMoveData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DbTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Signature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldScriptOperation">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Script">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldTableOperation">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="TableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldTwoColumnOperation">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="SourceColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TargetColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+      <Class Name="TBoldTwoTableOperation">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="SourceTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TargetTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+</DLUnitDoc>

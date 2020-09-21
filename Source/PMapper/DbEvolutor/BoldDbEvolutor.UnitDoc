@@ -1,0 +1,223 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/DbEvolutor/BoldDbEvolutor.UnitDoc 5     11/16/01 8:37a Jeho $">
+   <Classes>
+      <Class Name="TBoldDataBaseEvolutor">
+         <Methods>
+            <Method Name="AddNewColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddNewInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddNewTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CalculateScript">
+               <Summary>Analyses database and schema.</Summary>
+               <Desc>This method will analyze the database and the model, and construct a script which is an abstract plan for how to convert the database to be compliant to the model. This script can then be executed by calling <See Method="ExecuteScript"/> and extracted as SQL by calling <See Method="GenerateScript"/>. The database and model to analyze are both taken from the <InlineCode>PersistenceHandle</InlineCode> passed in to the constructor. </Desc>
+            </Method>
+            <Method Name="CanHaveOldInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Creates an instance of the component</Summary>
+               <Desc>The <InlineCode>PersistenceHandle</InlineCode> passed in to the constructor should point to both the database to be updated and the new BoldModel. </Desc>
+            </Method>
+            <Method Name="DeleteOldInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DetectMapperChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DetectTypeClashes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DetectTypeClashesAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DropOldColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DropOldTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteScript">
+               <Summary>Executes evolution script</Summary>
+               <Desc>A call to this method will cause the database to be modified to fit the new model.
+                  <Note>You need to call <See Class="CalculateScript"/> before calling this method, or it will not work properly.</Note>
+               </Desc>
+            </Method>
+            <Method Name="ForEachMemberMappingPair">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateExecutedStatements">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateScript">
+               <Summary>Generates evolution scripts</Summary>
+               <Desc>This method to extracts an SQL script that will perform the modifications necessary to make the database compliant with the new model. The DBScript contains the part that does the structural changes and moves instance data, and the MappingScript adds the mapping information needed by Bold for Delphi/Bold for C++ to fully support model evolution.
+                  <P>The <See Method="GenericScript"/> property is useful in conjuction with this method to create a script that can be applied to any database that is structurally equivalent to the one analyzed (but does not necessarily contain the same instance data).</P>
+               </Desc>
+            </Method>
+            <Method Name="GenerateWarnings">
+               <Summary>Controls if warnings are generated</Summary>
+               <Desc>This method will add warnings to Info about what possible data losses may occur as an effect of performing the changes in the script. </Desc>
+            </Method>
+            <Method Name="GetAllTablesForClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCommonPrimaryKeyColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewPSDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPrimaryIndexForExistingTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPrimaryIndexForNewTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HasOldInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HasStorageMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeTableData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadExistingInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkMemberMappingHandled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MergeOldDbTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveDataAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveDataBetweenMappings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OldRootTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TranslateClassExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TranslateMemberName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="GenericScript">
+               <Summary>Controls if the script is generic or specific to an instance set</Summary>
+               <Desc>If this property is <InlineCode>True</InlineCode>, then <See Method="CalculateScript"/> will create a script that can be applied to any database that is structurally equivalent to the one being analyzed. If it is <InlineCode>False</InlineCode>, <InlineCode>CalculateScript</InlineCode> will use information about the existing instance data to optimize the script.
+                  <Note>If the value of this property is changed after <See Method="CalculateScript"/> has been called, this will not affect the outcome of the <See Method="ExecuteScript"/> and <See Method="GenerateScript"/> methods.</Note>
+               </Desc>
+            </Property>
+            <Property Name="NewColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewPSDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OldColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OldMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OldTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PreScript">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Script">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This class is responsible for comparing an old database to a new model, and for performing the changes needed to the database to conform to the new model. It will attempt to do this in a way that preserves as much of the data as possible. Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what this does. It is the same as the Evolve Database operation in the Model Editor. </Desc>
+      </Class>
+   </Classes>
+   <Types>
+      <Type Name="TBoldMemberMappingPairAction">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary></Summary>
+   <Desc>Please see the article about <Jump ID="mech_modelevolution" Text="Model Evolution"/> for a thorough description of what the evolutor components do.</Desc>
+</DLUnitDoc>

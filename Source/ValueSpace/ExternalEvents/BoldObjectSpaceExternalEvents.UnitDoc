@@ -1,0 +1,58 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/ExternalEvents/BoldObjectSpaceExternalEvents.UnitDoc 4     01-09-12 14:59 Joho $">
+   <Classes>
+      <Class Name="TBoldObjectSpaceExternalEvent">
+         <Methods>
+            <Method Name="DecodeExternalEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EncodeExternalEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEventType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParameter">
+               <Summary>Retrieves the part of the event that comes after the <see unit=bolddefs const=PROPAGATOR_PARAMETER_DELIMITER_CHAR></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldEventType">
+         <Summary></Summary>
+         <Desc></Desc>
+		 <Enumeration>
+
+  <EnumItem Name="bsClassChanged"> <Desc>an instance of the class (refered by the event) has been either created or deleted</Desc> </EnumItem>
+  <EnumItem Name="bsEmbeddedStateOfObjectChanged"> <Desc>the object (refered by the event) has been changed. Normally an attribute or a singlelink changed </Desc> </EnumItem>
+  <EnumItem Name="bsNonEmbeddedStateOfObjectChanged"> <Desc>The non embedded state of the object has changed. this is normally a multilink, but could also be an indirect singlelink</Desc> </EnumItem>
+  <EnumItem Name="bsGotLocks"> <Desc></Desc> </EnumItem>
+  <EnumItem Name="bsLockLost"> <Desc></Desc> </EnumItem>
+  <EnumItem Name="bsObjectDeleted"> <Desc>The object has been deleted</Desc> </EnumItem>
+</Enumeration>
+      </Type>
+      <Type Name="TBoldExternalEvent">
+         <Summary></Summary>
+         <Desc>This type represents the kind of events that a client can subscribe to in a propagator. It normally consists of a character indicating the type of the event, and the stringrepresentation of an object identity. s</Desc>
+      </Type>
+      <Type Name="TBoldObjectSpaceSubscriptionType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

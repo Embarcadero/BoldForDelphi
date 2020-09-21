@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.05.03"/>
+    <PROJECT value="BatchUpgrader.exe"/>
+    <OBJFILES value="BatchUpgrader.obj ..\Common\dSystemTypeInfo.obj dPersistence.obj 
+      dModel.obj ..\Common\fBatchUpgraderGui.obj ModelEvClasses.obj"/>
+    <RESFILES value="BatchUpgrader.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) ..\Common\dSystemTypeInfo.dfm dPersistence.dfm dModel.dfm 
+      ..\Common\fBatchUpgraderGui.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value=""/>
+    <SPARELIBS value="Vcl50.lib VclX50.lib VclIB50.lib VCLDB50.lib VclBDE50.lib BOLD31BCB5.lib 
+      BOLD31BCB5UML.lib Bold31BCB5Utils.lib"/>
+    <PACKAGES value="Vcl50.bpi Vclx50.bpi bcbsmp50.bpi Vcldb50.bpi vclado50.bpi ibsmp50.bpi 
+      VCLBDE50.bpi vcldbx50.bpi Qrpt50.bpi TeeUI50.bpi TeeDB50.bpi Tee50.bpi 
+      Dss50.bpi TeeQR50.bpi VCLIB50.bpi Vclmid50.bpi vclie50.bpi Inetdb50.bpi 
+      Inet50.bpi NMFast50.bpi webmid50.bpi bcbie50.bpi dclocx50.bpi 
+      bcb2kaxserver50.bpi Bold31BCB5XMILink.bpi BOLD31BCB5.bpi BOLD31BCB5UML.bpi 
+      Bold31BCB5Ado.bpi Bold31BCB5Com.bpi Bold31BCB5IB.bpi Bold31BCB5Utils.bpi"/>
+    <PATHCPP value=".;..\Common"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="tlink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="BatchUpgrader.cpp"/>
+    <INCLUDEPATH value="..\Common;..\..\..\..\..\Stage\BCB5\Include;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\Common;..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I..\Common -I..\..\..\..\..\Stage\BCB5\Include -I$(BCB)\include 
+      -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl50.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tW -tWM"/>
+    <PFLAGS value="-$YD -$W -$O- -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+  </LINKER>
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1053
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[Excluded Packages]
+C:\Program Files\BoldSoft\BfBCB31BCB5Ent\ThirdParty\Bin\PlexityHideBCB5_Bold31.bpl=Plexity Hide (Bold Aware)
+
+[HistoryLists\hlIncludePath]
+Count=6
+Item0=..\..\..\..\..\Stage\BCB5\Include;$(BCB)\include;$(BCB)\include\vcl
+Item1=C:\Program Files\Borland\CBuilder5\Projects;..\Common;..\..\..\..\..\Stage\BCB5\Include;$(BCB)\include;$(BCB)\include\vcl
+Item2=C:\VSS\DEV\Stage\BCB5\Include;$(BCB)\include;$(BCB)\include\vcl
+Item3=..\..\..\..\Include\BCB5;$(BCB)\include;$(BCB)\include\vcl
+Item4=..\..\..\..\Lib\BCB5;$(BCB)\include;$(BCB)\include\vcl
+Item5=..\..\..\..\LibBCB5;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=6
+Item0=..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=C:\Program Files\Borland\CBuilder5\Projects;..\Common;..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item2=C:\VSS\DEV\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item3=..\..\..\..\Stage\BCB5\Lib;..\..\..\..\Lib\BCB5;$(BCB)\lib\obj;$(BCB)\lib
+Item4=..\..\..\..\Lib\BCB5;$(BCB)\lib\obj;$(BCB)\lib
+Item5=..\..\..\..\Lib\BCB5;..\..\..\..\LibBCB5;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=2
+Item0=c:\program files\borland\cbuilder5\source\vcl;C:\VSS\DEV\Source\ObjectSpace\BORepresentation\
+Item1=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[Debugging]
+DebugSourceDirs=c:\program files\borland\cbuilder5\source\vcl;C:\VSS\DEV\Source\ObjectSpace\BORepresentation\
+
+[Parameters]
+RunParams=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

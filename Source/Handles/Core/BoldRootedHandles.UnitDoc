@@ -1,0 +1,238 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldRootedHandles.UnitDoc 6     01-10-22 22:35 Jeho $">
+   <Classes>
+      <Class Name="TBoldRootedHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Call Create to instantiate an expression-handle at runtime. </Summary>
+               <Desc>Components placed in forms or data modules at design time are created automatically.</Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys the instance</Summary>
+               <Desc>
+                  <BH>Bold events</BH>
+Calling <InlineCode>Destroy</InlineCode> can result in the following events:
+                  <UL>
+                     <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed, i..e before any part of the destruction has been performed.</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="EffectiveRootValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EffectiveRootValueChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsDeriving">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticRootType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsRootLinkedTo">
+               <Summary></Summary>
+               <Desc>The function returns <InlineCode>true</InlineCode> if the handle is directly or indirectly linked the the Handle parameter via the <See Property="RootHandle"/> property. </Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkOutOfDate">
+               <Summary></Summary>
+               <Desc>This method is used for handles that don't <See Property="subscribe"/> to their conditions. Calling <InlineCode>markOutOfDate</InlineCode> will lead to full reevaluation of <See Class="TBoldElementHandle" Property="Value" Text="value"/> the next time the <InlineCode>Value</InlineCode> property is accessed. It will also lead to subscribers to the handle recieveing a <InlineCode>beValueIdentityChanged</InlineCode>.
+                  <BH>Bold Events</BH>
+Calling <InlineCode>MarkOutOfdate</InlineCode> raises the following event:
+                  <UL>
+                     <LI><InlineCode>beValueIndentityChanged</InlineCode>: Sent when the method is called.</LI>
+                  </UL>
+                  <P>The event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+               </Desc>
+            </Method>
+            <Method Name="MarkSubscriptionOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadDesignTimeContext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadDesignTimeHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadTrackBold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefersToComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEnabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInternalRootHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRootHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRootTypeName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueIdentityChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_NotifyOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveFromRoot">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveFromValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Enabled">
+               <Summary>Toggle the enabled status of the handle</Summary>
+               <Desc>Setting <InlineCode>Enabled</InlineCode> to <InlineCode>true</InlineCode> will make the handle act according to it's properties.
+                  <P>If <InlineCode>Enabled</InlineCode> is set to <InlineCode>false</InlineCode>, <See Class="TBoldElementHandle" Property="Value" Text="value"/> (and thus <See Class="TBoldElementHandle" Property="DynamicBoldType" Text="DynamicBoldType"/> will be set to <InlineCode>nil</InlineCode>, and all subscriptions will be dropped. This allows disabling handles while still leaving them connected to their root, and with all properties intact.</P>
+               </Desc>
+            </Property>
+            <Property Name="InternalRootHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsDeriving">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ResultElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootHandle">
+               <Summary>The RootHandle property is a reference to another handle.</Summary>
+               <Desc>The <See Class="TBoldElementHandle" Property="Value" Text="Value"/> of a given rooted handle is calculated by applying some calculations to the value of the root. These calculations differ for the various subclasses, and are described in the overview of the class for each handle.
+                  <BH>Bold Events</BH>
+Since changing <InlineCode>RootHandle</InlineCode> indirectly changes <InlineCode>Value</InlineCode> the following events can be sent when setting <InlineCode>RootHandle</InlineCode>:
+                  <UL>
+                     <LI><InlineCode>beValueIndentityChanged</InlineCode>: Sent if <InlineCode>RootHandle</InlineCode> is assigned a new value.</LI>
+                  </UL>
+                  <P>If the property is assigned with the same value as it already has the event will not be sent.
+Also, the event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+               </Desc>
+            </Property>
+            <Property Name="RootTypeName">
+               <Summary></Summary>
+               <Desc>The property is a string, which must be a valid name for a type in <See Class="TBoldElementHandle" Property="StaticSystemTypeInfo" Text="StaticSystemTypeInfo"/>. At design time, a property editor is supplied to aid in choosing valid types. Typical values are "String", "Person", "Collection(String)", "Collection(Person)".
+                  <P><InlineCode>RootTypeName</InlineCode> is used when determining <InlineCode>StaticRootType</InlineCode>.</P>
+                  <BH>Bold events</BH>
+Setting <InlineCode>RootTypeName</InlineCode> gives rise to the following events:
+                  <UL>
+                     <LI><InlineCode>beValueIndentityChanged</InlineCode>: Will be send if the value of the property is changed.</LI>
+                  </UL>
+                  <P>Setting the property to its current value will not give an event.</P>
+               </Desc>
+            </Property>
+            <Property Name="StaticRootType">
+               <Summary>The static type of <See Property="RootHandle"/>.Value. </Summary>
+               <Desc>If <InlineCode>RootHandle</InlineCode> is assigned, it is defined as <InlineCode>RootHandle.StaticBoldType</InlineCode>, otherwise it is determined by applying <See Property="RootTypeName"/> to <InlineCode>StaticSystemTypeInfo</InlineCode>, which in turn is defined by <See Class="TBoldNonSystemHandle" Property="StaticSystemHandle" Text="StaticSystemHandle"/> The property is primarily intended for the internal use of the handles when evaluating <InlineCode>StaticBoldType</InlineCode>.
+                  <BH>Bold events</BH>
+Since <InlineCode>StaticRootType</InlineCode> is a read only property setting it can't directly give rise to events. The following event will however be sent when the value of the property has changed (or rather may have changed, since it may have "changed" to the same value):
+                  <UL>
+                     <LI><InlineCode>beValueIndentityChanged</InlineCode>: Will be sent whenever the conditions defining <InlineCode>StaticRootType</InlineCode> have changed.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="Subscribe">
+               <Summary> </Summary>
+               <Desc><P>If <InlineCode>Subscribe</InlineCode> is set to <InlineCode>true</InlineCode>, the handle will subscribe to changes affecting the value of the handle, and ensure that it is always kept current. If <InlineCode>Subscribe</InlineCode> is set to <InlineCode>false</InlineCode> the need to reevaluate must be signaled by calling <See Method="MarkOutOfDate"/>.</P>
+<P>Setting <InlineCode>Subscribe</InlineCode> to <InlineCode>false</InlineCode> will only suppress subscriptions related to calculating <InlineCode>Value</InlineCode>. The internal subscriptions placed by the handle on <InlineCode>Value</InlineCode> itself will still be placed, and thus <InlineCode>Value</InlineCode> will still be set to <InlineCode>nil</InlineCode> if the element is destroyed.</P>
+                  <BH>Bold Events</BH>
+Setting subscribe can raise the following events:
+                  <UL>
+                     <LI><InlineCode>beValueIndentityChanged</InlineCode>: Send if the value is changed from <InlineCode>false</InlineCode> to <InlineCode>true</InlineCode>.</LI>
+                  </UL>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldRootedHandle is the superclass for all handles that get their value and type by deriving it from another handle (the <See Property="RootHandle"/>). </Summary>
+         <Desc><InlineCode>TBoldRootedHandle</InlineCode> is a subclass of <See Class="TBoldElementHandle"/>. Everything in its description applies and is for the most part not repeated here.
+            <BH>Value</BH>
+<P>The <See Class="TBoldElementHandle" Property="Value" Text="value"/> of a rooted handle is in some way derived from the Value of RootHandle. The derivation is performed in different ways for different subclasses, and is described in the description for each class.</P>
+            <BH>Typing</BH>
+<P>In the same way as <InlineCode>Value</InlineCode> is derived from <InlineCode>RootHandle.Value</InlineCode>, <InlineCode>StaticBoldType</InlineCode> is derived from <InlineCode>RootHandle.</InlineCode><See Class="TBoldElementHandle" Property="StaticBoldType" Text="StaticBoldType"/>. However, since <InlineCode>RootHandle</InlineCode> may not always be assigned the type can also be specified directly using the <See Property="RootTypeName"/> property.</P>
+            <BH>Events and Lazy evaluation</BH>
+<P>The rooted handles have a "lazy evaluation" scheme. This means that the <InlineCode>Value</InlineCode> will not actually be derived until it is needed. Instead events will be sent it the value has changed (or rather may have changed, since in some cases it will change to the same value).</P>
+<P>It is important to note that there is a difference between the fact that the <InlineCode>Value</InlineCode> property changes, and that the contents of the element referred by <InlineCode>Value</InlineCode> changes.</P>
+<P>Any event (such as setting <InlineCode>RootHandle</InlineCode>, or <InlineCode>RootHandle.Value</InlineCode> changing) leading to a (possible) change in <InlineCode>Value</InlineCode> will lead to a <InlineCode>beValueIdentityChanged</InlineCode> event being sent to all the subscribers of the handle. However the actual deriving of <InlineCode>Value</InlineCode> will not be done until the property is accessed.</P>
+<P>Any event leading to a possible change of the contents of <InlineCode>Value</InlineCode> will lead to the subscribers to Value beeing notified according to their subscriptions.</P>
+<P>If a convienient way is needed to subscribe to the value of a handle, without worrying about these two types of subscriptions, a <See Class="TBoldPlaceableSubscriber"/> should be used.</P>
+            <BH>Subscription</BH>
+<P>In general, the handle will subscribe to anything affecting <InlineCode>Value</InlineCode>. In this case <InlineCode>Value</InlineCode> will be automatically reevaluated as needed.</P>
+<P>If <See Property="Subscribe"/> is set to <InlineCode>false</InlineCode>, no subscriptions will be placed, and the handle must be manually invalidated by calling <See Method="MarkOutOfDate"/></P>
+            <BH>Bold Events</BH>
+<P><InlineCode>TBoldRootedHandle</InlineCode> is a subclass of <See Class="TBoldSubscribableComponent"/>, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldRootedHandle</InlineCode> can send the following events:</P>
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed.</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>. Also sent if anything influencing <InlineCode>StaticBoldType</InlineCode> has changed.</LI>
+            </UL>
+<P>Due to the lazy evaluation, "has changed" has a very specific meaning. It means that the next time the <InlineCode>Value</InlineCode> property is accessed it may return a different value from the previous time. It does not imply that this value has actually been calculated yet.</P>
+<P>If several things occur that would change <InlineCode>Value</InlineCode>, but the <InlineCode>Value</InlineCode> property is not accessed in between, only the first will give rise to an event.</P>
+            <Note>The event is not send when the contents of <InlineCode>Value</InlineCode> is changed. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Defines TBoldRootedHandle</Summary>
+   <Desc>This unit defines TBoldRootedHandle, super class to all handles that are rooted in other handles.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,93 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldPlaceableSubscriber.UnitDoc 6     02-08-06 18:17 Johosos $">
+   <Classes>
+      <Class Name="TBoldPlaceableSubscriber">
+         <Events>
+            <Event Name="OnReceive">
+               <Summary>Occurs when the subscriber notices a change</Summary>
+               <Desc>Write an OnReceive event handler to take specific actions when either the <see property=BoldHandle> changes (or its value), or to react to events subscribed to in the <see event=OnSubscribeToElement>.</Desc>
+            </Event>
+            <Event Name="OnSubscribeToElement">
+               <Summary>Occurs when the subscriber is requested to place subscriptions. </Summary>
+               <Desc>Write an OnSubscribeToElement event handler to subscribe to events in the object space. When a request event occurs the <see event=OnReceive> event will be executed. 
+<p>
+The element-parameter is the value of the <see property=BoldHandle></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="ActOnHandleValueChanged">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="HandleSubscriberReceive">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="HandleValueChanged">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary>Overrides TComponent.Notification</Summary>
+               <Desc>Overrides <See Class="TComponent" Method="Notification"/></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetDelayEventsUntilPostNotify">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SubscribeToElement">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+            <Method Name="ValueSubscriberReceive">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>Provides the root element for the placeable subscriber.</Summary>
+               <Desc>The BoldHandle property provides the root element for the placeable subscriber. </Desc>
+            </Property>
+            <Property Name="DelayEventsUntilPostNotify">
+               <Summary>Causes the placeable subscriber to delay the OnSubscribeToElement call</Summary>
+               <Desc>Set this property to True to ensure that upon receiving a notification any other subscribers to the same event have already been notified. </Desc>
+            </Property>
+         </Properties>
+         <Summary>The TBoldPlaceableSubscriber is used for placing subscriptions on values in the object space. </Summary>
+         <Desc> Use TBoldPlaceableSubscriber if you want to subscribe to values in the object space. It provides event handlers for placing subscriptions and handling events in the object space.
+<p>
+The <see event=OnReceive> event will be triggered when either the <see property=BoldHandle> changes (or the value of the same), or when a subscription placed by the <see event=OnSubscribeToElement> triggers</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains the defintion and implementation of the TBoldPlaceableSubscriber component. </Summary>
+   <Desc>Contains the defintion and implementation of the <See Class="TBoldPlaceableSubscriber"/> component. </Desc>
+   <Types>
+      <Type Name="TBoldPlaceableSubcriberReceive">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSubscribeToElementEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

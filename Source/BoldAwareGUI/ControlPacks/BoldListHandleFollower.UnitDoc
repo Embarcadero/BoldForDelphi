@@ -1,0 +1,89 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldListHandleFollower.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldListHandleFollower">
+         <Methods>
+            <Method Name="Apply">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Display">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFollowerValueCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FollowerValueCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="breHandleIndexChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breHandleNil">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breListIdentityChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines follower to follow list handles.
+
+</Summary>
+   <Desc>This unit defines the TBoldListHandleFollower which is used to follow the value of a listhandle.</Desc>
+</DLUnitDoc>

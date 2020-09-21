@@ -1,0 +1,43 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/UMLPlugins/BoldUMLNameTrimmer.UnitDoc 3     11/21/01 8:03a Jeho $">
+   <Classes>
+      <Class Name="TUMLNameFixer">
+         <Methods>
+            <Method Name="Execute">
+               <Summary>The method being called by the plug in manager.</Summary>
+               <Desc>Execute is the method known to the plug in mechanism. Implement the core of the plug in logic here.</Desc>
+            </Method>
+            <Method Name="GetImageMaskColor">
+               <Summary>Mask color used for bitmap.</Summary>
+               <Desc>The result of this method (actually the Get-method for the property ImageMaskColor) is used to determine the mask color of the bitmap used on the button for the plugin.</Desc>
+            </Method>
+            <Method Name="GetImageResourceName">
+               <Summary>Name of image for plug-in button.</Summary>
+               <Desc>The result of this method (actually the Get-method for the property ImageResourceName) is used to locate the image resource for the plug in button.</Desc>
+            </Method>
+            <Method Name="GetMenuItemName">
+               <Summary>Caption of menu in Tools.</Summary>
+               <Desc>The result of this method (actually the Get-method for the property MenuItemName) will be used as the caption of the menu in the model editor.</Desc>
+            </Method>
+            <Method Name="GetPlugInType">
+               <Summary>Indicates in the plugin goes to the File or Tools menu.</Summary>
+               <Desc>The result of this method (actually the Get-method for the property PlugInType) indicates if the plug in is shown in the File or Tools menu in the model editor.</Desc>
+            </Method>
+            <Method Name="TrimClassAndMembers">
+               <Summary>Sample plugin functionality</Summary>
+               <Desc>Sample plugin functionality</Desc>
+            </Method>
+            <Method Name="TrimName">
+               <Summary>Sample plugin functionality</Summary>
+               <Desc>Sample plugin functionality</Desc>
+            </Method>
+         </Methods>
+         <Summary>Example of a plugin to the model editor.</Summary>
+         <Desc>This class shows how to write plugins to the model editor.
+            <Note>We reserve the right to change the interface to the plug-in mechanism.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Example of a plugin to the model editor.</Summary>
+   <Desc>The simplest way to write a new plug in is to follow the example in this unit.</Desc>
+</DLUnitDoc>

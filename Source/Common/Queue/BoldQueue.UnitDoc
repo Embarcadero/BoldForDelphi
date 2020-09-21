@@ -1,0 +1,227 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Queue/BoldQueue.UnitDoc 4     01-10-09 15:31 Jeho $">
+   <Classes>
+      <Class Name="TBoldQueue">
+         <Methods>
+            <Method Name="ActivateDisplayQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddBoldQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddEventToPredisplayQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeActivateDisplayQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayOne">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDisplayMessage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveBoldQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromPreDisplayQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DisplayMode">
+               <Summary></Summary>
+               <Desc>This property can be used to fine tune the performance of a bold application with gui. By default it will be set to dmDisplayOne which will cause the bold queue handler to process one item at a time and return control to the application in between. This normally makes the application more responsive since it can handle gui-input or mouse actions while the gui is still refreshing. If there are other events occuring when the application is idle it might take a long time before all items in the bold queue are processed. In this case, changing the DisplayMode to dmDisplayAll will force the bold queue handler to process all items as soon as it gets the chance.</Desc>
+               <Examples>
+                  <Example>
+                     <Body>To change the displaymode of an application: 
+                        <Code>uses
+  BoldQueue;
+
+begin
+  BoldInstalledQueue.DisplayMode := dmDisplayAll;
+end;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldQueueable">
+         <Methods>
+            <Method Name="AddToApplyList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddToDisplayList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddToPreDisplayQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AfterInPriority">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Apply">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyAllMatching">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChangeAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DiscardChangeAllMatching">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Display">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayOne">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MostPrioritizedQueuable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MostPrioritizedQueuableOrSelf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromApplyList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromDisplayList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromPreDisplayQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StronglyPrioritizedSibbling">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IsInDisplayList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MatchObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PrioritizedQueuable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StronglyDependedOfPrioritized">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="befFollowerSelected">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="befIsInDisplayList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="befStronglyDependedOfPrioritized">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldFinalizeQueue">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldInstallQueueClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldInstalledQueue">
+         <Summary>Returns the installed queue</Summary>
+         <Desc>This function will return the installed queue, creating it if required and permitted. It is not permitted to create new queues if it has been finalized, see <See Routine="BoldQueueFinalized"/></Desc>
+      </Routine>
+      <Routine Name="BoldQueueFinalized">
+         <Summary>Returns true if the queue has been finalized</Summary>
+         <Desc>When the application goes down, the queue will marked as finalized, to prevent things from being added to it.</Desc>
+      </Routine>
+   </Routines>
+   <Types>
+      <Type Name="TBoldQueueDisplayMode">
+         <Summary></Summary>
+         <Desc></Desc>
+         <Enumeration>
+            <EnumItem Name="dmDisplayOne">
+               <Desc>Each time the queue handler is allowed to process items, it will process one item, then return.</Desc>
+            </EnumItem>
+            <EnumItem Name="dmDisplayAll">
+               <Desc>Each time the queue handler is allowed to process items, it will all queued items before it returns.</Desc>
+            </EnumItem>
+         </Enumeration>
+      </Type>
+   </Types>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

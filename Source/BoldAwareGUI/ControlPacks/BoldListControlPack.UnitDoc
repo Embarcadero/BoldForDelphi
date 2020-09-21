@@ -1,0 +1,205 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldListControlPack.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAsFollowerListController">
+         <Methods>
+            <Method Name="CleanRendererData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAfterDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoAfterInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoBeforeDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoBeforeInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActiveRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToggleSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OnAfterDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnAfterInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnBeforeDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnBeforeInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldAsFollowerListRenderer">
+         <Methods>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActiveRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFollowerList">
+         <Methods>
+            <Method Name="AddSelectedToList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Delete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureSubfollowersDisplayable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentSubFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubFollowerCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PurgeEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectAll">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActiveRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentSubFollowerIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FirstActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Followers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the rendering structures for lists.
+
+</Summary>
+   <Desc>This unit defines the TBoldListAsFollowerListRenderer, TBoldAsFollowerListController and TBoldFollowerList for presenting lists.</Desc>
+</DLUnitDoc>

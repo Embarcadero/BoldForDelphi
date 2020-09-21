@@ -1,0 +1,49 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldSystemHandleCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldSystemHandleCom">
+         <Methods>
+            <Method Name="ClearAllValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerHandleClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesFromServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesToServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Persistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

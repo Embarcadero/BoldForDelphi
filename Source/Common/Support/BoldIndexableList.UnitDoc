@@ -1,0 +1,290 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldIndexableList.UnitDoc 5     02-06-11 16:34 Isje $">
+   <Classes>
+      <Class Name="TBoldIndexableList">
+         <Methods>
+            <Method Name="AddToAllNonOrderedIndexes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Exchange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUnorderedIndexCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOf">
+               <Summary>Return an index</Summary>
+               <Desc>The function makes use of the <inlinecode>TList.IndexOf</inlinecode> function.</Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary>Inserts an object at the specified index. </Summary>
+               <Desc>The procedure makes use of the <inlinecode>TList.Insert</inlinecode> procedure.</Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary>Change an items index</Summary>
+               <Desc>The procedure makes use of the <inlinecode>TList.Move</inlinecode> procedure.</Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromAllNonOrderedIndexes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Sort">
+               <Summary>Sorts the list</Summary>
+               <Desc>The procedure makes use of the <inlinecode>TList.Sort</inlinecode> procedure.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UnorderedIndexCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldIndexableList is an abstaract superclass for indexable lists.
+</Summary>
+         <Desc>Each concrete subclass needs to define is indexes.</Desc>
+      </Class>
+      <Class Name="TBoldIndexableListTraverser">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CurrentIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EndOfList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Item">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldUnOrderedIndexableList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddToAllIndexes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CalculateSupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateTraverser">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys the instance of TBoldIndexableList. 
+</Summary>
+               <Desc>If <see property=OwnsEntries> is true, all items will be destroyed too.
+			   <note>
+Do not call Destroy directly in an application. Instead, call Free. Free verifies that the object is not already freed and only then calls Destroy.</note></Desc>
+            </Method>
+            <Method Name="FirstAssignedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FirstNilSupportingIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAny">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAssignedIndexCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetKnowsSupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwnsEntries">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveAndFreeIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromAllIndexes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIndexCapacity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetKnowsSupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOwnsEntries">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TraverserClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Any">
+               <Summary>Returns any item in the list.
+</Summary>
+               <Desc> This is handy for unordered lists where you want to retrieve an item, do something with it and then remove it from the list. This way you do not need to create a list traverser.</Desc>
+            </Property>
+            <Property Name="AssignedIndexCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IndexCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Indexes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="KnowsSupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwnsEntries">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SupportsNil">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="SetIndexVariable">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldIndexableListOptions">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldIndexableListOptionsSet">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldIndexableListTraverserClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

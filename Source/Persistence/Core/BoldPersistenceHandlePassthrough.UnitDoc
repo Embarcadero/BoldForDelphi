@@ -1,0 +1,49 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesPropagation/BoldPersistenceHandlePassthrough.UnitDoc 4     02-03-13 12:53 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceHandlePassthrough">
+         <Methods>
+            <Method Name="ChainPersistenceController">
+               <Summary></Summary>
+               <Desc>Call this method from <see class=TBoldPersistenceHandle method=CreatePersistenceController text=CreatePersistenceController> in a subclass to chain the new controller to the next persistence controller </Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitNextPHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NextPHandleDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNextPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="NextPersistenceHandle">
+               <Summary></Summary>
+               <Desc>The persistence handle to which the calls received from the BoldSystem are delegated. NextPersistenceHande could be either a real persistence handle or a passthrough handle. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Superclass for classes used for intercepting the calls made by a BoldSystem to a BoldPersistenceHandle.</Summary>
+         <Desc> A TBoldPersistenceHandlePassthrough has an interface similar to that of a TBoldPersistenceHandle, but does not possess any persistence handling functionality. It's usually inserted in between a BoldSystemHandle and a BoldPersistenceHandle, and intercepts the calls made from the system to the persistence handle. It receives the calls made by the BoldSystem and delegates them to its <See Property="NextPersistenceHandle"/>. Subclasses usually do some investigation on the data that is passed along and/or add information to it.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc> </Desc>
+</DLUnitDoc>

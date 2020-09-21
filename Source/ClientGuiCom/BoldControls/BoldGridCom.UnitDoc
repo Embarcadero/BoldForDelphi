@@ -1,0 +1,1053 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldGridCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldColumnTitleCom">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultAlignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultCaption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FontChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAlignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCaption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsAlignmentStored">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsCaptionStored">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsColorStored">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsFontStored">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefreshDefaultFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RestoreDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAlignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCaption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Caption">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldConstraintRenderer">
+         <Methods>
+            <Method Name="DefaultMakeUptodateAndSetMayModifyAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldCustomGridCom">
+         <Events>
+            <Event Name="OnDrawCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnTopLeftChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AddColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AdjustActiveRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AdjustCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AutoAdjustCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditAcceptKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditShow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditShowForCustomEditors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CellFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColWidthsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColumnMoved">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateDefaultColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateEditor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DataRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultTitlePopup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultTitlePopupOnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteAllColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureConstraintColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureOneFixedCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCellFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentCellFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEditText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandleListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandleStaticType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRowFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GridRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HighlightCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InvalidateFromRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReallyInvalidateCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEditText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTitleFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TitleMenuPopup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TopLeftChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TypeMayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeCellUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeListUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_BeforeMakeListUpToDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_DeleteRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_InsertRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AddNewAtEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AlwaysShowSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldAutoColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldShowConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CellFollowers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Columns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentCellFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EnableColAdjust">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasGhostRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Options">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RowFollowers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TitleFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldFirstColumnRenderer">
+         <Methods>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGridColumnCom">
+         <Methods>
+            <Method Name="AreFontsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefreshDefaultFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RestoreDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCWAdjust">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTitle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_FontChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AssignedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CWAdjust">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultTitlePopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Grid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Title">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UserDraw">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Width">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGridColumnsCom">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Grid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldGridCom">
+         <Events>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDrawCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnTopLeftChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="AddNewAtEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AlwaysShowSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldAutoColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldShowConstraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CellFollowers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Col">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColWidths">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Columns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3d">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultColWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultRowHeight">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EnableColAdjust">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FixedColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FixedCols">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GridLineWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LeftCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Options">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Row">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RowCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RowHeights">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ScrollBars">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TitleFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VisibleColCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VisibleRowCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldCWAdjust">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldCWAdjustSet">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldColumnClassCom">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldColumnValue">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldColumnValues">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

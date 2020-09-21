@@ -1,0 +1,90 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractExternalPersistenceHandle">
+         <Events>
+            <Event Name="OnActivate">
+               <Summary>Called before the handle has been activated</Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDeActivate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndUpdates">
+               <Summary>Called after any updates </Summary>
+               <Desc>After an update has been successfully written to both the external datastore and the internal datastore, this event is called</Desc>
+            </Event>
+            <Event Name="OnFailUpdates">
+               <Summary>Called after update failures</Summary>
+               <Desc>If anything casues an exception during the update of either the external or the internal datastore, this event is called</Desc>
+            </Event>
+            <Event Name="OnStartUpdates">
+               <Summary>Called before updates to the data stores</Summary>
+               <Desc>This method is called before any updates to the persistent data stores. If you want to implement a two phase commit protocol, then this is the place to do so.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="CurrencyValueForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DateValueForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReferredObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IntValueForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyIntForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyStringForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary>Changes the active state of the handle and calls OnActivate/OnDeactivate</Summary>
+               <Desc>The events OnActivate and OnDeactivate are called when the activation state of the handle changes.</Desc>
+            </Method>
+            <Method Name="StringValueForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+           
+            <Property Name="PersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Generic functionality to handle objects stored in external data stores</Summary>
+         <Desc>This component implements some of the generic functionality to handle objects that are not primarily stored in a "Bold database".
+            <Note>The persistence handle will not use a two phase commit protocol to update the internal and the external data store. The changes will first be applied to the external data store, and then to the internal datastore. The events <See Event="OnStartUpdate"/>, <See Event="OnEndUpdate"/> and <See Event="FailUpdate"/> are called at apropriate times if you need to implement this your self.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,92 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldSortedHandle.UnitDoc 7     01-10-22 22:37 Jeho $">
+   <Classes>
+      <Class Name="TBoldComparer">
+         <Events>
+            <Event Name="OnCompare">
+               <Summary></Summary>
+               <Desc>This event should decide the internal order of two items. If <InlineCode>item1</InlineCode> should come before <InlineCode>item2</InlineCode> then the result should be negative (-1), if <InlineCode>item2</InlineCode> should come before <InlineCode>item1</InlineCode> then the result should be positive, and if the internal order of <InlineCode>item1</InlineCode> and <InlineCode>item2</InlineCode> can not be decided, then the result should be 0. This is the same scheme as is used by <InlineCode>CompareStr</InlineCode>, <InlineCode>CompareText</InlineCode>, <InlineCode>AnsiCompareStr</InlineCode> and <InlineCode>AnsiCompareText</InlineCode>. </Desc>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>function TForm1.BoldComparer1Compare(Item1: TBoldElement; Item2: TBoldElement): integer;
+begin
+  result := compareText((Item1 as TPerson).firstName, (Item2 as TPerson).firstName);
+end ;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Event>
+            <Event Name="OnPrepareSort">
+               <Summary>Allows the developer to prefetch the sort-values for all elements in the list before sorting starts</Summary>
+               <Desc>If the implementation of the <InlineCode>OnCompare</InlineCode> requires that associated objects are available, it will improve performance if these are fetched prior to the sorting of the list, rather than as they are needed. <InlineCode>OnPrepareSort</InlineCode> will be executed once before each time the list is sorted, and gives the possibility to ensure that all associated objects are fetched efficiently. <See Class="TBoldSystem" Method="FetchLinksWithObjects"/> is suitable to use in this situation</Desc>
+            </Event>
+            <Event Name="OnSubscribe">
+               <Summary></Summary>
+               <Desc>The subscribe event should subscribe to everything that was used to determine the order in the <See Event="OnCompare"/>-event. </Desc>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>procedure TForm1.BoldComparer1Subscribe(BoldElement: TBoldElement; Subscriber: TBoldSubscriber);
+begin
+  (Element as TPerson).M_FirstName.DefaultSubscribe(Subscriber, breReEvaluate);
+end ;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Compare">
+               <Summary>Called when the list is sorted.</Summary>
+               <Desc>If <See Event="OnCompare"/> is defined, it will be called. If it is not defined, the result will be 0.</Desc>
+            </Method>
+            <Method Name="PrepareSort">
+               <Summary>Invokes OnPrepareSort.</Summary>
+               <Desc><InlineCode>PrepareSort</InlineCode> simply checks in <InlineCode>OnPrepareSort</InlineCode> is assigned, and if so invokes it.</Desc>
+            </Method>
+            <Method Name="SortList">
+               <Summary>SortList is used to invoke the sorting.</Summary>
+               <Desc>
+                  <P><InlineCode>SortList</InlineCode> invokes <InlineCode>Sort</InlineCode> on the list if it is a <See Class="TBoldObjectList"/> with <See Method="Compare"/> as the <InlineCode>CompareFunction</InlineCode>.</P>
+                  <P><InlineCode>Sort</InlineCode> uses a quicksort algorithm to sort the list.</P>
+               </Desc>
+            </Method>
+            <Method Name="Subscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>This component is intended to be connected to the <InlineCode>BoldComparer</InlineCode> property of a <See Class="TBoldSortedHandle"/> (or <See Class="TBoldListHandle"/> ).</Summary>
+         <Desc> It defines two main events, <InlineCode>OnCompare</InlineCode> and <InlineCode>OnSubscribe</InlineCode>. It also defines a utility-event called <InlineCode>OnPrepareSort</InlineCode>.
+            <Note>Since OCL was extended with the <InlineCode>OrderBy</InlineCode> operator the need for this component has been greatly reduced. One advantage of the <InlineCode>TBoldComparer</InlineCode> component is that is is reusable for multiple list handles</Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldSortedHandle">
+         <Methods>
+            <Method Name="DeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldComparer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldComparer">
+               <Summary>Points to the TBoldComparer to use.</Summary>
+               <Desc>The <InlineCode>BoldComparer</InlineCode> property is used to link to a <See Class="TBoldComparer"/>.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Designed for internal use by a TBoldListHandle</Summary>
+         <Desc><InlineCode>TBoldSortedHandle</InlineCode> is used by the <See Class="TBoldListHandle"/> when the <See Class="TBoldListHandle" Property="BoldSorter" Text="BoldSorter"/> is set. There will be little need to create your own <InlineCode>TBoldSortedHandle</InlineCode>.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+</DLUnitDoc>

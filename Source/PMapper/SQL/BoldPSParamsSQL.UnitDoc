@@ -1,0 +1,25 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PMapper/SQL/BoldPSParamsSQL.UnitDoc 5     02-06-05 13:42 Johosos $">
+   <Classes>
+      <Class Name="TBoldPSSQLParams">
+         <Methods>
+         </Methods>
+         <Properties>
+            <Property Name="Database">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IgnoreUnknownTables">
+               <Summary>Do not remove non-Bold tables</Summary>
+               <Desc>When this property is True, the database generation will not attempt to delete tables that are not recognized as Bold tables.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

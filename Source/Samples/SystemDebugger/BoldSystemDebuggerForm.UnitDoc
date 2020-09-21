@@ -1,0 +1,81 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/SystemDebugger/BoldSystemDebuggerForm.UnitDoc 3     11/21/01 8:09a Jeho $">
+   <Classes>
+      <Class Name="TBoldSystemDebuggerFrm">
+         <Methods>
+            <Method Name="Button1Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithSystem">
+               <Summary>Preferred method of construction.</Summary>
+               <Desc>Use this constructor and submit your system to start debugging.</Desc>
+            </Method>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormDestroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Panel2DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Panel2DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnClearLogClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnUpdateDatabaseClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnUpdateDirtyObjectsClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="btnUpdateMemoryInfoClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cbLogOclClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cbLogPMapperClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cbLogSQLClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cbOclDebuggerClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="System">
+               <Summary>The system being debugged.</Summary>
+               <Desc>The system being debugged.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Simple debug form.</Summary>
+         <Desc>This form contains some useful routines to extract debug information from a running application.
+            <P>The form is a "normal" form, in the sense you need to use the unit, create the instance and invoke <InlineCode>Show</InlineCode> on the instance to be able to see the form.</P>
+            <P>Worth noting is the ability to see all evaluated OCL expressions, all SQL expressions sent to the database and allow viewing data state of objects in the system.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Simple debug form.</Summary>
+   <Desc>This form contains some useful routines to extract debug information from a running application.
+      <P>The form is a "normal" form, in the sense you need to use the unit, create the instance and invoke <InlineCode>Show</InlineCode> on the instance to be able to see the form.</P>
+      <P>Worth noting is the ability to see all evaluated OCL expressions, all SQL expressions sent to the database and allow viewing data state of objects in the system.</P>
+   </Desc>
+</DLUnitDoc>

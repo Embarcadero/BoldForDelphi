@@ -1,0 +1,53 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/UtilsGUI/BoldComponentValidator.UnitDoc 4     11/14/01 7:21a Jeho $">
+   <Classes>
+      <Class Name="TBoldComponentValidator">
+         <Methods>
+            <Method Name="CompleteLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateApplication">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateExpressionInContext">
+               <Summary>Validates an OCL expression in a given context.</Summary>
+               <Desc>This method can be called with an OCL expression and a context. Any errors will be logged to the <See unit="BoldLogHandler" Routine="BoldLog">. </Desc>
+            </Method>
+            <Method Name="ValidateOCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateValidateableComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Helper class for component validation.</Summary>
+         <Desc>An object of this class will be passed to components that implements the <see interface=IBoldOCLComponent> interface. The most useful method is <see method=ValidateExpressionInContext>. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldValidateableComponent">
+         <Methods>
+            <Method Name="ValidateComponent">
+               <Summary>Allows a component to validate itself.</Summary>
+               <Desc>The form validation mechanism will call any implementor of <see interface=IBoldOCLComponent> and pass a helper-object of type <see class=TBoldComponentValidator>. The component must itself decide what and how to perform validation, but it is expected to at least validate all its OCL expressions.</Desc>
+            </Method>
+         </Methods>
+         <Summary>This interface can be implemented by components that require customized validation of OCL expressions.</Summary>
+         <Desc>Simple components with only one OCL expression (such as <See Class="TBoldEdit"/>) can be automatically validated if they implement the <see interface=IBoldOCLComponent> interface. More complex components, such as the <See Class="TBoldGrid" Text="grid"/> or the <See Class="TBoldTreeView" Text="treeview"/>, which has multiple OCL expressions, perhaps with different contexts can implement this interface instead. When a user validates a form the <see method=ValidateComponent> method of the component will be called. Here any custom validation can be performed</Desc>
+      </Interface>
+   </Interfaces>
+   <Summary>Defines interfaces to support validation of OCL expressions in components.</Summary>
+   <Desc>This unit defines the interface <InlineCode>IBoldValidateableComponent</InlineCode>, which is used in design time validation of form/component validation.</Desc>
+</DLUnitDoc>

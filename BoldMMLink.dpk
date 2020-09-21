@@ -1,0 +1,47 @@
+package BoldMMLink;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (ModelMaker Link)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  Bold,
+  BoldUml,
+  DesignIDE;
+
+contains
+  BoldMMLinkReg in 'Source\UMLModel\ModelLinks\ModelMaker\Link\BoldMMLinkReg.pas',
+  BoldModelMaker_TLB in 'Source\UMLModel\ModelLinks\ModelMaker\Link\BoldModelMaker_TLB.pas',
+  BoldUMLMMLink in 'Source\UMLModel\ModelLinks\ModelMaker\Link\BoldUMLMMLink.pas',
+  BoldMMPlugin_TLB in 'Source\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMPlugin_TLB.pas',
+  BoldMMTVDefGen in 'Source\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMTVDefGen.pas',
+  BoldMMTVDefGenGUI in 'Source\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMTVDefGenGUI.pas',
+  BoldMMTVDefs in 'Source\UMLModel\ModelLinks\ModelMaker\MMPlugin\BoldMMTVDefs.pas';
+
+end.

@@ -1,0 +1,140 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractPersistenceHandleDB">
+             <Events>
+		  <Event Name="OnGetCurrentTime">
+               <Summary>Event for plugging in method replacing the Delphi 'now' function</Summary>
+               <Desc>
+                  <Note>This feature is only available in the Product Extension Object Versioning Extension.</Note>
+               </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Event>
+           
+         </Events>
+     <Methods>
+              <Method Name="AddModelEvolutionInfoToDatabase">
+               <Summary>Adds tables to the database to support ModelEvolution</Summary>
+               <Desc>This method will add the mapping information tables required in the database to support using the ModelEvolution feature. These tables are normally added to the database when the schema is first generated, but the schema was generated prior to version 3.0 of Bold for Delphi, then these tables will be missing
+                  <Warning>Always take a backup of your critical data before applying changes to the database structure</Warning>
+               </Desc>
+            </Method>
+            <Method Name="CreateDataBaseSchema">
+               <Summary>Creates a schema in the database</Summary>
+               <Desc>This method will create an empty database schema in the database that the persistence handle is connected to. This schema will be sufficient to store objects from the model of the <See Property="BoldModel"/>. If there is a schema already in the database, the user will be prompted if he wants to proceed anyway.
+                  <Warning>Any existing data will be removed from the database</Warning>
+               </Desc>
+               <Params>
+                  <Param Name="IgnoreUnknownTables">
+                     <Desc>When this parameter is True, the database generation will not attempt to delete tables that are not recognized as Bold tables. It is defaulted to False.</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClockLogGranularity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistenceControllerDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLDatabaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PlaceComponentSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PreparePSParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClockLogGranularity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEvolutionSupport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUpgraderHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveComponentEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+              <Property Name="BoldModel">
+               <Summary></Summary>
+               <Desc>Always set this property to point to the same <InlineCode>TBoldModel</InlineCode> component as the TBoldSystemHandle is pointing to.</Desc>
+            </Property>
+            <Property Name="ClockLogGranularity">
+               <Summary>The granularity for the mapping between time stamps and physical time. </Summary>
+               <Desc>This is the smallest time that will occur between two entries in the clock log. If you have a system that has very frequent updates, you might want to restrict the number of entries in the clock log to one entry per 5 seconds for example.
+                  <Note>This feature is only available in the Product Extension Object Versioning Extension.</Note>
+               </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+            <Property Name="DatabaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EvolutionSupport">
+               <Summary>Specifies if the application should support dynamic model evolution</Summary>
+               <Desc>Normally the application derives the mapping information (where objects and attributes are stored in the database) directly from the model when it starts. If the datbase is expected to change, and old versions of the application are still running, then the mapping information can be read from the database instead. This restricts the changes that can be made to the model (nothing that is accessed by any client that is still in use can ever be removed from the model).
+                  <P>If you plan to upgrade all your clients when deploying new model changes you should set htis property to <InlineCode>false</InlineCode> (default). If you plan to have old versions running against the same database as new versions, you must set this to <InlineCode>true</InlineCode></P>
+               </Desc>
+               <SeeAlso><Jump ID="mech_ModelEvolution" Text="Model Evolution"/></SeeAlso>
+            </Property>
+
+                <Property Name="PersistenceControllerDefault">
+               <Summary></Summary>
+               <Desc>All calls to fetch or update objects will go directly to the persistence controller. Normally there is no need to call any methods on the PersistenceController manually.</Desc>
+            </Property>
+            <Property Name="SQLDatabaseConfig">
+               <Summary>The SQLDatabaseConfig that defines some of the settings for the database connnection</Summary>
+               <Desc>Subclasses may either themselves aggregate a TBoldSQLDatabaseConfig-object, or delegate the ownership to some related component. The recommended subclass (<see class=TBoldPersistenceHandleDB> links to a <see class=TBoldDatabaseAdapter> that will carry a TBoldSQLDatabaseConfig-object. </Desc>
+            </Property>
+             <Property Name="UpgraderHandle">
+               <Summary></Summary>
+               <Desc>If this property is connected to a <See Class="TBoldObjectUpgraderHandle"/> component the fetch operation will automatically upgrade objects that were written by an application with an older model version. This will be completely transparent to the caller of the fetch operation. </Desc>
+               <SeeAlso><Jump ID="mech_ModelEvolution" Text="Model Evolution"/></SeeAlso>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

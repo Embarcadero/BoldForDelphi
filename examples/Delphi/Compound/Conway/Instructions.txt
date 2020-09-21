@@ -1,0 +1,4 @@
+ Instructions:
+
+ 1-  Mark the Cells with a star (*) sign.
+ 2- You can cut and paste some interesting patterns from the files Initial.txt and zip2.lif.txt.

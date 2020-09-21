@@ -1,0 +1,173 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldOclRepository.UnitDoc 4     01-11-09 15:21 Aniv $">
+   <Classes>
+      <Class Name="TBoldOclDefinition">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc>The type defined by <See Property="Context"/> in <See Property="SystemTypeInfo"/>. Mainly intended for the use of the property editor for <See Property="Expression"/> </Desc>
+            </Method>
+            <Method Name="GetDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="QueryInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AddRef">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Context">
+               <Summary></Summary>
+               <Desc>This string must be the name of a valid type in the type system defined by <See Property="SystemTypeInfo"/>.
+At designtime the property editor will aid in setting the type. </Desc>
+            </Property>
+            <Property Name="Definitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary></Summary>
+               <Desc>When the macro is used, it will be expanded to this string. </Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc>This is the name of the macro. The OCL evaluator will replace the OCL expression %Name with <See Property="Expression"/>. </Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc>This property is intended mainly for the use of the property editor for <See Property="Context"/>. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>Each macro definition has <See Property="Context"/>, <See Property="Name"/> and <See Property="Expression"/>.
+            <BH>Advanced Information</BH>
+It is possible, but not advisable, to have multiple macros with the same name but different contexts. In this case the most specific matching context will be used. </Desc>
+      </Class>
+      <Class Name="TBoldOclDefinitions">
+         <Methods>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueName">
+               <Summary></Summary>
+               <Desc> Used internally to create a name for a new macro.</Desc>
+            </Method>
+            <Method Name="LookUpOclDefinition">
+               <Summary></Summary>
+               <Desc>Locates the defintion with Name=Name that best matches Context. Returns the definitions Expression.</Desc>
+            </Method>
+            <Method Name="NameIsUnique">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc>Index property for accessing the individual defintions in the collection. </Desc>
+            </Property>
+            <Property Name="OwningRepository">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldOclRepository">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LookUpOclDefinition">
+               <Summary></Summary>
+               <Desc>Look up the macro with name Name </Desc>
+            </Method>
+            <Method Name="SetOclDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OclDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemHandle">
+               <Summary></Summary>
+               <Desc>The OCL repository is connected to a SystemHandle. Ths OCL-expressions defined in the repository will be available in expressions that are evaluated in context of that system.
+Furthermore, the type information will provide designtime support when creating the definitions. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Stores a number of pre-defined OCL-expressions as macros</Summary>
+         <Desc>The OCL repository stores a number of pre-defined OCL-expressions as macros. Once the macros are defined they can be used by name in all places where OCL expressions can be used.
+They are used with the syntax <InlineCode>%MacroName</InlineCode>. Note that this replaces the entire expression, i.e. it is not possible to write something like <InlineCode>%MacroName.SomeMoreOCL</InlineCode>.
+The macros are defined using the property editor for <See Property="OclDefinitions"/>.
+            <BH>Advanced information</BH>
+It is possible but not advisable to change the contents of the repository at runtime. Since no subscriptions are placed on the repository, expressions already fetched from the repository will not be reevaluated. However, the new value will be used the next time the macro is evaluated. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

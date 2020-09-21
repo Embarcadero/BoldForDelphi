@@ -1,0 +1,119 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/PessimisticLocking/BoldRegionDefinitionParser.UnitDoc 3     01-10-24 9:17 Jeho $">
+   <Classes>
+      <Class Name="EBoldBadLockExpression">
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="EBoldLockExpressionSyntaxError">
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionParser">
+         <Methods>
+            <Method Name="AddError">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CheckRegionReferences">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Eat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDefaultRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEOS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNextToken">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSymbol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Parse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParseCurrentExpression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParseMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParseMembersAndSubregions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ParseSubregions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Skip">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TryToEat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EOS">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Errors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NextToken">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RegionDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+   </Classes>
+   <Types>
+      <Type Name="TBoldRegionDefinitionSymbolType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldRegionParserErrorType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary></Summary>
+   <Desc>The components defined in this unit are part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.
+      <P>This feature set is licensed separately.</P>
+   </Desc>
+</DLUnitDoc>

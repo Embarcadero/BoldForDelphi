@@ -1,0 +1,51 @@
+[
+  uuid(6B076BBC-EAFF-4C11-B024-B542EF8CFCB3),
+  version(1.0),
+  helpstring("AccountClasses Library")
+]
+library AccountClasses
+{
+
+  importlib("BoldComObjectSpace.dll");
+  importlib("stdole2.tlb");
+  importlib("STDVCL40.DLL");
+
+
+  [
+    uuid(34342E85-B63D-4851-BCB8-001BF1EC75D4),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IAccountClassesRoot: IBoldObject
+  {
+  };
+
+
+  [
+    uuid(F360E44E-4436-4721-98B3-3C001AA12073),
+    version(1.0),
+    dual,
+    oleautomation
+  ]
+  interface IAccount: IAccountClassesRoot
+  {
+    [propget, id(0x00000400)]
+    HRESULT _stdcall Total([out, retval] LONG * Value );
+    [propput, id(0x00000400)]
+    HRESULT _stdcall Total([in] LONG Value );
+    [propget, id(0x00000401)]
+    HRESULT _stdcall Number([out, retval] BSTR * Value );
+    [propput, id(0x00000401)]
+    HRESULT _stdcall Number([in] BSTR Value );
+    [propget, id(0x00000402)]
+    HRESULT _stdcall Credit([out, retval] LONG * Value );
+    [propput, id(0x00000402)]
+    HRESULT _stdcall Credit([in] LONG Value );
+  };
+
+
+
+};
+
+ 

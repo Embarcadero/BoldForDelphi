@@ -1,0 +1,103 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldRegistry.UnitDoc 3     02-08-05 11:43 Joho $">
+   <Classes>
+      <Class Name="TBoldRegistry">
+         <Methods>
+            <Method Name="CloseKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OpenKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OpenNotDefaultKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadBool">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteBool">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="RegistryMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="RegPathExtention">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="GetBoldBasePath">
+         <Summary>Returns the path for the BfD installation</Summary>
+         <Desc>The function reads the registry key that is added when BfD is installed.</Desc>
+		 <SeeAlso><see method=GetBoldLibPath></SeeAlso>
+		 <SeeAlso><see method=GetBoldResPath></SeeAlso>
+      </Routine>
+      <Routine Name="GetBoldLibPath">
+         <Summary>Returns the path for the Lib directory of the BfD installation</Summary>
+         <Desc>The function reads the registry key that is added when BfD is installed.</Desc>
+		 <SeeAlso><see method=GetBoldBasePath></SeeAlso>
+      </Routine>
+      <Routine Name="GetBoldResPath">
+         <Summary>Returns the path for the Res directory of the BfD installation</Summary>
+         <Desc>The function reads the registry key that is added when BfD is installed.</Desc>
+		 <SeeAlso><see method=GetBoldBasePath></SeeAlso>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TRegistryMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,351 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientGuiCom/BoldControls/BoldNavigatorCom.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldCustomNavigatorCom">
+         <Events>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AdjustSizeXY">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BtnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BtnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CMEnabledChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClickHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FixButtonGlyphs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitHints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MapMinus">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActiveButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBounds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFlat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetImages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVisible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMGetDlgCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMKillFocus">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSetFocus">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldDeleteMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConfirmDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DeleteQuestion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Flat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Hints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageIndices">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Images">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VisibleButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNavButton">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Paint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TimerExpired">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Index">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NavStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNavigatorCom">
+         <Events>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnResize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldDeleteMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConfirmDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DeleteQuestion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Flat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Hints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageIndices">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Images">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VisibleButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="InitRepeatPause">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="RepeatPause">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,166 @@
+<html>
+
+<head>
+  <title>Constraints</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt;
+      <a href="constraints.html">Constraints</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Constraints</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Simple/ObjectSpace/Constraints/BE_Constraints.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/ObjectSpace/Constraints/BE_Constraints.bpr">Launch CBuilder-example</a>
+    <p>This example illustrates how constraints in the model may be used to validate the
+    consistency of an object. The participating classes and their constraints are:
+    </p>
+    <table width="600" cellspacing="0">
+      <tr>
+        <td class="grey" width="80"><b>Class</b></td>
+        <td class="grey" width="220"><b>Constraint</b></td>
+        <td class="grey" width="10"></td>
+        <td class="grey" width="290"><b>Constraint as OCL</b></td></tr>
+      <tr class="even">
+        <td><b>Customer</b></td>
+        <td>If a customer doesn't have a credit card number, the maximum credit limit is 1000</td>
+        <td></td>
+        <td>(creditcardno = '') implies (creditlimit &lt; 1000)</td></tr>
+      <tr class="odd">
+        <td>&nbsp;</td>
+        <td>A customer must have a name</td>
+        <td></td>
+        <td>name &lt;&gt; ''</td></tr>
+      <tr class="even">
+        <td>&nbsp;</td>
+        <td>A customer must have a shipping address</td>
+        <td></td>
+        <td>shippingAddress &lt;&gt; ''</td></tr>
+      <tr class="odd">
+        <td><b>Order</b></td>
+        <td>the sum of an order must not exceed the creditlimit of a customer</td>
+        <td></td>
+        <td>ordersum &lt; customer.creditlimit</td></tr>
+      <tr class="even">
+        <td>&nbsp;</td>
+        <td>The shipping date must come after the order date</td>
+        <td></td>
+        <td>shippingdate &lt; orderdate</td></tr>
+      <tr class="odd">
+        <td><b>OrderItem</b></td>
+        <td>The quantity must be more than 0</td>
+        <td></td>
+        <td>qty &gt; 0</td></tr>
+      <tr class="even">
+        <td>&nbsp;</td>
+        <td>We do not accept ordersitems whose sum is less than 100</td>
+        <td></td>
+        <td>itemSum &gt; 100</td></tr>
+      <tr class="odd">
+        <td>&nbsp;</td>
+        <td>Each orderitem must be related to a part</td>
+        <td></td>
+        <td>part-&gt;notEmpty</td></tr>
+      <tr class="even">
+        <td><b>Part</b></td>
+        <td>A part must have a positive price</td>
+        <td></td>
+        <td>price &gt; 0</td></tr>
+      <tr class="odd">
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td></td>
+        <td>&nbsp;</td></tr>
+      <tr class="even">
+        <td><b>Order</b></td>
+        <td>An order may not have more than 3 orderitems</td>
+        <td></td>
+        <td>This is constrained using <i> multiplicity</i> 0..3 on the relation, and not explicitly using           OCL</td>
+      </tr>
+    </table>
+    <br>
+    <hr size="1">
+    <p class="head2">How to run</p>
+<p>
+	Add instances to the customers, parts, orders and orderitems grids. The red sphere
+that appears in the left column of the grids indicates that there are some broken constraints,
+meaning that there's some missing information, for the
+	instance. As long as some necessary information is missing for the instance it
+	can't be saved to the database. If you try to save anyway you will get an
+	exception.
+	</p>
+	<p>The GUI continuously presents the broken constraints on the objects in the lower grid.
+	Double-click a row in the grid to open up the object you have to add information
+	to.
+	</p>
+	<p class="head2">Work with constraints</p>
+<p>	To see the constraints used in this example open the model editor in the
+	project. Select a class to view its constraints. If you can't see an editfield named
+Constraints go to the main menu and check the Advanced option under
+    View. Now you should get
+	additional fields and one of them should be the Constraints
+	field.&nbsp;Open the constraints editor by clicking the button at the right
+	of the edit field. There you see all the constraints associated to the class.
+	The body field is the constraint written in OCL.
+	</p>
+	<p>The class <code>Order</code> puts a constraint on the number of orderitems using <i>multiplicity</i>. 
+	You can see how that is done by selecting the role <code>Items</code> on the <code>Order</code> class in the model editor. One of the fields shown for the
+	role is Multiplicity. Here you can prescribe how many items you
+    can relate to an order.
+	</p>
+	<p class="head3">A way of handling them</p>
+	<p>The example enforces constraints to be valid when an object is updated by overriding
+   the framework methods <code>MayUpdate</code>  and <code>ReceiveQueryfromOwned
+	</code>on the root class <code>BusinessClassesRoot</code>. If an object breaks a constraint, the update
+   will be aborted, and the reason will be shown to the user.
+   </p>
+   <p>The little red/green sphere in the left column in the grids is turned on with the
+    property <i> BoldShowConstraints</i> on the grid, and indicates that the
+    object has/has not any broken constraints.
+    </p>
+    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_OverrideFWMethods.htm" target="self">
+			How to override framework methods</a>  (<font size="1">also found in
+          [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+	<br>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and
+    alias is established you only have to use the &quot;Open system&quot; button when running
+    the example program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

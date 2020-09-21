@@ -1,0 +1,237 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/ConnectionCOM/BoldComClient.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldComClient">
+         <Methods>
+            <Method Name="AddConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CancelSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnectionCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Instance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClientId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConnectionCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connections">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EventQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComClientConnection">
+         <Methods>
+            <Method Name="Connect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConnectFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Connected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Connecting">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Disconnecting">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Reconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerDisconnect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConnectionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComClientEventQueue">
+         <Methods>
+            <Method Name="HandleEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComClientInterface">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OnServerEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Release">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComClientPassthroughSubscriber">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComClientSubscriber">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClientId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSubscriberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClientId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubscriberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="bceConnectFailed">
+         <Summary>Event constant.</Summary>
+         <Desc> This event is sent when a connection attempt failed for some reason. </Desc>
+      </Const>
+      <Const Name="bceConnected">
+         <Summary>Event/status constant. </Summary>
+         <Desc> This event is sent when a connection has been established. </Desc>
+      </Const>
+      <Const Name="bceConnecting">
+         <Summary>Event/status constant.</Summary>
+         <Desc> This event is sent shortly before a connection attempt is made. </Desc>
+      </Const>
+      <Const Name="bceDisconnected">
+         <Summary>Event/status constant. </Summary>
+         <Desc> This event is sent after the connection has been closed.</Desc>
+      </Const>
+      <Const Name="bceDisconnecting">
+         <Summary>Event/status constant. </Summary>
+         <Desc>This event is sent when a connection is about to be closed.</Desc>
+      </Const>
+      <Const Name="bceHandleChange">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bceHandleInit">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bceHandleTerm">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains classes used in a COM client application.</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

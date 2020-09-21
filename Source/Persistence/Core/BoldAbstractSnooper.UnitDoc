@@ -1,0 +1,109 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractSnooper">
+         <Methods>
+            <Method Name="AddClassEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClassNameFromClassID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoPropagatorFailure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDataBaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateNonEmbeddedStateChangedEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MemberIsEmbeddedSingleLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MemberIsNonEmbeddedLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NonEmbeddedStateOfObjectChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjectIdByMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchIDListWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseDataBaseLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToNonEmbeddedStateChangedEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TransmitEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CancelledSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Events">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnPropagatorFailure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

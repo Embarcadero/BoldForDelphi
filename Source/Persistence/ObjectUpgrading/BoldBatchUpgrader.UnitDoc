@@ -1,0 +1,75 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/ObjectUpgrading/BoldBatchUpgrader.UnitDoc 4     01-10-24 9:18 Jeho $">
+   <Classes>
+      <Class Name="TBoldBatchUpgrader">
+         <Methods>
+            <Method Name="AutoUpgradeObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpgradeClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpgradeObjectIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpgradeObjectIdListInTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpgradeObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoUpgradedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BatchSize">
+               <Summary></Summary>
+               <Desc>The maximum number of instances to upgrade in one go. This property can be adjusted so as to not block the database for too long periods of time. </Desc>
+            </Property>
+            <Property Name="IntervalBetweenBatches">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsUpgrading">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxExecuteTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UpgradedObjects">
+               <Summary>Call this method to perform one round of object upgrading.</Summary>
+               <Desc>This will result in the upgrading of all objects that does not need any manual upgrading, as well as the upgrading of some, but not necessarily all, objects for which the Upgrader has an event defined. Rather, the amount of objects that will be passed on to the upgrader is determined by the configuration and the performance of the database. </Desc>
+            </Property>
+            <Property Name="Upgrader">
+               <Summary></Summary>
+               <Desc>The TBoldObjectUpgrader that is responsible for the actual upgrading of objects.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This class handles the conversion of many objects from an older version of a model to a newer version. It uses a <See Class="TBoldObjectUpgrader"/> for the individual instances, and has configuration for batch sizes and other performance properties.
+            <P>This class is part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>The components/classes herein are part of the <Jump ID="Mech_modelevolution" Text="Model Evolution"/> feature set.</Desc>
+</DLUnitDoc>

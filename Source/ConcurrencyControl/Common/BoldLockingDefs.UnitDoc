@@ -1,0 +1,27 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ConcurrencyControl/Common/BoldLockingDefs.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BOLD_DBLOCK_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="LOCKS_CAN_TIMEOUT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="LOCK_MANAGER_ADMIN_OBJECT_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="LOCK_MANAGER_OBJECT_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

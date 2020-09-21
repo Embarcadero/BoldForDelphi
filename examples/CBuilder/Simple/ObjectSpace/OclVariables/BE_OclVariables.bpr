@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="BE_OclVariables.exe"/>
+    <OBJFILES value="BE_OclVariables.obj MainForm.obj OclVariablesClasses.obj"/>
+    <RESFILES value="BE_OclVariables.res"/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES) MainForm.dfm"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="dbexpress.lib cds.lib"/>
+    <SPARELIBS value="rtl.lib vcl.lib vclx.lib ibxpress.lib dbrtl.lib vcldb.lib bdertl.lib 
+      cds.lib dsnap.lib dbexpress.lib Bold40BCB6.lib Bold40BCB6BDE.lib 
+      Bold40BCB6IB.lib Bold40BCB6VCLGUI.lib Bold40BCB6Uml.lib"/>
+    <PACKAGES value="rtl.bpi vcl.bpi vclx.bpi bcbsmp.bpi dbrtl.bpi vcldb.bpi adortl.bpi 
+      ibsmp.bpi bdertl.bpi vcldbx.bpi qrpt.bpi teeui.bpi teedb.bpi tee.bpi 
+      dss.bpi teeqr.bpi ibxpress.bpi dsnap.bpi vclie.bpi inetdb.bpi inet.bpi 
+      nmfast.bpi webdsnap.bpi bcbie.bpi dclocx.bpi bcb2kaxserver.bpi 
+      Bold40BCB6.bpi Bold40BCB6Utils.bpi Bold40BCB6Ado.bpi Bold40BCB6BDE.bpi 
+      Bold40BCB6Com.bpi Bold40BCB6ComGUI.bpi Bold40BCB6DBExpress.bpi 
+      Bold40BCB6IB.bpi Bold40BCB6MMLink.bpi Bold40BCB6UDPProp.bpi 
+      Bold40BCB6Uml.bpi Bold40BCB6VCLGUI.bpi Bold40BCB6XMILink.bpi"/>
+    <PATHCPP value=".;"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <DEBUGLIBPATH value="$(BCB)\lib\debug"/>
+    <RELEASELIBPATH value="$(BCB)\lib\release"/>
+    <LINKER value="ilink32"/>
+    <USERDEFINES value="_DEBUG"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
+    <MAINSOURCE value="BE_OclVariables.cpp"/>
+    <INCLUDEPATH value="C:\VSS\DEV\Stage\BCB6\Lib;C:\VSS\DEV\Stage\BCB6\Include;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation;P:\ObjectSpace\UtilsGUI;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="..\..\..\..\..\Stage\BCB6\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-IC:\VSS\DEV\Stage\BCB6\Lib -IC:\VSS\DEV\Stage\BCB6\Include 
+      -IP:\Common\Support -IP:\Samples\Actions -IP:\Common\Handles 
+      -IP:\Common\Subscription -IP:\UMLModel\Handles -IP:\MoldModel\Handles 
+      -IP:\Handles\Core -IP:\BoldAwareGUI\BoldControls 
+      -IP:\ValueSpace\Interfaces -IP:\Common\Core -IP:\ValueSpace\Id 
+      -IP:\ObjectSpace\BORepresentation -IP:\Common\MsXml 
+      -IP:\ObjectSpace\RTModel -IP:\ObjectSpace\Core -IP:\Common\TaggedValues 
+      -IP:\Common\UML -IP:\MoldModel\TypeNameDictionary -IP:\MoldModel\Core 
+      -IP:\FreestandingValueSpace\Core -IP:\ObjectSpace\Interfaces 
+      -IP:\Persistence\Core -IP:\ValueSpace\Condition 
+      -IP:\ObjectSpace\PessimisticLocking -IP:\BoldAwareGUI\ControlPacks 
+      -IP:\Common\Queue -IP:\Common\Environment -IP:\Handles\Actions 
+      -IP:\Persistence\DB -IP:\Common\Logging -IP:\PMapper\SQL -IP:\PMapper\Core 
+      -IP:\PMapper\Default -IP:\Persistence\ObjectUpgrading -IP:\UMLModel\Core 
+      -IP:\Persistence\BDE -IP:\Persistence\IBX -IP:\Persistence\Propagation 
+      -IP:\ObjectSpace\UtilsGUI -I$(BCB)\include -I$(BCB)\include\vcl 
+      -src_suffix cpp -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=c:\PROGRA~1\borland\CBUILD~2\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 
+      -b- -k -y -v -vi- -c -tW -tWM"/>
+    <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <RFLAGS value=""/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="-D&quot;&quot; -aa -Tpe -x -Gn -v"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="c0w32.obj $(PACKAGES) Memmgr.Lib sysinit.obj $(OBJFILES)"/>
+    <ALLRES value="$(RESFILES)"/>
+    <ALLLIB value="$(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib"/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="BE_OclVariables.cpp" FORMNAME="" UNITNAME="BE_OclVariables" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="BE_OclVariables.res" FORMNAME="" UNITNAME="BE_OclVariables" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="MainForm.cpp" FORMNAME="Form1" UNITNAME="MainForm" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="OclVariablesClasses.cpp" FORMNAME="" UNITNAME="OclVariablesClasses" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1053
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[Excluded Packages]
+C:\VSS\DEV\Stage\BCB6\Bin\Bold40BCB6ExPe.bpl=Bold Package (12)
+
+[HistoryLists\hlIncludePath]
+Count=5
+Item0=C:\VSS\DEV\Stage\BCB6\Lib;C:\VSS\DEV\Stage\BCB6\Include;P:\Common\Support;P:\Samples\Actions;P:\Common\Handles;P:\Common\Subscription;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\BoldAwareGUI\BoldControls;P:\ValueSpace\Interfaces;P:\Common\Core;P:\ValueSpace\Id;P:\ObjectSpace\BORepresentation;P:\Common\MsXml;P:\ObjectSpace\RTModel;P:\ObjectSpace\Core;P:\Common\TaggedValues;P:\Common\UML;P:\MoldModel\TypeNameDictionary;P:\MoldModel\Core;P:\FreestandingValueSpace\Core;P:\ObjectSpace\Interfaces;P:\Persistence\Core;P:\ValueSpace\Condition;P:\ObjectSpace\PessimisticLocking;P:\BoldAwareGUI\ControlPacks;P:\Common\Queue;P:\Common\Environment;P:\Handles\Actions;P:\Persistence\DB;P:\Common\Logging;P:\PMapper\SQL;P:\PMapper\Core;P:\PMapper\Default;P:\Persistence\ObjectUpgrading;P:\UMLModel\Core;P:\Persistence\BDE;P:\Persistence\IBX;P:\Persistence\Propagation;P:\ObjectSpace\UtilsGUI;$(BCB)\include;$(BCB)\include\vcl
+Item1=$(BCB)\include;$(BCB)\include\vcl;D:\bold\BfD\Stage\BCB5\Include
+Item2=P:\BoldAwareGUI\BoldControls\;P:\Common\Support\;P:\Common\Subscription\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\Samples\Actions\;$(BCB)\include;$(BCB)\include\vcl;..\..\..\..\..\Stage\BCB5\Include
+Item3=P:\BoldAwareGUI\BoldControls;P:\Common\Support;P:\Common\Subscription;P:\PersistenceControllers\Handles;P:\PersistenceControllerCore\Handles;P:\Common\Handles;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\Samples\Actions;$(BCB)\include;$(BCB)\include\vcl;D:\BOLD\BfD\Stage\BCB5\Include
+Item4=P:\BoldAwareGUI\BoldControls;P:\Common\Support;P:\Common\Subscription;P:\PersistenceControllers\Handles;P:\PersistenceControllerCore\Handles;P:\Common\Handles;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\Samples\Actions;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=6
+Item0=..\..\..\..\..\Stage\BCB6\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=$(BCB)\lib\obj;$(BCB)\lib;D:\bold\BfD\Stage\BCB5\Lib;D:\bold\BfD\Stage\BCB5\Res
+Item2=P:\BoldAwareGUI\BoldControls\;P:\Common\Support\;P:\Common\Subscription\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\Samples\Actions\;..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib;..\..\..\..\..\Stage\BCB5\Res
+Item3=P:\BoldAwareGUI\BoldControls\;P:\Common\Support\;P:\Common\Subscription\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\Samples\Actions\;..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib;D:\BOLD\BfD\Stage\BCB5\Res;D:\BOLD\BfD\Stage\BCB5\lib
+Item4=P:\BoldAwareGUI\BoldControls\;P:\Common\Support\;P:\Common\Subscription\;P:\PersistenceControllers\Handles\;P:\PersistenceControllerCore\Handles\;P:\Common\Handles\;P:\UMLModel\Handles\;P:\MoldModel\Handles\;P:\Handles\Core\;P:\Samples\Actions\;..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib
+Item5=P:\BoldAwareGUI\BoldControls;P:\Common\Support;P:\Common\Subscription;P:\PersistenceControllers\Handles;P:\PersistenceControllerCore\Handles;P:\Common\Handles;P:\UMLModel\Handles;P:\MoldModel\Handles;P:\Handles\Core;P:\Samples\Actions;..\..\..\..\..\Stage\BCB5\Lib;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=1
+Item0=_DEBUG
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+  </IDEOPTIONS>
+</PROJECT>

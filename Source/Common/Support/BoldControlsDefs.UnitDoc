@@ -1,0 +1,82 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BoldPropertiesController_SupportedPropertyTypes">
+         <Summary>The property types supported by the <See Class="TBoldPropertiesController"/></Summary>
+         <Desc> 
+            <DelphiCode>		   
+BoldPropertiesController_SupportedPropertyTypes =
+  [tkInteger, tkChar, tkEnumeration, tkFloat, 
+   tkString, tkSet, tkClass, tkWChar, tkLString, 
+   tkWString, tkVariant, tkInt64];</DelphiCode>
+ </Desc>
+      </Const>
+   </Constants>
+   <Types>
+      <Type Name="TBoldCWAdjust">
+         <Summary></Summary>
+         <Desc>
+            <UL>
+               <LI><B>caAllowGrow</B> - The width of the column is allowed to grow, if a a cell holds a string that is wider than the current width of the column.</LI>
+               <LI><B>caAllowShring</B> - The width of the column is allowed to shrink, if the width of the column is wider than the widest cell.</LI>
+               <LI><B>caIncludeTitle</B> - The required width of the title cell is ioncluded in the calculations above.</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TBoldCWAdjustSet">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldColumnValue">
+         <Summary></Summary>
+         <Desc>This type is used internally to determine which properties should use default values and which has been changed by the user. </Desc>
+      </Type>
+      <Type Name="TBoldColumnValues">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldComboSelectChangeAction">
+         <Summary></Summary>
+         <Desc>See <See Class="TBoldCustomComboBox" Property="BoldSelectChangeAction"/></Desc>
+      </Type>
+      <Type Name="TBoldDrawCellEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldEditButtonStyle">
+         <Summary></Summary>
+         <Desc>The <InlineCode>TBoldEditButtonStyle</InlineCode> is used to specify the image of the speedbutton on the right hand side of a <InlineCode>TBoldCustomEdit</InlineCode>.
+            <UL>
+               <LI><B>bbsNone</B> - No button is visible</LI>
+               <LI><B>bbsCombo</B> - The image looks like the drop-down image of a combobox</LI>
+               <LI><B>bbsEllipsis</B> - The image looks like an ellipsis</LI>
+               <LI><B>bbsCustom</B> - No image is set. Use the Button-property to set your own button.</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TBoldMouseDirection">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldNodeExpansionMethod">
+         <Summary>See <See Class="TBoldCustomTreeView" Property="NodeExpansion"/> controls how nodes are created.</Summary>
+         <Desc> There are three posible values: <InlineCode>neAll</InlineCode>, <InlineCode>neDemand</InlineCode> and <InlineCode>neVisible</InlineCode>.
+            <UL>
+               <LI><B>neAll</B> - All nodes will be insert in the tree immediatly. This will consume much time, memory and resources if the tree is large but everything will be in place when the user starts to interact with the control.</LI>
+               <LI><B>neDemand</B> - Child nodes are inserted and data is fetched when a node is expanded. The plus sign indicating that there are child nodes disapears if the list of child nodes are empty first after you expand a node.</LI>
+               <LI><B>neVisible</B> - Child nodes are inserted and data is fetched when a node is expanded. All inserted visible nodes insertets their child nodes to correctly show or hide the plus sign.</LI>
+            </UL>
+         </Desc>
+      </Type>
+      <Type Name="TBoldStretchMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Unit declaring types and constants used by components</Summary>
+   <Desc>The types and constants defined in this unit are used by the Bold aware controls as well as the COM enabled Bold aware controls.</Desc>
+</DLUnitDoc>

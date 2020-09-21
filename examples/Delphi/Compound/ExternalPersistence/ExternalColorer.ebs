@@ -1,0 +1,148 @@
+Sub ColorItem (theItemView As RoseItemView)
+	Dim theItem As RoseItem
+    Dim theSubViews As ItemViewCollection
+    Dim theSubView As RoseItemView
+	
+	Set theItem = theItemView.Item
+    aViewname = theItemView.name
+
+	If theItem Is Nothing Then
+
+  	  Set theSubViews = theItemView.SubViews
+
+	  For SubViewID = 1 To theSubViews.Count
+	    Set theSubView = theSubViews.GetAt(SubViewID)
+        Call ColorItem (theSubView)
+	  Next SubViewID
+	Else
+	  storage = theItem.GetPropertyValue ("Bold", "Storage")
+	  anItemname = theItem.Name
+
+      If Storage = "External" Then
+        theItemView.font.Red = 255
+        theItemView.FillColor.green = 220
+        theItemView.FillColor.red = 220
+        theItemView.FillColor.blue = 220
+		theItemView.LineColor.Red = 0
+		theItemView.LineColor.Blue = 0
+		theItemView.LineColor.Green = 255
+
+	  End If
+
+      If Storage = "ExternalKey" Then
+        theItemView.font.Red = 127
+
+	  End If
+
+      If Storage = "PartiallyExternal" Then
+        theItemView.font.Red = 0
+        theItemView.FillColor.green = 220
+        theItemView.FillColor.red = 220
+        theItemView.FillColor.blue = 200
+        theItemView.LineColor.green = 0
+		theItemView.LineColor.red = 0
+        theItemView.LineColor.blue = 255
+	  End If
+
+      If Storage = "Internal" Then
+  	  End If
+
+  	  Set theSubViews = theItemView.SubViews
+	
+	  For SubViewID = 1 To theSubViews.Count
+	    Set theSubView = theSubViews.GetAt(SubViewID)
+        Call ColorItem (theSubView)
+	  Next SubViewID
+	End If
+End Sub
+
+Sub ColorDiagram (theDiagram As ClassDiagram)
+	Dim	theItemViews As ItemViewCollection
+	Dim theItemView As RoseItemView
+
+	Set theItemViews = theDiagram.ItemViews
+	
+	For ItemViewID = 1 To theItemViews.Count
+	  Set theItemView = theItemViews.GetAt(ItemViewID)
+      Call ColorItem (theItemView)
+	Next ItemViewID
+
+End Sub
+
+Sub ColorAttribute (theAttribute As Attribute, theClass As Class)
+  storage = theAttribute.GetPropertyValue ("Bold", "Storage")
+  If Storage = "External" Then
+    Set theAttribute.StereoType = "E"
+  Else
+    If Storage = "ExternalKey" Then
+      Set theAttribute.StereoType = "EK"
+	Else
+      If Storage = "Internal" Then
+	    If theClass.GetPropertyValue("Bold", "Storage") <> "Internal"Then
+          Set theAttribute.StereoType = "I"
+		Else
+		  Set theAttribute.StereoType = ""
+	    End If
+	  Else
+        Set theAttribute.StereoType = ""
+      End If
+    End If
+  End If
+End Sub
+
+
+Sub ColorClass(theClass As Class)
+  Dim theAttributes As AttributeCollection
+  Dim theAttribute As Attribute
+  Set theAttributes = theClass.Attributes
+
+  For AttrId = 1 To theAttributes.count
+    Set theAttribute = theAttributes.GetAt(AttrId)
+	Call ColorAttribute(theAttribute, theClass)
+  Next AttrId
+
+End Sub
+
+Sub ColorCategory (theCategory As Category)
+	Dim	theClasses As ClassCollection
+	Dim theClass As class
+	Dim theSubCategories As CategoryCollection
+	Dim theSubClategory As Category
+
+	Set theClasses = theCategory.classes
+	
+	For ClassID = 1 To theClasses.Count
+	  Set theClass = theClasses.GetAt(ClassID)
+      Call ColorClass(theClass)
+	Next ClassID
+
+	Set theSubCategories = theCategory.Categories
+	For CatID = 1 To theSubCategories.Count
+	  Set theSubClategory = theSubCategories.GetAt(CatID)
+      Call ColorCategory(theSubClategory)
+	Next CatID
+End Sub
+
+
+
+
+Sub Main
+
+	Dim theDiagram As ClassDiagram 	
+
+
+	Dim theClassDiagrams As ClassDiagramCollection
+	Dim TheModel As Model
+
+	Set theModel = RoseApp.CurrentModel
+
+	Set theClassDiagrams = theModel.RootCategory.ClassDiagrams
+
+	For DiagID = 1 To theClassDiagrams.Count
+	  Set theDiagram = theClassDiagrams.GetAt(DiagID)
+      Call ColorDiagram (theDiagram)
+	Next DiagID
+
+	Call ColorCategory(theModel.RootCategory)
+
+End Sub

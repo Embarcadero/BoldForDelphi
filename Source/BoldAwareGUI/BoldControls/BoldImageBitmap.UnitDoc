@@ -1,0 +1,109 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldImageBitmap.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldViewBitmapAdapter">
+         <Methods>
+            <Method Name="CanLoadFromFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanPasteFromClipboard">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ContentType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CopyToClipboard">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultExtension">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Description">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Empty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureBitmap">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FileFilter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPalette">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HasChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Height">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Paint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PasteFromClipboard">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToFile">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Width">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines a viewer adapter for bitmaps.
+
+</Summary>
+   <Desc>This unit defines a TBoldViewBitmapAdapter, that plugs into the TBoldImage viewer adapter framework as defined in BoldViewerControlPack .</Desc>
+</DLUnitDoc>

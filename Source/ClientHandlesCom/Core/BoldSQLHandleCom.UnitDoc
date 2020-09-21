@@ -1,0 +1,97 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldSQLHandleCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldSQLHandleCom">
+         <Methods>
+            <Method Name="ClearAllValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClearBeforeExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLOrderByClause">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLWhereClause">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerHandleClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClassExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClearBeforeExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLOrderByClause">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLWhereClause">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesFromServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesToServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClearBeforeExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLOrderByClause">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLWhereClause">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

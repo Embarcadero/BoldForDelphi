@@ -1,0 +1,209 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldTemplateExpander.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldTemplateHolder">
+         <Methods>
+            <Method Name="ExpandTemplate">
+               <Summary></Summary>
+               <Desc>This will expand the template and store the result in <see property=LastExpansion>.
+<BH>Predefined variables</BH>
+DateTime, Time and Date - initialized to the the current date/time
+</Desc>
+            </Method>
+            <Method Name="GetExpandedFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TemplateChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Description">
+               <Summary></Summary>
+               <Desc>Free text description of the template. Not used internally.
+</Desc>
+            </Property>
+            <Property Name="ExpandedFileName">
+               <Summary></Summary>
+               <Desc>The expanded version of <see property=FileName></Desc>
+            </Property>
+            <Property Name="ExpandedTemplate">
+               <Summary></Summary>
+               <Desc>The expanded version of <see property=Template> using the current variable settings. It will be recalculated regardless of whether the variables have changed or not.
+</Desc>
+            </Property>
+            <Property Name="FileName">
+               <Summary></Summary>
+               <Desc>This property will be expanded in the same way the template is expanded, and is useful if the final result should be saved to different files depending on the settings of the variables.
+</Desc>
+            </Property>
+            <Property Name="LastExpansion">
+               <Summary></Summary>
+               <Desc>This will be the cached result of the last expansion.
+</Desc>
+            </Property>
+            <Property Name="Template">
+               <Summary></Summary>
+               <Desc>The original text to be expanded. For details on the template language, please see <see routine=BoldExpandTemplate>.
+</Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc>This property defines the values of all variables needed for the expansion
+</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The TBoldTemplateHolder holds a text that can be expanded by the BoldExpandTemplate function. The variables used by the template can be defined in the Variables-property.
+<BH>Predefined variables</BH>
+DateTime, Time and Date - initialized to the the current date/time
+</Desc>
+      </Class>
+      <Class Name="TBoldTemplateVariables">
+         <Methods>
+            <Method Name="Add">
+               <Summary>
+</Summary>
+               <Desc>If the variable is already defined, this call will have no effect (the value will not change)</Desc>
+            </Method>
+            <Method Name="Change">
+               <Summary></Summary>
+               <Desc>If the variable does not exist, this call has no effect
+</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Exists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpandString">
+               <Summary></Summary>
+               <Desc>Expands the argument string using the variables defined
+<BH>Predefined variables</BH>
+DateTime, Time and Date - initialized to the the current date/time</Desc>
+            </Method>
+            <Method Name="ForceAdd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVariableByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeDateTimeMacros">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Remove">
+               <Summary></Summary>
+               <Desc>This is an overloaded function that takes either a name or a position of the variable
+</Desc>
+            </Method>
+            <Method Name="SetVariable">
+               <Summary></Summary>
+               <Desc>If the variable exists, it is modified, otherwise it is added
+</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Values">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VariableByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldTemplatevariable">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Flags">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldBooleanToTemplateVar">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bvfPersistent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bvfReadOnly">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldExpandTemplate">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldVariableFlags">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

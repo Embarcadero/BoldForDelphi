@@ -1,0 +1,363 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldSQLDataBaseConfig">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssignConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Change">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CorrectlyQuotedDefaultValue">
+               <Summary>Auxillary function that quotes default column values if required</Summary>
+               <Desc>If the <See Property="QuoteNonStringDefaultValues"/> is true, then this function will return the argument enclosed in quotes, otherwise it will be returned as it is</Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDropColumnQuery">
+               <Summary></Summary>
+               <Desc>Returns an expanded version of the <See Property="DropIndexTemplate"/></Desc>
+            </Method>
+            <Method Name="GetDropIndexQuery">
+               <Summary></Summary>
+               <Desc>Returns an expanded version of the <See Property="DropIndexTemplate"/></Desc>
+            </Method>
+            <Method Name="GetDropTableQuery">
+               <Summary></Summary>
+               <Desc>Returns an expanded version of the <See Property="DropTableTemplate"/></Desc>
+            </Method>
+            <Method Name="GetEffectiveSQLForNotNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeDbEngineSettings">
+               <Summary>Initializes the settings with the predefined values for each database engine</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadUseTransactionsDuringDBCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForBlob">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForDate">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForDateTime">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForFloat">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForSmallInt">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForString">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumnTypeForTime">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDBGenerationMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDefaultStringLength">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDropColumnTemplate">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDropIndexTemplate">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDropTableTemplate">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEmptyStringMarker">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFetchBlockSize">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFieldTypeForBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInitialValues">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMaxDbIdentifierLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMaxIndexNameLenght">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMaxParamsInIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetQuoteNonStringDefaultValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetReservedWords">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLforNotNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStoreEmptyStringsAsNULL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSupportsConstraintsInCreateTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSupportsStringDefaultValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemTablePrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUseSQL92Joins">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUseTransactionsDuringDBCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setAllowMetadataChangesInTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllowMetadataChangesInTransaction">
+               <Summary></Summary>
+               <Desc> If true, then the modifications to the database schema will be wrapped in transactions. This is normally a good thing, but not all databases support this.
+                  <Note>When using InterbaseExpress an implicit transaction is started if not explicit transaction is started. Changes to meta data will not be visible until the transaction is committed. If this property is false, then the implicit transaction will not be committed, and the creation of the database will fail.</Note>
+               </Desc>
+            </Property>
+            <Property Name="ColumnTypeForBlob">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the BLOB-type (Binary Large OBject)</Desc>
+            </Property>
+            <Property Name="ColumnTypeForCurrency">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the Currency type</Desc>
+            </Property>
+            <Property Name="ColumnTypeForDate">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the Date type</Desc>
+            </Property>
+            <Property Name="ColumnTypeForDateTime">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the DateTime type</Desc>
+            </Property>
+            <Property Name="ColumnTypeForFloat">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the Float type</Desc>
+            </Property>
+            <Property Name="ColumnTypeForInteger">
+               <Summary>The SQL-name to use for the Integer type</Summary>
+               <Desc>The SQL-name to use for the Integer type. Default value is INTEGER</Desc>
+            </Property>
+            <Property Name="ColumnTypeForSmallInt">
+               <Summary>The SQL-name to use for the SmallInt type</Summary>
+               <Desc>The SQL-name to use for the SmallInt type. Default is SMALLINT</Desc>
+            </Property>
+            <Property Name="ColumnTypeForString">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the string type. The default value is 'VARCHAR(%d)'. This value will be sent to a format-statement where the parameter will be the length of the strings. Some columns for internal use will use the length defined by <See Property="DefaultStringLength"/>, other columns that will store string attributes for the business objects will use the length defined in the model for attributes. Using %d in this property is optional; if the database has a more efficient datatype, the %d can be omitted</Desc>
+            </Property>
+            <Property Name="ColumnTypeForTime">
+               <Summary></Summary>
+               <Desc>The SQL-name to use for the Time type</Desc>
+            </Property>
+            <Property Name="DBGenerationMode">
+               <Summary></Summary>
+               <Desc>Controls whether the database schema will be created using SQL-statements (dbgQuery) or modifications through TTable-objects (dbgTable). Default value is dbgQuery since this is the only way to specify default values for columns. This is not compatible with for example Paradox that only supports metadata changes through TTable objects</Desc>
+            </Property>
+            <Property Name="DefaultStringLength">
+               <Summary></Summary>
+               <Desc>This is the length that some of the internally used string columns will use. Default is 255, but not all databases support string columns of this length</Desc>
+            </Property>
+            <Property Name="DropColumnTemplate">
+               <Summary>The template for dropping columns from a database</Summary>
+               <Desc>The default value for this property is 
+                  <Code>ALTER TABLE <TableName> DROP <ColumnName></Code>
+ The template will expand any occurances of TableName and ColumnName keywords </Desc>
+            </Property>
+            <Property Name="DropIndexTemplate">
+               <Summary>The template for dropping columns from a database</Summary>
+               <Desc>The default value for this property is 
+                  <Code>DROP TABLE <TableName></Code>
+ The template will expand any occurances of TableName keywords </Desc>
+            </Property>
+            <Property Name="DropTableTemplate">
+               <Summary>The template for dropping columns from a database</Summary>
+               <Desc>The default value for this property is 
+                  <Code>DROP INDEX <IndexName></Code>
+ The template will expand any occurances of TableName and IndexName keywords </Desc>
+            </Property>
+            <Property Name="EffectiveSQLForNotNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EmptyStringMarker">
+               <Summary>The value that empty strings will be stored as</Summary>
+               <Desc>
+                  <Note>This property is obsolete but kept for backwards compatibility. Please use the property <See Class="TBoldSQLDatabaseConfig" Property="StoreEmptyStringsAsNULL"/>.</Note>
+                  <P>Some datbases are not able to tell the difference between empty strings and NULL strings. Bold on the other hand always makes a difference between NULL values and any other values. This means thatn an empty string will be stored as a NULL value in the database and later loaded as a NULL value (which is not the same as it was before saving).</P>
+                  <P>If this property is set to for example <InlineCode>[$EMPTYSTR$]</InlineCode> then any string attribute that is empty will be stored in the database as <InlineCode>[$EMPTYSTR$]</InlineCode>, and loaded as an empty string</P>
+                  <P>Just make sure that the value of this property is (either empty or) different from any other value that your string attributes will have</P>
+                  <Note>Once you have set the <InlineCode>EmptyStringMarker</InlineCode> you must never change it again, since there will be entries in the database with this value that will not be recognized anymore.</Note>
+               </Desc>
+            </Property>
+            <Property Name="Engine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FetchBlockSize">
+               <Summary></Summary>
+               <Desc>When multiple objects are to be fetched from the database, the persistence mapper splits the job in manageable chunks. This is to reduce the size of the SQL statements. Normally, the default value of 250 is a good tradeoff between the size of the resulting SQL statements, and the number of statements that needs to be issued. Some databases (Informix) have shown bad performance when this value exceeds ~125. Keep in mind that there might be an upper limit to how large SQL statements the database handles</Desc>
+            </Property>
+            <Property Name="FieldTypeForBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxDbIdentifierLength">
+               <Summary>The maximum length for identifiers such as table names, column names and index names</Summary>
+               <Desc>Many databases have a restriction on the maximum lenght of identifiers. Setting this property to any value &lt;&gt; -1 will cause the persistence mapper to truncate long identifier names to be no longer than the value set. The truncation procedure will calculate a checksum of the whole identifier, and add this checksum at the end of the truncated name. The checksum consists of 3 characters ['0'..'9', 'A'..'Z', '_'], giving it a likelyhood of 1 in ~50000 for a name collision (if the first (<InlineCode>MaxDbIdentifierLength</InlineCode>-3) characters are identical) </Desc>
+               <Examples>
+                  <Example>
+                     <Body>Example of a truncated tablename:
+                        <P>Original tablename: "<InlineCode>Building_with_a_very_long_tablename</InlineCode>"</P>
+                        <P>Truncated to 20 characters: "<InlineCode>Building_with_a_vFZI</InlineCode>"</P>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Property>
+            <Property Name="MaxIndexNameLength">
+               <Summary>The maximum length for the names of database indices</Summary>
+               <Desc>Many databases have a restriction on the maximum lenght of identifiers. Indexnames are generated by the persistence mapper and will in general be rather long (they are the concatenation of the table and the column(s) they index). This property is default set to 18 which will be accepted by most databases. It can be overridden by setting the more general setting <See Property="MaxDbIdentifierLenght"/>. Index names that exceeds this value will be truncated using a checksum algorithm to avoid name collisions.
+                  <Note>The Model evolution mechanism will require that it can calculate the names of indices in order to be able to remove indices before the removing the columns they index. If this property is changed, the calculated name of an index may change, preventing the Model evolution to find the index.</Note>
+               </Desc>
+            </Property>
+            <Property Name="MaxParamsInIdList">
+               <Summary>The maximum number if parameter values to send in an idlist when retrieving multiple objects </Summary>
+               <Desc>Some databases allow caching of planned SQL queries on the server side. To reduce the number of unique queries, the persistence mapper will use parameterized queries when retrieving objects. Too many parameters in a single query degrades performance. This property can finetune the number of parameters that is optimal for your database. default value is 20.</Desc>
+            </Property>
+            <Property Name="OnChange">
+               <Summary>For internal use</Summary>
+               <Desc>The OnChange-event is used internally to propagate any changes to cloned instances of TBoldSQLDatabaseConfig.</Desc>
+            </Property>
+            <Property Name="QuoteNonStringDefaultValues">
+               <Summary>Indicates whether non-string default values needs to be quoted</Summary>
+               <Desc>Some databases requires the default values for columns to be quoted: 
+                  <Code>CREATE TABLE <TABLE> (<COL> INTEGER DEFAULT '2')</Code>
+ Setting this value to true will force quotes to such default values </Desc>
+            </Property>
+            <Property Name="ReservedWords">
+               <Summary>Specifies reserved words for the database.</Summary>
+               <Desc>Each database has a list of words that are reserved from use. By default this property is set to a list of commonly reserved words but you may change it according to the database you use to get it more accurate. Lists of reserved words for some databases exists in the /doc library of your Bold installation.
+                  <P>Note that if you use SQLServer2000 you should also include the list of reserved words for ODBC, wich is the same as reserved words for SQL92. There is also a list of words that are likely to be reserved in future releases of SQLServer.</P>
+               </Desc>
+            </Property>
+            <Property Name="SQLforNotNull">
+               <Summary>Specifies the fragment to be used to tell the database that a NULL-value is not allowed</Summary>
+               <Desc>Specifies the fragment to be used to tell the database that a NULL-value is not allowed. Default is "NOT NULL", but for example Advantage requires this value to be "CONSTRAINT NOT NULL".
+If the datase default for a column is to not allow <InlineCode>NULL</InlineCode>-values, then you should specify "&lt;Empty%gt;"</Desc>
+            </Property>
+            <Property Name="StoreEmptyStringsAsNULL">
+               <Summary></Summary>
+               <Desc> Some databases are not able to distinguish between empty strings and <InlineCode>NULL</InlineCode> strings. Bold on the other hand always makes a difference between <InlineCode>NULL</InlineCode> values and any other values. This means thatn an empty string will be stored as a <InlineCode>NULL</InlineCode> value in the database and later loaded as a <InlineCode>NULL</InlineCode> value (which is not the same as it was before saving).
+                  <P>If this property is set to true, the persistence mapper will remove the <InlineCode>NOT NULL</InlineCode>-restriction from all string-columns, and store the empty string as a <InlineCode>NULL</InlineCode>. When loading a <InlineCode>NULL</InlineCode> string from the database, the persistence mapper will insert an empty string in the string-attribute.</P>
+                  <Note>Since it is not possible to tell the difference between a <InlineCode>NULL</InlineCode> string and an empty string when this property is true, it will not be allowed to have any string-attributes in the model that has the tagged value "Allow NULL" set to <InlineCode>true</InlineCode>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="SupportsConstraintsInCreateTable">
+               <Summary>Indicates whether the CREATE TABLE operation allows adding of primary index, or if it should be added separately</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SupportsStringDefaultValues">
+               <Summary>Indicates whether the database supports default values for string columns</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTablePrefix">
+               <Summary></Summary>
+               <Desc>If you want to have data from several Bold applications stored in the same database, you must set up a unique <InlineCode>SystemTablePrefix</InlineCode> for each of them so that the system tables will have unique names. The default for this property is <InlineCode>'BOLD'</InlineCode>. It can not be set to empty. </Desc>
+            </Property>
+            <Property Name="UseSQL92Joins">
+               <Summary></Summary>
+               <Desc>Using SQL92 joins can some times lead to improved performance. Not all databases support this syntax: 
+                  <Code>SELECT <Column> FROM <Table> <TableAlias> 
+LEFT JOIN <Table> <TableAlias> ON <Primary key>
+WHERE <Condition></Code>
+ </Desc>
+            </Property>
+         </Properties>
+         <Summary>Contains specific database settings</Summary>
+         <Desc>Though many databases in large support ANSI SQL, most of them require slight changes to the statements they accept. The differences are captured with this class. It has predefined settings for the database engines listed in <See Type="TBoldDatabaseEngine"/>. If your database is not listed here and it needs some tweaking, then set the engine-property of your persistencehandle to unknown, and set the different properties as required. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldDataBaseEngine">
+         <Summary></Summary>
+         <Desc>Predefined settings for some of the databases that requires special settings in the <See Class="TBoldPersistenceHandleDB" Property="SQLDataBaseConfig"/>-property</Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

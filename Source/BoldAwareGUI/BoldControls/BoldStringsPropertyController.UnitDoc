@@ -1,0 +1,193 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldStringsPropertyController.UnitDoc 3     01-10-09 13:20 Jeho $">
+   <Classes>
+      <Class Name="TBoldStringsPropertyController">
+         <Events>
+            <Event Name="OnItemAfterMakeUpToDate">
+               <Summary>Event triggered after an item is updated</Summary>
+               <Desc>This event triggers after an item (string in the stringlist) has been updated from the business object tier.</Desc>
+            </Event>
+            <Event Name="OnItemBeforeMakeUpToDate">
+               <Summary>Event triggered before an item is updated</Summary>
+               <Desc>This event triggers before an item (string in the stringlist) is to be  updated from the business object tier.</Desc>
+            </Event>
+            <Event Name="OnListAfterDeleteItem">
+               <Summary>Triggered after an item has been deleted from the list</Summary>
+               <Desc>This event is triggered after an item has been deleted from the list.</Desc>
+            </Event>
+            <Event Name="OnListAfterInsertItem">
+               <Summary>Triggered after an item has been added to the list</Summary>
+               <Desc>This event is triggered after an item has been added to the list.</Desc>
+            </Event>
+            <Event Name="OnListAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnListBeforeDeleteItem">
+               <Summary>Event triggered before an item is deleted</Summary>
+               <Desc>This event is triggered prior to deletion of an item in the list.
+                  <P>The event code can not prevent the item from being deletedd</P>
+               </Desc>
+            </Event>
+            <Event Name="OnListBeforeInsertItem">
+               <Summary>Event triggered before an item is inserted</Summary>
+               <Desc>This event is triggered prior to insertion of an item in the list.
+                  <P>The event code can not prevent the item from being added</P>
+               </Desc>
+            </Event>
+            <Event Name="OnListBeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStringsProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ItemAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ItemBeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListAfterDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListAfterInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListAfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListBeforeDeleteItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListBeforeInsertItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ListBeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow.</Summary>
+               <Desc><InlineCode>BoldHandle</InlineCode> identifies the <InlineCode>TBoldListHandle</InlineCode> the component will extract its string list from.</Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+                  <P>Since this is not a visible control, this sub-property has no effect.</P>
+                  <BH>CleanOnEqual</BH>
+                  <P>Since this is not visible control, this sub-property has no effect.</P>
+                  <BH>DragMode</BH>
+                  <P>Since this is not a visible control, this sub-property has no effect.</P>
+                  <BH>DropMode</BH>
+                  <P>Since this is not a visible control, this sub-property has no effect.</P>
+                  <BH>Expression</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Expression</InlineCode> will be interpreted as an OCL expression to be applied to <InlineCode>BoldHandle.Value</InlineCode>.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Expression</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+                  <BH>Renderer</BH>
+                  <P>This property identifies a <InlineCode>TBoldAsStringRenderer</InlineCode> that is used do define the mapping from <InlineCode>BoldHandle.Value</InlineCode> to the string displayed in the control. The default renderer will apply <InlineCode>Expression</InlineCode> to the value, and then return <InlineCode>TBoldElement.StringRepresentation</InlineCode> as the result. A custom renderer may perform any mapping.</P>
+                  <BH>Representation</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Representation</InlineCode> will be interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating expression.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Representation</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="BoldRowProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PropertyName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StringsProperty">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VCLComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Examples>
+            <Example>
+               <Body>Suppose we have a modelled class <InlineCode>Person</InlineCode>, with attributes <InlineCode>FirstName</InlineCode> and <InlineCode>LastName</InlineCode> of type string. <InlineCode>blhPerson</InlineCode> is a <InlineCode>TBoldListHandle</InlineCode> maintaining a list of <InlineCode>Person.allinstances</InlineCode>. Let's display the full names (<InlineCode>FirstName + ', '+ LastName</InlineCode>) of all Person objects in <InlineCode>blhPerson</InlineCode> in a <InlineCode>TListBox</InlineCode>, <InlineCode>ListBox1</InlineCode>.
+To do so, add a <InlineCode>TBoldStringsPropertyController</InlineCode> (<InlineCode>BoldStringsPropertyController1</InlineCode>) to your form and set its properties as follows: 
+                  <Code>BoldStringsPropertyController1.BoldHandle: blhPerson
+BoldStringsPropertyController1.BoldProperties.Expression: lastName + ', ' + firstName
+BoldStringsPropertyController1.VCLComponent: ListBox1
+BoldStringsPropertyController1.Property: Items</Code>
+               </Body>
+            </Example>
+         </Examples>
+         <Summary>Used for controlling a property (of any Delphi component) of type TStrings in the normal Bold fashion. </Summary>
+         <Desc> Use the <InlineCode>TBoldStringsPropertyController</InlineCode> to control the value of a <InlineCode>TStrings</InlineCode> property in the normal Bold fashion.
+            <BH>Usage</BH>
+Set the VCLComponent property to the identifier of the Delphi component whose property you wish to control. Set the <InlineCode>Propety</InlineCode> property to the identifier of the VCLComponent's <InlineCode>TStings</InlineCode> property. For each object in the <InlineCode>TBoldListHandle</InlineCode> referenced by the <InlineCode>BoldHandle</InlineCode> property, <InlineCode>BoldHandle</InlineCode> + <InlineCode>BoldRowProperties.Expression</InlineCode> should evaluate to a string value. The <InlineCode>TStrings</InlineCode> property of VCLComponent will then be populated by the list of strings evaluated by <InlineCode>BoldHandle</InlineCode> + <InlineCode>BoldRowProperties.Expression</InlineCode> corresponding to the list of objects maintained by <InlineCode>BoldHandle</InlineCode>. </Desc>
+      </Class>
+   </Classes>
+   <Types>
+      <Type Name="TBoldControlFollowerEvent">
+         <Summary>Method prototype for events</Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldControlSubFollowerEvent">
+         <Summary>Method prototype for events</Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

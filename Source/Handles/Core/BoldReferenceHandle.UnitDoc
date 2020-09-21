@@ -1,0 +1,100 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldReferenceHandle.UnitDoc 7     02-04-02 10:44a Jeho $">
+   <Classes>
+      <Class Name="TBoldReferenceHandle">
+         <Events>
+            <Event Name="OnObjectDeleted">
+               <Summary>Triggered when the value has been deleted</Summary>
+               <Desc>This event will trigger when the <See Property="Value"/> has been deleted.
+                  <P>If the event has not been defined, the default behaviour is to set <InlineCode>Value</InlineCode> to <InlineCode>nil</InlineCode>, to clear all controls connected to the handle. If you chose to implement the event, you may want to set <InlineCode>Value</InlineCode> to <InlineCode>nil</InlineCode> manually.</P>
+                  <P><InlineCode>Sender</InlineCode> is the handle.</P>
+               </Desc>
+            </Event>
+            <Event Name="OnValueDestroyed">
+               <Summary>Triggered when the value has been destroyed</Summary>
+               <Desc>This event will trigger when the <See Property="Value"/> has been destroyed. Before the event code is invoked, the <InlineCode>Value</InlineCode> is set to <InlineCode>nil</InlineCode>.
+                  <P><InlineCode>Sender</InlineCode> is the handle.</P>
+               </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldReferenceHandle</Summary>
+               <Desc>Use Create to create a new instance of <InlineCode>TBoldReferenceHandle</InlineCode>.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldReferenceHandle. Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> instead.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary>Get method for value-property</Summary>
+               <Desc>This method implements the get method for the <See Property="Value"/> property.</Desc>
+            </Method>
+            <Method Name="SetStaticValueTypeName">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetValue">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StaticValueTypeName">
+               <Summary>StaticTypeName is used to determine <See Class="TBoldElementHandle" Property="StaticBoldType"/>. </Summary>
+               <Desc>The string must be a valid type name in the context of <See Class="TBoldNonSystemHandle" Property="StaticSystemHandle"/>, or the default system.
+                  <BH>Bold Events</BH>
+                  <P>The following events can be sent when setting <InlineCode>StaticTypeName</InlineCode>:</P>
+                  <UL>
+                     <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent if <InlineCode>StaticTypeName</InlineCode> is assigned a new value.</LI>
+                  </UL>
+                  <P>If the property is assigned with the same value as it already has the event will not be sent.</P>
+                  <P>Also, the event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+               </Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary>The Value of a reference handle is a settable property. It may be set to refer to any TBoldElement. </Summary>
+               <Desc>This property is the same property as <See Class="TBoldElementHandle" Property="Value"/> but in this class it is writeable.
+                  <BH>Bold Events</BH>
+                  <P>The following events can be sent when setting <InlineCode>Value</InlineCode></P>
+                  <UL>
+                     <LI><B><InlineCode>beValueIdentityChanged</InlineCode></B>: Sent if <InlineCode>Value</InlineCode> is assigned a new value.</LI>
+                  </UL>
+                  <P>If the property is assigned with the same value as it already has the event will not be sent.</P>
+                  <P>Also, the event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+                  <P>When <InlineCode>Value</InlineCode> is set, the handle subscribes to <InlineCode>beDestroying</InlineCode> and <InlineCode>beObjectDeleted</InlineCode>. Receiving these events will trigger <See Event="OnValueDestroyed"/> and <See Event="OnObjectDeleted"/>, respectively.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary>As its name indicates, TBoldReferenceHandle is used for holding a reference to any TBoldElement. </Summary>
+         <Desc> <InlineCode>TBoldReferenceHandle</InlineCode> is often used as the starting handle on a form.
+            <P><InlineCode>TBoldReferenceHandle</InlineCode> is a subclass of <See Class="TBoldElementHandle"/>. Everything in its description applies and is for the most part not repeated here.</P>
+            <BH>Value</BH>
+            <P>Its <InlineCode>Value</InlineCode> is set by assigning to the <InlineCode>Value</InlineCode> property, with is settable, in contrast to all other handles which have a read-only <InlineCode>Value</InlineCode>.</P>
+            <BH>Typing</BH>
+            <P>Since a <InlineCode>TBoldReferenceHandle</InlineCode> is never connected to anything at design time, static typing is extra important in this case. The type is defined through the properties <See Property="StaticValueTypeName"/> and (optionally) <See Class="TBoldNonSystemHandle" Property="StaticSystemHandle"/></P>
+            <BH>Bold events</BH>
+            <P><InlineCode>TBoldReferenceHandle</InlineCode> is a subclass of <See Class="TBoldSubscribableComponent"/>, and can therefore by subscribed to using <InlineCode>AddSmallSubscription</InlineCode>. A <InlineCode>TBoldReferenceHandle</InlineCode> can send the following events:</P>
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent when <InlineCode>Value</InlineCode> has changed, i.e. when <InlineCode>Value</InlineCode> points to a new <InlineCode>TBoldElement</InlineCode>. Also sent if anything influencing <InlineCode>BoldStaticType</InlineCode> has changed.</LI>
+            </UL>
+            <P>The event will not be sent if it has previously been sent, and the <InlineCode>Value</InlineCode> property has not been accessed since then.</P>
+            <P>Note that the event is not send when the contents of <InlineCode>Value</InlineCode> is changed. This is found out by subscribing to <InlineCode>Value</InlineCode> itself.</P>
+            <Note>A <InlineCode>TBoldReferenceHandle</InlineCode> is used for refering to an existing <InlineCode>TBoldElement</InlineCode>. If you need a handle to hold and own a value (such as a <InlineCode>string</InlineCode> or a list of <InlineCode>TPerson</InlineCode>) a <See Class="TBoldVariableHandle"/> should be used instead.</Note>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines TBoldReferenceHandle</Summary>
+   <Desc>This unit defines the class <See Class="TBoldReferenceHandle"/></Desc>
+</DLUnitDoc>

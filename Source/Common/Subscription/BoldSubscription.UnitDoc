@@ -1,0 +1,894 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Subscription/BoldSubscription.UnitDoc 10    02-08-05 12:17 Johosos $">
+   <Classes>
+      <Class Name="TBoldEventSubscription">
+         <Methods>
+            <Method Name="CloneTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsMatchingEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPassthroughSubscriber">
+         <Events>
+            <Event Name="receiveFunc">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Answer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>ReceiveFunc is a pointer to the method to which calls to Receive will be passed on. </Desc>
+            </Method>
+            <Method Name="CreateWithExtendedReceive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithReceiveAndAnswer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandlesExtendedEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveExtended">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>TBoldPassthroughSubscriber is a subscriber intended for classes that do not subclass TBoldSubscriber directly, but still need to subscribe to events. It simply passes the call to Receive on to a method in another object. </Desc>
+      </Class>
+      <Class Name="TBoldPublisher">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc>
+                  <Note>If Subscriber already has a subscription with the same RequestedEvent, Events will be merged into that subscription. A consequence of this is that subscribing to the same event multiple times with the same RequestedEvent will only give one subscription.</Note>
+               </Desc>
+               <Params>
+                  <Param Name="Subscriber">
+                     <Desc>The subscriber to be notified if TBoldPublisher_SendEvent or TBoldPublisher_SendQuery is called with an event matching Event.</Desc>
+                  </Param>
+                  <Param Name="Events">
+                     <Desc>The set of events to match</Desc>
+                  </Param>
+                  <Param Name="RequestedEvent">
+                     <Desc>The value send as the RequestedEvent parameter to TBoldSubscriber_Receive or TBoldSubscriber_Answer.</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc>
+                  <Note>If Subscriber already has a subscription with the same RequestedEventand and the same OriginalEvent, no additional subsctiption is placed.</Note>
+               </Desc>
+               <Params>
+                  <Param Name="Subscriber">
+                     <Desc>The subscriber to be notified if <See Method="SendEvent"/> or <See Method="SendQuery"/> is called with an event matching Event.</Desc>
+                  </Param>
+                  <Param Name="OriginalEvent">
+                     <Desc>The set of events to match</Desc>
+                  </Param>
+                  <Param Name="RequestedEvent">
+                     <Desc>The value send as the RequestedEvent parameter to <See Class="TBoldSubscriber" Method="Receive"/> or <See Class="TBoldSubscriber" Method="Answer"/>.</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="AddToSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DelayTillAfterNotification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor for TBoldPublisher.</Summary>
+               <Desc>Will raise an exception if the publicher still has subscribers. Subscribers should be cleared prior to destruction by calling <See Method="NotifySubscribersAndClearSubscriptions"/>. </Desc>
+            </Method>
+            <Method Name="EndNotify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNeedsPacking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPublisherFlag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NotifySubscribersAndClearSubscriptions">
+               <Summary>The method will perform a <See Method="SendEvent"/> (Originator, beDestroying), and subsequently clear all subscriptions. </Summary>
+               <Desc>In general this method will be called by the object using the publisher early in the destructor, in order to prepare all subscribers for the destruction, and ensure that no spurious events are generated during the destruction process.</Desc>
+               <Params>
+                  <Param Name="Originator">
+                     <Desc>The objects to be sent as the Originator to <See Method="SendEvent"/>. In general the object using the publisher to become subscribable</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="PackSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromPostNotificationQueue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendExtendedEvent">
+               <Summary>A call to this method will lead to TBoldSubscriber_Receive beeing called for all subscribers holding a subscription mathching OriginalEvent. </Summary>
+               <Desc></Desc>
+               <Params>
+                  <Param Name="Originator">
+                     <Desc>The objects to be sent as the Originator parameter to <See Class="TBoldSubscriber" Method="Receive"/>.</Desc>
+                  </Param>
+                  <Param Name="OriginalEvent">
+                     <Desc>The value used as the OriginalEvent parameter to <See Class="TBoldSubscriber" Method="Receive"/>.</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNeedsPacking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPublisherFlag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartNotify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HasSubscribers">
+               <Summary>HasSubscribers is true if the publisher has any subscribers. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NeedsPacking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary> </Summary>
+         <Desc>Developers will not use a TBoldPublisher directly except when Making_a_Class_Subscribable_Task. In most normal use, the methods on TBoldSubscribableObject will be used.
+            <P>TBoldPublisher performs the publishing part of the Subscription_Mechanism.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldSmallEventSubscription">
+         <Methods>
+            <Method Name="CloneTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>This constructor is only intended to be called by TBoldPublisher </Desc>
+            </Method>
+            <Method Name="ExtendEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsMatchingEvent">
+               <Summary>The subscription will match all events in the set given in the constructor.</Summary>
+               <Desc>
+                  <Note>This class is intended to be used internally by the subscription mechanism.</Note>
+               </Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSubscribableComponent">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSmallSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreePublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendEvent">
+               <Summary></Summary>
+               <Desc>SendEvent notifies all subscribers holding a subscription matching Event by calling their <See Class="TBoldSubscriber" Method="Receive"/> method.
+If a subscriber holds multiple subscriptions matching the same event, but with different requested events, Receive will be called multiple times, once for each requested event. </Desc>
+            </Method>
+               <Method Name="SendExtendedEvent">
+               <Summary>Sends an extended event to all subscribers.</Summary>
+               <Desc>An extended event can pass any arguments to the subscribers. Each event should send a well defined set of arguments that the subscribers can extract additional information from.</Desc>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary>Sends a query to all subscribers</Summary>
+               <Desc>A subscriber can subscribe to a query event. Call SendQuery to query all subscribers to the particular query event to see if any subscriber has any objection to the query. If the result of SendQuery is false, this should be interpreted as a veto from one of the subscribers. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Publisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldSubscribableComponent is an abstract superclass for classes that need to be subclasses to TComponent and also need to be subscribable. </Summary>
+         <Desc>It has essentially the same interface as a TBoldPublisher.
+            <Note>It is implemented by allocating an internal TBoldPublisher and passing the calls on to it.</Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldSubscribableObject">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSmallSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>The destructor will free the internal TBoldPublisher. </Desc>
+            </Method>
+            <Method Name="FreePublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendEvent">
+               <Summary>SendEvent notifies all subscribers holding a subscription matching Event by calling their <See Class="TBoldSubscriber" Method="Receive" Text="Receive"/> method.</Summary>
+               <Desc> If a subscriber holds multiple subscriptions matching the same event, but with different requested events, Receive will be called multiple times, once for each requested event.
+                  <P>This method is virtual to allow the concrete subclasses to perform other actions when sending an event.</P>
+               </Desc>
+            </Method>
+            <Method Name="SendExtendedEvent">
+               <Summary>Sends an extended event to all subscribers.</Summary>
+               <Desc>An extended event can pass any arguments to the subscribers. Each event should send a well defined set of arguments that the subscribers can extract additional information from.</Desc>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary>Sends a query to all subscribers</Summary>
+               <Desc>A subscriber can subscribe to a query event. Call SendQuery to query all subscribers to the particular query event to see if any subscriber has any objection to the query. If the result of SendQuery is false, this should be interpreted as a veto from one of the subscribers. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Publisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldSubscribableComponent is an abstract superclass for classes that need to be subscribable. </Summary>
+         <Desc>It has the same interface as a TBoldPublisher, i.e. SendEvent and AddSubscription.
+            <Note>It is implemented by allocating an internal TBoldPublisher and passing the calls on to it.</Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldSubscribablePersistent">
+         <Methods>
+            <Method Name="AddSmallSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSmallSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="AddSubscription">
+               <Summary></Summary>
+               <Desc></Desc>
+               <SeeAlso><See Class="TBoldPublisher" Method="AddSubscription"/></SeeAlso>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreePublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SendEvent">
+               <Summary></Summary>
+               <Desc>SendEvent notifies all subscribers holding a subscription matching Event by calling their <See Class="TBoldSubscriber" Method="Receive"/> method.
+If a subscriber holds multiple subscriptions matching the same event, but with different requested events, Receive will be called multiple times, once for each requested event. </Desc>
+            </Method>
+     <Method Name="SendExtendedEvent">
+               <Summary>Sends an extended event to all subscribers.</Summary>
+               <Desc>An extended event can pass any arguments to the subscribers. Each event should send a well defined set of arguments that the subscribers can extract additional information from.</Desc>
+            </Method>
+            <Method Name="SendQuery">
+               <Summary>Sends a query to all subscribers</Summary>
+               <Desc>A subscriber can subscribe to a query event. Call SendQuery to query all subscribers to the particular query event to see if any subscriber has any objection to the query. If the result of SendQuery is false, this should be interpreted as a veto from one of the subscribers. </Desc>
+            </Method>         </Methods>
+         <Properties>
+            <Property Name="HasSubscribers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Publisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This is an abstract superclass for classes that need to be subclasses to TPersistent and also need to be subscribable. </Summary>
+         <Desc>It has the same interface as TPublisher, i.e. SendEvent and AddSubscription.
+            <Note>It is implemented by allocating an internal TBoldPublisher and passing the calls on to it.</Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldSubscriber">
+         <Methods>
+            <Method Name="AddToSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Answer">
+               <Summary></Summary>
+               <Desc>Each time SendQuery is called on a TBoldPublisher, TBoldSubscriber_Answer is be called on each subscriber holding a subscription matching the event. If all Answer calls return True, SendQuery will return True. If any Answer returns False, SendQuery returns False. The process is terminated on the first False reply, so there is no guarantee that Answer will be called for all subscribers.
+                  <P>This function is only called by TBoldPublisher.</P>
+               </Desc>
+               <Params>
+                  <Param Name="Originator">
+                     <Desc>The object originating the event, given as parameter to SendQuery.</Desc>
+                  </Param>
+                  <Param Name="OriginalEvent">
+                     <Desc>The event send by Originator</Desc>
+                  </Param>
+                  <Param Name="RequestedEvent">
+                     <Desc>The requested event given when placing the subscription with AddSubscription or AddSmallSubscription.</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="CancelAllSubscriptions">
+               <Summary></Summary>
+               <Desc>This method cancels all the subscribers subscriptions. </Desc>
+            </Method>
+            <Method Name="CloneSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextString">
+               <Summary></Summary>
+               <Desc>Default implementation of property <See Property="ContextString"/>, returns ''</Desc>
+            </Method>
+            <Method Name="GetHandlesExtendedEvents">
+               <Summary></Summary>
+               <Desc>Implements the property <See Property="HandlesExtendedEvents"/>. The base implementation always returns false, but subclasses may override this. </Desc>
+            </Method>
+            <Method Name="GetSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary>This method is called each time a event occurs that the subscriber holds a subscription to occurs.</Summary>
+               <Desc> Receive is an abstract method that must be implemented in each concrete subclass.
+This procedure is only called by TBoldPublisher. </Desc>
+               <Params>
+                  <Param Name="OriginalEvent">
+                     <Desc>the event that triggers the subscription</Desc>
+                  </Param>
+                  <Param Name="Originator">
+                     <Desc>the object on which OriginalEvent occurred</Desc>
+                  </Param>
+                  <Param Name="RequestedEvent">
+                     <Desc>the event requested when placing the subscription with AddSubscription or AddSmallSubscription</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="ReceiveExtended">
+               <Summary></Summary>
+               <Desc>This method is similar to <See Method="Receive"/>, but it also get a set of arguments that were provided by the object who sent the event.
+Subscribers that implements ReceiveExtended should always override the <See Method="GetHandlesExtendedEvents"/> otherwise this method will never be called. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextString">
+               <Summary></Summary>
+               <Desc>This property returns a string describing the subscriber.
+The default implementation returns '', this can be changed by overriding <See Method="GetContextString"/>. </Desc>
+            </Property>
+            <Property Name="HandlesExtendedEvents">
+               <Summary></Summary>
+               <Desc>This property is used by the subscription mechanism to know if <See Method="Receive"/> or <See Method="ReceiveExtended"/> should be called when notifying a subscriber.
+                  <Note>Default is to return false, override the <See Method="GethandlesExtendedEvents"/> to change this</Note>
+               </Desc>
+            </Property>
+            <Property Name="Subscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldSubscriber is an abstract superclass for classes subscribing to events.</Summary>
+         <Desc>Concrete classes become subscribable either by subclassing TBoldSubscriber, e.g. TBoldFollower, or by using a TBoldPassthroughSubscriber. </Desc>
+      </Class>
+      <Class Name="TBoldSubscription">
+         <Methods>
+            <Method Name="CloneTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsMatchingEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkFromPublisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnlinkFromSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Publisher">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RequestedEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary> </Summary>
+         <Desc>TBoldSubscription is an abstract superclass. The actual subscriptions are the concrete subclasses of TBoldSubscription.
+A TBoldSubscription has 4 basic properties, a <See Class="TBoldPublisher"/>, a <See Class="TBoldSubscriber"/>, a match condition and a requested event.
+The requested event allows mapping of one or more actual events an event meaningful for the Subscriber.
+Each subscription defines the conditions for notifying the subscriber. They will normally be a TBoldEvent or a set of TBoldSmallEvents.
+When <See Class="TBoldPublisher" Method="SendEvent"/> is called it checks all the publishers subscriptions. For each subscription that matches the event <See Class="TBoldSubscriber" Method="Receive"/> is called for the corresponding subscriber.
+The same is done for <See Class="TBoldPublisher" Method="SendQuery"/> and <See Class="TBoldSubscriber" Method="Answer"/></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="beCompleteModify">
+         <Summary>Event sent by a TBoldMember after its value has been modified</Summary>
+         <Desc>This Event is sent by a TBoldMember after its value has been modified. See <Jump ID="Mech_StateMachines"/>.</Desc>
+      </Const>
+      <Const Name="beDeactivating">
+         <Summary>Internal use</Summary>
+         <Desc>This event is sent by a PersistenceHandle when it is deactivating.</Desc>
+      </Const>
+      <Const Name="beDerivedSoonDestroyed">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beDestroying">
+         <Summary>Internal use</Summary>
+         <Desc>Event sent by all subscribable objects prior to their destruction.
+            <P>beDestroying is sent when an instance of any of the subscribable classes is commencing its destruction phase. As the object will soon be gone, it is wise to clear all references to the object at this point.</P>
+         </Desc>
+      </Const>
+      <Const Name="beDirtyListInvalidOrItemDeleted">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beItemAdded">
+         <Summary></Summary>
+         <Desc>beItemAdded is sent when an item is added to a list. This includes for example:
+            <UL>
+               <LI>an object being added to the system; the classlist and all classlists of superclasses will send the event.</LI>
+               <LI>a locator is being added or inserted into a TBoldObjectListController.</LI>
+               <LI>an object is added to a multilink.</LI>
+            </UL>
+         </Desc>
+      </Const>
+      <Const Name="beItemDeleted">
+         <Summary></Summary>
+         <Desc>beItemDeleted is sent when an item is deleted from a list. This includes for example:
+            <UL>
+               <LI>an object is deleted; the classlist and all classlists of superclasses will send the event.</LI>
+               <LI>a locator is being removed from a TBoldObjectListController.</LI>
+               <LI>an object is deleted from a multilink</LI>
+            </UL>
+         </Desc>
+      </Const>
+      <Const Name="beItemReplaced">
+         <Summary></Summary>
+         <Desc>Event sent when an Item in a list has been replaced by another item.</Desc>
+      </Const>
+      <Const Name="beLocatorDestroying">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beMaxEvent">
+         <Summary></Summary>
+         <Desc>This is the largest of all events. No event should be defined above this number. Events above this are reserved for events of type BoldQuery. </Desc>
+      </Const>
+      <Const Name="beMaxSmallReserved">
+         <Summary></Summary>
+         <Desc>This is the largest reserved small event. The reserved events range from beMinSmallReserved to beMaxSmallReserved. </Desc>
+      </Const>
+      <Const Name="beMaxSmallUser">
+         <Summary></Summary>
+         <Desc>This is the largest available small event. User defined event should be between beMinSmallUser and beMaxSmallUser. </Desc>
+      </Const>
+      <Const Name="beMaxUser">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beMemberChanged">
+         <Summary>Sent by a TBoldObject when the value of one of its members changes</Summary>
+         <Desc>This event is sent by a TBoldObject when the value of one of its members changes. Subscribing to this is equivalent to making a DefaultSubscribe to all the object's members.</Desc>
+      </Const>
+      <Const Name="beMinSmallReserved">
+         <Summary></Summary>
+         <Desc> The beMinSmallReserved is the smallest BoldSmallEvent that is reserved. Since negative event-numbers are not allowed, this is in effect the smallest BoldSmallEvent that can ever happen. Small events between beMinSmallReserved and beMaxSmallReserved are reserved. </Desc>
+      </Const>
+      <Const Name="beMinSmallUser">
+         <Summary></Summary>
+         <Desc>beMinSmallUser is the smallest BoldSmallEvent available for user extensibility. User defined events should start from beMinSmallUser and increment from there (up to beMaxSmallUser ). </Desc>
+      </Const>
+      <Const Name="beMinUser">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beObjectCreated">
+         <Summary>This event is sent by a TBoldObject when it is created.</Summary>
+         <Desc>This event is sent by a TBoldObject when it is created. More importantly it will also be relayed by the TBoldSystem to the valid class lists that contains the object. If a ResidentialBuilding is fetched, the class list for ResidentialBuilding, Building, and BusinessClassesRoot will send this event (if these lists are not invalid, ie they have never been made current). </Desc>
+      </Const>
+      <Const Name="beObjectDeleted">
+         <Summary>This event is sent by a TBoldObject when it is deleted.</Summary>
+         <Desc>This event is sent by a TBoldObject when it is deleted. More importantly it will also be relayed by the TBoldSystem to the valid class lists that contains the object. If a ResidentialBuilding is fetched, the class list for ResidentialBuilding, Building, and BusinessClassesRoot will send this event (if these lists are not invalid, ie they have never been made current).
+            <Note>Deleting a TBoldObject is not equivalent to destroying it. See <See Class="TBoldObject" Method="Delete"/>.</Note>
+         </Desc>
+      </Const>
+      <Const Name="beObjectFetched">
+         <Summary>This event is sent by a TBoldObject when it is fetched</Summary>
+         <Desc>This event is sent by a TBoldObject when it is fetched. More importantly it will also be relayed by the TBoldSystem to the class lists that could contain the object. If a ResidentialBuilding is fetched, the class list for ResidentialBuilding, Building, and BusinessClassesRoot will send this event.</Desc>
+      </Const>
+      <Const Name="beOrderChanged">
+         <Summary></Summary>
+         <Desc>Event sent by a list if the order if the items in a list has changed.</Desc>
+      </Const>
+      <Const Name="bePostUpdateId">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bePreUpdateId">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bePrepareDelete">
+         <Summary>Event sent by a TBoldObject before it is deleted.</Summary>
+         <Desc>This event is sent by a <See Class="TBoldObject"/> before it is deleted. The document on <Jump ID="Mech_StateMachines" Text="the internal state machines of objects and members"/> has further information about the full life cycle of Bold objects.</Desc>
+      </Const>
+      <Const Name="bePrepareModify">
+         <Summary>Event sent by a TBoldMember before its value is modified</Summary>
+         <Desc>Event sent by a <See Class="TBoldMember"/> before its value is modified. The document on <Jump ID="Mech_StateMachines" Text="the internal state machines of objects and members"/> has further information about the full life cycle of Bold objects. Also, see <See Class="TBoldSubscriber" Method="Answer"/> for information about query events in general.</Desc>
+      </Const>
+      <Const Name="beQualifierChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beRolledBack">
+         <Summary>Sent when a system-transaction is rolled back.</Summary>
+         <Desc>This event is sent by a <See Class="TBoldSystem"/> after a transaction is rolled back. See <See Class="TBoldSystem" Method="RollbackTransaction"/>.</Desc>
+      </Const>
+      <Const Name="beServerSubscriberRemoved">
+         <Summary>Event sent by a COM-server to indicate that the serverside part of a clientsubscriber has been removed</Summary>
+         <Desc>Event sent by a COM-server to indicate that the serverside part of a clientsubscriber has been removed. This is used by the client-side to know when a SubscriberId can be reused.</Desc>
+      </Const>
+      <Const Name="beValueChanged">
+         <Summary></Summary>
+         <Desc>Event send by a BoldElement if its value has changed. Most notably, this event is sent by a <See Class="TBoldAttribute"/> when its value changes. </Desc>
+      </Const>
+      <Const Name="beValueEvents">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beValueIdentityChanged">
+         <Summary></Summary>
+         <Desc>The beValueIdentityChanged is normally sent by descendants of <See Class="TBoldElementHandle"/> when the identity of their value-property changes </Desc>
+      </Const>
+      <Const Name="beValueInvalid">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="bpeCreateObject">
+         <Summary></Summary>
+         <Desc>bpeCreateObject is sent by the object persistence mapper when it is creating an object in the persistence storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>Id of created object: TBoldObjectId</LI>
+               <LI>Valuespace: IBoldValueSpace</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeDeleteObject">
+         <Summary></Summary>
+         <Desc>bpeDeleteObject is sent by the object persistence mapper when it is deleting an object in the persistence storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>Id of deleted object: TBoldObjectId</LI>
+               <LI>Valuespace: IBoldValueSpace</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeEndFetch">
+         <Summary></Summary>
+         <Desc>The persistence controller sends this event when it has completed a fetch operation from persistent storage. </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeEndFetchID">
+         <Summary></Summary>
+         <Desc>The persistence controller sends this event when it has completed fetching a list of IDs from persistent storage. </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeEndUpdate">
+         <Summary></Summary>
+         <Desc>bpeStartUpdate is sent by the persistence controller when it is done updating objects in the persisten t storage. </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeFetchId">
+         <Summary></Summary>
+         <Desc>The bpeFetchID is sent by a system persistence mapper when it has fetched an ID from the persistent storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>Id of fetched object: TBoldObjectId</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeFetchMember">
+         <Summary></Summary>
+         <Desc></Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeFetchObject">
+         <Summary></Summary>
+         <Desc>bpeCreateObject is sent by the object persistence mapper when it is fetching an object from the persistent storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>Id of fetched object: TBoldObjectId</LI>
+               <LI>Valuespace: IBoldValueSpace</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeMaxReserved">
+         <Summary></Summary>
+         <Desc></Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeMinReserved">
+         <Summary></Summary>
+         <Desc></Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeProgressEnd">
+         <Summary></Summary>
+         <Desc></Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeProgressStart">
+         <Summary></Summary>
+         <Desc></Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeStartFetch">
+         <Summary></Summary>
+         <Desc>bpeStartFetch is sent by the persistence controller when it is commencing a fetch operation from persistent storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>List of Ids to fetch: TBoldObjectIdList</LI>
+               <LI>List of members to fetch: TBoldMemberIdList</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeStartFetchID">
+         <Summary></Summary>
+         <Desc>The persistence controller sends this event when it is starting to fetch an ID list from persistent storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>Condition: TBoldCondition</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeStartUpdate">
+         <Summary></Summary>
+         <Desc>bpeStartUpdate is sent by the persistence controller when it starts updating objects in the persistent storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>list of Ids to update: TBoldObjectIdList</LI>
+               <LI>Valuespace: IBoldValueSpace</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bpeUpdateObject">
+         <Summary></Summary>
+         <Desc>bpeCreateObject is sent by the object persistence mapper when it is updating an object in the persistent storage.
+            <BH>Extended event arguments</BH>
+            <OL>
+               <LI>Id of updated object: TBoldObjectId</LI>
+               <LI>Valuespace: IBoldValueSpace</LI>
+               <LI>query: IBoldQuery</LI>
+            </OL>
+         </Desc>
+         <SeeAlso><Jump A="BoldPersistenceEvents" Text="Bold Persistence Events"/> </SeeAlso>
+      </Const>
+      <Const Name="bqMaxSubscription">
+         <Summary></Summary>
+         <Desc>There are no basic queries sent with a higher value than bqMaxSubscription. Above that starts the base queries. </Desc>
+      </Const>
+      <Const Name="bqMayCommit">
+         <Summary>Query sent when a system transaction tries to commit</Summary>
+         <Desc>This query is sent when a system transaction tries to commit. See <See Class="TBoldSystem" Method="CommitTransaction"/>.</Desc>
+      </Const>
+      <Const Name="bqMayDelete">
+         <Summary>Query sent by TBoldObject when an attemt is made to delete the object.</Summary>
+         <Desc>This query is sent by TBoldObject when an attemt is made to delete the object. The document on <Jump ID="Mech_StateMachines" Text="the internal state machines of objects and members"/> has further information about the full life cycle of Bold objects. Also, see <See Class="TBoldSubscriber" Method="Answer"/> for information about query events in general.</Desc>
+      </Const>
+      <Const Name="bqMayModify">
+         <Summary>Query sent by TBoldMember when an attempt to modify the member's value is made.</Summary>
+         <Desc>This query is sent by <See Class="TBoldMember"/> when an attempt to modify the member's value is made. The document on <Jump ID="Mech_StateMachines" Text="the internal state machines of objects and members"/> has further information about the full life cycle of members. Also, see <See Class="TBoldSubscriber" Method="Answer"/> for information about query events in general.</Desc>
+      </Const>
+      <Const Name="bqMayUpdate">
+         <Summary>Query sent by TBoldObject and TBoldMember before attempting to write its value to persistent storage.</Summary>
+         <Desc>This query is sent by TBoldObject and TBoldMember before attempting to write its value to persistent storage.  The document on <Jump ID="Mech_StateMachines" Text="the internal state machines of objects and members"/> has further information about the full life cycle of members and objects. Also, see <See Class="TBoldSubscriber" Method="Answer"/> for information about query events in general.</Desc>
+      </Const>
+      <Const Name="bqMinQuery">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breReEvaluate">
+         <Summary></Summary>
+         <Desc>Requested event used to indicate to the receiver of the event that it needs to perform a re-evaluation</Desc>
+      </Const>
+      <Const Name="breReSubscribe">
+         <Summary></Summary>
+         <Desc>Requested event used to indicate to the receiver of the event that it needs to perform a re-subscription.</Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldAddEventToPostNotifyQueue">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldForcedDequeuePostNotify">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldEvent">
+         <Summary></Summary>
+         <Desc>Users can define new events in Bold simply by defining a new constant.
+All events actually used by Bold are of the subtype TBoldSmallEvent. </Desc>
+      </Type>
+      <Type Name="TBoldEventHandler">
+         <Summary></Summary>
+         <Desc>Originator is the object producing the event, OriginalEvent is the event produced by the originator, while RequestedEvent is the event requested when subscribing. </Desc>
+      </Type>
+      <Type Name="TBoldExtendedEventHandler">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldPublisherFlag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldPublisherFlags">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldQueryHandler">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldRequestedEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+         <SeeAlso><See Const="breReEvaluate"/>/></SeeAlso>
+         <SeeAlso><See Const="breReSubscribe"/></SeeAlso>
+      </Type>
+      <Type Name="TBoldSmallEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSmallEventSet">
+         <Summary></Summary>
+         <Desc>A subrange of TBoldEvent with 32 values, allowing efficient storage and matching for a set of values.
+24 of the values [<See Const="beMinSmallReserved"/>..<See Const="beMaxSmallReserved"/>] are reserved for Bolds internal use, while 8 [<See Const="beMinSmallUser"/>..<See Const="beMaxSmallUser"/>] are available to the user. </Desc>
+      </Type>
+      <Type Name="TBoldSubscriptionList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

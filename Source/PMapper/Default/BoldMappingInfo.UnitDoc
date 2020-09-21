@@ -1,0 +1,47 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/Default/BoldMappingInfo.UnitDoc 3     02-01-08 13:20 Joho $">
+   <Classes>
+      <Class Name="TBoldDefaultMappingInfo">
+         <Methods>
+            <Method Name="AITableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DbTypeTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpandColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MMTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OSTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadDataFromDB">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ScriptForClearData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ScriptForWriteData">
+               <Summary>Generates a SQL script to write mapping info to the database</Summary>
+               <Desc>See <see class=TBoldSQLMappingInfo method=ScriptForWriteData> for details</Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldDatabaseAdapterBDE">
+         <Methods>
+            <Method Name="GetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDataBaseInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseBoldDatabase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DataBase">
+               <Summary>The database connection</Summary>
+               <Desc>You must connect the adapter to an instance of TDatabase. The TDatabase component is where you configure the BDE-specific details such as which alias to use, username, password etc</Desc>
+            </Property>
+         </Properties>
+         <Summary>Adapter component to allow connections to databases through BDE</Summary>
+         <Desc>Use this component to allow the persistence mechanism to connect to your database through BDE. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,35 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/File/BoldPersistenceHandleFileXML.UnitDoc 4     01-09-21 15:46 Jeho $">
+   <Classes>
+      <Class Name="TBoldPersistenceControllerFileXML">
+         <Methods>
+            <Method Name="ReadValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPersistenceHandleFileXML">
+         <Methods>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Persistence handle for persistence on disk files.</Summary>
+         <Desc>This component can be used to store objects in a simple XML file format directly on disk. This is not intended for large amounts of data, but can be very handy while prototyping a system.<p>
+The fileformat does not handle changes in the model, so you will have to discard your data if you make any changes.<p>
+The PersistenceHandle needs to have model information, so you must connect it to a <InlineCode>TBoldModel</InlineCode>, and you must also supply a filename where you want the data to be stored.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains the defintion for persistence handle oprtaing on a disk file.</Summary>
+   <Desc>This unit defines the classes required for persisting objects into a file with XML-structure.</Desc>
+</DLUnitDoc>

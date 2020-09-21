@@ -1,0 +1,40 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldMath.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="Floor">
+         <Summary>Floor returns the integer lower than the parameter sent.</Summary>
+         <Desc>
+Example:<br>
+Floor(10.2) yields 10<br>
+Floor(-101.2) yields -101.2</Desc>
+      </Routine>
+      <Routine Name="MaxIntValue">
+         <Summary></Summary>
+         <Desc>MaxIntValue returns the largest value of the array of integers passed as parameter.</Desc>
+      </Routine>
+      <Routine Name="MaxValue">
+         <Summary></Summary>
+         <Desc>
+MaxValue returns the largest number in the array passed as parameter.
+</Desc>
+      </Routine>
+      <Routine Name="MinIntValue">
+         <Summary></Summary>
+         <Desc>MinIntValue returns the smallest value of the array of integers passed as parameter.
+
+</Desc>
+      </Routine>
+      <Routine Name="MinValue">
+         <Summary></Summary>
+         <Desc>MinValue returns the smallest value of the array of double passed as parameter.
+</Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc>The BoldMath unit exists to overcome some limitations in some versions of the development environment.
+</Desc>
+</DLUnitDoc>

@@ -1,0 +1,90 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldStringList.UnitDoc 4     01-09-26 11:50 Jeho $">
+   <Classes>
+      <Class Name="TBoldStringList">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds a string to the list</Summary>
+               <Desc>Add adds a string to the list. The string will be shared, i.e. if there is at least one other identical shared string in the system, no additional memory will be consumed.</Desc>
+            </Method>
+            <Method Name="AddMultipleStrings">
+               <Summary>Adds multiple strings.</Summary>
+               <Desc><InlineCode>AddMultipleStrings</InlineCode> can be used instead of multiple <See Event="Add"/>. </Desc>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <DelphiCode>			var
+			  BoldStringList: TBoldStringList;
+			begin
+			  BoldStringList := TBoldStringList.Create;
+			  BoldStringList.AddMultipleStrings(['First', 'second', IntToStr(3)]);
+...</DelphiCode>
+                        <P>is equivalent to</P>
+                        <DelphiCode>			var
+			  BoldStringList: TBoldStringList;
+			begin
+			  BoldStringList := TBoldStringList.Create;
+			  BoldStringList.Add('First');
+			  BoldStringList.Add('second');
+			  BoldStringList.Add(IntToStr(3));
+...</DelphiCode>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Method>
+            <Method Name="AssignMultipleStrings">
+               <Summary>Assigns multiple strings.</Summary>
+               <Desc><InlineCode>AssignMultipleStrings</InlineCode> work like <See Method="AddMultipleStrings"/>, but clears the list first.</Desc>
+            </Method>
+            <Method Name="GetFastValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexOfName">
+               <Summary>Performs a binary search for name.</Summary>
+               <Desc>Use <InlineCode>GetIndexOfName</InlineCode> to retrieve the position  of name in the list of <InlineCode>name=value</InlineCode> pairs. The search is case insensitive.</Desc>
+            </Method>
+            <Method Name="GetIndexOfprefix">
+               <Summary>Performs a binary search for prefix</Summary>
+               <Desc>Use <InlineCode>GetIndexOfprefix</InlineCode> to retrieve the position of a name starting with <InlineCode>prefix</InlineCode> in the list of <InlineCode>name=value</InlineCode> pairs. The search is case insensitive.</Desc>
+            </Method>
+            <Method Name="GetValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveValue">
+               <Summary>Removes the value belonging to Name</Summary>
+               <Desc><InlineCode>RemoveValue</InlineCode> will remove the name=value tuple where name equals the parameter.</Desc>
+            </Method>
+            <Method Name="SetFastValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Sort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="FastValues">
+               <Summary>This property will perform a binary search on the name if the stringlist is sorted. </Summary>
+               <Desc>This will reduce time significantly on long stringlists.</Desc>
+            </Property>
+            <Property Name="ValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This is a descendant of TStringList of VCL, but it is much faster when looking up a named value. </Summary>
+         <Desc>All you need to do is to make sure that the list is sorted (<InlineCode>stringlist.Sorted := true</InlineCode>) and look up values using the <InlineCode>FastValues</InlineCode>-property instead of the normal <InlineCode>values</InlineCode>-property.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains a subclass to TStringlist with faster lookups. </Summary>
+   <Desc>TBoldStringList is a stringlist optimized for speed and memory.</Desc>
+</DLUnitDoc>

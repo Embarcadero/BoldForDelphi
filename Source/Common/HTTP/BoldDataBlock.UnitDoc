@@ -1,0 +1,65 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/HTTP/BoldDataBlock.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldDataBlock">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Read">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Write">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Memory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Size">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Stream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

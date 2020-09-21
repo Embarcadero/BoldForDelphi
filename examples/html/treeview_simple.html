@@ -1,0 +1,113 @@
+<html>
+
+<head>
+  <title>TreeView</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top"> Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_gui.html" target="menu">GUI Controls</a> &gt;
+      <a href="treeview_simple.html">Simple TreeView</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Simple TreeView</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+        
+<!-- Content cell starts -->
+    <a href="../Delphi/Simple/GUIControls/TreeView/BE_SimpleTreeView.dpr">Launch Delphi-example</a>
+    <p>This example shows of some of the features included in the BoldTreeView control.
+    <p>The following features are included in the example:</p>
+    <ul>
+      <li>Build a simple treeview with node branches and leafs that corresponds
+        to objects in the persistence layer.</li>
+      <li>Build simple treeview with &quot;fake&quot; node branches that don't
+        corresponds to objects in the persistence layer with leafs that do.</li>
+    </ul>
+	<hr size="1">
+	<p class="head2">How to run</p>
+<p>Check the model, either the rose-model or in the model editor (double click
+the <code>TBoldModel</code> control on the form). The model of this example
+contains of three classes, &quot;Company&quot;, &quot;Department&quot; and
+&quot;Employee&quot;. The relations between them are:
+	</p>
+<ul>
+  <li>A <em>Company</em> consists of several <em>Departments</em>
+  <li>Each <em>Department</em> employs several <em>Employees</em>
+  <li>A <em>Department</em> only belongs to one <em>Company</em>
+  <li>An <em>Employee</em> is employed only by one <em>Department</em>
+  <li>Each <em>Employee</em> also belongs to a <em>Company</em> since the <em>Department</em>
+    belongs to a <em>Company</em></li>
+</ul>
+<p>Run the application. In the main form there are two treeview controls (the
+big white space that is empty before you have entered any data to the
+objectspace) and three grids. In the grids you enter companies, departments and
+employees.&nbsp;
+	</p>
+<p>Start by entering one company and add some departments to it. For each
+department add some employees. As you can see the two treeviews will be updated
+with the objects you enter.&nbsp;
+	</p>
+<p> In the right treeview the selected companys departments
+will be listed as node branches and each departments employees will be listed as
+node
+leafs. The structure follows the structure in the model. Each employee is listed
+under its employer (department).&nbsp;
+	</p>
+<p>In the left treeview the structure of the model is broken. In this treeview
+we will list all the employees of each department of the selected company in
+alphabetical order taking no consideration of the departments. To do this we
+create &quot;fake&quot; node branches and with the help of OCL expressions we
+list the employers under the right node branch according to the employees last
+name.
+	</p>
+<p class="head2">The BoldTreeView</p>
+	<p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_BoldTreeView.htm" target="self">
+			How to use BoldTreeView</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+  		<li>
+			<a href="../../Help/BfD.hlp" target="self">Programmers Reference</a> 
+            (<font size="1">[BfDInstallDir]/help/Bfd.hlp</font>) for explanation of the
+			properties on BoldTreeView.</li>
+	</ul>
+	<p class="head4">More examples</p>
+	<ul>
+  		<li><a href="treeview.html">Advanced TreeView</a> - An advanced example.</li>
+		<li><a href="product_structure.html">Product Structure</a> - Build recursive structures in a treeview.</li>
+ 	</ul>
+<br>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and alias is
+    established you only have to use the &quot;Open system&quot; button when running the example
+    program.
+    </p>
+<!-- Content frame ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks are
+      properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

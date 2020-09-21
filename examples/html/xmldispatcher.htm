@@ -1,0 +1,280 @@
+<html>
+
+<head>
+  <title>Association Class</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt; 
+      <a href="xmldispatcher.htm">XML Dispatcher</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">XML Dispatcher</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<p><a href="../Delphi/Compound/XML/WebApplicationDll.dpr">Launch Delphi-example for WebApplicationDll</a><br>
+<a href="../Delphi/Compound/XML/XMLDispatcher.dpr">Launch Delphi-example for XMLDispatcher</a></p>
+
+<p>This example shows how to use the XML components in $(PRODUCT_BASE_NAME) to
+build a web applications to extract data from a Web application in XML format. The model used in this example is
+<i>Budget.bld</i>, it has four classes: <code>Budget</code>,
+<code>Row</code>, <code>Column</code> and <code>Cell</code>. A Budget object can own a set of columns and rows. The
+<code>Budget</code> class has two derived attributes: <code>ColNumber</code> and <code>RowNumber</code>, indicating
+<code>Col.aNumber</code> and <code>Row.aNumber</code> respectively. A qualified
+relation is defined from the <code>Budget</code> class to the <code>Cell</code> class on the attributes (<code>ColNumber</code>,
+<code>RowNumber</code>) of the Budget. Thus for each (Col, Row) pair the
+Budget can be associated to at most one Cell object.</p>
+
+<p>The example consists of two parts:&nbsp;</p>
+
+<ul>
+  <li>A web application (WebApplicationDll.dll) which handles the calls from the
+    web server.&nbsp;</li>
+  <li>A Bold application where the ObjectSpace is located.&nbsp;</li>
+</ul>
+<p>Users will be able to ask for a budget given its name, and display its
+Cells in a tabular format in their browser. They can then modify the values of
+these cells and apply the updates back to the object space.&nbsp;</p>
+
+    <hr size="1">
+	<p class="head2">How to run</p>
+<p><font face="Courier New">WebApplicationDll.dll </font> is an ISAPI dll, in
+order to work with your web browser it must be properly installed. See the
+appendix for more details on how to install an ISAPI dll.&nbsp;&nbsp;&nbsp;</p>
+
+<p><font face="Courier New">XMLDispatcher</font> is a COM server that will be invoked
+by the <font face="Courier New">WebApplicationDll</font>, hence it must be
+properly registered and configured:&nbsp;</p>
+
+<ul>
+  <li>To register <font face="Courier New">XMLDispatcher.exe</font>  type the
+    following at the command prompt:&nbsp;<font face="Courier New">
+    XMLDispatcher /regserver</font></li>
+  <li>Use the <font face="Courier New">dcomcnfg</font> utility to configure the
+    security settings if necessary, the account under which <font face="Courier New">WebApplicationDll</font>
+    is running should have launch and access rights to the XMLDispatcher Com server.</li>
+</ul>
+<p>To test follow these steps:</p>
+<ul>
+  <li>Run the XMLDispatcher application.</li>
+  <li>Create a database and open the system.&nbsp;</li>
+  <li>Create
+three Budget objects by right clicking the mouse and selecting New, generate
+rows and columns and set their values.&nbsp;</li>
+  <li>For each budget in the grid,
+generate cells by selecting a budget in the grid and pressing the Create Cells
+    button.</li>
+  <li>Update using the Update button. Recall the names of the budget objects.</li>
+  <li>Start your web browser and type the following url:</li>
+</ul>
+<p><font face="Courier New">
+http://&lt;Root-Directory-name&gt;\WebApplicationDll.dll\bold?who=&lt;A-Budget-Name&gt;</font></p>
+<p>where <font face="Courier New">&lt;Root-Directory-name&gt;</font> is the name
+of the web directory where the web application is located and <font face="Courier New">&lt;A-Budget-Name&gt;</font>
+is the value of the aName attribute of an existing budget. When the URL is
+requested, the XMLDispatcher server is launched on the machine where the web
+server is located. The returned page contains the cells of the requested
+budget in a table and an &quot;Update Cell&quot; in the bottom.
+Test by modifying the values of the cells and pressing the Update button, then
+check your updates by opening another browser window and asking
+for the same Budget.</p>
+<p class="head2">WebApplicationDll</p>
+
+<p><font face="Courier New">WebApplicationDll</font> is an ISAPI dll. The
+important points to note here are:&nbsp;</p>
+
+<ul>
+  <li>The web application uses a TWebModule to handle communication with the web
+    server: WebModule1 in unit WebModule.pas.</li>
+  <li>The web module has a TWebActionItem called Budget. The pathinfo property
+    of Budget is set to <code>\bold</code>. In the OnAction event handler we examine the
+    Request argument in order to build the XML request to be sent to the <font face="Courier New">XMLDispatcher</font>.
+    The XML request should contain a proper Action-element that will help the
+    XMLDispatcher to determine what action to take for generating the page
+    requested by the user.&nbsp;</li>
+  <li>The following steps are performed when getting a request to view a
+    budget:<br>
+    <b>1)</b> Create and initialize a TBoldXMLRequest instance.<br>
+    <b>2)</b> Define an Action element called GetBudget and set its parameters: i.e. the
+    &nbsp;&nbsp;&nbsp;&nbsp;BudgetName parameter which represents	the name of the budget we want to 
+    &nbsp;&nbsp;&nbsp;&nbsp;view.<br>
+    <b>3)</b> Send the resulting XML string to the BudgetDispatcher residing in the 
+    &nbsp;&nbsp;&nbsp;&nbsp;XMLDispatcher Com server.</li>
+  <li>The XML request will look like this:</li>
+</ul>
+
+<blockquote>
+
+<div class="e">
+  <font face="Courier New"><span class="b">&nbsp;</span> <span class="m">&lt;?</span><span class="pi">xml
+  version=&quot;1.0&quot; </span><span class="m">?&gt;</span></font>
+</div>
+<div class="e">
+  <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+    <font face="Courier New">&nbsp;&nbsp;&nbsp; <a class="b" href="#" onclick="return false" onfocus="h()">-</a>
+    <span class="m">&lt;</span><span class="t">BoldDocument</span><span class="m">&gt;</span></font>
+  </div>
+  <div>
+    <div class="e">
+      <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+        <font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a class="b" href="#" onclick="return false" onfocus="h()">-</a>
+        <span class="m">&lt;</span><span class="t">SOAP:Envelope</span><span class="ns">
+        xmlns:SOAP</span><span class="m">=&quot;</span><b class="ns">urn:schemas-xmlssoap-org:soap.v1</b><span class="m">&quot;&gt;</span></font>
+      </div>
+      <div>
+        <div class="e">
+          <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+            <font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="b" href="#" onclick="return false" onfocus="h()">-</a> <span class="m">&lt;</span><span class="t">SOAP:Body</span><span class="m">&gt;</span></font>
+          </div>
+          <div>
+            <div class="e">
+              <div class="c" style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+                <font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a class="b" href="#" onclick="return false" onfocus="h()">-</a>
+                <span class="m">&lt;</span><span class="t">GetBudget</span><span class="m">&gt;</span></font>
+              </div>
+              <div>
+                <div class="e">
+                  <div style="MARGIN-LEFT: 1em; TEXT-INDENT: -2em">
+                    <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;</span> <span class="m">&lt;</span><span class="t">BudgetName</span><span class="m">&gt;</span><span class="tx">MMM</span><span class="m">&lt;/</span><span class="t">BudgetName</span><span class="m">&gt;</span></font>
+                  </div>
+                </div>
+                <div>
+                  <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  &nbsp;</span> <span class="m">&lt;/</span><span class="t">GetBudget</span><span class="m">&gt;</span></font>
+                </div>
+              </div>
+            </div>
+            <div>
+              <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;</span> <span class="m">&lt;/</span><span class="t">SOAP:Body</span><span class="m">&gt;</span></font>
+            </div>
+          </div>
+        </div>
+        <div>
+          <font face="Courier New"><span class="b">&nbsp;&nbsp;&nbsp; &nbsp;</span>
+          <span class="m">&lt;/</span><span class="t">SOAP:Envelope</span><span class="m">&gt;</span></font>
+        </div>
+      </div>
+    </div>
+    <div>
+      <span class="b"><font face="Courier New">&nbsp;</font></span><font face="Courier New">
+      <span class="m">&lt;/</span><span class="t">BoldDocument</span><span class="m">&gt;&nbsp;&nbsp;&nbsp;&nbsp;</span></font>
+    </div>
+  </div>
+</div>
+</blockquote>
+<ul>
+  <li>The application uses a BoldComClientObjectHandle: bohDispatcher. This is
+    used to import the dispatcher object <code>BudgetDispatcher</code> exported by the
+    XMLDispatcher application. Properties are:<br><code>ObjectName</code>: BudgetDispatcher. The name under which the BoldXMLDispatcher&nbsp;&nbsp;
+    component is exported
+	by <font face="Courier New">XMLDispatcher</font>.
+  </li>
+  <li>Get the IBoldSOAPService interface of the <code>BudgetDispatcher</code> object and
+    invoke its Get-method. The first argument passed to the Get-method is the
+    XML request, the second is an out parameter that holds the XML response. The following line of code
+    invokes the Get-method of the dispatcher:<br><br>
+    <font face="Courier New">(bohDispatcher.ComObject as IBoldSOAPService).Get(XMLRequest.DomDocument.XML, res);</font>
+	</li>
+</ul>
+<p class="head2">XMLDispatcher</p>
+
+<p>The XMLDispatcher application holds the object space. The BoldSystem resides
+in dmMain (<i>BoldAppDataModUnit.pas</i>).</p>
+
+<p>An important component in <i> dmXMLProducerForBudget.pas</i> is the <font face="Courier New">BoldXMLDispatcher1</font>.
+This component receives and outputs XML. The imcoming XML should
+contain a properly formatted Action. It uses the tag name of the Action element
+to select the appropriate BoldXMLActionItem for handling the request.&nbsp;</p>
+
+<p>The Actions property of the BoldXMLDispatcher1 holds a collection of
+TBoldXMLActionItem objects used when
+handling requests. The actions should usually reflect the actions that a user
+can perform. In our example users can either request information about a Budget
+or update that information if they already have requested it, hence we have two
+actions defined:</p>
+
+<ol>
+  <li>GetBudget - returns XML containing Budget information, i.e. Cells
+    owned.&nbsp; </li>
+  <li>UpdateBudget - updates the Cells of a Budget.</li>
+</ol>
+<p>ObjectName is another property on BoldXMLDispatcher1. It's the name, in this
+case BudgetDispatcher, under which the dispatcher object is
+exported.</p>
+
+<p>The <font face="Courier New">BudgetProducer</font> (also in <i>dmXMLProducerForBudget.pas</i>) is a TBoldXMLProducer that
+generates the XML data containing Budget information. The property OnProduce
+returns the XML string that should be sent back to the web application.</p>
+
+<p class="head2">Appendix</p>
+<p class="head3">Installing an ISAPI dll in IIS</p>
+<ul>
+  <li>
+    <p class="MsoNormal">Start the Internet Services Manager.</li>
+  <li>Create a virtual directory under your web site.</li>
+  <li>Set an alias name for the virtual directory.</li>
+  <li>Specify a local directory, this directory is where your ISAPI dll will be
+    located; in the case of the example it’s the directory where the
+    WebApplication.dll is located.</li>
+  <li>Make sure you give read, write, EXECUTE and browse access rights to it.</li>
+  <li>Edit the properties of the new virtual directory (right-mouse-click), on
+    the Virtual Directory tab sheet set Application Protection to <code>High
+    (Isolated)</code>. If you now start the Component Services, you will find an
+    entry for your ISAPI application with a name similar to <font face="Courier New">IIS-{Default
+    Web Site//Root/&lt;AliasName&gt;}</font>. Edit the properties of the Com application
+    and set the identity to an account that has the right to launch the Bold
+    application (XMLDispatcher).</li>
+</ul>
+
+<p class="head3">Configuring Delphi to debug an ISAPI dll</p>
+<p>Open the ISAPI dll project file in Delphi. From the main menu, go to
+Run|Parameters and set the values of the following properties:</p>
+<ol>
+  <li>Host Application: <a href="file:///C:/WINNT/system32/dllhost.exe">C:\WINNT\system32\dllhost.exe</a></li>
+  <li>Parameters: <code>/ProcessId:&lt;GUID&gt;</code>. Where <code>&lt;GUID&gt;</code> is the GUID of the
+    ISAPI application as it appears in the Component Services window. Note: Make
+    sure you're not leaving any spaces after the colon &quot;:&quot; following ProcessId. </li>
+</ol>
+<p>Set your breakpoints and run the project in Delphi then invoke the
+application through the web browser.
+</p><br>
+<p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+   button before attempting to open the system for the first time. Once the database and
+   alias is established you only have to use the &quot;Open system&quot; button when running
+   the example program.
+</p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

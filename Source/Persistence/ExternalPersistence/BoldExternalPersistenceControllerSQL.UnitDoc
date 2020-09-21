@@ -1,0 +1,212 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceControllerSQL">
+         <Methods>
+
+            <Method Name="AssignKeyToObject">
+               <Summary></Summary>
+               <Desc>
+                  <P>Bold objects stored in external databases have their object Id formed from the external key fields from the external database.
+                    This routine sets the members of the <InlineCode>TBoldObject</InlineCode> to refelect the key.</P>
+               </Desc>
+            </Method>
+            <Method Name="AssignParameters">
+               <Summary>This routine assigns parameters to an <See Interface="IBoldParameterized"/></Summary>
+               <Desc>
+                  <P>This routine assigns parameters to a <See Interface="IBoldParameterized"/> based on the contents of the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="AssignParametersWithMemberIdList">
+               <Summary>This routine assigns parameters to an <See Interface="IBoldParameterized"/></Summary>
+               <Desc>
+                  <P>This routine assigns parameters to a <See Interface="IBoldParameterized"/> based on the parameter <InlineCode>MemberIdList</InlineCode></P>
+               </Desc>
+            </Method>
+
+            <Method Name="Create">
+               <Summary>Creates an instance of <InlineCode>TBoldExternalPersistenceControllerSQL</InlineCode></Summary>
+               <Desc>
+                  <P>This constructor is called from the CreatePersistenceController method in <See Class="TBoldExternalPersistenceHandleSQL"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="CreateObjects">
+               <Summary>Creates objects in the external database</Summary>
+               <Desc>
+                  <P>This routine loops over the <InlineCode>ObjectIdList</InlineCode> and calls the method <See Method="InternalCreateObject"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="DeleteObjects">
+               <Summary>Deletes objects in the external database</Summary>
+               <Desc>
+                  <P>This rouine loops over the <InlineCode>ObjectIdList</InlineCode> and calls the method <See Method="InternalDeleteObject"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="ExternalKeyExistsInExternalStorage">
+               <Summary>Returns <InlineCode>True</InlineCode> if the external key exists in the external database, else it returns <InlineCode>False</InlineCode></Summary>
+               <Desc> </Desc>
+            </Method>
+            <Method Name="ExternalKeysToInternalSQL">
+               <Summary>Generates a suitable condition for <InlineCode>WHERE</InlineCode> clauses in SQL scripts</Summary>
+               <Desc>
+                  <P>This routine generates a condition for use in <InlineCode>WHERE</InlineCode> clauses in SQL.</P>
+                  <P>Example:</P>
+                  <Code>SQLText := 'SELECT * FROM ' + BoldExpandName(MoldClass.TableName, MoldClass.name, xtSQL, -1, nccFalse) + ' WHERE ' + ExternalKeysToInternalSQL(MoldClass, ExternalKeys);</Code>
+ </Desc>
+            </Method>
+            <Method Name="FetchObject">
+               <Summary>Fetches one object</Summary>
+               <Desc>
+                  <P>This routine fetches one object based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="GenerateDeleteSQL">
+               <Summary>Generates a complete <InlineCode>DELETE</InlineCode> SQL sentance</Summary>
+               <Desc>
+                  <P>This routine returnes a fully qualified SQL command for deleting one object in the external database, based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="GenerateInsertSQL">
+               <Summary>Generates an <InlineCode>INSERT</InlineCode> SQL sentance</Summary>
+               <Desc>
+                  <P>This routine generates a parameterized command in the format:</P>
+                  <Code>INSERT INTO <TableName> (<Field 1>, <Field 2>, ..., <Field n>) <Parameter 1>, <Parameter 2>, ... <Parameter n></Code>
+                  <P>Note: The field list only includes members that have been modified.</P>
+               </Desc>
+            </Method>
+            <Method Name="GenerateUpdateSQL">
+               <Summary>Generates an <InlineCode>UPDATE</InlineCode> SQL sentence</Summary>
+               <Desc>
+                  <P>This routine generates a parameterized command in the format:<Br/>
+                     <InlineCode>UPDATE <TableName> SET <Field 1> = <Parameter 1>, <Field 2> = <Paramter 2>, ..., <Field n> = <Paramter n> WHERE <Condition></InlineCode></P>
+                  <P>Note: The field list only includes members that have been modified.  The condion is generated from <See Method="ObjectContentsToInternalSQL"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetExternalDirtyMembers">
+               <Summary>Returnes a list of members that are marked as external and have been modified</Summary>
+               <Desc>
+                  <P>This routine adds <See Class="TBoldMemberId"/> to the <InlineCode>MemberIdList</InlineCode> parameter, that corresponds to the following rules:<Br/>
+                  </P>
+                  <OL>
+                     <LI>Member is external</LI>
+                     <LI>Member is not derived</LI>
+                     <LI>Member is a not multi role</LI>
+                     <LI>Member is not a non-embedded single role</LI>
+                     <LI>Member is modified</LI>
+                  </OL>
+               </Desc>
+            </Method>
+            <Method Name="GetExternalKeyFromObject">
+               <Summary>Creates a <InlineCode>TBoldObjectId</InlineCode></Summary>
+               <Desc>
+                  <P>Creates a <See Class="TBoldObjectId"/> based on the contents of the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetExternalKeys">
+               <Summary>Retrieves a list of keys from the external database</Summary>
+               <Desc>
+                  <P>Retrieves a list of external keys from the external database for the table referred to by <InlineCode>MoldClass</InlineCode>.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetMaxFetchBlockSize">
+               <Summary>Returns a maximum amount of objects to fetch at once</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesClass">
+               <Summary>Returns <InlineCode>True</InlineCode> if this controller handles the class, else it returnes <InlineCode>False</InlineCode></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalCreateObject">
+               <Summary>Create one object in the external database</Summary>
+               <Desc>
+                  <P>Create one object in the external database based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="InternalDeleteObject">
+               <Summary>Deletes one object in the external database</Summary>
+               <Desc>
+                  <P>Deletes one object in the external database based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="InternalUpdateObject">
+               <Summary>Updates one object in the external database</Summary>
+               <Desc>
+                  <P>Updates one object in the external database based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="LocateInDB">
+               <Summary>Locates a record in a DataSet</Summary>
+               <Desc>
+                  <P>Locates a record in the <InlineCode>BoldQuery</InlineCode> DataSet, based on the <InlineCode>ObjectContents</InlineCode> parameter.</P>
+               </Desc>
+            </Method>
+            <Method Name="PostFetch">
+               <Summary>Called after a fetch batch has completed</Summary>
+               <Desc>See also: <See Method="PrepareFetchExternal"/>, <See Method="FetchObject"/></Desc>
+            </Method>
+            <Method Name="PrepareFetchExternal">
+               <Summary>Prepare a fetch batch</Summary>
+               <Desc>
+                  <P>This routine is called prior to subsequent calls to <See Method="FetchObject"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="SubscribeToPeristenceEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateObjects">
+               <Summary>Saves a list of objects in the external database</Summary>
+               <Desc>
+                  <P>Loops over the <InlineCode>ObjectIdList</InlineCode> list and calls InternalUpdateObject.</P>
+               </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DatabaseAdapter">
+               <Summary>Link to a TBoldDatabaseAdapter component</Summary>
+               <Desc>This property points to a <See Class="TBoldDatabaseAdapter"/> component that provides query execution to the external data store</Desc>
+            </Property>
+         </Properties>
+         <Summary>This class is used internally by <See Class="TBoldExternalPersistenceHandleSQL"/></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TExternalDBFetchContextObject">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldDataSet">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FetchingMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldQueryMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

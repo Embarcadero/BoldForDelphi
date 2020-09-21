@@ -1,0 +1,47 @@
+/* ------------------------------------------------------------------------------------
+Variable used in this file:
+COMPANY_NAME_LONG
+COPYRIGHT_TEXT
+BUILD_COMMENT
+APP_VERSION
+APP_ICON
+MODULE_DESCRIPTION
+MODULE_FILENAME
+MODULE_NAME
+PRODUCT_NAME
+-------------------------------------------------------------------------------------- */
+
+MAINICON ICON LOADONCALL MOVEABLE DISCARDABLE IMPURE "BOLD.ICO"
+
+1 VERSIONINFO LOADONCALL MOVEABLE DISCARDABLE IMPURE
+FILEVERSION 4,0,0,0
+PRODUCTVERSION 4,0,0,0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEOS VOS__WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "Borland\000"
+   VALUE "FileDescription", "\000"
+   VALUE "FileVersion", "4.0.0.0\000"
+   VALUE "InternalName", "\000"
+   VALUE "LegalCopyright", "Copyright (c) 2003 Borland\000"
+   VALUE "LegalTrademarks", "Bold is a registered trademark of Borland. All other trademarks and registered trademarks are the property of their respective companies.\000"
+   VALUE "OriginalFilename", "\000"
+   VALUE "ProductName", "Bold for Delphi Development R4.0-D7\000"
+   VALUE "ProductVersion", "4.0.0.0\000"
+   VALUE "Comments", "Timestamp: 2003-03-23 20:00:33. Development build.\000"
+  }
+
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 1033, 1252
+ }
+
+}
+

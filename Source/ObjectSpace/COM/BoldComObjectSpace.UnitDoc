@@ -1,0 +1,133 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/COM/BoldComObjectSpace.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="DF_ACTIVE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_AUTOFIRST">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_BOLDLIST">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_BOLDSYSTEM">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_CLASSEXPRESSIONNAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_CLEARBEFOREEXECUTE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_COUNT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_CURRENTBOLDOBJECT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_CURRENTINDEX">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_DYNAMICBOLDTYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_ENABLED">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_EVALUATEINPS">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_EXPRESSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_HANDLEID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_INITIALVALUES">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_LISTELEMENTTYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_PERSISTENT">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_ROOTHANDLE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_ROOTTYPENAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_SQLORDERBYCLAUSE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_SQLWHERECLAUSE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_STATICBOLDTYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_STATICROOTTYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_STATICSYSTEMHANDLE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_STATICSYSTEMTYPE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_STATICVALUETYPENAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_SUBSCRIBE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_VALUE">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="DF_VALUETYPENAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldComObjectSpaceTypeLibrary">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

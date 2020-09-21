@@ -1,0 +1,1092 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldGrid.UnitDoc 14    02-08-19 14:41 Isje $">
+   <Classes>
+      <Class Name="TBoldColumnTitle">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc><InlineCode>Assign</InlineCode> is implemented to support the assign pattern as required by VCL. </Desc>
+            </Method>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultAlignment">
+               <Summary>Default alignment for title</Summary>
+               <Desc>The default alignment is used if the <See Property="Alignment"/> property is not set. The default value is <InlineCode>taLeftJustify</InlineCode>. </Desc>
+            </Method>
+            <Method Name="DefaultCaption">
+               <Summary>Default caption for title</Summary>
+               <Desc>The <InlineCode>DefaultCaption</InlineCode> will be used if the <InlineCode>Caption</InlineCode> property has not been set. The default value is the expression of the <InlineCode>TBoldStringFollowerController</InlineCode>. </Desc>
+            </Method>
+            <Method Name="DefaultColor">
+               <Summary></Summary>
+               <Desc>The <InlineCode>DefaultColor</InlineCode> will be used if the <See Property="Color"/> property has not been set. The default value is the value of the <InlineCode>FixedColor</InlineCode> property of the owning grid. </Desc>
+            </Method>
+            <Method Name="DefaultFont">
+               <Summary></Summary>
+               <Desc>The <InlineCode>DefaultFont</InlineCode> will be used if the <See Property="Font"/> property has not been set.
+                  <P>The default is to use the <InlineCode>TitleFont</InlineCode> of the owning grid.</P>
+               </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FontChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAlignment">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCaption">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColor">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFont">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsAlignmentStored">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsCaptionStored">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsColorStored">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsFontStored">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefreshDefaultFont">
+               <Summary>Restores the default font of the title.</Summary>
+               <Desc>The default font is the font of the grid's title.</Desc>
+            </Method>
+            <Method Name="RestoreDefaults">
+               <Summary>Restores the default values for the title.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAlignment">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCaption">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPopupMenu">
+               <Summary>Private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary>Specifies text alignment</Summary>
+               <Desc>The <InlineCode>alignment</InlineCode> property allows the title to be aligned left, right or centered. </Desc>
+            </Property>
+            <Property Name="Caption">
+               <Summary>Caption of the title cell</Summary>
+               <Desc>The <InlineCode>caption</InlineCode> can be set to any string value. It will default to the <See Class="TBoldFollowerController" Property="Expression"/> if not touched. </Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary>Background color of the title cell </Summary>
+               <Desc>This property controls the background color of the title cell. If not changed it will use the FixedColor of the grid.</Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc>Use this property to specify the font of the title cell. If nothing is specified, the <See Property="DefaultFont"/> will be used. </Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary>Popupmenu of the tile cell.</Summary>
+               <Desc>Using this property it is possible to attach a separate popup menu to each title cell. Setting it disables the default popup menu used for automatic resizing of the column.</Desc>
+            </Property>
+         </Properties>
+         <Summary>The TBoldColumnTitle specifies the look and feel of the title cell of a TBoldGridColumn. </Summary>
+         <Desc>It holds the <See Property="Color"/>, <See Property="Font"/> and <See Property="Caption"/>, in addition to a <See Property="PopupMenu"/>. </Desc>
+      </Class>
+      <Class Name="TBoldConstraintRenderer">
+         <Methods>
+            <Method Name="DefaultMakeUptodateAndSetMayModifyAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>The renderer used to show the validity of the constraints.</Summary>
+         <Desc>This renderer is used for the first colunm if the <See Class="TBoldCustomGrid" Property="BoldShowConstraints"/> is set.</Desc>
+      </Class>
+      <Class Name="TBoldCustomGrid">
+         <Events>
+            <Event Name="OnDrawCell">
+               <Summary>Event for user drawing of cells</Summary>
+               <Desc><InlineCode>OnDrawCell</InlineCode> can be assigned to supply custom drawing of cells. </Desc>
+            </Event>
+            <Event Name="OnSelectCell">
+               <Summary>Event fired when a cell is selected.</Summary>
+               <Desc>Implement this event if you are interested in which cell has been selected.</Desc>
+            </Event>
+            <Event Name="OnTopLeftChanged">
+               <Summary>Event triggered when viewport changed</Summary>
+               <Desc>Assigning code to this event allows for logic to execute when the top left cell of the grid changes. The top left cell changes when the viewport changes. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="ActivateAllCells">
+               <Summary>Ensures all cells contain data</Summary>
+               <Desc>The grid will only load data in the cells visible in the viewport, plus a couple of rows above and below the viewport. <InlineCode>ActivateAllCells</InlineCode> makes sure all cells contain valid data.</Desc>
+            </Method>
+            <Method Name="AddColumn">
+               <Summary>Adds a column to the grid.</Summary>
+               <Desc>Use this method to programmatically add a column to the grid. </Desc>
+            </Method>
+            <Method Name="AdjustActiveRange">
+               <Summary>Called internally to set the active range</Summary>
+               <Desc><InlineCode>AdjustActiveRange</InlineCode> is used to ensure the availablity of data in the cells visible in the viewport.</Desc>
+            </Method>
+            <Method Name="AdjustCol">
+               <Summary>Adjusts the width of a column.</Summary>
+               <Desc><InlineCode>AdjustCol</InlineCode> adjusts the width of the column according to the column's <See Class="TBoldGridColumn" Property="CWAdjust"/> settings.</Desc>
+            </Method>
+            <Method Name="AsClipBoardText">
+               <Summary>Returns the contents of the grid in a tab-separated list</Summary>
+               <Desc>Use <InlineCode>AsClipBoardText</InlineCode> to retrieve the content of the grid as a tab-separated list. Columns will be separated by a tab-character and rows by a CRLF pair.</Desc>
+            </Method>
+            <Method Name="AutoAdjustCol">
+               <Summary>Automatically adjust column widths</Summary>
+               <Desc>Invoking this method will adjust the width of the column on position col to the width of it's widest content, including the caption in the title.
+                  <P>The column's <See Class="TBoldGridColumn" Property="CWAdjust"/>-property will temporarily be set to include all options, thus forcing it to update its width immediately. The <InlineCode>CWAdjust</InlineCode> property will then be restored to the original values.</P>
+               </Desc>
+            </Method>
+            <Method Name="CanEditAcceptKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditModify">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditShow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEditShowForCustomEditors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CellFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Click">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColWidthsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColumnClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColumnIsCheckBox">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColumnMoved">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Create an instance of the component</Summary>
+               <Desc>use <InlineCode>Create</InlineCode> to programmatically create an instance of the component.</Desc>
+            </Method>
+            <Method Name="CreateColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateDefaultColumns">
+               <Summary>Creates columns based on context</Summary>
+               <Desc><InlineCode>CreateDefaultColumns</InlineCode> can be used to create columns corresponding to what is made known to the grid by the <See Property="BoldHandle"/>.
+                  <P>Assuming the <InlineCode>BoldHandle</InlineCode> hold a list of Persons, all having a name, a single relation to a building called home and a multirelation to buildings called owned buildings, invoking <InlineCode>CreateDefaultColumns</InlineCode> will create one column for name, one for the single relation home but no column for the multi relation ownedBuildings.</P>
+               </Desc>
+            </Method>
+            <Method Name="CreateEditor">
+               <Summary>Used internally to create an inplace editor</Summary>
+               <Desc>There should be no need to call this function.</Desc>
+            </Method>
+            <Method Name="DataRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultColumns">
+               <Summary>Creates default columns</Summary>
+               <Desc><InlineCode>DefaultColumns</InlineCode> invokes the virtual method <See Method="CreateDefaultColumns"/>. The end result is that one column per attribute member of the displayed type is created. </Desc>
+            </Method>
+            <Method Name="DefaultTitlePopup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultTitlePopupOnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteAllColumns">
+               <Summary>Deletes all defined columns</Summary>
+               <Desc><InlineCode>DeleteAllColumns</InlineCode> removes all defined columns from the grid and adds the fixed index column. </Desc>
+            </Method>
+            <Method Name="DeleteColumn">
+               <Summary>Delete a single column</Summary>
+               <Desc><InlineCode>DeleteColumn</InlineCode> removes the column of index <InlineCode>ACol</InlineCode> from the grid. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of the component</Summary>
+               <Desc>Do not call <InlineCode>destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> instead.</Desc>
+            </Method>
+            <Method Name="DisplayAllCells">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayAvailableFollowers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary>Internal use.</Summary>
+               <Desc>Executed when the user has released the mousebutton and dropped the dragged object.</Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary>Internal use.</Summary>
+               <Desc>Executed when the user presses the mousebutton over an object to drag.</Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary>Internal use.</Summary>
+               <Desc>Executes drop statement, when the user releases the mousebutton to drop a dragged object.</Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary>Internal use.</Summary>
+               <Desc>Executed when the user has selected an object to drag by pressing the mouse over it and are moving the objet around.</Desc>
+            </Method>
+            <Method Name="DrawCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EditStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureActiveCellFollowerExpressions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureConstraintColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureOneFixedCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureRowActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetActiveRange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCellFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCellText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentBoldElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentCellFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEditText">
+               <Summary>Internal use.</Summary>
+               <Desc>Executed when a gridcolumn is marked for editing.</Desc>
+            </Method>
+            <Method Name="GetEditor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandleListElementType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandleStaticType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRowFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary>Internal use.</Summary>
+               <Desc>Returns true if currrent row is selected.</Desc>
+            </Method>
+            <Method Name="GetShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetString">
+               <Summary>Internal use.</Summary>
+               <Desc>Returns string value of the current gridcolumn.</Desc>
+            </Method>
+            <Method Name="GetTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GridRow">
+               <Summary>Internal use.</Summary>
+               <Desc>Returns current row number. Executed everytime the selection of row changes in a grid. Don't use this method </Desc>
+            </Method>
+            <Method Name="HighlightCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InvalidateFromRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LookUpChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MoveColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReallyInvalidateCol">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SelectCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandleIndexLock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetEditText">
+               <Summary>This method is for internal use.</Summary>
+               <Desc>Whenever the value in a gridcolumn is edited this method is executed. It detectes and commites any changes.</Desc>
+            </Method>
+            <Method Name="SetMultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTitleFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TitleMenuPopup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TopLeftChanged">
+               <Summary></Summary>
+               <Desc><InlineCode>TopLeftChanged</InlineCode> triggers <InlineCode>OnTopLeftChanged</InlineCode> and invokes logic to update the column widths according to each columns <See Class="TBoldGridColumn" Property="CWAdjust" Text="CWAdjust"/> settings. </Desc>
+            </Method>
+            <Method Name="TypeMayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateComponent">
+               <Summary>Used by the design time validator</Summary>
+               <Desc>This method is for internal use</Desc>
+            </Method>
+            <Method Name="WMChar">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeCellUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeListUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_BeforeMakeListUpToDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_DeleteRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_InsertRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AddNewAtEnd">
+               <Summary></Summary>
+               <Desc>If <InlineCode>AddNewAtEnd</InlineCode> is set to <InlineCode>true</InlineCode>, the grid will try to add a new object to the list held by the <InlineCode>BoldHandle</InlineCode>. If set to <InlineCode>false</InlineCode> it is not possible to move below the last row. </Desc>
+            </Property>
+            <Property Name="AlwaysShowSelected">
+               <Summary></Summary>
+               <Desc>If <InlineCode>AlwaysShowSelected</InlineCode> is set to <InlineCode>true</InlineCode> the selected cell will be indicated even if the grid does not have focus. Setting this property to <InlineCode>false</InlineCode> will prevent the selected cell to be indicated if the grid loses focus. </Desc>
+            </Property>
+            <Property Name="AutoSelectNewRows">
+               <Summary>Selects new rows as they are added to the list</Summary>
+               <Desc>If this property is <InlineCode>True</InlineCode>, the new row will be selected when added. </Desc>
+            </Property>
+            <Property Name="BoldAutoColumns">
+               <Summary>Controls how automatically columns are created</Summary>
+               <Desc>If set, the grid will recreate columns as required when the type of the <See Property="BoldHandle"/> changes. This is truly powerful weapon in the arsenal for building dynamic GUIs. </Desc>
+            </Property>
+            <Property Name="BoldDragAnywhere">
+               <Summary>Determines where the user has to position the mouse to drag a row.</Summary>
+               <Desc>If this property is set to true the user can position the mouse anywhere on the row to drag it. If not, the user has to position the mouse to the left column (the one holding the selection indicator) to be able to drag the row.</Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Since <InlineCode>TBoldCustomGrid</InlineCode> is a multi-value control it will follow the List property of the handle. The elements in the list are represented by rows in the grid. </Desc>
+            </Property>
+            <Property Name="BoldHandleIndexLock">
+               <Summary>Controls relation to current index in bold handle</Summary>
+               <Desc>If <InlineCode>BoldHandleIndexLock</InlineCode> is set to <InlineCode>True</InlineCode> the grid's current row will reflect the <InlineCode>CurrentIndex</InlineCode> of its handle. Correspondingly, changing the current row of the grid will update the <InlineCode>CurrentIndex</InlineCode> of the handle.
+                  <P>When <InlineCode>BoldHandleIndexLock</InlineCode> is set to <InlineCode>false</InlineCode>, changing the current of the grid will not change the handle and changes to the handle will not propagate to the grid.</P>
+               </Desc>
+            </Property>
+            <Property Name="BoldList">
+               <Summary>Shortcut to handle's list</Summary>
+               <Desc>This property returns the <InlineCode>List</InlineCode>-property of the <See Property="BoldHandle"/> of the grid. It is equivalent to 
+                  <Code>if Assigned(BoldHandle) then
+  Result := BoldHandle.List
+else
+  Result := nil;</Code>
+ </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc>The <InlineCode>BoldProperties</InlineCode> of the grid deal with the properties pertaining to the list rather than the individual columns. </Desc>
+            </Property>
+            <Property Name="BoldShowConstraints">
+               <Summary>Controls if a column indicating constraints will be visible</Summary>
+               <Desc>If this property is set to <InlineCode>True</InlineCode>, a column indicating if there is any broken constraint for the object/elements in the grid</Desc>
+            </Property>
+            <Property Name="CellFollowers">
+               <Summary></Summary>
+               <Desc>The <InlineCode>CellFollowers</InlineCode> two-dimensional matrix allows access to all followers that help map the grid contents to the object space. </Desc>
+            </Property>
+            <Property Name="CellText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Columns">
+               <Summary>Columns collection</Summary>
+               <Desc>The columns property enables access to the collection object that holds the collection of columns owned by the grid. </Desc>
+            </Property>
+            <Property Name="CurrentBoldElement">
+               <Summary></Summary>
+               <Desc>This is a shortcut to gain access to the current element of the grid. It is calculated from the the <See Property="CurrentCellFollower"/> element. </Desc>
+            </Property>
+            <Property Name="CurrentCellFollower">
+               <Summary>CurrentCellFollower is the follower for the selected cell. </Summary>
+               <Desc>It is deduced from the selected column and row in conjunction with the <See Property="CellFollowers"/> matrix. </Desc>
+            </Property>
+            <Property Name="EnableColAdjust">
+               <Summary></Summary>
+               <Desc>if <InlineCode>EnableColAdjust</InlineCode> is <InlineCode>true</InlineCode>, a single click on the title cell will adjust the column's width as if all column width adjustment options were set by invoking <See Property="AutoAdjustCol"/> on the column. </Desc>
+            </Property>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasGhostRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LookUpEditorActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MutableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDrawCell">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Options">
+               <Summary></Summary>
+               <Desc>The options-property stem from the VCL-grid and are used correspondingly. </Desc>
+            </Property>
+            <Property Name="RowFollowers">
+               <Summary>Followers for rows</Summary>
+               <Desc>This array contains the followers that manage rows. The array does not contain a follower for the title row (FixedRows). </Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary>Show if column is selected.</Summary>
+               <Desc>True if current grid column is selected.</Desc>
+            </Property>
+            <Property Name="ShowTitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TitleFont">
+               <Summary></Summary>
+               <Desc>The grid allows for a very high level of control in regard to looks. The <InlineCode>TitleFont</InlineCode> is used to set the default font of the title cells of the grid. These can then be further controlled by tweaking the <See Class="TBoldGridColumn" Property="Title"/> of the individual <InlineCode>TBoldGridColumn</InlineCode>. </Desc>
+            </Property>
+            <Property Name="TitleRow">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>'Custom' version of Bold-aware grid component</Summary>
+         <Desc><InlineCode>TBoldCustomGrid</InlineCode> introduces new properties, events, and methods to expand the capabilities of <InlineCode>TCustomGrid</InlineCode> for displaying elements and objects from the object space.
+            <P>Do not create instances of <InlineCode>TBoldCustomGrid</InlineCode>. Use <InlineCode>TBoldCustomGrid</InlineCode> as a base class when declaring grid objects that display information from the object space. Properties and methods of <InlineCode>TBoldCustomGrid</InlineCode> provide basic behavior that descendant classes inherit as well as behavior that components can override to customize their behavior.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldFirstColumnRenderer">
+         <Methods>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Renders the first column</Summary>
+         <Desc>This renderer renders the first column of the grid, the onw indicating if a row is current and/or selected.</Desc>
+      </Class>
+      <Class Name="TBoldGrid">
+         <Events></Events>
+         <Properties>
+         </Properties>
+         <Summary>Subclass to TBoldCustomGrid, making properties published, but not introducing anything new.</Summary>
+         <Desc>A TBoldGrid allows for a list of elements to be displayed in a grid. Each element will correspond to a row in the grid, and various features of each element will be shown in the columns. The elements to show are specified by the <See Class="TBoldCustomGrid" Property="BoldHandle"/> property. </Desc>
+      </Class>
+      <Class Name="TBoldGridCheckBoxPainterRenderer">
+         <Methods>
+            <Method Name="CheckBoxClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCheckBoxRect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ToggleValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Renders checkboxes in cells</Summary>
+         <Desc>This class is used to make cells look like checkboxes.</Desc>
+      </Class>
+      <Class Name="TBoldGridColumn">
+         <Events>
+            <Event Name="OnLookupChange">
+               <Summary>Current object in the lookup handle has been changed.</Summary>
+               <Desc>Executed when the <See Class="TBoldCustomEdit" Property="BoldHandle" Text="LookupHandle"/> has been used to update the value in the column. Observe, the column has to be connected to a <See Class="TBoldCustomEdit" Property="BoldHandle" Text="LookupHandle"/>.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AreFontsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ColumnHasCheckBoxOverrides">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLookupContext">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RefreshDefaultFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RestoreDefaults">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCWAdjust">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCheckBoxRendererIfAppropriate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetCurrentCheckBoxState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLookUpProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLookupHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTitle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetWidth">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_FontChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Alignment">
+               <Summary>How the text in the cells in the column should be adjusted</Summary>
+               <Desc>How the text in the cells in the column should be adjusted. Possible values are <InlineCode>taLeftJustify</InlineCode>, <InlineCode>taRightJustify</InlineCode>, <InlineCode>taCenter</InlineCode></Desc>
+            </Property>
+            <Property Name="AllowCheckBox">
+               <Summary>Render boolean values as checkboxes</Summary>
+               <Desc>If the type of the value of the cells in the column is boolean, then it will be represented as a checkbox if this property is true. See also <See Var="BoldAllowCheckBoxInGrids"/></Desc>
+            </Property>
+            <Property Name="AssignedValues">
+               <Summary></Summary>
+               <Desc> </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc> This property has a number of sub-properties that control the Bold-aware aspects of the control. In the context of this control, the sub-properties have the following meaning:
+                  <BH>ApplyPolicy</BH>
+                  <P>Determines when changes to the control will be applied to the underlying business objects.</P>
+                  <UL>
+                     <LI><InlineCode>bapChange</InlineCode> - means that changes will be applied after each change, i.e. after each character typed by the user.</LI>
+                     <LI><InlineCode>bapExit</InlineCode> - means that changes will be applied when focus leaves the control. Please note that some operations that seem to leave the control, e.g. selecting a menu-item do not actually move focus, and thus do not trigger apply.</LI>
+                     <LI><InlineCode>bapDemand</InlineCode> - means that the changed value will continue to reside in the GUI until it is explicitly applied by calling <See Class="TBoldQueueable" Method="ApplyAll" Text="TBoldQueueable.ApplyAll"/> or <See Class="TBoldQueueable" Method="ApplyAllMatching" Text="TBoldQueueable.ApplyAllMatching"/>. This will in general be done by an OK button on the form. The changes can also be discarded by calling <See Class="TBoldQueueable" Method="DiscardChangeAll" Text="TBoldQueueable.DiscardChangeAll"/> or <See Class="TBoldQueueable" Method="DiscardChangeAllMatching" Text="TBoldQueueable.DiscardChangeAllMatching"/>.</LI>
+                  </UL>
+                  <BH>CleanOnEqual</BH>
+                  <P>If <InlineCode>CleanOnEqual</InlineCode> is <InlineCode>true</InlineCode> then if the value of the control is changed, and then subsequently changed back to the original value before it has been applied to the business objects, then it will be regarded as unchanged, and removed from the Apply list.</P>
+                  <BH>DragMode</BH>
+                  <P>This property is not used for columns</P>
+                  <BH>DropMode</BH>
+                  <P>This property is not used for columns</P>
+                  <BH>Expression</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Expression</InlineCode> will be interpreted as an OCL expression to be applied to <InlineCode>BoldHandle.Value</InlineCode>.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Expression</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+                  <BH>NilStringRepresentation</BH>
+                  <P>The string value used for display purposes in case <InlineCode>BoldHandle.Value</InlineCode> evaluates to <InlineCode>nil</InlineCode>. The default <InlineCode>NilStringRepresentation</InlineCode> is an empty string.</P>
+                  <BH>Renderer</BH>
+                  <P>This property identifies a <See Class="TBoldAsStringRenderer"/> that is used do define the mapping from <See Class="TBoldCustomEdit" Property="BoldHandle" Text="BoldHandle"/>.Value to the string displayed in the control. The default renderer will apply <InlineCode>Expression</InlineCode> to the value, and then take <See Class="TBoldElement" Property="StringRepresentation"/> on the result. A custom renderer may perform any mapping.</P>
+                  <BH>Representation</BH>
+                  <P>The interpretation of this sub-property depends on the value of the <InlineCode>Renderer</InlineCode> sub-property. If <InlineCode>Renderer</InlineCode> is <InlineCode>(default)</InlineCode> then <InlineCode>Representation</InlineCode> will be interpreted as the <InlineCode>StringRepresentation</InlineCode> to be used on the element resulting from evaluating expression.</P>
+                  <P>If an explicit renderer has been given, <InlineCode>Representation</InlineCode> is passed as a parameter to the methods/events of the renderer. The renderer is free to use the value in any way desired. For most custom renderers it is just ignored.</P>
+               </Desc>
+            </Property>
+            <Property Name="CWAdjust">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColReadOnly">
+               <Summary>If the column is read-only</Summary>
+               <Desc>Set to <InlineCode>true</InlineCode> to make the cells in the column read-only.</Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary>The background color of the cells in the column</Summary>
+               <Desc>The background color of the cells in the column.</Desc>
+            </Property>
+            <Property Name="DefaultTitlePopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary>The font to be used in the column</Summary>
+               <Desc>The font to be used in the column.</Desc>
+            </Property>
+            <Property Name="Grid">
+               <Summary>The grid that the column belongs to</Summary>
+               <Desc>The grid that the column belongs to.</Desc>
+            </Property>
+            <Property Name="LookUpProperties">
+               <Summary>Subproperties configuring lookup combo box behaviour </Summary>
+               <Desc>If a the <See Property="LookupHandle"/> is assigned, then these specify the behaviour of the individual rows in the drop down portion of the combo box. For example, see <See Class="TBoldComboBox" Property="BoldRowProperties"/> for a thorough description of the subproperties.</Desc>
+            </Property>
+            <Property Name="LookupHandle">
+               <Summary>The contents of the drop down list of a combo box</Summary>
+               <Desc>If this property is assigned, then a combo box will be used to edit the contents of the cells in this column. The handle specifies the list of elements to be used for the drop down portion of the combo box. The elements of the list handle must be assignment compatible with the elements of the cells. See also <See Property="LookupProperties"/> </Desc>
+            </Property>
+            <Property Name="NilElementMode">
+               <Summary>Specifies how to add nil elements</Summary>
+               <Desc>In some cases, users should be allowed to clean a link, i.e. setting it to nil. NilElementMode specifies if and how such a nil element should be added to the list.
+                  <BH>Options</BH>
+                  <UL>
+                     <LI><InlineCode>neNone</InlineCode> - No nil element is present in the list</LI>
+                     <LI><InlineCode>neAddLast</InlineCode> - a nil element is added at the end of the list</LI>
+                     <LI><InlineCode>neInsertFirst</InlineCode> - a nil element is inserted first in the list</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="Title">
+               <Summary>Controls the title of the column</Summary>
+               <Desc>Controls the title of the column.</Desc>
+            </Property>
+            <Property Name="UserDraw">
+               <Summary>If true, call the grid's OnUserDraw to draw the cells in the column.</Summary>
+               <Desc>If <InlineCode>true</InlineCode>, call the grid's <See Class="TBoldGrid" Property="OnUserDraw"/> to draw the cells in the column.</Desc>
+            </Property>
+            <Property Name="Width">
+               <Summary>Width of the column</Summary>
+               <Desc>The width of the column, in pixels.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Holds the configuration for a column of a TBoldGrid.</Summary>
+         <Desc>Holds the configuration for a column of a <See Class="TBoldGrid"/>.</Desc>
+      </Class>
+      <Class Name="TBoldGridColumns">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Add a new column.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumn">
+               <Summary>Return a column.</Summary>
+               <Desc>Return the column at the specified index.</Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary>Return the owning grid.</Summary>
+               <Desc>Return the grid that the columns belong to as a TPersistent object.</Desc>
+            </Method>
+            <Method Name="MoveColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColumn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Grid">
+               <Summary>The owning grid.</Summary>
+               <Desc>The grid to which the columns belong.</Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary>Get and set a specified column.</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A collection of grid columns.</Summary>
+         <Desc>Holds a collection of a TBoldGrid's <See Class="TBoldGridColumn" Text="columns"/>.</Desc>
+      </Class>
+      <Class Name="TBoldInplaceEdit">
+         <Methods>
+            <Method Name="BoundsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ChangedPos">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ComboChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ComboKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCombo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDestElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGrid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HideCombo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitCombo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Combo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Grid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the bold aware grid control. </Summary>
+   <Desc>This unit defines the <InlineCode>TBoldGrid</InlineCode>. It is a control used to display lists of objects, with several columns per row.</Desc>
+   <Types>
+      <Type Name="TBoldCWAdjustSet">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldColumnClass">
+         <Summary></Summary>
+         <Desc>This class is used for factory methods by the TBoldGridColumns ancestor.</Desc>
+      </Type>
+      <Type Name="TBoldLookupChange">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldAllowCheckBoxInGrids">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

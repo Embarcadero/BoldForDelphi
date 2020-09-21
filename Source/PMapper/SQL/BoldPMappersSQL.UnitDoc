@@ -1,0 +1,431 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/SQL/BoldPMappersSQL.UnitDoc 7     02-02-13 10:14 Johosos $">
+   <Classes>
+      <Class Name="EBoldDbTypeMissing">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberSQLMapper">
+         <Methods>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDatabaseScript">
+               <Summary>Generates a SQL script to create the full database schema for this persistence mapper</Summary>
+               <Desc>This method is virtual if a subclass requires to add any customized initialization of the database. The implementation at this level does not add anything to the script</Desc>
+            </Method>
+            <Method Name="GetAllowNullAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInitialColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequiresLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetParamToNullWithDataType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllowNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AllowNullAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColumnDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InitialColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InitialColumnRootName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RequiresLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectSQLMapper">
+         <Methods>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DistributableTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDatabaseScript">
+               <Summary>Generates a SQL script to create the full database schema for this persistence mapper</Summary>
+               <Desc>This method will loop over the member-mappers to call their method <See Class="TBoldMemberSQLMapper" Method="GenerateDatabaseScript"/>. It is virtual if a subclass requires to add any customized initialization of the database. The implementation at this level does not add anything to the script</Desc>
+            </Method>
+            <Method Name="GetSystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializePSDescriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="JoinSQLTableByKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveSelectStatement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveTimeStampCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForDistributed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForKey">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLForMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TableAlias">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdatesMembersInTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesFromFieldsByMemberList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesToParamsByMemberList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MainTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSystemSQLMapper">
+         <Events>
+            <Event Name="OnPreInitializeBoldDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="BoldDbTypeForTopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloseDataBase">
+               <Summary></Summary>
+               <Desc>This method, closes the connection to the database.</Desc>
+            </Method>
+            <Method Name="Commit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePSParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreatePersistentStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillPSParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateDatabaseScript">
+               <Summary>Generates a SQL script to create the full database schema for this persistence mapper</Summary>
+               <Desc>This method will add script for the schema (as defined by the <See Property="PSSystemDescription"/>), and the mapping information (as defined by <See Property="MappingInfo"/>). It will also loop over all object mappers to allow them to add customized initialization of the database </Desc>
+               <Params>
+                  <Param Name="Script">
+                     <Desc>A TStrings-object in which the script should be generated</Desc>
+                  </Param>
+                  <Param Name="Separator">
+                     <Desc>If the separator is not the empty string, it will be added to the script between each SQL-statement</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="GetAllTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIBoldDataBase">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootClassObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeBoldDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InvokeMemberMappersInitializeSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OpenDatabase">
+               <Summary></Summary>
+               <Desc>This method will open the connection to the database. If it requires a login, and the username and password has been supplied to the Database-object, a login-prompt might occur. </Desc>
+               <Params>
+                  <Param Name="ReadDbTypeFromDB">
+                     <Desc>If true, then the mapping from name to database type (integer) will be read from the database, otherwise it will be calculated from the model. This parameter should only be false if the database schema is going to be created</Desc>
+                  </Param>
+                  <Param Name="ReadMappingFromDB">
+                     <Desc>If true, then the database mapping (where classes, and attributes are stored) is read from the database, otherwise it is calculated from the model. If you want to allow multiple versions of the application to access the database (with different models), this property must be true. It is usually set by setting the property <See Class="TBoldDBPersistenceHandle" Property="EvolutionSupport"/></Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="ReleaseQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RollBack">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSystemtablesPrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TopSortedIndexForBoldDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Database">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxDBIdentifierLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PSSystemDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootClassObjectPersistenceMapper">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SQLDataBaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemtablesPrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="SQLFORNOTNULL">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldDBStorageMode">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldPreInitializeBoldDbType">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

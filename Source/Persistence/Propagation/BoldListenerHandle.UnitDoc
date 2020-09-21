@@ -1,0 +1,186 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesPropagation/BoldListenerHandle.UnitDoc 12    02-03-05 23:29 Johosos $">
+   <Classes>
+      <Class Name="TBoldListenerHandle">
+         <Events>
+            <Event Name="OnExtendLeaseFailed">
+               <Summary>Event indicating extension of lease failed</Summary>
+               <Desc>This event is fired when the listener fails to extent the lease with the propagator. This can happen for various reasons. Either the listener is not using <See Property="AutoExtendLease"/> or it has been unable to contact the propagator in time (perhaps the network has been unavailable). See <See Type="TBoldExtendLeaseResult"/> for more details on what went wrong. </Desc>
+            </Event>
+            <Event Name="OnRegistrationFailed">
+               <Summary>Event indicating registration failed</Summary>
+               <Desc>This event is fired when a client's attempt to register with a propagator fails. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>Creates an instance of <InlineCode>TBoldListenerHandle</InlineCode>. This is normally done by placing the component on a datamodule. </Desc>
+            </Method>
+            <Method Name="DebugGetQueueContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DequeuerDeleted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtendLease">
+               <Summary>Extends lease</Summary>
+               <Desc>Call <InlineCode>ExtendLease</InlineCode> to renew a client's lease with the propagator. For renewing the lease with a new value, set the <See Property="LeaseDuration"/> property to that new value and call <InlineCode>ExtendLease</InlineCode> afterwards. </Desc>
+            </Method>
+            <Method Name="GetBoldClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConnected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsLoaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListenerThread">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NotifyDequeuer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary></Summary>
+               <Desc>If <InlineCode>Value</InlineCode> is <InlineCode>True</InlineCode> and <InlineCode>AutoStart</InlineCode> is <InlineCode>True</InlineCode>, <InlineCode>SetActive</InlineCode> will try start the <See Property="ListenerThread"/>. If <InlineCode>Value</InlineCode> is <InlineCode>False</InlineCode>, it will stop the <InlineCode>ListenerThread</InlineCode>.
+                  <BH>Usage</BH>
+For programatically controlling the client's registration with the propagator see <See Method="StartListenerThread"/> and <See Method="StopListenerThread"/>. </Desc>
+            </Method>
+            <Method Name="SetDequeuer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExtendLeaseAfter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOnExtendLeaseFailed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPropagatorHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartListenerThread">
+               <Summary>Starts/Resumes the listener thread</Summary>
+               <Desc>Call this method to register the object space with a propagator, or if it already is registered, to resume listening to the notifications sent by the propagator. </Desc>
+            </Method>
+            <Method Name="StopAndFreeListenerThread">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StopListenerThread">
+               <Summary>Stops the listener thread.</Summary>
+               <Desc>Calling this method stops the listener thread and  and deregisters the system with the Propagator server.</Desc>
+            </Method>
+            <Method Name="SuspendListenerThread">
+               <Summary>Suspends the listener thread.</Summary>
+               <Desc>Calling this method suspends the thread that is listening to notifications sent by the propagator.</Desc>
+            </Method>
+            <Method Name="_ReceivePropagatorHandleEvents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setAutoExtendLease">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setClientIdentifierString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setLeaseDuration">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setPollingInterval">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoExtendLease">
+               <Summary>Determines whether the client application should periodically call the propagator for renewing its lease.</Summary>
+               <Desc> If <InlineCode>AutoExtendLease</InlineCode> is <InlineCode>True</InlineCode>, then the client application will periodically call the propagator for renewing its lease. If it's <InlineCode>False</InlineCode> then the developer must ensure that the Propagator is called before the lease of the client expires. If a client's lease expires the propagator will drop its connection with that client.
+                  <P>For renewing a client's lease programatically see <See Method="ExtendLease"/>. The lease will be extended when 80% of the <See Property="LeaseDuration"/> has passed.</P>
+               </Desc>
+            </Property>
+            <Property Name="AutoStart">
+               <Summary>Controls automatic start of listener</Summary>
+               <Desc>If <InlineCode>AutoStart</InlineCode> is <InlineCode>False</InlineCode> the object space will not register with the propagator when the application starts, instead the application must call <See Method="StartListenerThread"/> to register the object space. </Desc>
+            </Property>
+            <Property Name="BoldClientID">
+               <Summary></Summary>
+               <Desc>The <InlineCode>BoldClientID</InlineCode> is an ID assigned by the propagator to identify the object space when the latter registered. </Desc>
+            </Property>
+            <Property Name="ClientIdentifierString">
+               <Summary>Use this to specify a string identifier for a client.</Summary>
+               <Desc> Use <InlineCode>ClientIdentifierString</InlineCode> to specify a string identifier for your client, this will be displayed on the propagator console (and registered in the log files) and will let identify the client more easily (since the <See Property="BoldClientID"/> is dynamically assigned by the propagator) when it's connected. </Desc>
+            </Property>
+            <Property Name="Connected">
+               <Summary>Read the Connected property to determine whether the client is registered with a propagator. </Summary>
+               <Desc> The value of <InlineCode>Connected</InlineCode> is <InlineCode>True</InlineCode> if the client is registered with a propagator, <InlineCode>False</InlineCode> otherwise.</Desc>
+            </Property>
+            <Property Name="Dequeuer">
+               <Summary></Summary>
+               <Desc>The <InlineCode>Dequeuer</InlineCode> property is a reference to a <See Class="TBoldExternalObjectSpaceEventHandle"/> object. The <InlineCode>TBoldListenerHandle</InlineCode> listens to the notifications sent by the Propagator server and stores them in an event-queue, the <InlineCode>Dequeuer</InlineCode> dequeues these events and processes them. </Desc>
+            </Property>
+            <Property Name="ExtendLeaseAfter">
+               <Summary>Specifies how long the client wait until trying to extend the lease</Summary>
+               <Desc>This value specifies in percent how long the client should wait until it tries to extend its lease with the propagator. Default value is <see const=DEFAULT_EXTEND_LEASE_AFTER>. When <InlineCode>ExtendLeaseAfter</InlineCode> percent of <see property=LeaseDuration> has passed the client will try to extend the lease. Should the call to the propagator fail (due to network problems), it will try more frequently until it figures that the lease has expired, it will then resume the original intervals until it receives a denial of extension from the propagator</Desc>
+            </Property>
+            <Property Name="IsLoaded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LeaseDuration">
+               <Summary>The time (in ms) before the propagator drops the connection to the client</Summary>
+               <Desc>The lease duration is the period (in milliseconds) for which a client's registration with the propagator will remain valid, when the lease duration expires, the propagator will drop its connection with that client, i.e. the client won't be able to send or receive any notifications from the propagator.<Br/>
+The lease duration must not be set too low. Recommended minimum value is 60000 (one minute), default is 300000 (5 minutes). </Desc>
+            </Property>
+            <Property Name="ListenerThread">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PollingInterval">
+               <Summary>Determines the minimum amount of time, in milliseconds, that passes before the client receives another notification from the propagator. </Summary>
+               <Desc> Used for specifying how frequently a client application wishes to be notified by the propagator. Each time the specified interval passes, the propagator notifies the client (in case there are any notifications to dispatch). However, the frequency of notifications is not exact. The propagator will attempt not to exceed the amount of time specified. But in case there is overload, the notification intervals may exceed the period specified by the <InlineCode>PollingInterval</InlineCode>.
+                  <P>The default value is 5000 (5 seconds).</P>
+               </Desc>
+            </Property>
+            <Property Name="PropagatorHandle">
+               <Summary></Summary>
+               <Desc> The propagator handle provides a connection to the propagator.</Desc>
+            </Property>
+         </Properties>
+         <Summary>The TBoldListenerHandle receives (and queues) incoming notifications from a Propagator</Summary>
+         <Desc><InlineCode>TBoldListenerHandle</InlineCode> registers and unregisters an object space with a propagator, and listens to notifications sent by the propagator. It adds the events received from the propagator to an event-queue from where they can be dequeued and processed by for example a <See Class="TBoldExternalObjectSpaceEventHandler"/>.
+            <P>For more information on using the object space synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization"/>.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit defines the TBoldListenerHandle component</Summary>
+   <Desc>This unit defines the <InlineCode>TBoldListenerHandle</InlineCode> component.
+      <P>For more information on using the Object Space Synchronization components see <Jump ID="Mech_OSS" Text="Object Space Synchronization Server Overview"/>.</P>
+   </Desc>
+</DLUnitDoc>

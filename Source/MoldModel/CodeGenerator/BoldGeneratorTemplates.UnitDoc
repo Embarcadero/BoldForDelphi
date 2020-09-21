@@ -1,0 +1,164 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/CodeGenerator/BoldGeneratorTemplates.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldGeneratorTemplateManager">
+         <Methods>
+            <Method Name="AddQualifierParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="COMTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GenerateInheritedCall">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCOMFileTemplateCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCOMFileTemplates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultIncFileExtension">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerivedMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileTemplateCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileTemplates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIncFileHeaderTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReverseDeriveMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSearchStringfromMethodHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeCOMTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeTemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MethodToCodeHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StringContainsMethodHeader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TemplateList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="COMFileTemplateCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="COMFileTemplates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultIncFileExtension">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DerivedMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileTemplateCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FileTemplates">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IncFileHeaderTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReverseDeriveMethodTemplate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="ImplementationTag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="PrivateTag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="protectedTag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="publicTag">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldGeneratorTemplatesManager">
+         <Summary></Summary>
+         <Desc>This function returns an instance of the currently installed code generator template manager.
+</Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc>This unit contains the framework to plug in templates for a codegenerator
+</Desc>
+   <Types>
+      <Type Name="TBoldGeneratorTemplateManagerClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="BoldGeneratorTemplateManagerClass">
+         <Summary></Summary>
+         <Desc>If you want to add new templates to the code generator, subclass <see class=TBoldGeneratorTemplateManager> or any of its subclasses and set this variable to your new class.
+</Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

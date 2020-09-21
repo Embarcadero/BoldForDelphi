@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldOracleBDEQuery">
+         <Methods>
+            <Method Name="ExecSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InstallQuery">
+               <Summary></Summary>
+               <Desc>Class method that will install this implementation of IBoldQuery as the default query class</Desc>
+            </Method>
+            <Method Name="Open">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TrimSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>TBoldOracleBDEQuery subclasses TBoldBDEQuery, and overrides the methods Open and ExecSQL. Before the SQL statements are sent to the database, any occurance of CR (#13), LF (#10) and Tab (#9) will be replaced by space (#32). Call <See Method="InstallQuery"/> to install this feature </Desc>
+<Examples><Example><Body>To install this class:
+<code>
+uses 
+  TBoldOracleBDEQuery;
+  
+begin
+  TBoldOracleBDEQuery.InstallQuery;
+end;</code>
+remember to include this code in a package that is installed in delphi if you want this behaviour in designtime (when creating databases from the modeleditor).
+</Body></Example></Examples>
+     </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains a class that will trim unwanted characters from SQL-statements before they are sent to the database</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

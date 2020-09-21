@@ -1,0 +1,99 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldDBPersistenceHandle">
+         <Methods>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSQLDataBaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadEmptyStringMarker">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadSystemTablePrefix">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SQLDatabaseConfigChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDataBaseEngine">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPassword">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSQLDataBaseConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUserName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TransferPropertiesToNewPersistenceHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DatabaseEngine">
+               <Summary></Summary>
+               <Desc>Predefined settings for some of the known database engines. Changing this property will change the settings of the <See Property="SQLDataBaseConfig"/></Desc>
+            </Property>
+            <Property Name="EmptyStringMarker">
+               <Summary>This property has moved!</Summary>
+               <Desc>The new location for this property is: <See Class="TBoldSQLDatabaseConfig" Property="EmptyStringMarker"/> </Desc>
+            </Property>
+            <Property Name="Password">
+               <Summary>Password to access DB</Summary>
+               <Desc>The value of this property will be sent to the database as the password to use to login</Desc>
+            </Property>
+            <Property Name="SQLDataBaseConfig">
+               <Summary></Summary>
+               <Desc>Certain database types have different names in different databases. Here you can change the predefined names of the database types that are most common to differ</Desc>
+            </Property>
+            <Property Name="SystemTablesPrefix">
+               <Summary>This property has moved!</Summary>
+               <Desc>This property has moved to <See Class="TBoldSQLDatabaseConfig" Property="SystemTablePrefix"/> </Desc>
+            </Property>
+            <Property Name="Username">
+               <Summary>Name of user that can access the DB</Summary>
+               <Desc>The value of this property will be sent to the database as the username to use to login </Desc>
+            </Property>
+            <Property Name="__TransferPropertiesToNewPersistenceHandle">
+               <Summary>Helper property to facilitate upgrading to new architecture</Summary>
+               <Desc>Use this property to upgrade your application to the new persistence handle architecture. For more details, read <Jump ID="PersistenceHandleUpgrade" Text="Upgrade PersistenceHandle"/></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>
+            <Warning>This component is deprecated! Please use TBoldPersistenceHandleDB and a database-adapter instead. For details on how to migrate to the new architecture, please read <Jump ID="PersistenceHandleUpgrade" Text="Upgrade PersistenceHandle"/></Warning>
+This component contains general properties needed for database connectivity. Concrete subclasses can add their own properties to identify the database.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

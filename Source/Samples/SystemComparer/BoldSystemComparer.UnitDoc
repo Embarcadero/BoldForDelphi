@@ -1,0 +1,55 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Samples/SystemComparer/BoldSystemComparer.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldSystemComparer">
+         <Methods>
+            <Method Name="CompareAttributes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareObjectLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareObjectReferences">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareSystems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FullMemberName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FullObjectName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCorrespondingObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ObjectReferenceAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

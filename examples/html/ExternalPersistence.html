@@ -1,0 +1,96 @@
+<html>
+
+<head>
+  <title>External Persistence</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a target="_top" href="../../index.html">Release Doc</a> &gt; <a target="_top" href="index.html">Examples</a>
+      &gt; <a target="menu" href="menu/menu_examples_compound.html">Compound
+      Examples</a> &gt; <a href="ExternalPersistence.html">External Persistence</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">External Persistence</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+        
+<!-- Content cell starts --><a href="../Delphi/Compound/ExternalPersistence/BE_ExternalPersistence.dpr">Launch
+Delphi-example for EventDriven ExternalPersistence</a>
+<p><a href="../Delphi/Compound/ExternalPersistence2/BE_ExternalPersistence2.dpr">Launch
+Delphi-example for ModelDriven External Persistence</a></p>
+<p>These example shows how to integrate data in external databases with data
+stored in a Bold-generated database.<p>Both examples uses the database that
+whips with Delphi in &lt;program files&gt;\common files\Borland shared\data<p>The
+event driven example uses the paradox version of this database, and the
+model-driven example uses the Interbase version of this database (mastsql.gdb)
+<p>If you have installed your &quot;&lt;common files&gt;\borland shared&quot; in
+a non standard location, you might need to change the path-settings in the
+database components that access the external databases.</p>
+	<hr size="1">
+<p class="head2">Common behaviour</p>
+<p>Both examples share the fact that their model contains classes, relations and
+attributes that already exists in an external data source. These
+classes/attributes/associations are tagged in the model with a tagged value
+called &quot;Storage&quot;. For the classes, the value should be
+&quot;PartiallyExternal&quot;, for attributes, it can be either
+&quot;External&quot; or &quot;ExternalKey&quot;, and for associations, it should
+be &quot;External&quot;.<p>As objects are loaded from the external datasouurce
+their existence will be synchronized into the bold database, but their data will
+not be duplicated (except for the key, which will be used to find the external
+object again).<p class="head2">The event driven example (BE_ExternalPersistence)</p>
+<p>This example shows how to use the event driven persistence handle to access
+data from an external source. The persistence handle has a collection of
+config-items, one per class that should be handled. Each collection item has a
+number of events that define how&nbsp; objecs of this class is retrieved and
+stored. The example shows how to read and write data from a database, but the
+external storage could be anything:
+<ul>
+  <li>POP/IMAP-server</li>
+  <li>NNTP/news server</li>
+  <li>XML database</li>
+  <li>Flatfile</li>
+  <li>LDAP directory</li>
+</ul>
+<p class="head2">The model driven example (BE_ExternalPersistence)</p>
+<p>The model driven example shows how to load data from a SQL-based database,
+using the model as the only source of information how to map the data to and
+from the external database. The tagged value &quot;Storage&quot; defines which
+elements should be stored/retrieved externally, and the tagged values
+&quot;TableName&quot; (for classes) and &quot;ColumnName&quot; (for
+attributes/association ends) defines exactly where to find the data.
+	<p class="head2">How to run</p>
+<p>The &quot;Create DB&quot;-button in this example will only create the Bold
+database. it will not erase or modify the external database.
+	</p>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &quot;
+    button before attempting to open the system for the first time. Once the database and alias is
+    established you only have to use the &quot;Open system&quot; button when running the example
+    program.&nbsp;
+    </p>
+<!-- Content frame ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks are
+      properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

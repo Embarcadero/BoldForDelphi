@@ -1,0 +1,42 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldRev.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldBuildVersion">
+         <Summary>Returns the product's build version.</Summary>
+         <Desc> Use this function to obtain the build version for Bold for Delphi.
+The build version number consists of four digits and has the following format: &lt;MajorVersion&gt;.&lt;MinorVersion&gt;.&lt;ReleaseNumber&gt;.&lt;BuildNumber&gt;. </Desc>
+         <SeeAlso><See Routine="BoldProductVersion"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldModuleVersions">
+         <Summary></Summary>
+         <Desc>The list is owned by the unit, and should not be freed by the caller.</Desc>
+      </Routine>
+      <Routine Name="BoldProductNameLong">
+         <Summary>Returns the long product name.
+
+</Summary>
+         <Desc>
+The resulting string will be similar to this: "Bold for Delphi Enterprise Edition 3.1-D6".</Desc>
+      </Routine>
+      <Routine Name="BoldProductNameShort">
+         <Summary>Returns the short product name.</Summary>
+         <Desc> The resulting string will be similar to this: "BfD31D5Ent". </Desc>
+         <SeeAlso><See Routine="BoldProductnameLong"/></SeeAlso>
+      </Routine>
+      <Routine Name="BoldProductVersion">
+         <Summary></Summary>
+         <Desc>The product version string contains the major and minor version numbers only, for example: "3.1"
+</Desc>
+      </Routine>
+      <Routine Name="BoldRegisterModuleVersion">
+         <Summary></Summary>
+         <Desc>The BoldRegisterModuleVersion is used internally to register the source units into the about screen. </Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

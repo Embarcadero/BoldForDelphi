@@ -1,0 +1,429 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/Core/BoldPersistenceOperationXMLStreaming.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldPMExactifyIdsOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMFetchIdListOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Condition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FetchMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMFetchOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FetchMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMReserveNewIdsOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ObjectIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMTimeForTimestampOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClockTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Timestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMTimestampForTimeOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClockTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Timestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMUpdateOperation">
+         <Methods>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldClientID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Old_Values">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Precondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Timestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPersistenceOperation">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Execute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExecuteStreamed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoteExecute">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteOutParams">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StreamManager">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

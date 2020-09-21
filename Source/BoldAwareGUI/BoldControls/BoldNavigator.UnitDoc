@@ -1,0 +1,462 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldNavigator.UnitDoc 9     02-08-12 13:19 Isje $">
+   <Classes>
+      <Class Name="TBoldCustomNavigator">
+         <Events>
+            <Event Name="OnClick">
+               <Summary>This event is triggered after the control has handled the button click.</Summary>
+               <Desc>The clicked buttons enumerated value will be passed in the parameter list. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="AdjustSizeXY">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BtnClick">
+               <Summary></Summary>
+               <Desc>The <InlineCode>BtnClick</InlineCode> method receives the button clicked as parameter, and then performs the logic related to that button. </Desc>
+            </Method>
+            <Method Name="BtnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CMEnabledChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClickHandler">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FixButtonGlyphs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetChildren">
+               <Summary>Implementation empty!</Summary>
+               <Desc>This method is implemented empty for <InlineCode>TBoldCustomNavigator</InlineCode>. This is to prevent it from behaving as a <InlineCode>TCustomPanel</InlineCode>. </Desc>
+            </Method>
+            <Method Name="InitButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitHints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyDown">
+               <Summary><InlineCode>KeyDown</InlineCode> implements a behaviour that makes the control usable without requiring a mouse.</Summary>
+               <Desc>
+                  <UL>
+                     <LI><B>Space</B> - Click the selected button.</LI>
+                     <LI><B>Cursor-Right</B> - Select the next button to the right.</LI>
+                     <LI><B>Cursor-Left</B> - Select the next button to the left.</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="Loaded">
+               <Summary></Summary>
+               <Desc>To ensure the control reflects the current state of the object space buttons have to be updated. This takes place in Loaded. </Desc>
+            </Method>
+            <Method Name="MapMinus">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetActiveButtons">
+               <Summary></Summary>
+               <Desc>This method is for internal use. </Desc>
+            </Method>
+            <Method Name="SetBoldListHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBounds">
+               <Summary>Change size of control</Summary>
+               <Desc>This method updates the <InlineCode>clientRect</InlineCode> of the control to the values passed as parameters. </Desc>
+            </Method>
+            <Method Name="SetFlat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetHints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetImages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVisible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMGetDlgCode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMKillFocus">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSetFocus">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WMSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldDeleteMode">
+               <Summary>Specifies the action when pressing the delete button.</Summary>
+               <Desc>Use this property to control what pressing the delete button means.
+                  <UL>
+                     <LI><B>dmDefault</B>, <B>dmRemoveFromList</B> - Removes the current object from the list</LI>
+                     <LI><B>dmDelete</B> - Deletes the object</LI>
+                     <LI><B>dmUnlinkAllAndDelete</B> - unlinks and deletes the current object</LI>
+                  </UL>
+               </Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle holds the list that the navigator operates on.</Summary>
+               <Desc> Operating in this sense means changing the <InlineCode>currentIndex</InlineCode>, adding or removing elements. </Desc>
+            </Property>
+            <Property Name="ConfirmDelete">
+               <Summary></Summary>
+               <Desc>If <InlineCode>ConfirmDelete</InlineCode> is <InlineCode>True</InlineCode>, a message box appears when the user presses the delete button and the element isn't deleted unless the user chooses the OK button. If <InlineCode>ConfirmDelete</InlineCode> is <InlineCode>False</InlineCode>, no message box appears and the element is simply deleted (according to what delete means, see <See Property="BoldDeleteMode"/>). </Desc>
+            </Property>
+            <Property Name="DeleteQuestion">
+               <Summary>Question asked to confirm delete</Summary>
+               <Desc>When <See Property="ConfirmDelete"/> is set to <InlineCode>True</InlineCode> and a user tries to delete the current object with the "-" button, a question with the text of this property is sent up in a message box.
+The text will be formatted with two parameters: <br>
+0: the name of the class of the object being deleted (ie: Person)<br>
+1: the string representation of the object being deleted (ie: John Doe)<p>
+The default value of this property is 'Delete "%1:s"?'
+ </Desc>
+ <SeeAlso><see property=UnlinkQuestion></SeeAlso>
+ <SeeAlso><see property=RemoveQuestion></SeeAlso>
+ <SeeAlso><see property=BoldDeleteMode></SeeAlso>
+            </Property>
+            <Property Name="Flat">
+               <Summary>Configures look of control</Summary>
+               <Desc>When <InlineCode>Flat</InlineCode> is <InlineCode>True</InlineCode>, the navigator buttons appear flat and do not have borders separating them. When <InlineCode>Flat</InlineCode> is <InlineCode>False</InlineCode>, the buttons get a 3D look. </Desc>
+            </Property>
+            <Property Name="Hints">
+               <Summary>Fly over hints for buttons</Summary>
+               <Desc>Use the Hints property to supply Help Hints of your choosing for the individual navigator buttons. Each button has a default Help Hint. Hints allow the values of any or all of these default Help Hints to be replaced by customized hints.
+                  <P>Hints is a string list. Each hint is a string. The first string in the string list becomes the Help Hint for the first button on the navigator (the First button). The seventh hint becomes the Help Hint for the seventh button (the Edit button).</P>
+                  <P>When specifying Hints at runtime, enter an empty string ('') for any Help Hint that should keep the default value. Simply leave the line blank when using the string list property editor of the Object Inspector for the Hints property.</P>
+                  <Note>To have the Help Hints appear at runtime, set the <InlineCode>ShowHint</InlineCode> property to <InlineCode>True</InlineCode>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="ImageIndices">
+               <Summary>Map images in image list to buttons</Summary>
+               <Desc>Use this property to map the images in the <See Property="Images"/> list to the buttons of the navigator.</Desc>
+            </Property>
+            <Property Name="Images">
+               <Summary>Image list for button images</Summary>
+               <Desc>Specify an Image list to supply your own images for the buttons of the navigator.</Desc>
+            </Property>
+            <Property Name="OnClick">
+               <Summary>Event triggered after a button has been clicked</Summary>
+               <Desc>The OnClick will trigger after the components activities for the clicked button has been performed.</Desc>
+            </Property>
+            <Property Name="RemoveQuestion">
+               <Summary>Question asked to confirm the removal of an object from an objectlist</Summary>
+               <Desc>When <See Property="ConfirmDelete"/> is set to <InlineCode>True</InlineCode> and a user tries to remove the current object from the list with the "-" button, a question with the text of this property is sent up in a message box.
+The text will be formatted with two parameters: <br>
+0: the name of the class of the object being removed (ie: Person)<br>
+1: the string representation of the object being removed (ie: John Doe)<p>
+The default value of this property is 'Remove "%1:s" from the list?'
+
+ </Desc>
+ <SeeAlso><see property=UnlinkQuestion></SeeAlso>
+ <SeeAlso><see property=RemoveQuestion></SeeAlso>
+ <SeeAlso><see property=BoldDeleteMode></SeeAlso>
+            </Property>
+            <Property Name="UnlinkQuestion">
+               <Summary>Question asked to the unlinking of an object from a multilink</Summary>
+               <Desc>When <See Property="ConfirmDelete"/> is set to <InlineCode>True</InlineCode> and a user tries to unlink the current object from a multilink with the "-" button, a question with the text of this property is sent up in a message box.
+The text will be formatted with two parameters: <br>
+0: the name of the class of the object being unlinked (ie: Person)<br>
+1: the string representation of the object being unlinked (ie: John Doe)<br>
+2: the name of the multilink (ie: Residents)<p>
+
+The default value of this property is 'Unlink "%1:s" from "%2:s"?'
+ </Desc>
+ <SeeAlso><see property=UnlinkQuestion></SeeAlso>
+ <SeeAlso><see property=RemoveQuestion></SeeAlso>
+ <SeeAlso><see property=BoldDeleteMode></SeeAlso>
+            </Property>
+            <Property Name="VisibleButtons">
+               <Summary>The VisibleButtons decides which buttons will be visible on the component.</Summary>
+               <Desc>This is very handy if a navigator should only be allowed to navigate, and not add or delete elements. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Used for changing the current element of a handle, and adding and deleting items to the list represented by the handle.</Summary>
+         <Desc>When the user chooses one of the navigator buttons, the appropriate action occurs on the TBoldListHandle the navigator is linked to. For example, if the user clicks the Next button, the current element is set to the next in the list.
+            <P>The used can selectively choose which buttons to display with the <InlineCode>VisibleButtons</InlineCode> property.</P>
+            <P>The buttons have the following functions.</P>
+            <BH>First</BH>
+Sets the current element to the first element in the list, disables the First and Prior buttons, and enables the Next and last buttons if they are disabled, and there is more than one element in the list.
+            <BH>Prior</BH>
+Sets the current element to the previous element to the previous element in the list and enables the Last and Next buttons if they are disabled.
+            <BH>Next</BH>
+Sets the current element to the next element and enables the First and Prior buttons if they are disabled.
+            <BH>Last</BH>
+Sets the current element to the last element in the list, disables the Last and Next buttons, and enables the First and Prior buttons if they are disabled, and there is more than one element in the list.
+            <BH>Insert</BH>
+Creates a new object and adds to the list. The button is only active if the list is either an entire class, or an entire multiple relationship.
+            <BH>Delete</BH>
+Will either delete the current element, or just remove it from the list, depending on the state of <InlineCode>BoldDeleteMode</InlineCode>.
+            <BH>Up</BH>
+Attempts to move the selected element towards the top of the list. Useful for reordering ordered relations. This button is not visible by default.
+            <BH>Down</BH>
+Attempts to move the selected element towards the end of the list. Useful for reordering ordered relations. This button is not visible by default.
+            <BH>Implementation notes</BH>
+            <InlineCode>TBoldCustomNavigator</InlineCode> keeps most of its properties protected. It is not intended to be used directly, but rather to be subclassed, where the subclasses publish and/or override the behaviour implemented by <InlineCode>TBoldCustomNavigator</InlineCode> </Desc>
+      </Class>
+      <Class Name="TBoldNavigator">
+         <Events>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnResize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Anchors">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldDeleteMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ConfirmDelete">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DeleteQuestion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Flat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Hints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImageIndices">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Images">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnContextPopup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndDock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnResize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartDock">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VisibleButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Used for changing the current element of a handle, and adding and deleting items to the list represented by the handle.</Summary>
+         <Desc>When the user chooses one of the navigator buttons, the appropriate action occurs on the TBoldListHandle the navigator is linked to. For example, if the user clicks the Next button, the current element is set to the next in the list.
+            <P>The used can selectively choose which buttons to display with the <InlineCode>VisibleButtons</InlineCode> property.</P>
+            <P>The buttons have the following functions.</P>
+            <BH>First</BH>
+Sets the current element to the first element in the list, disables the First and Prior buttons, and enables the Next and last buttons if they are disabled, and there is more than one element in the list.
+            <BH>Prior</BH>
+Sets the current element to the previous element to the previous element in the list and enables the Last and Next buttons if they are disabled.
+            <BH>Next</BH>
+Sets the current element to the next element and enables the First and Prior buttons if they are disabled.
+            <BH>Last</BH>
+Sets the current element to the last element in the list, disables the Last and Next buttons, and enables the First and Prior buttons if they are disabled, and there is more than one element in the list.
+            <BH>Insert</BH>
+Creates a new object and adds to the list. The button is only active if the list is either an entire class, or an entire multiple relationship.
+            <BH>Delete</BH>
+Will either delete the current element, or just remove it from the list, depending on the state of <InlineCode>BoldDeleteMode</InlineCode>.
+            <BH>Up</BH>
+Attempts to move the selected element towards the top of the list. Useful for reordering ordered relations. This button is not visible by default.
+            <BH>Down</BH>
+Attempts to move the selected element towards the end of the list. Useful for reordering ordered relations. This button is not visible by default. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines the bold aware navigator</Summary>
+   <Desc>This unit defines the <InlineCode>TBoldCustomNavigator</InlineCode>, which implements everything required for a navigator, and the <InlineCode>TBoldNavigator</InlineCode>, which publishes properties required and is registered on the component palette.</Desc>
+   <Types>
+   </Types>
+</DLUnitDoc>

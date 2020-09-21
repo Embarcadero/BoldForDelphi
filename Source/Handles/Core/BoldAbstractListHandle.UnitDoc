@@ -1,0 +1,160 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldAbstractListHandle.UnitDoc 7     01-11-06 15:26 Aniv $">
+   <Classes>
+      <Class Name="TBoldAbstractListHandle">
+         <Methods>
+            <Method Name="First">
+               <Summary>Sets CurrentIndex to 0.</Summary>
+               <Desc>Sets <See Property="CurrentIndex"/> to 0.</Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetCurrentBoldObject">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetCurrentElement">
+               <Summary>Get-method for the CurrentElement property</Summary>
+               <Desc>Get-method for the <See Property="CurrentElement"/> property</Desc>
+            </Method>
+            <Method Name="GetCurrentIndex">
+               <Summary>Get-method for the CurrentIndex property</Summary>
+               <Desc>Get-method for the <See Property="CurrentIndex"/> property</Desc>
+            </Method>
+            <Method Name="GetHasNext">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetHasPrior">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetList">
+               <Summary>Get-method for the List property</Summary>
+               <Desc>Get-method for the <See Method="List"/> property</Desc>
+            </Method>
+            <Method Name="GetListElementType">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetListType">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetMutableList">
+               <Summary>Get-method for the MutableList property</Summary>
+               <Desc>Get-method for the <See Property="MutableList"/> property</Desc>
+            </Method>
+            <Method Name="GetMutableObjectList">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetObjectList">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetStaticListType">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Last">
+               <Summary>Set CurrentIndex to Count - 1.</Summary>
+               <Desc>Set <See Property="CurrentIndex"/> to <See Property="Count"/> - 1. </Desc>
+            </Method>
+            <Method Name="Next">
+               <Summary>Move forward in list </Summary>
+               <Desc>Increases <See Property="CurrentIndex"/> if it is less than <See Property="Count"/>. </Desc>
+            </Method>
+            <Method Name="Prior">
+               <Summary>Move backwards in the list </Summary>
+               <Desc>Decrease <See Property="CurrentIndex"/> if it is more than 0. </Desc>
+            </Method>
+            <Method Name="RemoveCurrentElement">
+               <Summary>Remove current element from list </Summary>
+               <Desc>Remove the <See Property="CurrentElement"/> from the <See Property="List"/>. If the list is a class-list (such as <InlineCode>Person.allInstances</InlineCode>), this will result in the object being deleted. </Desc>
+            </Method>
+            <Method Name="SetCurrentIndex">
+               <Summary>Set-method for the CurrentIndex property</Summary>
+               <Desc>Set-method for the <See Property="CurrentIndex"/> property</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary>Number of elements in the list. </Summary>
+               <Desc>This is mostly equivalent to <InlineCode>List.Count</InlineCode>, with the added provision of being 0 if <See Property="List"/> is <InlineCode>nil</InlineCode>.</Desc>
+            </Property>
+            <Property Name="CurrentBoldObject">
+               <Summary>CurrentElement as <InlineCode>TBoldObject</InlineCode>. </Summary>
+               <Desc>
+                  <P>If <See Property="CurrentElement"/> is a <InlineCode>TBoldObject</InlineCode>, then this property will be that value, type cast to a <InlineCode>TBoldObject</InlineCode>, otherwise an exception will be raised.</P>
+               </Desc>
+            </Property>
+            <Property Name="CurrentElement">
+               <Summary>Current element in list. </Summary>
+               <Desc><InlineCode>CurrentElement</InlineCode> returns the element that is current in the list. This will be the same as the value property of the handle</Desc>
+            </Property>
+            <Property Name="CurrentIndex">
+               <Summary>Current position in list. </Summary>
+               <Desc>This property can be read to find the current index of the listhandle, or set programmatically to change the current index in the list. </Desc>
+               <SeeAlso><See Property="CurrentElement"/></SeeAlso>
+               <SeeAlso><See Property="CurrentBoldObject"/></SeeAlso>
+            </Property>
+            <Property Name="HasNext">
+               <Summary>Use <InlineCode>HasNext</InlineCode> to determine if at end of list.</Summary>
+               <Desc>
+                  <P><InlineCode>HasNext</InlineCode> is a concept similar to <InlineCode>Eof</InlineCode>, but returning <InlineCode>true</InlineCode> while there is a next element.</P>
+                  <U>Example:</U> 
+                  <DelphiCode>aListHandle.First;
+while aListHandle.HasNext do
+  aListHandle.Next;</DelphiCode>
+ </Desc>
+            </Property>
+            <Property Name="HasPrior">
+               <Summary>Indicates whether it is possible to move backward in the list. </Summary>
+               <Desc>This is true if the <See Property="CurrentIndex"/> property is greater than 0.</Desc>
+            </Property>
+            <Property Name="List">
+               <Summary>List represented by handle.</Summary>
+               <Desc>List represented by handle.</Desc>
+            </Property>
+            <Property Name="ListElementType">
+               <Summary>Type of elements in List. </Summary>
+               <Desc>This is the type of the elements of the list.
+                  <Note>This is subtly different from <See Property="BoldType"/>. It will be equivalent to <InlineCode>BoldType</InlineCode> when (<InlineCode>Value <> nil</InlineCode>) or (<InlineCode>List = nil</InlineCode>). However if there is list, but (<InlineCode>Value = nil</InlineCode>), either because the list is empty, or (<InlineCode>CurrentIndex = -1</InlineCode>), <InlineCode>ListElementType</InlineCode> will be the type of the elements in that list, rather than <InlineCode>StaticBoldType</InlineCode>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="ListType">
+               <Summary>The "Best Available" type</Summary>
+               <Desc>The type of the list, if available. <See Property="StaticListType"/>, otherwise.</Desc>
+            </Property>
+            <Property Name="MutableList">
+               <Summary>Returns a list that is possible to change.</Summary>
+               <Desc><InlineCode>MutableObjectList</InlineCode> will return a list that is possible to change. If the <See Property="List"/> is mutable, it will be used.</Desc>
+            </Property>
+            <Property Name="MutableObjectList">
+               <Summary>Returns the MutableList as a TBoldObjectList.</Summary>
+               <Desc><InlineCode>MutableObjectList</InlineCode> will determine if the <See Property="MutableList"/> is a <See Class="TBoldObjectList"/>. If so the the list will be returned as such, otherwise <InlineCode>nil</InlineCode> will be returned</Desc>
+            </Property>
+            <Property Name="ObjectList">
+               <Summary>Returns the List as a TBoldObjectList.</Summary>
+               <Desc><InlineCode>ObjectList</InlineCode> will determine if the <InlineCode>List</InlineCode> is a <See Class="TBoldObjectList"/>. If so, the list will be returned as such, otherwise <InlineCode>nil</InlineCode> will be returned.</Desc>
+            </Property>
+            <Property Name="StaticListType">
+               <Summary>The list type of the StaticBoldType</Summary>
+               <Desc>The list type of the <See Class="TBoldElementHandle" Method="StaticBoldType"/></Desc>
+            </Property>
+         </Properties>
+         <Summary>Superclass for all list handles. </Summary>
+         <Desc>
+            <P>TBoldAbstractListHandle is an abstract superclass for handles with a cursor-type behaviour. Its purpose is to represent a list of elements, and a position in that list.</P>
+            <P>It is an extension of <See Class="TBoldElementHandle"/> in that it really has two values, the <See Property="List"/> property, and the <See Class="TBoldElementHandle" Property="Value"/> property, where this Value property is effectively <InlineCode>List[CurrentIndex]</InlineCode>. There are a number of visual controls, notably <See Class="TBoldNavigator"/>, <See Class="TBoldGrid"/> and <See Class="TBoldListBox"/> that connect to a list handle. They are a bit special compared to other controls in that they not only manipulate values in the Object-Space, but also can set <See Property="CurrentIndex"/>, which resides in the listhandle itself.</P>
+The handle is designed to make Chained Evaluation as natural as possible.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit defines the class TBoldAbstractListHandle. </Summary>
+   <Desc><InlineCode>TBoldAbstractListHandle</InlineCode> is the abstract super class for other handles that holds a list.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,93 @@
+<html>
+
+<head>
+  <title>Concurrency Management</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_compound.html" target="menu">Compound Examples</a> &gt;
+      <a href="concurrency_management.html">Concurrency Management</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Locking - Concurrency Management</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Compound/Locking/LockingDemo.bpg">Launch Delphi-example</a> |
+    <a href="../CBuilder/Compound/Locking/LockingDemo.bpg">Launch CBuilder-example</a>
+	<p class="note"><b>Note!</b> This example demonstrates features of the<b> ObjectSpace Synchronization
+	Server Extension</b> and the <b> Concurrency Management Server Extension</b>. License keys
+	are required for the extensions to try the example. Use the License Manager to
+	request evaluation keys.</p>
+	<p class="note"> To run the example, you have to register a propagator. To register a propagator you need
+    to run the binary 'BoldPropagator.exe' (found under \bin) with the command line parameter '/regserver'.
+    </p>
+    <p>This example shows how to use the various locking mechanisms in
+    $(PRODUCT_BASE_NAME). It requires a propagator/lock manager server.
+    </p>
+    <p>Some of the features shown:</p>
+    <ul>
+      <li>Pessimistic locking</li>
+      <li>Optimistic Locking</li>
+      <li>Propagation</li>
+      <li>Exclusive database lock</li>
+      <li>A separate persistence server (the LockingPServer project)</li>
+    </ul>
+    <br>
+	<hr size="1">
+    <p class="head2">How to run
+    </p>
+<p>Launch the LockingDemo application and click the button Start System to start
+the propagator. Now launch one more instance of the LockingDemo application.
+    </p>
+<h2>Use of Concurrency Management
+    </h2>
+    <p>Points of interest:</p>
+    <ul>
+      <li>The datamodules in <i> MainDM.pas</i> and <i> Server/PServerDM.pas</i> shows how to connect
+        the various handles needed to set up pessimistic locking.</li>
+      <li>The <code>TBoldModel</code> on Common/ModelDM defines some example regions.</li>
+    </ul>
+    <p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/Mech_CMS.htm" target="self">
+			Concurrency Management</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/mech_regionDefinitions.htm" target="self">
+			Regions</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <br>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp;
+    Alias&quot; button before attempting to open the system for the first time.
+    Once the database and alias is established you only have to use the
+    &quot;Open system&quot; button when running the example program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

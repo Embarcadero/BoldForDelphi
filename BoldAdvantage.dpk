@@ -1,0 +1,44 @@
+package BoldAdvantage;
+
+{$R *.RES}
+{A}{ ALIGN ON}
+{C}{ ASSERTIONS ON}
+{B}{ BOOLEVAL OFF}
+{D}{ DEBUGINFO ON}
+{X}{ EXTENDEDSYNTAX ON}
+{G}{ IMPORTEDDATA ON}
+{I}{ IOCHECKS ON}
+{L}{ LOCALSYMBOLS ON}
+{H}{ LONGSTRINGS ON}
+{Z1}{ MINENUMSIZE 1}
+{P}{ OPENSTRINGS ON}
+{O}{ OPTIMIZATION OFF}
+{Q}{ OVERFLOWCHECKS ON}
+{R}{ RANGECHECKS ON}
+{U}{ SAFEDIVIDE OFF}
+{W}{ STACKFRAMES ON}
+{T}{ TYPEDADDRESS OFF}
+{V}{ VARSTRINGCHECKS ON}
+{J}{ WRITEABLECONST ON}
+
+{$IMAGEBASE $00400000}
+{$DESIGNONLY}
+{$REFERENCEINFO ON}
+{$IMPLICITBUILD ON}
+
+{$DESCRIPTION 'Bold 4.0 for Delphi (dvantage Support)'}
+{$LIBSUFFIX '90'}
+
+requires
+  vcl,
+  vcldb,
+  Bold,
+  ADSD80;
+
+contains
+  BoldAdvantageInterfaces in 'Source\Persistence\Advantage\BoldAdvantageInterfaces.pas',
+  BoldDatabaseAdapterAdvantage in 'Source\Persistence\Advantage\BoldDatabaseAdapterAdvantage.pas',
+  BoldPersistenceHandleAdvantage in 'Source\Persistence\Advantage\BoldPersistenceHandleAdvantage.pas',
+  BoldPersistenceHandleAdvantageReg in 'Source\Persistence\Advantage\BoldPersistenceHandleAdvantageReg.pas';
+
+end.

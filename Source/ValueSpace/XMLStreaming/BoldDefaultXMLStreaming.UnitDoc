@@ -1,0 +1,499 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/XMLStreaming/BoldDefaultXMLStreaming.UnitDoc 3     01-09-13 14:39 Joho $">
+   <Classes>
+      <Class Name="TBoldDefaultXMLStreamManager">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassStreamer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassStreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AdjustLinks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassStreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ClassStreamers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IgnorePersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Model">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OverwriteCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PersistenceStatesToBeStreamed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDefaultXMLStreamerRegistry">
+         <Methods>
+            <Method Name="MainStreamerRegistry">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLBlobContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLBooleanContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLClassStreamer">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberStreamer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberStreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MemberStreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberStreamers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLCurrencyContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLDateContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLDateTimeContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLFloatContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLIdListRefPairStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLIdListRefStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLIdRefPairStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLIdRefStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLIntegerContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLMemberStreamer">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Index">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLModelElementStreamer">
+         <Properties>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLNullableValueStreamer">
+         <Methods>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLRoleStreamer">
+         <Methods>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLModelElementStreamerList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StreamerByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLStringContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLTimeContentStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLTypedBlobStreamer">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldXMLValueStreamer">
+         <Methods>
+            <Method Name="ReadInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="WriteInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

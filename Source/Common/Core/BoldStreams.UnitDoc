@@ -1,0 +1,25 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Core/BoldStreams.UnitDoc 5     02-02-19 12:18 Jano $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldStreamable">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary>Get method for <See Property="StreamName"/> propery.</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StreamName">
+               <Summary>Name identifying streamable item.</Summary>
+               <Desc>This string is used to allow the streaming mechanism to identify the item to be streamed. The information will typically be used to select a streamer for the item. Note that it is not certain that this is the same name as is used in the actual stream, though this is the case when using the default Bold streamers.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Interface for streamable objects.</Summary>
+         <Desc>Implement this interface for objects that are to be streamed using <jump id="Mech_XMLStreaming"  text="The XML streaming mechanism">. The interface may of course also be used by a custom-written streaming-mechansim.</Desc><SeeAlso> <jump id="Mech_XMLStreaming"  text="The XML streaming mechanism"></SeeAlso>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Contains the interface IBoldStreamable.</Desc>
+</DLUnitDoc>

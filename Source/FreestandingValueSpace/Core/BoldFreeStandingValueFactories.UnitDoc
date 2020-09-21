@@ -1,0 +1,41 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/FreestandingValueSpace/Core/BoldFreeStandingValueFactories.UnitDoc 4     02-01-09 11:44 Jano $">
+   <Classes>
+      <Class Name="TBoldFreeStandingElementFactory">
+         <Methods>
+            <Method Name="CreateInstance">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegisterFreeStandingClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SupportsStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains the factory that creates an instance of a freesanting value given the contentsname.. </Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="FreeStandingValueFactory">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

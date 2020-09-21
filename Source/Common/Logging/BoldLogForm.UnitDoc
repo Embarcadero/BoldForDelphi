@@ -1,0 +1,65 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Logging/BoldLogForm.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldLogForm">
+         <Methods>
+            <Method Name="AddLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormCreate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FormDestroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ShowAllLines">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateView">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cmdCloseClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="cmdSaveClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="mnuCopyClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="mnuShowAllClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LogLines">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

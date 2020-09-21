@@ -1,0 +1,106 @@
+<html>
+
+<head>
+  <title>Parent or Child Mapping</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top"> Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu"> Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_persistence.html" target="menu">Persistence</a> &gt;
+      <a href="parent_child_mapping.html"> Parent and Child Mapping</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Parent and Child Mapping</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell starts -->
+    <a href="../Delphi/Simple/Persistence/ParentandChildMapping/BE_ParentChildMapping.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/Persistence/ParentChildMapping/BE_ParentChildMapping.bpr">Launch
+    CBuilder-example</a>
+    <p>Illustrates the possibility to map the persistence of an abstract class to its children or to
+    map child classes to their parent.
+    </p>
+    <hr size="1">
+    <p class="head2">How to run</p>
+    <p>Mapping the persistence of a parent to its children improves the search in one of the child
+    classes since the database only have to open one table to achieve this. The downside of this is
+    if you want to perform a search in the parent class. To accomplish this the database have to
+    open all child tables.
+    </p>
+<p>In this example the settings for Table mapping in the model editor is set to
+    <code>&lt;&lt;Parent&lt;&lt;</code> for the classes <code>Jet</code> and <code>Prop</code>, 
+    and <code>&lt;&lt;Children&lt;&lt;</code> for the class <code>Vehicle</code>. The easiest way to view
+    the table structure that is the result of this is by checking the window
+    &quot;Logging Activity:
+    Generating Persistent Storage&quot; which  becomes visible when you click
+the button Create DB &amp; Alias.
+    </p><p>To fully understand the concept of the parent/child mapping, it's
+necessary to have some insight in how Bold for Delphi/Bold for C++ maps objects
+to tables (also known as Object-Relational mapping, or simply OR mapping).
+    </p><p>The default mapping strategy is to create one table per inheritance
+level. The &quot;artificial&quot; class <i>BusinessClassesRoot</i> will get a
+table containing only two columns; instance ID and class ID. Obviously, if you
+have added persistent attributes or embedded relations to this class there will
+be more columns.
+    </p><p>&nbsp;
+    </p>
+<p align="center"><img border="0" src="images/parentchild_model.gif" width="453" height="230">
+<p align="left">Considering the model above, there will be four tables in your
+database to represent the classes: Bold_Object (the default name for the root
+class table), Party, Person and Company. To get a Person object, three tables
+will be joined; Bold_Object, Party, Person. only the Person table will have a
+salary column, and only the Party table will have a name column.&nbsp;&nbsp;</p>
+<p align="left">The parent mapping Person and Company will result in the
+reduction of tables. Now there will only be two: Bold_Object and Party. Party
+will now contain the columns pertaining to its subclasses too. To retrieve a
+person, only the Bold_Object and Party table need o be joined.</p>
+<p align="left">Child mapping is the inverse of parent mapping, where the Name
+column of the party table will be distributed to <i>all</i> the subclasses'
+tables. To retrieve a person, two tables will be joined. However, to get all
+instances of Party, the situation is somewhat mre complex, as all Person
+instances will need to be retrieved, then all Company instances and finally
+these two sets combined. Luckily, that part is all automatic!
+</p>
+<p align="left">The setting of mapping does not in anyway reflect n the code you
+write. It is solely an issue for the persistence mapper. It is thus safe and
+sound to not worry about mapping in the early phases of development but wait a
+while to see if there is a need to&nbsp; remap tables, and prepare some test
+cases indicating what kind of speed gains can be achieved. What mapping makes
+sense for you largely depends on your model, application usage pattern and
+database engine.<br>
+</p>
+    <p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and alias is
+    established you only have to use the &quot;Open system&quot; button when running the example
+    program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks are
+      properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

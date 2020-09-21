@@ -1,0 +1,394 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Persistence/SQL/BoldSQLMappingInfo.UnitDoc 3     02-01-08 13:20 Joho $">
+   <Classes>
+      <Class Name="TBoldAllInstancesMappingInfo">
+         <Methods>
+            <Method Name="CompareMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassIdRequired">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldAllInstancesMappingList">
+         <Methods>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldClassMappingInfo">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ClassExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldClassMappingList">
+         <Methods>
+            <Method Name="AddMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMappingsForClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MappingsForClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDbTypeMappingInfo">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDbTypeMappingList">
+         <Methods>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberMappingInfo">
+         <Methods>
+            <Method Name="CompareMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ColumnByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Columns">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MapperName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMemberMappingList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillFromList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMappingsByExpressionNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MappingsByExpressionNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectStorageMappingInfo">
+         <Methods>
+            <Method Name="CompareMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="TableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectStorageMappingList">
+         <Methods>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSQLMappingInfo">
+         <Methods>
+            <Method Name="AddAllInstancesMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddMemberMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddObjectStorageMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddTypeIdMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearDbTypes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloneWithoutDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllInstancesMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllInstancesMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDbTypeMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDbTypeMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberMappings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectStorageMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectStorageMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadDataFromDB">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ScriptForWriteData">
+               <Summary>Generates a SQL script to write mapping info to the database</Summary>
+               <Desc>Generates a SQL script to write mapping info to the database</Desc>
+               <Params>
+                  <Param Name="Script">
+                     <Desc>Pass an instance of (a subclass of) TStrings in which you want the script to be generated</Desc>
+                  </Param>
+                  <Param Name="Separator">
+                     <Desc>If the separator is not the empty string, it will be added to the script between each SQL-statement</Desc>
+                  </Param>
+                  <Param Name="ClearFirst">
+                     <Desc>If this parameter is true (default) then the old mapping will first be removed before the new mapping is written. this is not needed if the database is newly created</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="WriteDataToDB">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllInstancesMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AllInstancesMappings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DbTypeMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DbTypeMappings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HighestUsedDbType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxDBIdentifierLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberMappings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectStorageMappingInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectStorageMappings">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldAllInstancesMappingArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldClassMappingArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldMemberMappingArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldObjectStorageMappingArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSQLMappingInfoClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

@@ -1,0 +1,341 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldBrokenLinkResolver">
+         <Methods>
+            <Method Name="ResolveBrokenLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HeldObjectAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NonheldObjectAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDistributableObjectHandler">
+         <Methods>
+            <Method Name="AddToMapping">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CommitTransaction">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExtractAllIds">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Fetch">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetForeignPSInfo">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInfoObjectsFor">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocalIdsFor">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LockAndFreeObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LookupInfoByLocalId">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeGlobalTranslationListFor">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeLocalizingTranslationList">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewForeignInfoObjectsFor">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewOwnInfoObjectsFor">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RollbackTransaction">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SearchByOcl">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartTransaction">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TheMapping">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Update">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="VerifyAssociations">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BrokenLinkResolver">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Property>
+            <Property Name="OllSystem">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Property>
+            <Property Name="PController">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Property>
+         </Properties>
+         <Summary>Common superclass for the TBoldOwnObjectHandler and TBoldForeignObjectHandler</Summary>
+         <Desc>Common superclass for the TBoldOwnObjectHandler and TBoldForeignObjectHandler</Desc>
+      </Class>
+      <Class Name="TBoldForeignObjectHandler">
+         <Methods>
+            <Method Name="AcknowledgeCheckIn">
+               <Summary>Tells the database that the check-in has completed successfully.</Summary>
+               <Desc>Call this method to tell an OLLE-enabled database that a check-in has succeeded. The check-in was started by a call to <See Method="StartCheckIn"/>, and the check-in was successfully received by the owner database's <See Class="TBoldOwnObjectHandler" Method="CheckIn"/> method.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>NewTimeStamp: Integer</InlineCode> - the timestamp that the checked in objects received in the owning database. This is the <InlineCode>NewTimestamp</InlineCode> returned by the <InlineCode>TBoldOwnObjectHandler.CheckIn</InlineCode> method.</LI>
+                  </UL>
+                  <P>See also <See Method="FailCheckIn"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="FailCheckIn">
+               <Summary>Tells the database that the check-in has failed.</Summary>
+               <Desc>Call this method to tell an OLLE-enabled database that a check-in has failed. The check-in was started by a call to <See Method="StartCheckIn"/>, but for some reason <See Class="TBoldOwnObjectHandler" Method="CheckIn"/> was never called, or returned an error.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                  </UL>
+                  <P>See also <See Method="AcknowledgeCheckIn"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="HeldObjectsFrom">
+               <Summary>Returns all objects from a specified database that this database holds.</Summary>
+               <Desc>Returns all objects from a specified database that this database holds.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>Objects: TBoldObjectIdList</InlineCode> - This id list will be filled with the object ids of the held objects.</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="ModifiedObjectsFrom">
+               <Summary>Returns all objects from a specified database that have been modified in this database.</Summary>
+               <Desc>Returns all objects from a specified database that have been modified in this database.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>Objects: TBoldObjectIdList</InlineCode> - This id list will be filled with the object ids of the modified objects.</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="ObjectsFrom">
+               <Summary>Returns all objets from a specified database that have been replicated to this database.</Summary>
+               <Desc>Returns all objets from a specified database that have been replicated, held or nonheld, to this database.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>Objects: TBoldObjectIdList</InlineCode> - This id list will be filled with the object ids of the objects.</LI>
+                  </UL>
+               </Desc>
+            </Method>
+            <Method Name="Put">
+               <Summary>Transfers objects from another database.</Summary>
+               <Desc>Transfers objects from another database. The objects are owned by the other database, and may become either held or not in this database.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>ValueSpace: IBoldValueSpace</InlineCode> - The valuespace containing the actual object data.</LI>
+                     <LI><InlineCode>IdList: TBoldObjectIdList</InlineCode> - Ids of the objects to transfer.</LI>
+                     <LI><InlineCode>HoldList: TBoldObjectIdList</InlineCode> - Ids of the objects that should be held by this database. Held objects will be writeable, and are considered checked-out from the owning database. This is a subset of the objects in <InlineCode>IdList</InlineCode>.</LI>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                  </UL>
+                  <P>It is important to note that the <InlineCode>ValueSpace</InlineCode>, <InlineCode>IdList</InlineCode> and <InlineCode>HoldList</InlineCode> should contain the global  ids of the objects. The global ids are unique across several databases, whereas the same object may have different local ids in different databases. The parameters to <See Class="TBoldOwnObjectHandler" Method="Get" Type="TBoldOwnObjectHandler.Get"/> will be suitable for passing into <InlineCode>Put</InlineCode>.</P>
+               </Desc>
+            </Method>
+            <Method Name="PutObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReleaseObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartCheckIn">
+               <Summary>Transfers checked out objects back to the owning database</Summary>
+               <Desc>Call this method to extract the object data to send back to the owning database when checking in objects. The objects should be held by this database.
+                  <P>There can only be one ongoing check-in between a pair of databases at the same time.</P>
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>IdList: TBoldObjectIdList</InlineCode> - object ids of the objects to check in.</LI>
+                     <LI><InlineCode>ReleaseList: TBoldObjectIdList</InlineCode> - object ids of the objects to give up hold of. These objects will no longer be held, and thus become readonly in this database. They will become held by the owning database. This list should be a subset of <InlineCode>IdList</InlineCode>. The objects that are in <InlineCode>IdList</InlineCode>, but not in <InlineCode>ReleaseList</InlineCode> will still be held by this database, but will have their values transferred back to the owner.</LI>
+                     <LI><InlineCode>ValueSpace: IBoldValueSpace</InlineCode> - This valuespace will be filled with the actual object data to transfer back to the owner.</LI>
+                     <LI><InlineCode>Owner: TBoldPSId</InlineCode> - a string identifying the owner database. This may be any arbitrary name.</LI>
+                  </UL>
+                  <P>Note that <InlineCode>IdList</InlineCode> and <InlineCode>ReleaseList</InlineCode> will be transformed by the call to <InlineCode>StartCheckIn</InlineCode>. They should be passed in containing local object ids. After the call to <InlineCode>StartCheckIn</InlineCode> they will contain the global ids of the same objects, and thus be suitable for passing into <See Class="TBoldOwnObjectHandler" Method="CheckIn" Text="TBoldOwnObjectHandler.CheckIn"/>. Global ids are unique across several databases, whereas the same object may have different local ids in different databases.</P>
+               </Desc>
+            </Method>
+            <Method Name="StartCheckInObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnReleaseObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Responsible for handling objects owned by another OLLE database</Summary>
+         <Desc>This class is responsible for handling objects owned by another OLLE database. The objects may be either replicated as read-only, or checked out (held) by this database, and thus writeable. The TBoldForeignObjectHandler implements methods such as Put and StartCheckIn. See <Jump ID="mech_objectlending"/> for an overview of the Object Lending Library Extension.</Desc>
+      </Class>
+      <Class Name="TBoldOwnObjecthandler">
+         <Methods>
+            <Method Name="AcknowledgeSynch">
+               <Summary>Tell the owning database that a synch operation completed successfully.</Summary>
+               <Desc>Call this method to tell the owning database that a synch operation completed successfully. The synch was started by a call to <See Method="GetSynch"/>, and was received successfully by <See Class="TBoldForeignObjectHandler" Method="Put" Text="TBoldForeignObjectHandler.Put"/>.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>Foreign: TBoldPSId</InlineCode> - a string identifying the receiving database. This may be any arbitrary name.</LI>
+                  </UL>
+                  <P>See also <See Method="FailSynch"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="CheckIn">
+               <Summary>Transfers checked-out objects back from another database.</Summary>
+               <Desc>Transfers checked-out objects back from another database. The check-in was started with a call to <See Class="TBoldForeignObjectHandler" Method="StartCheckIn" Text="TBoldForeignObjectHandler.StartCheckIn"/>.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>ValueSpace: IBoldValueSpace</InlineCode> - The valuespace containing the actual object data.</LI>
+                     <LI><InlineCode>IdList: TBoldObjectIdList</InlineCode> - object ids of the objects to check in.</LI>
+                     <LI><InlineCode>ReleaseList: TBoldObjectIdList</InlineCode> - object ids of the objects to resume hold of. These objects will no longer be held by the other database, and thus become writeable in this database. This list should be a subset of <InlineCode>IdList</InlineCode>. The objects that are in <InlineCode>IdList</InlineCode>, but not in <InlineCode>ReleaseList</InlineCode> will still be held by the other database, but will have their values transferred back to this database.</LI>
+                     <LI><InlineCode>Holder: TBoldPSId</InlineCode> - a string identifying the database that had the objects checked out. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>var NewTimeStamp: Integer</InlineCode> - Timestamp that the objects receive in this database as a result of checking in. This value should be sent to <See Class="TBoldForeignObjectHandler" Method="AcknowledgeCheckIn" Text="TBoldForeignObjectHandler.AcknowledgeCheckIn"/>.</LI>
+                  </UL>
+                  <P>It is important to note that the <InlineCode>ValueSpace</InlineCode>, <InlineCode>IdList</InlineCode> and <InlineCode>ReleaseList</InlineCode> should contain the global ids of the objects. The global ids are unique across several databases, whereas the same object may have different local ids in different databases. The parameters to <See Class="TBoldForeignObjectHandler" Method="StartCheckIn" Type="TBoldForeignObjectHandler.StartCheckIn"/> will be suitable to passing into <InlineCode>CheckIn</InlineCode>.</P>
+               </Desc>
+            </Method>
+            <Method Name="CheckInObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailSynch">
+               <Summary>Tells the database that a synch has failed.</Summary>
+               <Desc>Call this method to tell an OLLE-enabled database that a synch has failed. The synch was started by a call to <See Method="GetSynch"/>, but for some reason <See Class="TBoldForeignObjectHandler" Method="Put"/> was never called, or returned an error.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>ForeignPS: TBoldPSId</InlineCode> - a string identifying the foreign database. This may be any arbitrary name.</LI>
+                  </UL>
+                  <P>See also <See Method="AcknowledgeSynch"/>.</P>
+               </Desc>
+            </Method>
+            <Method Name="Get">
+               <Summary>Transfers objects from another database.</Summary>
+               <Desc>Transfers objects from another database. The objects are owned by this database, and may become either held or not by the other database.
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>IdList: TBoldObjectIdList</InlineCode> - object ids of the objects to transfer.</LI>
+                     <LI><InlineCode>HoldList: TBoldObjectIdList</InlineCode> - object ids of the objects to give up hold of. These objects will no longer be held, and thus become readonly in this database. They will become held by the receiving database. This list should be a subset of <InlineCode>IdList</InlineCode>. The objects that are in <InlineCode>IdList</InlineCode>, but not in <InlineCode>ReleaseList</InlineCode> will still be held by this database, but will have their values transferred to the receiver.</LI>
+                     <LI><InlineCode>Holder: TBoldPSId</InlineCode> - a string identifying the receiving database. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>ValueSpace: IBoldValueSpace</InlineCode> - This valuespace will be filled with the actual object data to transfer.</LI>
+                  </UL>
+                  <P>Note that <InlineCode>IdList</InlineCode> and <InlineCode>HoldList</InlineCode> will be transformed by the call to <InlineCode>Get</InlineCode>. They should be passed in containing local object ids. After the call to <InlineCode>Get</InlineCode> they will contain the global ids of the same objects, and thus be suitable for passing into <See Class="TBoldForeignObjectHandler" Method="Put" Text="TBoldForeignObjectHandler.Put"/>. Global ids are unique across several databases, whereas the same object may have different local ids in different databases.</P>
+               </Desc>
+            </Method>
+            <Method Name="GetObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSynch">
+               <Summary>Transfers changes to another database</Summary>
+               <Desc>This method is an alternative to <See Method="Get"/>, but instead of sending in an explicit id list specifying the objects to transfer, <InlineCode>GetSynch</InlineCode> transfers the objects that have changed since it was last called. The corresponding method at the receiving end is <See Class="TBoldForeignObjectHandler" Method="Put" Text="TBoldForeignObjectHandler.Put"/>. <InlineCode>GetSynch</InlineCode> does not check out objects.
+			   <P>GetSynch must be either acknowledged (<See Method="AcknowledgeSynch"/>) or failed (<See Method="FailSynch"/>). There can only be one ongoing synch between two databases. </P>
+                  <BH>Parameters</BH>
+                  <UL>
+                     <LI><InlineCode>ForeignPS: TBoldPSId</InlineCode> - a string identifying the receiving database. This may be any arbitrary name.</LI>
+                     <LI><InlineCode>IdList: TBoldObjectIdList</InlineCode> - object ids of the objects to transfer. Unlike for <InlineCode>Get</InlineCode>, this id list is not passed in, but will be filled by <InlineCode>GetSynch</InlineCode> with the global object ids of the changed objects.</LI>
+                     <LI><InlineCode>ValueSpace: IBoldValueSpace</InlineCode> - This valuespace will be filled with the actual object data to transfer.</LI>
+                  </UL>
+			   </Desc>
+            </Method>
+            <Method Name="InternalGet">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReserveObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnCheckOut">
+               <Summary>Resumes hold of objects without checking them in.</Summary>
+               <Desc>Call this method to resume hold of objects without checking them in. This should be done only if the objects have become 'lost', for example if they did not reach the foreign database, or if the foreign database crashed.
+				<BH>Parameters</BH>
+				<UL><LI><InlineCode>IdList: TBoldObjectIdList</InlineCode> - Global object ids of the objects to resume hold of. The ids will be translated into their local id counterparts.</LI>
+				<LI><InlineCode>Holder: TBoldPSId</InlineCode> - The database that currently holds the objects. This may be any arbitrary name.</LI></UL></Desc>
+            </Method>
+            <Method Name="UnCheckOutObjects">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Responsible for handling objects owned by this OLLE database</Summary>
+         <Desc>This class is responsible for handling objects owned by this OLLE database. The objects may be either replicated as read-only, or checked out (held) by another database. The <InlineCode>TBoldOwnObjectHandler</InlineCode> implements methods such as Get and CheckIn. See <Jump ID="mech_objectlending"/> for an overview of the Object Lending Library Extension.</Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BOLD_OLL_IDATTRIBUTECOLUMN_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BOLD_OLL_NAMEOFCLASSATTRIBUTECOLUMN_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BOLD_OLL_PSIDATTRIBUTECOLUMN_NAME">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldLinkResolveAction">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldPSId">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

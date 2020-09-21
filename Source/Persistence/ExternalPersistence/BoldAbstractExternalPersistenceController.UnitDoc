@@ -1,0 +1,121 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldAbstractExternalPersistenceController">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndUpdates">
+               <Summary>Called after any updates are made to the internal and external persistence store</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureObjectsforFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FailUpdates">
+               <Summary>Called if any updates to either the external or internal data store failed</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMaxFetchBlockSize">
+               <Summary>Virtual method to get the maximum blocksize when fetching</Summary>
+               <Desc>It defaults to 250, but subclasses may allow this value to be configurable</Desc>
+            </Method>
+            <Method Name="HandleAllInstances">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HandlesClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMExactifyIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMFetchIDListWithCondition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PostFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PrepareFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SplitObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StartUpdates">
+               <Summary>Called before any updates are made to the internal and external persistence stores</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueForObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MaxFetchBlockSize">
+               <Summary></Summary>
+               <Desc>Reads the value of <see method=GetMaxFetchBlockSize></Desc>
+            </Property>
+            <Property Name="MoldModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeNameDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

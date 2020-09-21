@@ -1,0 +1,109 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldSharedStrings.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldSharedStringCache">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHolderByValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="HolderByValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSharedStringHolder">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExternalRefCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ExternalRefCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSharedStringManager">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GarbageCollect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInfoString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSavedMemory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSharedString">
+               <Summary>Use this function to reduce memory consumption for strings. 
+</Summary>
+               <Desc>If you have many (possibly and likely) identical strings that came from different sources. (such as loading them from file), and you send them through the StringManager they will all point to the same space in memory, and the exess memory will be recovered by delphi.</Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="InfoString">
+               <Summary>This property contains some statistics of the string manager.
+</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SavedMemory">
+               <Summary>
+This property gives an estimate of how much memory has been saved by using the string manager.
+</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This class provides the possibility to share the memory for strings in an easy way. 
+</Summary>
+         <Desc>Call <see method=GetSharedString> with the string you want to have shared, and use the result of the function instead of the original string.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldSharedStringManager">
+         <Summary>Call this method to get hold of the manager for shared strings</Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="StringRefCount">
+         <Summary>Returns the number of references to a string.</Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary>This unit contains the implementation of the manager for shared strings
+</Summary>
+   <Desc></Desc>
+</DLUnitDoc>

@@ -1,0 +1,42 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/HandlesHTTP/BoldHTTPClientPersistenceHandle.UnitDoc 4     01-10-16 14:47 Jeho $">
+   <Classes>
+      <Class Name="TBoldHTTPClientPersistenceHandle">
+         <Methods>
+            <Method Name="CreatePersistenceController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Notification">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setWebConnection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary></Summary>
+               <Desc>This must be the same model component that the systemhandle is connected to.</Desc>
+            </Property>
+            <Property Name="WebConnection">
+               <Summary></Summary>
+               <Desc>The WebConnection takes care of the connection details such as which host to connect to.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Implements the client side of remote persistence over HTTP</Summary>
+         <Desc>Remote persistence mapping over HTTP makes it possible to have clients connecting to the database over the internet.
+            <P>The server must be equipped with a <See Class="TBoldHTTPServerPersistenceHandlePassthrough"/> component</P>
+            <P>See the HTTPMapper example for details on how to implement and deploy the server</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary></Summary>
+   <Desc>Use the HttpPMapper components to build distributed applications where the persistence storage is located on a remote server, and allow the client application to connect to the persistence server by using HTTP.
+      <P>Use <InlineCode>TBoldHTTPClientPersistenceHandle</InlineCode> to allow an object space to connect to a remote persistence storage through HTTP.</P>
+      <P><InlineCode>TBoldHTTPClientPersistenceHandle</InlineCode> connects to a remote persistence handle specified by a URL. The URL specifies a web application receiving the HTTP requests sent by the <InlineCode>TBoldHTTPClientPeristenceHandle</InlineCode> and passing the HTTP content to a <InlineCode>TBoldHTTPServerPersistenceHandlePassthrough</InlineCode> component.</P>
+      <Note>The HTTP contenct sent by client and server passthrough handles are in XML format.</Note>
+   </Desc>
+</DLUnitDoc>

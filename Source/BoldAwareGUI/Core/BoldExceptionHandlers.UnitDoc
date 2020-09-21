@@ -1,0 +1,67 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/Core/BoldExceptionHandlers.UnitDoc 5     01-10-17 10:10 Jeho $">
+   <Classes>
+      <Class Name="TBoldExceptionHandler">
+         <Events>
+            <Event Name="OnApplyException">
+               <Summary>The event called when an Apply-exception occurs</Summary>
+               <Desc> <InlineCode>OnApplyException</InlineCode> is called when a Bold-aware visual component failed to write data to the object space. Often, this is because the Bold object displayed is read-only, for some reason or other, or because a programmatic error occurred in a renderer, derivation, or other mechanism that is triggered by the apply. </Desc>
+            </Event>
+            <Event Name="OnDisplayException">
+               <Summary>The event called when a Display-exception occurs.</Summary>
+               <Desc><InlineCode>OnDisplayException</InlineCode> is called when a Bold-aware visual component failed to read data from the object space. Often, this is due to a faulty OCL-expression, or because a programmatic error occurred in a renderer, derivation, or other mechanism that is triggered by the Display. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldExceptionHandler</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldExceptionHandler</Summary>
+               <Desc>Do not call <InlineCode>Destroy</InlineCode> directly, use <InlineCode>Free</InlineCode> to destroy the instance.</Desc>
+            </Method>
+            <Method Name="FindExceptionHandler">
+               <Summary>Finds the exception handler that is responsible for handling the exceptions of Component</Summary>
+               <Desc> Finds the exception handler that is responsible for handling the exceptions of <InlineCode>Component</InlineCode>. This will be the exception handler that is placed on the same form as the component (has the same <InlineCode>Owner</InlineCode>). This method is normally only called by the framework, and there is no need for a developer to call it directly.
+                  <P>There is no vertical traversal of owner list to allow a global exception handler.</P>
+                  <Note>If there is more than one exception handler on a form, only one will be used. Which one is undefined.</Note>
+               </Desc>
+            </Method>
+            <Method Name="HandleApplyException">
+               <Summary>Dispatcher of OnApplyException</Summary>
+               <Desc>Handles an Apply exception and triggers the <See Event="onApplyException"/> if it is assigned. This method is internal to the framework, and there is normally no need for a developer to call it directly. </Desc>
+            </Method>
+            <Method Name="HandleDisplayException">
+               <Summary>Dispatcher of OnDisplayException</Summary>
+               <Desc>Handles a Display exception and triggers the <See Event="OnDisplayException"/> if it is assigned. This method is internal to the framework, and there is normally no need for a developer to call it directly. </Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This component, when dropped on a form, allows the developer to catch all exceptions, and process them in the events <InlineCode>OnApplyException</InlineCode> and <InlineCode>OnDisplayException</InlineCode>. If there is more than one exception handler on a form, the behavior is undefined. The mechanism uses the <InlineCode>Owner</InlineCode> of the Bold-aware component in which the exception occured to find an exception handler. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>This unit contains the component <See Class="TBoldExceptionHandler"/>. When dropped on a form, it allows the developer to catch exceptions, and process them in events. </Desc>
+   <Types>
+      <Type Name="TBoldApplyExceptionEvent">
+         <Summary>This event type is used by the OnApplyException event of the TBoldExceptionHandler.</Summary>
+         <Desc>
+            <P><InlineCode>E</InlineCode> is the exception that occurred.</P>
+            <P><InlineCode>Component</InlineCode> is the Bold-aware component that was applying when the exception occurred.</P>
+            <P><InlineCode>Elem</InlineCode> is the element that the component was applying to. Or, more correctly, the value of the handle that the component was connected to.</P>
+            <P><InlineCode>Discard</InlineCode> is a <InlineCode>boolean out</InlineCode> parameter, where the developer can specify if the component should discard the value that failed to apply. If <InlineCode>true</InlineCode>, the modified contents of the component will be lost. If <InlineCode>false</InlineCode>, the contents will be kept, thus leaving the component dirty, and displaying the modified value. The default is <InlineCode>False</InlineCode>.</P>
+         </Desc>
+      </Type>
+      <Type Name="TBoldDisplayExceptionEvent">
+         <Summary>This event type is used by the OnDisplayException event of the TBoldExceptionHandler.</Summary>
+         <Desc>
+            <P><InlineCode>E</InlineCode> is the exception that occurred.</P>
+            <P><InlineCode>Component</InlineCode> is the Bold-aware component that was applying when the exception occurred.</P>
+            <P><InlineCode>Elem</InlineCode> is the element that the component was displaying. Or, more correctly, the value of the handle that the component was connected to.</P>
+         </Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

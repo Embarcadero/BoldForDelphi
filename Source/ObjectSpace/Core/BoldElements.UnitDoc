@@ -1,0 +1,804 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/Core/BoldElements.UnitDoc 12    02-08-05 11:59 Joho $">
+   <Classes>
+      <Class Name="TBoldElement">
+         <Methods>
+            <Method Name="Assign">
+               <Summary>Copy the value of one element into another</Summary>
+               <Desc> The value of the source element will be copied into the element, provided the elements are assignment compatible, i.e. of sufficiently similar types. </Desc>
+            </Method>
+            <Method Name="AssignError">
+               <Summary>Signal an error in an assign operation</Summary>
+               <Desc>This method should only be called by the implementation of <See Method="Assign"/> in the subclasses of <InlineCode>TBoldElement</InlineCode> when the type of the source element is not compatible. </Desc>
+            </Method>
+            <Method Name="CloneIfPossible">
+               <Summary>If the element can be cloned, then it will be cloned and the clone will be returned.</Summary>
+               <Desc>If the element can be cloned, then it will be cloned and the clone will be returned. Otherwise a <InlineCode>nil</InlineCode>-pointer will be returned.
+                  <P>In general, only members can be cloned, but this method could be overriden by a businessobject to clone itself.</P>
+               </Desc>
+            </Method>
+            <Method Name="CompareError">
+               <Summary>Signal an error in a compare operation</Summary>
+               <Desc>This method should only be called by the implementation of <See Method="CompareToAs"/> in the subclasses of <InlineCode>TBoldElement</InlineCode> when the types of the elements are not compatible. </Desc>
+            </Method>
+            <Method Name="CompareTo">
+               <Summary>Compare two elements</Summary>
+               <Desc>Compare two elements. <InlineCode>CompareTo</InlineCode> will return 0 if the two elements are equal, -1 if the argument is before self and 1 if self is before the argument. This is equivalent to calling <See Method="CompareToAs"/> with <InlineCode>ctDefault</InlineCode> as <InlineCode>CompareType</InlineCode>. </Desc>
+            </Method>
+            <Method Name="CompareToAs">
+               <Summary>Compare two elements</Summary>
+               <Desc>Compare two elements. <InlineCode>CompareToAs</InlineCode> will return 0 if the two elements are equal, -1 if the argument is before self and 1 if self is before the argument.</Desc>
+            </Method>
+            <Method Name="CompareTypeError">
+               <Summary>Signal a CompareType error in a compare operation</Summary>
+               <Desc>Called by an implementation of <See Method="CompareToAs"/> if the elements do not support the <InlineCode>CompareType</InlineCode>.</Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary>Place default subscriptions</Summary>
+               <Desc> Will place the most common subscriptions on the element. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="EnsureValidString">
+               <Summary>Raise an exception if the string is not valid.</Summary>
+               <Desc>Will raise an exception if the string <InlineCode>Value</InlineCode> is not valid for the element, per the <See Method="ValidateString"/> method. </Desc>
+            </Method>
+            <Method Name="EvaluateAndSubscribeToExpression">
+               <Summary>Evaluate the expression, and place subscriptions to notify when the value of the expression has changed.</Summary>
+               <Desc> Evaluate the expression, and place subscriptions to notify when the value of the expression has changed. The element is used as root of the expression. resultElement is an indirect element that should be provided by the caller. Its value will be the result of the expression. Subscriber is the subscriber that will receive the subscriptions. If it is <InlineCode>nil</InlineCode> then no subscriptions will be placed. If <InlineCode>Resubscribe</InlineCode> is <InlineCode>true</InlineCode>, then all subscriptons will be placed with <InlineCode>breResubscribe</InlineCode> as <InlineCode>RequestedEvent</InlineCode>.
+                  <P>If <InlineCode>EvaluateInPS</InlineCode> is <InlineCode>true</InlineCode>, then the evaluator will attempt to pass on the expression to the persistence mechanism. If not, the expression will be evaluated in memory. The <InlineCode>VariableList</InlineCode> can be used to supply variable definitions to the expression.</P>
+               </Desc>
+               <SeeAlso><See Class="TBoldIndirectElement"/></SeeAlso>
+               <SeeAlso><Jump ID="Mech_Ocl2Sql" Text="About Ocl2Sql"/></SeeAlso>
+            </Method>
+            <Method Name="EvaluateExpression">
+               <Summary>Evaluate the expression.</Summary>
+               <Desc> Evaluate the expression. The element is used as root of the expression. resultElement is an indirect element that should be provided by the caller. Its value will be the result of the expression.
+                  <P>If <InlineCode>EvaluateInPS</InlineCode> is <InlineCode>true</InlineCode>, then the evaluator will attempt to pass on the expression to the persistence mechanism. If not, the expression will be evaluated in memory. The <InlineCode>VariableList</InlineCode> can be used to supply variable definitions to the expression.</P>
+               </Desc>
+               <SeeAlso><See Class="TBoldIndirectElement"/></SeeAlso>
+               <SeeAlso><Jump ID="Mech_Ocl2Sql" Text="About Ocl2Sql"/></SeeAlso>
+            </Method>
+            <Method Name="EvaluateExpressionAsDirectElement">
+               <Summary>As EvaluateExpression, but sends the resulting value as the return value of function.</Summary>
+               <Desc> This method works the same way as <See Method="EvaluateExpression"/>, with the difference that it returns the resulting element rather than forcing the caller to supply an indirect element to hold the result. This, however, means that the expression must result in an element that is owned (transitively) by a system, i.e. its result must be a Bold object, an attribute or role of a Bold object, an "all instances"-list, a Bold type info or the system itself. Expressions that would not result in an owned element are, for instance, the sum of two attributes, or filtered or sorted lists. Such expressions will return <InlineCode>nil</InlineCode>. </Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsNewElement">
+               <Summary>As EvaluateExpression, but returns a newly created element.</Summary>
+               <Desc>The result of this function is always an element that must be destroyed after use. If the expression results in an attribute of an object, it will first be cloned before it is returned to you. </Desc>
+            </Method>
+            <Method Name="EvaluateExpressionAsString">
+               <Summary>As EvaluateExpression, but sends the string representation of the expression's result as the return value of function.</Summary>
+               <Desc> This method works the same way as <See Method="EvaluateExpression"/>, but sends the string representation of the <InlineCode>expression</InlineCode>'s result as the return value of function. </Desc>
+            </Method>
+            <Method Name="GetAsList">
+               <Summary>Gives the element as a list.</Summary>
+               <Desc> Different elements will have different ways of converting themselves to lists. Elements that are already lists, such as <See Class="TBoldObjectList"/> or <See Class="TBoldMemberList"/>, will yield themselves as result. Elements that represent more basic entities, such as <See Class="TBoldObject"/> or <See Class="TBoldAttribute"/>, will yeild a list with one element. The result will be returned as the <InlineCode>Value</InlineCode> of the <InlineCode>ResultList</InlineCode> indirect element. </Desc>
+            </Method>
+            <Method Name="GetAsValue">
+               <Summary>Makes itself the value of an indirect element.</Summary>
+               <Desc>Makes itself the value of an indirect element.</Desc>
+            </Method>
+            <Method Name="GetAsVariant">
+               <Summary>The value of the element as a variant</Summary>
+               <Desc> This function returns the value of the element as a variant. </Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary>Get-method for the BoldType property </Summary>
+               <Desc>Get-method for the BoldType property </Desc>
+            </Method>
+            <Method Name="GetEvaluator">
+               <Summary>Get-method for the Evaluator property</Summary>
+               <Desc> Get-method for the Evaluator property </Desc>
+            </Method>
+            <Method Name="GetModifiedValueHolder">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetMutable">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary>Get-method for the StringRepresentation property</Summary>
+               <Desc> Get-method for the <See Property="StringRepresentation"/> property. This method can be overridden on <See Class="TBoldObject"/> subclasses (i.e. the modelled business classes for a project), or <See Class="TBoldAttribute"/> subclasses, thus providing customized string represenations. </Desc>
+            </Method>
+            <Method Name="IsEqual">
+               <Summary>True if the element is concidered equal to BoldElement</Summary>
+               <Desc> The behaviour of this function can be modified by overriding <See Method="IsEqualAs"/>.
+<!--[FIXME links to Value semantics and Identity semantics].--> </Desc>
+            </Method>
+            <Method Name="IsEqualAs">
+               <Summary>True if the element is equal to BoldElement according to the CompareType.</Summary>
+               <Desc> <InlineCode>True</InlineCode> if the element is equal to <InlineCode>BoldElement</InlineCode> according to the <InlineCode>CompareType</InlineCode>. Elements can be compared if they are of sufficiently similar types. This method can be overridden to implement custom criteria for equality. </Desc>
+            </Method>
+            <Method Name="MakeImmutable">
+               <Summary>Sets the element to immutable.</Summary>
+               <Desc>Sets the element to immutable. See <See Property="Mutable"/>.</Desc>
+            </Method>
+            <Method Name="MutableError">
+               <Summary>Signal an error because the element is immutable</Summary>
+               <Desc>Called by subclasses to <InlineCode>TBoldElement</InlineCode> if an error occured because the element is immutable.</Desc>
+            </Method>
+            <Method Name="ObserverMayModify">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+            <Method Name="ObserverMayModifyAsString">
+               <Summary>Bold-internal</Summary>
+               <Desc>Bold-internal</Desc>
+            </Method>
+            <Method Name="PrepareToDestroy">
+               <Summary>Bold-internal</Summary>
+               <Desc>This method is intended to be called early in each destructor in the subclasses of <InlineCode>TBoldElement</InlineCode>. It will call <See Method="FreePublisher"/>, which in turn will notify all subscribers of the elements' imminent destruction.
+                  <BH>Implementation notes</BH>
+The method is virtual, so subclasses may override it to perform further actions that need to be performed prior to destroying the element.
+It is not intended to be overridden by developers using Bold. </Desc>
+            </Method>
+            <Method Name="RegisterModifiedValueHolder">
+               <Summary>Sets the ModifiedValueHolder to the observer object.</Summary>
+               <Desc>Sets the <InlineCode>ModifiedValueHolder</InlineCode> to the observer object.</Desc>
+            </Method>
+            <Method Name="SetAsVariant">
+               <Summary>Set the value of the element from a variant. </Summary>
+               <Desc> Sets the value of the element from a variant. This method should be overridden by custom attribute classes (i.e. descendents to <See Class="TBoldAttribute"/>).</Desc>
+            </Method>
+            <Method Name="SetModifiedValueHolder">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary>Set-method for the <See Property="StringRepresentation"/> property.</Summary>
+               <Desc> Set-method for the <InlineCode>StringRepresentation</InlineCode> property. This method can be overridden in the subclasses to implement customized string representations. </Desc>
+            </Method>
+            <Method Name="SubscribeToExpression">
+               <Summary>Places the subscriptions necessary to detect when the result of Expression changes</Summary>
+               <Desc> Places the subscriptions necessary to detect when the result of Expression changes. See <See Method="EvaluateAndSubscribeToExpression"/> for details. </Desc>
+            </Method>
+            <Method Name="SubscribeToStringRepresentation">
+               <Summary>Place subscriptions to be notified when the string representation of the element changes. </Summary>
+               <Desc>Place subscriptions to be notified when the string representation of the element changes. This method should be overridden in subclasses that implement custom string representations. </Desc>
+               <SeeAlso><See Method="GetStringRepresentation"/></SeeAlso>
+               <SeeAlso><See Method="SetStringRepresentation"/></SeeAlso>
+            </Method>
+            <Method Name="UnRegisterModifiedValueHolder">
+               <Summary>Remove the observer object as the ModifiedValueHolder</Summary>
+               <Desc>Remove the observer object as the <InlineCode>ModifiedValueHolder</InlineCode></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary>Return true if C is a valid character in the string representation Representation of the element.</Summary>
+               <Desc> Return <InlineCode>true</InlineCode> if <InlineCode>C</InlineCode> is a valid character in the string representation <InlineCode>Representation</InlineCode> of the element. Override this method to provide quick validation of user input. </Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary>Return true if Value is a valid string representation of the element.</Summary>
+               <Desc> Return <InlineCode>true</InlineCode> if <InlineCode>Value</InlineCode> is a valid string representation of the element, using the representation <InlineCode>Representation</InlineCode>. Override this method to provide validation of user input. </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary>The default stringrepresentation of a TBoldElement</Summary>
+               <Desc><InlineCode>AsString</InlineCode> is the default stringrepresentation of a TBoldElement. It is equivalent to <See Method="StringRepresentation"/>[brDefault]. </Desc>
+            </Property>
+            <Property Name="BoldType">
+               <Summary>The type of the element</Summary>
+               <Desc> All Bold elements refer to an object representing its type. The fact that everything has type information available in run-time is one of the key features of Bold for Delphi/Bold for C++. </Desc>
+            </Property>
+            <Property Name="Evaluator">
+               <Summary>Used for evaluating expressions relative to the expression</Summary>
+               <Desc>Each <InlineCode>TBoldElement</InlineCode> has an evaluator that is used for evaluating expressions relative to the expression. The evaluator will actually be part of the runtime information for a <See Class="TBoldSystem"/>, and the various subclasses to <InlineCode>TBoldElement</InlineCode> will pick it up in different ways. </Desc>
+            </Property>
+            <Property Name="ModifiedValueHolder">
+               <Summary>GUI locking mechanism of Bold</Summary>
+               <Desc>This property is used by the GUI locking mechanism of Bold for Delphi/Bold for C++. It can be set using the methods <See Method="RegisterModifiedValueHolder"/> and <See Method="UnRegisterModifiedValueHolder"/>. The locking mechanism is not mandatory, but should be handled by each component and ControlPack. </Desc>
+               <SeeAlso><See Method="ObserverMayModify"/> </SeeAlso>
+            </Property>
+            <Property Name="Mutable">
+               <Summary>If the element can change</Summary>
+               <Desc>An element that is mutable is an element that can be changed. Examples of mutable elements are the attributes of an object.
+                  <P>An immutable element can not be changed, ever. The instances of subclasses to <See Class="TBoldElementTypeInfo"/> are immutable. The metainformation can not change when the application is running. The results of ocl evaluations are also immutable if they are not simple values. You are not allowed to change the result of '<InlineCode>aPerson.firstName + aPerson.lastName</InlineCode>'.</P>
+                  <P>One consequence of being immutable is that subscriptions to value changes will be disregarded, another that Bold at its discretion may copy/cache the value for efficiency reasons.</P>
+                  <P>A element may be explicitly made immutable by calling <See Method="MakeImmutable"/>. This can be done e.g. to enforce security restrictions.</P>
+                  <P>There is no way to make an immutable value mutable again.</P>
+               </Desc>
+            </Property>
+            <Property Name="StringRepresentation">
+               <Summary>A string representing the value of the element</Summary>
+               <Desc>All Bold elements may represent themselves as strings. The string should in some way reflect the value of the element. The <InlineCode>Representation</InlineCode> can be used to implement variations, such as brief or verbose.</Desc>
+            </Property>
+         </Properties>
+         <Summary>Superclass for all elements in Bold</Summary>
+         <Desc><InlineCode>TBoldElement</InlineCode> is the superclass for all elements in Bold that actually exist, or to be more precise that in themselves represent a value, and object or a piece of meta-information.
+            <P>It also holds some high-level operations that apply to all Elements such as <InlineCode>Assign</InlineCode> and <InlineCode>Compare</InlineCode>.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldElementTypeInfo">
+         <Methods>
+            <Method Name="ConformsTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEvaluator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This is the superclass for all classes in the type-herarchy of a BoldSystem.</Desc>
+      </Class>
+      <Class Name="TBoldEvaluator">
+         <Methods>
+            <Method Name="DefineVariable">
+               <Summary></Summary>
+               <Desc>This will define a global variable in the evaluator. There is currently no way to undefine a variable, but redefining it will replace the old value. The <InlineCode>VarValue</InlineCode> must live as long the evaluator does since there is no subscription to this object. If the <InlineCode>VarValue</InlineCode> is <InlineCode>nil</InlineCode>, a <InlineCode>VariableType</InlineCode> must be supplied, otherwise the <InlineCode>VariableType</InlineCode> can be <InlineCode>nil</InlineCode>. </Desc>
+            </Method>
+            <Method Name="Evaluate">
+               <Summary></Summary>
+               <Desc>Evaluate will evaluate the expression OCL relative to <InlineCode>Root</InlineCode>. If <InlineCode>ResultElement</InlineCode> is not <InlineCode>nil</InlineCode> it will be set to the result when evaluating the expression. If the result of evaluating the expression is an existing <See Class="TBoldElement"/>, <InlineCode>ResultElement</InlineCode> will just refer to it, and <InlineCode>ResultElement</InlineCode>.<See Class="TBoldIndirectElement" Property="OwnsValue" Text="OwnsValue"/> will be <InlineCode>False</InlineCode>. Otherwise the result will be owned by <InlineCode>ResultElement</InlineCode>.
+                  <P>If <InlineCode>Subscriber</InlineCode> is not <InlineCode>nil</InlineCode> then <InlineCode>Subscribe</InlineCode> will get the default set of subscriptions on the result. If <InlineCode>ResubscribeAll</InlineCode> is <InlineCode>False</InlineCode>, subscriptions will be placed in the following way:</P>
+                  <UL>
+                     <LI>Any change such that re-evaluating the expression would give a new value will give a notification to <InlineCode>Subscriber</InlineCode> with <InlineCode>RequestedEvent = breReEvaluate</InlineCode>.</LI>
+                     <LI>Any change such that re-evaluating the expression would result in new subscriptions being placed will give a notification with <InlineCode>RequestedEvent = breReSubscribe</InlineCode>.</LI>
+                  </UL>
+If <InlineCode>ReSubscribeAll</InlineCode> is <InlineCode>True</InlineCode>, a <InlineCode>breReSubscribe</InlineCode> will always be sent. </Desc>
+            </Method>
+            <Method Name="ExpressionType">
+               <Summary></Summary>
+               <Desc><InlineCode>ExpressionType</InlineCode> will return the type of the result that would be obtained if <See Method="Evaluate"/> is called with a <InlineCode>Root</InlineCode> of type <InlineCode>Context</InlineCode>. If the expression is an invalid expression relative to the context, and <InlineCode>ReRaise</InlineCode> is <InlineCode>true</InlineCode>, an exception will be raised with an explanation of what went wrong in the syntactic or semantic parse. If <InlineCode>ReRaise</InlineCode> is <InlineCode>false</InlineCode>, the result will be set to <InlineCode>nil</InlineCode>. </Desc>
+            </Method>
+            <Method Name="SetLookupOclDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>An implementation of Bold can contain one or more evaluators for expressions. The current implementation contains an evaluator for OCL </Desc>
+      </Class>
+      <Class Name="TBoldExternalVariable">
+         <Methods>
+            <Method Name="GetValue">
+               <Summary>Abstract method to return the value of the variable</Summary>
+               <Desc>Override this method to define how the variable stores the value. It might store the value directly in a private field variable, or it might store for example a handle from which the value is retrieved</Desc>
+            </Method>
+            <Method Name="GetValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Name">
+               <Summary>The name of the variable</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary>Returns the value of the variable. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueType">
+               <Summary>Returns the value type of the variable</Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>External variables are used to send additional values to an OCL-expression</Summary>
+         <Desc>This is an abstract class and needs to be subclassed. The two operations that must be overridden are <See Method="GetValue"/> and <See Method="GetValueType"/>
+            <P>Once an external variable is created, it can be added to an instance of <See Class="TBoldExternalVariablelist"/> and sent to <See Class="TBoldElement" Method="EvaluateExpression"/>. One available implementation of this class is the class used for <See Class="TBoldOCLVariables"/> (<See Class="TBoldHandleBasedExternalVariable"/>)</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldExternalVariableList">
+         <Methods>
+            <Method Name="Add">
+               <Summary>Adds an external variable to the list</Summary>
+               <Desc>The variable list will assume ownership of the external variable and take care of its destruction</Desc>
+            </Method>
+            <Method Name="GetVariables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This class is used to send external variables to OCL expressions</Summary>
+         <Desc>The methods of <See Class="TBoldElement"/> that evaluate OCL expressions all take a parameter called <InlineCode>Variables</InlineCode>. That parameter should be an instance of this class filled with <See Class="TBoldExternalVariable" Text="external variables"/> (or nil)
+</Desc>
+      </Class>
+      <Class Name="TBoldIndirectElement">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="RelinquishValue">
+               <Summary>Makes the indirect element give up ownership of its value.</Summary>
+               <Desc>This function returns the value of the indirect element. It also passes the ownership of the element to the caller. After <InlineCode>RelinquishValue</InlineCode> the indirect element's <See Property="Value"/> property will be <InlineCode>nil</InlineCode></Desc>
+            </Method>
+            <Method Name="SetOwnedValue">
+               <Summary>Sets the value, and passes ownership.</Summary>
+               <Desc>This method will set the indirect element's <See Property="Value"/> property to <InlineCode>NewValue</InlineCode>, and <See Method="OwnsValue"/> to true. If the indirect element was already owning another element, that element will be freed.</Desc>
+            </Method>
+            <Method Name="SetReferenceValue">
+               <Summary>Sets the value, without passing ownership.</Summary>
+               <Desc>This method will set the indirect element's <See Property="Value"/> property to <InlineCode>NewValue</InlineCode>, and <See Method="OwnsValue"/> to false. If the indirect element was owning another element, that element will be freed.</Desc>
+            </Method>
+            <Method Name="TransferValue">
+               <Summary>Transfers the value to another indirect element.</Summary>
+               <Desc>The <See Method="Value"/> element will be transferred to the <InlineCode>Target</InlineCode>. If the indirect element has ownership of the value, ownership will also be passed. After <InlineCode>TransferValue</InlineCode>, the <InlineCode>Value</InlineCode> property will be <InlineCode>nil</InlineCode>.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OwnsValue">
+               <Summary>True if the indirect element owns the value it refers to.</Summary>
+               <Desc> The <See Property="Value"/> of a <InlineCode>TBoldIndirectElement</InlineCode> can either be an existing <See Class="TBoldElement"/>, or one that has been created solely for the purpose of some derivation. In the latter case, the indirect value owns the value, and will be responsible for freeing it.</Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary>Referred element of the indirect element</Summary>
+               <Desc>The purpose of an indirect element is to refer to a <See Class="TBoldElement"/>, that it either owns or not. The <InlineCode>Value</InlineCode> property holds that element.</Desc>
+            </Property>
+            <Property Name="WriteableOwnsValue">
+               <Summary></Summary>
+               <Desc>private</Desc>
+            </Property>
+         </Properties>
+         <Summary>Reference to a TBoldElement</Summary>
+         <Desc>A <InlineCode>TBoldIndirectElement</InlineCode> may either own its <InlineCode>Value</InlineCode>, or refer to an existing <See Class="TBoldElement"/> that is owned by someone else. A common use of a <InlineCode>TBoldIndirectElement</InlineCode> is to use it for returning the result of evaluating an expression <See Class="TBoldEvaluator" Method="Evaluate"/> A TBoldIndirectElement can be created by anyone. When destroyed, it might or might not cascade the destroy to its <See Property="value"/> depending on whether the value is <See Property="OwnsValue" Text="owned"/> or not (but this is somehting determined by the Evaluate-method, and not the creator of the indirect element. </Desc>
+         <Examples>
+            <Example>
+               <Body>
+                  <Code>var
+  ie: TBoldIndirectElement;
+begin
+  // first we create an object to hold the result of our OCL-evaluation
+  ie := TBoldIndirectElement.Create;
+  
+  // this call will create a list of buildings that have more 
+  // than one owners
+  aPerson.Evaluate('ownedBuildings->select(owners->size > 1)', ie);
+  
+  // check if this list is empty
+  if (ie.value as TBoldObjectList).Count = 0 then
+    showmessages(aPerson.Name + ' owns all his houses by himself');
+	
+  // this will free the temporary list with buildings that was created 
+  // by the call to evaluate
+  ie.free; 
+end;</Code>
+               </Body>
+            </Example>
+         </Examples>
+      </Class>
+      <Class Name="TBoldMetaElement">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="DefaultSubscribe">
+               <Summary>Overrides TBoldElement.DefaultSubscribe.</Summary>
+               <Desc>Since MetaElements are always immutable, and are only destroyed when the system is destroyed, it is not possible to subscribe to meta elements. </Desc>
+            </Method>
+            <Method Name="GetAsList">
+               <Summary>Overrides TBoldElement.GetAsList.</Summary>
+               <Desc>There is currently no subclass of <See Class="TBoldList"/> that supports meta-elements. Calling <InlineCode>GetAsList</InlineCode> on a meta element will raise an exception. </Desc>
+            </Method>
+            <Method Name="GetStringRepresentation">
+               <Summary>Overrides TBoldElement.GetStringRepresentation.</Summary>
+               <Desc>Overrides <See Class="TBoldElement" Method="GetStringRepresentation"/></Desc>
+            </Method>
+            <Method Name="IsEqualAs">
+               <Summary>Overrides TBoldElement.IsEqualAs.</Summary>
+               <Desc>Overrides <See Class="TBoldElement" Method="IsEqualAs"/></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DelphiName">
+               <Summary>The DelphiName is the Delphi-identifier representing the meta element.</Summary>
+               <Desc>The <InlineCode>DelphiName</InlineCode> is the Delphi-identifier representing the meta element.</Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary>The ExpressionName is the name used in ocl-expressions for the metaelement.</Summary>
+               <Desc>The <InlineCode>ExpressionName</InlineCode> is the name used in ocl-expressions for the metaelement.</Desc>
+            </Property>
+            <Property Name="ModelName">
+               <Summary>Name of the original model element</Summary>
+               <Desc>This is the name of the original model element.</Desc>
+            </Property>
+         </Properties>
+         <Summary>The superclass of all elements holding information describing the Bold system</Summary>
+         <Desc><InlineCode>TBoldMetaElement</InlineCode> is the superclass of all elements holding information describing the Bold system as such. Its sibling class <See Class="TBoldDomainElement"/> is the superclass for all classes representing the information held by the Bold system. </Desc>
+      </Class>
+      <Class Name="TBoldSubscribableComponentViaBoldElem">
+         <Summary></Summary>
+         <Desc>When a component is placed on a form in the Delphi, the IDE will automatically include the units for a component and all its direct ancestors. It doesn't however pull in the units needed for the parameters of the events.
+            <P>This class is a trick used to pull in the BoldElements unit automatically when needed.</P>
+         </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldDMShift">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldDSShift">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldDefaultRegionModeMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldDefaultRegionModeShift">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldDerivationStateMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldDuplicateModeMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldESShift">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldExistenceStateMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldPSShift">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldPersistenceStateMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldValueTypeMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldValueTypeShift">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="beFIsImported">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befAdjusted">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befAllowNull">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befClassPersistent">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befClassToBeRemoved">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befDelayedFetch">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befDerived">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befEnforceOptimisticLocking">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befEnsuringCurrent">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befForceOtherEnd">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befGenerateDefaultRegion">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befGenerateDefaultRegions">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befHasDeriver">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befHasInitalvalue">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befHasModifiedValueHolder">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befHasOldValues">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="befHasRtInfo">
+         <Summary></Summary>
+         <Desc>For internal use by <InlineCode>TBoldElement</InlineCode> and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befHasSubclasses">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befHastemporaryDummyValue">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befImmutable">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befInDirtyList">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsAbstract">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsConstant">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsDerived">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsIndirect">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsLinkClass">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsMultiRole">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsNavigable">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsNonVersionedInVersionedClass">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsNull">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsOrdered">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsReverseDerived">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsSingleRole">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befIsStoredInObject">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befMandatory">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befMemberModified">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befMemberModifiedKnown">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befMemberPersistent">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befMemberReadOnly">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befMemberToBeRemoved">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befNeedsListCoercion">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befObjectReadOnly">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befObjectWasCreatedNew">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befOtherEndOrdered">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befOwnedByObject">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="befOwnsValue">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befPersistent">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befQualifiedMulti">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befResubscribe">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befStoresTimeStamp">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befSubscribeToLocatorsInList">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befSubscribeToObjectsInList">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befSystemIsRunnable">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befSystemPersistent">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befTouched">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befUpdateWholeObjects">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+      <Const Name="befVersioned">
+         <Summary></Summary>
+         <Desc>For internal use by TBoldElement and subclasses to reduce memory consumption of boolean properties</Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldOCLComponent">
+         <Methods>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc>Returns the context in which the expression of the component will be evaluated </Desc>
+            </Method>
+            <Method Name="GetExpression">
+               <Summary></Summary>
+               <Desc>Returns the expression of the component </Desc>
+            </Method>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc>This function will normally return nil, but if the component behind the interface is connected to a <See Class="TBoldOclVariables"/>-component then the variablelist of that component should be returned. This is used by the OCL-editor to support/understand variables in expressions. </Desc>
+            </Method>
+            <Method Name="SetExpression">
+               <Summary></Summary>
+               <Desc>Sets the expression of the component </Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Expression">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="VariableList">
+               <Summary></Summary>
+               <Desc>This property will normally return <InlineCode>nil</InlineCode>, but if the component behind the interface is connected to a <See Class="TBoldOclVariables"/>-component then the variablelist of that component should be returned. This is used by the OCL-editor to support/understand variables in expressions. </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>A visual component that implements this interface can be automatically validated in designtime using the menu Choice "Validate Current form" or "Validate All Forms"
+The three Methods that has to be implemented are: <See Interface="IBoldOCLComponent" Method="GetContextType"/>, <See Interface="IBoldOCLComponent" Method="GetExpression"/> and <See Interface="IBoldOCLComponent" Method="SetExpression"/>.
+More complicated components can implement <See Interface="IBoldValidateableComponent"/>. </Desc>
+      </Interface>
+   </Interfaces>
+   <Summary>Unit containing the top hierarchy of Bold</Summary>
+   <Desc>This unit contains the top hierarchy in Bold, <See Class="TBoldElement"/>, <See Class="TBoldIndirectElement"/>, <See Class="TBoldMetaElement"/>.</Desc>
+   <Types>
+      <Type Name="TBoldDirectElement">
+         <Summary></Summary>
+         <Desc>This type is kept for backwards compatibility, and should not be used anymore. Use TBoldElement instead. </Desc>
+      </Type>
+      <Type Name="TBoldElementClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldElementSubscribe">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldLookUpOclDefinition">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValueTypeSet">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValueTypes">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

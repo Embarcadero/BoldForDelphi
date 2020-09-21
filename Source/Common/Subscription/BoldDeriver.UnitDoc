@@ -1,0 +1,181 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Subscription/BoldDeriver.UnitDoc 3     02-06-26 14:59 Isje $">
+   <Classes>
+      <Class Name="TBoldAbstractDeriver">
+         <Methods>
+            <Method Name="CloneDerivationSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Derive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoDeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoNotifyOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInternalDeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsDeriving">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkOutOfdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkSubscriptionOutOfdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInternalDeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CanReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DerivedObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InternalDeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsDeriving">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Subscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDeriver">
+         <Methods>
+            <Method Name="GetInternalDeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetInternalDeriverState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldEventPluggedDeriver">
+         <Events>
+            <Event Name="OnDeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DoDeriveAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoNotifyOutOfDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanReverseDerive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OnNotifyOutOfdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="bdsIsDeriving">
+         <Summary>Internal use</Summary>
+         <Desc>This constant is checked for derivation purposes.</Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldDeriveAndResubscribe">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDeriverState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldReverseDerive">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

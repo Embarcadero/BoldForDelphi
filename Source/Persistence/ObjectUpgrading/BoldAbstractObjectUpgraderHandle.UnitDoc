@@ -1,0 +1,54 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllers/Handles/BoldAbstractObjectUpgraderHandle.UnitDoc 3     01-09-12 10:35 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractObjectUpgraderHandle">
+         <Methods>
+            <Method Name="ConfigClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateObjectUpgrader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandledObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectUpgrader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetConfig">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Config">
+               <Summary></Summary>
+               <Desc>This holds the configuration of what classes requires manual upgrading.</Desc>
+            </Property>
+            <Property Name="ObjectUpgrader">
+               <Summary></Summary>
+               <Desc>The actual upgrader object doing the work.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The abstact superclass for handles that can provide the functionality of upgrading objects between model versions. There is currently only one implementation, the <see class=TBoldObjectUpgraderHandle>.
+</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

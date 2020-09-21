@@ -1,0 +1,207 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/Interfaces/BoldValueSpaceInterfaces.UnitDoc 3     02-04-02 17:14 Johosos $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BUSINESSCLASSESROOT_TOPSORTEDINDEX">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldObjectContents">
+         <Methods>
+            <Method Name="EnsureMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldMemberCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsModified">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueByMemberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIsReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldExistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsModified">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ValueByMemberId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldValueSpace">
+         <Methods>
+            <Method Name="AllObjectIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyStreamedValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyValueSpace">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplytranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureObjectContents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExactifyIDs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasContentsForId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StreamOut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EnsuredObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasContentsForId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectContentsByObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldApplyPartialValueSpace">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldCopyValueSpace">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldExistenceState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

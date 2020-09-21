@@ -1,0 +1,211 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldOclVariables.UnitDoc 2     02-08-07 17:48 Johosos $">
+   <Classes>
+      <Class Name="TBoldHandleBasedExternalVariable">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValueType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveHandleEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Concrete subclass of TBoldExternalVariable that allows to bind a handle to a variablename</Summary>
+         <Desc>Concrete subclass of <InlineCode>TBoldExternalVariable</InlineCode> that allows to bind a handle to a variable name</Desc>
+      </Class>
+      <Class Name="TBoldOclVariables">
+         <Methods>
+            <Method Name="GetVariableList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinksToHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariableTupleList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToHandles">
+               <Summary></Summary>
+               <Desc>This method will make the following call 
+                  <Code>AddSubscription(Subscriber, beValueIdentityChanged, breResubscribe);</Code>
+ to all handles that have a variable defined for them. </Desc>
+            </Method>
+            <Method Name="VariablesChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="VariableList">
+               <Summary></Summary>
+               <Desc>This property returns a <InlineCode>TBoldExternalVariableList</InlineCode> with the names and values as defined by <See Property="Variables"/>. If <InlineCode>Variables</InlineCode> or the value of any of the handles referenced there change a <InlineCode>beValueChanged</InlineCode> event will be sent, and <InlineCode>VariableList</InlineCode> will return a new list (with the new values) next time it is referenced. </Desc>
+            </Property>
+            <Property Name="Variables">
+               <Summary></Summary>
+               <Desc>A list of <InlineCode>TBoldVariableTuples</InlineCode> each binding the name of a OCL-variable to the he <See Class="TBoldElementHandle" Property="Value" Text="value"/> of a <See Class="TBoldElementHandle"/>.
+                  <P>Variables can be set at design time through the property editor, or programmatically at runtime.</P>
+               </Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>A <InlineCode>TBoldOclVariables</InlineCode> holds a number of <InlineCode>TBoldVariableTuple</InlineCode> each connecting the <See Class="TBoldElementHandle" Property="Value" Text="value"/> of a <See Class="TBoldElementHandle"/> to an OCL variable name.
+            <P>Many places in Bold that use OCL expressions can then be connected to a variable definition. When this has been done any of the variables defined may be used in the expression.</P>
+            <P>If the variable-definitions are to be used in user-written code, the <See Property="VariableList"/> property is used.</P>
+            <BH>Bold Events</BH>
+            <UL>
+               <LI><InlineCode>beDestroying</InlineCode>: Sent when the handle is about to be destroyed</LI>
+               <LI><InlineCode>beValueIdentityChanged</InlineCode>: Sent when <InlineCode>VariableList</InlineCode> has changed</LI>
+            </UL>
+The event will not be sent if it has previously been sent, and the <InlineCode>VariableList</InlineCode> property has not been accessed since then.
+            <Note>Currently, changing the definitions of variables at runtime is not supported, the result is undefined.</Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldVariableTuple">
+         <Methods>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Changed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveUseListElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTupleList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinksToHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUseListElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetVariableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="_ReceiveHandleEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldHandle">
+               <Summary>The value that this variable should represent</Summary>
+               <Desc>The value of the handle will be the value that can be refered to by the <See Property="name"/> of the variable.
+                  <Note>The interpretation of the handle depends on <See Property="UseListElement"/></Note>
+               </Desc>
+            </Property>
+            <Property Name="EffectiveUseListElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TupleList">
+               <Summary>The owning TupleList</Summary>
+               <Desc>The owning <See Class="TBoldVariableTupleList"/></Desc>
+            </Property>
+            <Property Name="UseListElement">
+               <Summary> </Summary>
+               <Desc>This property may only be set to <InlineCode>true</InlineCode> if <See Property="BoldHandle"/> is a subclass of <See Class="TBoldAbstractListHandle"/>. If it is <InlineCode>true</InlineCode> the <See Class="TBoldAbstractListHandle" Property="List" Text="list"/> property will be used as the value of the variable. In all other cases <See Class="TBoldElementHandle" Property="Value" Text="value"/> will be used.</Desc>
+            </Property>
+            <Property Name="VariableName">
+               <Summary>The string must be a valid variable name in OCL. </Summary>
+               <Desc>The variable will be bound to the value of the corresponding <See Property="BoldHandle"/>. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Each TBoldVariableTuple binds an OCL variable-name to a handle. </Summary>
+         <Desc>Add <InlineCode>TBoldVariableTuples</InlineCode> to a <See Class="TBoldOclVariables"/> component to make it hold variables that can be used in OCL-expressions.</Desc>
+      </Class>
+      <Class Name="TBoldVariableTupleList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUniqueName">
+               <Summary>Mainly intended for internal use.</Summary>
+               <Desc>Mainly intended for internal use. </Desc>
+            </Method>
+            <Method Name="NameIsUnique">
+               <Summary>Mainly intended for internal use.</Summary>
+               <Desc>Mainly intended for internal use.</Desc>
+            </Method>
+            <Method Name="NameIsValid">
+               <Summary>Mainly intended for internal use.</Summary>
+               <Desc>Mainly intended for internal use.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary>Indexed property for accessing the individual variable tuples. </Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwningDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Collection class that holds TBoldVariableTuple objects</Summary>
+         <Desc>Collection class that holds <See Class="TBoldVariableTuple"/> objects</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Defines classes pertaining to OCL variable definition.</Summary>
+   <Desc>The classes in this unit make up the mechanism for adding variables into your OCL expressions.</Desc>
+</DLUnitDoc>

@@ -1,0 +1,217 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ClientHandlesCom/Core/BoldHandlesCom.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldAbstractSystemHandleCom">
+         <Methods>
+            <Method Name="DefaultBoldSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultBoldSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwnsHandleOnServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSystemActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIsDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IsDefault">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="System">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SystemActive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldElementHandleCom">
+         <Methods>
+            <Method Name="ClearAllValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConnectionClosing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ConnectionOpened">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDynamicBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHandleId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasHandleOnServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwnsHandleOnServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetServerElementHandleSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LocalValueChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerElementHandleSubscriber_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ServerHandleClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetServerElementHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesFromServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValuesToServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DynamicBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HandleId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasHandleOnServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OwnsHandleOnServer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ServerElementHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ServerElementHandleSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StaticBoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StaticSystemTypeInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Value">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldNonSystemHandleCom">
+         <Methods>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStaticSystemHandleSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStaticSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StaticSystemHandleSubscriber_Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StaticSystemHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StaticSystemHandleSubscriber">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

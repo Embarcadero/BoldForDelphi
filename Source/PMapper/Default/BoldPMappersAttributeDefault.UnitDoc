@@ -1,0 +1,464 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PMapper/Default/BoldPMappersAttributeDefault.UnitDoc 3     02-05-07 22:58 Johosos $">
+   <Classes>
+      <Class Name="TBoldPMBlob">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMByte">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMCurrency">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMDate">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMDateTime">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMFloat">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMInteger">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMLiveBlob">
+         <Methods>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequiresLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMLiveTypedBlob">
+         <Methods>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRequiresLiveQuery">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMLogic">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMMemoBlob">
+         <Methods>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMNonEmptyBlob">
+         <Methods>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMShortInt">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMSmallInt">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMString">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateFromMold">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultDefaultDbValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMStringBDECodePageBug">
+         <Methods>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>Stringmapper that fixes a bug with BDE and non-standard codepages</Summary>
+         <Desc>There seems to be a bug in the code page conversion routines in Delphi/BDE causing the strings stored in String attributes of business-objects to be modified when the string is converted to the codepage of the database/alias. This subclass of TBoldPMString will always take a copy of the attribute string before sending it to the update query. <p>
+To use this string mapper simply change the mapping of strings to use this class. If you do not already have a <see class=TBoldTypeNameHandle>, add one and connect your <see class=TBoldModel> component to it. Open the component-editor, and find the mapping for strings. change the PMapper-value to "TBoldPMStringBDECodePageBug" </Desc>
+      </Class>
+      <Class Name="TBoldPMTime">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMTypedBlob">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnSize">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnTypeAsSQL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInitialColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueFromField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValueToParam">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPMWord">
+         <Methods>
+            <Method Name="CanStore">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnBDEFieldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

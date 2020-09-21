@@ -1,0 +1,59 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldOLLEController">
+         <Methods>
+            <Method Name="ConnectToPersistenceHandle">
+               <Summary>Tells the OLLEController which persistence handle to use</Summary>
+               <Desc>Tells the OLLEController which persistence handle to use. This is used internally, and there is no need for users to call this method themselves. It will be called by the TBoldOLLEHandle.</Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="GenerateDatabase">
+               <Summary>Create the OLLE tables</Summary>
+               <Desc>Adds the tables used by OLLE to an existing  database. Under normal usage, the tables will be created in the database that the TBoldOLLEHandle's persistence handle refers to.</Desc>
+            </Method>
+            <Method Name="GetOLLESystem">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistent">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetPersistent">
+               <Summary>private</Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OLLESystem">
+               <Summary>Internal</Summary>
+               <Desc>For internal use</Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary>If OLLE should persist its data</Summary>
+               <Desc>If this property is set to False, then OLLE will not save its state to the database, and thus there will be no need for the extra OLLE tables. However, this also means that the information about which objects are checked out by which client, etc, is not saved between sessions. It is not recommended to set this property to false for most normal uses of OLLE.</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldPHandleMimic">
+         <Methods>
+            <Method Name="GetDataBaseInterface">
+               <Summary>Internal</Summary>
+               <Desc>Internal</Desc>
+            </Method>
+         </Methods>
+         <Summary>Internal</Summary>
+         <Desc>Internal</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

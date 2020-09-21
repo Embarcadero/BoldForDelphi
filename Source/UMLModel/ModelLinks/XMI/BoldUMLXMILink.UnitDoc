@@ -1,0 +1,69 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/UMLModel/ModelLinks/XMI/BoldUMLXMILink.UnitDoc 5     02-06-17 16:48 Johosos $">
+   <Classes>
+      <Class Name="TBoldUMLXMILink">
+         <Methods>
+            <Method Name="ExportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanExport">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ImportModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldModel">
+               <Summary>The model component that where the UML model will be stored</Summary>
+               <Desc>Set this property to point to a TBoldModel component that should store the UML model for your application. in the model-editor for this component, you will now be able to use the "Import via link" menu option to read the model from file</Desc>
+            </Property>
+            <Property Name="FileName">
+               <Summary>Filename of the XMI file containing the model</Summary>
+               <Desc>This should be the fully qualified filename of your model in XMI format</Desc>
+            </Property>
+            <Property Name="TranslateRoseTaggedValues">
+               <Summary>If the import/export should use Rose-style tag names for tagged values</Summary>
+               <Desc>Models exported from Rational Rose using the Unisys plugin will have a special syntax for tagged-value tags. If the tagged values in your imported model are named RationalRose$Bold:[something], then set this property to True, and they will be imported into Bold correctly. This also affects the way the model is exported from Bold; if the property is true, tag names will be prefixed with RationalRose$Bold: so that they will be correctly imported into Rose.</Desc>
+            </Property>
+            <Property Name="ValidateInput">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>The XMI link handles importing UML models in the XMI format</Summary>
+         <Desc>XMI (XML Metadata Interchange) is the standardized interchange format for UML models. Many modelling tools supports storing/saving/exporting the UML model as XMI. This component can be placed on the same datamodule as you keep your TBoldModel component</Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="XMI_LINKDESC">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="XMI_LINKEXTENSION">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary>Contains the definition of TBoldUMLXMILink component</Summary>
+   <Desc>Contains the definition of <See Class="TBoldUMLXMILink"/> component</Desc>
+   <Types>
+   </Types>
+</DLUnitDoc>

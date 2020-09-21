@@ -1,0 +1,68 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldGUIHandler">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Creates an instance of TBoldGUIHandler</Summary>
+               <Desc>There is no need to create an instance of <InlineCode>TBoldGUIHandler</InlineCode>. Use the global function <See Routine="BoldGUIHandler"/> to get hold of the singleton instance of this class.</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destroys an instance of TBoldGUIHandler.</Summary>
+               <Desc>You do not need to free the singleton instance of <InlineCode>TBoldGUIHandler</InlineCode>. It is maintained internally and destroyed at system shutdown.</Desc>
+            </Method>
+            <Method Name="DoPopUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DraggedObjectsAssignable">
+               <Summary>Determines if the drop operation can succeed.</Summary>
+               <Desc>This method is used to control the drag cursor and to determine if the drop operation is legal.</Desc>
+            </Method>
+            <Method Name="FindHostingForm">
+               <Summary>Helper function used by Bold aware components</Summary>
+               <Desc>If the property <See Property="ActivateTargetFormOnDrop"/> is set to <InlineCode>true</InlineCode>, this method is used to locate the target form.</Desc>
+            </Method>
+            <Method Name="TryToFocusHostingForm">
+               <Summary>Helper function used by Bold aware components</Summary>
+               <Desc>If the property <See Property="ActivateTargetFormOnDrop"/> is set to <InlineCode>true</InlineCode>, this method is used to invoke <InlineCode>SetFocus</InlineCode> on the target form.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ActivateTargetFormOnDrop">
+               <Summary>Determines if the drop target form shall be activated on drop</Summary>
+               <Desc>If this property is <InlineCode>true</InlineCode>, the form hosting the drop target will be focused on drop.</Desc>
+            </Property>
+            <Property Name="DraggedObjects">
+               <Summary>List of dragged objects</Summary>
+               <Desc>The <InlineCode>DraggedObjects</InlineCode> list will be filled with the objects participating in the drop operation at initiation. It can be inspected at drop time to perform specific actions depending on classes or other information.</Desc>
+            </Property>
+            <Property Name="PopupControl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>Helper class for Bold aware Drag and Drop operations.</Summary>
+         <Desc>The <InlineCode>TBoldGUIHandler</InlineCode> is central to the model aware Drag and Drop functionality.
+<P>It maintains a list of the <See Class="TBoldObject" Text="TBoldObjects"/> being dragged in the <See Property="DraggedObjects"/> list and using the <See Method="DraggedObjectsAssignable"/> method it can determine if the drop is allowed.</P></Desc>
+      </Class>
+   </Classes>
+   <Routines>
+      <Routine Name="BoldGUIHandler">
+         <Summary>Returns the singleton instance of the <See Class="TBoldGUIHandler"/></Summary>
+         <Desc>The <InlineCode>BoldGUIHandler</InlineCode> global method returns and if necessary creates an instance of <InlineCode>TBoldGUIHandler</InlineCode>.</Desc>
+      </Routine>
+   </Routines>
+   <Variables>
+      <Var Name="BoldPopupMenu">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+   <Summary>Defines the object handling bold aware drag and drop operations</Summary>
+   <Desc>This unit defines the <InlineCode>TBoldGUIHandler</InlineCode>, which is central to bold aware drag and drop operations.</Desc>   
+</DLUnitDoc>

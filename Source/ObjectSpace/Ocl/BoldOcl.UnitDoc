@@ -1,0 +1,146 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/Ocl/BoldOcl.UnitDoc 4     11/16/01 8:37a Jeho $">
+   <Classes>
+      <Class Name="TBoldOClDictionary">
+         <Methods>
+            <Method Name="AddOcl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOcl">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OclEntryByExpressionString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldOcl">
+         <Methods>
+            <Method Name="AddVarsToEnv">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineVariable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Evaluate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpressionType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LookupOclDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PSEvaluation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RTInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SemanticCheck">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLookupOclDefinition">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SyntacticParse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldSystem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SymbolTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldOclEntry">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldForceNelCompatibility">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+      <Routine Name="BoldOCLLog">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary>This unit contains the declaration o the Bold OCL evaluator (TBoldOCL).</Summary>
+   <Desc> Generally, there is exactly one instance of the evaluator for each bold system and this evaluator is accessed using the Evaluator property of any bold element in the system. There is normally no need to access the concrete subclass TBoldOcl.
+<P>In theory, a bold system could use other expression evaluators, but there is currently no plans to add support for a pluggable evaluator.</P>
+</Desc>
+   <Variables>
+      <Var Name="BoldNelCompatibility">
+         <Summary></Summary>
+         <Desc>Before Bold for Delphi R1.0, there was another language called NEL. If this variable is set to <InlineCode>true</InlineCode>, the ocl-evaluator will accept expressions in NEL-syntax. This should not be used for newer applications.</Desc>
+      </Var>
+      <Var Name="BoldOCLAllowCapitalMembers">
+         <Summary></Summary>
+         <Desc>This variable is normally <InlineCode>false</InlineCode>, forcing the ocl evaluator to adhere to the standard specification of OCL. Setting it to <InlineCode>true</InlineCode> will allow the name of members of an object to be specified with the first character in upper case, if it does not conflict with a typename in the model.
+</Desc>
+      </Var>
+      <Var Name="BoldOCLLogHandler">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldOCLRTDebugger">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+      <Var Name="BoldOclParserTablePath">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

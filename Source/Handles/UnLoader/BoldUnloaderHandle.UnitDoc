@@ -1,0 +1,153 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/UnLoader/BoldUnloaderHandle.UnitDoc 5     11/21/01 7:28a Jeho $">
+   <Classes>
+      <Class Name="TBoldUnloaderHandle">
+         <Methods>
+            <Method Name="Create">
+               <Summary>Constructor</Summary>
+               <Desc>Constructor</Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary>Destructor</Summary>
+               <Desc>Destructor</Desc>
+            </Method>
+            <Method Name="GetCollectDelayedFetch">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetMinAgeForCollect">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetMinAgeForUnload">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetOnMayInvalidate">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetOnMayUnload">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetScanPerTick">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetTickInterval">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="GetUnloadDelayedFetch">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="PropagateToUnloder">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="ReceiveFromSystemHandle">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetActive">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetBoldSystemHandle">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetCollectDelayedFetch">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetMinAgeForCollect">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetMinAgeForUnload">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetOnMayInvalidate">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetOnMayUnload">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetScanPerTick">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetTickInterval">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="SetUnloadDelayedFetch">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+            <Method Name="Tick">
+               <Summary>private</Summary>
+               <Desc>private</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Active">
+               <Summary>Activate/Deactivate scan/unload.</Summary>
+               <Desc>Set <InlineCode>Active</InlineCode> to <InlineCode>true</InlineCode> to activate scan/unload.</Desc>
+            </Property>
+            <Property Name="BoldSystemHandle">
+               <Summary>System to unload from.</Summary>
+               <Desc>Set BoldSystem to the TBoldSystem from which to Unload.
+                  <Note>Setting serveral unloaders to point at the same system can lead to objects and members being unloaded before <See Property="MinAgeToUnload"/>.</Note>
+               </Desc>
+            </Property>
+            <Property Name="MinAgeForUnload">
+               <Summary>Min age (in ms) for unload</Summary>
+               <Desc>Set this property to the minimum time (in milliseconds) that must pass after a member is accessed until it becoms eligable for unloading.</Desc>
+            </Property>
+            <Property Name="OnMayInvalidate">
+               <Summary>Event to allow/block invalidating of member.</Summary>
+               <Desc>Use this event to decide if <InlineCode>Member</InlineCode> shall be invalidated. The event will only occur is the member is eligable for unloading. When the event handler is called <InlineCode>MayInvalidate</InlineCode> will be <InlineCode>true</InlineCode> if <InlineCode>Member</InlineCode> has no subscribers, otherwise <InlineCode>false</InlineCode>. In most cases the event will only be used to block the invalidation of certain members that are to be retained even though they haven't been used for some time. It can however also be used to allow unloading of members even though they have subscribers, in cases where it is known that the subscribers will not lead to refetch or reevaluation of the member.</Desc>
+            </Property>
+            <Property Name="OnMayUnload">
+               <Summary>Event to allow/block unloading of object.</Summary>
+               <Desc>>Use this event to decide if <InlineCode>BoldObject</InlineCode> shall be unloaded. The event will only occur is the member is eligable for unloading. When the event handler is called <InlineCode>Unload</InlineCode> will be <InlineCode>true</InlineCode> if neither the object, nor any of its members has subscribers, otherwise false. In most cases the event will only be used to block the unloading of certain objects that are to be retained even though they haven't been used for some time. It can however also be used to allow unloading of objects even though they have subscribers, in cases where it is known that the subscribers will not lead to refetch of the object.</Desc>
+            </Property>
+            <Property Name="ScanPerTick">
+               <Summary>Number of objects to scan per tick.</Summary>
+               <Desc>This is the number of objects that will be scanned for each tick. Setting this value too high can cause the system to pause too long when examining objects for unloadability. Setting the value to 0 will cause all objects to be scanned in a single operation.</Desc>
+            </Property>
+            <Property Name="TickIntervall">
+               <Summary>Interval (in ms) between ticks.</Summary>
+               <Desc><InlineCode>TickIntervall</InlineCode> determines the time between scan/collect cycles. At most <See Property="ScanPerTick"/>will be examined for each tick.</Desc>
+            </Property>
+            <Property Name="UnloadDelayedFetch">
+               <Summary>Should attributes with delayed fetch be unloaded.</Summary>
+               <Desc>If this property is set to <InlineCode>true</InlineCode>, the contents of persistent attributes with delayed fetch will be unloaded (invalidated) individually if they meet the criteria. If it is <InlineCode>false</InlineCode>, they will only be unloaded if the entire object is unloaded.</Desc>
+            </Property>
+            <Property Name="Unloader">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+   <Summary>Handle for unloading unused objects and members</Summary>
+   <Desc>Connect a <InlineCode>TBoldUnloaderHandle</InlineCode> to a <See Class="TBoldSystemHandle"/> to automatically unload objects and members that are no longer used. The critera for unloading is that the object/member has not been accessed for <See Property="MinAgeForUnload"/> ms.
+      <P>The unloader will always unload derived members and whole persistent objects that meet the criteria. If <See Property="UnloadDelayedFetch"/> is <InlineCode>true</InlineCode> it will also unload persistent members with delayed fetch which meet the criteria.</P>
+      <P>The events <See Event="OnMayUnload"/> or <See Event="OnMayInvalidate"/> can be used to specify if objects/members meeting the critera shall actually be unloaded. If the events are not defined, candidate objects/members will be unloaded if they have no subscribers.</P>
+      <Note>In order for unloading to be safe, the code using Bold must never hold a reference to a <InlineCode>TBoldObject</InlineCode> within <See Property="BoldSystem"/> or any of its members, without also subscribing to the object or some part of it.</Note>
+   </Desc>
+      </Class>
+   </Classes>
+   <Summary>Handle for unloading unused objects and members</Summary>
+   <Desc>Connect a <InlineCode>TBoldUnloaderHandle</InlineCode> to a <See Class="TBoldSystemHandle"/> to automatically unload objects and members that are no longer used. The critera for unloading is that the object/member has not been accessed for <See Property="MinAgeForUnload"/> ms.
+      <P>The unloader will always unload derived members and whole persistent objects that meet the criteria. If <See Property="UnloadDelayedFetch"/> is <InlineCode>true</InlineCode> it will also unload persistent members with delayed fetch which meet the criteria.</P>
+      <P>The events <See Event="OnMayUnload"/> or <See Event="OnMayInvalidate"/> can be used to specify if objects/members meeting the critera shall actually be unloaded. If the events are not defined, candidate objects/members will be unloaded if they have no subscribers.</P>
+      <Note>In order for unloading to be safe, the code using Bold must never hold a reference to a <InlineCode>TBoldObject</InlineCode> within <See Property="BoldSystem"/> or any of its members, without also subscribing to the object or some part of it.</Note>
+   </Desc>
+</DLUnitDoc>

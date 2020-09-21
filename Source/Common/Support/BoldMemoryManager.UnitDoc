@@ -1,0 +1,147 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/Support/BoldMemoryManager.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldMemoryManager">
+         <Methods>
+            <Method Name="AllocateMemory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AllocateNewPage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeAllocateMemory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GarbageCollect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GarbageCollectPage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllocated">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllocatedPages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInUse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemoryInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOverhead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkIn">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkOut">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Allocated">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AllocatedPages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BigBlockCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BytesInBigBlocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InUse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemoryInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Overhead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PageSizes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Pages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BoldMemoryManagerLSBFactor">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldMemoryManagerLSBZero">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldMemoryManagerMask">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldMemoryManagerMaxPage">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldMemoryManagerPageSize">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldMemoryManager_">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Routine>
+   </Routines>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldMemoryManagerPageCounters">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldMemoryManagerPagePointers">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

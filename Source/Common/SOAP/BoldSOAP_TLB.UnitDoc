@@ -1,0 +1,37 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/SOAP/BoldSOAP_TLB.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+   </Classes>
+   <Constants>
+      <Const Name="BoldSOAPMajorVersion">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BoldSOAPMinorVersion">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="IID_IBoldSOAPService">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="LIBID_BoldSOAP">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+      <Interface Name="IBoldSOAPService">
+         <Methods>
+            <Method Name="Get">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

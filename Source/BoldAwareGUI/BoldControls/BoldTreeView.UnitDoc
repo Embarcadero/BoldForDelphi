@@ -1,0 +1,664 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/BoldControls/BoldTreeView.UnitDoc 7     02-08-16 14:29 Isje $">
+   <Classes>
+      <Class Name="TBoldCustomTreeView">
+         <Methods>
+            <Method Name="AfterMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BeforeMakeUptoDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="BeginUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanCollapse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanEdit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CanExpand">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Change">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearAllSelections">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Collapse">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DestroyWnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayIcon">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DisplayText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoContextPopup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoInsertHiddenNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoInsertVisibleNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Edit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EndUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Expand">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillListWithSelectedObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindListPartByNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContextType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElementAt">
+               <Summary>Call GetElementAt to access the TBoldElement at the position specified by the X and Y parameters.</Summary>
+               <Desc>X and Y specify the position in pixels relative to the top left corner of the tree view. If there is no node at the location, GetElementAt returns nil. </Desc>
+            </Method>
+            <Method Name="GetFollowerAt">
+               <Summary>Call GetFollowerAt to access the TBoldFollower at the position specified by the X and Y parameters. </Summary>
+               <Desc>X and Y specify the position in pixels relative to the top left corner of the tree view. If there is no node at the location, GetFollowerAt returns nil. </Desc>
+            </Method>
+            <Method Name="GetPopupElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRootFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertNode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="KeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAutoExpandLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMaxLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNodeState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelectedIndexDelta">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelectionInSubtree">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTreeController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TreeFollowerControllerClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateMultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AutoExpandLevels">
+               <Summary>his property is used if you want the topmost nodes in the tree automatically expanded.</Summary>
+               <Desc>The default value is -1 and it means that no nodes are expanded. Another value will expands all nodes with Level less than or to AutoExpandLevels when they are first created.
+                  <P>Note</P>
+                  <P>When you set AutoExpandLevels property all existing nodes in the tree will expand or collapse depending on the value and their level.</P>
+               </Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary>The BoldHandle property indicates which handle the control should follow. </Summary>
+               <Desc>Since TBoldCustomTreeView starts with a single element as the root for a tree it will follow the Value property of the handle. Note that for a TBoldListHandle this means the current element in the list. </Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary>This property has a number of sub-properties that control the Bold-aware aspects of the control. </Summary>
+               <Desc> </Desc>
+            </Property>
+            <Property Name="CurrentElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CurrentFollower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxLevels">
+               <Summary>his property controls how deep you can drill down in a branch. </Summary>
+               <Desc>The default value is -1 and it doesn't imply any constraints. Another value will prevent nodes on MaxLevel from expanding.
+                  <P>Note</P>
+                  <P>When you the set MaxLevels property existing nodes will be deleted if they have a Level higher than MaxLevel.</P>
+               </Desc>
+            </Property>
+            <Property Name="MultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeExpansion">
+               <Summary></Summary>
+               <Desc>See <See Type="TBoldNodeExpansiopnMethod"/> for details </Desc>
+            </Property>
+            <Property Name="PopupElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootFollower">
+               <Summary></Summary>
+               <Desc>The RootFollower is only used for advanced operations. </Desc>
+            </Property>
+            <Property Name="SelectInserted">
+               <Summary></Summary>
+               <Desc>If SelectInserted is True new nodes in the tree are selected when they are inserted in the tree. The focus will not change when you expand a branch in the tree. </Desc>
+            </Property>
+            <Property Name="Selected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedIndexDelta">
+               <Summary></Summary>
+               <Desc>The default value is 0 and the node will show the same image if the control has focus. Another value will give the node antoher image when it selected. The SelectedIndex is equal to the node's ImageIndex plus SelectedIndexDelta. </Desc>
+            </Property>
+            <Property Name="StateImageSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StateImageUnselected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldCustomTreeView allows displaying and optionally editing information from the Business Object tier of Bold.</Summary>
+         <Desc>It is a subclass of TCustomTreeView.
+See the TBoldTreeView for a general description.
+            <BH>Implementation</BH>
+TBoldCustomTreeView keeps most of its properties protected. It is not intended to be used directly, but rather to be subclassed, where the subclasses publish and/or override the behaviour implemented by TBoldCustomTreeView. </Desc>
+      </Class>
+      <Class Name="TBoldTreeNode">
+         <Methods>
+            <Method Name="ExistsInParent">
+               <Summary></Summary>
+               <Desc>Nodes where ExistsInParent is True are not expandeble.</Desc>
+            </Method>
+            <Method Name="GetHideNodeIfNoVisibleChildren">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNodeDescription">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTreeView">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UpdateIcon">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Follower">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideNodeIfNoVisibleChildren">
+               <Summary></Summary>
+               <Desc>This property shows the content of <See Class="TBoldNodeDescription" Property="HideNodeIfNoVisibleChildren"/>. </Desc>
+            </Property>
+            <Property Name="NodeDescription">
+               <Summary>Use NodeDescription to get the active NodeDescription for a TreeNode</Summary>
+               <Examples>
+                  <Example>
+                     <Body>
+                        <Code>if BoldTreeView1.Selected.NodeDescription.Name = 'Building' then
+  Response.Content := PageProducerBuilding.Content;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+               <Desc> </Desc>
+            </Property>
+            <Property Name="TreeView">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldTreeNode introduces a few Bold related methods and properties. </Summary>
+         <Desc>
+            <Note>Some properties on the TBoldTreeView are inherited from TCustomTreeView and returns a TTreeNode instead of a TBoldTreeNode. You can downcast the returned object to a TBoldTreeNode (i.e. (TreeView1.Items[7] as TBoldTreeNode).NodeDescription.Name).</Note>
+         </Desc>
+      </Class>
+      <Class Name="TBoldTreeView">
+         <Events>
+            <Event Name="OnChange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnChanging">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnCollapsed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnCollapsing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDblClick">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDeletion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragDrop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDragOver">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEdited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEditing">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEndDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnEnter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExit">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExpanded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExpanding">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetSelectedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyPress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnKeyUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseDown">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseMove">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnMouseUp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnStartDrag">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Properties>
+            <Property Name="Align">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AutoExpandLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldHandle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BorderStyle">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Color">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ctl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragCursor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DragMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Enabled">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Font">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HideSelection">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Images">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Indent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxLevels">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MultiSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NodeExpansion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentCtl3D">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PopupMenu">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RightClickSelect">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectInserted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedImageIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SelectedIndexDelta">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowButtons">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowHint">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowLines">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ShowRoot">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StateImageSelected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StateImageUnselected">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StateImages">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TabStop">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visible">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>TBoldTreeView allows displaying and optionally editing information from the Business Object tier of Bold.</Summary>
+         <Desc> <See Class="TBoldCustomTreeView" Property="BoldHandle" Text="BoldHandle"/> specifies the root of the tree and the sub-properties of <See Class="TBoldCustomTreeView" Property="BoldProperties" Text="BoldPropeties"/> specify how the value is to be displayed and edited.
+            <P>To display a node in a TreeView you need to have three things. A string for the node's text, an integer to select which icon to show from the Images property and optionally a list of elements to create child nodes from.</P>
+            <BH>Node Description Editor</BH>
+Double click on the TBoldTreeView to show the Node Description Editor. Create new Node Descriptions with the [Add Node Description] button or select an existing Node Description in the tree.
+A TBoldNodeDescription has a <See Class="TBoldNodeDescription" Property="TextController" Text="TextController"/> to control the text of a node, an <See Class="TBoldNodeDescription" Property="IconController" Text="IconController"/> to control the index of the node's image and a <See Class="TBoldNodeDescription" Property="ListController" Text="ListController"/> to control the child nodes.
+            <P>The example below illustrates configuration of a BoldTreeView using the model in the Building Example found in the examples directory.</P>
+            <P>Every Node Description are usually designed for different contexts. Use the Name property to give the Node Description a Name that reflects the context. If the context of a node is a Person set the Name property to Person.
+The TextController.Expression could be 
+               <Code>lastname+', '+firstname+' ('+age.asStrring+')'</Code>
+ to show the lastname, firstname and age.</P>
+            <P>If all persons use the same image from the images list then the IconController.Expression could be a constant (i.e. "12") or 
+               <Code>if assets > 10000 then 13 else 12 endif</Code>
+ to show a different icon depending on how rich the person is.
+The ListController has a collection of Parts and every part describes a fragment of a list of elements. Click on the [Add List Fragment] button to create a new part of the list or select an existing from the tree.</P>
+            <P>The ElementExpression of a part has the same context as the expression in the TextController and IconController. It is used to evaluate a new context of a child node. It could be "Home" to create a child node for the Building where the Person lives.</P>
+            <P>Set the InterpretAsList property to True if the ElementExpression evaluates to a list. If the ElementExpression is "OwnedBuildings" and InterpretAsList is True, a new child node will be created for every Building in the list. The context of each child node will be a Building. If InterpretAsList is false only one child node will be created. The context of that child node will be a list of Buildings.</P>
+            <P>The ControllerExpression is used to find a Node Description to the child nodes. It is evaluated in the same context as the child node itself. The result should be a string that matches the Name property of a NodeDescription. It could be "'OwnedBuildings'" to choose a NodeDescription named OwnedBuildings or "self.oclType" to choose a NodeDescription with the same name as the current context.</P>
+         </Desc>
+         <SeeAlso><Jump ID="HowTo_BoldTreeView" Text="How to use TBoldTreeView"/></SeeAlso>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>The BoldTreeView-unit is responsible for defining the TBoldCustomTreeView, TBoldTreeView and TBoldTreeNode classes. </Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldMouseDirection">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

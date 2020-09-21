@@ -1,0 +1,338 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/PessimisticLocking/BoldLockRegions.UnitDoc 5     01-12-20 19:02 Joho $">
+   <Classes>
+      <Class Name="TBoldOrderedRegionLookup">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFirstRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="FirstRegion">
+               <Summary></Summary>
+               <Desc>Returns the first region on the lookup</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegion">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc>Internal. Regions are created by calling a <See Class="TBoldRegionFactory"/>. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillDependentSubregions">
+               <Summary>Returns the dependent subregions of this region</Summary>
+               <Desc>This method will add all dependent subregions of the region in the region list parameter</Desc>
+            </Method>
+            <Method Name="FillIndependentSubregions">
+               <Summary>Returns the independent subregions of this region</Summary>
+               <Desc>This method will add all independent subregions of the region in the region list parameter</Desc>
+            </Method>
+            <Method Name="FillSubregions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetElements">
+               <Summary></Summary>
+               <Desc>The supplied list is filled with the domain elements that are contained in the region. Only the elements that are directly part of the region's definition are returned, i.e. not the elements that are part of a subregion of the region. </Desc>
+            </Method>
+            <Method Name="GetRoot">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PlaceRootSubscriptions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Receive">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc>A string that uniquely identifies the region. This string is used for locking the region with the Lock Manager. </Desc>
+            </Property>
+            <Property Name="Definition">
+               <Summary></Summary>
+               <Desc>The definition is the internal representation of the region definitions put in the model. See <Jump ID="Mech_Regiondefinitions" Text="Region Definition Language"/> for a description of the Region Definition Language. </Desc>
+            </Property>
+            <Property Name="Factory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Root">
+               <Summary></Summary>
+               <Desc>The Bold object that is the root of the region. </Desc>
+            </Property>
+            <Property Name="RootLocator">
+               <Summary></Summary>
+               <Desc>The Locator of the <See Property="root"/> of the region</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This class implements regions, as described in <Jump ID="Mech_Regiondefinitions" Text="Region Definition Language"/>.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldRegionExpander">
+         <Methods>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpandParentRegions">
+               <Summary>Expands the parent regions of a list of regions</Summary>
+               <Desc>This method will efficiently expand the parent regions of a list of regions. The parent regions will be stored in the property <see property=NewParentRegions></Desc>
+               <Params>
+                  <Param Name="RegionsToExpand">
+                     <Desc>The regions to be expanded</Desc>
+                  </Param>
+                  <Param Name="KnownParentRegions">
+                     <Desc>If some regions have already been expanded before, the expansion can be optimized</Desc>
+                  </Param>
+                  <Param Name="KnownSubregions">
+                     <Desc>If some regions have already been expanded before, the expansion can be optimized</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="ExpandRegionEnclosure">
+               <Summary>Expands all parent regions and subregions starting from a list of regions</Summary>
+               <Desc>This method will start with the regions in the region list parameter and efficiently expand the parent regions. The parent regions will be added to the region list parameter, and then the subregions of the regions in the list are expanded and added to the list. The result will be the complete enclosure of all related regions. </Desc>
+            </Method>
+            <Method Name="ExpandSubRegions">
+               <Summary>Expands the subregions of a list of regions</Summary>
+               <Desc>This method will efficiently expand the subregions of a list of regions. The subregions will be stored in the property <see property=NewSubRegions></Desc>
+               <Params>
+                  <Param Name="RegionsToExpand">
+                     <Desc>The regions to be expanded</Desc>
+                  </Param>
+                  <Param Name="KnownSubregions">
+                     <Desc>If some regions have already been expanded before, the expansion can be optimized</Desc>
+                  </Param>
+               </Params>
+            </Method>
+            <Method Name="ExtractSimilarRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SignalProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="NewParentRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewSubRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OnProgress">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParentRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SubRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionFactory">
+         <Events>
+            <Event Name="OnRegionChanged">
+               <Summary></Summary>
+               <Desc>Internal. </Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="CoreDefintionFromRegionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureRegionEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegion">
+               <Summary></Summary>
+               <Desc>Gets the region that is defined by Definition and is rooted in Root. </Desc>
+            </Method>
+            <Method Name="GetRegionByName">
+               <Summary></Summary>
+               <Desc>Gets the region whose AsString property is RegionName. </Desc>
+            </Method>
+            <Method Name="GetRegionsForElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NotifyRegionChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RegionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RootObjectFromRegionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RootObjectLocatorFromRegionId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This class creates and holds regions.
+            <P>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.</P>
+         </Desc>
+      </Class>
+      <Class Name="TBoldRegionList">
+         <Methods>
+            <Method Name="AddList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionLookup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Assign">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItems">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>A list of regions</Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+      <Class Name="TBoldRegionLookup">
+         <Methods>
+            <Method Name="AddIfNotInLookup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionLookup">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionLookupWithFilter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExpandOneLevelRegionsForNavigation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchAndExpandOneLevelParentRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FetchAndExpandOneLevelSubRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FillObjectList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindByID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>The class is part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set. </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="breNone">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breParentsChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="breSubregionsChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Types>
+      <Type Name="TBoldRegionEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Summary></Summary>
+   <Desc>The components defined in this unit are part of the <Jump ID="Mech_CMS" Text="Concurrency Management Server"/> feature set.
+      <P>This feature set is licensed separately.</P>
+   </Desc>
+   <Variables>
+      <Var Name="BoldRegionExpansionDebugLogHandler">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

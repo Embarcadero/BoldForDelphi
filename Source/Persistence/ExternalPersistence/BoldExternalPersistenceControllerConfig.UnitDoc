@@ -1,0 +1,161 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true">
+   <Classes>
+      <Class Name="TBoldExternalPersistenceConfigItem">
+         <Events>
+            <Event Name="OnAssignKeyToObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnCreateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnDeleteObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetInternalSQLForKeys">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetKeyFromObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnGetKeyList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnPostFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnPrepareFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnReadMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnReadObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+            <Event Name="OnUpdateObject">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="GetDisplayName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldExternalPersistenceConfigItems">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldExternalPersistenceAssignKeyToObjectEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceCreateEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceDeleteEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceFetchEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceGetExistsEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceGetInternalSQLForKeysEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceGetKeyFromObject">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceGetListEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistencePostFetchEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistencePrepareFetchEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceReadMemberEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldExternalPersistenceUpdateEvent">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

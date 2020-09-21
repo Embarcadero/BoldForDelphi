@@ -1,0 +1,210 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/TypeNameDictionary/BoldTypeNameDictionary.UnitDoc 5     01-10-15 14:16 Jeho $">
+   <Classes>
+      <Class Name="TBoldTypeNameDictionary">
+         <Methods>
+            <Method Name="AddDefaultMappings">
+               <Summary>This procedure will add the default type name mappings to the dictionary.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddMapping">
+               <Summary>Adds a new TypeNameMapping to the dictionary and returns it.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExactMappingForModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMappingForModelName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromFile">
+               <Summary> Loads a dictionary from file</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToFile">
+               <Summary>Saves the dictionary to a file</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStringList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ExactMappingForModelName">
+               <Summary></Summary>
+               <Desc>Finds the mapping that has a modelname that exactly matches the parameter.</Desc>
+            </Property>
+            <Property Name="Mapping">
+               <Summary> Returns the corresponding mapping.</Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MappingForModelName">
+               <Summary></Summary>
+               <Desc>Finds a mapping that has the same model name as the parameter, if none is found, it will look for a mapping with the modelname '&lt;Default&gt;'</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>A type name dictionary is used to figure out what a type name in the model means in the implementation environment. It holds mappings between the name used for types in the model and a number of other attributes for the attribute type (see <See Class="TBoldTypeNameMapping"/>). </Desc>
+      </Class>
+      <Class Name="TBoldTypeNameMapping">
+         <Methods>
+            <Method Name="AssignTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefineProperties">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedAccessor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedComType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedContentsName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedMapperName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedNativeType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Accessor">
+               <Summary></Summary>
+               <Desc>The accessor is used in the code generator to get the native delphi type of the accessor.
+                  <P>For string (<InlineCode>TBAString</InlineCode>), this is 'AsString'</P>
+               </Desc>
+            </Property>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ComType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContentsName">
+               <Summary></Summary>
+               <Desc>The <InlineCode>ContentsName</InlineCode> is used when the attribute is to be streamed, or accessed via its <See Interface="IBoldValue"/> interface. This must correspond to behaviour of the FreeStandingValue that corresponds to the interface.
+                  <P>For value set attributes, this is always <InlineCode>integer</InlineCode>.</P>
+               </Desc>
+            </Property>
+            <Property Name="DelphiName">
+               <Summary></Summary>
+               <Desc>The DelphiName is the name of the subclass of <InlineCode>TBoldAttribute</InlineCode> that is used to handle the attribute type (such as <InlineCode>TBAString</InlineCode>, <InlineCode>TBABoolean</InlineCode>...) </Desc>
+            </Property>
+            <Property Name="ExpandedAccessor">
+               <Summary></Summary>
+               <Desc>This is an expanded version of accessor. Any occurrances of '&lt;Name&gt;' is replaced by the expression name of the attribute. </Desc>
+            </Property>
+            <Property Name="ExpandedComType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedContentsName">
+               <Summary></Summary>
+               <Desc>This is an expanded version of contentsname. Any occurrances of '&lt;Name&gt;' is replaced by the expression name of the attribute. </Desc>
+            </Property>
+            <Property Name="ExpandedDelphiName">
+               <Summary></Summary>
+               <Desc>This is an expanded version of delphi name. Any occurrances of '&lt;Name&gt;' is replaced by the expression name of the attribute. </Desc>
+            </Property>
+            <Property Name="ExpandedMapperName">
+               <Summary></Summary>
+               <Desc>This is an expanded version of mapper name. Any occurrances of '&lt;Name&gt;' is replaced by the expression name of the attribute. </Desc>
+            </Property>
+            <Property Name="ExpandedNativeType">
+               <Summary></Summary>
+               <Desc>This is an expanded version of native type. Any occurrances of '&lt;Name&gt;' is replaced by the expression name of the attribute. </Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary>Name of type as used in OCL</Summary>
+               <Desc>This is the name to be used in OCL for the attribute type. Some names are predefined in ocl, and may not be arbitrarily defined (string, numeric, date, datetime, moment, time, boolean, integer, constraint). The OCL-evaluator will complain if this is violated... </Desc>
+            </Property>
+            <Property Name="IDLType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MapperName">
+               <Summary>Class name if persistence mapper</Summary>
+               <Desc>The delphi name of the persistence mapper that should be used to store the attribute.
+<P>For value set attributes, this is always <InlineCode>TBoldPMInteger</InlineCode>.</P> </Desc>
+            </Property>
+            <Property Name="ModelName">
+               <Summary>Name of type as used in the model</Summary>
+               <Desc>The model name is the name used to find a correct mapping for a type in the model </Desc>
+            </Property>
+            <Property Name="NativeType">
+               <Summary>Name of type in implementation language.</Summary>
+               <Desc> The native type is the type returned by the accessor (see <See Property="accessor"/>) </Desc>
+            </Property>
+            <Property Name="UnitName">
+               <Summary></Summary>
+               <Desc>This value is used by the code generator to set up the correct uses-clause for the generated code. It should be the unit where the delphi attribute is declared and implemented. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Mapping information for an attribute type.</Summary>
+         <Desc>A mapping holds all the details of how to interpret the name of a type that is found in the model. </Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>Contains class definitions for the <InlineCode>TBoldTypeNameDictionary</InlineCode>, and also the set of default type name mappings for the attribute types that ship with Bold. </Desc>
+   <Types>
+      <Type Name="TBoldTypeNameDictionaryClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+   <Variables>
+      <Var Name="TBoldCurrentTypeNameDictionaryClass">
+         <Summary>To install your own default TypeNameDictionary (with your own set of default type mappings), subclass the <InlineCode>TBoldTypeNameDictionary</InlineCode> and set this variable to your new class </Summary>
+         <Desc></Desc>
+      </Var>
+   </Variables>
+</DLUnitDoc>

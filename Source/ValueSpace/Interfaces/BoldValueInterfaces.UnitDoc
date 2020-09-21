@@ -1,0 +1,417 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/Interfaces/BoldValueInterfaces.UnitDoc 2     01-09-12 10:35 Joho $">
+   <Classes>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldBlobContent">
+         <Methods>
+            <Method Name="GetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asBlob">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldBooleanContent">
+         <Methods>
+            <Method Name="GetContentAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asBoolean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldCurrencyContent">
+         <Methods>
+            <Method Name="GetContentAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asCurrency">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldDateContent">
+         <Methods>
+            <Method Name="GetContentAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asDate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldDateTimeContent">
+         <Methods>
+            <Method Name="GetContentAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asDateTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldFloatContent">
+         <Methods>
+            <Method Name="GetContentAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asFloat">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldIntegerContent">
+         <Methods>
+            <Method Name="GetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asInteger">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldNullableValue">
+         <Methods>
+            <Method Name="GetContentIsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentToNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IsNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldObjectIdListRef">
+         <Methods>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldObjectIdListRefPair">
+         <Methods>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIdLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdList1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdList2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldObjectIdRef">
+         <Methods>
+            <Method Name="GetId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Id">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldObjectIdRefPair">
+         <Methods>
+            <Method Name="GetId1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetId2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Id1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Id2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldStringContent">
+         <Methods>
+            <Method Name="GetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldStringRepresentable">
+         <Methods>
+            <Method Name="GetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="StringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldTimeContent">
+         <Methods>
+            <Method Name="GetContentAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentAsTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="asTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldTypedBlob">
+         <Methods>
+            <Method Name="GetContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ContentTypeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+      <Interface Name="IBoldValue">
+         <Methods>
+            <Method Name="AssignContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetContentName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldPersistenceState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ContentName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Interface>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

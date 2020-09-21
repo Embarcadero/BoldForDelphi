@@ -1,0 +1,269 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/BoldAwareGUI/ControlPacks/BoldStringControlPack.UnitDoc 4     01-11-22 15:37 Aniv $">
+   <Classes>
+      <Class Name="TBoldAsStringRenderer">
+         <Events>
+            <Event Name="OnGetAsString">
+               <Summary></Summary>
+               <Desc>If OnGetAsString is set, this event handler will be called when a TBoldDirectElement needs to be converted to a string. The event will always be called by a TBoldStringFollowerController that will in most cases be owned by a Bold-aware control. The parameters Expression and Representation will be the corresponding properties on the TBoldStringFollowerController. These parameters are only used by methods and events of the renderer, and may be used freely by the implementer. In most cases they will be ignored.
+                  <P>The event will be called whenever needed. In order for the underlying architecture to be able to determine when it is needed TBoldRenderer_OnSubscribe will in most cases need to be overridden as well.</P>
+               </Desc>
+            </Event>
+            <Event Name="OnIsChanged">
+               <Summary></Summary>
+               <Desc>This event shall return whether the value in the NewValue parameter has changed relative to the value known to the followercontroller.</Desc>
+            </Event>
+            <Event Name="OnSetAsString">
+               <Summary>Propagate a change in the GUI to values in the object space.</Summary>
+               <Desc>The implementation of this event shall propagate a change in a <InlineCode>string</InlineCode> in the GUI to values in the object space. It may be considered the inverse of <See Event="OnGetAsString"/>.</Desc>
+            </Event>
+            <Event Name="OnSetColor">
+               <Summary>This event can be implemented to change the color with which the string is displayed.</Summary>
+               <Desc>This event can be implemented to change the color with which the string is displayed.</Desc>
+            </Event>
+            <Event Name="OnSetFont">
+               <Summary>This event can be implemented to change the font with which the string is displayed.</Summary>
+               <Desc>This event can be implemented to change the font with which the string is displayed. Modify the <InlineCode>AFont</InlineCode> object.</Desc>
+            </Event>
+            <Event Name="OnValidateCharacter">
+               <Summary>Validates each character in the string</Summary>
+               <Desc>This event shall return true for each character in the string for the string to be considered valid.</Desc>
+            </Event>
+            <Event Name="OnValidateString">
+               <Summary>Whether Value is a valid value in this context or not</Summary>
+               <Desc>The implementation of this event shall return whether <InlineCode>Value</InlineCode> is a valid value in this context or not.</Desc>
+            </Event>
+         </Events>
+         <Methods>
+            <Method Name="DefaultGetAsStringAndSubscribe">
+               <Summary></Summary>
+               <Desc>This method is invoked if TBoldAsStringRenderer_OnGetAsString has not been assigned. The default behaviour is to subscribe to the expression contained in the followercontroller and return the result of the evaluated expression as string. </Desc>
+            </Method>
+            <Method Name="DefaultIsChanged">
+               <Summary></Summary>
+               <Desc>The default behaviour will be invoked if TBoldAsStringRenderer_OnIsChanged has not been assigned. By default, the result is calculated by comparing the NewValue to the RendererData.OldStringValue. If they differ, the result is true. </Desc>
+            </Method>
+            <Method Name="DefaultMakeUptodateAndSetMayModifyAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultRenderer">
+               <Summary>This function return the default TBoldAsStringRenderer.</Summary>
+               <Desc>This is the renderer that will be used by TBoldStringFollowerController if no renderer has been set.
+                  <P>The default string renderer will interpret TBoldFollowerController_Expression as an OCL expression to be evaluated, while TBoldFollowerController_Representation will be interpreted as the string representation to be used.</P>
+               </Desc>
+            </Method>
+            <Method Name="DefaultSetAsString">
+               <Summary></Summary>
+               <Desc>The default behaviour will be invoked unless TBoldAsStringRenderer_OnSetAsString has been implemented. The default behaviour is to evaluate the expression and set the resulting element's string value for representation to value.
+</Desc>
+            </Method>
+            <Method Name="DefaultValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DefaultValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DrawStringOnCanvas">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsStringAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRendererDataClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUpToDateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MultiMakeUpToDateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary>The TBoldAsStringRenderer renders values in the object space as strings.
+</Summary>
+         <Desc> This is as the default renderer used in virtually all standard bold aware components. The ability to represent itself as a string is inherent in all classes in object space from TBoldElement and down.</Desc>
+      </Class>
+      <Class Name="TBoldStringFollowerController">
+         <Methods>
+            <Method Name="DoMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DoMultiMakeUptodateAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCurrentAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveAsStringRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSupportsMultiEnsure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeClean">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayHaveChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetColor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFont">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNilStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateCharacter">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ValidateString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="EffectiveAsStringRenderer">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NilStringRepresentation">
+               <Summary>The string to display if there is no element</Summary>
+               <Desc>This property contains the string to display if there is no element.</Desc>
+            </Property>
+            <Property Name="Renderer">
+               <Summary>The renderer to use</Summary>
+               <Desc>The renderer to use</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldStringRendererData">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CurrentStringValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxStringLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OldStringValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldGetAsString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetAsString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetColor">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldSetFont">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldStringIsChanged">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldValidateString">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

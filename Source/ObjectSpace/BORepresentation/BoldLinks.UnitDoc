@@ -1,0 +1,727 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldLinks.UnitDoc 5     02-08-08 1:30 Johosos $">
+   <Classes>
+      <Class Name="TBoldDirectMultiLinkController">
+         <Methods>
+            <Method Name="AddLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearNoLongerReferring">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Exchange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeNoLongerReferring">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocatorByQualifiersAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEndController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IncludesLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOfLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OtherEndDirectSingleLinkController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PrepareClear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SingleLinkLinkTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SingleLinkUnlink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Unlink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldDirectSingleLinkController">
+         <Methods>
+            <Method Name="AddToOtherEnd">
+               <Summary>Adds self to other end</Summary>
+               <Desc>This method finds the locator for the other end, and adds the locator of the object containing OwningMember to it.</Desc>
+            </Method>
+            <Method Name="GetLocator">
+               <Summary>Get locator.</Summary>
+               <Desc>This is the implementation of Getlocator used for accessing the member from the "front" side.</Desc>
+            </Method>
+            <Method Name="GetOtherEndController">
+               <Summary>Get controller for other end for a given locator.</Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalSetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PreDiscard">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveFromOtherEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAndModifyOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Unlink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="OrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIndirectMultiLinkController">
+         <Methods>
+            <Method Name="AddLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AssertIntegrity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ClearNoLongerReferring">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CompareOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ControllerForLinkMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Exchange">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeContent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FreeNoLongerReferring">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdList1">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkObjectListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkObjectOtherLinkController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkObjectOwnLinkController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocatorByQualifiersAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IncludesLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOfLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InternalAddLinkObjectLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PrepareClear">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIDLists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="UnLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getIdList2">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LinkLocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReferredLocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIndirectSingleLinkController">
+         <Methods>
+            <Method Name="AssertIntegrity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="DeleteLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkObjectOtherLinkController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkObjectOwnLinkController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkObjectRoleController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LinkTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MayUpdate">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NewLink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Unlink">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldLinkObjectListController">
+         <Methods>
+            <Method Name="AddLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocatorByQualifiersAndSubscribe">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMainList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMainListController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IncludesLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IndexOfLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InsertLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Move">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveByIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="LocatorList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldLinkObjectReferenceController">
+         <Methods>
+            <Method Name="GetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeDbCurrent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ProxyInterface">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldLinkObjectSingleLinkController">
+         <Methods>
+            <Method Name="OtherInnerLinkController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetFromId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLocator">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldMultiLinkController">
+         <Methods>
+            <Method Name="ControllerForLinkMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ControllerForMainRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanCreateNew">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEndController">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="IsInOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MarkPossiblyOutOfOrder">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="OtherEndMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Resort">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAndModifyOrderNo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Variables>
+      <Var Name="BoldPerformMultiLinkConsistenceCheckLimit">
+         <Summary></Summary>
+         <Desc>For overview description, see <See Var="BoldPerformMultiLinkConsistenceCheck"/>. This global variable adds the possibility to still have the consistency check if the number of objects in memory is small (and performance hit is low). By default this property is set to 5000. You might have to lower this value if you experience performance problems when loading multilinks.
+            <Note>This global variable is a workaround for a problem that will be resolved more efficiently in a future release (by keeping a hash table over the loaded singlelink ends for example). When the problem is solved properly, this variable will be removed)</Note>
+         </Desc>
+         <SeeAlso><See Var="BoldPerformMultiLinkConsistenceCheck"/> </SeeAlso>
+      </Var>
+      <Var Name="BoldPerformMultilinkConsistencyCheck">
+         <Summary></Summary>
+         <Desc>Loading Multilinks in an object space with many objects in it currently has very bad performance. The reason 
+              is that the multilink has to find all (non-dirty) singlelinks that is pointing to it in memory, but 
+              that was not present in the fetched set of objects. The time to perform this operation is linear to 
+              the number of objects in memory.
+			  <p>The default value for this variable is <InlineCode>True</InlineCode>.
+            <P>The problem occurs if client 1 first loads a singlelink (ie the home-relation of a aPerson), and then client 2 changes this singlelink and updates the database. If client 1 now loads the list of residents of the home of aPerson, he would expect to find aPerson in this list, but the database will not include this object as a resident. If the consistency check is perfomed, then the object space will invalidate the home-relation of aPerson (since it is clearly not valid anymore). If it is not performed, the object space will be inconsistent.</P>
+            <P>This inconsistency will automatically resolve it self if the clients are synchronized using <Jump ID="Mech_OSS" Text="Object Space Synchronization"/></P>
+            <Note>This global variable is a workaround for a problem that will be resolved more efficiently in a future release (by keeping a hash table over the loaded singlelink ends for example). When the problem is solved properly, this variable will be removed)</Note>
+         </Desc>
+         <SeeAlso><See Var="BoldPerformMultiLinkConsistenceCheckLimit"/> </SeeAlso>
+      </Var>
+   </Variables>
+</DLUnitDoc>

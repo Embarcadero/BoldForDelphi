@@ -1,0 +1,113 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/PersistenceControllerCore/Core/BoldPersistenceController.UnitDoc 5     02-03-12 9:19 Johosos $">
+   <Classes>
+      <Class Name="TBoldPersistenceController">
+         <Methods>
+            <Method Name="MultilinksAreStoredInObject">
+               <Summary></Summary>
+               <Desc>This function tells the world whether this persistence controller is storing multilinks as a part of the objects they belong to, or if it will calculate them bsed on the single-links in the other end. </Desc>
+            </Method>
+            <Method Name="PMExactifyIds">
+               <Summary></Summary>
+               <Desc>This function will add an entry in the translationlist for each id that is inexact specifying an exact id for the same object </Desc>
+            </Method>
+            <Method Name="PMFetch">
+               <Summary></Summary>
+               <Desc>This function will fetch all the members specified in MemberIdList for the objects specified in ObejctIdList, and store them in the ValueSpace. If the MemberIdList is empty, all default members will be fetched (normally all attributes that are not DelayedFetch, and all singlelinks).
+if FetchEvenIfDBCurrent is true, then the old values will be discarded. Fetchmode should always be fmNormal. </Desc>
+            </Method>
+            <Method Name="PMFetchIDListWithCondition">
+               <Summary></Summary>
+               <Desc>This procedure will fetch the IDs of the objects that match the condition (but not the objects them selves). The most common condition is the <See Class="TBoldConditionWithClass"/> which should fetch all instances of the specified class. Not all subclasses of TBoldPersistenceController will support all sorts of TBoldCondition... </Desc>
+            </Method>
+            <Method Name="PMSetReadOnlyness">
+               <Summary></Summary>
+               <Desc>This method will update the readonly flag for the objects in the ReadOnlyList and the WriteableList. This should normally not be called.
+                  <P>This operation is optional to implement for a subclass</P>
+               </Desc>
+            </Method>
+            <Method Name="PMTimeForTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTimestampForTime">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="PMTranslateToGlobalIds">
+               <Summary></Summary>
+               <Desc>This method will find the global Ids for all ids in the ObjectIdList and store them in the TranslationList.
+                  <P>This operation is optional to implement for a subclass.</P>
+               </Desc>
+               <Examples>
+                  <Example>
+                     <Body>The following piece of code will find the Global Id for a single object using this method: 
+                        <Code>uses
+  BoldPersistenceController,
+  BoldID,
+  BoldGlobalId,
+  BoldSystem;
+  
+function GlobalIdStringForObject(BoldObject: TBoldObject): string;
+var
+  anIdList: TBoldObjectIdList;
+  aTranslationList: TBoldIdTranslationList;
+  aPersistenceController: TBoldPersistenceController;
+  aGlobalId: TBoldGlobalId;
+  anObjectId: TBoldObjectID;
+begin
+  anIdList := TBoldObjectIdList.Create;
+  aTranslationList := TBoldIdTranslationList.Create;
+  result := '';
+  try
+    anObjectId := BoldObject.BoldObjectLocator.BoldObjectId;
+    anIdList.Add(anObjectId);
+    aPersistenceController := BoldObject.BoldSystem.PersistenceController;
+    aPersistenceController.PMTranslateToGlobalIds(anIdList, aTranslationList);
+    aGlobalId := aTranslationList.TranslateToNewId[anObjectId] as
+    TBoldGlobalId;
+    result := aGlobalID.asString;
+  finally
+    anIdList.Free;
+    aTranslationList.Free;
+  end;
+end;</Code>
+                     </Body>
+                  </Example>
+               </Examples>
+            </Method>
+            <Method Name="PMTranslateToLocalIds">
+               <Summary></Summary>
+               <Desc>This method will translate a set of global ids to local database ids.
+                  <P>This operation is optional to implement for a subclass</P>
+               </Desc>
+            </Method>
+            <Method Name="PMUpdate">
+               <Summary></Summary>
+               <Desc>This method will update the obejcts in the ObjectIdList, and mark them as clean in the valuespace. If any Ids is changed during this process, the new Ids will be added to the TranslationList. If the PersistenceController uses timestamps, the new timestamp will be returned in the var-parameter. </Desc>
+            </Method>
+            <Method Name="ReserveNewIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SubscribeToPeristenceEvents">
+               <Summary></Summary>
+               <Desc>Call this method to be notified about future activity in the persistence controller. </Desc>
+               <SeeAlso><See Class="TBoldPersistenceProgressNotifier"/></SeeAlso>
+               <SeeAlso><See Class="TBoldPersistenceNotifier"/></SeeAlso>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>This class defines the protocol and all operations involved in persistence actions such as fetching and updating, possibly delegating the actual work to a persistence mapper (this is the case for the DB-based persistence controller)
+The most important methods defined by this abstract class, that must be implemented by a concrete subclass are <See Method="PMExactifyIds"/>, <See Method="PMFetch"/>, <See Method="PMFetchIDListWithCondition"/> and <See Method="PMUpdate"/>. </Desc>
+      </Class>
+   </Classes>
+   <Constants>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+   <Types>
+   </Types>
+</DLUnitDoc>

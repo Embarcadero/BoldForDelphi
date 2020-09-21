@@ -1,0 +1,90 @@
+<html>
+
+<head>
+  <title>Derived Attributes</title>
+  <link href="style.css" type="text/css" rel="stylesheet">
+  <base target="_self">
+</head>
+
+<body>
+
+<!-- Right table starts -->
+<table class="right" cellspacing="0">
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">
+      <a href="../../index.html" target="_top">Release Doc</a> &gt;
+      <a href="index.html" target="_top">Examples</a> &gt;
+      <a href="menu/menu_examples_simple.html" target="menu">Simple Examples</a> &gt;
+      <a href="menu/menu_examples_simple_objectspace.html" target="menu">ObjectSpace</a> &gt;
+      <a href="derived_attributes.html">Derived Attributes</a>
+    </td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+  <tr><td colspan="3"><img src="images/trans_high.gif" width="1" height="10"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="title" colspan="3">Derived Attributes</td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr><td colspan="3"><img src="images/top_wide.gif" width="620" height="5"></td></tr>
+  <tr><td class="content" colspan="3">
+  
+<!-- Content cell ends -->
+    <a href="../Delphi/Simple/ObjectSpace/DerivedAttributes/BE_DerivedAttribDemo.dpr">Launch Delphi-example</a> |
+    <a href="../CBuilder/Simple/ObjectSpace/DerivedAttributes/BE_DerivedAttributes.bpr">Launch CBuilder-example</a>
+	<p>A derived attribute is a value that doesn´t need to be persistent since it can always be
+    calculated using other values. Examples of derived attributes are the total sum of
+    an invoice, the full name of a person or the age of a person given the birth
+    date.
+    </p>
+	<p>This example shows a <b>code free</b> way to implement derived attributes. The derivation is defined by an OCL expression
+    in the model. Observe that the derived attribute is write protected.
+    </p>
+    <p>There is also a small example of how to define global variables within the OCL evaluator.
+    This variable is used inside the OCL expression that controls the derived attribute.
+    </p>
+    <hr size="1">
+    <p class="head2">How to run</p>
+    <p>
+	The example shows how a retail price can be calculated from a
+   net price and a VAT value.&nbsp; Add
+	products and enter net price in the grid. Change the VAT value in the edit field
+	at the bottom of the form and see how the value in the retail price column is
+	changed. Changes in the net price also affects the retail price. You can't
+	change the value of the retail price directly by editing the field. The only way
+	to do that is to change the value of either the net price or the VAT.
+	</p>
+	<p class="head2">Derive attributes</p>
+	<p>In this example the attribute <code>retail_Price</code> in the <code>Product</code> class is derived.
+	</p>
+	<p class="head4">See also</p>
+	<ul>
+		<li><a href="http://info.borland.com/techpubs/delphi/boldfordelphi/html/HowTo_DeriveAttributes.htm" target="self">
+			How to derive attributes</a> (<font size="1">also found in [BfDInstallDir]/help/Bfd.hlp</font>)</li>
+	</ul>
+    <p class="head4">More examples</p>
+	<ul>
+  		<li><a href="reverse_derived_attributes.html">Reverse Derived Attributes</a> - How to reverse derived attributes.</li>
+  		<li><a href="renderers.html">Renderers</a> - Implement non write-protected derived attributes.</li>
+  		<li><a href="derived_relations.html">Derived Relations</a> - Derive relations.</li>
+	</ul>
+<br>
+	<p class="note"><b>Note!</b> Please make sure to use the &quot;Create DB &amp; Alias&quot;
+    button before attempting to open the system for the first time. Once the database and
+    alias is established you only have to use the &quot;Open system&quot; button when running
+    the example program.
+    </p>
+<!-- Content cell ends -->
+  
+  </td></tr>
+  <tr><td colspan="3"><img src="images/bottom_wide.gif" width="620" height="15"></td></tr>
+  <tr>
+    <td class="left"><img src="images/left_round.gif" width="10" height="15"></td>
+    <td class="mini">All material $(COPYRIGHT_TEXT). Registered Trademarks and other trademarks
+      are properties of their respective holders.</td>
+    <td class="right"><img src="images/right_round.gif" width="10" height="15"></td>
+  </tr>
+</table>
+<!-- Right table ends -->
+
+</body>
+</html>

@@ -1,0 +1,2052 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/MoldModel/Core/BoldMeta.UnitDoc 8     02-04-04 10:50 Joho $">
+   <Classes>
+      <Class Name="TMoldAssociation">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithRoles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllPossibleNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStorage">
+               <Summary>Private</Summary>
+               <Desc>Private</Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetLinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllPossibleNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Derived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EvolutionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FormerNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Roles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Storage">
+               <Summary>The storage location of this association</Summary>
+               <Desc>See <See Type="TBoldStorage"/> for details</Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>This represent an association in the intermediate format of the model. </Desc>
+      </Class>
+      <Class Name="TMoldAssociationList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldAttribute">
+         <Methods>
+            <Method Name="CalculateCRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllowNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAttributeKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultDBValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDelphiPropertyRead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDelphiPropertyWrite">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDelayedFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDelphiField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReverseDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStorage">
+               <Summary>Private</Summary>
+               <Desc>Private</Desc>
+            </Method>
+            <Method Name="GetTypeStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllowNull">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AttributeKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultDBValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DelphiPropertyRead">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DelphiPropertyWrite">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Derived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EvolutionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasDelphiField">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InitialValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Length">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReverseDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldAttributeList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldClass">
+         <Methods>
+            <Method Name="AssignMemberDispIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CalculateCRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ChildTo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EffectiveIncFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindDefiningTable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllAutoOverrideMethods">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllBoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllNativeAttributes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllPossibleNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDefaultStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveEvolutionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveOptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedInterfaceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFirstDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFirstOwnBoldMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFirstOwnNativeAttributeIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGenerateDefaultRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGuid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasCodeStubs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDelphiAttributesWithAccessorFunctions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasManuallyDerivedMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasNotNullMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImported">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIncFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIntroducesManuallyDerivedMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLastDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetListGuid">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptimisticLocking">
+               <Summary>Private</Summary>
+               <Desc>Private</Desc>
+            </Method>
+            <Method Name="GetStorage">
+               <Summary>Private</Summary>
+               <Desc>Private</Desc>
+            </Method>
+            <Method Name="GetTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTablemapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetVersioned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="InitializeClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LowestCommonSuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LowestVisibleAncestor">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MainTables">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetIncFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetSuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TrimRemoved">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AllAutoOverrideMethods">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AllBoldMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AllNativeAttributes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="AllPossibleNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Association">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Attributes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Component">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveDefaultStringRepresentation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveEvolutionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveOptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EvolutionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedInterfaceName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedTableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FirstDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FirstOwnBoldMemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FirstOwnNativeAttributeIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FormerNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerateDefaultRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasCodeStubs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasDelphiAttributesWithAccessorFunctions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasManuallyDerivedMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasNotNullMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Imported">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IncFileName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IntroducesManuallyDerivedMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsAbstract">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LastDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ListGUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Methods">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Persistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Roles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Storage">
+               <Summary>The storage location of this class</Summary>
+               <Desc>See <See Type="TBoldStorage"/> for details</Desc>
+            </Property>
+            <Property Name="SubClasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="SuperClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableMapping">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TableName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Versioned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldClassList">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldComponent">
+         <Methods>
+            <Method Name="DependentOf">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImplementationDependencies">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInterfaceDependencies">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Dependencies">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldElement">
+         <Methods>
+            <Method Name="AddAllTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAllNonBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultBoldTVList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEvolutionState">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFormerNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNonDefaultTaggedValuesCommaText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetPMapperName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStdTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetBoldTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetNonDefaultTaggedValuesCommaText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetStdTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripOwnDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="BoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Constraints">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultBoldTVList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedDelphiName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Model">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NonDefaultTaggedValuesCommaText">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="PMapperName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="StdTVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Stereotype">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TVByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="name">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldElementList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="MakeUniqueName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveEntryReference">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldMember">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerivationOCL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDelayedFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveMemberInfoClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedExpressionName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetManuallyDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberInfoClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReverseDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStorage">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTypeStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetMoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="ColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DerivationOCL">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Derived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveDelayedFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveMemberInfoClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedColumnName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FormerNames">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ManuallyDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MemberInfoClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReverseDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Storage">
+               <Summary>The storage location of this member</Summary>
+               <Desc>See <See Type="TBoldStorage"/> for details</Desc>
+            </Property>
+            <Property Name="TypeStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visibility">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldMemberList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldMethod">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCallSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCanCallInherited">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDelphiReturnType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetFuncType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasReturnValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOverrideInAllSubclasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetParameters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="CallSignature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="CanCallInherited">
+               <Summary>Indicates whether it is possible to call inherited from this method</Summary>
+               <Desc>If the method is overridden from a superclass, and the mehtod is declared <InlineCode>abstract</InlineCode> in the superclass, then calling <InlineCode>inherited</InlineCode> will result in an "Abstract Error" exception. The property CanCallInherited will return false for these methods.</Desc>
+            </Property>
+            <Property Name="DelphiReturnType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="FuncType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasReturnValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsClassMethod">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OverrideInAllSubclasses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Parameters">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ReturnType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Signature">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Visibility">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldMethodList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldModel">
+         <Methods>
+            <Method Name="AssignDispIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CalculateCRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureCRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureLinkRoles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureTopSorted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindRoleByClassNameAndName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetClassByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetComponents">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultMemberInfoClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDispIdsAssigned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetExpandedUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetGenerateDefaultRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasMemberInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetImplementationUses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetInterfaceUses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMainComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMaxDBIdentifierLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModelVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTypeLibVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUpdateWholeObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseClockLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseModelVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUseXFiles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveAssoc">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RemoveClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RenameComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetDefaultDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetRootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="StripDefaultBoldTaggedValues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="TrimRemoved">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Associations">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Classes">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Components">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultMemberInfoClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DispIdsAssigned">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ExpandedUnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GUID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="GenerateDefaultRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasMemberInfo">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ImplementationUses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="InterfaceUses">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MainComponent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MaxDBIdentifierLength">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ModelVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NationalCharConversion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OptimisticLocking">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RegionDefinitions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RootClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TopSorted">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeLibVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TypeNameDictionary">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UnitName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UpdateWholeObjects">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseClockLog">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseGlobalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseModelVersion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseReadOnly">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseTimestamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="UseXFiles">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldParameter">
+         <Methods>
+            <Method Name="GetDelphiParameterType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="DelphiParameterType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsConst">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParameterKind">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParameterName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ParameterType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldQualifier">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="BoldType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldQualifierList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldRole">
+         <Methods>
+            <Method Name="CalculateCRC">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureLinkRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDefaultRegionMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDefaultRegionMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDelayedFetch">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveEmbed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectiveOrdered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEffectivePersistent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEmbed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasDispId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHasLinkRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLinkRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMainRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMandatory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMemberExists">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetModel">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOtherEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetQualifiedMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetReverseDerived">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStorage">
+               <Summary>Returns the storage of the association.</Summary>
+               <Desc>Returns the storage mode of the <see property=association></Desc>
+            </Method>
+            <Method Name="GetTypeStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetUMLClassName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="NameChanged">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setAssociation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="setMoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Aggregation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Association">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Changeability">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DefaultRegionMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="DeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveDefaultRegionMode">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveDeleteAction">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveEmbedded">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="EffectiveOrdered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Embed">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="HasLinkRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="LinkRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MainRole">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Mandatory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="MoldClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Multi">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Multiplicity">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Navigable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Ordered">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OtherEnd">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="QualifiedMulti">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Qualifiers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="RoleType">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TMoldRoleList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="tMoldComponentList">
+         <Methods>
+            <Method Name="GetItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetItemByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Items">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ItemsByName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Constants>
+      <Const Name="BOLD_DISPID_ROUND">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+      <Const Name="BOLD_FIRSTUSERDISPID">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Const>
+   </Constants>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc>This unit classes related to the model format of Bold. This fomat is quite close to the original UML model, and is used for storing the model internally and externally (in the dfm-file of your model-component for example).
+Normally, as a developer you never need to create objects of these classes, and Bold only uses them for a short period of time when the runtime version of the model is created. <See Class="TBoldModel"/> is a component that takes care of all details around the meta-model. All Bold applications need atleast one TBoldModel (normally placed on a datamodule). To this component you can hook up a <See Class="TBoldSystemHandle"/> (through a <See Class="TBoldSystemTypeInfoHandle"/>).
+      <P>When the runtime model is created (see TBoldSystemTypeInfoHandle and the classes of the <See Unit="BoldSystemRT"/> unit), this is the preferred way to access model information.</P>
+   </Desc>
+   <Types>
+      <Type Name="TBoldDefaultDeleteActionArray">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TBoldDispIdAssigningState">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TModelOnChange">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+      <Type Name="TMoldElementClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

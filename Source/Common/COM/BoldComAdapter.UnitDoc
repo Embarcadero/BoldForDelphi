@@ -1,0 +1,155 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Common/COM/BoldComAdapter.UnitDoc 3     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldComAdapter">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc>If the adapter owns its adaptee it will destroys the adaptee as well.</Desc>
+            </Method>
+            <Method Name="GetAdaptee">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetEnsuredAdaptee">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReceiveEvent">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetAdaptee">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Adaptee">
+               <Summary></Summary>
+               <Desc>The adapter's adaptee.</Desc>
+            </Property>
+            <Property Name="EnsuredAdaptee">
+               <Summary></Summary>
+               <Desc>Retrieves the adaptee. Raises an exception if adaptee is nil. </Desc>
+            </Property>
+            <Property Name="IsOwner">
+               <Summary></Summary>
+               <Desc>Tells if the adapter owns its adaptee. </Desc>
+            </Property>
+         </Properties>
+         <Summary>Base class for all COM adapter classes. </Summary>
+         <Desc>Handles the adaptee.</Desc>
+      </Class>
+      <Class Name="TBoldComAdapterContext">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldComAdapterFactory">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateAdapterForClass">
+               <Summary>Creates a suitable adapter for the class type. </Summary>
+               <Desc> When created through this function the adapter will have no initial adaptee. </Desc>
+            </Method>
+            <Method Name="CreateAdapterForObject">
+               <Summary>Creates a suitable adapter for the object. </Summary>
+               <Desc> Creates an adapter object with an initial adaptee. The Owner flag controls if the adapter will own its adaptee. </Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="FindAdapterClass">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Instance">
+               <Summary></Summary>
+               <Desc>Provides access to the singleton instance.</Desc>
+            </Method>
+            <Method Name="RegisterAdapterClass">
+               <Summary></Summary>
+               <Desc>Adds an adapter class to the registry. </Desc>
+            </Method>
+         </Methods>
+         <Summary>Adapter factory/registry class.</Summary>
+         <Desc> Serves as an adapter object factory and adapter class registry.
+This is a singleton class.</Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+      <Interface Name="IBoldComAdapter">
+         <Methods>
+            <Method Name="GetAdaptee">
+               <Summary></Summary>
+               <Desc>Retrieves the adaptee.</Desc>
+            </Method>
+            <Method Name="GetIsOwner">
+               <Summary></Summary>
+               <Desc>Retrieves the owner status.</Desc>
+            </Method>
+            <Method Name="SetAdaptee">
+               <Summary></Summary>
+               <Desc> Changes/sets the adaptee.</Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Adaptee">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsOwner">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary>This interface is implemented by adapter classes.</Summary>
+         <Desc> This interface is used to maintain adapter classes in server applications. </Desc>
+      </Interface>
+   </Interfaces>
+   <Routines>
+      <Routine Name="BoldComCreateAdapter">
+         <Summary>Creates an adapter object.</Summary>
+         <Desc> Creates an adapter object and and returns a pointer to the requested interface. If there is no suitable adapter class registered or if the adapter doesn't support the requested interface the Obj parameter will be nil. </Desc>
+      </Routine>
+      <Routine Name="BoldComInterfaceToObject">
+         <Summary>Returns the adapter object that implements the interface.</Summary>
+         <Desc>
+
+This function queries for the IBoldComAdapter interface through which it can get a pointer to the actual object. Returns nil if the COM object doesn't support that interface.
+</Desc>
+      </Routine>
+      <Routine Name="BoldComRegisterAdapter">
+         <Summary>Registers an adapter class in the adapter factory/registry.</Summary>
+         <Desc> Use this function to register an adapter class. </Desc>
+      </Routine>
+   </Routines>
+   <Summary>Contains the adapter mechanism used in COM server applications.</Summary>
+   <Desc></Desc>
+   <Types>
+      <Type Name="TBoldAdaptableClass">
+         <Summary></Summary>
+         <Desc>Class reference type for adapter classes. </Desc>
+      </Type>
+      <Type Name="TBoldAdaptableObject">
+         <Summary></Summary>
+         <Desc>Base class for adaptees.</Desc>
+      </Type>
+      <Type Name="TBoldComAdapterClass">
+         <Summary>Class reference type for classes that can have an COM adapter.</Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>

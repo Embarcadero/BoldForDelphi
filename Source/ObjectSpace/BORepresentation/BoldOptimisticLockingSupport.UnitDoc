@@ -1,0 +1,85 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ObjectSpace/BORepresentation/BoldOptimisticLockingSupport.UnitDoc 2     01-09-12 10:34 Joho $">
+   <Classes>
+      <Class Name="TBoldOptimisticLockHandler">
+         <Methods>
+            <Method Name="AddOptimisticLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddOptimisticRegionLocks">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionObjectsToEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddRegionsObjectsToEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CopyValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="EnsureEnclosure">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLockingValuesForRegion">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetLockingValuesForRegions">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionFactory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionsForDirtyMembers">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionsForDirtyMembersInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionsForDirtyOtherEnds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionsForElement">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRegionsForRemoteMember">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetRemotedfromIdRefValue">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="RetrieveOptimisticLockingvalues">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="RegionFactory">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary></Summary>
+   <Desc></Desc>
+</DLUnitDoc>

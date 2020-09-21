@@ -1,0 +1,21 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/Handles/Core/BoldVariableDefinition.UnitDoc 12    02-01-30 20:47 Joho $">
+   <Classes>
+      <Class Name="TBoldVariableDefinition">
+         <Summary></Summary>
+         <Desc>This component has been renamed to <see class=TBoldOclVariables>. 
+         To change existing components to the new/renamed component, do the following steps:
+         <ul>
+         <li>Open the form with the deprecated component</li>
+         <li>Change to the text-view of the DFM-file (ALT-F12)</li>
+         <li>Find the component (look for "object &lt;name&gt;: TBoldVariableDefinition")</li>
+         <li>Change the type to the new name ("object &lt;name&gt;: TBoldOclVariables")</li>
+         <li>Change back to the form view (ALT-F12)</li>
+         <li>Save the form and confirm the retyping of the component when asked</li>
+         </UL>
+         </Desc>
+      </Class>
+   </Classes>
+   <Summary>Obsolete unit. Please use the classes in <see unit=BoldOclVariables> instead</Summary>
+   <Desc>Obsolete unit. Please use the classes in <see unit=BoldOclVariables> instead</Desc>
+</DLUnitDoc>

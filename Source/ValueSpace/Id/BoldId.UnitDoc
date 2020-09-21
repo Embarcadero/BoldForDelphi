@@ -1,0 +1,472 @@
+<!DOCTYPE DLUnitDoc>
+<DLUnitDoc ExplicitSummary="true" Version="$Header: /BfD/Source/ValueSpace/Id/BoldId.UnitDoc 10    02-05-13 15:09 Joho $">
+   <Classes>
+      <Class Name="EBoldOperationFailedForIdList">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IdList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldExternalObjectID">
+         <Methods>
+            <Method Name="GetIsStorable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldID">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIDTranslationList">
+         <Methods>
+            <Method Name="AddTranslation">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetNewId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetOldId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTranslateToNewId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTranslateToOldId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="Count">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="NewIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="OldIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TranslateToNewId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="TranslateToOldId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldIdList">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldInternalObjectId">
+         <Methods>
+            <Method Name="CloneWithClassId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithClassID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithClassIDandInternalId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHash">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsStorable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc>When an object is created it is assigned an internal object id. This id is only meaningful (guaranteed to be unique) in the context of a program execution. If the object is ever stored in a database, this id will be replaced by an external object id. </Desc>
+      </Class>
+      <Class Name="TBoldMemberID">
+         <Methods>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MemberIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc>A <InlineCode>TBoldMemberID</InlineCode> is only meaningful in the context of an object, and refers to the member with the index <See Property="MemberIndex"/>. </Desc>
+      </Class>
+      <Class Name="TBoldMemberIdList">
+         <Methods>
+            <Method Name="GetMemberIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="MemberIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectId">
+         <Methods>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CloneWithClassId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CreateWithClassID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetAsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetHash">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIsStorable">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTimeStamp">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetTopSortedIndexExact">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SetClassIdData">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="getTopSortedIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="AsString">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="Hash">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsEqual">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IsStorable">
+               <Summary></Summary>
+               <Desc>If an id is storable, it means that it is relevant outside the context of a running program. This property will be <InlineCode>false</InlineCode> for <See Class="TBoldInternalObjectId"/>, and <InlineCode>true</InlineCode> for <See Class="TBoldExternalObjectId"/>. </Desc>
+            </Property>
+            <Property Name="TimeStamp">
+               <Summary></Summary>
+               <Desc>This property is used by the Object Versioning Extension to identify old versions of Bold objects. For normal objects ("current version") the value is <See Const="BOLDMAXTIMESTAMP"/>.
+                  <Note>This feature is only available in the Product Extension Object Versioning Extension.</Note>
+               </Desc>
+               <SeeAlso><Jump ID="Mech_OVE" Text="Object Versioning Extension"/></SeeAlso>
+            </Property>
+            <Property Name="TopSortedIndex">
+               <Summary></Summary>
+               <Desc>The <InlineCode>TopSortedIndex</InlineCode> refers to the topological sorted list of classes in a model. </Desc>
+            </Property>
+            <Property Name="TopSortedIndexExact">
+               <Summary></Summary>
+               <Desc>An inexact classid means that an object is known to be of the class referred to by the <See Property="TopSortedIndex"/> or any of the subclasses of this class. If the id is exact, the object is exactly of this class. </Desc>
+            </Property>
+         </Properties>
+         <Summary>This is an abstract class representing the identity of a domain object. </Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectIdHashIndex">
+         <Methods>
+            <Method Name="FindById">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="HashItem">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ItemAsBoldObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectIdKey">
+         <Methods>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Hash">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Match">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="id">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldObjectIdList">
+         <Methods>
+            <Method Name="Add">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddIfNotInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="AddList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ApplyTranslationList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Clone">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="CommaSeparatedIdList">
+               <Summary>List all IDs in the list with commaseparation</Summary>
+               <Desc>If the list is empty, the result will be the empty string, otherwise the result will be a string with all IDs listed commaseparated. Ex: "1, 6, 100, 45"</Desc>
+            </Method>
+            <Method Name="ContainsSameIDs">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ExactifyIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetCount">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIDByID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIdInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetIndexByID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectIDIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetObjectId">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="GetStreamName">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="Insert">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="LoadFromStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="ReplaceID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="SaveToStream">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Properties>
+            <Property Name="IDByID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IdInList">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="IndexByID">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectIDIndex">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+            <Property Name="ObjectIds">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Property>
+         </Properties>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+      <Class Name="TBoldSubMemberID">
+         <Methods>
+            <Method Name="create">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+            <Method Name="destroy">
+               <Summary></Summary>
+               <Desc></Desc>
+            </Method>
+         </Methods>
+         <Summary></Summary>
+         <Desc></Desc>
+      </Class>
+   </Classes>
+   <Interfaces>
+   </Interfaces>
+   <Summary>This unit contains the declarations of all generic ID-related classes. </Summary>
+   <Desc>This unit contains the declarations of all generic ID-related classes. ObjectIDs are used to uniquely identify objects, MemberIDs are used to identify a member (an attribute/relation) within an object. This unit also contains class declarations for List classes for the different ID classes</Desc>
+   <Types>
+      <Type Name="TBoldObjectIdClass">
+         <Summary></Summary>
+         <Desc></Desc>
+      </Type>
+   </Types>
+</DLUnitDoc>
