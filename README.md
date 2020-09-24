@@ -11,6 +11,6 @@ For more information see:
 - http://boldfordelphi.blogspot.com/
 
 There is a new Slackspace dedicated only for this project.
-If you are interested to join the chat send your email to roland<dot>bengtsson<at>gmail<dot>com for an invite.
+If you are interested to join the chat send your email to roland(dot)bengtsson(at)gmail(dot)com for an invite.
   
 The project source code has been made available by https://www.embarcadero.com/ and published under an MIT license.
