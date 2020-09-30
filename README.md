@@ -11,6 +11,6 @@ For more information see:
 - http://boldfordelphi.blogspot.com/
 
 There is a new Slackspace dedicated only for this project.
-If you are interested to join the chat about thi repository login to Discord here https://discord.gg/C6frzsn
+If you are interested to join the chat about the repository login to Discord here https://discord.gg/C6frzsn
   
 The project source code has been made available by https://www.embarcadero.com/ and published under an MIT license.
