@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCursorGuard;
 
 interface
@@ -21,7 +24,8 @@ type
 implementation
 
 uses
-  Forms;
+  Forms,
+  BoldRev;
 
 { TBoldGuardCursorChange }
 
@@ -36,5 +40,7 @@ begin
   Screen.Cursor := fOldCursor;
   inherited;
 end;
+
+initialization
 
 end.

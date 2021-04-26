@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldImageJPEG;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -30,7 +33,7 @@ type
     function HasChanged: Boolean; override;
     class function CanReadContent(const ContentType: string): Boolean; override;
     function ContentType: string; override;
-    class function Description: string; override; // How to handle Localizastion?
+    class function Description: string; override;
     {Clipboard}
     procedure CopyToClipboard; override;
     class function CanPasteFromClipboard(const AcceptedContentType: string): Boolean; override;
@@ -40,7 +43,7 @@ type
     procedure SaveToStream(Stream: TStream); override;
     {Files}
     class function DefaultExtension: string; override;
-    class function FileFilter: string; override; // How to handle Localizastion?
+    class function FileFilter: string; override;
     class function CanLoadFromFile(const Filename: string): Boolean; override;
     procedure LoadFromFile(const Filename: string); override;
     procedure SaveToFile(const Filename: string); override;
@@ -55,10 +58,8 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings;
+  BoldRev;
 
-const
-  MIME_image_jpeg = 'image/jpeg';
 
 {-- TBoldViewJPEGAdapter --}
 
@@ -103,7 +104,7 @@ var
   S: string;
 begin
   S := AnsiLowerCase(ContentType);
-  Result := (S = MIME_image_jpeg);
+  Result := (S = 'image/jpeg');
 end;
 
 function TBoldViewJPEGAdapter.ContentType: string;
@@ -111,12 +112,12 @@ begin
   if Empty then
     Result := ''
   else
-    Result := MIME_image_jpeg
+    Result := 'image/jpeg'
 end;
 
 class function TBoldViewJPEGAdapter.Description: string;
 begin
-  Result := sJpegImage;
+  Result := 'JPEG image'
 end;
 
 {Clipboard}
@@ -132,12 +133,12 @@ var
 begin
   S := AnsiLowerCase(AcceptedContentType);
   Result := Clipboard.HasFormat(CF_BITMAP) and
-            ((S = '') or (S = 'image/*') or (S = MIME_image_jpeg)); // do not localize
+            ((S = '') or (S = 'image/*') or (S = 'image/jpeg'));
 end;
 
 type
   THack = class(TJPEGImage)
-  end; //FIX to access NewBitmap so LoadFromClipboardFormat does not return an exception.
+  end;
 
 procedure TBoldViewJPEGAdapter.PasteFromClipboard;
 var
@@ -173,12 +174,12 @@ end;
 {Files}
 class function TBoldViewJPEGAdapter.DefaultExtension: string;
 begin
-  Result := 'jpg'; // do not localize
+  Result := 'jpg';
 end;
 
 class function TBoldViewJPEGAdapter.FileFilter: string;
 begin
-  Result := Format('%s (*.jpg, *.jpeg)|*.jpg;*.jpeg', [Description]); // do not localize
+  Result := Format('%s (*.jpg, *.jpeg)|*.jpg;*.jpeg', [Description]);
 end;
 
 class function TBoldViewJPEGAdapter.CanLoadFromFile(const Filename: string): Boolean;
@@ -187,8 +188,8 @@ var
 begin
   Extension := ExtractFileExt(FileName);
   Extension := Copy(Extension, 2, Length(Extension));
-  Result := (CompareText(Extension, 'jpg') = 0) or // do not localize
-            (CompareText(Extension, 'jpeg') = 0); // do not localize
+  Result := (CompareText(Extension, 'jpg') = 0) or
+            (CompareText(Extension, 'jpeg') = 0);
 end;
 
 procedure TBoldViewJPEGAdapter.LoadFromFile(const Filename: string);
@@ -214,6 +215,7 @@ begin
     Stream.Free;
   end;
 end;
+
 
 {Canvas}
 procedure TBoldViewJPEGAdapter.Paint(Canvas: TCanvas; Rect: TRect);
@@ -247,5 +249,4 @@ end;
 
 initialization
   TBoldViewJPEGAdapter.RegisterViewAdapter(TBoldViewJPEGAdapter);
-
 end.

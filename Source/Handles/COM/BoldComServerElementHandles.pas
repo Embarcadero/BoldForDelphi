@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComServerElementHandles;
 
 interface
@@ -33,8 +36,7 @@ implementation
 
 uses
   BoldComAdapter,
-  // These two are not used here, this is just to make
-  // sure they get linked into the executable
+
   BoldComObjectSpaceAdapters,
   BoldComServerElementHandleFactory;
 
@@ -87,5 +89,7 @@ begin
     FExportMode := Value;
   end;
 end;
+
+initialization
 
 end.

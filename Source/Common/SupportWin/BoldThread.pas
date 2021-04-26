@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldThread;
 
 interface
@@ -44,9 +47,9 @@ implementation
 uses
   SysUtils,
   Messages,
-  BoldPropagatorConstants, { TODO : Move TIMEOUT to BoldDefs }
-  BoldThreadSafeLog,
-  BoldCommonConst;
+  BoldPropagatorConstants, 
+  BoldThreadSafeLog, 
+  BoldRev;
 
 function WaitForObject (iHandle : THandle; iTimeOut : dword) : TWaitResult;
 begin
@@ -83,12 +86,14 @@ procedure TBoldNotifiableThread.EnsureMessageQueue;
 var
   rMsg:TMsg;
 begin
-  PeekMessage(rMsg, 0, 0, 0, PM_NOREMOVE);  // force thread message queue!
+  PeekMessage(rMsg, 0, 0, 0, PM_NOREMOVE);
 end;
+
+{$Assertions On}
 
 procedure TBoldNotifiableThread.Notify(const Msg: Cardinal);
 begin
-  PostThreadMessage(ThreadID, Msg, 0, 0);
+  Assert(PostThreadMessage(ThreadID, Msg, 0, 0), SysErrorMessage(GetLastError));
 end;
 
 function TBoldNotifiableThread.WaitUntilReady(dwMilliseconds: Cardinal): Boolean;
@@ -112,7 +117,7 @@ begin
   begin
     Resume;
     WaitUntilReady(TIMEOUT);
-    SwitchToThread; //REVIEW ME
+    SwitchToThread;
   end;
   if not (Terminated) then
   begin
@@ -121,7 +126,7 @@ begin
       Result := WaitForQuit
     else
       Result := (WaitForObject(Handle, Timeout*2) = wrSignaled);
-  end;
+  end; 
 end;
 
 procedure TBoldNotifiableThread.Execute;
@@ -134,11 +139,10 @@ begin
   while not Terminated do
   begin
     res :=  Integer(GetMessage(rMsg, 0, 0, 0));
-    if res = -1 then //error
+    if res = -1 then
       Terminate
-    else if res = 0 then // terminated
+    else if res = 0 then
       Terminate
-      //handle message
     else
       ProcessMessage(rMsg);
   end;
@@ -161,26 +165,23 @@ begin
   Result := false;
   try
     Assert(ThreadId <> GetCurrentThreadId,
-      'Message queue thread cannot be terminated from within its own thread!!!' // do not localize
+      'Message queue thread cannot be terminated from within its own thread!!!'
     );
     wr := WaitForObject(Handle, timeout*5);
-
-    //if thread is not properly terminated, then force terminate it
     Result := (wr = wrSignaled);
     if (wr <> wrSignaled) then
     begin
       TerminateThread (Handle, 1);
-      BoldLogError(sThreadWasForcedTerminated, [ClassName]);
+      BoldLogError('%s.WaitForQuit: thread was force terminated', [ClassName]);
     end;
   except on E:Exception do
-    BoldLogError(sErrorWaitForQuit, [ClassName, E.Message]);
+    BoldLogError('%s.WaitForQuit: %s', [ClassName, E.Message]);
   end;
 end;
 
 class procedure TBoldNotifiableThread.CreateQueueWindow(
   var ServerWindow: HWnd);
 begin
-  //impelement in subsclasses that use queue windows
 end;
 
 procedure TBoldNotifiableThread.InitServerWindow(bInit: boolean);
@@ -203,5 +204,7 @@ begin
   FreeAndNil(fReadyEvent);
   inherited;
 end;
+
+initialization
 
 end.

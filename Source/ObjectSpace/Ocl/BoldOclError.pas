@@ -1,10 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclError;
 
 interface
 
 uses
   SysUtils,
-  Classes,
   BoldDefs;
 
 resourceString
@@ -42,7 +44,6 @@ resourceString
   boeVariableNotAssigned           = '%d:This variable (%s) has no value or type';
   boeSubscribeBeforeEval           = '%d:You can not subscribe to an expression that has not been evaluated';
   boeCollectionNotValidLiteral     = '%d:You can not create a literal of type "Collection", try Set, Sequence or Bag instead';
-//  boeTryingMemberOfNilPtr          = '%d:Trying to take a member of a nil-reference';
   boeElementnotConformToCollection = '%d:All elements in a collection literal must conform to a common type, this one doesn''t';
   boeRangeMustBeInt                = '%d:Ranges can only consist of integers';
   boeInvalidCharacter              = '%d:Expression contains an invalid character';
@@ -58,6 +59,7 @@ resourceString
   boeMemberofType                  = '%d:Types can not have members (tried %s.%s)';
   boeMemberofAttr                  = '%d:Attributes can not have members (tried %s.%s)';
   boeEnvSizeError                  = '%d:Started with %d vars, ended up with %d...';
+  boeEnumValueNotFound             = '%d:Enum value (%s) not found in any registed ValueSet';
 {//}  boeunknownExprtypeinDeduce       = '%d:Unable to deduce type of expression ' + BOLDCRLF +
 {//}                                        'Operation: %s ' + BOLDCRLF +
 {//}                                        '%s' + BOLDCRLF +
@@ -65,10 +67,7 @@ resourceString
 
   boeOperationNotOclable           = '%d:Operation %s is not OCLCompatible';
 
-  // BoldOCLRunTimeErrors
 
-//  borteFirstOnEmptyList            = 'Tried to take first element of an empty list';
-//  borteLastOnEmptyList             = 'Tried to take last element of an empty list';
   borteAtIndexOutOfBounds          = '%d:Tried to take element #%d of a list with %d elements';
   borteDivisionByZero              = '%d:Division By Zero';
   borteInvalidCast                 = '%d:Invalid OCL-cast, tried to cast a %s to a %s';
@@ -82,7 +81,6 @@ resourceString
 type
 
   EBoldOCLAbort = class(EAbort)
-//  EBoldOCLAbort = class(Exception)
   public
     Position: integer;
     Ocl: String;
@@ -106,6 +104,9 @@ type
 
 
 implementation
+
+uses
+  BoldRev;
 
 procedure EBoldOClAbort.FixError;
 begin
@@ -148,5 +149,5 @@ begin
   result := StringOfChar(' ', Position) + '^';
 end;
 
+initialization
 end.
-

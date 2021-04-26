@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclPropEditor;
 
 interface
@@ -30,7 +33,7 @@ type
     TabControlPanel: TPanel;
     ExprEditPageControl: TPageControl;
     ExpressionPage: TTabSheet;
-    pnlLeftSide: TPanel;
+    pnlClient: TPanel;
     ExpParserPanel: TPanel;
     EditPanel: TPanel;
     EditMemo: TMemo;
@@ -42,26 +45,35 @@ type
     PopupMenu1: TPopupMenu;
     Copymessagestoclipboard1: TMenuItem;
     ParserMessages: TMemo;
-    Splitter1: TSplitter;
     ParserMsg: TLabel;
     Splitter2: TSplitter;
-    pnlRightSide: TPanel;
-    SelectBox: TListBox;
-    pnlShowTypes: TPanel;
-    Typescb: TCheckBox;
     imgModelErrors: TImage;
     pnlOKCancel: TPanel;
     btnOK: TButton;
     btnCancel: TButton;
     btnShowInfo: TButton;
+    VariablesPageControl: TPageControl;
+    OclVariablesTabSheet: TTabSheet;
+    pnlOclVariables: TPanel;
+    VariablesListBox: TListBox;
+    ExpressionTypePageControl: TPageControl;
+    ExpressionTypeTabSheet: TTabSheet;
+    pnlRightSide: TPanel;
+    SelectBox: TListBox;
+    pnlFilterPersistence: TPanel;
+    Derivedcb: TCheckBox;
+    SplitterRight: TSplitter;
+    SplitterLeft: TSplitter;
+    filterCombo: TComboBox;
+    MRUPopupMenu: TPopupMenu;
+    Persistentcb: TCheckBox;
+    Transientcb: TCheckBox;
     procedure SelectBoxDblClick(Sender: TObject);
     procedure EditMemoEnter(Sender: TObject);
     procedure SelectBoxKeyPress(Sender: TObject; var Key: Char);
     procedure EditMemoChange(Sender: TObject);
     procedure ClearClick(Sender: TObject);
     procedure RemoveLastClick(Sender: TObject);
-    procedure SyntaxcbClick(Sender: TObject);
-    procedure TypescbClick(Sender: TObject);
     procedure EditMemoMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure EditMemoKeyPress(Sender: TObject; var Key: Char);
@@ -76,30 +88,47 @@ type
     procedure Copymessagestoclipboard1Click(Sender: TObject);
     procedure imgModelErrorsClick(Sender: TObject);
     procedure InfoBrowserClick(Sender: TObject);
+    procedure SyntaxcbClick(Sender: TObject);
+    procedure FilterClick(Sender: TObject);
+    procedure filterComboChange(Sender: TObject);
+    procedure filterComboExit(Sender: TObject);
+    procedure VariableTypescbClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     fContext: TBoldElementTypeInfo;
     fSystemTypeInfo: TBoldSystemTypeInfo;
     fOclEvaluator: TBoldOcl;
     fVariables: TBoldExternalVariableList;
+    fCompleteSelectList: TStrings;
+    fMRUExpressionList: TStringList;
     procedure SetOclExpr(Expr: String);
     function GetOclExpr: String;
     procedure SetContext(Context: TBoldElementTypeInfo);
     procedure SetSelection;
     procedure CleanParserMsg;
     procedure MemberHelp(Ocl: String);
-    Procedure OperationHelp(Ocl: String);
+    procedure OperationHelp(Ocl: String);
+    procedure ApplyFilter;
+    procedure UpdateVariables;
     function CheckOcl(Ocl: String): TBoldElementTypeInfo;
-    function GetOclEvaluator:TBoldOcl;
+    function GetOclEvaluator: TBoldOcl;
     procedure WMGetMinMaxInfo(Var Msg: TWMGetMinMaxINfo); message WM_GETMINMAXINFO;
     procedure SetVariables(const Value: TBoldExternalVariableList);
+    procedure AddExpressionToMRUList;
+    procedure FetchMRUExpressionList;
+    procedure MRUPopUpMenuClick(Sender: TObject);
+    function HasVariables: boolean;
+    procedure UpdateWidth;
+    procedure SetOclEvaluator(const Value: TBoldOCL);
   public
     { Public declarations }
     ShowSyntaxErrors: Boolean;
-    ShowTypes: Boolean;
-    Property OclEvaluator: TBoldOCL read GetOclEvaluator;
+    ShowDerived, ShowPersistent, ShowTransient: Boolean;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    property OclEvaluator: TBoldOCL read GetOclEvaluator write SetOclEvaluator;
     property Context: TBoldElementTypeInfo read fContext write SetContext;
     property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
     property OclExpr: String read GetOclExpr write SetOclExpr;
@@ -110,18 +139,22 @@ implementation
 
 uses
   SysUtils,
+  StrUtils,
+  BoldUtils,  
   BoldDefs,
   BoldRegistry,
   BoldOclError,
   BoldSystem,
-  BoldCoreConsts,
   BoldOclClasses;
 
 {$R *.dfm}
 
 const
-  OCLInfoURL = 'http://info.borland.com/techpubs/delphi/boldfordelphi/?Mech_OclAndSubscription.htm';
+  OCLInfoURL = 'http://www.boldsoft.com/go/oclinfo';
   OCLInfoLocal = 'doc\oclinfo.html';
+  cMRUExpressionRegKey = '\MRU';
+  cMRUExpressionRegKeyName = 'OCL Expression';
+  cHiddenOCLVariables: array[0..3] of string = ('Nil', 'True', 'False', 'TimeStampNow');
 
 type
   ModeType = (Arrow, Dot, unKnown);
@@ -131,50 +164,62 @@ begin
   ParserMessages.lines.clear;
 end;
 
+procedure TBoldOclPropEditForm.ClearClick(Sender: TObject);
+begin
+  EditMemo.Lines.Clear;
+  EditMemoChange(Sender)
+end;
+
 constructor TBoldOclPropEditForm.Create(AOwner: TComponent);
 begin
   inherited;
-  ExpressionPAge.TabVisible := false;
+  fCompleteSelectList := TStringList.Create;
+  ShowDerived := true;
+  ShowPersistent := true;
+  ShowTransient := true;
   ExprEditPageControl.ActivePage := ExpressionPage;
   SetFocusedControl(EditMemo);
-  fOclEvaluator := nil;
 end;
 
-destructor TBoldOclPropEditForm.Destroy;
+destructor TBoldOclPropEditForm.destroy;
 begin
-  FreeAndNil(fOclEvaluator);
+  fCompleteSelectList.free;
   inherited;
 end;
 
 function TBoldOclPropEditForm.GetOclEvaluator;
 begin
-  if not assigned(fOclEvaluator) then
-    fOclEvaluator := TBoldOcl.Create(SystemTypeInfo, nil);
   result := fOclEvaluator;
+  if not Assigned(result) and Assigned(SystemTypeInfo) then
+    result := SystemTypeInfo.Evaluator as TBoldOcl
+end;
+
+procedure TBoldOclPropEditForm.SetOclEvaluator(const Value: TBoldOCL);
+begin
+  fOclEvaluator := Value;
 end;
 
 procedure TBoldOclPropEditForm.SetContext(Context: TBoldElementTypeInfo);
-var
-  OldSystemTypeInfo: TBoldSystemTypeInfo;
-//  j, i: integer;
 begin
-  OldSystemTypeInfo := SystemTypeInfo;
   fContext := Context;
-//  ContextCombo.Items.Clear;
   if assigned(Context) then
   begin
     fSystemTypeInfo := Context.SystemTypeInfo as TBoldSystemTypeInfo;
-    Caption:= 'OCL expression editor - Context: ' + Context.AsString; // do not localize
+    Caption:= 'OCL expression editor - Context: ' + Context.AsString;
   end
   else
   begin
-    Caption:= 'OCL expression editor - Context: <unknown>'; // do not localize
+    Caption:= 'OCL expression editor - Context: <unknown>';
     CleanParserMsg;
-    ParserMessages.lines.Add(sNoContextNoSupport);
+    ParserMessages.lines.Add('No Context, No design support');
   end;
 
   if (not assigned(SystemTypeInfo)) and (TBoldSystem.DefaultSystem <> nil) then
     fSystemTypeInfo := TBoldSystem.DefaultSystem.BoldType as tBoldSystemTypeInfo;
+
+  filterCombo.ItemIndex := 0;
+
+  UpdateWidth;
 
 {
   if assigned( Model) then
@@ -199,12 +244,6 @@ begin
       ContextCombo.ItemIndex := i;
 }
 
-  if OldSystemTypeInfo <> fSystemTypeInfo then
-  begin
-    fOclEvaluator.Free;
-    fOclEvaluator := TBoldOcl.Create(SystemTypeInfo, nil);
-  end;
-
   EditMemoChange(nil);
   imgModelErrors.visible := assigned(SystemTypeInfo) and (SystemTypeInfo.InitializationLog.count > 0);
 end;
@@ -213,39 +252,103 @@ procedure TBoldOclPropEditForm.SetOclExpr(Expr: String);
 var
   i: integer;
 begin
-  while Expr <> '' do
-  begin
-    if pos(BOLDCR, Expr) = 0 then
-    begin
-      EditMemo.Lines.Add(Expr);
-      Expr := '';
-    end
-    else
-    begin
-      EditMemo.Lines.Add(copy(Expr, 1, pos(BOLDCR, Expr)));
-      Delete(Expr, 1, pos(BOLDCR, Expr));
-    end;
-  end;
-//  EditMemo.Text := EditMemo.Text + ' ';
+  EditMemo.Text := Expr;
   i := Length(EditMemo.Text);
   EditMemo.SelStart := i - 2;
   EditMemoChange(nil);
 end;
 
 function TBoldOclPropEditForm.GetOclExpr: String;
-var
-  i: integer;
 begin
-  with EditMemo do
-  begin
-    result := '';
-    For i := 0 to Lines.Count - 1 do
-      Result := Result + Lines[i] + BOLDCR;
-  end;
-  Delete(result, length(result), 1);
+  result := EditMemo.Text;
 end;
 
-function TBoldOClPropEditForm.CheckOcl(Ocl: String): TBoldElementTypeInfo;
+function TBoldOclPropEditForm.HasVariables: boolean;
+begin
+  result := (Assigned(fVariables) and (fVariables.count > 0)) or (Assigned(OclEvaluator) and (OclEvaluator.VariableCount > Length(cHiddenOCLVariables)));
+end;
+
+procedure TBoldOclPropEditForm.AddExpressionToMRUList;
+var
+  lRegistry: TBoldRegistry;
+begin
+  if fMRUExpressionList.IndexOf(EditMemo.Text) = -1 then
+  begin
+    lRegistry := TBoldRegistry.Create;
+    try
+      fMRUExpressionList.insert(0, EditMemo.Text);
+      if fMRUExpressionList.Count > 10 then
+      begin
+        fMRUExpressionList.Delete(10);
+      end;
+      if lRegistry.OpenKey(cMRUExpressionRegKey) then
+      begin
+        lRegistry.WriteString(cMRUExpressionRegKeyName, fMRUExpressionList.CommaText);
+        lRegistry.CloseKey;
+      end;
+    finally
+      lRegistry.free;
+    end;
+  end;
+end;
+
+type
+  TFilterType = (ftAll, ftAttribute, ftSingleLink, ftMultilink, ftOperation, ftType, ftText);
+
+procedure TBoldOclPropEditForm.ApplyFilter;
+
+  function ExtractFilterType(const AString: string): TFilterType;
+  var
+    c: char;
+  begin
+    result := ftAll;
+    if (copy(AString, 3,1) = '|') and (Length(AString) > 4) then
+    begin
+      c := AString[1];
+      case c of
+        '1': result := ftAttribute;
+        '2': result := ftSingleLink;
+        '3': result := ftMultiLink;
+        '4': result := ftType;
+        '5': result := ftOperation;
+      end;
+    end;
+  end;
+
+var
+  i: integer;
+  vElementType: TFilterType;
+  vFilterType: TFilterType;
+  vInclude: boolean;
+  vFilterText: string;
+begin
+  case filterCombo.ItemIndex of
+     -1: vFilterType := ftText;
+      Ord(ftAttribute)..Ord(ftType): vFilterType := TFilterType(filterCombo.ItemIndex);
+    else
+      vFilterType := ftAll;
+  end;
+  vFilterText :=  Trim(FilterCombo.Text);
+
+  for I := 0 to fCompleteSelectList.Count - 1 do
+  begin
+    vInclude := vFilterType = ftAll;
+    if vFilterType <> ftAll then
+    begin
+      vElementType := ExtractFilterType(fCompleteSelectList[i]);
+      case vFilterType of
+        ftAll: vInclude := true;
+        ftAttribute..ftOperation: vInclude := vElementType = vFilterType;
+        ftType: vInclude := true;
+        ftText: vInclude := (vFilterText = '') or AnsiContainsText(Copy(fCompleteSelectList[i], 5, MaxInt), vFilterText);
+      end;
+    end;
+    if vInclude then
+      SelectBox.Items.Add(fCompleteSelectList[i]);
+  end;
+end;
+
+function TBoldOclPropEditForm.CheckOcl(Ocl: String): TBoldElementTypeInfo;
 
   procedure ShowError(Ocl: String; ErrorPointer: String; message: string);
   var
@@ -265,7 +368,7 @@ function TBoldOClPropEditForm.CheckOcl(Ocl: String): TBoldElementTypeInfo;
       insert('-------', errorPointer, length(ErrorPointer));
     end else
       ErrorPointer := ErrorPointer + '-------';
-
+                                             
     ParserMessages.lines.Insert(i+1, ErrorPointer);
   end;
 
@@ -275,7 +378,7 @@ begin
   if Ocl = '' then
   begin
     Result := Context;
-    ParserMessages.lines.Add(sEmptyExpression);
+    ParserMessages.lines.Add('Empty Expression');
     exit;
   end;
 
@@ -286,12 +389,12 @@ begin
     begin
       Result := nil;
       ParserMessages.lines.BeginUpdate;
-      if (Pos('SSYacc', e.Message) > 0) or (Pos('SSLex', e.Message) > 0) then // do not localize
+      if (Pos('SSYacc', e.Message) > 0) or (Pos('SSLex', e.Message) > 0) then
       begin
         if ShowSyntaxErrors then
           ShowError(e.Ocl, e.ErrorPointer, e.Message)
         else
-          ParserMessages.lines.add(sSyntaxError);
+          ParserMessages.lines.add('Unable to complete parse, syntax error');
       end else
         ShowError(e.Ocl, e.ErrorPointer, e.Message);
       ParserMessages.lines.EndUpdate;
@@ -300,7 +403,7 @@ begin
     on e: EBoldOclInternalError do
     begin
       Result := nil;
-      e.Ocl := 'Internal Error: ' + e.ocl; // do not localize
+      e.Ocl := 'Internal Error: ' + e.ocl;
       ShowError(e.Ocl, e.ErrorPointer, e.Message);
       exit;
     end;
@@ -318,12 +421,12 @@ begin
     end;
   end;
   ParserMessages.lines.BeginUpdate;
-  ParserMessages.lines.Add(sSyntaxOK);
+  ParserMessages.lines.Add('Syntax is OK');
   ParserMessages.lines.Add('');
   if assigned(result) then
-    ParserMessages.lines.Add(Format(sCurrentTypeIsX, [Result.AsString]))
+    ParserMessages.lines.Add('Current type is: ' + Result.AsString)
   else
-    ParserMessages.lines.Add(sCurrentTypeIsUnknown);
+    ParserMessages.lines.Add('Current type is: unknown');
   ParserMessages.SelStart := 0;
   ParserMessages.SelLength := 0;
   ParserMessages.lines.EndUpdate;
@@ -353,10 +456,10 @@ begin
       if (not Assigned(Symbol.FormalArguments[0]) or
         ExpressionType.ConformsTo(Symbol.formalArguments[0]) or
         ((ExpressionType is TBoldListTypeInfo) and
-         assigned(TBoldListTypeInfo(ExpressionType).ListElementTypeInfo) and
+         assigned(TBoldListTypeInfo(ExpressionType).ListElementTypeInfo) and 
          TBoldListTypeInfo(ExpressionType).ListElementTypeInfo.ConformsTo(Symbol.FormalArguments[0]))) and symbol.IsPostFix then
       begin
-        Addition := 'O | ' + prefix[Symbol.IsDotNotation] + Symbol.SymbolName; // do not localize
+        Addition := '5 | ' + prefix[Symbol.IsDotNotation] + Symbol.SymbolName;
         if Symbol.NumberofArgs > 1 then
         begin
           Addition := Addition + '(';
@@ -367,22 +470,49 @@ begin
               begin
                 ListExprType := Symbol.FormalArguments[j] as TBoldListTypeInfo;
                 if Assigned(LIstExprType.ListElementTypeInfo) then
-                  Addition := Addition + '«List<' + (Symbol.FormalArguments[j] as TBoldListTypeInfo).ListElementTypeInfo.ExpressionName + '>»,' // do not localize
+                  Addition := Addition + '«List<' + (Symbol.FormalArguments[j] as TBoldListTypeInfo).ListElementTypeInfo.ExpressionName + '>»,'
                 else
-                  Addition := Addition + '«List<AnyArg>»,'      // do not localize // do not localize
+                  Addition := Addition + '«List<AnyArg>»,'
               end
               else
                 Addition := Addition + '«' + Symbol.FormalArguments[j].ExpressionName + '»,'
             end
             else
-              Addition := Addition + '«AnyArg»,'; // do not localize
+              Addition := Addition + '«AnyArg»,';
           Delete(Addition, Length(Addition), 1);
           Addition := Addition + ')';
         end;
-        SelectBox.Items.AddObject(Addition +  ' ', Symbol);
+        if Assigned(Symbol.ResultType) then
+          fCompleteSelectList.AddObject(Addition +  ' : ' + Symbol.ResultType.ExpressionName , Symbol)
+        else
+          fCompleteSelectList.AddObject(Addition +  ' ', Symbol);
       end;
     end;
   end;
+end;
+
+procedure TBoldOclPropEditForm.RemoveLastClick(Sender: TObject);
+var
+  line: string;
+procedure RemovePrefix;
+begin
+  if line = '' then
+    exit;
+  if line[length(line)] = '.' then
+    delete(line, length(line), 1)
+  else if Copy(line, Length(line) - 1, 2) = '->' then
+    delete(line, length(line) - 1, 2);
+end;
+
+begin
+  Line := trim(EditMemo.Text);
+  if Line = '' then exit;
+  while (line <> '') and
+        (not CharInSet(line[length(line)], ['.', ' ']) and
+        (Copy(line, Length(line) - 1, 2) <> '->')) do
+    delete(line, length(line), 1);
+  RemovePrefix;
+  Editmemo.Text := trim(Line);
 end;
 
 procedure TBoldOclPropEditForm.MemberHelp(Ocl: String);
@@ -392,6 +522,7 @@ var
   I: Integer;
   ClassInfo: TBoldClasstypeInfo;
   SystemInfo: TBoldSystemtypeInfo;
+  Member: TBoldMemberRTInfo;
   ExpressionType: TBoldElementTypeInfo;
   Attr: TBoldAttributeRTInfo;
   Role: TBoldRoleRTInfo;
@@ -408,53 +539,64 @@ begin
   begin
     ClassInfo := ExpressionType as TBoldClasstypeInfo;
     for I := 0 to ClassInfo.AllMembers.Count - 1 do
+    begin
+      Member := ClassInfo.AllMembers[I];
+      if not ShowDerived and Member.IsDerived then continue;
+      if not ShowPersistent and Member.Persistent  then continue;
+      if not ShowTransient and not (Member.Persistent or Member.IsDerived) then continue;
       if ClassInfo.AllMembers[I] is TBoldAttributeRTInfo then
       begin
         Attr := ClassInfo.AllMembers[I] as TBoldAttributeRTInfo;
-        Exprname := 'M | ' + Prefix[ocl <> ''] + Attr.ExpressionName; // do not localize
-        if ShowTypes then
-          SelectBox.Items.Add(Exprname + ': ' + Attr.BoldType.ExpressionName)
-        else
-          SelectBox.Items.Add(Exprname + ' ');
+        Exprname := '1 | ' + Prefix[ocl <> ''] + Attr.ExpressionName;
+        fCompleteSelectList.Add(Exprname + ': ' + Attr.BoldType.ExpressionName)
       end else if ClassInfo.AllMembers[I] is TBoldRoleRTInfo then
       begin
         Role := ClassInfo.AllMembers[I] as TBoldRoleRTInfo;
         if role.IsNavigable then
         begin
-          Exprname := 'A | ' + Prefix[ocl <> ''] + Role.ExpressionName; // do not localize
-          if ShowTypes then
-          begin
-            if role.IsMultiRole then
-              SelectBox.Items.Add(ExprName + ': List<' + Role.ClassTypeInfoOfOtherEnd.Expressionname + '>') // do not localize // do not localize
-            else
-              SelectBox.Items.Add(ExprName + ': ' + Role.ClassTypeInfoOfOtherEnd.Expressionname)
-          end
+          if role.IsMultiRole then
+            Exprname := '3 | ' + Prefix[ocl <> ''] + Role.ExpressionName
           else
-            SelectBox.Items.Add(ExprName + ' ');
+            Exprname := '2 | ' + Prefix[ocl <> ''] + Role.ExpressionName;
+          if role.IsMultiRole then
+            fCompleteSelectList.Add(ExprName + ': List<' + Role.ClassTypeInfoOfOtherEnd.Expressionname + '>')
+          else
+            fCompleteSelectList.Add(ExprName + ': ' + Role.ClassTypeInfoOfOtherEnd.Expressionname)
         end;
       end;
+    end;
   end
   else if ExpressionType is TBoldSystemTypeInfo then
   begin
     SystemInfo := ExpressionType as TBoldSystemTypeInfo;
     for i := 0 to SystemInfo.TopSortedClasses.Count - 1 do
       with SystemInfo.TopSortedClasses[i] do
-        if ShowTypes then
-          SelectBox.Items.Add('C | ' + ExpressionName + ': ' + DelphiName) // do not localize
-        else
-          SelectBox.Items.Add('C | ' + ExpressionName + ' '); // do not localize
+        fCompleteSelectList.Add('4 | ' + ExpressionName + ': ' + DelphiName);
   end;
+end;
+
+procedure TBoldOclPropEditForm.MRUPopUpMenuClick(Sender: TObject);
+var
+  lMenuItem: TMenuItem;
+begin
+  lMenuItem := (Sender as TMenuItem);
+  EditMemo.Text := fMRUExpressionList[lMenuItem.Parent.IndexOf(lMenuItem)];
 end;
 
 procedure TBoldOclPropEditForm.SelectBoxDblClick(Sender: TObject);
 var
   Addition: String;
+  vListBox: TListBox;
 begin
   if not assigned(Context) then
     exit;
-  if SelectBox.ItemIndex = -1 then
-    SelectBox.ItemIndex := 0;
-  Addition := SelectBox.Items[SelectBox.ItemIndex];
+  if not(Sender is TListBox) then
+    exit;
+
+  vListBox := Sender as TListBox;
+  if vListBox.ItemIndex = -1 then
+    vListBox.ItemIndex := 0;
+  Addition := vListBox.Items[vListBox.ItemIndex];
 
   if pos(' | ', Addition) <> 0 then
     Delete(Addition, 1, Pos(' | ', Addition) + 2);
@@ -468,12 +610,14 @@ begin
     EditMemo.Lines[EditMemo.Lines.Count - 1] +
     Addition;
 
+  if filterCombo.ItemIndex = -1 then
+    filterCombo.Clear;
+    
   EditMemoChange(Sender);
 end;
 
 procedure TBoldOclPropEditForm.EditMemoEnter(Sender: TObject);
 begin
-//  Context := DefaultBoldSystem.BoldSystemRtInfo;
   EditMemoChange(Sender);
 end;
 
@@ -496,9 +640,21 @@ begin
 }
   Ocl := trim(EditMemo.Text);
 
-  SelectBox.Items.Clear;
-  MemberHelp(Ocl);
-  OperationHelp(Ocl);
+  VariablesListBox.Items.BeginUpdate;
+  SelectBox.Items.BeginUpdate;
+  fCompleteSelectList.BeginUpdate;
+  try
+    SelectBox.Clear;
+    fCompleteSelectList.Clear;
+    MemberHelp(Ocl);
+    OperationHelp(Ocl);
+    ApplyFilter;
+    UpdateVariables;
+  finally
+    VariablesListBox.Items.EndUpdate;
+    SelectBox.Items.EndUpdate;
+    fCompleteSelectList.EndUpdate;
+  end;
 
 {  if Ocl = '' then
   begin
@@ -517,55 +673,99 @@ begin
 }
 end;
 
-procedure TBoldOclPropEditForm.ClearClick(Sender: TObject);
-begin
-  EditMemo.Lines.Clear;
-  EditMemoChange(Sender)
-end;
-
-procedure TBoldOclPropEditForm.RemoveLastClick(Sender: TObject);
-var
-  line: string;
-
-procedure RemovePrefix;
-begin
-  if line = '' then
-    exit;
-  if line[length(line)] = '.' then
-    delete(line, length(line), 1)
-  else if Copy(line, Length(line) - 1, 2) = '->' then
-    delete(line, length(line) - 1, 2);
-end;
-
-begin
-  // rewrite this entire procedure...
-  Line := trim(EditMemo.Text);
-  if Line = '' then exit;
-  while (line <> '') and
-        (not (line[length(line)] in ['.', ' ']) and
-        (Copy(line, Length(line) - 1, 2) <> '->')) do
-    delete(line, length(line), 1);
-  RemovePrefix;
-  Editmemo.Text := trim(Line);
-end;
-
 procedure TBoldOclPropEditForm.SyntaxcbClick(Sender: TObject);
 begin
   ShowSyntaxErrors := syntaxcb.Checked;
   EditMemoChange(Sender);
 end;
 
-procedure TBoldOclPropEditForm.TypescbClick(Sender: TObject);
+procedure TBoldOclPropEditForm.FilterClick(Sender: TObject);
 var
   OldIndex: Integer;
   OldTop: Integer;
 begin
   OldIndex := SelectBox.ItemIndex;
   OldTop := SelectBox.TopIndex;
-  ShowTypes := Typescb.checked;
+  ShowDerived := Derivedcb.Checked;
+  ShowPersistent := Persistentcb.Checked;
+  ShowTransient := Transientcb.Checked;
   EditMemoChange(Sender);
   SelectBox.ItemIndex := OldIndex;
   SelectBox.TopIndex := OldTop;
+end;
+
+procedure TBoldOclPropEditForm.UpdateVariables;
+
+  procedure AddVariable(const AName: string; AValueType: TBoldElementTypeInfo);
+  var
+    s: string;
+  begin
+    if not Assigned(AValueType) then
+    begin
+      VariablesListBox.Items.Add('5 | ' + AName + ': ' + 'Nil');
+      exit;
+    end;
+    if AValueType is TBoldListTypeInfo then
+      s := '3 | '
+    else
+    if AValueType is TBoldAttributeTypeInfo then
+      s := '1 | '
+    else
+    if AValueType is TBoldClassTypeInfo then
+      s := '2 | '
+    else
+    if AValueType is TBoldSystemTypeInfo then
+      s := '4 | '
+    else
+    if AValueType is TBoldTypeTypeInfo then
+      s := '5 | '
+    else
+      Assert(False, 'Unhandled ValueType: ' + AValueType.ClassName);
+    s := s + AName + ': ' + AValueType.ExpressionName;
+//    if VariablesListBox.Items.IndexOf(s) = -1 then
+      VariablesListBox.Items.Add(s);
+  end;
+
+var
+  i: integer;
+begin
+  VariablesPageControl.Visible := HasVariables;
+  VariablesListBox.Items.BeginUpdate;
+  VariablesListBox.Clear;
+  try
+    if Assigned(fVariables) then
+      for I := 0 to Variables.Count - 1 do
+        AddVariable(Variables[i].Name, Variables[i].ValueType);
+    for i := 0 to OclEvaluator.VariableCount - 1 do
+      with OclEvaluator.Variables[i] as TBoldOCLVariableBinding do
+        if AnsiIndexText(VariableName, cHiddenOCLVariables) = -1 then
+          AddVariable(VariableName, BoldType);
+  finally
+    VariablesListBox.Items.EndUpdate;
+  end;
+end;
+
+procedure TBoldOclPropEditForm.UpdateWidth;
+begin
+  if not visible then
+  begin
+    if HasVariables then
+      Width := 900
+    else
+      Width := 720;
+  end;
+end;
+
+procedure TBoldOclPropEditForm.VariableTypescbClick(Sender: TObject);
+var
+  OldIndex: Integer;
+  OldTop: Integer;
+begin
+  OldIndex := VariablesListBox.ItemIndex;
+  OldTop := VariablesListBox.TopIndex;
+  EditMemoChange(Sender);
+  VariablesListBox.ItemIndex := OldIndex;
+  VariablesListBox.TopIndex := OldTop;
 end;
 
 procedure TBoldOclPropEditForm.SetSelection;
@@ -575,14 +775,14 @@ begin
   if EditMemo.SelLength = 0 then
   begin
     i := EditMemo.SelStart;
-    while (i > 0) and not (EditMemo.Text[i]  in ['«', '»']) do
+    while (i > 0) and not CharInSet(EditMemo.Text[i], ['«', '»']) do
       dec(i);
 
     if (i = 0)or (EditMemo.Text[i] = '»') then
       exit;
 
     j := i + 1;
-    while (j <= Length(EditMemo.Text)) and not (EditMemo.Text[j] in ['«', '»']) do
+    while (j <= Length(EditMemo.Text)) and not CharInSet(EditMemo.Text[j], ['«', '»']) do
       Inc(j);
 
     if (j > Length(EditMemo.Text)) or (EditMemo.Text[j] = '«') then
@@ -599,6 +799,56 @@ begin
   SetSelection;
 end;
 
+procedure TBoldOclPropEditForm.FetchMRUExpressionList;
+var
+  lRegistry: TBoldRegistry;
+  lIndex: Integer;
+  lMenuItem: TMenuItem;
+begin
+  lRegistry := TBoldRegistry.Create;
+  try
+    if lRegistry.OpenKey(cMRUExpressionRegKey) then
+    begin
+      fMRUExpressionList.CommaText := lRegistry.ReadString(cMRUExpressionRegKeyName, '');
+      lRegistry.CloseKey;
+    end;
+  finally
+    lRegistry.free;
+  end;
+  for lIndex := 0 to fMRUExpressionList.Count - 1 do
+  begin
+    lMenuItem := TMenuItem.Create(Self);
+    lMenuItem.Caption := '&' + IntToStr(lIndex+1) + ': ' + fMRUExpressionList[lIndex];
+    lMenuItem.OnClick := MRUPopUpMenuClick;
+    MRUPopupMenu.Items.Add(lMenuItem);
+  end;
+end;
+
+procedure TBoldOclPropEditForm.filterComboChange(Sender: TObject);
+begin
+  EditMemoChange(Sender);
+end;
+
+procedure TBoldOclPropEditForm.filterComboExit(Sender: TObject);
+begin
+  if (FilterCombo.ItemIndex = -1) and (FilterCombo.Text = '') then
+  begin
+    FilterCombo.ItemIndex := 0;
+    EditMemoChange(Sender);    
+  end;
+end;
+
+procedure TBoldOclPropEditForm.FormCreate(Sender: TObject);
+begin
+  fMRUExpressionList := TStringList.Create;
+  FetchMRUExpressionList;
+end;
+
+procedure TBoldOclPropEditForm.FormDestroy(Sender: TObject);
+begin
+  fMRUExpressionList.free;
+end;
+
 procedure TBoldOclPropEditForm.EditMemoKeyPress(Sender: TObject; var Key: Char);
 begin
   SetSelection;
@@ -609,6 +859,7 @@ end;
 procedure TBoldOclPropEditForm.OKClick(Sender: TObject);
 begin
   Modalresult := mrOK;
+  AddExpressionToMRUList;  
 end;
 
 procedure TBoldOclPropEditForm.CancelClick(Sender: TObject);
@@ -678,22 +929,59 @@ end;
 procedure TBoldOclPropEditForm.SelectBoxDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; State: TOwnerDrawState);
 var
   StringfromSelect: String;
+  s: string;
+  r: TRect;
+  vXOffset: integer;
 begin
   with (Control as TListBox) do
   begin
     Canvas.FillRect(Rect);
     StringFromSelect := (Control as TListBox).items[Index];
     case StringFromSelect[1] of
-      'M': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 0); //Member
-      'C': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 1); //Class
-      'A': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 2); //Assoc/role
-      'E': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 3); //Method
-      'O': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 4); //Operation (OCL)
+      '1': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 0);
+      '2': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 2);
+      '3': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 3);
+      '4': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 1);
+      '5': ImageList1.Draw(Canvas, Rect.Left + 2, Rect.Top, 4);
     end;
     if pos(' | ', StringFromSelect) <> 0 then
       Delete(StringFromSelect, 1, Pos(' | ', StringFromSelect) + 2);
 
-    Canvas.TextOut(ImageList1.Width + Rect.Left + 2, Rect.Top, StringfromSelect);
+    vXOffset := 2 + ImageList1.Width;
+    if not ((odFocused in State) or (odSelected in State)) then
+    begin
+      s := StringFromSelect;
+
+      if pos(':', s) <> 0 then
+        Delete(s, Pos(':', s), MaxInt);
+
+      if pos(' ', s) <> 0 then
+        Delete(s, Pos(' ', s), MaxInt);
+
+      if pos('(', s) <> 0 then
+        Delete(s, Pos('(', s), MaxInt);
+
+      r := Rect;
+      r.Left := r.Left + vXOffset;
+      Canvas.Font.Color := clBlack;
+      DrawText(Canvas.Handle,
+        PChar(S),
+        Length(S),
+        r,
+        DT_LEFT or DT_WORDBREAK or DT_CALCRECT);
+
+      DrawText(Canvas.Handle,
+        PChar(S),
+        Length(S),
+        r,
+        DT_LEFT or DT_WORDBREAK);
+
+      vXOffset := r.Right;
+      Canvas.Font.Color := $00A0A0A0;;
+      StringFromSelect := Copy(StringfromSelect, Length(s)+1, MaxInt);
+    end;
+
+    Canvas.TextOut(Rect.Left + vXOffset, Rect.Top, StringFromSelect);
 	end;
 end;
 
@@ -728,6 +1016,7 @@ procedure TBoldOclPropEditForm.SetVariables(const Value: TBoldExternalVariableLi
 begin
   fVariables := Value;
   EditMemoChange(nil);
+  UpdateWidth;
 end;
 
 procedure TBoldOclPropEditForm.Copymessagestoclipboard1Click(Sender: TObject);
@@ -735,19 +1024,20 @@ var
   s: string;
 begin
   if Assigned(Context) then
-    s := 'Context: ' + Context.ExpressionName + BOLDCRLF      // do not localize
+    s := 'Context: ' + Context.ExpressionName + BOLDCRLF
   else
     s := '';
   ClipBoard.AsText := s +
-                      'OCL Expression: ' + BOLDCRLF +         // do not localize
+                      'OCL Expression: ' + BOLDCRLF +
                       EditMemo.Text + BOLDCRLF + BOLDCRLF +
-                      'Parser messages: ' + BOLDCRLF +        // do not localize
+                      'Parser messages: ' + BOLDCRLF +
                       ParserMessages.lines.text;
+
 end;
 
 procedure TBoldOclPropEditForm.imgModelErrorsClick(Sender: TObject);
 begin
-  Showmessage(Format(sModelContainsErrors, [BoldCRLF, BoldCRLF, SystemTypeInfo.InitializationLog.text]));
+  Showmessage('The model contains errors: ' + BoldCRLF + BoldCRLF+ SystemTypeInfo.InitializationLog.text);
 end;
 
 procedure TBoldOclPropEditForm.InfoBrowserClick(Sender: TObject);
@@ -759,7 +1049,9 @@ begin
   else
     URL := OCLInfoURL;
 
-  ShellExecute(0, 'open', PChar(URL), '', '', SW_SHOWMAXIMIZED); // do not localize
+  ShellExecute(0, 'open', PChar(URL), '', '', SW_SHOWMAXIMIZED);
 end;
+
+initialization
 
 end.

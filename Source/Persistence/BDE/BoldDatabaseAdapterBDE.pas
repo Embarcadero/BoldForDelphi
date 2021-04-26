@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterBDE;
 
 interface
@@ -22,7 +25,7 @@ type
     procedure ReleaseBoldDatabase; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
   published
     property DataBase: TDataBase read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -35,16 +38,16 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  BDEConsts;
+  BoldRev;
 
-{ TBoldDatabaseAdapterBDE }
+{ TBoldDatabaseAdapterBDE }      
 
-destructor TBoldDatabaseAdapterBDE.Destroy;
+destructor TBoldDatabaseAdapterBDE.destroy;
 begin
   Changed;
   FreePublisher;
   FreeAndNil(fBoldDatabase);
-  inherited;
+  inherited;                   
 end;
 
 function TBoldDatabaseAdapterBDE.GetDataBase: TDataBase;
@@ -55,7 +58,7 @@ end;
 function TBoldDatabaseAdapterBDE.GetDataBaseInterface: IBoldDatabase;
 begin
   if not assigned(Database) then
-    raise EBold.CreateFmt(sAdapterNotConnected, [classname]);
+    raise EBold.CreateFmt('%s.GetDatabaseInterface: The adapter is not connected to a database', [classname]); 
   if not assigned(fBoldDatabase) then
     fBoldDatabase := TBoldBDEDataBase.create(Database, SQLDataBaseConfig);
   result := fBoldDatabase;
@@ -70,5 +73,7 @@ procedure TBoldDatabaseAdapterBDE.SetDataBase(const Value: TDataBase);
 begin
   InternalDatabase := value;
 end;
+
+initialization
 
 end.

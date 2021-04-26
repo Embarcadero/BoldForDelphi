@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHandleReg;
 
 interface
@@ -33,6 +36,7 @@ uses
   BoldVariableHandle,
   BoldSystemHandle,
   BoldSQLHandle,
+  BoldRawSQLHandle,
   BoldFilteredHandle,
   BoldSortedHandle,
   BoldReferenceHandle,
@@ -79,6 +83,7 @@ begin
     TBoldVariableHandle,
     TBoldListHandle,
     TBoldSQLHandle,
+    TBoldRawSQLHandle,
     TBoldCursorHandle,
     TBoldReferenceHandle,
     TBoldOclVariables,
@@ -122,7 +127,9 @@ begin
   RegisterPropertyEditor(TypeInfo(string), TBoldRootedHandle, 'RootTypeName', TBoldTypeNameSelectorPropertyForAllTypes);              // do not localize
   RegisterPropertyEditor(TypeInfo(string), TBoldVariableHandle, 'ValueTypeName', TBoldTypeNameSelectorPropertyForVariableHandle);     // do not localize
   RegisterPropertyEditor(TypeInfo(string), TBoldDerivedHandle, 'ValueTypeName', TBoldTypeNameSelectorPropertyForAllTypes);            // do not localize
+  RegisterPropertyEditor(TypeInfo(string), TBoldDerivedHandle, 'ValueTypeName', TBoldTypeNameSelectorPropertyForVariableHandle);      // do not localize
   RegisterPropertyEditor(TypeInfo(string), TBoldSQLHandle, 'ClassExpressionName', TBoldTypeNameSelectorForSQLHandle);                 // do not localize
+  RegisterPropertyEditor(TypeInfo(string), TBoldRawSQLHandle, 'ClassExpressionName', TBoldTypeNameSelectorForSQLHandle);              // do not localize
   // Propeditor för listhandle.expression
   // Propeditor för Exprhandle.expression
 
@@ -137,6 +144,7 @@ begin
   RegisterComponentEditor(TBoldDerivedHandle, TBoldModelAwareComponentEditor);
   RegisterComponentEditor(TBoldVariableHandle, TBoldModelAwareComponentEditor);
   RegisterComponentEditor(TBoldSQLHandle, TBoldModelAwareComponentEditor);
+  RegisterComponentEditor(TBoldRawSQLHandle, TBoldModelAwareComponentEditor);
   RegisterComponentEditor(TBoldCursorHandle, TBoldModelAwareComponentEditor);
   RegisterComponentEditor(TBoldReferenceHandle, TBoldModelAwareComponentEditor);
 end;
@@ -149,5 +157,6 @@ begin
 end;
 
 end.
+
 
 

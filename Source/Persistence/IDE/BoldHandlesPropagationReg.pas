@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHandlesPropagationReg;
 
 interface
@@ -5,8 +8,6 @@ interface
 procedure Register;
 
 implementation
-
-{.$R *.res}
 
 uses
   SysUtils,
@@ -30,8 +31,8 @@ end;
 
 procedure RegisterEditors;
 begin
-  RegisterPropertyEditor(TypeInfo(TBoldAbstractDequeuer), TBoldListenerHandle, 'Dequeuer', TBoldComponentPropertyIndicateMissing); // do not localize
-  RegisterPropertyEditor(TypeInfo(TBoldListenerHandle), TBoldIDAdderHandle, 'BoldListener', TBoldComponentPropertyIndicateMissing); // do not localize
+  RegisterPropertyEditor(TypeInfo(TBoldAbstractDequeuer), TBoldListenerHandle, 'Dequeuer', TBoldComponentPropertyIndicateMissing);
+  RegisterPropertyEditor(TypeInfo(TBoldListenerHandle), TBoldIDAdderHandle, 'BoldListener', TBoldComponentPropertyIndicateMissing);
 end;
 
 procedure Register;

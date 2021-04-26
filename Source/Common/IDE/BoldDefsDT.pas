@@ -1,21 +1,28 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDefsDT;
 
 interface
-
 uses
-  BoldDefs; // BOLDCRLF for BCB
+  BoldDefs;
 
 const
-	HelpFile = 'bold90.hlp';
+{$IFDEF BOLD_DELPHI6}
+  HelpFile = 'boldd6.hlp';
+{$ENDIF}
+{$IFDEF BOLD_DELPHI7}
+  HelpFile = 'boldd7.hlp';
+{$ENDIF}
 
   ATTRIBUTEWIZARDHELPFILE = 'boldattributewizard.hlp';
   MODELEDITORHELPFILE = 'boldmodeleditor.hlp';
 
-  URLBoldSoft = 'http://www.borland.com';
-  URLBoldForDelphi = 'http://www.borland.com';
-  URLSupport = 'http://www.borland.com';
+  URLBoldSoft = 'http://www.boldsoft.com';
+  URLBoldForDelphi = 'http://www.boldsoft.com';
+  URLSupport = 'http://www.boldsoft.com';
 
-  GETTINGSTARTEDPATH = '\doc\frames\';  //NOTE: Must end with backslash!
+  GETTINGSTARTEDPATH = '\doc\frames\';
   GETTINGSTARTEDDOCNAME = 'getting_started_f.html';
 
   regPath = 'Path';
@@ -55,5 +62,10 @@ const
 {$ENDIF}
 
 implementation
+
+uses
+  BoldRev;
+
+initialization
 
 end.

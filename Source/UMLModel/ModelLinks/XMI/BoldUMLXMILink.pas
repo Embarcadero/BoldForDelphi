@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLXMILink;
 
 interface
@@ -61,7 +64,7 @@ begin
     BoldLog.EndLog;
   finally
     exporter.Free;
-  end;
+  end;    
   result := true;
 end;
 

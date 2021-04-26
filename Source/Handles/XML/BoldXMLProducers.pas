@@ -1,7 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLProducers;
 
 interface
-
 uses
   MSXML_TLB,
   BoldStringList,
@@ -10,7 +12,8 @@ uses
   BoldElements,
   BoldSystem,
   BoldSubscription,
-  Classes;
+  Classes
+  ;
 
 type
   TBoldXMLProducerOption = (xpoIncludeIdString, xpoIncludeValue);
@@ -34,7 +37,7 @@ type
   protected
     procedure Produce(const paramList: TBoldStringList; const DomDoc: IXMLDomDocument); virtual; abstract;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    function getDocument(const paramList: TBoldStringList): IXMLDomDocument;
+    function getDocument(const paramList: TBoldStringList): IXMLDomDocument;    
     property BoldManipulator: TBoldManipulator read FBoldManipulator write SetBoldManipulator;
     property XMLElementBoldIDName: string read FXMLElementBoldIDName write FXMLElementBoldIDName;
   public
@@ -62,12 +65,11 @@ type
 
 implementation
 
-{.$R *.res}
-
 uses
   SysUtils,
   BoldUtils,
-  HandlesConst;
+  HandlesConst
+  ;
 
 { TBoldXMLProducer }
 
@@ -201,5 +203,6 @@ begin
     for i:= 0 to XMLAttributes.Count - 1 do
       Result.setAttribute(WideString(XMLAttributes.Names[i]), WideString(XMLAttributes.Strings[i]));
 end;
+
 
 end.

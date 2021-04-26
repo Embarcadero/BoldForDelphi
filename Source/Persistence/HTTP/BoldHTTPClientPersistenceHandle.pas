@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHTTPClientPersistenceHandle;
 
 interface
@@ -8,7 +11,8 @@ uses
   BoldHTTPPersistenceControllerClient,
   BoldAbstractModel,
   BoldWebConnection,
-  classes;
+  classes
+  ;
 
 type
   { forward declarations }
@@ -34,15 +38,15 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldDefs,
-  BoldComConst;
+  BoldDefs
+  ;
 
 { TBoldHTTPClientPersistenceHandle }
 
 function TBoldHTTPClientPersistenceHandle.CreatePersistenceController: TBoldPersistenceController;
 begin
   if not assigned(BoldModel) then
-    raise EBold.createfmt(sModelRequired, [ClassName]);
+    raise EBold.createfmt('%s.CreatePersistenceController: Can not get a PersistenceController without a Model', [ClassName]);
   FPersistenceController := TBoldHTTPPersistenceControllerClient.Create(fModel.MoldModel);
   (FPersistenceController as TBoldHTTPPersistenceControllerClient).WebConnection := WebConnection;
   result := FPersistenceController;
@@ -71,5 +75,7 @@ begin
       (FPersistenceController as TBoldHTTPPersistenceControllerClient).WebConnection := Value;
   end;
 end;
+
+initialization
 
 end.

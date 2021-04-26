@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFreeStandingValues;
 
 interface
@@ -48,48 +51,55 @@ type
   end;
 
   TBoldFreeStandingElementClass = class of TBoldFreeStandingElement;
+  TBoldFreeStandingObjectContentsClass = class of TBoldFreeStandingObjectContents;
 
   { TBoldFreeStandingElement }
   TBoldFreeStandingElement = class(TBoldNonRefCountedObject)
   public
+    class function ContentType: TBoldValueContentType; virtual; abstract;
+    function GetContentType: TBoldValueContentType;
     constructor Create; virtual;
   end;
 
   { TBoldFreeStandingValueSpace }
   TBoldFreeStandingValueSpace = class(TBoldFreeStandingElement, IBoldValueSpace)
-  private
-    fIdLIst: TBoldObjectIdlist;
+  strict private
+    fIdList: TBoldObjectIdlist;
     fObjectContentsList: TBoldFSObjectContentList;
     fTranslationList: TBoldIdTranslationList;
-    function GetIdList: TBoldObjectIdList;
-    function GetObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents;
+  private
+    function GetIdList: TBoldObjectIdList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure ApplyTranslationList(IdTranslationList: TBoldIdTranslationList);
-    procedure EnsureObjectId(ObjectId: TBoldObjectId);
+    procedure EnsureObjectId(ObjectId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure ExactifyIDs(TranslationList: TBoldIdTranslationList);
   protected
     property IdList: TBoldObjectIdList read GetIdList;
   public
     constructor Create; override;
     destructor Destroy; override;
+    class function ContentType: TBoldValueContentType; override;
     procedure RemoveDeletedObjects;
     procedure MarkAllObjectsAndMembersCurrent;
-    function GetFSObjectContentsByObjectId(ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents;
-    procedure RemoveFSObjectContentsByObjectId(ObjectId: TBoldObjectId);
-    procedure ApplyValueSpace(ValueSpace: IBoldValueSpace; IgnorePersistenceState: Boolean);
+    function GetFSObjectContentsByObjectId(ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure RemoveFSObjectContentsByObjectId(ObjectId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure RemoveFSObjectContents(ObjectContents: TBoldFreeStandingObjectContents); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ApplyValueSpace(const ValueSpace: IBoldValueSpace; IgnorePersistenceState: Boolean);
     procedure AllObjectIds(resultList: TBoldObjectIdList; OnlyLoaded: Boolean);
-    procedure UpdateOwnValuesFrom(ValueSpace: IBoldValueSpace);
+    procedure ClearWhenObjectContentsEmpty;
+    procedure UpdateOwnValuesFrom(const ValueSpace: IBoldValueSpace);
     procedure RemoveAllObjectContents;
-    function GetHasContentsForId(ObjectId: TBoldObjectId): boolean;
-    procedure EnsureObjectContents(ObjectId: TBoldObjectId);
-    function GetEnsuredObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents;
-    function GetEnsuredFSObjectContentsByObjectId(ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents;
+    function GetHasContentsForId(ObjectId: TBoldObjectId): boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure EnsureObjectContents(ObjectId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEnsuredObjectContentsByObjectIdAndCheckIfCreated(ObjectId: TBoldObjectId; out aBoldObjectContents: IBoldObjectContents): boolean;
+    function GetEnsuredObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEnsuredFSObjectContentsByObjectId(ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents; overload;
+    function GetEnsuredFSObjectContentsByObjectId(ObjectId: TBoldObjectId; out aCreated: boolean): TBoldFreeStandingObjectContents; overload;
     function GetValueForIdAndMemberIndex(Id: TBoldObjectId; MemberIndex: integer): IBoldValue;
+    function IdCount: integer;
+    function IsEmpty: boolean;
+    procedure Clear;
   end;
-
-  PMemberList = ^TMemberList;
-  TMemberList = array[0..MaxListSize - 1] of TBoldFreeStandingValue;
-
-
 
   { TBoldFreeStandingObjectContents }
   TBoldFreeStandingObjectContents = class(TBoldFreeStandingElement, IBoldObjectContents, IBoldStreamable)
@@ -98,42 +108,47 @@ type
     fBoldPersistenceState: TBoldValuePersistenceState;
     fGlobalId: string;
     fIsReadOnly: Boolean;
-    fMemberList: PMemberList;
-    fMemberCount: integer;
     fObjectId: TBoldObjectId;
     fTimeStamp: TBoldTimeStampType;
-    function GetObjectId: TBoldObjectId;
-    function GetStreamName: string;
+    function GetObjectId: TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList);
-    function GetBoldExistenceState: TBoldExistenceState;
-    function GetBoldMemberCount: Integer;
-    function GetBoldPersistenceState: TBoldValuePersistenceState;
-    function GetGlobalId: string;
-    function GetIsModified: Boolean;
-    function GetIsReadOnly: Boolean;
-    function GetValueByIndex(I: Integer): IBoldValue;
-    function GetFSValueByIndex(i: integer): TBoldFreeStandingValue;
-    function GetValueByMemberId(MemberId: TBoldMemberID):IBoldValue;
-    function GetTimeStamp: TBoldTimeStampType;
-    procedure SetBoldExistenceState(Value: TBoldExistenceState);
-    procedure SetBoldPersistenceState(Value: TBoldValuePersistenceState);
-    procedure SetGlobalId(const NewValue: string);
-    procedure SetIsReadOnly(NewValue: Boolean);
-    procedure SetTimeStamp(NewValue: TBoldTimeStampType);
+    function GetBoldExistenceState: TBoldExistenceState; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetBoldMemberCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetBoldPersistenceState: TBoldValuePersistenceState; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetGlobalId: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIsModified: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIsReadOnly: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetValueByIndex(I: Integer): IBoldValue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFSValueByIndex(i: integer): TBoldFreeStandingValue;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetValueByMemberId(MemberId: TBoldMemberID):IBoldValue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTimeStamp: TBoldTimeStampType; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetBoldExistenceState(Value: TBoldExistenceState); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetBoldPersistenceState(Value: TBoldValuePersistenceState); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetGlobalId(const NewValue: string); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetIsReadOnly(NewValue: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetTimeStamp(NewValue: TBoldTimeStampType); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  protected
+    fMemberList: array of TBoldFreeStandingValue;
+    procedure EnsureMemberListLength(index: integer); // {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create; override;
     destructor Destroy; override;
+    class function ContentType: TBoldValueContentType; override;
     procedure MarkAllMembersCurrent;
-    procedure RemoveMemberByIndex(Index: integer);
+    procedure RemoveMemberByIndex(Index: integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure EnsureMember(MemberId: TBoldMemberId; const StreamName: string);
-    procedure EnsureMemberByIndex(Index: integer; const StreamName: string);
-    procedure ApplyObjectContents(ObjectContents: IBoldObjectContents; const ApplyValues: Boolean; const IgnorePersistenceState: Boolean);
-    procedure UpdateObjectContentsFrom(ObjectContents: IBoldObjectContents);
+    function EnsureMemberAndGetValueByIndex(Index: integer; const StreamName: string): IBoldValue;
+    procedure ApplyObjectContents(const ObjectContents: IBoldObjectContents; ApplyValues: Boolean; IgnorePersistenceState: Boolean);
+    procedure UpdateObjectContentsFrom(const ObjectContents: IBoldObjectContents);
+    function IsEmpty: boolean;
     property ValueByIndex[I: integer]: IBoldValue read GetValueByIndex;
     property FSValueByIndex[I: integer]: TBoldFreeStandingValue read GetFSValueByIndex;
     property BoldExistenceState: TBoldExistenceState read GetBoldExistenceState write SetBoldExistenceState;
     property BoldPersistenceState: TBoldValuePersistenceState read GetBoldPersistenceState write SetBoldPersistenceState;
-    property MemberCount: integer read fMemberCount;
+    property TimeStamp: TBoldTimeStampType read GetTimeStamp write SetTimeStamp;    
+    property MemberCount: integer read GetBoldMemberCount;
+    property ObjectId: TBoldObjectId read GetObjectId;
   end;
 
   { TBoldFreeStandingValue }
@@ -141,39 +156,49 @@ type
   private
     fBoldPersistenceState: TBoldValuePersistenceState;
   protected
-    function GetContentName: String;
-    function GetBoldPersistenceState: TBoldValuePersistenceState;
-    procedure SetBoldPersistenceState(Value: TBoldValuePersistenceState);
+    function GetContentName: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetBoldPersistenceState: TBoldValuePersistenceState; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetBoldPersistenceState(Value: TBoldValuePersistenceState); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetStreamName: string; virtual; abstract;
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList); virtual;
-    procedure AssignContentValue(Source: IBoldValue); virtual;
+    procedure AssignContentValue(const Source: IBoldValue); virtual;
   public
     constructor Create; override;
-    procedure AssignContent(Source: IBoldValue);
+    procedure AssignContent(const Source: IBoldValue); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function IsEqualToValue(const Value: IBoldValue): Boolean; virtual;
     property ContentName: string read GetContentName;
     property BoldPersistenceState: TBoldValuePersistenceState read fBoldPersistenceState write fBoldPersistenceState;
   end;
 
   { TBoldFreeStandingNullableValue }
-  TBoldFreeStandingNullableValue = class(TBoldFreeStandingValue, IBoldNullableValue)
+  TBoldFreeStandingNullableValue = class(TBoldFreeStandingValue, IBoldNullableValue, IBoldVariantReadable, IBoldStringRepresentable)
   private
     fIsNull: Boolean;
+    function GetAsVariant: Variant; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    procedure SetToNonNull;
-    function GetContentIsNull: Boolean;
-    procedure SetContentToNull;
+    procedure SetToNonNull; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetContentIsNull: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentToNull; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetValueAsVariant: Variant; virtual; abstract;
+    function GetStringRepresentation(representation:integer): String; virtual;
+    function GetContentAsString: String; virtual;
+  public
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
   end;
 
   { TBFSInteger }
   TBFSInteger = class(TBoldFreeStandingNullableValue, IBoldIntegerContent)
   private
     fDataValue: Integer;
-    function GetContentAsInteger: Integer;
-    procedure SetContentAsInteger(NewValue: Integer);
+    function GetContentAsInteger: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsInteger(NewValue: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetStreamName: string; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsInteger: Integer read GetContentAsInteger write SetContentAsInteger;
   end;
 
@@ -181,12 +206,15 @@ type
   TBFSString = class(TBoldFreeStandingNullableValue, IBoldStringContent)
   private
     fDataValue: String;
-    function GetContentAsString: String;
-    procedure SetContentAsString(const NewValue: String);
+    function GetContentAsString: String; override;
+    procedure SetContentAsString(const NewValue: String); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetStreamName: string; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsString: String read GetContentAsString write SetContentAsString;
   end;
 
@@ -194,12 +222,15 @@ type
   TBFSCurrency = class(TBoldFreeStandingNullableValue, IBoldCurrencyContent)
   private
     fDataValue: Currency;
-    function GetContentAsCurrency: Currency;
-    procedure SetContentAsCurrency(NewValue: Currency);
+    function GetContentAsCurrency: Currency; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsCurrency(NewValue: Currency); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsCurrency: Currency read GetContentAsCurrency write SetContentAsCurrency;
   end;
 
@@ -207,12 +238,15 @@ type
   TBFSFloat = class(TBoldFreeStandingNullableValue, IBoldFloatContent)
   private
     fDataValue: Double;
-    function GetContentAsFloat: Double;
-    procedure SetContentAsFloat(NewValue: Double);
+    function GetContentAsFloat: Double; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsFloat(NewValue: Double); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsFloat: Double read GetContentAsFloat write SetContentAsFloat;
   end;
 
@@ -220,12 +254,15 @@ type
   TBFSBoolean = class(TBoldFreeStandingNullableValue, IBoldBooleanContent)
   private
     fDataValue: Boolean;
-    function GetContentAsBoolean: Boolean;
-    procedure SetContentAsBoolean(NewValue: Boolean);
+    function GetContentAsBoolean: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsBoolean(NewValue: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsBoolean: Boolean read GetContentAsBoolean write SetContentAsBoolean;
   end;
 
@@ -234,20 +271,23 @@ type
   private
     fDataValue: TDateTime;
   protected
-    function GetContentAsDateTime: TDateTime;
-    procedure SetContentAsDateTime(NewValue: TDateTime);
-    function GetContentAsTime: TDateTime;
-    procedure SetContentAsTime(NewValue: TDateTime);
-    function GetContentAsDate: TDateTime;
-    procedure SetContentAsDate(NewValue: TDateTime);
+    function GetContentAsDateTime: TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsDateTime(NewValue: TDateTime); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetContentAsTime: TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsTime(NewValue: TDateTime); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetContentAsDate: TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsDate(NewValue: TDateTime); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   { TBFSDateTime }
   TBFSDateTime = class(TBFSDateTimeAbstract, IBoldDateTimeContent)
   protected
     function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsDateTime: TDateTime read GetContentAsDateTime write SetContentAsDateTime;
   end;
 
@@ -255,8 +295,11 @@ type
   TBFSDate = class(TBFSDateTimeAbstract, IBoldDateContent)
   protected
     function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsDate: TDateTime read GetContentAsDate write SetContentAsDate;
   end;
 
@@ -264,39 +307,48 @@ type
   TBFSTime = class(TBFSDateTimeAbstract, IBoldTimeContent)
   protected
     function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsTime: TDateTime read GetContentAsTime write SetContentAsTime;
   end;
 
   { TBFSBlobAbstract }
   TBFSBlobAbstract = class(TBoldFreeStandingNullableValue)
   private
-    fDataValue: String;
-    function GetContentAsBlob: String;
-    procedure SetContentAsBlob(const NewValue: String);
+    fDataValue: AnsiString;
+    function GetContentAsBlob: TBoldAnsiString; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentAsBlob(const NewValue: TBoldAnsiString); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetStreamName: String; override;
+    function GetValueAsVariant: Variant; override;
   public
-    property AsBlob: String read GetContentAsBlob write SetContentAsBlob;
+    property AsBlob: TBoldAnsiString read GetContentAsBlob write SetContentAsBlob;
   end;
 
   { TBFSBlob }
   TBFSBlob = class(TBFSBlobAbstract, IBoldBlobContent)
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+  public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
   end;
 
   { TBFSTypedBlob }
   TBFSTypedBlob = class(TBFSBlobAbstract, IBoldTypedBlob, IBoldBlobContent)
   private
     fContent: String;
-    function GetContentTypeContent: String;
-    procedure SetContentTypeContent(const NewValue: String);
+    function GetContentTypeContent: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContentTypeContent(const NewValue: String); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-      function GetStreamName: String; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    function GetStreamName: String; override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
   public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property ContentTypeContent: String read GetContentTypeContent write SetContentTypeContent;
   end;
 
@@ -306,8 +358,8 @@ type
   TBFSObjectIDRefAbstract = class(TBoldFreeStandingValue)
   private
     fOrderNo: Integer;
-    function GetOrderNo: integer;
-    procedure SetOrderNo(NewOrder: Integer);
+    function GetOrderNo: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetOrderNo(NewOrder: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     property OrderNo: integer read GetOrderNo write SetOrderNo;
   end;
@@ -316,14 +368,16 @@ type
   TBFSObjectIDRef = class(TBFSObjectIDRefAbstract, IBoldObjectIdRef)
   private
     fObjectId: TBoldObjectId;
-    function GetId: TBoldObjectID;
+    function GetId: TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStreamName: String; override;
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList); override;
   public
     destructor Destroy; override;
-    procedure SetFromId(Id: TBoldObjectId);
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
+    procedure SetFromId(Id: TBoldObjectId; Adopt: Boolean);
     property Id: TBoldObjectId read GetId;
   end;
 
@@ -331,15 +385,16 @@ type
   TBFSObjectIDRefPair = class(TBFSObjectIDRefAbstract, IBoldObjectIdRefPair)
   private
     fObjectIds: TBoldObjectIdList;
-    procedure EnsureIdList;
-    function GetId1: TBoldObjectID;
-    function GetId2: TBoldObjectID;
+    procedure EnsureIdList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetId1: TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetId2: TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStreamName: String; override;
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList); override;
   public
     destructor Destroy; override;
+    class function ContentType: TBoldValueContentType; override;
     procedure SetFromIds(Id1, Id2: TBoldObjectId);
     property Id1: TBoldObjectId read GetId1;
     property Id2: TBoldObjectId read GetId2;
@@ -352,15 +407,17 @@ type
     function GetIdList(Index: Integer): TBoldObjectID;
     procedure RemoveId(Id: TBoldObjectId);
     procedure AddId(Id: TBoldObjectId);
-    procedure EnsureList;
+    procedure EnsureList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStreamName: String; override;
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList); override;
-    function GetCount: integer;
+    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     destructor Destroy; override;
+    class function ContentType: TBoldValueContentType; override;
     procedure SetFromIdList(IdList: TBoldObjectIdList);
+    procedure SetList(IdList: TBoldObjectIdList);
     property IdList[Index: integer]: TBoldObjectID read GetIdList;
     property Count: integer read GetCount;
   end;
@@ -369,18 +426,19 @@ type
   TBFSObjectIdListrefPair = class(TBoldFreeStandingValue, IBoldObjectIdListRefPair, IBoldFreeStandingIdListPair)
   private
     fIdLIst1, fIdList2: TBoldObjectidLIst;
-    function GetIdList1(Index: Integer): TBoldObjectID;
-    function GetIdList2(Index: Integer): TBoldObjectID;
-    procedure EnsureLists;
+    function GetIdList1(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIdList2(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure EnsureLists; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure AddIds(Id1, Id2: TBoldObjectId);
     procedure RemoveId(Id: TBoldObjectId);
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStreamName: String; override;
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList); override;
-    function GetCount: integer;
+    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     destructor Destroy; override;
+    class function ContentType: TBoldValueContentType; override;
     procedure SetFromIdLists(IdList1, IdList2: TBoldObjectIdList);
     property IdList1[Index: integer]: TBoldObjectID read GetIdList1;
     property IdList2[Index: integer]: TBoldObjectID read GetIdList2;
@@ -388,30 +446,32 @@ type
   end;
 
   { TBoldFSObjectContentList }
-
-  // this list should be an unordered indexable list for performace reasons, but FSValueSpace.ApplyTranslationList is a bit tricky to rewrite...
   TBoldFSObjectContentList = class(TBoldIndexableList)
   private
-    function GetItems(index: integer): TBoldFreeStandingObjectContents;
+    class var IX_FSObjectContent: integer;
+    function GetItems(index: integer): TBoldFreeStandingObjectContents; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetItems(index: integer; const Value: TBoldFreeStandingObjectContents);
   public
     constructor Create;
-    function FindObjectContentById(Id: TBoldObjectId): TBoldFreeStandingObjectContents;
+    function FindObjectContentById(Id: TBoldObjectId): TBoldFreeStandingObjectContents; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property Items[index: integer]: TBoldFreeStandingObjectContents read GetItems write SetItems; default;
   end;
+
+
+var
+  BoldFreeStandingObjectContentsClass: TBoldFreeStandingObjectContentsClass = TBoldFreeStandingObjectContents;
 
 implementation
 
 uses
   SysUtils,
-  FreeStandingValuesConst,
   BoldUtils,
   BoldIndex,
   BoldHashIndexes,
   BoldFreeStandingValueFactories,
   BoldDefaultStreamNames,
-  BoldMemoryManager,
-  BoldGuard;
+  BoldGuard,
+  Variants;
 
 type
   {---TBoldObjectIdHashIndex---}
@@ -421,20 +481,21 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function FindById(boldObjectId:TboldObjectId): TObject;
+    function FindById(BoldObjectId: TBoldObjectId): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
-
-var
-  IX_FSObjectContent: integer = -1;
 
 
 {---TBoldFreeStandingElement---}
 
 constructor TBoldFreeStandingElement.Create;
 begin
-  // this is empty, but allows other freestanding values to initialize values
-  // in their overridden constructors
+
   inherited;
+end;
+
+function TBoldFreeStandingElement.GetContentType: TBoldValueContentType;
+begin
+  result := ContentType;
 end;
 
 {---TBoldFreeStandingvalueSpace---}
@@ -443,7 +504,7 @@ constructor TBoldFreeStandingvalueSpace.Create;
 begin
   inherited;
   fObjectContentsList := TBoldFSObjectContentList.create;
-  fIdLIst := tBoldObjectIdList.Create;
+  fIdLIst := TBoldObjectIdList.Create;
 end;
 
 destructor TBoldFreeStandingvalueSpace.Destroy;
@@ -467,9 +528,20 @@ begin
   result := fIdList;
 end;
 
+function TBoldFSObjectContentList.FindObjectContentById(Id: TBoldObjectId): TBoldFreeStandingObjectContents;
+begin
+  Result := TBoldFreeStandingObjectContents(TBoldHashIndex(indexes[IX_FSObjectContent]).Find(ID));
+end;
+
 function TBoldFreeStandingvalueSpace.GetFSObjectContentsByObjectId(ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents;
 begin
   result := fObjectContentsList.FindObjectContentById(ObjectId);
+end;
+
+procedure TBoldFreeStandingValueSpace.RemoveFSObjectContents(
+  ObjectContents: TBoldFreeStandingObjectContents);
+begin
+  fObjectContentsList.Remove(ObjectContents);
 end;
 
 procedure TBoldFreeStandingvalueSpace.RemoveFSObjectContentsByObjectId(ObjectId: TBoldObjectId);
@@ -478,19 +550,20 @@ begin
 end;
 
 function TBoldFreeStandingvalueSpace.GetObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents;
-var
-  temp: TBoldFreeStandingObjectContents;
 begin
-  temp := GetFSObjectContentsByObjectId(ObjectId);
-  if assigned(temp) then
-    result := temp
-  else
-    result := nil;
+  result := GetFSObjectContentsByObjectId(ObjectId);
 end;
 
 function TBoldFreeStandingvalueSpace.GetEnsuredObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents;
 begin
   Result := GetEnsuredFSObjectContentsByObjectId(ObjectId);
+end;
+
+function TBoldFreeStandingValueSpace.GetEnsuredObjectContentsByObjectIdAndCheckIfCreated(
+  ObjectId: TBoldObjectId;
+  out aBoldObjectContents: IBoldObjectContents): boolean;
+begin
+  aBoldObjectContents := GetEnsuredFSObjectContentsByObjectId(ObjectId, result);
 end;
 
 function TBoldFreeStandingvalueSpace.GetHasContentsForId(ObjectId: TBoldObjectId): boolean;
@@ -534,12 +607,13 @@ begin
   if not assigned(fTranslationList) then
     fTranslationList := TBoldIDTranslationList.Create;
   For i := 0 to IdTranslationList.Count - 1 do
+    if IdTranslationList.OldIds[i] <> nil then
       fTranslationList.AddTranslation(IdTranslationList.OldIds[i], IdTranslationList.NewIds[i]);
   for i := 0 to fObjectContentsList.Count - 1 do
     DoOneObject(i, TBoldFreeStandingObjectContents(fObjectContentsList[i]));
 end;
 
-procedure TBoldFreeStandingvalueSpace.ApplyValueSpace(ValueSpace: IBoldValueSpace; IgnorePersistenceState: Boolean);
+procedure TBoldFreeStandingvalueSpace.ApplyValueSpace(const ValueSpace: IBoldValueSpace; IgnorePersistenceState: Boolean);
 var
   i: Integer;
   anIdList: TBoldObjectIdList;
@@ -580,12 +654,8 @@ destructor TBoldFreeStandingObjectContents.Destroy;
 var
   i: integer;
 begin
-  if Assigned(fMemberList) then
-  begin
-    for i := 0 to fMemberCount - 1 do
-      fMemberList^[i].Free;
-    BoldMemoryManager_.DeAllocateMemory(fMemberList, fMemberCount*sizeof(Pointer));
-  end;
+  for i := 0 to Length(fMemberList) - 1 do
+    FreeAndNil(fMemberList[i]);
   inherited;
 end;
 
@@ -595,6 +665,19 @@ begin
   result := GetValueByIndex(MemberId.MemberIndex);
 end;
 
+function TBoldFreeStandingObjectContents.IsEmpty: boolean;
+var
+  i: integer;
+begin
+  result := true;
+  for i := Length(fMemberList) - 1 downto 0 do
+    if Assigned(fMemberList[i]) then
+    begin
+      result := false;
+      exit;
+    end;
+end;
+
 function TBoldFreeStandingObjectContents.GetStreamName: string;
 begin
   result := BOLDOBJECTCONTENTSNAME;
@@ -602,13 +685,13 @@ end;
 
 procedure TBoldFreeStandingObjectContents.EnsureMember(MemberId: TBoldMemberId; const StreamName: string);
 begin
-   EnsurememberByIndex( MemberId.MemberIndex, StreamName );
+  EnsureMemberAndGetValueByIndex( MemberId.MemberIndex, StreamName );
 end;
 
 function TBoldFreeStandingObjectContents.GetValueByIndex(I: Integer): IBoldValue;
 begin
-  if i < MemberCount then
-    result := fMemberList^[i]
+  if i < Length(fMemberList) then
+    result := fMemberList[i]
   else
     result := nil;
 end;
@@ -616,11 +699,10 @@ end;
 function TBoldFreeStandingObjectContents.GetFSValueByIndex(i: integer): TBoldFreeStandingValue;
 begin
   if i < MemberCount then
-    result := fMemberList^[i]
+    result := fMemberList[i]
   else
     result := nil;
 end;
-
 
 function TBoldFreeStandingObjectContents.GetIsModified: Boolean;
 begin
@@ -636,7 +718,6 @@ end;
 
 procedure TBoldFreeStandingValue.ApplyTranslationList(TranslationList: TBoldIdTranslationList);
 begin
-  // do nothing
 end;
 
 {---TBoldFreeStandingNullableValue---}
@@ -646,14 +727,46 @@ begin
   fIsNull := true;
 end;
 
+function TBoldFreeStandingNullableValue.GetContentAsString: String;
+begin
+  result := GetStringRepresentation(brDefault);
+end;
+
 function TBoldFreeStandingNullableValue.GetContentIsNull: Boolean;
 begin
   result := fIsNull;
 end;
 
+function TBoldFreeStandingNullableValue.IsEqualToValue(const Value: IBoldValue):
+    Boolean;
+var
+  aNullableValue: IBoldNullableValue;
+begin
+  Result := Assigned(Value) and
+      (Value.QueryInterface(IBoldNullableValue, aNullableValue) = S_OK) and
+      (fIsNull = aNullableValue.IsNull);
+end;
+
+function TBoldFreeStandingNullableValue.GetStringRepresentation(
+  representation: integer): String;
+begin
+  if GetContentIsNull then
+    result := ''
+  else
+    result := VarToStr(GetValueAsVariant);
+end;
+
 procedure TBoldFreeStandingNullableValue.SetToNonNull;
 begin
   fIsNull := false;
+end;
+
+function TBoldFreeStandingNullableValue.GetAsVariant;
+begin
+  if GetContentIsNull then
+    result := Null
+  else
+    result := GetValueAsVariant;
 end;
 
 {---TBFSInteger---}
@@ -663,9 +776,19 @@ begin
   result := BoldContentName_Integer;
 end;
 
+function TBFSInteger.GetValueAsVariant: Variant;
+begin
+  result := AsInteger;
+end;
+
 function TBFSInteger.GetContentAsInteger: Integer;
 begin
   result := fDataValue;
+end;
+
+class function TBFSInteger.ContentType: TBoldValueContentType;
+begin
+  result := bctInteger;
 end;
 
 procedure TBFSInteger.SetContentAsInteger(NewValue: Integer);
@@ -681,14 +804,24 @@ begin
   result := BoldContentName_String;
 end;
 
+function TBFSString.GetValueAsVariant: Variant;
+begin
+  result := AsString;
+end;
+
 function TBFSString.GetContentAsString: String;
 begin
   result := fDataValue;
 end;
 
+class function TBFSString.ContentType: TBoldValueContentType;
+begin
+  result := bctString;
+end;
+
 procedure TBFSString.SetContentAsString(const NewValue: String);
 begin
-  fDataValue := NewValue;
+  fDataValue := NewValue; // Use BoldSharedStringManager ?
   SetToNonNull;
 end;
 
@@ -699,9 +832,19 @@ begin
   result := BoldContentName_Currency;
 end;
 
+function TBFSCurrency.GetValueAsVariant: Variant;
+begin
+  result := AsCurrency;
+end;
+
 function TBFSCurrency.GetContentAsCurrency: Currency;
 begin
   result := fDataValue;
+end;
+
+class function TBFSCurrency.ContentType: TBoldValueContentType;
+begin
+  result := bctCurrency;
 end;
 
 procedure TBFSCurrency.SetContentAsCurrency(NewValue: Currency);
@@ -717,9 +860,19 @@ begin
   result := BoldContentName_Float;
 end;
 
+function TBFSFloat.GetValueAsVariant: Variant;
+begin
+  result := AsFloat;
+end;
+
 function TBFSFloat.GetContentAsFloat: double;
 begin
   result := fDataValue;
+end;
+
+class function TBFSFloat.ContentType: TBoldValueContentType;
+begin
+  result := bctFloat;
 end;
 
 procedure TBFSFloat.SetContentAsFloat(NewValue: Double);
@@ -735,9 +888,19 @@ begin
   Result := BoldContentName_Boolean;
 end;
 
+function TBFSBoolean.GetValueAsVariant: Variant;
+begin
+  result := AsBoolean;
+end;
+
 function TBFSBoolean.GetContentAsBoolean: Boolean;
 begin
   Result := fDataValue;
+end;
+
+class function TBFSBoolean.ContentType: TBoldValueContentType;
+begin
+  result := bctBoolean;
 end;
 
 procedure TBFSBoolean.SetContentAsBoolean(NewValue: Boolean);
@@ -788,12 +951,17 @@ begin
   Result := BoldContentName_Blob;
 end;
 
-function TBFSBlobAbstract.GetContentAsBlob: String;
+function TBFSBlobAbstract.GetValueAsVariant: Variant;
+begin
+  result := AsBlob;
+end;
+
+function TBFSBlobAbstract.GetContentAsBlob: TBoldAnsiString;
 begin
   Result := fDataValue;
 end;
 
-procedure TBFSBlobAbstract.SetContentAsBlob(const NewValue: String);
+procedure TBFSBlobAbstract.SetContentAsBlob(const NewValue: TBoldAnsiString);
 begin
   fDataValue := NewValue;
   SetToNonNull;
@@ -804,6 +972,11 @@ end;
 function TBFSTypedBlob.GetStreamName: String;
 begin
   Result := BoldContentName_TypedBlob;
+end;
+
+class function TBFSTypedBlob.ContentType: TBoldValueContentType;
+begin
+  result := bctTypedBlob;
 end;
 
 function TBFSTypedBlob.GetContentTypeContent: String;
@@ -836,18 +1009,36 @@ begin
   Result := BoldContentName_ObjectIdRef;
 end;
 
-procedure TBFSObjectIdRef.SetFromId(Id: TBoldObjectId);
+procedure TBFSObjectIdRef.SetFromId(Id: TBoldObjectId; Adopt: Boolean);
+var
+  Assign: Boolean;
 begin
+  Assign := false;
   if assigned(Id) then
   begin
     if (not Assigned(fObjectId)) or (not Id.IsEqual[fObjectId]) then
     begin
       FreeAndNil(fObjectId);
-      fObjectId := Id.Clone;
+      Assign := True;
     end
-  end
+  end   
   else
     FreeAndNil(fObjectId);
+  if Adopt then
+  begin
+    if Assign then
+      fObjectId := Id
+    else
+      FreeAndNil(Id);   
+  end
+  else
+    if Assign then
+      fObjectId := Id.Clone;
+end;
+
+class function TBFSObjectIDRef.ContentType: TBoldValueContentType;
+begin
+  result := bctObjectIdRef;
 end;
 
 function TBFSObjectIdRef.GetId: TBoldObjectID;
@@ -873,6 +1064,11 @@ begin
     if assigned(Id2) then
       fObjectIds.Add(Id2);
   end;
+end;
+
+class function TBFSObjectIDRefPair.ContentType: TBoldValueContentType;
+begin
+  result := bctObjectIdRefPair;
 end;
 
 function TBFSObjectIdRefPair.GetId1: TBoldObjectID;
@@ -903,6 +1099,16 @@ procedure TBFSObjectIdListref.SetFromIdList(IdList: TBoldObjectIdList);
 begin
   fIdLIst.Free;
   fIdList := IdList.Clone;
+end;
+
+procedure TBFSObjectIdListref.SetList(IdList: TBoldObjectIdList);
+var
+  i: integer;
+begin
+  IdList.Clear;
+  IdList.Capacity := fIdList.Count;
+  for i := 0 to fIdList.Count - 1 do
+    IdList.Add(fIdList[i]);
 end;
 
 function TBFSObjectIdListref.GetIdList(Index: Integer): TBoldObjectID;
@@ -969,10 +1175,11 @@ procedure TBoldFreeStandingObjectContents.ApplyTranslationList(
 var
   i: Integer;
 begin
-  for i := 0 to MemberCount - 1 do
-    if Assigned(fMemberList^[i]) then
-      fMemberList^[i].ApplyTranslationList(TranslationList);
+  for i := 0 to Length(fMemberList)- 1 do
+    if Assigned(fMemberList[i]) then
+      fMemberList[i].ApplyTranslationList(TranslationList);
 end;
+
 
 procedure TBFSObjectIdListref.ApplyTranslationList(
   TranslationList: TBoldIdTranslationList);
@@ -986,7 +1193,6 @@ procedure TBFSObjectIdListrefPair.ApplyTranslationList(
 begin
   if assigned(fIdlist1) then
   begin
-    // the two lists are either assigned or not assigned, there can never be one assigned and one not assigned
     fIdLIst1.ApplyTranslationList(TranslationList);
     fIdList2.ApplyTranslationList(TranslationList);
   end;
@@ -1036,9 +1242,13 @@ end;
 procedure TBoldFreeStandingValueSpace.AllObjectIds(
   resultList: TBoldObjectIdList; OnlyLoaded: Boolean);
 var
-  i: integer;
+  i,j: integer;
 begin
-  for i := 0 to fIdList.Count - 1 do
+  j := fIdList.Count;
+  if j = 0 then
+    exit;
+  resultList.Capacity := j;
+  for i := 0 to j - 1 do
     if OnlyLoaded then
     begin
       if Assigned(GetObjectContentsByObjectId(fIdList[i])) then
@@ -1066,12 +1276,22 @@ begin
   end;
 end;
 
+class function TBFSObjectIdListref.ContentType: TBoldValueContentType;
+begin
+  result := bctObjectIdListRef;
+end;
+
 function TBFSObjectIdListref.GetCount: integer;
 begin
   if assigned(fIdList) then
     result := fIdList.Count
   else
     result := 0;
+end;
+
+class function TBFSObjectIdListrefPair.ContentType: TBoldValueContentType;
+begin
+  result := bctObjectIdListRefPair;
 end;
 
 function TBFSObjectIdListrefPair.GetCount: integer;
@@ -1098,6 +1318,11 @@ begin
   result := fBoldPersistenceState;
 end;
 
+class function TBoldFreeStandingObjectContents.ContentType: TBoldValueContentType;
+begin
+  result := bctObject;
+end;
+
 procedure TBoldFreeStandingObjectContents.SetBoldExistenceState(
   Value: TBoldExistenceState);
 begin
@@ -1110,13 +1335,13 @@ begin
   fBoldPersistenceState := Value;
 end;
 
-procedure TBoldFreeStandingValue.AssignContent(Source: IBoldValue);
+procedure TBoldFreeStandingValue.AssignContent(const Source: IBoldValue);
 begin
   AssignContentValue(Source);
   BoldPersistenceState := Source.BoldPersistenceState;
 end;
 
-procedure TBFSInteger.AssignContentValue(Source: IBoldValue);
+procedure TBFSInteger.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldIntegerContent;
 begin
@@ -1126,10 +1351,19 @@ begin
     else
       SetContentAsInteger(s.AsInteger)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSString.AssignContentValue(Source: IBoldValue);
+function TBFSInteger.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aIntegerValue: IBoldIntegerContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldIntegerContent, aIntegerValue) = S_OK) and
+      (AsInteger = aIntegerValue.asInteger);
+end;
+
+procedure TBFSString.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldStringContent;
 begin
@@ -1139,10 +1373,19 @@ begin
     else
       SetContentAsString(s.AsString)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSCurrency.AssignContentValue(Source: IBoldValue);
+function TBFSString.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aStringValue: IBoldStringContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldStringContent, aStringValue) = S_OK) and
+      (AsString = aStringValue.asString);
+end;
+
+procedure TBFSCurrency.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldCurrencyContent;
 begin
@@ -1152,10 +1395,19 @@ begin
     else
       SetContentAsCurrency(s.AsCurrency)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSFloat.AssignContentValue(Source: IBoldValue);
+function TBFSCurrency.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aCurrencyValue: IBoldCurrencyContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldCurrencyContent, aCurrencyValue) = S_OK) and
+      (AsCurrency = aCurrencyValue.asCurrency);
+end;
+
+procedure TBFSFloat.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldFloatContent;
 begin
@@ -1165,10 +1417,19 @@ begin
     else
       SetContentAsFloat(s.AsFloat)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSBoolean.AssignContentValue(Source: IBoldValue);
+function TBFSFloat.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aFloatValue: IBoldFloatContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldFloatContent, aFloatValue) = S_OK) and
+      (AsFloat = aFloatValue.asFloat);
+end;
+
+procedure TBFSBoolean.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBooleanContent;
 begin
@@ -1178,12 +1439,21 @@ begin
     else
       SetContentAsBoolean(s.AsBoolean)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+end;
+
+function TBFSBoolean.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aBooleanValue: IBoldBooleanContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldBooleanContent, aBooleanValue) = S_OK) and
+      (AsBoolean = aBooleanValue.asBoolean);
 end;
 
 { TBFSDateTime }
 
-procedure TBFSDateTime.AssignContentValue(Source: IBoldValue);
+procedure TBFSDateTime.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldDateTimeContent;
 begin
@@ -1193,7 +1463,17 @@ begin
     else
       SetContentAsDateTime(s.AsDateTime)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+end;
+
+function TBFSDateTime.GetValueAsVariant: Variant;
+begin
+  result := AsDateTime;
+end;
+
+class function TBFSDateTime.ContentType: TBoldValueContentType;
+begin
+  result := bctDateTime;
 end;
 
 function TBFSDateTime.GetStreamName: String;
@@ -1201,9 +1481,18 @@ begin
   result := BoldContentName_DateTime;
 end;
 
+function TBFSDateTime.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aDateTimeValue: IBoldDateTimeContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldDateTimeContent, aDateTimeValue) = S_OK) and
+      (AsDateTime = aDateTimeValue.asDateTime);
+end;
+
 { TBFSDate }
 
-procedure TBFSDate.AssignContentValue(Source: IBoldValue);
+procedure TBFSDate.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldDateContent;
 begin
@@ -1213,7 +1502,17 @@ begin
     else
       SetContentAsDate(s.AsDate)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+end;
+
+function TBFSDate.GetValueAsVariant: Variant;
+begin
+  result := AsDate;
+end;
+
+class function TBFSDate.ContentType: TBoldValueContentType;
+begin
+  result := bctDate;
 end;
 
 function TBFSDate.GetStreamName: String;
@@ -1221,9 +1520,18 @@ begin
   result := BoldContentName_Date;
 end;
 
+function TBFSDate.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aDateValue: IBoldDateContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldDateContent, aDateValue) = S_OK) and
+      (AsDate = aDateValue.asDate);
+end;
+
 { TBFSTime }
 
-procedure TBFSTime.AssignContentValue(Source: IBoldValue);
+procedure TBFSTime.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldTimeContent;
 begin
@@ -1233,7 +1541,17 @@ begin
     else
       SetContentAsTime(s.AsTime)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+end;
+
+function TBFSTime.GetValueAsVariant: Variant;
+begin
+  result := AsTime;
+end;
+
+class function TBFSTime.ContentType: TBoldValueContentType;
+begin
+  result := bctTime;
 end;
 
 function TBFSTime.GetStreamName: String;
@@ -1241,9 +1559,18 @@ begin
   result := BoldContentName_Time;
 end;
 
+function TBFSTime.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aTimeValue: IBoldTimeContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldTimeContent, aTimeValue) = S_OK) and
+      (AsTime = aTimeValue.asTime);
+end;
+
 { TBFSBlob }
 
-procedure TBFSBlob.AssignContentValue(Source: IBoldValue);
+procedure TBFSBlob.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBlobContent;
 begin
@@ -1253,10 +1580,24 @@ begin
     else
       SetContentAsBlob(s.AsBlob)
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSTypedBlob.AssignContentValue(Source: IBoldValue);
+class function TBFSBlob.ContentType: TBoldValueContentType;
+begin
+  result := bctBlob;
+end;
+
+function TBFSBlob.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aBlobValue: IBoldBlobContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldBlobContent, aBlobValue) = S_OK) and
+      (AsBlob = aBlobValue.asBlob);
+end;
+
+procedure TBFSTypedBlob.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBlobContent;
   t: IBoldTypedBlob;
@@ -1271,23 +1612,44 @@ begin
     SetContentTypeContent(t.ContentTypeContent);
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSObjectIDRef.AssignContentValue(Source: IBoldValue);
+function TBFSTypedBlob.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aBlobValue: IBoldBlobContent;
+  aTypedBlob: IBoldTypedBlob;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldBlobContent, aBlobValue) = S_OK) and
+      (Value.QueryInterface(IBoldTypedBlob, aTypedBlob) = S_OK) and
+      (AsBlob = aBlobValue.asBlob) and
+      (ContentTypeContent = aTypedBlob.ContentTypeContent);
+end;
+
+procedure TBFSObjectIDRef.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldObjectIdRef;
 begin
   if source.QueryInterface(IBoldObjectIDRef, S) = S_OK then
   begin
-    SetFromId(s.Id);
+    SetFromId(s.Id, false);
     OrderNo := s.OrderNo;
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSObjectIDRefPair.AssignContentValue(Source: IBoldValue);
+function TBFSObjectIDRef.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aObjectIDRef: IBoldObjectIdRef;
+begin
+  Result := Assigned(Value) and
+      (Value.QueryInterface(IBoldObjectIdRef, aObjectIDRef) = S_OK) and
+      ((Assigned(ID) and Assigned(aObjectIDRef.Id) and Id.IsEqual[aObjectIDRef.Id]) or
+       ((ID = nil) and (aObjectIDRef.Id = nil)));
+end;
+procedure TBFSObjectIDRefPair.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldObjectIdRefPair;
 begin
@@ -1297,10 +1659,26 @@ begin
     OrderNo := s.OrderNo;
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSObjectIdListref.AssignContentValue(Source: IBoldValue);
+procedure TBFSObjectIdListref.EnsureList;
+begin
+  if not assigned(fIdList) then
+    fIdList := TBoldObjectIdList.Create
+  else
+    Assert(fIdList is TBoldObjectIdList);
+end;
+
+procedure TBFSObjectIdListrefPair.EnsureLists;
+begin
+  if not assigned(fIdList1) then
+    fIdList1 := TBoldObjectIdList.Create;
+  if not assigned(fIdList2) then
+    fIdList2 := TBoldObjectIdList.Create;
+end;
+
+procedure TBFSObjectIdListref.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldObjectIdListRef;
   i: Integer;
@@ -1308,15 +1686,13 @@ begin
   if source.QueryInterface(IBoldObjectIDListRef, S) = S_OK then
   begin
     EnsureList;
-    fIdList.Clear;
-    for i := 0 to s.Count - 1 do
-      fIdList.Add(s.IdList[i]);
+    s.SetList(fIdList);
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
-procedure TBFSObjectIdListrefPair.AssignContentValue(Source: IBoldValue);
+procedure TBFSObjectIdListrefPair.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldObjectIdListRefPair;
   i: Integer;
@@ -1326,6 +1702,8 @@ begin
     EnsureLists;
     fIdList1.Clear;
     fIdList2.Clear;
+    fIdList1.Capacity := s.Count;
+    fIdList2.Capacity := s.Count;
     for i := 0 to s.Count - 1 do
     begin
       fIdList1.Add(s.IdList1[i]);
@@ -1333,7 +1711,7 @@ begin
     end;
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname]);
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
 destructor TBFSObjectIdListrefPair.Destroy;
@@ -1353,35 +1731,9 @@ procedure TBoldFreeStandingObjectContents.RemoveMemberByIndex(Index: integer);
 begin
   if MemberCount > Index then
   begin
-    fMemberList^[Index].Free;
-    fMemberList^[Index] := nil;
+    fMemberList[Index].Free;
+    fMemberList[Index] := nil;
   end;
-end;
-
-{ TBoldFSObjectContentList }
-
-constructor TBoldFSObjectContentList.Create;
-begin
-  inherited Create;
-  SetIndexCapacity(1);
-  OwnsEntries := true;
-  SetIndexVariable(IX_FSObjectContent, AddIndex(TBoldFSObjectContentHashIndex.Create));
-end;
-
-function TBoldFSObjectContentList.FindObjectContentById(Id: TBoldObjectId): TBoldFreeStandingObjectContents;
-begin
-  Result := TBoldFreeStandingObjectContents(TBoldFSObjectContentHashIndex(indexes[IX_FSObjectContent]).FindByID(ID));
-end;
-
-function TBoldFSObjectContentList.GetItems(index: integer): TBoldFreeStandingObjectContents;
-begin
-  result := TBoldFreeStandingObjectContents(inherited items[index]);
-end;
-
-procedure TBoldFSObjectContentList.SetItems(index: integer;
-  const Value: TBoldFreeStandingObjectContents);
-begin
-  inherited items[index] := Value;
 end;
 
 { TBoldFSObjectContentHashIndex }
@@ -1412,6 +1764,28 @@ begin
   Result := TBoldObjectId(Key).IsEqual[ItemAsBoldObjectId(Item)];
 end;
 
+{ TBoldFSObjectContentList }
+
+constructor TBoldFSObjectContentList.Create;
+begin
+  inherited Create;
+  SetIndexCapacity(1);
+  OwnsEntries := true;
+  IX_FSObjectContent := -1;
+  SetIndexVariable(IX_FSObjectContent, AddIndex(TBoldFSObjectContentHashIndex.Create));
+end;
+
+function TBoldFSObjectContentList.GetItems(index: integer): TBoldFreeStandingObjectContents;
+begin
+  result := TBoldFreeStandingObjectContents(inherited items[index]);
+end;
+
+procedure TBoldFSObjectContentList.SetItems(index: integer;
+  const Value: TBoldFreeStandingObjectContents);
+begin
+  inherited items[index] := Value;
+end;
+
 function TBoldFreeStandingValue.GetContentName: String;
 begin
   result := GetStreamName;
@@ -1423,9 +1797,14 @@ begin
   BoldPersistenceState := bvpsInvalid;
 end;
 
-procedure TBoldFreeStandingValue.AssignContentValue(Source: IBoldValue);
+procedure TBoldFreeStandingValue.AssignContentValue(const Source: IBoldValue);
 begin
-  raise EBold.CreateFmt(sAbstractError, [classname]);
+  raise EBold.CreateFmt('%s.AssignContentValue: Abstract error', [classname]);
+end;
+
+function TBoldFreeStandingValue.IsEqualToValue(const Value: IBoldValue): Boolean;
+begin
+  raise EBold.CreateFmt('%s.IsEqualToValue: Abstract error', [classname]);
 end;
 
 function TBoldFreeStandingObjectContents.GetObjectId: TBoldObjectId;
@@ -1434,36 +1813,30 @@ begin
 end;
 
 procedure TBoldFreeStandingObjectContents.ApplyObjectContents(
-  ObjectContents: IBoldObjectContents; const ApplyValues: Boolean; const IgnorePersistenceState: Boolean);
+  const ObjectContents: IBoldObjectContents; ApplyValues: Boolean; IgnorePersistenceState: Boolean);
 var
   i: Integer;
   aValue: IBoldValue;
-  MemberId: TBoldMemberId;
 begin
   SetBoldExistenceState(ObjectContents.BoldExistenceState);
   SetBoldPersistenceState(ObjectContents.BoldPersistenceState);
   if ApplyValues then
-    for i := 0 to ObjectContents.MemberCount - 1 do
+    for i := ObjectContents.MemberCount - 1 downto 0 do
     begin
       aValue := ObjectContents.valueByIndex[i];
       if assigned(aValue) then
       begin
-        MemberId := TBoldMemberId.Create(i);
-        try
-          EnsureMember(MemberId, aValue.ContentName);
-          if IgnorePersistenceState then
-            fMemberList^[i].AssignContentValue(aValue)
-          else
-            fMemberList^[i].AssignContent(aValue);
-        finally
-          FreeAndNil(MemberId);
-        end;
+        EnsureMemberAndGetValueByIndex(i, aValue.ContentName);
+        if IgnorePersistenceState then
+          fMemberList[i].AssignContentValue(aValue)
+        else
+          fMemberList[i].AssignContent(aValue);
       end;
     end;
 end;
 
 procedure TBoldFreeStandingValueSpace.UpdateOwnValuesFrom(
-  ValueSpace: IBoldValueSpace);
+  const ValueSpace: IBoldValueSpace);
 var
   i: Integer;
   anIdList: TBoldObjectIdList;
@@ -1488,27 +1861,32 @@ begin
 end;
 
 procedure TBoldFreeStandingObjectContents.UpdateObjectContentsFrom(
-  ObjectContents: IBoldObjectContents);
+  const ObjectContents: IBoldObjectContents);
 var
   i: Integer;
   OwnValue, aValue: IBoldValue;
 begin
   SetBoldExistenceState(ObjectContents.BoldExistenceState);
   SetBoldPersistenceState(ObjectContents.BoldPersistenceState);
-  for i := 0 to MemberCount - 1 do
+  for i := MemberCount - 1 downto 0 do
   begin
     OwnValue := GetValueByIndex(i);
-    aValue := ObjectContents.ValueByIndex[i];
-    if assigned(OwnValue) and assigned(aValue) then
-      OwnValue.AssignContent(aValue);
+    if Assigned(OwnValue) then begin
+      aValue := ObjectContents.ValueByIndex[i];
+      if Assigned(aValue) then begin
+        OwnValue.AssignContent(aValue);
+      end;
+    end;
   end;
 end;
 
 procedure TBoldFreeStandingValueSpace.RemoveAllObjectContents;
-var
+{var
  i: integer;
- ObjectIds: TBoldObjectIdlist;
+ ObjectIds: TBoldObjectIdlist;}
 begin
+  fObjectContentsList.Clear;
+{
   ObjectIds := TBoldObjectIdList.Create;
   try
     AllObjectIds(ObjectIds, True);
@@ -1517,6 +1895,7 @@ begin
   finally
     FreeAndNil(Objectids);
   end;
+}
 end;
 
 procedure TBoldFreeStandingValueSpace.MarkAllObjectsAndMembersCurrent;
@@ -1537,31 +1916,44 @@ var
   M: integer;
 begin
   for M := 0 to MemberCount - 1 do
-    if Assigned(fMemberList^[M]) then
-      GetValueByIndex(M).BoldPersistenceState := bvpsCurrent;
+    if Assigned(fMemberList[M]) then
+      fMemberList[M].BoldPersistenceState := bvpsCurrent;
 end;
 
-
-
-procedure TBoldFreeStandingObjectContents.EnsureMemberByIndex(
-  Index: integer; const StreamName: string);
+procedure TBoldFreeStandingObjectContents.EnsureMemberListLength(
+  index: integer);
 begin
-  if not Assigned(fMemberlist) then
-  begin
-    fMemberlist := BoldMemoryManager_.AllocateMemoryZeroFill((Index+1)*sizeof(Pointer));
-    fMemberCount := Index+1;
-  end;
-  if (Index >= MemberCount) then
-  begin
-    fMemberlist := BoldMemoryManager_.ReallocateMemoryZeroFill(fMemberlist, MemberCount*sizeof(Pointer),
-    (Index+1)*sizeof(Pointer));
-    fMemberCount := Index+1;
-  end;
-
-  if not assigned(fMemberlist^[Index]) then
-    fMemberlist^[Index] := TBoldFreeStandingValue(FreeStandingValueFactory.CreateInstance(StreamName));
+  if (Index >= Length(fMemberList)) then
+    SetLength(fMemberList, Index+1);
 end;
 
+procedure TBoldFreeStandingValueSpace.Clear;
+begin
+  fIdLIst.Clear;
+  fObjectContentsList.Clear;
+  FreeAndNil(fTranslationList);
+end;
+
+procedure TBoldFreeStandingValueSpace.ClearWhenObjectContentsEmpty;
+begin
+  if fObjectContentsList.Count = 0 then begin
+    if Assigned(fIdLIst) then begin
+      fIdLIst.Clear;
+    end;
+    if Assigned(fTranslationList) then begin
+      FreeAndNil(fTranslationList);
+    end;
+  end;
+end;
+
+function TBoldFreeStandingObjectContents.EnsureMemberAndGetValueByIndex(
+  Index: integer; const StreamName: string): IBoldValue;
+begin
+  EnsureMemberListLength(Index);
+  if not assigned(fMemberlist[Index]) then
+    fMemberlist[Index] := TBoldFreeStandingValue(FreeStandingValueFactory.CreateInstance(StreamName));
+  Result :=  fMemberlist[Index];
+end;
 
 function TBoldFreeStandingValueSpace.GetValueForIdAndMemberIndex(
   Id: TBoldObjectId; MemberIndex: integer): IBoldValue;
@@ -1571,33 +1963,66 @@ begin
   ObjectContents := GetFSObjectContentsByObjectId(Id);
   if Assigned(ObjectContents) then
      Result := ObjectContents.ValueByIndex[MemberIndex]
+  else
+    result := nil;
+end;
+
+class function TBoldFreeStandingValueSpace.ContentType: TBoldValueContentType;
+begin
+  result := bctValueSpace;
 end;
 
 function TBoldFreeStandingValueSpace.GetEnsuredFSObjectContentsByObjectId(
-  ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents;
+  ObjectId: TBoldObjectId;
+  out aCreated: boolean): TBoldFreeStandingObjectContents;
 var
   LocalId: TBoldObjectId;
 begin
   Result := GetFSObjectContentsByObjectId(ObjectId);
-  if not Assigned(Result) then
+  aCreated := not Assigned(Result);
+  if aCreated then
   begin
     LocalId := IdLIst.IdById[ObjectId];
     if not assigned(LocalId) then
     begin
-      IdList.Add(ObjectId);
-      LocalId :=IdLIst.IdById[ObjectId];
+      LocalId := IdList.AddAndGetID(ObjectId);
     end;
-    Result := TBoldFreeStandingObjectContents.Create;
+    Result := BoldFreeStandingObjectContentsClass.Create;
     Result.fObjectId := LocalId;
     fObjectContentsList.Add(Result);
   end;
 end;
 
-function TBoldFreeStandingObjectContents.GetBoldMemberCount: Integer;
+function TBoldFreeStandingValueSpace.GetEnsuredFSObjectContentsByObjectId(
+  ObjectId: TBoldObjectId): TBoldFreeStandingObjectContents;
+var
+  lCreated: boolean;
 begin
-  Result := fMemberCount;
+  result := GetEnsuredFSObjectContentsByObjectId(ObjectId, lCreated);
 end;
 
+function TBoldFreeStandingValueSpace.IdCount: integer;
+begin
+  result := fIdLIst.Count;
+end;
+
+function TBoldFreeStandingValueSpace.IsEmpty: boolean;
+var
+  i: integer;
+begin
+  for i := 0 to fIdList.Count - 1 do
+    if Assigned(GetObjectContentsByObjectId(fIdList[i])) then
+    begin
+      result := false;
+      exit;
+    end;
+  result := true;
+end;
+
+function TBoldFreeStandingObjectContents.GetBoldMemberCount: Integer;
+begin
+  Result := Length(fMemberList);
+end;
 
 procedure TBFSObjectIdListrefPair.RemoveId(Id: TBoldObjectId);
 var
@@ -1615,13 +2040,14 @@ procedure TBFSObjectIdListref.RemoveId(Id: TBoldObjectId);
 var
   p: integer;
 begin
-  p := fIdList.IndexByID[id];
+  p := fIdList.IndexByID[Id];
   if p <> -1 then
     fIdLIst.RemoveByIndex(p);
 end;
 
 procedure TBFSObjectIdListrefPair.AddIds(Id1, Id2: TBoldObjectId);
 begin
+  EnsureLists;
   fIdList1.Add(Id1);
   fIdLIst2.Add(Id2);
 end;
@@ -1632,18 +2058,6 @@ begin
   fIdList.Add(Id);
 end;
 
-procedure TBFSObjectIdListref.EnsureList;
-begin
-  if not assigned(fIdList) then
-    fIdList := TBoldObjectIdList.Create;
-end;
-
-procedure TBFSObjectIdListrefPair.EnsureLists;
-begin
-  if not assigned(fIdList1) then
-    fIdList1 := TBoldObjectIdList.Create;
-  if not assigned(fIdList2) then
-    fIdList2 := TBoldObjectIdList.Create;
-end;
-
+initialization
 end.
+

@@ -1,18 +1,22 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGUI;
 
 interface
 
 uses
+  // VCL
   Classes,
-  Menus,
-  Forms,
   Controls,
-  BoldSystem,
-  BoldDefs,
-  BoldControlPackDefs,
+  Forms,
+  Menus,
+
+  // Bold
   BoldBase,
+  BoldControlPackDefs,
   BoldElements,
-  BoldControlPack;
+  BoldSystem;
 
 type
   TBoldGUIHandler = class;
@@ -46,7 +50,6 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
   BoldSystemRT;
 
 var
@@ -118,7 +121,6 @@ end;
 
 procedure TBoldGUIHandler.DoPopUp;
 begin
-  // FIXME fill in items in popup menu, etc, etc
 end;
 
 function TBoldGUIHandler.FindHostingForm(Component: TComponent): TForm;
@@ -126,23 +128,28 @@ var
   temp: TComponent;
   Control: TControl;
 begin
-  result := nil;
-  if Component is TControl then
+  if Component is TForm then
+    result := Component as TForm
+  else
   begin
-    Control := Component as TControl;
-    while assigned(Control) and not (Control is TForm) do
-      Control := Control.Parent;
-    if Control is TForm then
-      result := Control as TForm;
-  end;
+    result := nil;
+    if Component is TControl then
+    begin
+      Control := Component as TControl;
+      while assigned(Control) and not (Control is TForm) do
+        Control := Control.Parent;
+      if Control is TForm then
+        result := Control as TForm;
+    end;
 
-  if not assigned(result) then
-  begin
-    temp := Component;
-    while assigned(temp) and not (temp is TForm) do
-      temp := temp.Owner;
-    if temp is TForm then
-      result := temp as TForm;
+    if not assigned(result) then
+    begin
+      temp := Component;
+      while assigned(temp) and not (temp is TForm) do
+        temp := temp.Owner;
+      if temp is TForm then
+        result := temp as TForm;
+    end;
   end;
 end;
 
@@ -160,6 +167,7 @@ begin
 end;
 
 initialization
+
   BoldPopupMenu := TPopupMenu.Create(nil);
   BoldPopupMenu.OnPopup := BoldGUIHandler.DoPopUp;
 

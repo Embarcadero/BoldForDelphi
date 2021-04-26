@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDefaultStreamNames;
 
 interface
@@ -15,22 +18,43 @@ const
   BOLDMEMBERIDLISTNAME = 'BoldMemberIdList';
   BOLDIDTRANSLATIONLISTNAME = 'BoldIDTranslationList';
 
-  BoldContentName_String = 'String';
-  BoldContentName_Integer = 'Integer';
-  BoldContentName_Float = 'Float';
-  BoldContentName_Currency = 'Currency';
-  BoldContentName_Blob = 'Blob';
-  BoldContentName_TypedBlob = 'TypedBlob';
-  BoldContentName_DateTime = 'DateTime';
-  BoldContentName_Date = 'Date';
-  BoldContentName_Time = 'Time';
-  BoldContentName_Boolean = 'Boolean';
+var
+  BoldContentName_String: string;
+  BoldContentName_Integer: string;
+  BoldContentName_Float: string;
+  BoldContentName_Currency: string;
+  BoldContentName_Blob: string;
+  BoldContentName_TypedBlob: string;
+  BoldContentName_DateTime: string;
+  BoldContentName_Date: string;
+  BoldContentName_Time: string;
+  BoldContentName_Boolean: string;
 
-  BoldContentName_ObjectIdRef = 'ObjectIdRef';
-  BoldContentName_ObjectIdRefPair = 'ObjectIdRefPair';
-  BoldContentName_ObjectIdListRef = 'ObjectIdListRef';
-  BoldContentName_ObjectIdListRefPair = 'ObjectIdListRefPair';
+  BoldContentName_ObjectIdRef: string;
+  BoldContentName_ObjectIdRefPair: string;
+  BoldContentName_ObjectIdListRef: string;
+  BoldContentName_ObjectIdListRefPair: string;
 
 implementation
+
+uses
+  BoldSharedStrings,
+  BoldRev;
+
+initialization
+  BoldContentName_ObjectIdRef := BoldSharedStringManager.GetSharedString('ObjectIdRef');
+  BoldContentName_ObjectIdRefPair := BoldSharedStringManager.GetSharedString('ObjectIdRefPair');
+  BoldContentName_ObjectIdListRef := BoldSharedStringManager.GetSharedString('ObjectIdListRef');
+  BoldContentName_ObjectIdListRefPair := BoldSharedStringManager.GetSharedString('ObjectIdListRefPair');
+  BoldContentName_String  := BoldSharedStringManager.GetSharedString('String');
+  BoldContentName_Integer := BoldSharedStringManager.GetSharedString('Integer');
+  BoldContentName_Float := BoldSharedStringManager.GetSharedString('Float');
+  BoldContentName_Currency := BoldSharedStringManager.GetSharedString('Currency');
+  BoldContentName_Blob := BoldSharedStringManager.GetSharedString('Blob');
+  BoldContentName_TypedBlob := BoldSharedStringManager.GetSharedString('TypedBlob');
+  BoldContentName_DateTime := BoldSharedStringManager.GetSharedString('DateTime');
+  BoldContentName_Date := BoldSharedStringManager.GetSharedString('Date');
+  BoldContentName_Time := BoldSharedStringManager.GetSharedString('Time');
+  BoldContentName_Boolean := BoldSharedStringManager.GetSharedString('Boolean');
 
 end.

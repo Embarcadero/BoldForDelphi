@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListHandleFollowerCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -14,8 +17,6 @@ uses
   BoldListListControlPackCom,
   BoldAbstractListHandleCom;
 
-// Note, Currently subscibes to value-identity-change via element of handle, until
-// subscribability has been added to the handle.
 
 type
   { forward declarations }
@@ -45,15 +46,13 @@ type
     property Follower: TBoldFollowerCom read fFollower;
     constructor Create(MatchObject: TObject; Controller: TBoldAbstractListAsFollowerListControllerCom);
     destructor Destroy; override;
-  end;
+  end;                              
 
 implementation
 
 uses
   SysUtils,
   BoldControlPackDefs,
-  BoldRev,
-  BoldUtils,
   BoldDefs;
 
 { TBoldElementHandleFollowerCom }
@@ -84,7 +83,7 @@ end;
 destructor TBoldListHandleFollowerCom.Destroy;
 begin
   FreeAndNil(fFollower);
-  FreeAndNil(fSubscriber);
+  FreeAndNil(fSubscriber);  
   inherited;
 end;
 
@@ -94,7 +93,6 @@ begin
   if (value <> BoldHandle) then
   begin
     fBoldHandle := Value;
-    // will force subscription on Handle
     FollowerValueCurrent := false;
   end;
 end;
@@ -134,8 +132,8 @@ procedure TBoldListHandleFollowerCom.SetFollowerValueCurrent(value: Boolean);
   begin
     if Assigned(BoldHandle) then
     begin
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breListIdentityChanged); // FIXME
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breHandleIndexChanged); // FIXME
+      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breListIdentityChanged);
+      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breHandleIndexChanged);
     end;
   end;
 
@@ -151,7 +149,7 @@ begin
     if Value then
     begin
       PropagateValue;
-      RemoveFromDisplayList;
+      RemoveFromDisplayList(false);
       Subscribe;
     end
     else
@@ -181,4 +179,3 @@ end;
 
 initialization
 end.
-

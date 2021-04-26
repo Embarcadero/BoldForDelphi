@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerAdminCOM;
 
 interface
@@ -10,7 +13,6 @@ uses
 
 const
   CLSID_LOCKMANAGERADMIN : TGuid = '{D06C7BF6-EBC1-4D2E-954F-AEA567C262F7}';
-
 type
   {forward declarations}
   TBoldLockManagerAdminCOM = class;
@@ -49,7 +51,8 @@ uses
   BoldPropagatorServer,
   BoldApartmentThread,
   Classes,
-  windows;
+  windows
+  ;
 
 { TBoldLockManagerAdminCOM }
 
@@ -147,5 +150,7 @@ constructor TBoldLockManagerAdminComFactory.Create(
 begin
   inherited Create(ComServer, TBoldLockManagerAdminCOM, ClassID, ClassName, Description, ciMultiInstance, batSTA);
 end;
+
+initialization
 
 end.

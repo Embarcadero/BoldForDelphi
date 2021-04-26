@@ -1,9 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldReferenceHandleCom;
 
 interface
 
 uses
-  BoldComObjectSpace,
   BoldComObjectSpace_TLB,
   BoldHandlesCom;
 
@@ -35,11 +37,10 @@ implementation
 
 uses
   SysUtils,
-  ComHandlesConst,
-  BoldComHandlesConst,
-  BoldUtils,
+  BoldComObjectSpace,
+  BoldComUtils,
   BoldDefs,
-  BoldComUtils;
+  BoldRev;
 
 {-- TBoldReferenceHandleCom ---------------------------------------------------}
 
@@ -51,14 +52,12 @@ end;
 
 procedure TBoldReferenceHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldReferenceHandleCom
+
 end;
 
 
@@ -81,7 +80,7 @@ begin
   if Value <> StaticValueTypeName then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['StaticValueTypeName']); // do not localize
+      raise EBold.Create('StaticValueTypeName is read-only');
     FStaticValueTypeName := Value;
     LocalValueChanged;
   end;
@@ -92,13 +91,13 @@ begin
   if NewValue <> FValue then
   begin
     if not assigned(EffectiveConnectionHandle) then
-      raise EBold.Createfmt(sSetValueNotAllowedWithoutConnectionHandle, [Classname]);
+      raise EBold.Createfmt('%s.Setvalue: Now allowed without a connectionHandle', [Classname]);
     if not EffectiveConnectionHandle.Connected then
-      raise EBold.Createfmt(sSetValueNotAllowedWithInactiveConnectionHandle, [ClassName]);
+      raise EBold.Createfmt('%s.Setvalue: Now allowed with an inactive ConnectionHandle', [ClassName]);
 
 
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['Value']); // do not localize
+      raise EBold.Create('Value is read-only');
     FValue := NewValue;
     LocalValueChanged;
   end;
@@ -124,9 +123,9 @@ begin
     DummyList,
     DummyListType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
+  FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
   if not OwnsHandleOnServer then
-    FStaticValueTypeName := BoldGetNamedValue(NamedValues, nv_StaticValueTypeName);
+    FStaticValueTypeName := BoldGetNamedValue(NamedValues,'StaticValueTypeName');
 end;
 
 procedure TBoldReferenceHandleCom.ValuesToServer;
@@ -141,16 +140,18 @@ begin
   else
     StaticSystemHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-     nv_StaticValueTypeName],
+    ['StaticSystemHandle',
+    'StaticValueTypeName'],
     [StaticSystemHandleId,
-     FStaticValueTypeName]);
+    FStaticValueTypeName]);
   ServerElementHandle.SetData(DataFlags,FValue,NamedValues);
 end;
 
 function TBoldReferenceHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_ReferenceHandle;
+  result := 'TBoldReferenceHandle';
 end;
+
+initialization
 
 end.

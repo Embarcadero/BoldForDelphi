@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldModelOCLValidatorPlugIn;
 
 interface
@@ -43,7 +46,6 @@ procedure TUMLOCLValidator.Execute(Context: IUMLModelPlugInContext);
 var
   frmValidation: TfrmValidation;
 begin
-  // We delegate to the validation form to invoke the validation via the callback method.
   frmValidation := EnsureValidationForm(context.GetCurrentModelHandle, G_ValidationFormDefaultOwner, nil);
   frmValidation.ValidationProc := TUMLOCLValidatorCallBack.Validate;
   frmValidation.Validate;
@@ -76,6 +78,7 @@ begin
 end;
 
 initialization
+
   _UMLOCLValidator := TUMLOCLValidator.Create(true);
 
 finalization

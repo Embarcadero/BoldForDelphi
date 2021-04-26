@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControlsDefs;
 
 interface
@@ -26,7 +29,7 @@ type
   TBoldComboSelectChangeAction = (bdscSetText, bdcsSetValue, bdcsNone, bdcsSetReference, bdcsSetListIndex);
 
   TBoldEditButtonStyle = (bbsNone, bbsCombo, bbsEllipsis, bbsCustom);
-
+  
 const
   BoldPropertiesController_SupportedPropertyTypes =
     [{tkUnknown,} tkInteger, tkChar, tkEnumeration, tkFloat,
@@ -35,4 +38,8 @@ const
 
 implementation
 
+uses
+  BoldRev;
+
+initialization
 end.

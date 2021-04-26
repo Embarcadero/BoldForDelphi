@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStringControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,14 +8,18 @@ unit BoldStringControlPackCom;
 interface
 
 uses
-  Graphics,
+  // VCL
   Classes,
+  Graphics,
   Windows,
-  BoldDefs,
+
+  // Bold
+  BoldClientElementSupport,
+  BoldComClient,
+  BoldComObjectSpace_TLB,
   BoldContainers,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
   BoldControlPackCom,
-  BoldSubscription;
+  BoldDefs;
 
 type
   {Forward declaration of classes}
@@ -70,7 +77,7 @@ type
     function IsChanged(RendererData: TBoldStringRendererDataCom; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     procedure SetFont(Element: IBoldElement; EffectiveFont, Font: TFont; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
     procedure SetColor(Element: IBoldElement; var EffectiveColor: TColor; Color: TColor; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
-    procedure MakeUptodateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
     procedure MultiMakeUpToDateAndSubscribe(Elements: TBoldClientableListCom; Subscribers: TBoldObjectArray; RendererData: TBoldObjectArray; FollowerController: TBoldFollowerControllerCom);
     procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldStringFollowerControllerCom; Subscriber: TBoldComClientSubscriber); virtual;
   published
@@ -101,7 +108,7 @@ type
     function GetCurrentAsString(Follower: TBoldFollowerCom): string;
     procedure SetAsString(Value: string; Follower: TBoldFollowerCom);
     function ValidateCharacter(C: AnsiChar; Follower: TBoldFollowerCom): Boolean;
-    function ValidateString(Value: string; Follower: TBoldFollowerCom): Boolean;
+    function ValidateString(const Value: string; Follower: TBoldFollowerCom): Boolean;
     procedure SetFont(EffectiveFont, Font: tFont; Follower: TBoldFollowerCom);
     procedure SetColor(var EffectiveColor: tColor; COLOR: tColor; Follower: TBoldFollowerCom);
     procedure MayHaveChanged(NewValue: string; Follower: TBoldFollowerCom);
@@ -116,12 +123,13 @@ implementation
 
 uses
   SysUtils,
+  BoldSubscription,
   BoldControlPackDefs,
   {$IFNDEF BOLDCOMCLIENT}
-  BoldComObjectSpace_TLB, // IFNDEF BOLDCOMCLIENT
+  BoldComObjectSpace_TLB,
   BoldDomainElement,
   {$ELSE}
-  Variants, // IFDEF BOLDCOMCLIENT
+  Variants,
   {$ENDIF}
   BoldRev;
 
@@ -168,7 +176,7 @@ begin
   Result := EffectiveAsStringRenderer.ValidateCharacter(Follower.Element, C, Representation, Expression, VariableList);
 end;
 
-function TBoldStringFollowerControllerCom.ValidateString(Value: string; Follower: TBoldFollowerCom): Boolean;
+function TBoldStringFollowerControllerCom.ValidateString(const Value: string; Follower: TBoldFollowerCom): Boolean;
 begin
   Result := EffectiveAsStringRenderer.ValidateString(Follower.Element, Value, Representation, Expression, VariableList);
 end;
@@ -201,7 +209,7 @@ var
 begin
   if ValidateString(GetCurrentAsString(Follower), Follower) then
   begin
-    ReleaseChangedValue(Follower); // note, must do first, since set can change element
+    ReleaseChangedValue(Follower);
     SetAsString(GetCurrentAsString(Follower), Follower);
   end
   else
@@ -252,7 +260,6 @@ end;
 var
   Left: Integer;
 begin
-  // Adjust for alignment
   case Alignment of
     taLeftJustify: Left := Margins.X + Rect.Left;
     taRightJustify: Left := (Rect.Right - Rect.Left) - Canvas.TextWidth(S) + Rect.Left - 1 - Margins.X;
@@ -278,7 +285,7 @@ end;
 
 procedure TBoldAsStringRendererCom.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldStringFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
 var
-  {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
+  {$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
   {$ELSE}
   E: TBoldIndirectElement;
@@ -298,12 +305,12 @@ begin
   begin
     if Assigned(Element) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
+      {$IFDEF BOLDCOMCLIENT}
       if assigned(Subscriber) then
         e := Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber.ClientId, Subscriber.SubscriberId, False, false)
       else
         e := Element.EvaluateExpression(FollowerController.Expression);
-
+        
       if Assigned(E) then
       begin
         S := E.StringRepresentation[FollowerController.Representation];
@@ -357,7 +364,7 @@ end;
 
 function TBoldAsStringRendererCom.DefaultGetAsStringAndSubscribe(Element: IBoldElement; FollowerController: TBoldStringFollowerControllerCom; Subscriber: TBoldComClientSubscriber): string;
 var
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
   {$ELSE}
   E: TBoldIndirectElement;
@@ -375,7 +382,7 @@ begin
   begin
     if Assigned(Element) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // defaultGet
+      {$IFDEF BOLDCOMCLIENT}
       if assigned(Subscriber) then
         e := Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber.ClientId, Subscriber.SubscriberId, False, false)
       else
@@ -638,4 +645,3 @@ finalization
   FreeAndNil(DefaultAsStringRenderer);
 
 end.
-

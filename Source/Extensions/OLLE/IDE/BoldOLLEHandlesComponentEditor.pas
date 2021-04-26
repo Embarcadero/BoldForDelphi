@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEHandlesComponentEditor;
 
 interface
@@ -19,8 +22,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  OLLEConsts;
+  BoldUtils;
 
 { TBoldOLLEHandleComponentEditor }
 
@@ -36,9 +38,9 @@ end;
 function TBoldOLLEHandleComponentEditor.GetVerb(index: Integer): string;
 begin
   case index of
-  0: result := sGenerateOLLEDB;
+  0: result := 'Generate OLLE database';
   else
-    result := sNonexistingAction;
+    result := 'Nonexisting action';
   end;
 end;
 
@@ -47,5 +49,5 @@ begin
   result := 1;
 end;
 
+initialization
 end.
-

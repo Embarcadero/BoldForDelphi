@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAMethodInfo;
 
 interface
@@ -132,10 +135,10 @@ end;
 function TMethodInfo.MethodTypeAsString: string;
 begin
   case methodType of
-    mtProcedure: Result := 'procedure'; // do not localize
-    mtFunction: Result := 'function'; // do not localize
-    mtConstructor: Result := 'constructor'; // do not localize
-    mtDestructor: Result := 'destructor'; // do not localize
+    mtProcedure: Result := 'procedure';
+    mtFunction: Result := 'function';
+    mtConstructor: Result := 'constructor';
+    mtDestructor: Result := 'destructor';
     else Result := '';
   end;
 end;
@@ -144,17 +147,17 @@ function TMethodInfo.mDirectivesAsString: string;
 begin
   Result := '';
   if mdVirtual in mDirectives then
-    Result := Result + 'virtual; '; // do not localize
+    Result := Result + 'virtual; ';
   if mdAbstract in mDirectives then
-    Result := Result + 'abstract; '; // do not localize
+    Result := Result + 'abstract; ';
   if mdDynamic in mDirectives then
-    Result := Result + 'dynamic; '; // do not localize
+    Result := Result + 'dynamic; ';
   if mdOverride in mDirectives then
-    Result := Result + 'override; '; // do not localize
+    Result := Result + 'override; ';
   if mdOverload in mDirectives then
-    Result := Result + 'overload; '; // do not localize
+    Result := Result + 'overload; ';
   if mdReintroduce in mDirectives then
-    Result := Result + 'reintroduce; '; // do not localize
+    Result := Result + 'reintroduce; ';
 end;
 
 function TMethodInfo.IsOverriden: Boolean;
@@ -164,13 +167,13 @@ end;
 
 class function TMethodInfo.StrToMethodType(str: string): TMethodType;
 begin
-  if  (UpperCase(str) = UpperCase('procedure'))then // do not localize
+  if  (UpperCase(str) = UpperCase('procedure'))then
     Result := mtProcedure
-  else if  (UpperCase(str) = UpperCase('function')) then // do not localize
+  else if  (UpperCase(str) = UpperCase('function')) then
     Result := mtFunction
-  else if  (UpperCase(str) = UpperCase('constructor')) then // do not localize
+  else if  (UpperCase(str) = UpperCase('constructor')) then
     Result := mtConstructor
-  else if (UpperCase(str) = UpperCase('destructor')) then // do not localize
+  else if (UpperCase(str) = UpperCase('destructor')) then
     Result := mtDestructor
   else
     Result := mtNone;
@@ -179,23 +182,23 @@ end;
 class function TMethodInfo.TVisibilityToStr(v: TVisibility): string;
 begin
   case v of
-    stPublic: Result := 'public'; // do not localize
-    stPrivate: Result := 'private'; // do not localize
-    stPublished: Result := 'published'; // do not localize
-    stProtected: Result := 'protected'; // do not localize
+    stPublic: Result := 'public';
+    stPrivate: Result := 'private';
+    stPublished: Result := 'published';
+    stProtected: Result := 'protected';
     else raise Exception.Create('Error: Visiblity of method not specified');
   end;
 end;
 
 class function TMethodInfo.StrToVisibility(v: string): TVisibility;
 begin
-  if (Trim(v) = 'private') then // do not localize
+  if (Trim(v) = 'private') then
     Result := stprivate
-  else if (Trim(v) = 'protected') then // do not localize
+  else if (Trim(v) = 'protected') then
     Result := stprotected
-  else if (Trim(v) = 'public') then // do not localize
+  else if (Trim(v) = 'public') then
     Result := stpublic
-  else if (Trim(v) = 'published') then // do not localize
+  else if (Trim(v) = 'published') then
     Result := stpublished
   else raise Exception.Create('TVisibility: Error converting string');
 end;
@@ -287,5 +290,5 @@ end;
 initialization
 
 finalization
-  FreeAndNil(G_VirtualMethods);
+  FreeAndNil(G_VirtualMethods);  
 end.

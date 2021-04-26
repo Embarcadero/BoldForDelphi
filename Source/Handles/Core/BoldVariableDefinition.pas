@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldVariableDefinition;
 
 interface
@@ -16,5 +19,10 @@ type
 
 
 implementation
+
+uses
+  BoldRev;
+
+initialization
 
 end.

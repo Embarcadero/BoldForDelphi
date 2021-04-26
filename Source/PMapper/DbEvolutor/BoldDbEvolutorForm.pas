@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDbEvolutorForm;
 
 interface
@@ -31,16 +34,17 @@ type
     tsWarnings: TTabSheet;
     mmoWarnings: TMemo;
     ImageList1: TImageList;
-    Button1: TButton;
-    SaveDialog1: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
+    fSQLScript: TStringList;
+    fMappingInfoScript: TStringList;
     fWarnings: TStringList;
     fSessionName: String;
+    procedure SqlScriptChange(Sender: TObject);
+    procedure MappingInfoScriptChange(Sender: TObject);
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -58,12 +62,13 @@ type
     function GetWarnings: TStrings;
     procedure UpdateWarningCount(Sender: TObject);
   public
-    constructor Create(Owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(Owner: TComponent); override;
+    destructor destroy; override;
     class procedure EvolveDB(PersistenceHandle: TBoldAbstractPersistenceHandleDB; GenerateGenericScript: Boolean);
     property SQLScript: TStrings read GetSQLScript;
     property MappingInfoScript: TStrings read GetMappingInfoScript;
     property Warnings: TStrings read GetWarnings;
+
     { Public declarations }
   end;
 
@@ -73,7 +78,6 @@ uses
   SysUtils,
   BoldUtils,
   BoldDbEvolutor,
-  BoldPMConsts,
   BoldGuard;
 
 {$R *.DFM}
@@ -82,12 +86,11 @@ uses
 
 procedure TfrmBoldDbEvolutor.Clear;
 begin
-//  mmoActions.lines.Clear;
 end;
 
 procedure TfrmBoldDbEvolutor.EndLog;
 begin
-  Log(format(sDone, [formatDateTime('c', now), fSessionName])); // do not localize
+  Log(format('%s: Done %s', [formatDateTime('c', now), fSessionName]));
 end;
 
 procedure TfrmBoldDbEvolutor.Hide;
@@ -115,7 +118,6 @@ end;
 
 procedure TfrmBoldDbEvolutor.SetLogHeader(const Value: string);
 begin
-  // intentionally left empty
 end;
 
 procedure TfrmBoldDbEvolutor.SetProgressMax(const Value: integer);
@@ -129,9 +131,19 @@ begin
   inherited Show;
 end;
 
+procedure TfrmBoldDbEvolutor.SqlScriptChange(Sender: TObject);
+begin
+  mmoSQLScript.Lines.Assign(Sender as TStrings);
+end;
+
+procedure TfrmBoldDbEvolutor.MappingInfoScriptChange(Sender: TObject);
+begin
+  mmoMappingInfoScript.Lines.Assign(Sender as TStrings);
+end;
+
 procedure TfrmBoldDbEvolutor.StartLog(const SessionName: String);
 begin
-  Log(format(sStarting, [formatDateTime('c', now), sessionName])); // do not localize
+  Log(format('%s: Starting %s', [formatDateTime('c', now), sessionName]));
   fSessionName := SessionName;
   Show;
 end;
@@ -143,6 +155,10 @@ begin
   GetInterface(IBoldLogReceiver, LogReceiver);
   BoldLog.RegisterLogReceiver(LogReceiver);
   PageControl1.ActivePage := tsActions;
+  fSQLScript := TStringList.Create;
+  fMappingInfoScript := TStringList.Create;
+  fSQLScript.OnChange := SqlScriptChange;
+  fMappingInfoScript.OnChange := MappingInfoScriptChange;
 end;
 
 procedure TfrmBoldDbEvolutor.FormDestroy(Sender: TObject);
@@ -151,6 +167,8 @@ var
 begin
   GetInterface(IBoldLogReceiver, LogReceiver);
   BoldLog.UnRegisterLogReceiver(LogReceiver);
+  FreeAndNil(fSQLScript);
+  FreeAndNil(fMappingInfoScript);
 end;
 
 procedure TfrmBoldDbEvolutor.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -160,12 +178,12 @@ end;
 
 function TfrmBoldDbEvolutor.GetMappingInfoScript: TStrings;
 begin
-  result := mmoMappingInfoScript.Lines;
+  result := fMappingInfoScript; //mmoMappingInfoScript.Lines;
 end;
 
 function TfrmBoldDbEvolutor.GetSQLScript: TStrings;
 begin
-  result := mmoSQLScript.Lines;
+  result := fSQLScript; //mmoSQLScript.Lines;
 end;
 
 function TfrmBoldDbEvolutor.GetWarnings: TStrings;
@@ -183,7 +201,7 @@ end;
 destructor TfrmBoldDbEvolutor.destroy;
 begin
   FreeAndNil(fWarnings);
-  inherited;
+  inherited;            
 end;
 
 procedure TfrmBoldDbEvolutor.UpdateWarningCount(Sender: TObject);
@@ -192,12 +210,11 @@ begin
   mmoWarnings.lines.Clear;
   mmoWarnings.lines.AddStrings(fWarnings);
   mmoWarnings.Lines.EndUpdate;
-  tsWarnings.Caption := format(sWarnings, [fWarnings.Count]);
+  tsWarnings.Caption := format('Warnings (%d)', [fWarnings.Count]);
 end;
 
 procedure TfrmBoldDbEvolutor.ProcessInterruption;
 begin
-  // intentionally left blank
 end;
 
 procedure TfrmBoldDbEvolutor.Sync;
@@ -219,7 +236,7 @@ begin
   EvolutorForm := TfrmBoldDbEvolutor.Create(nil);
   EvolutorForm.Show;
   try
-    BoldLog.StartLog(sDetectingChanges);
+    BoldLog.StartLog('Detecting changes');
     Evolutor.GenericScript := GenerateGenericScript;
     try
       Evolutor.CalculateScript;
@@ -230,7 +247,7 @@ begin
     except
       on e: Exception do
       begin
-        showMessage(Format(sFailedToDetectChanges, [e.message]));
+        showMessage('Failed to detect changes: ' + e.message);
         exit;
       end;
     end;
@@ -238,31 +255,35 @@ begin
     BoldLog.EndLog;
     if EvolutorForm.SQLScript.Count = 0 then
     begin
-      ShowMessage(sNoUpdateNeeded);
+      ShowMessage('No update needed!');
       EvolutorForm.Close;
       EvolutorForm := nil;
     end
     else
     begin
-      ShowMessage(Format(sInspectChanges, [BOLDCRLF, BOLDCRLF]));
+      ShowMessage(
+        'Please inspect the planned actions and decide if you want to execute them' + BOLDCRLF +
+        BOLDCRLF +
+        'Make sure you back up your critical data before upgrading the database!!!');
       EvolutorForm.Hide;
       ModalResult := EvolutorForm.ShowModal;
       EvolutorForm := nil;
       if ModalResult = mrOK then
       begin
         try
-          BoldLog.StartLog(sUpdateDatabase);
+          BoldLog.StartLog('Update database');
           Evolutor.ExecuteScript;
           BoldLog.EndLog;
-          ShowMessage(sUpdateSuccessful);
+          ShowMessage('Database successfully updated');
         except
           on e: Exception do
           begin
-            showMessage(Format(sEvolveFailed, [e.Message, BOLDCRLF, BOLDCRLF]));
+            showMessage('Failed to Evolve database: ' + e.message + BOLDCRLF + BOLDCRLF +
+                        'See LogWindow for executed statements');
 
             ExecutedStatements := TStringList.Create;
             BoldLog.Separator;
-            BoldLog.Log(sExecutedStatements);
+            BoldLog.Log('The following statements were executed before evolution failed: ');
             BoldLog.Separator;
             Evolutor.GenerateExecutedStatements(ExecutedStatements);
             for i := 0 to ExecutedStatements.Count - 1 do
@@ -279,14 +300,5 @@ begin
   end;
 end;
 
-procedure TfrmBoldDbEvolutor.Button1Click(Sender: TObject);
-begin
-  SaveDialog1.FileName := 'EvolutionScript.sql';
-  if SaveDialog1.Execute then
-    mmoSQLScript.Lines.SaveToFile(SaveDialog1.FileName);
-  SaveDialog1.FileName := 'MappingInfoScript.sql';
-  if SaveDialog1.Execute then
-    mmoMappingInfoScript.Lines.SaveToFile(SaveDialog1.FileName);
-end;
-
+initialization
 end.

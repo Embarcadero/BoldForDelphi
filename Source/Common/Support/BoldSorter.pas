@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSorter;
 
 interface
@@ -10,6 +13,9 @@ type
 procedure BoldSort(FirstIndex, LastIndex: Integer; Compare:TBoldSortCompare ; Exchange : TBoldSortExchange);
 
 implementation
+
+uses
+  BoldRev;
 
 procedure BoldSort(FirstIndex, LastIndex: Integer; Compare:TBoldSortCompare ; Exchange : TBoldSortExchange);
 var
@@ -38,4 +44,7 @@ begin
   until I >= LastIndex;
 end;
 
+
+
+initialization
 end.

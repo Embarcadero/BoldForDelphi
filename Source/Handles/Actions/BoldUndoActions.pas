@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUndoActions;
 
 interface
@@ -35,13 +38,14 @@ type
     procedure ExecuteTarget(Target: TObject); override;
   end;
 
+
 implementation
 
 uses
-  HandlesConst,
   BoldSystem,
   ActnList,
   BoldUndoInterfaces;
+
 
 { TBoldSetCheckPointAction }
 
@@ -56,7 +60,7 @@ end;
 constructor TBoldSetCheckPointAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sSetCheckPoint;
+  Caption := 'Set check point';
 end;
 
 procedure TBoldSetCheckPointAction.ExecuteTarget(Target: TObject);
@@ -80,7 +84,7 @@ end;
 constructor TBoldUndoAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sUndo;
+  Caption := 'Undo';
 end;
 
 procedure TBoldUndoAction.ExecuteTarget(Target: TObject);
@@ -102,7 +106,7 @@ end;
 constructor TBoldRedoAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sRedo;
+  Caption := 'Redo';
 end;
 
 procedure TBoldRedoAction.ExecuteTarget(Target: TObject);
@@ -110,5 +114,7 @@ begin
   inherited;
   BoldSystemHandle.System.UndoHandlerInterface.RedoLatest;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSQLMappingInfo;
 
 interface
@@ -24,19 +27,25 @@ type
 
   TBoldMemberMappingInfo = class(TBoldClassMappingInfo)
   private
+    FColumnIndex: Boolean;
     fMemberName: String;
     fTableName: string;
     fColumns: string;
     fMapperName: string;
     function GetColumnByIndex(Index: integer): string;
+    function GetColumnCount: integer;
   public
-    constructor create(const ClassExpressionName, MemberName, TableName, Columns, MapperName: string);
+    constructor create(const ClassExpressionName, MemberName, TableName, Columns,
+        MapperName: string; const ColumnIndex: Boolean);
     function CompareMapping(Mapping: TBoldMemberMappingInfo): Boolean;
+    function CompareType(Mapping: TBoldMemberMappingInfo): Boolean;
     property MemberName: String read fMemberName;
     property TableName: string read fTableName;
     property MapperName: string read fMapperName;
     property Columns: string read fColumns;
     property ColumnByIndex[Index: integer]: string read GetColumnByIndex;
+    property ColumnIndex: Boolean read FColumnIndex;
+    property ColumnCount: integer read GetColumnCount;
   end;
 
   TBoldDbTypeMappingInfo = class(TBoldClassMappingInfo)
@@ -75,7 +84,7 @@ type
   TBoldMemberMappingList = class(TBoldIndexableList)
   private
     function GetMappingsByExpressionNames(const ClassExpressionName, MemberName: string): TBoldMemberMappingArray;
-    function GetItems(index: integer): TBoldMemberMappingInfo;
+    function GetItems(index: integer): TBoldMemberMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create;
     procedure FillFromList(SourceList: TBoldMemberMappingList);
@@ -88,27 +97,27 @@ type
     function GetMappingsForClassName(const ClassExpressionName: string): TBoldClassMappingArray;
   public
     constructor Create;
-    procedure AddMapping(Mapping: TBoldClassMappingInfo);
+    procedure AddMapping(Mapping: TBoldClassMappingInfo); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     property MappingsForClassName[const ClassExpressionName: string]: TBoldClassMappingArray read GetMappingsForClassName;
   end;
 
   TBoldAllInstancesMappingList = class(TBoldClassMappingList)
   private
-    function GetItems(index: integer): TBoldAllInstancesMappingInfo;
+    function GetItems(index: integer): TBoldAllInstancesMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     property items[index: integer]: TBoldAllInstancesMappingInfo read GetItems; default;
   end;
 
   TBoldObjectStorageMappingList = class(TBoldClassMappingList)
   private
-    function GetItems(index: integer): TBoldObjectStorageMappingInfo;
+    function GetItems(index: integer): TBoldObjectStorageMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     property items[index: integer]: TBoldObjectStorageMappingInfo read GetItems; default;
   end;
 
   TBoldDbTypeMappingList = class(TBoldClassMappingList)
   private
-    function GetItems(index: integer): TBoldDbTypeMappingInfo;
+    function GetItems(index: integer): TBoldDbTypeMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     property items[index: integer]: TBoldDbTypeMappingInfo read GetItems; default;
   end;
@@ -129,6 +138,7 @@ type
     fAllInstancesMapping: TBoldAllInstancesMappingList;
     fObjectStorageMapping: TBoldObjectStorageMappingList;
     fDbTypeMapping: TBoldDbTypeMappingList;
+    FCurrentDatabase: IBoldDataBase;
     property MemberMappingInfo[index: integer]: TBoldMemberMappingInfo read GetMemberMappingInfo;
     property AllInstancesMappingInfo[index: integer]: TBoldAllInstancesMappingInfo read GetAllInstancesMappingInfo;
     property ObjectStorageMappingInfo[index: integer]: TBoldObjectStorageMappingInfo read GetObjectStorageMappingInfo;
@@ -140,9 +150,11 @@ type
     destructor Destroy; override;
     procedure ReadDataFromDB(DataBase: IBoldDataBase; ReadDbTypeFromDB, ReadMappingFromDB: Boolean); virtual; abstract;
     procedure WriteDataToDB(DataBase: IBoldDataBase);
-    procedure ScriptForWriteData(Script: TStrings; Separator: string = ''; ClearFirst: Boolean = true; terminator: string = ''); virtual; abstract;
+    procedure ScriptForWriteData(DataBase: IBoldDataBase; Script: TStrings; ClearFirst: Boolean;
+        Separator: String; Terminator: String); virtual; abstract;
     function CloneWithoutDbType: TBoldSQLMappingInfo;
-    procedure AddMemberMapping(const ClassExpressionName, MemberName, TableName, ColumnNames, MapperName: String);
+    procedure AddMemberMapping(const ClassExpressionName, MemberName, TableName,
+        ColumnNames, MapperName: String; const ColumnIndex: Boolean);
     procedure AddAllInstancesMapping(const ClassExpressionName, TableName: String; ClassIdRequired: Boolean);
     procedure AddObjectStorageMapping(const ClassExpressionName, TableName: String);
     Procedure AddTypeIdMapping(const ClassExpressionName: String; DbType: TBoldDbType);
@@ -165,27 +177,52 @@ implementation
 uses
   BoldIndex,
   BoldLogHandler,
+  StrUtils,
   SysUtils,
   BoldUtils,
-  BoldPMConsts,
-  BoldHashIndexes;
+  BoldHashIndexes,
+  BoldPMapperLists,
+  Boldrev;
 
 type
+
   TBoldClassMappingIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   end;
 
   TBoldMemberMappingIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
-    function KeyStringForExpressionNames(const ClassExpressionName, MemberName: string): string;
+    function ItemASKeyString(Item: TObject): string; override;
+    function KeyStringForExpressionNames(const ClassExpressionName, MemberName: string): string;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure FindAllByExpressionNames(const ClassExpressionName, MemberName: string; aList: TList);
   end;
 
 var
   IX_ClassExpressionNameIndex: integer = -1;
   IX_ClassAndMemberExpressionNameIndex: integer = -1;
+
+{ TBoldAllInstancesMappingList }
+
+function TBoldAllInstancesMappingList.GetItems(index: integer): TBoldAllInstancesMappingInfo;
+begin
+  result := (inherited items[index]) as TBoldAllInstancesMappingInfo;
+end;
+
+{ TBoldObjectStorageMappingList }
+
+function TBoldObjectStorageMappingList.GetItems(index: integer): TBoldObjectStorageMappingInfo;
+begin
+  result := (inherited items[index]) as TBoldObjectStorageMappingInfo;
+end;
+
+{ TBoldDbTypeMappingList }
+
+function TBoldDbTypeMappingList.GetItems(index: integer): TBoldDbTypeMappingInfo;
+begin
+  result := (inherited items[index]) as TBoldDbTypeMappingInfo;
+end;
+
 { TBoldDBMappingInfo }
 
 procedure TBoldSQLMappingInfo.AddAllInstancesMapping(const ClassExpressionName, TableName: String; ClassIdRequired: Boolean);
@@ -203,7 +240,9 @@ begin
   fAllInstancesMapping.Add(TBoldAllInstancesMappingInfo.Create(ClassExpressionName, TableName, ClassIdRequired));
 end;
 
-procedure TBoldSQLMappingInfo.AddMemberMapping(const ClassExpressionName, MemberName, TableName, ColumnNames, MapperName: String);
+procedure TBoldSQLMappingInfo.AddMemberMapping(const ClassExpressionName,
+    MemberName, TableName, ColumnNames, MapperName: String; const ColumnIndex:
+    Boolean);
 var
   OldMappings: TBoldMemberMappingArray;
   i: integer;
@@ -215,7 +254,8 @@ begin
     begin
       exit;
     end;
-  fMemberMapping.Add(TBoldMemberMappingInfo.Create(ClassExpressionName, MemberName, TableName, ColumnNames, MapperName));
+  fMemberMapping.Add(TBoldMemberMappingInfo.Create(ClassExpressionName,
+      MemberName, TableName, ColumnNames, MapperName, ColumnIndex));
 end;
 
 procedure TBoldSQLMappingInfo.AddObjectStorageMapping(const ClassExpressionName, TableName: String);
@@ -303,18 +343,44 @@ end;
 
 function TBoldMemberMappingInfo.CompareMapping(Mapping: TBoldMemberMappingInfo): Boolean;
 begin
-  result :=
-    SameText(TableName, Mapping.TableName) and
-    SameText(Columns, Mapping.Columns);
+  Result := (SameText(TableName, Mapping.TableName) and SameText(Columns, Mapping.Columns)) and CompareType(Mapping);
 end;
 
-constructor TBoldMemberMappingInfo.create(const ClassExpressionName, MemberName, TableName, Columns, MapperName: string);
+function TBoldMemberMappingInfo.CompareType(
+  Mapping: TBoldMemberMappingInfo): Boolean;
+const
+  CompatibleDateTypes: array [0..2] of string = ('TBoldPMDateTime', 'TBoldPMDate', 'TBoldPMTime');
+  CompatibleStringTypes: array [0..1] of string = ('TBoldPMString', 'TBoldPMAnsiString');
+begin
+  Result := (MapperName = Mapping.MapperName);
+  if not Result then begin
+    // This is hardcoded case that should consider Date and DateTime as compatible.
+    // The generic way to do this properly would be to compare the actual ColumnTypes that are specified in TBoldSQLDataBaseConfig
+    // But the sql config is hard to reach from here...
+    Result := ((AnsiIndexText(MapperName, CompatibleDateTypes) <> -1) and
+               (AnsiIndexText(Mapping.MapperName, CompatibleDateTypes) <> -1));
+  end;
+  if not Result then begin
+    // Same for String/AnsiString
+    Result := ((AnsiIndexText(MapperName, CompatibleStringTypes) <> -1) and
+               (AnsiIndexText(Mapping.MapperName, CompatibleStringTypes) <> -1));
+  end;
+  if not Result then
+// If new mapper inherits from old mapper we assume they are compatible
+    Result := BoldMemberPersistenceMappers.DescriptorByDelphiName[MapperName].MemberPersistenceMapperClass.InheritsFrom(
+      BoldMemberPersistenceMappers.DescriptorByDelphiName[Mapping.MapperName].MemberPersistenceMapperClass);
+end;
+
+constructor TBoldMemberMappingInfo.create(const ClassExpressionName,
+    MemberName, TableName, Columns, MapperName: string; const ColumnIndex:
+    Boolean);
 begin
   inherited create(ClassExpressionName);
   fMemberName := MemberName;
   fTableName := TableName;
   fColumns := Columns;
   fMapperName := MapperName;
+  FColumnIndex := ColumnIndex;
 end;
 
 function TBoldMemberMappingInfo.GetColumnByIndex(Index: integer): string;
@@ -325,6 +391,19 @@ begin
   try
     s.CommaText := Columns;
     result := s[index];
+  finally
+    s.free;
+  end;
+end;
+
+function TBoldMemberMappingInfo.GetColumnCount: integer;
+var
+  s: TStringList;
+begin
+  s := TStringList.Create;
+  try
+    s.CommaText := Columns;
+    result := s.Count;
   finally
     s.free;
   end;
@@ -410,7 +489,8 @@ begin
       SourceList[i].MemberName,
       SourceList[i].TableName,
       SourceList[i].Columns,
-      Sourcelist[i].MapperName));
+      Sourcelist[i].MapperName,
+      SourceList[i].ColumnIndex));
 end;
 
 function TBoldMemberMappingList.GetItems(index: integer): TBoldMemberMappingInfo;
@@ -489,7 +569,7 @@ begin
     raise EBoldInternal.CreateFmt('%s.AddTypeIdMapping: ClassExpressionName is empty (dbtype: %d)', [ClassName, dbType]);
   OldMapping := GetDbTypeMapping(ClassExpressionName);
   if (OldMapping <> -1) and (OldMapping <> dbtype) then
-    raise EBold.CreateFmt(sMultipleDBTypes, [classname, ClassExpressionName, dbtype, oldMapping]);
+    raise EBold.CreateFmt('%s.AddTypeIdMapping: The class %s has multiple db types (%d and %d)', [classname, ClassExpressionName, dbtype, oldMapping]);
   if OldMapping = -1 then
   begin
     fDbTypeMapping.AddMapping(TBoldDbTypeMappingInfo.create(ClassExpressionName, DbType));
@@ -515,27 +595,6 @@ begin
 end;
 
 
-{ TBoldAllInstancesMappingList }
-
-function TBoldAllInstancesMappingList.GetItems(index: integer): TBoldAllInstancesMappingInfo;
-begin
-  result := (inherited items[index]) as TBoldAllInstancesMappingInfo;
-end;
-
-{ TBoldObjectStorageMappingList }
-
-function TBoldObjectStorageMappingList.GetItems(index: integer): TBoldObjectStorageMappingInfo;
-begin
-  result := (inherited items[index]) as TBoldObjectStorageMappingInfo;
-end;
-
-{ TBoldDbTypeMappingList }
-
-function TBoldDbTypeMappingList.GetItems(index: integer): TBoldDbTypeMappingInfo;
-begin
-  result := (inherited items[index]) as TBoldDbTypeMappingInfo;
-end;
-
 procedure TBoldSQLMappingInfo.WriteDataToDB(DataBase: IBoldDataBase);
 var
   i: integer;
@@ -544,22 +603,38 @@ var
 begin
   if BoldLog.ProcessInterruption then
     exit;
-
-  BoldLog.Log(sLogWritingMappingToDB);
-  Script := TStringList.create;
-  q := DataBase.GetExecQuery;
+  BoldLog.Log('Writing mapping information to database');
+  if not Database.Connected then
+    Database.Open;
+  Database.StartTransaction;
   try
-    ScriptForWriteData(Script);
-    BoldLog.ProgressMax := Script.Count;
-    for i := 0 to Script.Count-1 do
-    begin
-      q.AssignSQLText(Script[i]);
-      q.ExecSQL;
-      BoldLog.Progress := i;
+    q := DataBase.GetExecQuery;
+    Script := TStringList.create;
+    try
+      q.ParamCheck := false;
+      ScriptForWriteData(DataBase, Script, True, '', '');
+      BoldLog.ProgressMax := Script.Count;
+      q.StartSQLBatch;
+      try
+        for i := 0 to Script.Count-1 do
+        begin
+          q.AssignSQLText(Script[i]);
+          q.ExecSQL;
+          BoldLog.Progress := i;
+        end;
+        q.EndSQLBatch;
+      except
+        q.FailSQLBatch;
+        raise;
+      end;
+    finally
+      Script.Free;
+      DataBase.ReleaseExecQuery(q);
     end;
   finally
-    Script.Free;
-    DataBase.ReleaseExecQuery(q);
+    BoldLog.Separator;
+    BoldLog.Log('Committing changes to mapping information');
+    Database.Commit;
   end;
 end;
 
@@ -574,7 +649,8 @@ begin
       MemberMappingInfo[i].MemberName,
       MemberMappingInfo[i].TableName,
       MemberMappingInfo[i].Columns,
-      MemberMappingInfo[i].MapperName);
+      MemberMappingInfo[i].MapperName,
+      MemberMappingInfo[i].ColumnIndex);
 
   for i := 0 to fAllInstancesMapping.Count-1 do
     result.AddAllInstancesMapping(AllInstancesMappingInfo[i].ClassExpressionName, AllInstancesMappingInfo[i].TableName, AllInstancesMappingInfo[i].ClassIdRequired);
@@ -583,4 +659,5 @@ begin
     result.AddObjectStorageMapping(ObjectStorageMappingInfo[i].ClassExpressionName, ObjectStorageMappingInfo[i].TableName);
 end;
 
+initialization
 end.

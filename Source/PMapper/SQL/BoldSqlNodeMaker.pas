@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSqlNodeMaker;
 
 interface
@@ -43,7 +46,8 @@ implementation
 
 uses
   Classes,
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldSqlNodeMaker }
 
@@ -59,20 +63,18 @@ destructor TBoldSqlNodeMaker.destroy;
 var
   i: integer;
 begin
-  // simply let go of all the OLWVarBindings, they will be owned by the condition.
   for i := fOLWVarBindings.Count-1 downto 0 do
     fOLWVarBindings[i] := nil;
   FreeAndNil(fOLWVarBindings);
 
   for i := fSQLVarBindings.Count-1 downto 0 do
   begin
-    // external variables should be freed, internal should just be removed, they will be freed by the rootnode.
     if TBoldSqlVariableBinding(fSQLVarBindings[i]).IsExternal then
       TBoldSqlVariableBinding(fSQLVarBindings[i]).Free;
     fSQLVarBindings[i] := nil;
   end;
   FreeAndNil(fSqlVarbindings);
-
+  
   FreeAndNil(fRootNode);
   inherited;
 end;
@@ -85,7 +87,7 @@ var
 begin
   result := nil;
   for i := 0 to fOLWVarBindings.Count-1 do
-    if (fOLWVarBindings[i] as TBoldOLWVariableBinding).variablename = VarBinding.VariableName then
+    if CompareText((fOLWVarBindings[i] as TBoldOLWVariableBinding).variablename, VarBinding.VariableName) = 0 then
     begin
       result := TBoldSQLVariableBinding(fSqlVarBindings[i]);
       break;
@@ -95,7 +97,7 @@ end;
 
 procedure TBoldSqlNodeMaker.VisitTBoldOLWEnumLiteral(N: TBoldOLWEnumLiteral);
 begin
-  fRootNode := TBoldSqlEnumLiteral.create(n.Position, n.name);
+  fRootNode := TBoldSqlEnumLiteral.create(n.Position, n.Intvalue, n.name);
 end;
 
 procedure TBoldSqlNodeMaker.VisitTBoldOLWIntLiteral(N: TBoldOLWIntLiteral);
@@ -126,7 +128,6 @@ end;
 
 procedure TBoldSqlNodeMaker.VisitTBoldOLWLiteral(N: TBoldOLWLiteral);
 begin
-  // Abstract class
 end;
 
 procedure TBoldSqlNodeMaker.VisitTBoldOLWMember(N: TBoldOLWMember);
@@ -151,7 +152,6 @@ end;
 
 procedure TBoldSqlNodeMaker.VisitTBoldOLWNode(N: TBoldOLWNode);
 begin
-  // abstract class
 end;
 
 procedure TBoldSqlNodeMaker.VisitTBoldOLWFloatLiteral(N: TBoldOLWFloatLiteral);
@@ -196,7 +196,7 @@ var
 begin
   varBind := nil;
   for i := 0 to SQLVarBindings.Count-1 do
-    if ((SQLVarBindings[i] as TBoldSqlVariableBinding).VariableName = n.variableName) then
+    if CompareText((SQLVarBindings[i] as TBoldSqlVariableBinding).VariableName, n.variableName) = 0 then
       VarBind := SQLVarBindings[i] as TBoldSqlVariableBinding;
 
   if not assigned(VarBind) then
@@ -260,4 +260,5 @@ begin
   fRootNode := TBoldSqlTimeLiteral.Create(n.Position, n.TimeValue);
 end;
 
+initialization
 end.

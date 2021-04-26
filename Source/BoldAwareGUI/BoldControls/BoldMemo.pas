@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMemo;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -11,12 +14,13 @@ uses
   Controls,
   StdCtrls,
   Menus,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldHandles,
   BoldElements,
   BoldControlPack,
   BoldStringControlPack,
-  BoldElementHandleFollower;
+  BoldElementHandleFollower,
+  BoldDefs;
 
 type
   TBoldCustomMemo = class;
@@ -36,8 +40,8 @@ type
     fMyReadOnly: Boolean;
     fMaxLength: integer;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
 
     procedure _FontChanged(sender: TObject);
@@ -151,8 +155,7 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
-  BoldDefs,
+  BoldUtils,
   BoldControlPackDefs;
 
 {---TBoldCustomMemo---}
@@ -290,7 +293,7 @@ end;
 
 procedure TBoldCustomMemo.SetEffectiveColor(v: TColor);
 begin
-  if (EffectiveColor <> v) and not ParentColor then
+  if EffectiveColor <> v then
     inherited Color := v;
 end;
 
@@ -300,7 +303,7 @@ begin
     if not EffectiveReadOnly then
       inherited Text := value
     else
-      raise Exception.CreateFmt(sTextNotModifiable, [ClassName]);
+      raise Exception.CreateFmt('%s.Text: Not modifiable', [ClassName]);
 end;
 
 function TBoldCustomMemo.GetText: string;
@@ -318,13 +321,13 @@ end;
 procedure TBoldCustomMemo.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
-  if (Key in [#32..#255]) and
+  if CharInSet(Key, [#32..#255]) and
     not BoldProperties.ValidateCharacter(Key, Follower) then
   begin
     MessageBeep(0);
     Key := BOLDNULL;
   end;
-
+  
   if Key = BOLDESC then
   begin
     Follower.DiscardChange;
@@ -363,12 +366,9 @@ begin
   inherited ReadOnly := FMyReadOnly or
     not BoldProperties.MayModify(Follower);
   BoldProperties.SetFont(EffectiveFont, Font, Follower);
-  if not ParentColor then
-  begin
-    ec := EffectiveColor;
-    BoldProperties.SetColor(ec, Color, Follower);
-    EffectiveColor := ec;
-  end;
+  ec := EffectiveColor;
+  BoldProperties.SetColor(ec, Color, Follower);
+  EffectiveColor := ec;
   EffectiveMaxLength := 0;
   RendererDataMaxLength := (Follower.RendererData as TBoldStringRendererData).MaxStringLength;
 
@@ -390,7 +390,7 @@ end;
 procedure TBoldCustomMemo.CMExit(var Message: TCMExit);
 begin
   if (Follower.Controller.ApplyPolicy = bapExit) then
-    Follower.Apply;
+    Follower.Apply; 
   SetFocused(False);
   DoExit;
 end;
@@ -413,14 +413,14 @@ begin
     Result := nil;
 end;
 
-function TBoldCustomMemo.GetExpression: String;
+function TBoldCustomMemo.GetExpression: TBoldExpression;
 begin
   result := BoldProperties.Expression;
 end;
 
-procedure TBoldCustomMemo.SetExpression(Expression: String);
+procedure TBoldCustomMemo.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldCustomMemo.GetVariableList: TBoldExternalVariableList;
@@ -428,5 +428,6 @@ begin
   result := BoldProperties.VariableList;
 end;
 
-end.
+initialization
 
+end.

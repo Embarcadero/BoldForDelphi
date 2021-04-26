@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSOAPPersistenceControllerStub;
 
 interface
@@ -32,7 +35,7 @@ implementation
 uses
   sysutils,
   BoldComUtils,
-  BoldComConst;
+  BoldRev;
 
 { TBoldSOAPPersistenceControllerAdapter }
 
@@ -44,7 +47,7 @@ begin
   fAdapterCore := TBoldPersistenceControllerSOAPAdapterCore.Create(Model);
 
   if Failed(LoadRegTypeLib(LIBID_BoldSOAP, BoldSOAPMajorVersion, BoldSOAPMinorVersion, 0, aTypeLibrary)) then
-    raise EBoldCom.CreateFmt(sUnableToLoadTypeLibBoldSoap, [classname]);
+    raise EBoldCom.CreateFmt('%s.Create: Cannot load type library', [classname]);
   inherited Create(Adaptee, Owner, aTypeLibrary, IBoldSOAPService);
 end;
 
@@ -64,5 +67,7 @@ function TBoldSOAPPersistenceControllerAdapter.GetPersistenceController: TBoldPe
 begin
   result := Adaptee as TBoldPersistenceController;
 end;
+
+initialization
 
 end.

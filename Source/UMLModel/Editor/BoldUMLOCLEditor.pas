@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLOCLEditor;
 
 interface
@@ -28,9 +31,8 @@ implementation
 
 uses
   SysUtils,
-  Controls,  // mr_OK
-  BoldDefs,
-  BoldRev,
+  Controls,
+  BoldDefs,  
   BoldTypeNameDictionary;
 
 var

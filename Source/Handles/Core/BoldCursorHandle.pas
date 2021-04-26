@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCursorHandle;
 
 interface
@@ -17,11 +20,10 @@ type
   TBoldCursorHandle = class(TBoldAbstractListHandle)
   private
     fAutoFirst: Boolean;
-    fListElement: TBoldIndirectElement;
+    fListElement: TBoldIndirectElement;    
     fCurrentIndex: Integer;
     fListSubscriber: TBoldPassThroughSubscriber;
     procedure SetAutoFirst(Value: Boolean);
-//    function GetListSubscriber: TBoldPassThroughSubscriber;
     procedure _ReceiveFromList(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
   protected
     procedure DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber); override;
@@ -30,7 +32,7 @@ type
     function GetList: TBoldList; override;
     procedure SetCurrentIndex(NewIndex: Integer); override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
-//    property ListSubscriber: TBoldPassThroughSubscriber read GetListSubscriber;
+    property ListElement: TBoldIndirectElement read fListElement;
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
@@ -42,7 +44,6 @@ implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldDefs,
   BoldSystemRT;
 
@@ -51,7 +52,7 @@ uses
 constructor TBoldCursorhandle.Create(Owner: TComponent);
 begin
   inherited;
-  fListElement := TBOldIndirectElement.Create;
+  fListElement := TBoldIndirectElement.Create;
   fListSubscriber := TBoldPassThroughSubscriber.Create(_ReceiveFromList);
   fCurrentIndex := -1;
   AutoFirst := True;
@@ -66,6 +67,8 @@ var
   TheList: TBoldList;
   NewValue: TBoldElement;
 begin
+  if csDestroying in ComponentState then
+    raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
   fListSubscriber.CancelAllSubscriptions;
 
   if EffectiveRootValue = nil then
@@ -80,7 +83,7 @@ begin
   if Assigned(TheList) then
   begin
     ListCount := TheList.Count;
-    IndexOfOldCurrent := TheList.IndexOf(ResultElement.Value) // Don't ensure current!
+    IndexOfOldCurrent := TheList.IndexOf(ResultElement.Value)
   end
   else
   begin
@@ -190,8 +193,8 @@ procedure TBoldCursorhandle.SetCurrentIndex(NewIndex: Integer);
 var
   NewValue: TBoldElement;
 begin
-  if (NewIndex < -1) or (NewIndex >= Count) then // -1 accepted as "no current element"
-    raise EBold.CreateFmt(sIndexOutOfBounds, [ClassName, Count-1, NewIndex]);
+  if (NewIndex < -1) or (NewIndex >= Count) then
+    raise EBold.CreateFmt('%s.SetCurrentIndex: Index out of bounds. Valid range from -1 to %d. Attempted to set %d', [ClassName, Count-1, NewIndex]);
   if (NewIndex = -1) then
     NewValue := nil
   else
@@ -202,8 +205,10 @@ begin
     fCurrentIndex := NewIndex;
     ResultElement.SetReferenceValue(NewValue);
     SubscribeToValue;
-    ValueIdentityChanged;   // changing index is an identitychange
+    ValueIdentityChanged;
   end;
 end;
+
+initialization
 
 end.

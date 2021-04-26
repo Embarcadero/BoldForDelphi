@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldBDEInterfaces;
 
 interface
@@ -24,16 +27,25 @@ type
     function GetQuery: TQuery;
     procedure AssignParams(SourceParams: TParams);
     function GetParamCount: integer;
-    function GetParams(i: integer): IBoldParameter;
+    function GetParams: TParams;    
+    function GetParam(i: integer): IBoldParameter;
     function GetRequestLiveQuery: Boolean;
     function ParamByName(const Value: string): IBoldParameter;
     procedure SetRequestLiveQuery(NewValue: Boolean);
     function GetSQLText: String;
+    function GetSQLStrings: TStrings;    
     procedure AssignSQL(SQL: TStrings);
-    procedure AssignSQLText(SQL: String);
+    procedure AssignSQLText(const SQL: String);
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);    
     function GetRowsAffected: integer;
     function GetRecordCount: integer;
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
+    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
+    function GetUseReadTransactions: boolean;
+    procedure SetUseReadTransactions(value: boolean);
+    procedure BeginExecuteQuery;
+    procedure EndExecuteQuery;
+    function GetBatchQueryParamCount: integer;    
   protected
     function GetDataSet: TDataSet; override;
     procedure StartSQLBatch; virtual;
@@ -56,7 +68,7 @@ type
     procedure DeleteTable;
     function GetTable: TTable;
     function GetIndexDefs: TIndexDefs;
-    procedure SetTableName(NewName: String);
+    procedure SetTableName(const NewName: String);
     function GetTableName: String;
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
@@ -74,6 +86,7 @@ type
     fDataBase: TDataBase;
     fCachedTable: TTable;
     fCachedQuery: TQuery;
+    fExecuteQueryCount: integer;
     function GetConnected: Boolean;
     function GetInTransaction: Boolean;
     function GetIsSQLBased: Boolean;
@@ -86,17 +99,22 @@ type
     procedure RollBack;
     procedure Open;
     procedure Close;
+    procedure Reconnect;
     function GetTable: IBoldTable;
     procedure ReleaseTable(var Table: IBoldTable);
     function SupportsTableCreation: Boolean;
     procedure ReleaseCachedObjects;
+    function GetIsExecutingQuery: Boolean;
+    procedure BeginExecuteQuery;
+    procedure EndExecuteQuery;
   protected
     procedure AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetQuery: IBoldQuery; override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
   public
-    constructor Create(DataBase: TDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor Destroy; override;
+    constructor create(DataBase: TDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor destroy; override;
+    procedure CreateDatabase;    
   end;
 
 var
@@ -107,8 +125,7 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  BoldUtils,
-  BDEConsts;
+  BoldUtils;
 
 { TBoldBDEQuery }
 
@@ -127,12 +144,22 @@ begin
   result := fQuery;
 end;
 
+function TBoldBDEQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
+end;
+
 function TBoldBDEQuery.GetParamCount: integer;
 begin
   result := Query.params.count;
 end;
 
-function TBoldBDEQuery.GetParams(I: integer): IBoldParameter;
+function TBoldBDEQuery.GetParams: TParams;
+begin
+  result := Query.Params;
+end;
+
+function TBoldBDEQuery.GetParam(I: integer): IBoldParameter;
 begin
   result := TBoldDbParameter.Create(Query.Params[i], self);
 end;
@@ -153,9 +180,24 @@ begin
     result := nil;
 end;
 
+procedure TBoldBDEQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
+
 procedure TBoldBDEQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
   Query.RequestLive := NewValue;
+end;
+
+procedure TBoldBDEQuery.SetUseReadTransactions(value: boolean);
+begin
+
+end;
+
+function TBoldBDEQuery.GetBatchQueryParamCount: integer;
+begin
+  result := 0
 end;
 
 function TBoldBDEQuery.GetDataSet: TDataSet;
@@ -165,60 +207,72 @@ end;
 
 procedure TBoldBDEQuery.ExecSQL;
 begin
+  BeginExecuteQuery;
+  try
   BoldLogSQL(Query.SQL);
   try
     Query.ExecSQL;
   except
     on e: Exception do
     begin
-      e.Message := Format(sSQLFailure, [e.Message, BOLDCRLF, Query.SQL.text]);
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end
+  finally
+    EndExecuteQuery;
+  end;
 end;
 
 constructor TBoldBDEQuery.Create(Query: TQuery; DatabaseWrapper: TBoldDatabaseWrapper);
 begin
   inherited Create(DatabaseWrapper);
   fQuery := Query;
+  SetParamCheck(true);  
+end;
+
+procedure TBoldBDEQuery.EndExecuteQuery;
+begin
+  (DatabaseWrapper as TBoldBDEDataBase).EndExecuteQuery;
 end;
 
 procedure TBoldBDEQuery.EndSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldBDEQuery.StartSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldBDEQuery.FailSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldBDEQuery.Open;
 begin
+  BeginExecuteQuery;
+  try
   BoldLogSQL(Query.SQL);
   try
     inherited;
   except
     on e: Exception do
     begin
-      e.Message := Format(sSQLFailure, [e.Message, BOLDCRLF, Query.SQL.text]);
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end
+  finally
+    EndExecuteQuery;
+  end;
 end;
 
 procedure TBoldBDEQuery.AssignSQL(SQL: TStrings);
 begin
-  // Assign already calls BeginUpdate and EndUpdate before and after doing the actual assign
   Query.SQL.Assign(SQL);
 end;
 
-procedure TBoldBDEQuery.AssignSQLText(SQL: String);
+procedure TBoldBDEQuery.AssignSQLText(const SQL: String);
 begin
   Query.SQL.BeginUpdate;
   Query.SQL.Clear;
@@ -226,9 +280,24 @@ begin
   Query.SQL.EndUpdate;
 end;
 
+procedure TBoldBDEQuery.BeginExecuteQuery;
+begin
+  (DatabaseWrapper as TBoldBDEDataBase).EndExecuteQuery;
+end;
+
+function TBoldBDEQuery.GetSQLStrings: TStrings;
+begin
+  result := Query.SQL;
+end;
+
 function TBoldBDEQuery.GetSQLText: String;
 begin
   result := Query.SQL.text;
+end;
+
+function TBoldBDEQuery.GetUseReadTransactions: boolean;
+begin
+  result := false;
 end;
 
 function TBoldBDEQuery.GetRowsAffected: integer;
@@ -312,7 +381,7 @@ begin
   Table.Exclusive := NewValue;
 end;
 
-procedure TBoldBDETable.SetTableName(NewName: String);
+procedure TBoldBDETable.SetTableName(const NewName: String);
 begin
   Table.TableName := NewName;
 end;
@@ -329,6 +398,11 @@ end;
 function TBoldBDEDataBase.GetInTransaction: Boolean;
 begin
   result := fDataBase.InTransaction;
+end;
+
+function TBoldBDEDataBase.GetIsExecutingQuery: Boolean;
+begin
+  Result := fExecuteQueryCount > 0;
 end;
 
 function TBoldBDEDataBase.GetIsSQLBased: Boolean;
@@ -362,6 +436,11 @@ begin
   fDataBase := DataBase;
 end;
 
+procedure TBoldBDEDataBase.CreateDatabase;
+begin
+  Assert(false, 'Not implemented.');
+end;
+
 function TBoldBDEDataBase.GetConnected: Boolean;
 begin
   result := fDataBase.Connected;
@@ -387,12 +466,22 @@ begin
   fDataBase.Open;
 end;
 
+procedure TBoldBDEDataBase.BeginExecuteQuery;
+begin
+  inc(fExecuteQueryCount);
+end;
+
+procedure TBoldBDEDataBase.EndExecuteQuery;
+begin
+  dec(fExecuteQueryCount);
+end;
+
 procedure TBoldBDEDataBase.Close;
 begin
   fDataBase.Close;
 end;
 
-destructor TBoldBDEDataBase.Destroy;
+destructor TBoldBDEDataBase.destroy;
 begin
   inherited;
   fDatabase := nil;
@@ -478,13 +567,19 @@ begin
   result := true;
 end;
 
+procedure TBoldBDEDataBase.Reconnect;
+begin
+  if Assigned(FDataBase) then begin
+    FDataBase.Connected := False;
+    FDataBase.Connected := True;
+  end;
+end;
+
 procedure TBoldBDEDataBase.ReleaseCachedObjects;
 begin
   FreeAndNil(fCachedTable);
   FreeAndNil(fCachedQuery);
 end;
 
+initialization
 end.
-
-
-

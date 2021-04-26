@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEHandles;
 
 interface
@@ -35,6 +38,8 @@ type
   published
     property ApplicationPersistenceHandle: TBoldAbstractPersistenceHandleDB read fAppPHandle write fAppPHandle;
   end;
+
+
 
 implementation
 
@@ -99,4 +104,6 @@ begin
   GetOLLEController.Persistent := Value;
 end;
 
+
+initialization
 end.

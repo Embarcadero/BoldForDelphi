@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComPersistenceHandleReg;
 
 interface
@@ -5,8 +8,6 @@ interface
 procedure Register;
 
 implementation
-
-{$R BoldComPersistenceHandleReg.Res}
 
 uses
   Classes,
@@ -22,7 +23,7 @@ begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE,[
     TBoldSOAPClientPersistenceHandle,
     TBoldSOAPServerPersistenceHandle]);
-  RegisterPropertyEditor(TypeInfo(String), TBoldSOAPClientPersistenceHandle, 'Objectname', TBoldObjectNameProperty); // do not localize
+  RegisterPropertyEditor(TypeInfo(String), TBoldSOAPClientPersistenceHandle, 'Objectname', TBoldObjectNameProperty);
 end;
 
 end.

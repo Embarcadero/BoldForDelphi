@@ -1,10 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHandlesCom;
 
 interface
 
 uses
   Classes,
-  BoldDefs,
   BoldSubscription,
   BoldComObjectSpace,
   BoldComObjectSpace_TLB,
@@ -35,7 +37,6 @@ type
       OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SetServerElementHandle(const ElementHandle: IBoldElementHandle);
   protected
-    // server values
     FDynamicBoldType: IBoldElementTypeInfo;
     FHandleId: Integer;
     FStaticBoldType: IBoldElementTypeInfo;
@@ -74,7 +75,6 @@ type
     function GetSystemActive: Boolean;
     procedure SetIsDefault(Value: Boolean);
   protected
-    // server values
     FBoldSystem: IBoldSystem;
     FSystemActive: Boolean;
     function GetOwnsHandleOnServer: Boolean; override;
@@ -109,8 +109,6 @@ implementation
 
 uses
   SysUtils,
-  ComHandlesConst,
-  BoldUtils,
   BoldComUtils;
 
 const
@@ -119,6 +117,7 @@ const
 
 var
   G_DefaultBoldSystemHandle: TBoldAbstractSystemHandleCom = nil;
+
 
 {-- TBoldElementHandleCom -----------------------------------------------------}
 
@@ -200,7 +199,7 @@ begin
       DummyList,
       DummyType,
       NamedValues);
-    FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
+    FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
   end;
   Result := FHandleId;
 end;
@@ -377,4 +376,5 @@ begin
   end;
 end;
 
+initialization
 end.

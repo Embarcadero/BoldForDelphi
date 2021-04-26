@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHandles;
 
 interface
@@ -9,7 +12,8 @@ uses
   BoldSubscription,
   BoldElements,
   BoldSystem,
-  BoldSystemRT;
+  BoldSystemRT,
+  BoldComponentValidator; // maybe move IBoldValidateableComponent here instead ?
 
 type
   { forward declaration of classes }
@@ -18,26 +22,38 @@ type
   TBoldSystemTypeInfoHandle = class;
   TBoldNonSystemHandle = class;
 
+  TBoldElementHandleClass = class of TBoldElementHandle;
+  TBoldNonSystemHandleClass = class of TBoldNonSystemHandle;
+
   {---TBoldElementHandle---}
-  TBoldElementHandle = class(TBoldSubscribableComponent)
+  TBoldElementHandle = class(TBoldSubscribableComponent, IBoldValidateableComponent)
   private
     fStrictType: Boolean;
     function GetDynamicBoldType: TBoldElementTypeInfo;
     function GetBoldType: TBoldElementTypeInfo;
+    function GetValueAsString: String;
+    function GetValueAsVariant: variant;
   protected
     function GetValue: TBoldElement; virtual; abstract;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; virtual; abstract;
     function GetStaticBoldType: TBoldElementTypeInfo; virtual; abstract;
     procedure StaticBoldTypeChanged; virtual;
+    function GetCanSetValue: boolean; virtual;
+    procedure SetValue(NewValue: TBoldElement); virtual;
   public
     destructor Destroy; override;
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; virtual;
+    { IBoldValidateableComponent}
+    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean; virtual;
     property StaticSystemTypeInfo: TBoldSystemTypeInfo read GetStaticSystemTypeInfo;
     property BoldType: TBoldElementTypeInfo read GetBoldType;
     property DynamicBoldType: TBoldElementTypeInfo read GetDynamicBoldType;
     property StaticBoldType: TBoldElementTypeInfo read GetStaticBoldType;
     property Value: TBoldElement read GetValue;
     property StrictType: Boolean read fStrictType write fStrictType;
+    property AsString: String read GetValueAsString;
+    property AsVariant: Variant read GetValueAsVariant;
+    property CanSetValue: boolean read GetCanSetValue;
   end;
 
   { TBoldSystemTypeInfoHandle }
@@ -54,6 +70,7 @@ type
     procedure SetBoldModel(Value: TBoldAbstractModel);
     procedure ModelChanged;
     function GetRegionDefinitions: TBoldRegionDefinitions;
+    function GetIsSystemTypeInfoAvailable: boolean;
   protected
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
@@ -64,6 +81,7 @@ type
     procedure InstallOclDefinitionLookUp(const Value: TBoldLookUpOclDefinition);
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; override;
     property RegionDefinitions: TBoldRegionDefinitions read GetRegionDefinitions;
+    property IsSystemTypeInfoAvailable: boolean read GetIsSystemTypeInfoAvailable;
   published
     property BoldModel: TBoldAbstractModel read fBoldModel write SetBoldModel;
     property UseGeneratedCode: Boolean read fUseGeneratedCode write fUseGeneratedCode default True;
@@ -78,8 +96,7 @@ type
     fSystemTypeInfoHandle: TBoldSystemTypeInfoHandle;
     procedure SetSystemTypeInfoHandle(Value: TBoldSystemTypeInfoHandle);
     procedure _Recieve(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    procedure setIsDefault(Value: Boolean);
-    function GetIsDefault: Boolean;
+    procedure SetIsDefault(Value: Boolean);
   protected
     function GetActive: Boolean; virtual; abstract;
     procedure SetActive(Value: Boolean); virtual; abstract;
@@ -96,8 +113,9 @@ type
     property SystemTypeInfoHandle: TBoldSystemTypeInfoHandle read fSystemTypeInfoHandle write SetSystemTypeInfoHandle;
     class function DefaultBoldSystemTypeInfo: TBoldSystemTypeInfo;
     class function DefaultBoldSystemHandle: TBoldAbstractSystemHandle;
+    class function FindSystemHandleForSystem(ABoldSystem: TBoldSystem): TBoldAbstractSystemHandle;
   published
-    property IsDefault: Boolean read GetIsDefault write setIsDefault nodefault; {Always save}
+    property IsDefault: Boolean read fIsDefault write SetIsDefault nodefault; {Always save}
   end;
 
   { TBoldNonSystemHandle }
@@ -106,23 +124,31 @@ type
     fStaticSystemHandle: TBoldAbstractSystemHandle;
     fStaticSystemHandleSubscriber: TBoldPassthroughSubscriber;
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetBoldSystem: TBoldSystem;
   protected
+    function GetStaticSystemHandle: TBoldAbstractSystemHandle; virtual;
     procedure SetStaticSystemHandle(Value: TBoldAbstractSystemHandle); virtual;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
+    procedure DoAssign(Source: TPersistent); virtual;
+    function IsStaticSystemHandleStored: boolean; virtual;
   public
     constructor Create(Owner: TComponent); override;
+    procedure AfterConstruction; override;
     destructor Destroy; override;
+    procedure Assign(Source: TPersistent); override;
+    property BoldSystem: TBoldSystem read GetBoldSystem;
  published
-    property StaticSystemHandle: TBoldAbstractSystemHandle read fStaticSystemHandle write SetStaticSystemHandle;
+    property StaticSystemHandle: TBoldAbstractSystemHandle read GetStaticSystemHandle write SetStaticSystemHandle stored IsStaticSystemHandleStored;
   end;
 
 implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldDefs,
-  BoldregionDefinitionParser;
+  BoldregionDefinitionParser,
+  BoldContainers,
+  Variants;
 
 const
   breModelDestroyed = 42;
@@ -132,6 +158,7 @@ const
 
 var
   G_DefaultBoldSystemHandle: TBoldAbstractSystemHandle = nil;
+  G_BoldSystemHandleList: TBoldObjectArray;
 
 {---TBoldElementHandle---}
 
@@ -144,8 +171,13 @@ end;
 function TBoldElementHandle.GetBoldType: TBoldElementTypeInfo;
 begin
   Result := DynamicBoldType;
-  if not Assigned(DynamicBoldType) then
+  if not Assigned(Result) then
     Result := StaticBoldType;
+end;
+
+function TBoldElementHandle.GetCanSetValue: boolean;
+begin
+  result := false;
 end;
 
 function TBoldElementHandle.GetDynamicBoldType: TBoldElementTypeInfo;
@@ -156,9 +188,30 @@ begin
     Result := nil;
 end;
 
+function TBoldElementHandle.GetValueAsString: String;
+begin
+  if Assigned(Value) then
+    result := Value.AsString
+  else
+    result := '';
+end;
+
+function TBoldElementHandle.GetValueAsVariant: variant;
+begin
+  if Assigned(Value) then
+    result := Value.AsVariant
+  else
+    result := null;
+end;
+
 function TBoldElementHandle.RefersToComponent(Component: TBoldSubscribableComponent): Boolean;
 begin
   result := false;
+end;
+
+procedure TBoldElementHandle.SetValue(NewValue: TBoldElement);
+begin
+  raise EBold.CreateFmt('%s: SetValue Not supported', [ClassName]);
 end;
 
 procedure TBoldElementHandle.StaticBoldTypeChanged;
@@ -166,13 +219,22 @@ begin
   SendEvent(self, beValueIdentityChanged);
 end;
 
+function TBoldElementHandle.ValidateComponent(
+  ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
+var
+  vBoldOCLComponent: IBoldOCLComponent;
+begin
+  result := Assigned(BoldType);
+  if result and Supports(self, IBoldOCLComponent, vBoldOCLComponent) then
+    result := ComponentValidator.ValidateOCLComponent(vBoldOCLComponent, NamePrefix+Name);
+end;
+
 { TBoldNonSystemHandle }
 
 procedure TBoldNonSystemHandle._Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  Assert(Originator=StaticSystemHandle);
-  Assert(RequestedEvent in [breFreeHandle, breValueIdentityChanged]);
+  Assert(RequestedEvent in [breFreeHandle, breValueIdentityChanged], IntToStr(OriginalEvent) + ',' + IntToStr(RequestedEvent));
   case RequestedEvent of
     breFreeHandle: StaticSystemHandle := nil;
     breValueIdentityChanged: StaticBoldTypeChanged;
@@ -185,12 +247,40 @@ begin
   begin
     fStaticSystemHandleSubscriber.CancelAllSubscriptions;
     fStaticSystemHandle := Value;
-    if Assigned(StaticSystemHandle) then
+    if Assigned(fStaticSystemHandle) then
     begin
-      StaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beDestroying], breFreeHandle);
-      StaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beValueIDentityChanged], breValueIdentityChanged);
+      fStaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beDestroying], breFreeHandle);
+      fStaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beValueIDentityChanged], breValueIdentityChanged);
     end;
     StaticBoldTypeChanged;
+  end;
+end;
+
+function TBoldNonSystemHandle.GetBoldSystem: TBoldSystem;
+begin
+  if Assigned(fStaticSystemHandle) then
+    result := fStaticSystemHandle.System
+  else
+    result := nil;
+end;
+
+function TBoldNonSystemHandle.GetStaticSystemHandle: TBoldAbstractSystemHandle;
+begin
+  if Assigned(fStaticSystemHandle) then
+    result := fStaticSystemHandle
+  else
+  begin
+    result := nil;
+{    if BoldSystemCount = 1 then
+    begin
+      result := TBoldAbstractSystemHandle.DefaultBoldSystemHandle;
+      if Assigned(result) and (fStaticSystemHandleSubscriber.SubscriptionCount = 0) then
+      begin
+        result.AddSmallSubscription(fStaticSystemHandleSubscriber, [beDestroying], breFreeHandle);
+        result.AddSmallSubscription(fStaticSystemHandleSubscriber, [beValueIDentityChanged], breValueIdentityChanged);
+      end;
+    end;
+}    
   end;
 end;
 
@@ -198,10 +288,37 @@ function TBoldNonSystemHandle.GetStaticSystemTypeInfo: TBoldSystemTypeInfo;
 begin
   if Assigned(StaticSystemHandle) then
     Result := StaticSystemHandle.StaticSystemTypeInfo
-  else if TBoldAbstractSystemHandle.DefaultBoldSystemHandle <> nil then
-    Result := TBoldAbstractSystemHandle.DefaultBoldSystemTypeInfo
   else
-    Result := nil;
+    Result := TBoldAbstractSystemHandle.DefaultBoldSystemTypeInfo
+end;
+
+function TBoldNonSystemHandle.IsStaticSystemHandleStored: boolean;
+begin
+  result := Assigned(fStaticSystemHandle);
+end;
+
+procedure TBoldNonSystemHandle.AfterConstruction;
+begin
+  inherited;
+  if Assigned(G_DefaultBoldSystemHandle) and not (csLoading in ComponentState) and (csDesigning in ComponentState) then
+  {connect to default system at design time}
+    StaticSystemHandle := G_DefaultBoldSystemHandle;
+end;
+
+procedure TBoldNonSystemHandle.Assign(Source: TPersistent);
+begin
+  if Source is TBoldNonSystemHandle then
+    DoAssign(Source)
+  else
+    inherited Assign(Source);
+end;
+
+procedure TBoldNonSystemHandle.DoAssign(Source: TPersistent);
+begin
+  if (Source is TBoldNonSystemHandle) then
+  begin
+    StaticSystemHandle := TBoldNonSystemHandle(Source).StaticSystemHandle;
+  end
 end;
 
 constructor TBoldNonSystemHandle.Create(Owner: TComponent);
@@ -225,6 +342,7 @@ begin
   fSystemTypeInfoHandleSubscriber := TBoldPassThroughSubscriber.Create(_Recieve);
   if not Assigned(G_DefaultBoldSystemHandle) and (csdesigning in ComponentState) then  {only make first default at design time}
     IsDefault := True;
+  G_BoldSystemHandleList.Add(self);
 end;
 
 class function TBoldAbstractSystemHandle.DefaultBoldSystemHandle: TBoldAbstractSystemHandle;
@@ -243,6 +361,7 @@ end;
 destructor TBoldAbstractSystemHandle.Destroy;
 begin
   FreePublisher;
+  G_BoldSystemHandleList.Remove(self);
   if G_DefaultBoldSystemHandle = self then
     G_DefaultBoldSystemHandle := nil;
   IsDefault := False;
@@ -250,9 +369,17 @@ begin
   inherited;
 end;
 
-function TBoldAbstractSystemHandle.GetIsDefault: Boolean;
+class function TBoldAbstractSystemHandle.FindSystemHandleForSystem(ABoldSystem: TBoldSystem): TBoldAbstractSystemHandle;
+var
+  i: integer;
 begin
-  result := fIsDefault;
+  for I := 0 to G_BoldSystemHandleList.Count - 1 do
+  begin
+    result := TBoldAbstractSystemHandle(G_BoldSystemHandleList[i]);
+    if ABoldSystem = result.System then
+      exit;
+  end;
+  result := nil;
 end;
 
 function TBoldAbstractSystemHandle.GetStaticBoldType: TBoldElementTypeInfo;
@@ -275,17 +402,18 @@ begin
     result := Component = SystemTypeInfoHandle;
 end;
 
-procedure TBoldAbstractSystemHandle.setIsDefault(Value: Boolean);
+procedure TBoldAbstractSystemHandle.SetIsDefault(Value: Boolean);
 begin
   if (Value <> IsDefault) then
   begin
     fIsDefault := Value;
     if Value then
       G_DefaultBoldSystemHandle := Self
-    else if Isdefault then
+    else
+    if G_DefaultBoldSystemHandle = Self then
       G_DefaultBoldSystemHandle := nil;
     if Active then
-      System.IsDefault := Value;
+      System.IsDefault := G_DefaultBoldSystemHandle = Self;
   end;
 end;
 
@@ -294,7 +422,7 @@ begin
   if Value <> fSystemTypeInfoHandle then
   begin
     if Active then
-      raise EBold.CreateFmt(sNotAllowedOnActiveHandle, [Name]);
+      raise EBold.CreateFmt('%s: Not allowed to change the systemTypeInfoHandle on an active system', [Name]);
     fSystemTypeInfoHandleSubscriber.CancelAllSubscriptions;
     if Assigned(Value) then
     begin
@@ -336,7 +464,7 @@ end;
 
 function TBoldSystemTypeInfoHandle.GetStaticBoldType: TBoldElementTypeInfo;
 begin
-  result := GetStaticSystemTypeInfo;
+  result := GetStaticSystemTypeInfo; 
 end;
 
 function TBoldSystemTypeInfoHandle.GetStaticSystemTypeInfo: TBoldSystemTypeInfo;
@@ -358,10 +486,16 @@ begin
 end;
 
 procedure TBoldSystemTypeInfoHandle.ModelChanged;
+var
+  WasActive: boolean;
 begin
+  WasActive := Assigned(fSystemTypeInfo);
+  if WasActive then
+    SendEvent(self, beValueIdentityChanged);
   FreeAndNil(fSystemTypeInfo);
   FreeAndNil(fRegionDefinitions);
-  SendEvent(self, beValueIdentityChanged);  // type change regarded as idenitychange
+  if not WasActive then
+    SendEvent(self, beValueIdentityChanged);
 end;
 
 procedure TBoldSystemTypeInfoHandle.SetBoldModel(Value: TBoldAbstractModel);
@@ -387,7 +521,7 @@ begin
   fModelSubscriber := TBoldPassThroughSubscriber.Create(_Recieve);
 end;
 
-destructor TBoldSystemTypeInfoHandle.Destroy;
+destructor TBoldSystemTypeInfoHandle.destroy;
 begin
   FreePublisher;
   FreeAndNil(fModelSubscriber);
@@ -415,6 +549,11 @@ begin
     result := Component = BoldModel;
 end;
 
+function TBoldSystemTypeInfoHandle.GetIsSystemTypeInfoAvailable: boolean;
+begin
+  result := Assigned(fSystemTypeInfo);
+end;
+
 function TBoldSystemTypeInfoHandle.GetRegionDefinitions: TBoldRegionDefinitions;
 var
   Parser: TBoldRegionParser;
@@ -436,5 +575,11 @@ begin
   end;
   result := fRegionDefinitions;
 end;
+
+initialization
+  G_BoldSystemHandleList := TBoldObjectArray.Create(10, []);
+
+finalization
+  FreeAndNil(G_BoldSystemHandleList);
 
 end.

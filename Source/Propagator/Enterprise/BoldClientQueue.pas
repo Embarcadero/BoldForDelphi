@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientQueue;
 
 interface
@@ -24,7 +27,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 { TBoldClientQueue }
 
@@ -34,7 +38,7 @@ var
 begin
   Lock;
   try
-    if UnsafeIsEmpty then // already in lock
+    if UnsafeIsEmpty then
       Result := UnAssigned
     else
     begin
@@ -46,5 +50,7 @@ begin
     Unlock;
   end;
 end;
+
+initialization
 
 end.

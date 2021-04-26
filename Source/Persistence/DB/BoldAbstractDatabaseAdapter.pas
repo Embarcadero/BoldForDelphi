@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractDatabaseAdapter;
 
 interface
@@ -6,7 +9,8 @@ uses
   Classes,
   BoldDBInterfaces,
   BoldSQLDatabaseConfig,
-  BoldSubscription;
+  BoldSubscription,
+  BoldIndexCollection;
 
 const
   beDatabaseAdapterChanged = 100;
@@ -19,9 +23,11 @@ type
   TBoldAbstractDatabaseAdapter = class(TBoldSubscribableComponent)
   private
     FSQLDatabaseConfig: TBoldSQLDatabaseConfig;
+    fCustomIndexes: TBoldIndexCollection;
     fDatabaseEngine: TBoldDataBaseEngine;
     fInternalDatabase: TComponent;
     procedure SetSQLDatabaseConfig(const Value: TBoldSQLDatabaseConfig);
+    procedure SetCustomIndexes(const Value: TBoldIndexCollection);
     procedure SetInternalDatabase(const Value: TComponent);
   protected
     procedure ReleaseBoldDatabase; virtual; abstract;
@@ -32,17 +38,20 @@ type
     property InternalDatabase: TComponent read fInternalDatabase write SetInternalDatabase;
     function GetDataBaseInterface: IBoldDatabase; virtual; abstract;
   public
-    constructor Create(aOwner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(aOwner: TComponent); override;
+    destructor destroy; override;
+    procedure CreateDatabase; virtual; abstract;
     property DatabaseInterface: IBoldDatabase read GetDatabaseInterface;
   published
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read FSQLDatabaseConfig write SetSQLDatabaseConfig;
+    property CustomIndexes: TBoldIndexCollection read fCustomIndexes write SetCustomIndexes;
   end;
 
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldAbstractDatabaseAdapter }
 
@@ -55,11 +64,13 @@ constructor TBoldAbstractDatabaseAdapter.create(aOwner: TComponent);
 begin
   inherited;
   fSQLDatabaseConfig := TBoldSQLDatabaseConfig.Create;
+  fCustomIndexes := TBoldIndexCollection.Create(Self);
 end;
 
 destructor TBoldAbstractDatabaseAdapter.destroy;
 begin
   FreeAndNil(fSQLDatabaseConfig);
+  FreeAndNil(fCustomIndexes);
   inherited;
 end;
 
@@ -87,6 +98,12 @@ begin
   end;
 end;
 
+procedure TBoldAbstractDatabaseAdapter.SetCustomIndexes(
+  const Value: TBoldIndexCollection);
+begin
+  fCustomIndexes.Assign(value);
+end;
+
 procedure TBoldAbstractDatabaseAdapter.SetDataBaseEngine(const Value: TBoldDataBaseEngine);
 begin
   if value <> fDatabaseEngine then
@@ -103,4 +120,6 @@ begin
   FSQLDatabaseConfig.AssignConfig(value);
 end;
 
+initialization
+  
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDragDropTarget;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -7,7 +10,7 @@ uses
   Classes,
   Controls,
   ExtCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldElements,
   {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
@@ -15,7 +18,8 @@ uses
   BoldControlpack,
   BoldElementHandleFollower,
   BoldReferenceHandle,
-  BoldNodeControlPack;
+  BoldNodeControlPack,
+  BoldDefs;
 
 type
   TBoldDropTarget = class(TImage, IBoldOclComponent)
@@ -42,16 +46,16 @@ type
     function GetContextType: TBoldElementTypeInfo;
     procedure SetEmptyImageIndex(const Value: integer);
     function GetElement: TBoldElement;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
   protected
     property DraggedObject: TBoldObject read GetDraggedObject;
     property Element: TBoldElement read GetElement;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
     procedure DoStartDrag(var DragObject: TDragObject); override;
     procedure DoEndDrag(Target:TObject; X, Y: Integer); override;
     procedure MouseDown(BUTTON: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -68,14 +72,14 @@ type
   end;
 
 implementation
-
 uses
   Graphics,
   SysUtils,
+  BoldAttributes,
   {$IFNDEF BOLDCOMCLIENT}
   BoldGui,
   {$ENDIF}
-  BoldAttributes;
+  BoldRev;
 
 { TBoldDropTarget }
 
@@ -111,11 +115,11 @@ begin
   FRepresentations.OnGetContextType := GetContextType;
   fHandleFollower := TBoldElementHandleFollower.create(Owner, Representations);
   FRepresentations.AfterMakeUptoDate := AfterMakeUptoDate;
-  FNodeSelectionExpression := 'oclType.asstring->union(oclType.allsupertypes.asString)->union(''<Default>'')'; // do not localize
+  FNodeSelectionExpression := 'oclType.asstring->union(oclType.allsupertypes.asString)->union(''<Default>'')';
   AfterMakeUptoDate(fHandleFollower.Follower);
 end;
 
-destructor TBoldDropTarget.Destroy;
+destructor TBoldDropTarget.destroy;
 begin
   FreeAndNil(FHandleFollower);
   FreeAndNil(FRepresentations);
@@ -151,12 +155,9 @@ end;
 procedure TBoldDropTarget.DragOver(Source: TObject; X, Y: Integer;
   State: TDragState; var Accept: Boolean);
 begin
-  // First set the hard accept value
   Accept := IsDropTarget and CanAcceptDraggedObject;
-  // Then, if we accept, invoke user code
   if Accept and Assigned(OnDragOver) then
     OnDragOver(Self, Source, X, Y, State, Accept);
-  //  Make sure we only accept if hard conditions are true.
   Accept := Accept and IsDropTarget and CanAcceptDraggedObject;
 end;
 
@@ -185,7 +186,6 @@ begin
   begin
     ie := TBoldIndirectElement.create;
     try
-      // this code should move to the treeview support classes (or is it already there???)
       Element.EvaluateAndSubscribeToExpression(NodeSelectionExpression, fHandleFollower.Follower.Subscriber, ie);
       if ie.value is TBoldList then begin
         list := ie.value as TBoldList;
@@ -285,9 +285,9 @@ begin
   FEmptyImageIndex := Value;
 end;
 
-procedure TBoldDropTarget.SetExpression(Expression: String);
+procedure TBoldDropTarget.SetExpression(const Value: TBoldExpression);
 begin
-  NodeSelectionExpression := Expression;
+  NodeSelectionExpression := Value;
 end;
 
 procedure TBoldDropTarget.SetImageList(const Value: TImageList);
@@ -317,4 +317,5 @@ begin
   FRepresentations.Assign(Value);
 end;
 
+initialization
 end.

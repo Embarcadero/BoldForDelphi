@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPlaceableSubscriber;
 
 interface
@@ -24,7 +27,7 @@ type
     FOnReceive: TBoldPlaceableSubcriberReceive;
     FOnSubscribeToElement: TBoldSubscribeToElementEvent;
     FHandleSubscriber: TBoldPassthroughSubscriber;
-    FValueSubscriber: TBoldPassthroughSubscriber;
+    FValueSubscriber: TBoldExtendedPassthroughSubscriber;
     FDelayEventsUntilPostNotify: Boolean;
     procedure SetBoldHandle(Value: TBoldElementHandle);
     procedure HandleSubscriberReceive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
@@ -43,10 +46,13 @@ type
     property BoldHandle: TBoldElementHandle read FBoldHandle write SetBoldHandle;
     property OnReceive: TBoldPlaceableSubcriberReceive read FOnReceive write fOnReceive;
     property OnSubscribeToElement: TBoldSubscribeToElementEvent read FOnSubscribeToElement write FOnSubscribeToElement;
-    property DelayEventsUntilPostNotify: Boolean read FDelayEventsUntilPostNotify write SetDelayEventsUntilPostNotify;
+    property DelayEventsUntilPostNotify: Boolean read FDelayEventsUntilPostNotify write SetDelayEventsUntilPostNotify default false;
   end;
 
 implementation
+
+uses
+  BoldRev;
 
 {---TBoldPlaceableSubscriber---}
 
@@ -54,7 +60,7 @@ constructor TBoldPlaceableSubscriber.Create(Owner: TComponent);
 begin
   inherited;
   FHandleSubscriber := TBoldPassthroughSubscriber.Create(HandleSubscriberReceive);
-  FValueSubscriber := TBoldPassthroughSubscriber.CreateWithExtendedReceive(ValueSubscriberReceive);
+  FValueSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(ValueSubscriberReceive);
 end;
 
 destructor TBoldPlaceableSubscriber.Destroy;
@@ -80,7 +86,7 @@ begin
     if Assigned(Value) then
     begin
       Value.FreeNotification(Self);
-      BoldHandle.AddSmallSubscription(fHandleSubscriber, [beDestroying, beValueIdentityChanged], breReEvaluate);  // CHECKME
+      BoldHandle.AddSmallSubscription(fHandleSubscriber, [beDestroying, beValueIdentityChanged], breReEvaluate);
     end;
     HandleValueChanged;
   end;
@@ -88,6 +94,8 @@ end;
 
 procedure TBoldPlaceableSubscriber.HandleSubscriberReceive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
+  if (csDestroying in ComponentState) or (Assigned(BoldHandle) and (csDestroying in BoldHandle.ComponentState)) then
+    exit;
   Receive(Originator, OriginalEvent, RequestedEvent, []);
   HandleValueChanged;
 end;
@@ -114,7 +122,9 @@ end;
 procedure TBoldPlaceableSubscriber.SubscribeToElement(Element: TBoldElement; Subscriber: TBoldSubscriber);
 begin
   if Assigned(FOnSubscribeToElement) then
-    FOnSubscribeToElement(Element, Subscriber);
+    FOnSubscribeToElement(Element, Subscriber)
+  else if Assigned(Element) then
+    Element.DefaultSubscribe(Subscriber);
 end;
 
 procedure TBoldPlaceableSubscriber.Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
@@ -126,7 +136,7 @@ end;
 procedure TBoldPlaceableSubscriber.ActOnHandleValueChanged(Sender: TObject);
 begin
   fValueSubscriber.CancelAllSubscriptions;
-  if assigned(BoldHandle) and assigned(BoldHandle.Value) then
+  if not (csDestroying in ComponentState) and assigned(BoldHandle) and not (csDestroying in BoldHandle.ComponentState) and assigned(BoldHandle.Value) then
     SubscribeToElement(BoldHandle.Value, fValueSubscriber);
 end;
 
@@ -134,5 +144,7 @@ procedure TBoldPlaceableSubscriber.SetDelayEventsUntilPostNotify(const Value: Bo
 begin
   FDelayEventsUntilPostNotify := Value;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldManipulatorReg;
 
 interface
@@ -25,3 +28,4 @@ begin
 end;
 
 end.
+

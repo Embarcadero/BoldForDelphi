@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMLRenderers;
 
 interface
@@ -13,9 +16,9 @@ type
   { forward declarations }
   TBoldAsMLStringRenderer = class;
 
-  TBoldLanguageGetAsString = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Language: String): string of object;
-  TBoldLanguageSetAsString = procedure (Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; Language: String) of object;
-  TBoldLanguageSubscribe = procedure (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber; Language: String) of object;
+  TBoldLanguageGetAsString = function (aFollower: TBoldFollower;  const Language: String): string of object;
+  TBoldLanguageSetAsString = procedure (aFollower: TBoldFollower; const Value: string; const Language: String) of object;
+  TBoldLanguageSubscribe = procedure (aFollower: TBoldFollower; const Language: String; Subscriber: TBoldSubscriber) of object;
 
   { TBoldAsMLStringRenderer }
   TBoldAsMLStringRenderer = class (TBoldAsStringRenderer)
@@ -23,15 +26,15 @@ type
     fLanguage: String;
     fOnLanguageGetAsString: TBoldLanguageGetAsString;
     fOnLanguageSetAsString: TBoldLanguageSetAsString;
-    fOnLanguageSubscribe: TBoldLAnguageSubscribe;
-    procedure SetLanguage(newValue: String);
+    fOnLanguageSubscribe: TBoldLanguageSubscribe;
+    procedure SetLanguage(const newValue: String);
   protected
-    procedure SetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); override;
-    function GetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string; override;
+    procedure SetAsString(aFollower: TBoldFollower; const Value: string); override;
+    function GetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string; override;
   public
-    function DefaultGetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string; override;
-    procedure DefaultSetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); override;
-    procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber); override;
+    function DefaultGetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string; override;
+    procedure DefaultSetAsString(aFollower: TBoldFollower; const Value: string); override;
+    procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); override;
   published
     property Language: String read fLanguage write SetLanguage;
     property OnLanguageGetAsString: TBoldLanguageGetAsString read FOnLanguageGetAsString write FOnLanguageGetAsString;
@@ -43,153 +46,173 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldMLAttributes,
-  BoldUtils;
+  BoldUtils,
+  BoldGuard;
 
-function TBoldAsMLStringRenderer.GetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string;
+function TBoldAsMLStringRenderer.GetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string;
 begin
   if Assigned(OnLanguageSubscribe) and Assigned(Subscriber) then
   begin
-    if Assigned(Element) then
-      OnLanguageSubscribe(Element, FollowerController.Representation, FollowerController.Expression, Subscriber, Language);
+    if Assigned(aFollower.Element) then
+      OnLanguageSubscribe(aFollower, Language, Subscriber);
     Subscriber := nil;
   end;
   if Assigned(OnLanguageGetAsString) then
   begin
-    Result := OnLanguageGetAsString(Element, FollowerController.Representation, FollowerController.Expression, Language);
+    Result := OnLanguageGetAsString(aFollower, Language);
     if not assigned(OnLanguageSubscribe) and assigned(Subscriber) then
-      DefaultGetAsStringAndSubscribe(Element, FollowerController, Subscriber);
+      DefaultGetAsStringAndSubscribe(aFollower, Subscriber);
   end
   else
-    Result := DefaultGetAsStringAndSubscribe(Element, FollowerController, Subscriber);
+    Result := DefaultGetAsStringAndSubscribe(aFollower, Subscriber);
 end;
 
-function TBoldAsMLStringRenderer.DefaultGetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string;
+function TBoldAsMLStringRenderer.DefaultGetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string;
 var
   E: TBoldIndirectElement;
+  lResultElement: TBoldElement;
+  lGuard: IBoldGuard;
+  lFollowerController: TBoldFollowerController;
 begin
   Result := '';
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
-    E := TBoldIndirectElement.Create;
-    try
-      Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber, E, False, false, FollowerController.GetVariableListAndSubscribe(subscriber));
-      if Assigned(E.Value) then
+    lFollowerController := aFollower.AssertedController;
+    if Assigned(aFollower.Value) then
+    begin
+      lResultElement := aFollower.Value
+    end
+    else
+    begin
+      lGuard:= TBoldGuard.Create(E);
+      E := TBoldIndirectElement.Create;
+      aFollower.Element.EvaluateAndSubscribeToExpression(lFollowerController.Expression, Subscriber, E, False, False, lFollowerController.GetVariableListAndSubscribe(Subscriber));
+      lResultElement := e.Value;
+    end;
+    if Assigned(lResultElement) then
+    begin
+      if lResultElement is TBAMLString then
       begin
-        if e.Value is TBAMLString then
+        result := (lResultElement as TBAMLString).AsStringByLanguage[Language].StringRepresentation[lFollowerController.Representation];
+        if Assigned(Subscriber) then
         begin
-          result := (e.Value as TBAMLString).AsStringByLanguage[Language].StringRepresentation[FollowerController.Representation];
-          if Assigned(Subscriber) then
-          begin
-            (e.Value as TBAMLString).SubscribeToLanguage(Language, Subscriber, breReEvaluate);
-            Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
-          end;
-        end
-        else if e.Value is TBAMLValueSet then
+          (lResultElement as TBAMLString).SubscribeToLanguage(Language, Subscriber, breReEvaluate);
+          Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
+        end;
+      end
+      else if lResultElement is TBAMLValueSet then
+      begin
+        result := (lResultElement as TBAMLValueSet).StringRepresentationByLanguage[lFollowerController.Representation, Language];
+        if Assigned(Subscriber) then
         begin
-          result := (e.Value as TBAMLValueSet).StringRepresentationByLanguage[FollowerController.Representation, Language];
-          if Assigned(Subscriber) then
-          begin
-            (e.Value as TBAMLvalueSet).SubscribeToLanguage(FollowerController.Representation, Language, Subscriber, breReEvaluate);
-            Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
-          end;
-        end
-        else
-        begin
-          Result := E.Value.StringRepresentation[FollowerController.Representation];
-          if Assigned(Subscriber) then
-            E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
+          (lResultElement as TBAMLvalueSet).SubscribeToLanguage(lFollowerController.Representation, Language, Subscriber, breReEvaluate);
+          Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
         end;
       end
       else
-        Result := '';
-    finally
-      E.Free;
-    end;
+      begin
+        Result := lResultElement.StringRepresentation[lFollowerController.Representation];
+        if Assigned(Subscriber) then
+          lResultElement.SubscribeToStringRepresentation(lFollowerController.Representation, Subscriber, breReEvaluate);
+      end;
+    end
+    else
+      Result := '';
   end;
 end;
 
-procedure TBoldAsMLStringRenderer.SetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsMLStringRenderer.SetAsString(aFollower: TBoldFollower; const Value: string);
 begin
   if assigned(OnLanguageSetAsString) then
-    OnLanguageSetAsString(Element, Value, Representation, Expression, Language)
+    OnLanguageSetAsString(aFollower, Value, Language)
   else
-    DefaultSetAsString(Element, Value, Representation, Expression, VariableList);
+    DefaultSetAsString(aFollower, Value);
 end;
 
-procedure TBoldAsMLStringRenderer.DefaultSetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsMLStringRenderer.DefaultSetAsString(aFollower: TBoldFollower; const Value: string);
 var
   ValueElement: TBoldElement;
   MLValueSet: TBAMLValueSet;
+  lRepresentation: integer;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
+  lRepresentation := aFollower.AssertedController.Representation;
   if Assigned(ValueElement) then
   begin
     if (ValueElement is TBAMLValueSet) then
     begin
       MLValueSet := (ValueElement as TBAMLValueSet);
-      MLValueSet.StringRepresentationByLanguage[Representation, Language] := Value
+      MLValueSet.StringRepresentationByLanguage[lRepresentation, Language] := Value
     end
     else if ValueElement is TBAMLString then
-      (ValueElement as TBAMLString).AsStringByLanguage[Language].StringRepresentation[Representation] := Value
+      (ValueElement as TBAMLString).AsStringByLanguage[Language].StringRepresentation[lRepresentation] := Value
     else
-      ValueElement.StringRepresentation[Representation] := Value
+      ValueElement.StringRepresentation[lRepresentation] := Value
   end else
-    raise EBold.CreateFmt(sCannotSetStringValue, [ClassName]);
+    raise EBold.CreateFmt('%s.DefaultSetAsString: Can''t set string value', [ClassName]);
 end;
 
-procedure TBoldAsMLStringRenderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsMLStringRenderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
   E: TBoldIndirectElement;
   S: String;
+  lRepresentation: integer;
+  lRendererData: TBoldStringRendererData;
+  lResultElement: TBoldElement;
+  lFollowerController: TBoldFollowerController;
+  lGuard: IBoldGuard;
 begin
   S := '';
-
-  if Assigned(Element) then
+  lRendererData := aFollower.RendererData as TBoldStringRendererData;
+  lFollowerController := aFollower.AssertedController;
+  if Assigned(aFollower.Element) then
   begin
-    E := TBoldIndirectElement.Create;
-    try
-      Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber, E, False);
-      if Assigned(E.Value) then
+    lRepresentation := lFollowerController.Representation;
+    lResultElement := aFollower.Value;
+    if not Assigned(lResultElement) then
+    begin
+      lGuard:= TBoldGuard.Create(E);
+      E := TBoldIndirectElement.Create;
+      aFollower.Element.EvaluateAndSubscribeToExpression(lFollowerController.Expression, Subscriber, E, False, False, lFollowerController.GetVariableListAndSubscribe(Subscriber));
+      lResultElement := e.Value;
+    end;
+    if Assigned(lResultElement) then
+    begin
+      if lResultElement is TBAMLString then
       begin
-        if e.Value is TBAMLString then
+        S := (lResultElement as TBAMLString).AsStringByLanguage[Language].StringRepresentation[lRepresentation];
+        if Assigned(Subscriber) then
         begin
-          S := (e.Value as TBAMLString).AsStringByLanguage[Language].StringRepresentation[FollowerController.Representation];
-          if Assigned(Subscriber) then
-          begin
-            (e.Value as TBAMLString).SubscribeToLanguage(Language, Subscriber, breReEvaluate);
-            Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
-          end
+          (lResultElement as TBAMLString).SubscribeToLanguage(Language, Subscriber, breReEvaluate);
+          Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
         end
-        else if e.Value is TBAMLValueSet then
+      end
+      else if lResultElement is TBAMLValueSet then
+      begin
+        S := TBAMLValueSet(lResultElement).StringRepresentationByLanguage[lRepresentation, Language];
+        if Assigned(Subscriber) then
         begin
-          S := (e.Value as TBAMLValueSet).StringRepresentationByLanguage[FollowerController.Representation, Language];
-          if Assigned(Subscriber) then
-          begin
-            (e.Value as TBAMLvalueSet).SubscribeToLanguage(FollowerController.Representation, Language, Subscriber, breReEvaluate);
-            Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
-          end;
-        end
-        else
-        begin
-          S := E.Value.StringRepresentation[FollowerController.Representation];
-          if Assigned(Subscriber) then
-            E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
+          TBAMLValueSet(lResultElement).SubscribeToLanguage(lRepresentation, Language, Subscriber, breReEvaluate);
+          Publisher.AddSubscription(subscriber, beValueChanged, breReevaluate);
         end;
-        RendererData.MayModify := E.Value.ObserverMayModify(Subscriber);
       end
       else
-        S := '';
-    finally
-      E.Free;
-    end;
+      begin
+        S := lResultElement.StringRepresentation[lRepresentation];
+        if Assigned(Subscriber) then
+          lResultElement.SubscribeToStringRepresentation(lRepresentation, Subscriber, breReEvaluate);
+      end;
+//      lRendererData.MayModify := lResultElement.ObserverMayModify(Subscriber);
+    end
+    else
+      S := '';
   end;
-  (RendererData as TBoldStringRendererData).OldStringValue := S;
-  (RendererData as TBoldStringRendererData).CurrentStringValue := S;
+  lRendererData.OldStringValue := S;
+  lRendererData.CurrentStringValue := S;
 end;
 
-procedure TBoldAsMLStringRenderer.SetLanguage(newValue: String);
+procedure TBoldAsMLStringRenderer.SetLanguage(const newValue: String);
 begin
   if NewValue <> fLanguage then
   begin
@@ -198,4 +221,5 @@ begin
   end;
 end;
 
+initialization
 end.

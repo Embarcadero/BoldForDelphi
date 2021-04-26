@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropertiesController;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -6,12 +9,13 @@ interface
 
 uses
   Classes,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldElements,
   BoldHandles,
   BoldControlPack,
   BoldStringControlPack,
-  BoldElementHandleFollower;
+  BoldElementHandleFollower,
+  BoldOclVariables;
 
 type
   { forward declarations }
@@ -91,6 +95,9 @@ type
     property DrivenProperties: TBoldDrivenPropertyCollection read FDrivenProperties write SetDrivenProperties;
   end;
 
+  procedure CreatePropertyControllerMapping(aBoldHandle: TBoldElementHandle; aExpression: string;
+    aVCLComponent: TComponent; aPropertyName: string; aReadOnly: boolean = true; aBoldVariables: TBoldOclVariables = nil);
+
 implementation
 
 uses
@@ -98,15 +105,27 @@ uses
   TypInfo,
   BoldControlPackDefs,
   BoldControlsDefs,
-  BoldGuiResourceStrings,
   {$IFNDEF BOLDCOMCLIENT}
-  BoldSystem, // IFNDEF BOLDCOMCLIENT
+  BoldSystem,
   {$ENDIF}
   Variants,
   BoldGuard;
 
-const
-  EventNameOnExit = 'OnExit';
+procedure CreatePropertyControllerMapping(aBoldHandle: TBoldElementHandle; aExpression: string;
+  aVCLComponent: TComponent; aPropertyName: string; aReadOnly: boolean; aBoldVariables: TBoldOclVariables);
+var
+  lBoldPropertiesController: TBoldPropertiesController;
+  lBoldDrivenProperty: TBoldDrivenProperty;
+begin
+  lBoldPropertiesController:= TBoldPropertiesController.Create(aVCLComponent);
+  lBoldPropertiesController.BoldHandle:= aBoldHandle;
+  lBoldPropertiesController.BoldProperties.Expression:= aExpression;
+  lBoldPropertiesController.BoldProperties.Variables := aBoldVariables;
+  lBoldDrivenProperty:= lBoldPropertiesController.DrivenProperties.Add;
+  lBoldDrivenProperty.VCLComponent:= aVCLComponent;
+  lBoldDrivenProperty.PropertyName:= aPropertyName;
+  lBoldDrivenProperty.ReadOnly:= aReadOnly;
+end;
 
 { TBoldPropertiesController }
 
@@ -180,20 +199,16 @@ begin
 end;
 
 procedure TBoldDrivenProperty.EnsureValidPropertyName;
-// Searches through the list of properties of the assigned component to check that PropertyName
-// is valid for this particular component type. If not, it empties Property Name.
-// This is called by the Component property setter SetVCLComponent.
-// This is not used anymore at the moment. It was easy when we did not cater for property paths !
+
+
+
 var
   PropList: TPropList;
   Count, I: Integer;
   Found: Boolean;
 begin
-  // At least clear the property when we clear the component
   if not Assigned(VCLComponent) then
     PropertyName := '';
-
-  // Original code below
   exit;
   Found := False;
   I := 0;
@@ -202,7 +217,7 @@ begin
     Count := GetPropList(VCLComponent.ClassInfo, BoldPropertiesController_SupportedPropertyTypes, @PropList);
     while (I < Count) and (not Found) do
     begin
-      Found := PropList[I]^.Name = PropertyName;
+      Found := String(PropList[I]^.Name) = PropertyName;
       Inc(I);
     end;
   end;
@@ -214,7 +229,6 @@ procedure TBoldDrivenProperty.SetVCLComponent(const Value: TComponent);
 var
   AllowHookUnHook: Boolean;
 begin
-  //We don't support the two way update for collections of more than one driven property
   AllowHookUnHook := assigned(value) and
                      not ((csDesigning in Value.ComponentState) or
                      (Collection.Count > 1));
@@ -240,7 +254,6 @@ begin
 end;
 
 procedure TBoldDrivenProperty.DoOnExit(Sender: TObject);
-// Event that we have assigned as the OnExit of VCLComponent (Hooked)
 begin
   if (not ReadOnly) and PropertiesController.BoldProperties.MayModify(PropertiesController.HandleFollower.Follower) then
   begin
@@ -248,31 +261,27 @@ begin
     if PropertiesController.BoldProperties.ApplyPolicy = bapExit then
       PropertiesController.HandleFollower.Follower.Apply;
   end;
-  //Call the original event
   if Assigned(FOnExit) then
     FOnExit(Sender);
 end;
 
 procedure TBoldDrivenProperty.HookOnExit;
-// This method, replaces any existing OnExit event of VCLComponent with ours
 var
   DoOnExitMethod: TNotifyEvent;
 begin
-  // We could have simply used TWinControl(VCLComponent).OnExit := ... if only it was not protected !
-  // Has the VCLComponent got an OnExit event ?
-  if Assigned(VCLComponent) and Assigned(GetPropInfo(VCLComponent.ClassInfo, EventNameOnExit)) then
+
+  if Assigned(VCLComponent) and Assigned(GetPropInfo(VCLComponent.ClassInfo, 'OnExit')) then
   begin
-    FOnExit := TNotifyEvent(Typinfo.GetMethodProp(VCLComponent, EventNameOnExit));
+    FOnExit := TNotifyEvent(Typinfo.GetMethodProp(VCLComponent, 'OnExit'));
     DoOnExitMethod := DoOnExit;
-    Typinfo.SetMethodProp(VCLComponent, EventNameOnExit, TMethod(DoOnExitMethod));
+    Typinfo.SetMethodProp(VCLComponent, 'OnExit', TMethod(DoOnExitMethod));
   end;
 end;
 
 procedure TBoldDrivenProperty.UnhookOnExit;
 begin
-  // Reassign the original event
-  if Assigned(VCLComponent) and Assigned(GetPropInfo(VCLComponent.ClassInfo, EventNameOnExit)) then
-    Typinfo.SetMethodProp(VCLComponent, EventNameOnExit, TMethod(FOnExit));
+  if Assigned(VCLComponent) and Assigned(GetPropInfo(VCLComponent.ClassInfo, 'OnExit')) then
+    Typinfo.SetMethodProp(VCLComponent, 'OnExit', TMethod(FOnExit));
 end;
 
 procedure TBoldDrivenProperty.SetPropertyValue(Follower: TBoldFollower);
@@ -298,7 +307,7 @@ begin
   if assigned(PropertiesController.BoldHandle) and
      assigned(Follower.element) then
   begin
-    Follower.Element.EvaluateExpression(PropertiesController.BoldProperties.Expression, ie);
+    Follower.Element.EvaluateExpression(PropertiesController.BoldProperties.Expression, ie, false, PropertiesController.BoldProperties.VariableList);
     SendElement := ie.Value;
   end
   else
@@ -314,11 +323,10 @@ end;
 
 procedure TBoldDrivenProperty.ConvertRelativeProp(StartInstance: TObject;
   PropNamePath: String; var LastObject: TObject; var PropName: String);
-// This method will follow the objects specified in the PropNamePath starting from StartInstance
-// and set the LastObject and PropName
-// E.g: ConvertRelativeProp(Label1,'FocusControl.Font.Size') will return
-//    LastObject points to instance of Font
-//    LastProp  : Size
+
+
+
+
 var
   I, ColIndex,
   OpenBracketPos: Integer;
@@ -328,22 +336,19 @@ var
 begin
   BoldGuard := TBoldGuard.Create(Path);
   Path := TStringList.Create;
-
-  //convert . notation to commas so we can use CommaText function
   Path.CommaText := StringReplace(PropNamePath, '.', ',', [rfReplaceAll]);
 
   LastObject := StartInstance;
   for I := 0 to Path.Count - 1 do
   begin
-    // The path may very well follow unassigned links. This check prevents an AV
     if not Assigned(LastObject) then
       Exit;
     PathItem := Path[I];
     OpenBracketPos := Pos('[', PathItem);
     if OpenBracketPos = 0 then
     begin
-      if (I < Path.Count - 1) //Special case for when the last property is of tkClass we don't want
-                            //to loose LastObject to be in fact the Previous before Last !
+      if (I < Path.Count - 1)
+
       and (GetPropInfo(LastObject.ClassInfo, PathItem)^.PropType^.Kind = tkClass) then
       begin
         LastObject := TObject(Typinfo.GetOrdProp(LastObject, PathItem))
@@ -373,16 +378,13 @@ var
   TypeKind: TTypeKind;
   PropInfo: PPropInfo;
 begin
-  // No property specified
   if PropNamePath = '' then
     Exit;
 
   ConvertRelativeProp(StartInstance, PropNamePath, LastObject, PropName);
-  // Property path followed unassigned links
   if not Assigned(LastObject) then
     Exit;
   PropInfo := GetPropInfo(LastObject.ClassInfo, PropName);
-  // Property name misspelled
   if not Assigned(PropInfo) then
     Exit;
   TypeKind := PropInfo^.PropType^.Kind;
@@ -392,29 +394,25 @@ begin
     {$IFDEF BOLDCOMCLIENT}
     VarValue := Value.AsVariant;
     {$ELSE}
-    VarValue := Value.GetAsVariant;
+    VarValue := Value.AsVariant;
     {$ENDIF}
   end
   else
-    // Handle nil equivalents for various property types
     case TypeKind of
       tkEnumeration: VarValue := 0;
       tkInteger: VarValue := 0;
       else VarValue := PropertiesController.BoldProperties.NilStringRepresentation;
     end;
-
-  // Special case for booleans that don't seem to be handled properly by SetPropValue
   if VarType(VarValue) = varBoolean then
   begin
     if VarValue then
-      VarValue := 'True'  // do not localize
+      VarValue := 'True'
     else
-      VarValue := 'False'; // do not localize
+      VarValue := 'False';
   end;
 
   if TypeKind = tkClass then
   begin
-    // Special case for objects
     PropertyObj := TObject(Typinfo.GetOrdProp(LastObject, PropName));
     if PropertyObj is TStrings then
     begin
@@ -436,19 +434,27 @@ begin
     end;
   end
   else if TypeKind = tkInteger then
-    // This is needed to handle an error in TypInfo when setting CARDINAL properties
     try
+     if not VarIsNull(VarValue) then
       SetOrdProp(LastObject, PropName, VarValue)
     except
       on E: Exception do
-        raise Exception.CreateFmt(sCannotSetIntegerProperty, [PropNamePath, VarValue, e.Message]);
+        raise Exception.CreateFmt('Could not set the integer %s property to value %s. (%s)', [PropNamePath, VarValue, e.Message]);
+    end
+  else if TypeKind = tkFloat then
+    try
+     if VarIsFloat(VarValue) then
+       SetPropValue(LastObject, PropName, VarValue);
+    except
+      on E: Exception do
+        raise Exception.CreateFmt('Could not set the float %s property to value %s. (%s)', [PropNamePath, VarValue, e.Message]);
     end
   else
     try
       SetPropValue(LastObject, PropName, VarValue);
     except
       on E: Exception do
-        raise Exception.CreateFmt(sCannotSetProperty, [PropNamePath, VarValue, e.Message]);
+        raise Exception.CreateFmt('Could not set the %s property to value %s. (%s)', [PropNamePath, VarValue, e.Message]);
     end;
 end;
 
@@ -469,17 +475,17 @@ begin
   if assigned(VCLComponent) then
     result := VCLComponent.Name
   else
-    result := '<No Comp>'; // do not localize
+    result := '<No Comp>';
 
   if trim(propertyName) <> '' then
     result := result + '.' + trim(PropertyName)
   else
-    result := result + '.<No Prop>'; // do not localize
+    result := result + '.<No Prop>';
 
   if ReadOnly then
-    result := result + ' (RO)' // do not localize
+    result := result + ' (RO)'
   else
-    result := result + ' (RW)'; // do not localize
+    result := result + ' (RW)';
 end;
 
 { TBoldDrivenPropertyCollection }
@@ -517,5 +523,7 @@ begin
   else
     result := nil;
 end;
+
+initialization
 
 end.

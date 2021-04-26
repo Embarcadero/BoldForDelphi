@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectUpgraderHandleReg;
 
 interface
@@ -5,8 +8,6 @@ interface
 procedure Register;
 
 implementation
-
-{.$R *.res}
 
 uses
   classes,
@@ -19,4 +20,3 @@ begin
 end;
 
 end.
-

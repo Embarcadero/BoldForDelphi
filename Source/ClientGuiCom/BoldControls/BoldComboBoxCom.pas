@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComboBoxCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,31 +8,28 @@ unit BoldComboBoxCom;
 interface
 
 uses
-  Windows,
-  Messages,
+  // VCL
   Classes,
-  Graphics,
   Controls,
-  SysUtils,
+  Graphics,
   Menus,
+  Messages,
   StdCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldDefs,
-  BoldControlsDefs,
-  BoldHandlesCom,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+  SysUtils,
+  Windows,
+
+  // Bold
   BoldAbstractListHandleCom,
-  BoldElementHandleFollowerCom,
-  BoldListHandleFollowerCom,
+  BoldComObjectSpace_TLB,
   BoldComponentValidatorCom,
   BoldControlPackCom,
+  BoldControlsDefs,
+  BoldDefs,
+  BoldElementHandleFollowerCom,
+  BoldHandlesCom,
+  BoldListHandleFollowerCom,
   BoldListListControlPackCom,
   BoldStringControlPackCom;
-
-{TODO 3 -ofrha -cfeature: WM_PAINT}
-{TODO 3 -ofrha -cbug: Alignment not compleatly implemented}
-{TODO 3 -ofrha -ccheckme: CB_GETEXTENDEDUI}
-{TODO 3 -ofrha -cbug: AfterMakeUptodate when DroppedDown}
 
 type
   {Forward declarations of all classes}
@@ -135,7 +135,6 @@ type
     property EffectiveFont: TFont read GetEffectiveFont;
     property EffectiveReadOnly: Boolean read FEffectiveReadOnly;
     property Font: TFont read FFont write SetFont stored IsFontStored;
-//    property Items write SetItems;
     property ReadOnly: Boolean read FReadOnly write SetReadOnly default False;
     property Text: string read GetText write SetText;
   public
@@ -162,12 +161,11 @@ type
     property BoldSetValueExpression;
     property BoldSelectChangeAction;
     property OnSelectChanged;
-    property CharCase; {Must be published before ReadOnly} //From TBoldCutomCombBox
+    property CharCase; {Must be published before ReadOnly}
     property ReadOnly;
     {Properties in standard TComboBox}
-    property Style; {Must be published before Items} {TODO 3 -ofrha -cbug: Create own styles!}
+    property Style; {Must be published before Items} 
     property Anchors;
-    //  property BiDiMode;
     property Color;
     property Constraints;
     property Ctl3D;
@@ -177,10 +175,8 @@ type
     property DropDownCount;
     property Enabled;
     property Font;
-//    property ImeMode;
-//    property ImeName;
+
     property ItemHeight;
-//    property Items;
     property MaxLength;
     property ParentBiDiMode;
     property ParentColor;
@@ -192,7 +188,6 @@ type
     property Sorted;
     property TabOrder;
     property TabStop;
-//    property Text; Text is only public!
     property Visible;
     property OnChange;
     property OnClick;
@@ -218,7 +213,6 @@ type
 implementation
 
 uses
-  BoldRev,
   BoldExceptionHandlersCom,
   BoldReferenceHandleCom,
   {$IFNDEF BOLDCOMCLIENT}
@@ -252,7 +246,6 @@ begin
   if (index > -1) and (index < Items.Count) then
     Items[index] := TBoldStringFollowerControllerCom(Follower.Controller).GetCurrentAsString(Follower);
   Invalidate;
-  // forces a redisplay of the edit-area, the windows component might go blank if the active row is removed and then reinserted
   fHandleFollower.Follower.MarkValueOutOfDate;
 end;
 
@@ -260,10 +253,8 @@ procedure TBoldCustomComboBoxCom._AfterMakeUptoDate(Follower: TBoldFollowerCom);
 var
   NewText: string;
 begin
-//  Code below removed to avoid closeup when moving in dropped down combo. suggested by Hans Karlsen
 
-//  if not (Style = csSimple) and DroppedDown then
-//    PostMessage(Handle, CB_SHOWDROPDOWN, 0, 0); //FIXME Bad solution! CloseUp if changed while dropped down!
+
 
   UpdateEffectiveColor;
   UpdateEffectiveReadOnly;
@@ -337,7 +328,7 @@ begin
         if (Style = csSimple) and (ComboWnd <> EditHandle) then
           if EffectiveReadOnly then Exit;
     end;
-  fIsEditEvent := True; // Flag to know we're already in the event
+  fIsEditEvent := True;
   inherited ComboWndProc(Message, ComboWnd, ComboProc);
   fIsEditEvent := False;
 end;
@@ -499,7 +490,7 @@ begin
   begin
     if (Style <> csDropDownList) and
        (BoldSelectChangeAction <> bdcsSetReference) and
-       not BoldProperties.ValidateCharacter(Key, Follower) then
+       not BoldProperties.ValidateCharacter(AnsiChar(Key), Follower) then
     begin
       MessageBeep(0);
       Key := BOLDNULL;
@@ -535,7 +526,6 @@ procedure TBoldCustomComboBoxCom.SetCharCase(const Value: TEditCharCase);
 begin
   if CharCase <> Value then
   begin
-    //FIXME Investigate and fix problems with CharCase and non readonly
     inherited CharCase := Value;
   end;
 end;
@@ -561,7 +551,6 @@ begin
 end;
 
 procedure TBoldCustomComboBoxCom.SetEffectiveText(Value: string);
-// This mess is needed prevent flickering and allow changes to Text before the controls handle is allocated! /frha
 var
   I: Integer;
   Redraw: Boolean;
@@ -612,7 +601,7 @@ end;
 procedure TBoldCustomComboBoxCom.SetFont(Value: TFont);
 begin
   FFont.Assign(Value);
-end;
+end;  
 
 procedure TBoldCustomComboBoxCom.SetReadOnly(Value: Boolean);
 begin
@@ -639,14 +628,14 @@ var
   NewColor: TColor;
 begin
   NewColor := Color;
-  BoldProperties.SetColor(NewColor, Color, Follower); //FIXME FC should only take ONE color and a Follower! /frha
+  BoldProperties.SetColor(NewColor, Color, Follower);
   inherited Color := NewColor;
 end;
 
 procedure TBoldCustomComboBoxCom.UpdateEffectiveFont;
 begin
   EffectiveFont.Assign(Font);
-  BoldProperties.SetFont(EffectiveFont, Font, Follower); //FIXME FC should only take ONE font and a Follower! /frha
+  BoldProperties.SetFont(EffectiveFont, Font, Follower);
 end;
 
 procedure TBoldCustomComboBoxCom.UpdateEffectiveReadOnly;
@@ -659,7 +648,6 @@ end;
 
 procedure TBoldCustomComboBoxCom.WMPaint(var Message: TWMPaint);
 begin
-  //FIXME Own painting with call to renderers paint isn't done yet...
   inherited;
 end;
 
@@ -667,9 +655,7 @@ procedure TBoldCustomComboBoxCom.WndProc(var Message: TMessage);
 var
   CallInherited: Boolean;
   ElementToAssignTo: IBoldElement;
-  {$IFNDEF BOLDCOMCLIENT}
   Discard: Boolean;
-  {$ENDIF}
 begin
   CallInherited := True;
   if not (csDesigning in ComponentState) then
@@ -686,13 +672,13 @@ begin
               Follower.DiscardChange;
               if Assigned(BoldHandle) and Assigned(BoldHandle.value) then
               begin
-                {$IFDEF BOLDCOMCLIENT} // BoldSetValueExpression
+                {$IFDEF BOLDCOMCLIENT}
                 if trim(BoldSetValueExpression) <> '' then
                   ElementToAssignTo := BoldHandle.Value.EvaluateExpression(BoldSetValueExpression)
                 else
                   elementToAssignTo := BoldHandle.Value;
                 if assigned(ElementToAssignTo) then
-                  ElementToAssignTo.AssignElement(SelectedElement);  // checkme take from follwer instead?
+                  ElementToAssignTo.AssignElement(SelectedElement);
                 {$ELSE}
                 if trim(BoldSetValueExpression) <> '' then
                   ElementToAssignTo := BoldHandle.Value.EvaluateExpressionAsDirectElement(BoldSetValueExpression)
@@ -700,11 +686,10 @@ begin
                   elementToAssignTo := BoldHandle.Value;
 
                 if assigned(ElementToAssignTo) and ElementToAssignTo.Mutable and
-                  // must check the element (and not the follower) since we might have a BoldSetValueExpression...
                   (not (elementToAssignTo is IBoldMember) or
                    IBoldMember(ElementTOAssignTo).CanModify) then
                   try
-                    ElementToAssignTo.Assign(SelectedElement);  // checkme take from follwer instead?
+                    ElementToAssignTo.Assign(SelectedElement);
                   except
                     on E: Exception do
                     begin
@@ -740,7 +725,6 @@ begin
           end;
           if assigned(OnSelectChanged) then
             fOnSelectChanged(Self);
-//        Code below removed to avoid closing dropdown, suggested by Hans Karlsen
           if (not CallInherited) and
              (Style <> csSimple) and
              not fIsEditEvent then
@@ -757,7 +741,7 @@ begin
 
       CB_SHOWDROPDOWN:
         if (Message.WParam=0) and EffectiveReadOnly then
-          _AfterMakeUptoDate(Follower); {Restore text} //FIXME Maybe an UpdateEffectiveText?
+          _AfterMakeUptoDate(Follower); {Restore text}
     end;
   end;
   if CallInherited then
@@ -819,7 +803,6 @@ end;
 {$IFNDEF BOLDCOMCLIENT}
 function TBoldCustomComboBoxCom.ValidateComponent(ComponentValidator: TBoldComponentValidatorCom; NamePrefix: String): Boolean;
 begin
-  // We want to evaluate everything. Thus suboptimized expressions.
   Result := ComponentValidator.ValidateExpressionInContext(
               BoldProperties.Expression,
               GetContextForBoldProperties,
@@ -847,8 +830,7 @@ function TBoldCustomComboBoxCom.ComboAllowsTextEditing(
   BoldProperties: TBoldStringFollowerControllerCom;
   Follower: TBoldFollowerCom): Boolean;
 begin
-  // this method is primarily intended for subclasses to stop editing of string-attributes
-  // due to bad combo configuration (needed at SVT)
+
   result := true;
 end;
 

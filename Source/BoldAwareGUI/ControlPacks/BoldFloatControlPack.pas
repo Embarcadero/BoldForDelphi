@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFloatControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -17,9 +20,9 @@ type
   TBoldFloatFollowerController = class;
 
   { TBoldAsFloatRenderer }
-  TBoldGetAsFloatEvent = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): double of object;
-  TBoldSetAsFloatEvent = procedure (Element: TBoldElement; const Value: double; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldFloatIsChangedEvent = function (RenderData: TBoldFloatRendererData; const NewValue: double; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
+  TBoldGetAsFloatEvent = function (aFollower: TBoldFollower): double of object;
+  TBoldSetAsFloatEvent = procedure (aFollower: TBoldFollower; const Value: double) of object;
+  TBoldFloatIsChangedEvent = function (aFollower: TBoldFollower; const NewValue: double): Boolean of object;
 
   { TBoldFloatRendererData }
   TBoldFloatRendererData = class(TBoldRendererData)
@@ -40,15 +43,16 @@ type
   protected
     class function DefaultRenderer: TBoldAsFloatRenderer;
     function GetRendererDataClass: TBoldRendererDataClass; override;
-    function DefaultGetAsFloatAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): double; virtual;
-    procedure DefaultSetAsFloat(Element: TBoldElement; const Value: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
-    function GetAsFloatAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): double; virtual;
-    procedure SetAsFloat(Element: TBoldElement; const Value: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
+    function DefaultGetAsFloatAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): double; virtual;
+    procedure DefaultSetAsFloat(aFollower: TBoldFollower; const Value: double); virtual;
+    function GetAsFloatAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): double; virtual;
+    procedure SetAsFloat(aFollower: TBoldFollower; const Value: double); virtual;
+    function HasSetValueEventOverrides: boolean; override;
   public
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
-    function DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean; override;
-    function DefaultIsChanged(RendererData: TBoldFloatRendererData; const NewValue: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
-    function IsChanged(RendererData: TBoldFloatRendererData; const NewValue: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); override;
+    function DefaultMayModify(aFollower: TBoldFollower): Boolean; override;
+    function DefaultIsChanged(aFollower: TBoldFollower; const NewValue: double): Boolean;
+    function IsChanged(aFollower: TBoldFollower; const NewValue: double): Boolean;
   published
     property OnGetAsFloat: TBoldGetAsFloatEvent read FOnGetAsFloat write FOnGetAsFloat;
     property OnSetAsFloat: TBoldSetAsFloatEvent read FOnSetAsFloat write FOnSetAsFloat;
@@ -65,7 +69,6 @@ type
     property EffectiveAsFloatRenderer: TBoldAsFloatRenderer read GetEffectiveAsFloatRenderer;
     function GetEffectiveRenderer: TBoldRenderer; override;
   public
-//    procedure Assign(Source: TPersistent); override;
     function GetCurrentAsFloat(Follower: TBoldFollower): double;
     procedure  MakeClean(Follower: TBoldFollower); override;
     procedure MayHaveChanged(NewValue: double; Follower: TBoldFollower);
@@ -78,10 +81,9 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldUtils,
   BoldAttributes,
-  BoldControlPackDefs,
+  BoldControlPackDefs,  
   BoldGuard;
 
 var
@@ -98,33 +100,38 @@ begin
   Result := TBoldFloatRendererData;
 end;
 
-function TBoldAsFloatRenderer.DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean;
-{$IFNDEF BOLDCOMCLIENT} // defaultMayModify
+function TBoldAsFloatRenderer.HasSetValueEventOverrides: boolean;
+begin
+  result := Assigned(FOnSetAsFloat);
+end;
+
+function TBoldAsFloatRenderer.DefaultMayModify(aFollower: TBoldFollower): Boolean;
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: TBoldElement;
 {$ENDIF}
 begin
-  {$IFDEF BOLDCOMCLIENT} // defaultMayModify
+  {$IFDEF BOLDCOMCLIENT}
   result := inherited DefaultMayModify(Element, Representation, Expression, VariableList, Subscriber);
   {$ELSE}
-  // Note! We don't call inherited DefaultMayModify to prevent evaluation of expression two times!
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  result := ((ValueElement is TBAFloat) or (ValueElement is TBADateTime)) and ValueElement.ObserverMayModify(Subscriber)
+  ValueElement := aFollower.Value;
+  result := ((ValueElement is TBAFloat) or (ValueElement is TBACurrency) {or (ValueElement is TBADateTime)}) and ValueElement.ObserverMayModify(aFollower.Subscriber)
   {$ENDIF}
 end;
 
-function TBoldAsFloatRenderer.DefaultGetAsFloatAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): double;
+function TBoldAsFloatRenderer.DefaultGetAsFloatAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): double;
 var
   {$IFDEF BOLDCOMCLIENT} // defaultGet
   el: IBoldElement;
   attr: IBoldAttribute;
   {$ELSE}
   IndirectElement: TBoldIndirectElement;
-  g: IBoldGuard;
+  lGuard: IBoldGuard;
+  lResultElement: TBoldElement;
   {$ENDIF}
 begin
   Result := 0;
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
     {$IFDEF BOLDCOMCLIENT} // defaultGet
     if assigned(Subscriber) then
@@ -136,34 +143,39 @@ begin
     else
       raise EBold.CreateFmt(sCannotGetFloatValueFromElement, [Attr.AsString])
     {$ELSE}
-    g := TBoldGuard.Create(IndirectElement);
-    IndirectElement := TBoldIndirectElement.Create;
-    Element.EvaluateAndSubscribeToExpression(Expression, Subscriber, IndirectElement, False, False, VariableList);
-    if Assigned(IndirectElement.Value) then
+    lResultElement := aFollower.Value;
+    if not Assigned(lResultElement) then
     begin
-      if (IndirectElement.Value is TBANumeric) then
-        Result := TBANumeric(IndirectElement.Value).AsFloat
-      else if (IndirectElement.Value is TBADate) then
-        Result := TBADate(IndirectElement.Value).AsDate
-      else if (IndirectElement.Value is TBATime) then
-        Result := TBATime(IndirectElement.Value).AsTime
-      else if (IndirectElement.Value is TBADateTime) then
-        Result := TBADateTime(IndirectElement.Value).AsDateTime
-      else
-        raise EBold.CreateFmt(sCannotGetFloatValueFromElement, [IndirectElement.Value.ClassName])
+      lGuard:= TBoldGuard.Create(IndirectElement);
+      IndirectElement := TBoldIndirectElement.Create;
+      aFollower.Element.EvaluateAndSubscribeToExpression(aFollower.AssertedController.Expression, Subscriber, IndirectElement, False, False, aFollower.Controller.GetVariableListAndSubscribe(Subscriber));
+      lResultElement := IndirectElement.Value;
+    end;
+    if Assigned(lResultElement) then
+    begin
+      if (lResultElement is TBANumeric) then
+        Result := TBANumeric(lResultElement).AsFloat
+{      else if (lResultElement is TBADate) then
+        Result := TBADate(lResultElement).AsDate
+      else if (lResultElement is TBATime) then
+        Result := TBATime(lResultElement).AsTime
+      else if (lResultElement is TBADateTime) then
+        Result := TBADateTime(lResultElement).AsDateTime
+}      else
+         raise EBold.CreateFmt('Can''t get float value from element (%s)', [lResultElement.ClassName])
     end;
     {$ENDIF}
   end;
 end;
 
-procedure TBoldAsFloatRenderer.DefaultSetAsFloat(Element: TBoldElement; const Value: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsFloatRenderer.DefaultSetAsFloat(aFollower: TBoldFollower; const Value: double);
 var
   ValueElement: TBoldElement;
   {$IFDEF BOLDCOMCLIENT} // defaultSet
   attr: IBoldAttribute;
   {$ENDIF}
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression , VariableList);
+  ValueElement := aFollower.Value;
   {$IFDEF BOLDCOMCLIENT} // defaultSet
   if assigned(ValueElement) and (ValueElement.QueryInterface(IBoldAttribute, attr) = S_OK) then
     Attr.AsVariant := Value
@@ -172,62 +184,61 @@ begin
   {$ELSE}
   if ValueElement is TBAFloat then
     TBAFloat(ValueElement).AsFloat := Value
-  else if ValueElement is TBADateTime then
-    TBADateTime(ValueElement).AsDateTime := Value
   else
-    raise EBold.CreateFmt(sCannotSetFloatValueOnElement, [ValueElement.ClassName]);
+  if ValueElement is TBACurrency then
+    TBACurrency(ValueElement).AsCurrency := Value
+{  else
+  if ValueElement is TBADateTime then
+    TBADateTime(ValueElement).AsDateTime := Value}
+  else
+    raise EBold.CreateFmt('Can''t set float value on element (%s)', [ValueElement.ClassName]);
   {$ENDIF}
 end;
 
-function TBoldAsFloatRenderer.GetAsFloatAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): double;
+function TBoldAsFloatRenderer.GetAsFloatAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): double;
 begin
   if Assigned(OnSubscribe) and Assigned(Subscriber) then
   begin
-    if Assigned(Element) then
-      OnSubscribe(Element, Representation, Expression, Subscriber);
+    if Assigned(aFollower.Element) then
+      OnSubscribe(aFollower, Subscriber);
     Subscriber := nil;
   end;
   if Assigned(OnGetAsFloat) then
-    Result := OnGetAsFloat(Element, Representation, Expression)
+    Result := OnGetAsFloat(aFollower)
   else
-    Result := DefaultGetAsFloatAndSubscribe(Element, Representation, Expression, VariableList, Subscriber);
+    Result := DefaultGetAsFloatAndSubscribe(aFollower, Subscriber);
 end;
 
-procedure TBoldAsFloatRenderer.SetAsFloat(Element: TBoldElement; const Value: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsFloatRenderer.SetAsFloat(aFollower: TBoldFollower; const Value: double);
 begin
   if Assigned(FOnSetAsFloat) then
-    OnSetAsFloat(Element, Value, Representation, Expression)
+    OnSetAsFloat(aFollower, Value)
   else
-    DefaultSetAsFloat(Element, Value, Representation, Expression, VariableList)
+    DefaultSetAsFloat(aFollower, Value)
 end;
 
-procedure TBoldAsFloatRenderer.MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsFloatRenderer.MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
   Value: double;
+  lRendererData: TBoldFloatRendererData;
 begin
-  Value := GetAsFloatAndSubscribe(Element,
-    (FollowerController as TBoldFloatFollowerController).Representation,
-    (FollowerController as TBoldFloatFollowerController).Expression,
-    FollowerController.GetVariableListAndSubscribe(Subscriber),
-    Subscriber);
-  with (RendererData as TBoldFloatRendererData) do
-  begin
-    OldFloatValue := Value;
-    CurrentFloatValue := Value;
-  end;
+  Value := GetAsFloatAndSubscribe(aFollower, Subscriber);
+  lRendererData := (aFollower.RendererData as TBoldFloatRendererData);
+  lRendererData.OldFloatValue := Value;
+  lRendererData.CurrentFloatValue := Value;
 end;
 
-function TBoldAsFloatRenderer.DefaultIsChanged(RendererData: TBoldFloatRendererData; const NewValue: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsFloatRenderer.DefaultIsChanged(aFollower: TBoldFollower; const NewValue: double): Boolean;
 begin
-  Result := NewValue <> RendererData.OldFloatValue;
+  Result := NewValue <> TBoldFloatRendererData(aFollower.RendererData).OldFloatValue;
 end;
 
-function TBoldAsFloatRenderer.IsChanged(RendererData: TBoldFloatRendererData; const NewValue: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsFloatRenderer.IsChanged(aFollower: TBoldFollower; const NewValue: double): Boolean;
 begin
   if Assigned(FOnIsChanged) then
-    Result := FOnIsChanged(RendererData, NewValue, Representation, Expression)
+    Result := FOnIsChanged(aFollower, NewValue)
   else
-    Result := DefaultIsChanged(RendererData, NewValue, Representation, Expression, VariableList);
+    Result := DefaultIsChanged(aFollower, NewValue);
 end;
 
 { TBoldFloatFollowerController }
@@ -279,7 +290,7 @@ end;
 
 procedure TBoldFloatFollowerController.SetAsFloat(Value: double; Follower: TBoldFollower);
 begin
-  EffectiveAsFloatRenderer.SetAsFloat(Follower.Element, Value, Representation, Expression, VariableList);
+  EffectiveAsFloatRenderer.SetAsFloat(Follower, Value);
 end;
 
 procedure TBoldFloatFollowerController.MayHaveChanged(NewValue: double; Follower: TBoldFollower);
@@ -287,7 +298,8 @@ begin
   if Follower.State in bfsDisplayable then
   begin
     (Follower.RendererData as TBoldFloatRendererData).CurrentFloatValue := NewValue;
-    Follower.ControlledValueChanged(EffectiveAsFloatRenderer.IsChanged(Follower.RendererData as TBoldFloatRendererData, NewValue, Representation, Expression, VariableList));
+    if EffectiveAsFloatRenderer.IsChanged(Follower, NewValue) then
+      Follower.ControlledValueChanged;
   end;
 end;
 

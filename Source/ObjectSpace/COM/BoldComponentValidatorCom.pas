@@ -1,6 +1,7 @@
-unit BoldComponentValidatorCom;
 
-// this unit is currently only an empty replacement of BoldComponentValidator
+{ Global compiler directives }
+{$include bold.inc}
+unit BoldComponentValidatorCom;
 
 interface
 
@@ -13,5 +14,9 @@ type
   end;
 
 implementation
+uses
+  BoldRev;
+
+initialization
 
 end.

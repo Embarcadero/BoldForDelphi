@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControlPackDefs;
 
 interface
@@ -33,6 +36,13 @@ const
 
   beListPartEnabledChanged = 100;
 
+  DefaultBoldDragMode = bdgSelection;
+  DefaultBoldDropMode = bdpAppend;
+
 implementation
 
+uses
+  BoldRev;
+
+initialization
 end.

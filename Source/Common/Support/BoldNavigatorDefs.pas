@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNavigatorDefs;
 
 interface
@@ -28,7 +31,8 @@ type
     property FocusedButton: TBoldNavigateBtn read fFocusedButton write fFocusedButton;
   end;
 
-  { TBoldNavigateBtnImageIndex }
+
+    { TBoldNavigateBtnImageIndex }
   TBoldNavigateBtnImageIndex = class(TPersistent)
   private
     FnbNext: integer;
@@ -49,8 +53,8 @@ type
     procedure SetnbMoveUp(const Value: integer);
     procedure SetnbMoveDown(const Value: integer);
   public
-    constructor Create(Owner: TBoldNavigateBtnImageIndexOwner);
-    procedure Assign(Source: TPersistent); override;
+    constructor create(Owner: TBoldNavigateBtnImageIndexOwner);
+    procedure assign(Source: TPersistent); override;
   published
     property nbFirst: integer read FnbFirst write SetnbFirst;
     property nbPrior: integer read FnbPrior write SetnbPrior;
@@ -84,7 +88,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldRev;
 
 const
   InitRepeatPause = 400; { pause before repeat timer (ms)}
@@ -226,4 +230,7 @@ begin
   end;
 end;
 
+
+
+initialization
 end.

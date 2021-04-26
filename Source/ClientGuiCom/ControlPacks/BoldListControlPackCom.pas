@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,13 +8,11 @@ unit BoldListControlPackCom;
 interface
 
 uses
-  BoldDefs,
   Classes,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  BoldComObjectSpace_TLB,
+  {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   {$ENDIF}
-  BoldSubscription,
   BoldControlPackCom;
 
 type
@@ -65,7 +66,6 @@ type
     function GetSelectedCount: Integer;
     procedure SetSelected(index: Integer; V: Boolean);
     function GetSelected(index: Integer): Boolean;
-//    procedure UnselectPrev;
     procedure Insert(ListFollowerController: TBoldAsFollowerListControllerCom; Index: Integer; Follower: TBoldFollowerCom);
     procedure Delete(ListFollowerController: TBoldAsFollowerListControllerCom; index: Integer);
   protected
@@ -99,7 +99,7 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
+  BoldSubscription,
   BoldUtils;
 
 {---TBoldAsFollowerListControllerCom---}
@@ -135,7 +135,7 @@ end;
 
 procedure TBoldAsFollowerListControllerCom.SetActiveRange(Follower: TBoldFollowerCom; FirstActive, LastActive: Integer; RangeBuffer: Integer = 1);
 begin
-  if Assigned(EffectiveRenderer) then  // may be nil after finalization
+  if Assigned(EffectiveRenderer) then
     (EffectiveRenderer as TBoldAsFollowerListRendererCom).SetActiveRange(Follower, FirstActive, LastActive, RangeBuffer);
 end;
 
@@ -370,4 +370,3 @@ end;
 
 initialization
 end.
-

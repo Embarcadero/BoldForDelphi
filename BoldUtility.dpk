@@ -46,19 +46,20 @@ contains
   BoldSelectionListBox in 'Source\Samples\BoldCheckListBox\BoldSelectionListBox.pas',
   BoldSelectionListBoxReg in 'Source\Samples\BoldCheckListBox\BoldSelectionListBoxReg.pas',
   BoldFormSaver in 'Source\Samples\FormSaver\BoldFormSaver.pas',
+{
+  BoldAttributeWideString in 'Source\Samples\Unicode\BoldAttributeWideString.pas',
+  BoldPMWideString in 'Source\Samples\Unicode\BoldPMWideString.pas',
+  BoldWideStringControlPack in 'Source\Samples\Unicode\BoldWideStringControlPack.pas',
+  BoldWideStringInterface in 'Source\Samples\Unicode\BoldWideStringInterface.pas',
+}
   BoldEditOCLActionPropEditor in 'Source\Samples\IDE\BoldEditOCLActionPropEditor.pas',
   BoldSamplesReg in 'Source\Samples\IDE\BoldSamplesReg.pas',
   BoldLockUtils in 'Source\Samples\Misc\BoldLockUtils.pas',
   BoldObjectRetriever in 'Source\Samples\Misc\BoldObjectRetriever.pas',
   BoldModelLoader in 'Source\Samples\ModelLoader\BoldModelLoader.pas',
   BoldNewObjectInterceptor in 'Source\Samples\NewObjectInterceptor\BoldNewObjectInterceptor.pas',
-  BoldSortingGrid in 'Source\Samples\SortingGrid\BoldSortingGrid.pas',
   BoldSystemComparer in 'Source\Samples\SystemComparer\BoldSystemComparer.pas',
   BoldSystemDebuggerForm in 'Source\Samples\SystemDebugger\BoldSystemDebuggerForm.pas',
-  BoldUMLNameTrimmer in 'Source\Samples\UMLPlugins\BoldUMLNameTrimmer.pas',
-  BoldAttributeWideString in 'Source\Samples\Unicode\BoldAttributeWideString.pas',
-  BoldPMWideString in 'Source\Samples\Unicode\BoldPMWideString.pas',
-  BoldWideStringControlPack in 'Source\Samples\Unicode\BoldWideStringControlPack.pas',
-  BoldWideStringInterface in 'Source\Samples\Unicode\BoldWideStringInterface.pas';
+  BoldUMLNameTrimmer in 'Source\Samples\UMLPlugins\BoldUMLNameTrimmer.pas';
 
 end.

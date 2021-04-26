@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOTASupport;
 
 interface
@@ -57,54 +60,36 @@ function FindFileModuleInProject(const fileName: String; Project: IOTAProject): 
 function GetProjectPath(Project: IOTAProject): String;
 function GetProjectOtherPaths(Project: IOTAProject): string;
 function EnsuredModule(FileName: string; ModuleCreator: TBoldModuleCreator; AllowLoadFromDisk: Boolean; var WasOpen: Boolean): IOTAModule;
-procedure OTADEBUGLogFmt(const s: string; args: array of const);
 
 var
   OTAModuleServices: IOTAModuleServices;
   OTAActionServices: IOTAActionServices;
-  {$IFDEF DEBUG}
-  OTADEBUG: boolean = True;
-  {$ELSE}
   OTADEBUG: boolean = False;
- 	{$ENDIF}
 
 implementation
 
 uses
-	{$IFDEF DEBUG}
-	Dialogs,
-	{$ENDIF}
   SysUtils,
   IniFiles,
   Registry,
   BoldLogHandler,
   BoldUtils,
-  BoldCommonConst,
-  BoldIDESupport;
-
-procedure OTADEBUGLogFmt(const s: string; args: array of const);
-begin
-  if OTADEBUG then
-    BoldLog.LogFmt(s, Args);
-  {$IFDEF DEBUG}
-  ShowMessage(Format(s, Args));
-  {$ENDIF}
-end;
+  BoldRev;
 
 function GetProjectSearchPath(Project: IOTAProject): String;
 var
   DofFileName: string;
 begin
   result := '';
-  if assigned(Project) then
+  if assigned(project) then
   begin
     Result := ExtractFilepath(Project.FileName) + ';';
 
-    DofFileName := ChangeFileExt(Project.FileName, '.DOF'); // do not localize
+    DofFileName := ChangeFileExt(project.FileName, '.DOF');
 
     with TINIFile.Create(DofFileName) do
       try
-        Result := Result + ReadString('DIRECTORIES', 'SearchPath', ''); // do not localize
+        Result := Result + ReadString('DIRECTORIES', 'SearchPath', '');
       finally
         free;
       end;
@@ -117,8 +102,8 @@ begin
   with TRegistry.Create do
   begin
     try
-      if OpenKey(IDEBaseRegistryKey + 'Library', False) then // do not localize
-        Result := ReadString('Search Path'); // do not localize
+      if OpenKey(BOLD_HOST_IDE_REGISTRYPATH + 'Library', False) then
+        Result := ReadString('Search Path');
       CloseKey;
     finally
       Free;
@@ -145,7 +130,8 @@ var
 begin
   result := nil;
   Ensuretrailing(SearchPath, ';');
-  OTADEBUGLogFmt('Looking with searchpath:  %s', [SearchPath]); // do not localize
+  if OTADEBUG then
+    BoldLog.LogFmt('Looking with searchpath:  %s', [SearchPath]);
 
   while SearchPath <> '' do
   begin
@@ -159,7 +145,8 @@ begin
       result := FindDelphiModuleForFile(FileName);
       if assigned(result) then
       begin
-        OTADEBUGLogFmt('Loaded and Opened the file %s', [path + filename]); // do not localize
+        if OTADEBUG then
+          BoldLog.LogFmt('Loaded and Opened the file %s', [path + filename]);
         exit;
       end;
     end;
@@ -171,29 +158,32 @@ var
   Project: IOTAProject;
 begin
   result := nil;
-
-  OTADEBUGLogFmt('Looking in ModuleServices for %s', [FileName]); // do not localize
+  if OTADEBUG then
+    BoldLog.LogFmt('Looking in ModuleServices for %s', [FileName]);
   result := FindDelphiModuleForFile(FileName);
 
   WasOpen := assigned(Result);
-
+  
   if not Assigned(Result) then
   begin
     Project := GetOTAProject;
     if assigned(Project) then
     begin
-      OTADEBUGLogFmt('Looking in Project for %s', [FileName]); // do not localize
+      if OTADEBUG then
+        BoldLog.LogFmt('Looking in Project for %s', [FileName]);
       result := FindFileModuleInProject(FileName, Project);
 
       if not assigned(result) then
       begin
-        OTADEBUGLogFmt('Looking in Project SearchPath for %s', [FileName]); // do not localize
+        if OTADEBUG then
+          BoldLog.LogFmt('Looking in Project SearchPath for %s', [FileName]);
         result := OpenExistingFileInDelphi(FileName, GetProjectSearchPath(Project));
       end;
 
       if not Assigned(Result) then
       begin
-        OTADEBUGLogFmt('Looking in folders of other files in project for %s', [FileName]); // do not localize
+        if OTADEBUG then
+          BoldLog.LogFmt('Looking in folders of other files in project for %s', [FileName]);
         result := OpenExistingFileInDelphi(FileName, GetProjectOtherPaths(Project));
       end;
     end;
@@ -201,19 +191,20 @@ begin
 
   if not assigned(result) then
   begin
-    OTADEBUGLogFmt('Looking in Delphi SearchPath for %s', [FileName]); // do not localize
+    if OTADEBUG then
+      BoldLog.LogFmt('Looking in Delphi SearchPath for %s', [FileName]);
     result := OpenExistingFileInDelphi(FileName, GetDelphiSearchPath);
   end;
 
   if not assigned(result) then
   begin
-    OTADEBUGLogFmt('Creating New module for %s', [FileName]); // do not localize
+    if OTADEBUG then
+      BoldLog.LogFmt('Creating New module for %s', [FileName]);
     result := OTAModuleServices.CreateModule(ModuleCreator);
   end;
-  OTADEBUGLogFmt('New module created: %s', [FileName]); // do not localize
 
   if not assigned(result) then
-    raise EBoldDesignTime.CreateFmt(sUnableToGetModule, [filename]);
+    raise EBoldDesignTime.CreateFmt('Unable to get module for %s', [filename]);
 end;
 
 function BoldFilePathForComponent(component: TComponent): string;
@@ -241,12 +232,10 @@ begin
         begin
           RootComponent := FormEditor.GetRootComponent;
 
-          // if there is a component on the form with the same name
-          // as the one we are looking for, and the form has the same
-          // name as the owner of our component
+
 
           if assigned(FormEditor.FindComponent(Component.Name)) and
-          RootComponent.GetPropValueByName('Name', RootName) and // do not localize
+          RootComponent.GetPropValueByName('Name', RootName) and
             (RootName = Owner.Name) then
           begin
             Result := IncludeTrailingPathDelimiter(Trim(ExtractFilePath(Module.FileName)));
@@ -262,18 +251,17 @@ end;
 function GetOTAProject: IOTAProject;
 var
   i: integer;
+  CurrentModule: IOTAModule;
 begin
-	Result := OTAModuleServices.GetActiveProject;
-	if not Assigned(Result) then
-	begin
-	  // find the first project available
-	  for i := 0 to OTAModuleServices.ModuleCount - 1 do
-	    if OTAModuleServices.Modules[i].QueryInterface(IOTAProject, result) = S_OK then
-	      if uppercase(ExtractFileExt(result.GetFileName)) = '.DPR' then // do not localize
-	        exit;
-	  result := nil;
-	end;
-end;
+  result := (BorlandIDEServices as IOTAModuleServices).GetActiveProject;
+  if OTADEBUG then
+  begin
+    if Assigned(result) then
+      BoldLog.LogFmt('CurrentModule:', [result.FileName])
+    else
+      BoldLog.Log('CurrentModule not found');
+        end;
+    end;
 
 function FindFileModuleInProject(const fileName: String; Project: IOTAProject): IOTAModule;
 var
@@ -282,15 +270,13 @@ begin
   result := nil;
   if assigned(Project) then
     for i := 0 to Project.GetModuleCount - 1 do
-    begin
-    	OTADEBUGLogFmt('FindFileModuleInProject: %s - %s', [ExtractFileName(Project.GetModule(i).GetFileName), ExtractFileName(FileName)]);
       if SameFileName(ExtractFileName(Project.GetModule(i).GetFileName), ExtractFileName(FileName)) then
       begin
-        OTADEBUGLogFmt('Opening existing file from project: %s', [Project.GetModule(i).FileName]); // do not localize
+        if OTADEBUG then
+          BoldLog.Log('Opening existing file from project: '+ Project.GetModule(i).FileName);
         Result := Project.GetModule(i).OpenModule;
         Exit;
       end;
-    end;
 end;
 
 function GetProjectPath(Project: IOTAProject): String;
@@ -328,7 +314,6 @@ begin
   else
     result := '';
   end;
-  result := '';
 end;
 
 function TBoldModuleCreator.GetExisting: Boolean;
@@ -337,8 +322,8 @@ begin
   if FileExists(fFilename) then
     result := true;
 
-  if not result then
-    OTADEBUGLogFmt('TBoldModuleCreator.GetExisting: %s does not exist', [fFileName]); // do not localize
+  if not result and OTADEBUG then
+    BoldLog.LogFmt('%s does not exist', [fFileName]);
 end;
 
 function TBoldModuleCreator.GetFileSystem: string;
@@ -347,14 +332,18 @@ begin
 end;
 
 function TBoldModuleCreator.GetOwner: IOTAModule;
+var
+  Module: IOTAModule;
 begin
-	Result := nil;
-	Exit;
   case fModuleType of
-    // IncFiles and units should be owned by the project is possible
     mtIncFile,
-    mtUnit: Result := (BorlandIDEServices as IOTAModuleServices).GetActiveProject;
-    // Other files will not get added to a project (IDL files)
+    mtUnit: begin
+      Module := (BorlandIDEServices as IOTAModuleServices).CurrentModule;
+      if Assigned(Module) and (Module.OwnerCount > 0) then
+        Result := Module.Owners[0]
+      else
+        Result := nil;
+    end;
     mtText: result := nil;
   end;
 end;
@@ -416,7 +405,7 @@ end;
 
 procedure TBoldModuleCreator.FormCreated(const FormEditor: IOTAFormEditor);
 begin
-end;
+end;   
 
 constructor TBoldUnitFile.Create(const UnitIdent: string);
 begin
@@ -436,7 +425,7 @@ end;
 initialization
   OTAModuleServices := BorlandIDEServices as IOTAModuleServices;
   OTAActionServices := BorlandIDEServices as IOTAActionServices;
-  if assigned(BorlandIDEServices) then
+  if assigned(OTAModuleServices) and Assigned(OTAActionServices) then
     BoldRunningAsDesignTimePackage := true;
 
 end.

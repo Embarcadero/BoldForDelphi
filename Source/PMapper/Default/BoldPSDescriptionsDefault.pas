@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPSDescriptionsDefault;
 
 interface
@@ -7,12 +10,14 @@ uses
   BoldPSDescriptionsSQL,
   BoldPSParams,
   BoldPSParamsSQL,
-  BoldPSParamsDefault;
+  BoldPSParamsDefault,
+  BoldDBInterfaces;
 
 type
   {---TBoldDefaultSystemDescription---}
   TBoldDefaultSystemDescription = class(TBoldSQLSystemDescription)
   private
+    Query: IBoldExecQuery;
     FIdTable: TBoldSQLTableDescription;
     FTimeStamptable: TBoldSQLTableDescription;
     FTypeTable: TBoldSQLTableDescription;
@@ -36,16 +41,15 @@ type
     procedure AddFirstClock(PSParams: TBoldPSDefaultParams);
     procedure AddTableNames(PSParams: TBoldPSDefaultParams);
 
-    procedure GenerateScriptForFirstID(Script: TStrings; Separator: String);
-    procedure GenerateScriptForFirstTimeStamp(Script: TStrings; Separator: String);
-    procedure GenerateScriptForFirstClock(Script: TStrings; Separator: String);
-    procedure GenerateScriptForTableNames(Script: TStrings; Separator: String);
+    procedure GenerateScriptForFirstID(Script: TStrings);
+    procedure GenerateScriptForFirstTimeStamp(Script: TStrings);
+    procedure GenerateScriptForFirstClock(Script: TStrings);
+    procedure GenerateScriptForTableNames(Script: TStrings);
   protected
-
     procedure InitializeKnownSystemtables(KnownTables: TStrings; PSParams: TBoldPSSQLParams); override;
   public
     procedure CreatePersistentStorage(PSParams: TBoldPSParams); override;
-    procedure GenerateDatabaseScript(Script: TStrings; Separator: string); override;
+    procedure GenerateDatabaseScript(Script: TStrings); override;
     property IdTable: TBoldSQLTableDescription read FIdTable write SetIdTable;
     property RootTable: TBoldSQLTableDescription read fRootTable write SetRootTable;
     property TypeTable: TBoldSQLTableDescription read FTypeTable write SetTypeTable;
@@ -63,11 +67,15 @@ implementation
 
 uses
   SysUtils,
-  BoldDBInterfaces,
+  {$IFNDEF BOLD_UNICODE}
+  StringBuilder,
+  {$ENDIF}
+  DB,
   BoldDefs,
   BoldLogHandler,
   BoldNameExpander,
-  BoldPMConsts;
+  BoldMath,
+  BoldRev;
 
 {---TBoldDefaultSystemDescription---}
 
@@ -92,28 +100,23 @@ procedure TBoldDefaultSystemDescription.AddFirstClock(PSParams: TBoldPSDefaultPa
   end;
 
   procedure AddFirstClockUsingQuery;
-  var
-    Q: IBoldExecQuery;
   begin
-    q := PSParams.DataBase.GetExecQuery;
-    try
-      q.AssignSQLText(format(
-        'INSERT INTO %s (%s, %s) VALUES (0, :FirstClock)', // do not localize
-          [LastClockTable.SQLName, LASTTIMESTAMPCOLUMN_NAME, LASTCLOCKCOLUMN_NAME] ));
-      q.ParamByName('FirstClock').AsDateTime := 0; // do not localize
-      q.ExecSQL;
-    finally
-      PSParams.DataBase.ReleaseExecQuery(q);
-    end;
+    Query.AssignSQLText(format(
+      'INSERT INTO %s (%s, %s) VALUES (0, :FirstClock)',
+        [LastClockTable.SQLName, LASTTIMESTAMPCOLUMN_NAME, LASTCLOCKCOLUMN_NAME] ));
+    Query.CreateParam(ftDateTime, 'FirstClock').AsDateTime := 0;
+    Query.ParamCheck := true;
+    Query.ExecSQL;
+    Query.ParamCheck := false;
   end;
-
+  
 begin
-  BoldLog.Log(sLogWritingFirstClock);
+  BoldLog.Log('Writing First Clock');
 
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddFirstClockUsingTable;
     dbgQuery: AddFirstClockUsingQuery;
-    else raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstClock']); // do not localize
+    else raise EBold.CreateFmt('%s.AddFirstClock: unknown database generation mode', [ClassName]);
   end;
 end;
 
@@ -138,26 +141,19 @@ procedure TBoldDefaultSystemDescription.AddFirstID(PSParams: TBoldPSDefaultParam
   end;
 
   procedure AddFirstIdUsingQuery;
-  var
-    Q: IBoldExecQuery;
   begin
-    q := PSParams.DataBase.GetExecQuery;
-    try
-      q.AssignSQLText(format(
-        'INSERT INTO %s (%s) VALUES (1)', // do not localize
+    Query.AssignSQLText(format(
+        'INSERT INTO %s (%s) VALUES (1)',
           [IDTable.SQLName, IDCOLUMN_NAME] ));
-      q.ExecSQL;
-    finally
-      PSParams.DataBase.ReleaseExecQuery(q);
-    end;
+    Query.ExecSQL;
   end;
 
 begin
-  BoldLog.Log(sLogWritingFirstID);
+  BoldLog.Log('Writing First ID');
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddFirstIDUsingTable;
     dbgQuery: AddFirstIDUsingQuery;
-    else raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstID']); // do not localize
+    else raise EBold.CreateFmt('%s.AddFirstID: unknown database generation mode', [ClassName]);
   end;
 end;
 
@@ -166,7 +162,7 @@ procedure TBoldDefaultSystemDescription.AddFirstTimeStamp(PSParams: TBoldPSDefau
   var
     Table: IBoldTable;
   begin
-    BoldLog.Log(sLogWritingFirstTimeStamp);
+    BoldLog.Log('Writing First TimeStamp');
     Table := PSParams.DataBase.GetTable;
     with Table do
     try
@@ -181,26 +177,19 @@ procedure TBoldDefaultSystemDescription.AddFirstTimeStamp(PSParams: TBoldPSDefau
     end;
   end;
   procedure AddFirstTimeStampUsingQuery;
-  var
-    Q: IBoldExecQuery;
   begin
-    q := PSParams.DataBase.GetExecQuery;
-    try
-      q.AssignSQLText(format(
-        'INSERT INTO %s (%s) VALUES (0)', // do not localize
-          [TimeStampTable.SQLName, BoldExpandName(TIMESTAMPCOLUMN_NAME, '', xtSQL, SQLDatabaseConfig.MaxDbIdentifierLength, NationalCharConversion)] ));
-      q.ExecSQL;
-    finally
-      PSParams.DataBase.ReleaseExecQuery(q);
-    end;
+    Query.AssignSQLText(format(
+      'INSERT INTO %s (%s) VALUES (0)',
+        [TimeStampTable.SQLName, BoldExpandName(TIMESTAMPCOLUMN_NAME, '', xtSQL, SQLDatabaseConfig.MaxDbIdentifierLength, NationalCharConversion)] ));
+    Query.ExecSQL;
   end;
 
 begin
-  BoldLog.Log(sLogWritingFirstTimeStamp);
+  BoldLog.Log('Writing First TimeStamp');
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddFirstTimeStampUsingTable;
     dbgQuery: AddFirstTimeStampUsingQuery;
-    else raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstTimeStamp']); // do not localize
+    else raise EBold.CreateFmt('%s.AddFirstTimeStamp: unknown database generation mode', [ClassName]);
   end;
 end;
 
@@ -220,7 +209,7 @@ procedure TBoldDefaultSystemDescription.AddTableNames(PSParams: TBoldPSDefaultPa
       for i := 0 to SQLTablesList.Count - 1 do
         begin
           Append;
-          FieldValues['TABLENAME'] := SQLTablesList[i].SQLName; // do not localize
+          FieldValues['TABLENAME'] := SQLTablesList[i].SQLName;
           Post;
         end;
       Close;
@@ -231,45 +220,58 @@ procedure TBoldDefaultSystemDescription.AddTableNames(PSParams: TBoldPSDefaultPa
 
   procedure AddTableNamesUsingQuery;
   var
-    Q: IBoldExecQuery;
     i: integer;
+    row, limit: integer;
+    sb: TStringBuilder;
+    TableCount: integer;
+    sInsert: string;
   begin
-    q := PSParams.DataBase.GetExecQuery;
+    sb := TStringBuilder.Create;
     try
-      q.AssignSQLText(format(
-        'INSERT INTO %s (TABLENAME) VALUES (:TABLENAME)', // do not localize
-          [TableTable.SQLName] ));
-      for i := 0 to SQLTablesList.Count - 1 do
+      sInsert := format('INSERT INTO %s (TABLENAME) VALUES ', [TableTable.SQLName]);
+      limit := SQLDatabaseConfig.MultiRowInsertLimit;
+      row := 0;
+      for i := 0 to SQLTablesList.Count-1 do
       begin
-        q.ParamByName('TABLENAME').AsString := SQLTablesList[i].SQLName; // do not localize
-        q.ExecSQL;
+        if row = 0 then
+          sb.append(sInsert);
+        sb.Append(Format('(''%s'')', [SQLTablesList[i].SQLName]));
+        inc(row);
+        if (row = limit) or (i = SQLTablesList.Count - 1) then
+        begin
+          Query.AssignSQLText(sb.ToString);
+          Query.ExecSQL;
+          row := 0;
+          sb.clear;
+        end
+        else
+          sb.Append(',');
       end;
     finally
-      PSParams.DataBase.ReleaseExecQuery(q);
+      sb.free;
     end;
   end;
 
 begin
-  BoldLog.Log(sLogWritingTableNames);
+  BoldLog.Log('Writing TableNames');
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddTableNamesUsingTable;
     dbgQuery: AddTableNamesUsingQuery;
-    else raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddTableNames']); // do not localize
+    else raise EBold.CreateFmt('%s.AddTableNames: unknown database generation mode', [ClassName]);
   end;
 end;
 
 procedure TBoldDefaultSystemDescription.CreatePersistentStorage(PSParams: TBoldPSParams);
 var
   PSParamsDefault: TBoldPSDefaultParams;
-begin
-  inherited;
-  if BoldLog.ProcessInterruption then
-    exit;
-  BoldLog.LogHeader := sLogInitializingDefaultPS;
-  PSParamsDefault := PSParams as TBoldPSDefaultParams;
-  if EffectiveUseTransactions(PSParamsDefault) then
-    PSParamsDefault.Database.StartTransaction;
-  try
+
+  procedure InternalExecute;
+  begin
+    Query := PSParamsDefault.Database.GetExecQuery;
+    Query.ParamCheck := false;
+    Query.StartSQLBatch;
+    if EffectiveUseTransactions(PSParamsDefault) then
+      PSParamsDefault.Database.StartTransaction;
     AddFirstID(PSParamsDefault);
     if assigned(TimeStampTable) then
       AddFirstTimeStamp(PSParamsDefault);
@@ -277,60 +279,78 @@ begin
       AddFirstClock(PSParamsDefault);
     AddTableNames(PSParamsDefault);
     BoldLog.Separator;
+    Query.EndSQLBatch;
+  end;
+
+begin
+  inherited;
+  if BoldLog.ProcessInterruption then
+    exit;
+  BoldLog.LogHeader := 'Initializing Default Persistent Storage';
+  PSParamsDefault := PSParams as TBoldPSDefaultParams;
+  try
+    InternalExecute;
   finally
+    PSParamsDefault.Database.ReleaseExecQuery(Query);
     if EffectiveUseTransactions(PSParamsDefault) then
     begin
       BoldLog.Separator;
-      BoldLog.Log(sCommittingInitialData);
+      BoldLog.Log('Committing changes to initial data');
       PSParamsDefault.Database.Commit;
     end;
   end;
 end;
 
-procedure TBoldDefaultSystemDescription.GenerateDatabaseScript(
-  Script: TStrings; Separator: string);
+procedure TBoldDefaultSystemDescription.GenerateDatabaseScript(Script: TStrings);
 begin
   inherited;
-  GenerateScriptForFirstID(Script, Separator);
+  GenerateScriptForFirstID(Script);
   if assigned(TimeStampTable) then
-    GenerateScriptForFirstTimeStamp(Script, Separator);
+    GenerateScriptForFirstTimeStamp(Script);
   if assigned(LastClockTable) then
-    GenerateScriptForFirstClock(Script, Separator);
-  GenerateScriptForTableNames(Script, Separator);
+    GenerateScriptForFirstClock(Script);
+  GenerateScriptForTableNames(Script);
 end;
 
-procedure TBoldDefaultSystemDescription.GenerateScriptForFirstClock(Script: TStrings; Separator: String);
+procedure TBoldDefaultSystemDescription.GenerateScriptForFirstClock(Script: TStrings);
 begin
-  Script.Add(Separator);
   Script.Add(format(
-        'INSERT INTO %s (%s, %s) VALUES (0, %s)', // do not localize
-          [LastClockTable.SQLName, LASTTIMESTAMPCOLUMN_NAME, LASTCLOCKCOLUMN_NAME, DateToStr(0)] ));
+        'INSERT INTO %s (%s, %s) VALUES (0, %s)%s',
+          [LastClockTable.SQLName, LASTTIMESTAMPCOLUMN_NAME, LASTCLOCKCOLUMN_NAME, QuotedStr(DateToStr(0)),
+           SQLDatabaseConfig.SqlScriptTerminator] ));
+  if SQLDatabaseConfig.SqlScriptSeparator<>'' then
+    Script.Add(SQLDatabaseConfig.SqlScriptSeparator);
 end;
 
-procedure TBoldDefaultSystemDescription.GenerateScriptForFirstID(Script: TStrings; Separator: String);
+procedure TBoldDefaultSystemDescription.GenerateScriptForFirstID(Script: TStrings);
 begin
-  Script.Add(Separator);
-  Script.Add(format('INSERT INTO %s (%s) VALUES (1)', [IDTable.SQLName, IDCOLUMN_NAME] )); // do not localize
+  Script.Add(format('INSERT INTO %s (%s) VALUES (1)%s', [IDTable.SQLName, IDCOLUMN_NAME, SQLDatabaseConfig.SqlScriptTerminator] ));
+  if SQLDatabaseConfig.SqlScriptSeparator<>'' then
+    Script.Add(SQLDatabaseConfig.SqlScriptSeparator);
 end;
 
-procedure TBoldDefaultSystemDescription.GenerateScriptForFirstTimeStamp(Script: TStrings; Separator: String);
+procedure TBoldDefaultSystemDescription.GenerateScriptForFirstTimeStamp(Script: TStrings);
 begin
-  Script.Add(Separator);
   Script.Add(format(
-        'INSERT INTO %s (%s) VALUES (0)', // do not localize
-          [TimeStampTable.SQLName, BoldExpandName(TIMESTAMPCOLUMN_NAME, '', xtSQL, SQLDatabaseConfig.MaxDbIdentifierLength, NationalCharConversion)] ));
+        'INSERT INTO %s (%s) VALUES (0)%s',
+          [TimeStampTable.SQLName,
+           BoldExpandName(TIMESTAMPCOLUMN_NAME, '', xtSQL, SQLDatabaseConfig.MaxDbIdentifierLength, NationalCharConversion),
+           SQLDatabaseConfig.SqlScriptTerminator] ));
+  if SQLDatabaseConfig.SqlScriptSeparator<>'' then
+    Script.Add(SQLDatabaseConfig.SqlScriptSeparator);
 end;
 
-procedure TBoldDefaultSystemDescription.GenerateScriptForTableNames(Script: TStrings; Separator: String);
+procedure TBoldDefaultSystemDescription.GenerateScriptForTableNames(Script: TStrings);
 var
   i: integer;
 begin
   for i := 0 to SQLTablesList.Count - 1 do
   begin
-    Script.Add(Separator);
     Script.Add(format(
-      'INSERT INTO %s (TABLENAME) VALUES (''%s'')', // do not localize
-        [TableTable.SQLName, SQLTablesList[i].SQLName]));
+      'INSERT INTO %s (TABLENAME) VALUES (''%s'')%s',
+        [TableTable.SQLName, SQLTablesList[i].SQLName, SQLDatabaseConfig.SqlScriptTerminator]));
+    if SQLDatabaseConfig.SqlScriptSeparator<>'' then
+      Script.Add(SQLDatabaseConfig.SqlScriptSeparator);
   end;
 end;
 
@@ -339,15 +359,12 @@ procedure TBoldDefaultSystemDescription.InitializeKnownSystemtables(
 var
   Query: IBoldQuery;
 begin
-  // Reset The Query-pointer to avoid AVs at the end of method
   Query := nil;
-  // try to determine if the TablesTable exists...
   if PSParams.DataBase.TableExists(TableTable.SQLName) then
   begin
-    // Load the data from the table
     Query := PSParams.DataBase.GetQuery;
     try
-      Query.AssignSQLText(format('SELECT %s FROM %s', [TABLENAMECOLUMN_NAME, TableTable.SQLName])); // do not localize // do not localize
+      Query.AssignSQLText(format('SELECT %s FROM %s', [TABLENAMECOLUMN_NAME, TableTable.SQLName]));
       try
         Query.Open;
         while not Query.Eof do
@@ -357,8 +374,7 @@ begin
         end;
         Query.Close;
       except
-        // silence any exceptions (this happens if the table does not exist in the database,
-        // and the databaseinterfaces does not support IBoldTable
+
       end;
     finally
       PSParams.DataBase.ReleaseQuery(Query);
@@ -366,34 +382,42 @@ begin
   end;
 end;
 
-procedure TBoldDefaultSystemDescription.SetIdTable(const Value: TBoldSQLTableDescription);
+procedure TBoldDefaultSystemDescription.SetIdTable(
+  const Value: TBoldSQLTableDescription);
 begin
   FIdTable := Value;
 end;
 
-procedure TBoldDefaultSystemDescription.SetRootTable(const Value: TBoldSQLTableDescription);
+procedure TBoldDefaultSystemDescription.SetRootTable(
+  const Value: TBoldSQLTableDescription);
 begin
   fRootTable := Value;
 end;
 
-procedure TBoldDefaultSystemDescription.SetTabletable(const Value: TBoldSQLTableDescription);
+procedure TBoldDefaultSystemDescription.SetTabletable(
+  const Value: TBoldSQLTableDescription);
 begin
   FTabletable := Value;
 end;
 
-procedure TBoldDefaultSystemDescription.SetTimeStamptable(const Value: TBoldSQLTableDescription);
+procedure TBoldDefaultSystemDescription.SetTimeStamptable(
+  const Value: TBoldSQLTableDescription);
 begin
   FTimeStamptable := Value;
 end;
 
-procedure TBoldDefaultSystemDescription.SetTypeTable(const Value: TBoldSQLTableDescription);
+procedure TBoldDefaultSystemDescription.SetTypeTable(
+  const Value: TBoldSQLTableDescription);
 begin
   FTypeTable := Value;
 end;
 
-procedure TBoldDefaultSystemDescription.SetXFilestable(const Value: TBoldSQLTableDescription);
+procedure TBoldDefaultSystemDescription.SetXFilestable(
+  const Value: TBoldSQLTableDescription);
 begin
   FXFilestable := Value;
 end;
+
+initialization
 
 end.

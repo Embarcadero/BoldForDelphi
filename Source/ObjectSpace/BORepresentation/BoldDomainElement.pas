@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDomainElement;
 
 interface
@@ -11,13 +14,12 @@ uses
 type
   {forward declarations of all classes}
   TBoldDomainElementProxyMode = (
-    bdepContents,  // actual contents of member
-//    bDepObjectSpace, // the "fronside" inteferace, not used yet
-    bdepPMOut,  // Interface to Persistence mapper
-    bdepPMIn,  // Interface from Persistence mapper
-    bdepUnDo,  //Interface To/From UnDo-handler
-    bdepInternalInitialize,  //
-    bdRemove // ...
+    bdepContents,
+    bdepPMOut,
+    bdepPMIn,
+    bdepUnDo,
+    bdepInternalInitialize,
+    bdRemove
     );
 type
   TBoldDomainElement = class;
@@ -31,54 +33,64 @@ type
   private
     FOwningElement: TBoldDomainElement;
   protected
-    function GetDisplayName: String; virtual; abstract;
+    function GetDisplayName: String; override;
     function GetBoldDirty: Boolean; virtual; abstract;
     function MayCommit: Boolean; virtual;
-    procedure ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent); virtual;
+    function GetBoldSystem: TBoldDomainElement; virtual;
+    procedure ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const); virtual;
+{$IFNDEF BOLD_NO_QUERIES}
     function ReceiveQueryFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; virtual;
+{$ENDIF}
     procedure StateError(S: string); virtual;
   public
-    constructor Create(OwningElement: TBoldDomainElement); virtual;
+    constructor CreateWithOwner(OwningElement: TBoldDomainElement); virtual;
     function ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean; virtual;
+    procedure Discard; virtual; abstract;
+    procedure Invalidate; virtual;
     function CanCommit: Boolean;
     procedure SendEvent(OriginalEvent: TBoldEvent); override;
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const); override;
-    function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; override;
+{$IFNDEF BOLD_NO_QUERIES}
+    function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean; override;
+{$ENDIF}
     property BoldDirty: Boolean read GetBoldDirty;
     property BoldPersistent: Boolean index befPersistent read GetElementFlag;
     property OwningElement: TBoldDomainElement read FOwningElement;
-    property DisplayName: String read GetDisplayName;
+    property BoldSystem: TBoldDomainElement read GetBoldSystem;
   end;
 
   { TBoldDomainElement_Proxy }
   TBoldDomainElement_Proxy = class(TBoldRefCountedObject)
   private
     fMode:  TBoldDomainElementProxyMode;
-    fProxedElement: TBoldDomainElement;
   protected
     procedure UnsupportedMode(Mode: TBoldDomainElementProxyMode; Func: string);
+    procedure Retarget(Mode:  TBoldDomainElementProxyMode); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
-    constructor Create(ProxedElement: TBoldDomainElement; Mode:  TBoldDomainElementProxyMode);
-    property ProxedElement: TBoldDomainElement read fProxedElement;
+    constructor Create(Mode:  TBoldDomainElementProxyMode);
     property Mode: TBoldDomainElementProxyMode read fMode;
   end;
 
   { TBoldDomainElementCollectionTraverser }
   TBoldDomainElementCollectionTraverser = class(TBoldIndexableListTraverser)
   private
-    function GetItem: TBoldDomainElement;
+    function GetItem: TBoldDomainElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     property Item: TBoldDomainElement read GetItem;
+    property Current: TBoldDomainElement read GetItem;
   end;
 
   { TBoldDomainElementCollection }
   TBoldDomainElementCollection = class(TBoldUnorderedIndexableList)
+  private
+    class var IX_DomainElementCollection: integer;
   protected
     function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
-    constructor create;
-    procedure Add(item: TBoldDomainElement);
-    function Includes(item: TBoldDomainElement): Boolean;
+    constructor Create;
+    function GetEnumerator: TBoldDomainElementCollectionTraverser;
+    procedure Add(item: TBoldDomainElement); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Includes(item: TBoldDomainElement): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function CreateTraverser: TBoldDomainElementCollectionTraverser;
   end;
 
@@ -90,13 +102,10 @@ uses
   BoldIndex,
   BoldHashIndexes;
 
-var
-  IX_DomainElementCollection: integer = -1;
-
 type
   TBoldDomainElementCollectionIndex = class(TBoldObjectHashIndex)
   protected
-    function ItemAsKeyObject(Item: TObject): TObject; override;
+    function ItemASKeyObject(Item: TObject): TObject; override;
   end;
 
 { TBoldDomainElement }
@@ -109,7 +118,7 @@ begin
   if Assigned(Self) then
     MyClassName := ClassName
   else
-    MyClassName := '<nil>'; // do not localize
+    MyClassName := '<nil>';
   if Assigned(Self) and Assigned(OwningElement) then
     MyOwnerClassname := OwningElement.ClassName + '.'
   else
@@ -140,52 +149,73 @@ begin
 end;
 *)
 
-constructor TBoldDomainElement.Create(OwningElement: TBoldDomainElement);
+constructor TBoldDomainElement.CreateWithOwner(OwningElement: TBoldDomainElement);
 begin
-  inherited Create;
   FOwningElement := OwningElement;
+end;
+
+function TBoldDomainElement.GetBoldSystem: TBoldDomainElement;
+begin
+  result := nil;
+  if Assigned(OwningElement) then
+    result := OwningElement.BoldSystem
+  else
+    if self.ClassName = 'TBoldSystem' then
+      result := self;
+end;
+
+function TBoldDomainElement.GetDisplayName: String;
+begin
+  result := Inherited GetDisplayName;
+  if Assigned(OwningElement) then
+    result := OwningElement.DisplayName + '.' + result;
 end;
 
 procedure TBoldDomainElement.SendEvent(OriginalEvent: TBoldEvent);
 begin
   if Assigned(OwningElement) then
-    OwningElement.ReceiveEventFromOwned(self, OriginalEvent);
-  inherited; // SendEvent(Originator, OriginalEvent);
+    OwningElement.ReceiveEventFromOwned(self, OriginalEvent, []);
+  inherited;
 end;
 
+{$IFNDEF BOLD_NO_QUERIES}
 function TBoldDomainElement.SendQuery(
   OriginalEvent: TBoldEvent; const Args: array of const;
-  Subscriber: TBoldSubscriber): Boolean;
+  Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean;
 begin
   result := True;
   if Assigned(OwningElement) then
-    result := OwningElement.ReceiveQueryFromOwned(self, OriginalEvent, Args, Subscriber);
-  if result then
-    result := inherited SendQuery(OriginalEvent, Args, Subscriber);
+    result := OwningElement.ReceiveQueryFromOwned(Originator, OriginalEvent, Args, Subscriber);
+  result := result and inherited SendQuery(OriginalEvent, Args, Subscriber, Originator);
 end;
+{$ENDIF}
 
-procedure TBoldDomainElement.ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent);
+procedure TBoldDomainElement.ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const);
 begin
-  // Intentionally left blank
 end;
 
+{$IFNDEF BOLD_NO_QUERIES}
 function TBoldDomainElement.ReceiveQueryFromOwned(Originator: TObject;
   OriginalEvent: TBoldEvent; const Args: array of const;
   Subscriber: TBoldSubscriber): Boolean;
 begin
   result := True;
 end;
+{$ENDIF}
 
 procedure TBoldDomainElement.SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const);
 begin
   if Assigned(OwningElement) then
-    OwningElement.ReceiveEventFromOwned(self, OriginalEvent);
+    OwningElement.ReceiveEventFromOwned(self, OriginalEvent, Args);
   inherited;
 end;
 
 function TBoldDomainElement.CanCommit: Boolean;
 begin
-  result := MayCommit and SendQuery(bqMayCommit, [], nil);
+  result := MayCommit;
+{$IFNDEF BOLD_NO_QUERIES}
+  result := result and SendQuery(bqMayCommit, [], nil);
+{$ENDIF}
 end;
 
 function TBoldDomainElement.MayCommit: Boolean;
@@ -198,12 +228,21 @@ begin
   result := false;
 end;
 
+procedure TBoldDomainElement.Invalidate;
+begin
+// do nothing
+end;
+
 { TBoldDomainElement_Proxy }
 
-constructor TBoldDomainElement_Proxy.Create(ProxedElement: TBoldDomainElement; Mode:  TBoldDomainElementProxyMode);
+constructor TBoldDomainElement_Proxy.Create(Mode:  TBoldDomainElementProxyMode);
 begin
   inherited create;
-  fProxedElement := ProxedElement;
+  fMode := Mode;
+end;
+
+procedure TBoldDomainElement_Proxy.Retarget(Mode: TBoldDomainElementProxyMode);
+begin
   fMode := Mode;
 end;
 
@@ -219,7 +258,7 @@ begin
   inherited Add(item);
 end;
 
-constructor TBoldDomainElementCollection.create;
+constructor TBoldDomainElementCollection.Create;
 begin
   inherited create;
   OwnsEntries := false;
@@ -228,14 +267,17 @@ end;
 
 function TBoldDomainElementCollection.CreateTraverser: TBoldDomainElementCollectionTraverser;
 begin
-  result := TBoldDomainElementCollectionTraverser(inherited CreateTraverser);
-  Assert(Result is TBoldDomainElementCollectionTraverser);
+  result := inherited CreateTraverser as TBoldDomainElementCollectionTraverser;
+end;
+
+function TBoldDomainElementCollection.GetEnumerator: TBoldDomainElementCollectionTraverser;
+begin
+  result := CreateTraverser;
 end;
 
 function TBoldDomainElementCollection.Includes(item: TBoldDomainElement): Boolean;
 begin
-  Assert((Indexes[IX_DomainElementCollection] is TBoldDomainElementCollectionIndex));
-  result := assigned(TBoldDomainElementCollectionIndex(Indexes[IX_DomainElementCollection]).FindByObject(Item));
+  result := assigned(TBoldObjectHashIndex(Indexes[IX_DomainElementCollection]).FindByObject(Item));
 end;
 
 function TBoldDomainElementCollectionIndex.ItemASKeyObject(Item: TObject): TObject;
@@ -252,8 +294,11 @@ end;
 
 function TBoldDomainElementCollectionTraverser.GetItem: TBoldDomainElement;
 begin
-  Assert((inherited item) is TBoldDomainElement);
   result := TBoldDomainElement(inherited item);
+  Assert(result is TBoldDomainElement);
 end;
+
+initialization
+  TBoldDomainElementCollection.IX_DomainElementCollection := -1;
 
 end.

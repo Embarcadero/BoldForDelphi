@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGenericListControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,12 +8,16 @@ unit BoldGenericListControlPackCom;
 interface
 
 uses
+  // VCL
   Classes,
-  BoldDefs,
-  BoldSubscription,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+
+  // Bold
+  BoldComClient,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
-  BoldListControlPackCom;
+  BoldDefs,
+  BoldListControlPackCom,
+  BoldSubscription;
 
 type
   { forward declarations }
@@ -30,9 +37,9 @@ type
   TGetFollowerControllerEventCom = function (Element: IBoldElement; Subscriber: TBoldComClientSubscriber; GetFollowerControllerByName: TGetFollowerControllerByNameEventCom): TBoldFollowerControllerCom of object;
   {$ENDIF}
 
-  {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+  {$IFNDEF BOLDCOMCLIENT}
   TGetElementEvent = procedure (Sender: TBoldGenericListPartCom; Element: IBoldElement; Subscriber: TBoldComClientSubscriber; ResultElement: TBoldIndirectElement; Resubscribe: Boolean) of object;
-  {$ENDIF}
+  {$ENDIF}    
 
   { TBoldFollowerListWithOwnedListCom }
   TBoldFollowerListWithOwnedListCom = class (TBoldFollowerListCom)
@@ -51,7 +58,7 @@ type
     FElementExpression: TBoldExpression;
     FControllerExpression: TBoldExpression;
     FInterpretAsList: Boolean;
-    {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFNDEF BOLDCOMCLIENT}
     FOnGetElement: TGetElementEvent;
     {$ENDIF}
     FOnGetFollowerController: TGetFollowerControllerEventCom;
@@ -68,9 +75,9 @@ type
     property Publisher: TBoldPublisher read GetPublisher;
   public
     constructor Create(Collection: TCollection); override;
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure Assign(Source: TPersistent); override;
-    {$IFDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFDEF BOLDCOMCLIENT}
     function GetElement(Element: IBoldElement; Subscriber: TBoldComClientSubscriber; Resubscribe: Boolean): IBoldElement;
     {$ELSE}
     procedure DefaultGetElement(Element: IBoldElement; Subscriber: TBoldComClientSubscriber; ResultElement: TBoldIndirectElement; Resubscribe: Boolean);
@@ -85,7 +92,7 @@ type
     property InterpretAsList: Boolean read FInterpretAsList write SetInterpretAsList;
     property Name: String read fName write fName;
     property Enabled: Boolean read fEnabled write SetEnabled default true;
-    {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFNDEF BOLDCOMCLIENT}
     property OnGetElement: TGetElementEvent read FOnGetElement write FOnGetElement;
     {$ENDIF}
     property OnGetFollowerController: TGetFollowerControllerEventCom read FOnGetFollowerController write FOnGetFollowerController;
@@ -145,15 +152,12 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev,
-  BoldUtils,
-  BoldContainers,
-  BoldControlPackDefs,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   {$ENDIF}
-  BoldNodeControlPackCom;
+  SysUtils,
+  BoldContainers,
+  BoldControlPackDefs;
 
 var
   DefaultGenericAsListRenderer: TBoldGenericAsListRendererCom;
@@ -197,7 +201,7 @@ begin
     ElementExpression := TBoldGenericListPartCom(Source).ElementExpression;
     ControllerExpression := TBoldGenericListPartCom(Source).ControllerExpression;
     InterpretAsList := TBoldGenericListPartCom(Source).InterpretAsList;
-    {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFNDEF BOLDCOMCLIENT}
     OnGetElement := TBoldGenericListPartCom(Source).OnGetElement;
     {$ENDIF}
     OnGetFollowerController := TBoldGenericListPartCom(Source).OnGetFollowerController;
@@ -233,7 +237,7 @@ begin
   end;
 end;
 
-{$IFDEF BOLDCOMCLIENT} // GetElementEvent
+{$IFDEF BOLDCOMCLIENT}
 function TBoldGenericListPartCom.GetElement(Element: IBoldElement; Subscriber: TBoldComClientSubscriber; Resubscribe: Boolean): IBoldElement;
 begin
   if Assigned(Element) then
@@ -268,7 +272,7 @@ end;
 
 function TBoldGenericListPartCom.DefaultGetFollowerController(Element: IBoldElement; Subscriber: TBoldComClientSubscriber; GetFollowerControllerByName: TGetFollowerControllerByNameEventCom): TBoldFollowerControllerCom;
 var
-{$IFDEF BOLDCOMCLIENT} // DefaultGet
+{$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
 {$ELSE}
   E: TBoldIndirectElement;
@@ -296,7 +300,7 @@ end;
 
 begin
   Result := nil;
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   e := Element.EvaluateAndSubscribeToExpression(ControllerExpression, Subscriber.ClientId, Subscriber.SubscriberId, False, false);
   if Assigned(E) then
   begin
@@ -466,7 +470,7 @@ var
   {$IFDEF BOLDCOMCLIENT}
   begin
     element := part.GetElement(Follower.Element, Follower.Subscriber, False);
-    result := assigned(element); // fixme: true or false?
+    result := assigned(element);
   end;
   {$ELSE}
   var
@@ -499,7 +503,7 @@ begin
       DestList.AddOwnedElement(Element);
     if Assigned(Element) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // listconverting
+      {$IFDEF BOLDCOMCLIENT}
       Element.QueryInterface(IBoldList, SourceList);
       {$ELSE}
       if element is IBoldList then
@@ -553,7 +557,7 @@ begin
   end;
 end;
 
-destructor TBoldGenericListPartCom.Destroy;
+destructor TBoldGenericListPartCom.destroy;
 begin
   if assigned(fPublisher) then
     fPublisher.NotifySubscribersAndClearSubscriptions(self);

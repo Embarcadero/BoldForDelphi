@@ -1,7 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWebConnection;
 
 interface
-
 uses
   BoldWinInet,
   Classes,
@@ -12,6 +14,7 @@ resourcestring
   SDefaultURL = 'http://server.company.com/scripts/httpsrvr.dll';
 
 type
+
   {forward declarations}
   TBoldWebConnection = class;
 
@@ -69,7 +72,7 @@ begin
   if Error and (ErrCode <> 0) then
   begin
     SetLength(S, 256);
-    FormatMessage(FORMAT_MESSAGE_FROM_HMODULE, Pointer(GetModuleHandle('wininet.dll')), // do not localize
+    FormatMessage(FORMAT_MESSAGE_FROM_HMODULE, Pointer(GetModuleHandle('wininet.dll')),
       ErrCode, 0, PChar(S), Length(S), nil);
     SetLength(S, StrLen(PChar(S)));
     while (Length(S) > 0) and (S[Length(S)] in [#10, #13]) do
@@ -83,7 +86,7 @@ begin
   inherited Create(AOwner);
   FInetRoot := nil;
   FInetConnect := nil;
-  FAgent := 'Bold Application'; // do not localize
+  FAgent := 'Bold Application';
   URL := SDefaultURL;
 end;
 
@@ -107,7 +110,7 @@ begin
     if BoldHttpQueryInfo(Pointer(Context), BOLD_HTTP_QUERY_STATUS_TEXT, @S[1], Size, Index) then
     begin
       SetLength(S, Size);
-      raise Exception.CreateFmt('%s (%d)', [S, Status]); // do not localize
+      raise Exception.CreateFmt('%s (%d)', [S, Status]);
     end;
   end;
   Result := TBoldDataBlock.Create;
@@ -121,10 +124,8 @@ begin
     end;
   until Size = 0;
 
-  // If we want to compare the size of the result with the expected size, we must call httpQueryInfo with the
-  // flag HTTP_QUERY_CONTENT_LENGTH
-//  if Assigned(Result) and (Len <> DWord(Result.Size)) then
-//    raise EBold.Create(SInvalidDataPacket);
+
+
 end;
 
 function TBoldWebConnection.Send(const Data: TBoldDataBlock): Integer;
@@ -135,13 +136,13 @@ var
   AcceptTypes: PChararr;
 begin
   SetLength(AcceptTypes, 2);
-  AcceptTypes[0] := PChar('application/octet-stream'); // do not localize
+  AcceptTypes[0] := PChar('application/octet-stream');
   AcceptTypes[1] := nil;
   Flags := BOLD_INTERNET_FLAG_KEEP_CONNECTION or BOLD_INTERNET_FLAG_NO_CACHE_WRITE;
   if FURLScheme = BOLD_INTERNET_SCHEME_HTTPS then
     Flags := Flags or BOLD_INTERNET_FLAG_SECURE;
   SetConnected(True);
-  Request := BoldHttpOpenRequest(FInetConnect, 'POST', FURLSite, '', '', AcceptTypes, Flags, Integer(Self)); // do not localize
+  Request := BoldHttpOpenRequest(FInetConnect, 'POST', FURLSite, '', '', AcceptTypes, Flags, Integer(Self));
   Check(not Assigned(Request));
   while True do
   begin
@@ -226,5 +227,7 @@ begin
     FURL := Value;
   end;
 end;
+
+initialization
 
 end.

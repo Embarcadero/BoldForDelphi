@@ -1,7 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldServerHandlesDataMod;
 
 interface
-
 uses
   Messages,
   SysUtils,
@@ -40,7 +42,6 @@ var
 implementation
 
 uses
-  BoldRev,
   BoldLockManagerCOM,
   BoldPropagatorServer,
   BoldComServer,
@@ -86,7 +87,7 @@ begin
   while TBoldPropagatorServer.Instance.ComObjectCount > 0 do
   begin
     TBoldPropagatorServer.Instance.ComObjects[0].Disconnect;
-    TBoldPropagatorServer.Instance.ComObjects[0].Free; // this is because the RefCount is not zeroed after the call to CoDisconnectObject, review
+    TBoldPropagatorServer.Instance.ComObjects[0].Free;
   end;
 end;
 

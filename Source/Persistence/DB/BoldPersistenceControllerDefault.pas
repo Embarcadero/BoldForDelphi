@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceControllerDefault;
 
 interface
@@ -14,7 +17,9 @@ uses
   BoldPersistenceController,
   BoldSQLDatabaseConfig,
   BoldTypeNameDictionary,
-  BoldDefs;
+  BoldDefs,
+  BoldIndexCollection,
+  BoldElements;
 
 type
   { forward declarations }
@@ -28,31 +33,34 @@ type
     fMoldModel: TMoldModel;
     fTypeNameDictionary: TBoldTypeNameDictionary;
     fSQLDataBaseConfig: TBoldSQLDataBaseConfig;
+    fCustomIndexes: TBoldIndexCollection;
     fOnGetDatabase: TBoldGetDatabaseEvent;
-    procedure EnsureActive(Action: String);
+    procedure EnsureActive(Action: String);  
     function GetPersistenceMapper: TBoldSystemDefaultMapper;
-    procedure SQLDatabaseConfigChanged(Sender: TObject);
   public
-    constructor CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; SQLDataBaseConfig: TBoldSQLDataBaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
+    constructor CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary;
+      CustomIndexes: TBoldIndexCollection; SQLDataBaseConfig: TBoldSQLDataBaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
     destructor Destroy; override;
-    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
-    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID); override;
+    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     procedure OpenDatabase(ReadMappingFromDb: Boolean);
     procedure CloseDataBase;
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
-    procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
+    procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     property PersistenceMapper: TBoldSystemDefaultMapper read GetPersistenceMapper;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
     procedure PMTimeForTimestamp(Timestamp: TBoldTimestampType; var ClockTime: TDateTime); override;
-    procedure StartTransaction;
-    procedure CommitTransaction;
-    procedure RollbackTransaction;
+    procedure StartTransaction; override;
+    procedure CommitTransaction; override;
+    procedure RollbackTransaction; override;
+    function DatabaseInterface: IBoldDatabase; override;    
     function InTransaction: Boolean;
+    function CanEvaluateInPS(sOCL: string; aSystem: TBoldElement; aContext: TBoldElementTypeInfo = nil; const aVariableList: TBoldExternalVariableList = nil): Boolean; override;
     property Active: Boolean read fActive;
     property SQLDataBaseConfig: TBoldSQLDataBaseConfig read fSQLDataBaseConfig;
   end;
@@ -61,37 +69,40 @@ implementation
 
 uses
   SysUtils,
+  BoldUtils,
   BoldPMappers,
   BoldGuard,
+  BoldPMapperLists, //PATCH
   BoldPMappersSQL,
-  PersistenceConsts,
-  BoldPMappersAttributeDefault, // Not used, just to pull them in
-  BoldPMappersLinkDefault;  // Not used, just to pull them in
+  BoldPMappersAttributeDefault,
+  BoldPMappersLinkDefault;
 
 {---TBoldPersistenceControllerDefault---}
-constructor TBoldPersistenceControllerDefault.CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; SQLDataBaseConfig: TBoldSQLDataBaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
+constructor TBoldPersistenceControllerDefault.CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary;
+  CustomIndexes: TBoldIndexCollection; SQLDataBaseConfig: TBoldSQLDataBaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
 begin
+  inherited Create;
   fMoldModel := MoldModel;
   fTypeNameDictionary := TypeNameDictionary;
   fActive := false;
-  fSQLDataBaseConfig := TBoldSQLDataBaseConfig.Create;
-  fSQLDataBaseConfig.AssignConfig(SQLDataBaseConfig);
-  fSQLDataBaseConfig.OnChange := SQLDataBaseConfigChanged;
+  fSQLDataBaseConfig := SQLDataBaseConfig;
+  fCustomIndexes := TBoldIndexCollection.Create(nil);
+  fCustomIndexes.Assign(CustomIndexes);
   fOnGetDatabase := GetDatabaseFunc;
 end;
 
-procedure TBoldPersistenceControllerDefault.PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+procedure TBoldPersistenceControllerDefault.PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean);
 begin
-  EnsureActive('PMExactifyIDs'); // do not localize
-  PersistenceMapper.RootClassObjectPersistenceMapper.EnsureIDsExact(ObjectIdlist, TranslationList);
+  EnsureActive('PMExactifyIDs');
+  PersistenceMapper.RootClassObjectPersistenceMapper.EnsureIDsExact(ObjectIdlist, TranslationList, HandleNonExisting);
 end;
 
-procedure TBoldPersistenceControllerDefault.PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID);
+procedure TBoldPersistenceControllerDefault.PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID);
 var
   aTranslationList: TBoldIdTranslationList;
   NewTimeStamp: TBoldTimeStampType;
 begin
-  EnsureActive('PMUpdate'); // do not localize
+  EnsureActive('PMUpdate');
   SendExtendedEvent(bpeStartUpdate, [ObjectIdList, valueSpace]);
   if assigned(TranslationList) then
     aTranslationList := TranslationList
@@ -99,7 +110,7 @@ begin
     aTranslationList := TBoldIdTranslationList.Create;
 
   try
-    PersistenceMapper.PMUpdate(ObjectIdList, ValueSpace, Old_Values, Precondition, aTranslationList, NewTimeStamp);
+    PersistenceMapper.PMUpdate(ObjectIdList, ValueSpace, Old_Values, Precondition, aTranslationList, NewTimeStamp, TimeOfLatestUpdate);
     if not assigned(Precondition) or not Precondition.failed then
     begin
       TimeStamp := NewTimeStamp;
@@ -112,39 +123,53 @@ begin
   end;
 end;
 
-procedure TBoldPersistenceControllerDefault.PMFetch(ObjectIDList: TBoldObjectIdList;  ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID);
+procedure TBoldPersistenceControllerDefault.PMFetch(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID);
 var
   TranslationList: TBoldIdTranslationList;
   ExactifyTranslationList: TBoldIdTranslationList;
   DefaultMemberList: TBoldMemberPersistenceMapperList;
   FetchIdList: TBoldObjectIdList;
   WasInTransaction: Boolean;
+  NeedsExacitfy: boolean;
+  Guard: IBoldGuard;
 begin
-  EnsureActive('PMFetch'); // do not localize
+  Guard := TBoldguard.Create(TranslationLIst, ExactifyTranslationLIst, DefaultMemberList, FetchIdList);
+  EnsureActive('PMFetch');
   SendExtendedEvent(bpeStartFetch, [ObjectIdList, MemberIdList]);
-
-  TranslationList := TBoldIdTranslationList.Create;
-  ExactifyTranslationList := TBoldIdTranslationList.Create;
-  DefaultMemberList := TBoldMemberPersistenceMapperList.Create;
-  DefaultMemberList.OwnsEntries := false;
-  FetchIdList := ObjectIdList.Clone;
-
   try
     WasInTransaction := PersistenceMapper.Database.InTransaction;
-    PMExactifyIDs(FetchIdList, ExactifyTranslationList);
-    ValueSpace.ExactifyIDs(ExactifyTranslationList);
-    ObjectIdList.ExactifyIds(ExactifyTranslationList);
-    FetchIdList.ExactifyIds(ExactifyTranslationList);
-    PersistenceMapper.PMFetch(FetchIDList, ValueSpace, MemberIdList, FetchMode, TranslationList);
+    NeedsExacitfy := ObjectIdList.HasInexactIds;
+    DefaultMemberList := TBoldMemberPersistenceMapperList.Create;
+    DefaultMemberList.OwnsEntries := false;
+    TranslationList := TBoldIdTranslationList.Create;
+    if NeedsExacitfy then
+    begin
+      ExactifyTranslationList := TBoldIdTranslationList.Create;
+      FetchIdList := ObjectIdList.Clone;
+      PMExactifyIDs(FetchIdList, ExactifyTranslationList, false);
+      ValueSpace.ExactifyIDs(ExactifyTranslationList);
+      ObjectIdList.ExactifyIds(ExactifyTranslationList);
+      FetchIdList.ExactifyIds(ExactifyTranslationList);
+      if FetchIdList.HasNonExistingIds then
+        FetchIdList.RemoveNonExistingIds;
+      PersistenceMapper.PMFetch(FetchIDList, ValueSpace, MemberIdList, FetchMode, TranslationList)
+    end
+    else
+    begin
+      if ObjectIdList.HasNonExistingIds then
+      begin
+        FetchIdList := ObjectIdList.Clone;
+        FetchIdList.RemoveNonExistingIds;
+        PersistenceMapper.PMFetch(FetchIdList, ValueSpace, MemberIdList, FetchMode, TranslationList);
+      end
+      else
+      PersistenceMapper.PMFetch(ObjectIdList, ValueSpace, MemberIdList, FetchMode, TranslationList);
+    end;
     ValueSpace.ApplyTranslationList(TranslationList);
     if not WasInTransaction and PersistenceMapper.Database.InTransaction then
       PersistenceMapper.Database.Commit;
   finally
-    TranslationLIst.Free;
-    ExactifyTranslationLIst.Free;
-    DefaultMemberList.Free;
-    FetchIdList.Free;
-    SendEvent(bpeEndFetch);
+    SendExtendedEvent(bpeEndFetch, [ObjectIdList, MemberIdList]);
   end;
 end;
 
@@ -155,15 +180,18 @@ var
   WasInTransaction: Boolean;
 begin
   Guard := TBoldguard.Create(TranslationList);
-  EnsureActive('PMFetchIdListWithCondition'); // do not localize
+  EnsureActive('PMFetchIdListWithCondition');
   SendExtendedEvent(bpeStartFetchId, [Condition]);
-  TranslationList := TBoldIdTranslationList.Create;
-  WasInTransaction := PersistenceMapper.Database.InTransaction;
-  PersistenceMapper.PMFetchClassWithCondition(ObjectIdList, ValueSpace, Condition, FetchMode, TranslationList);
-  ValueSpace.ApplyTranslationList(TranslationList);
-  if not WasInTransaction and PersistenceMapper.Database.InTransaction then
-    PersistenceMapper.Database.Commit;
-  SendEvent(bpeEndFetchId);
+  try
+    TranslationList := TBoldIdTranslationList.Create;
+    WasInTransaction := PersistenceMapper.Database.InTransaction;
+    PersistenceMapper.PMFetchClassWithCondition(ObjectIdList, ValueSpace, Condition, FetchMode, TranslationList);
+    ValueSpace.ApplyTranslationList(TranslationList);
+    if not WasInTransaction and PersistenceMapper.Database.InTransaction then
+      PersistenceMapper.Database.Commit;
+  finally
+    SendExtendedEvent(bpeEndFetchId, [ObjectIdList]);
+  end;
 end;
 
 procedure TBoldPersistenceControllerDefault.OpenDatabase(ReadMappingFromDb: Boolean);
@@ -177,6 +205,13 @@ begin
   fActive := true;
 end;
 
+function TBoldPersistenceControllerDefault.CanEvaluateInPS(sOCL: string;
+  aSystem: TBoldElement; aContext: TBoldElementTypeInfo;
+  const aVariableList: TBoldExternalVariableList): Boolean;
+begin
+  Result := PersistenceMapper.CanEvaluateInPS(sOCL, aSystem, aContext, aVariableList);
+end;
+
 procedure TBoldPersistenceControllerDefault.CloseDataBase;
 begin
   PersistenceMapper.CloseDatabase;
@@ -186,7 +221,7 @@ end;
 destructor TBoldPersistenceControllerDefault.Destroy;
 begin
   FreeAndNil(fPersistenceMapper);
-  FreeAndNil(fSQLDataBaseConfig);
+  FreeAndNil(fCustomIndexes);
   inherited;
 end;
 
@@ -194,7 +229,7 @@ procedure TBoldPersistenceControllerDefault.PMTranslateToGlobalIds(
   ObjectIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList);
 begin
-  EnsureActive('PMTranslateToGlobalIds'); // do not localize
+  EnsureActive('PMTranslateToGlobalIds');
   PersistenceMapper.PMTranslateToGlobalIds(ObjectIdList, TranslationList);
 end;
 
@@ -202,14 +237,14 @@ procedure TBoldPersistenceControllerDefault.PMTranslateToLocalIds(
   GlobalIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList);
 begin
-  EnsureActive('PMTranslateToLocalIds'); // do not localize
+  EnsureActive('PMTranslateToLocalIds');
   PersistenceMapper.PMTranslateToLocalIds(GlobalIdList, TranslationList);
 end;
 
 procedure TBoldPersistenceControllerDefault.PMSetReadonlyness(ReadOnlyList,
   WriteableList: TBoldObjectIdList);
 begin
-  EnsureActive('PMSetReadonlyness'); // do not localize
+  EnsureActive('PMSetReadonlyness');
   PersistenceMapper.PMSetReadonlyness(ReadOnlyList, WriteableList);
 end;
 
@@ -223,42 +258,63 @@ end;
 procedure TBoldPersistenceControllerDefault.ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
             TranslationList: TBoldIdTranslationList);
 begin
-  EnsureActive('ReserveNewIds'); // do not localize
+  EnsureActive('ReserveNewIds');
   PersistenceMapper.ReserveNewIds(ValueSpace, ObjectIdList, TranslationList);
 end;
 
 procedure TBoldPersistenceControllerDefault.PMTimeForTimestamp(
   Timestamp: TBoldTimestampType; var ClockTime: TDateTime);
 begin
-  EnsureActive('PMTimeForTimeStamp'); // do not localize
+  EnsureActive('PMTimeForTimeStamp');
   PersistenceMapper.PMTimeForTimestamp(Timestamp, ClockTime);
 end;
 
 procedure TBoldPersistenceControllerDefault.PMTimestampForTime(
   ClockTime: TDateTime; var Timestamp: TBoldTimestampType);
 begin
-  EnsureActive('PMTimestampForTime'); // do not localize
+  EnsureActive('PMTimestampForTime');
   PersistenceMapper.PMTimestampForTime(ClockTime, Timestamp);
 end;
 
 procedure TBoldPersistenceControllerDefault.EnsureActive(Action: String);
 begin
   if not fActive then
-    raise EBold.CreateFmt(sNotActive, [ClassName, Action]);
+    raise EBold.CreateFmt('%s.%s: Not Active', [ClassName, Action]);
+end;
+
+function TBoldPersistenceControllerDefault.DatabaseInterface: IBoldDatabase;
+begin
+  if Assigned(PersistenceMapper) then  
+    result := PersistenceMapper.Database
+  else
+    result := nil;
 end;
 
 function TBoldPersistenceControllerDefault.GetPersistenceMapper: TBoldSystemDefaultMapper;
+type
+  TTBoldSystemDefaultMapperClass = class of TBoldSystemDefaultMapper;
+var
+  SystemMapperDescriptor: TBoldSystemPersistenceMapperDescriptor;
+  SystemPMapperName: string;
+  SysPMapperClass: TTBoldSystemDefaultMapperClass;
 begin
   if not assigned(fPersistenceMapper) then
-    fPersistenceMapper := TBoldSystemDefaultMapper.CreateFromMold(fMoldModel, fTypeNameDictionary, SQLDataBaseConfig, fOnGetDatabase);
+  begin
+    SystemPMapperName := fMoldModel.PMapperName;
+    if BoldNamesEqual(SystemPMapperName, DEFAULTNAME) and  (SQLDataBaseConfig.DefaultSystemMapper <> '') then
+       SystemPMapperName := SQLDataBaseConfig.DefaultSystemMapper;
+    
+    SystemMapperDescriptor := BoldSystemPersistenceMappers.DescriptorByName[SystemPMapperName];   //PATCH
+    if not assigned(SystemMapperDescriptor) then                                                       //PATCH
+      raise EBold.CreateFmt('Unable to find SystemPersistenceMapper (%s)', [SystemPMapperName]);  //PATCH
+
+    SysPMapperClass := TTBoldSystemDefaultMapperClass(SystemMapperDescriptor.SystemPersistenceMapperClass); //PATCH - This ugly code is needed to call the correct static constructor!!!
+
+    fPersistenceMapper := SysPMapperClass.CreateFromMold(fMoldModel, fTypeNameDictionary, fCustomIndexes,SQLDataBaseConfig, fOnGetDatabase); //PATCH
+//    fPersistenceMapper := TBoldSystemDefaultMapper.CreateFromMold(fMoldModel, fTypeNameDictionary, SQLDataBaseConfig, fOnGetDatabase); //PATCH - Original is Hardcoded! 
+  end;
 
   result := fPersistenceMapper;
-end;
-
-procedure TBoldPersistenceControllerDefault.SQLDatabaseConfigChanged(Sender: TObject);
-begin
-  if assigned(fPersistencemapper) then
-    PersistenceMapper.SQLDataBaseConfig.AssignConfig(SQLDataBaseConfig);
 end;
 
 procedure TBoldPersistenceControllerDefault.CommitTransaction;
@@ -280,5 +336,9 @@ function TBoldPersistenceControllerDefault.InTransaction: Boolean;
 begin
   Result := PersistenceMapper.Database.InTransaction;
 end;
+
+initialization
+
+
 
 end.

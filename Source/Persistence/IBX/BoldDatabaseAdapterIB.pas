@@ -1,10 +1,14 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterIB;
 
 interface
 
 uses
   Classes,
-  IBDataBase,
+  Windows,
+  IBX.IBDatabase,
   BoldSQLDatabaseConfig,
   BoldAbstractDataBaseAdapter,
   BoldDBInterfaces,
@@ -29,6 +33,7 @@ type
     destructor Destroy; override;
     procedure CreateInterbaseDatabase(PageSize: integer = 4096);
     procedure EnsureInterbaseDatabase(PageSize: integer = 4096);
+    procedure CreateDatabase; override; 
   published
     property DataBase: TIBDataBase read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -40,46 +45,23 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 
 { TBoldDatabaseAdapterIB }
 
-constructor TBoldDatabaseAdapterIB.create(aOwner: TComponent);
+constructor TBoldDatabaseAdapterIB.Create(aOwner: TComponent);
 begin
   inherited;
   DatabaseEngine := dbeInterbaseSQLDialect3;
 end;
 
 procedure TBoldDatabaseAdapterIB.CreateInterbaseDatabase(PageSize: integer = 4096);
-var
-  db: TIBDatabase;
-  username: String;
-  pwd: String;
 begin
-  if not assigned(Database) then
-    raise EBold.CreateFmt('%s.CreateInterbaseDatbase: Unable to complete operation without an IBDatabase', [classname]);
-
-  username := Database.Params.Values['user_name']; // do not localize
-  pwd := Database.Params.Values['password']; // do not localize
-
-  if (username = '') or (pwd = '') then
-    raise EBold.CreateFmt('%s.CreateInterbaseDatabase: username or password missing', [classname]);
-  if FileExists(Database.DatabaseName) then
-    if not DeleteFile(Database.DatabaseName) then
-      raise EBold.CreateFmt('%s.CreateInterbaseDatbase: Unable to remove old database file (%s)', [classname, DataBase.DatabaseName]);
-  db := TIBDatabase.Create(nil);
-  try
-    db.DatabaseName := Database.DatabaseName;
-    db.Params.add(format('USER "%s" PASSWORD "%s" PAGE_SIZE %d', [ // do not localize
-       username, pwd, PageSize]));
-    db.SQLDialect := Database.SQLDialect;
-    db.CreateDatabase;
-  finally
-    db.free;
-  end;
+  DatabaseInterface.CreateDatabase;
 end;
 
-destructor TBoldDatabaseAdapterIB.destroy;
+destructor TBoldDatabaseAdapterIB.Destroy;
 begin
   Changed;
   FreePublisher;
@@ -95,6 +77,11 @@ begin
 
   if not FileExists(Database.DatabaseName) then
     CreateInterbaseDatabase(PageSize);
+end;
+
+procedure TBoldDatabaseAdapterIB.CreateDatabase;
+begin
+  CreateInterbaseDatabase;
 end;
 
 function TBoldDatabaseAdapterIB.GetDataBase: TIBDataBase;
@@ -132,5 +119,6 @@ begin
       'dbeUnknown, dbeInterbaseSQLDialect1, dbeInterbaseSQLDialect3', [classname]);
 end;
 
-end.
+initialization
 
+end.

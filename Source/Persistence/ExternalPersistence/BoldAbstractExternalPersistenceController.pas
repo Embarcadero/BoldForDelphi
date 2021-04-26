@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractExternalPersistenceController;
 
 interface
@@ -21,7 +24,7 @@ type
     FOnStartUpdates: TNotifyEvent;
     FOnEndUpdates: TNotifyEvent;
     fOnFailUpdates: TNotifyEvent;
-
+    fUpdateBoldDatabaseFirst: boolean;
     procedure SplitObjects(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; ObjectsToPassAlong, ObjectsToHandle: TBoldObjectIdList; var CommonClass: TMoldClass);
   protected
     procedure PrepareFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList; var FetchContext: TObject); virtual;
@@ -45,14 +48,14 @@ type
     property MaxFetchBlockSize: integer read GetMaxFetchBlockSize;
 
   public
-    constructor Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent);
-    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    constructor Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AUpdateBoldDatabaseFirst: boolean);
+    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
-    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID); override;
+    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     function KeyForObject(ObjectContents: IBoldObjectContents): IBoldValue;
     function ValueForObject(ObjectContents: IBoldObjectContents; MemberExpressionName: string): IBoldValue;
-
+    property UpdateBoldDatabaseFirst: boolean read fUpdateBoldDatabaseFirst;
   end;
 
 
@@ -66,7 +69,7 @@ uses
 
 { TBoldAbstractExternalPersistenceController }
 
-constructor TBoldAbstractExternalPersistenceController.Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent);
+constructor TBoldAbstractExternalPersistenceController.Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AUpdateBoldDatabaseFirst: boolean);
 begin
   inherited Create;
   fMoldModel := MoldModel;
@@ -75,11 +78,12 @@ begin
   FOnStartUpdates := OnStartUpdates;
   fOnFailUpdates := OnFailUpdates;
   FOnEndUpdates := OnEndUpdates;
+  FUpdateBoldDatabaseFirst := AUpdateBoldDatabaseFirst;
 end;
 
 procedure TBoldAbstractExternalPersistenceController.PMExactifyIds(
   ObjectIdList: TBoldObjectIdList;
-  TranslationList: TBoldIdTranslationList);
+  TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean);
 begin
   inherited;
 end;
@@ -117,12 +121,13 @@ begin
     if MembersToHandle.Count = 0 then
       ObjectsToHandle.Clear;
   end;
-
-  // only call inherited fetch if there is anything to fetch from the internal database
   if (ObjectsToPassAlong.Count > 0) and (not assigned(MembersToPAssAlong) or (MembersToPassAlong.Count > 0)) then
     inherited PMFetch(ObjectsToPassAlong, Valuespace, MembersToPassAlong, FetchMode, BoldClientId);
-  EnsureObjectsforFetch(ObjectsToHandle, ValueSpace, MembersToHandle);
-  FetchObjects(ObjectsToHandle, ValueSpace, MembersToHandle);
+  if ObjectsToHandle.count > 0 then
+  begin
+    EnsureObjectsforFetch(ObjectsToHandle, ValueSpace, MembersToHandle);
+    FetchObjects(ObjectsToHandle, ValueSpace, MembersToHandle);
+  end;
 end;
 
 procedure TBoldAbstractExternalPersistenceController.PMFetchIDListWithCondition(
@@ -148,7 +153,7 @@ procedure TBoldAbstractExternalPersistenceController.PMUpdate(
   ObjectIdList: TBoldObjectIdList; ValueSpace, Old_Values: IBoldValueSpace;
   Precondition: TBoldUpdatePrecondition;
   TranslationList: TBoldIdTranslationList;
-  var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID);
+  var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID);
 var
   i: integer;
   ObjectsToHandle,
@@ -157,7 +162,7 @@ var
   SuperClass: TMoldClass;
   ObjectsToCreate, ObjectsToDelete, ObjectsToUpdate: TBoldObjectidList;
   ObjectContents: IBoldObjectContents;
-
+  lNeedsExternalTransaction: boolean;
 begin
   Guard := TBoldGuard.Create(
     ObjectsToHandle, ObjectsToPassAlong,
@@ -183,16 +188,38 @@ begin
     end else
       ObjectsToUpdate.Add(ObjectsTohandle[i]);
   end;
-  StartUpdates;
+  lNeedsExternalTransaction := ((ObjectsToCreate.Count + ObjectsToDelete.count + ObjectsToUpdate.count) > 0);
+  if lNeedsExternalTransaction then
+  begin
+    StartUpdates;
+    StartTransaction;
+  end;
   try
+    if UpdateBoldDatabaseFirst then
+    begin
+      inherited PMUpdate(ObjectsToPassAlong, ValueSpace, Old_Values, Precondition, TranslationList, TimeStamp, TimeOfLatestUpdate, BoldClientId);
+      ObjectsToCreate.ApplyTranslationList(TranslationList);
+    end;
     CreateObjects(ObjectsToCreate, ValueSpace);
     DeleteObjects(ObjectsToDelete, ValueSpace);
     UpdateObjects(ObjectsToUpdate, ValueSpace);
-
-    inherited PMUpdate(ObjectsToPassAlong, ValueSpace, Old_Values, Precondition, TranslationList, TimeStamp, BoldClientId);
-    EndUpdates;
+    if not UpdateBoldDatabaseFirst then
+    begin
+      inherited PMUpdate(ObjectsToPassAlong, ValueSpace, Old_Values, Precondition, TranslationList, TimeStamp, TimeOfLatestUpdate, BoldClientId);
+    end;
+    if lNeedsExternalTransaction then
+    begin
+      EndUpdates;
+      CommitTransaction;
+    end;
   except
-    FailUpdates;
+    if lNeedsExternalTransaction then
+    try
+      FailUpdates;
+    finally
+      RollbackTransaction;
+    end;
+    raise;
   end;
 end;
 
@@ -352,7 +379,7 @@ var
   ActionList: TBoldObjectIdList;
   FetchContext: TObject;
   MoldClass: TMoldClass;
-
+  
   procedure AddToActionList(index: integer);
   begin
     ActionList.Add(IdList[index]);
@@ -363,7 +390,7 @@ begin
   ActionList := TBoldObjectIdList.Create;
   TranslationList := TBoldIdTranslationList.Create;
 
-  PMExactifyIds(ObjectIdList, TranslationList);
+  PMExactifyIds(ObjectIdList, TranslationList, false);
   IdList := ObjectIdList.Clone;
   IdList.ApplyTranslationList(TranslationList);
 
@@ -392,12 +419,10 @@ end;
 procedure TBoldAbstractExternalPersistenceController.PostFetch(
   FetchContext: TObject; MoldClass: TMoldClass);
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldAbstractExternalPersistenceController.PrepareFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList; var FetchContext: TObject);
 begin
-  // intentionally left blank
 end;
 
 function TBoldAbstractExternalPersistenceController.GetMaxFetchBlockSize: integer;
@@ -410,5 +435,7 @@ begin
   if assigned(fOnFailUpdates) then
     fOnFailUpdates(self);
 end;
+
+initialization
 
 end.

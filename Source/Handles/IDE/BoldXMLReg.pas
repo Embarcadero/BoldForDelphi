@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLReg;
 
 interface
@@ -9,12 +12,12 @@ procedure Register;
 implementation
 
 uses
+  BoldGuard,
   BoldXMLProducers;
 
 procedure Register;
 begin
-  RegisterComponents('Bold XML', [TBoldXMLProducer]); // do not localize
+  RegisterComponents('Bold XML', [TBoldXMLProducer]);
 end;
 
 end.
-

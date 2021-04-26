@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSubscribableCollection;
 
 interface
@@ -28,7 +31,9 @@ type
       OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SendEvent(OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const);
+{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
+{$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
   end;
 
@@ -49,14 +54,17 @@ type
       OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SendEvent(OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const);
+{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
+{$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
   end;
 
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 {---TBoldSubscribableCollection---}
 
@@ -99,10 +107,12 @@ begin
     fPublisher.SendExtendedEvent(Self, OriginalEvent, []);
 end;
 
+{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribableCollection.SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
   result := not Assigned(fPublisher) or fPublisher.SendQuery(Self, OriginalEvent, Args, Subscriber);
 end;
+{$ENDIF}
 
 procedure TBoldSubscribableCollection.SendExtendedEvent(
   OriginalEvent: TBoldEvent;
@@ -156,11 +166,12 @@ begin
   if Assigned(fPublisher) then
     fPublisher.SendExtendedEvent(Self, OriginalEvent, []);
 end;
-
+{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribableCollectionItem.SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
   result := not Assigned(fPublisher) or fPublisher.SendQuery(Self, OriginalEvent, Args, Subscriber);
 end;
+{$ENDIF}
 
 procedure TBoldSubscribableCollectionItem.SendExtendedEvent(
   OriginalEvent: TBoldEvent;
@@ -174,4 +185,7 @@ begin
   result := assigned(fPublisher) and Publisher.HasSubscribers;
 end;
 
+
+
+initialization
 end.

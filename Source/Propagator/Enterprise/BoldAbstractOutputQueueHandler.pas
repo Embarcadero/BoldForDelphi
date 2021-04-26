@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractOutputQueueHandler;
 
 interface
@@ -8,7 +11,7 @@ uses
 type
   {forward declarations}
   TBoldAbstractOutputQueueHandler = class;
-
+  
   TBoldAbstractOutputQueueHandler = class
   public
     procedure SendEvent(const ClientID: TBoldClientID; EventName: string); virtual; abstract;
@@ -18,5 +21,10 @@ type
   end;
 
 implementation
+
+uses
+  BoldRev;
+
+initialization
 
 end.

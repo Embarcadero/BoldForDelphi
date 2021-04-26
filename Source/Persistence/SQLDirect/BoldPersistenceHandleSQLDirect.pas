@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleSQLDirect;
 
 interface
@@ -35,7 +38,7 @@ type
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); override;
     {$ENDIF}
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property DatabaseName: string read FDatabaseName write SetDatabaseName;
@@ -46,7 +49,8 @@ implementation
 
 uses
   Dialogs,
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldPersistenceHandleSQLDirect }
 
@@ -85,8 +89,8 @@ begin
   begin
     Target.DatabaseAdapter := TBoldDatabaseAdapterSQLDirect.Create(Target.Owner);
     Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterSQLDirect');
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Target.DatabaseAdapter.DesignInfo          := DesInfo;
     showmessage('Created a new DatabaseAdapterSQLDirect');
   end
@@ -102,8 +106,8 @@ begin
     Adapter.DataBase := TSDDatabase.Create(Target.owner);
     Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'SDDatabase');
     showmessage('Created a new SDDatabase');
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Adapter.DataBase.DesignInfo          := DesInfo;
   end;
 end;
@@ -153,5 +157,7 @@ procedure TBoldPersistenceHandleSQLDirect.SetEffectiveDataBase(const Value: TSDD
 begin
   FEffectiveDatabase := Value;
 end;
+
+initialization
 
 end.

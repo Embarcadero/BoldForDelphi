@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPriorityListEnlister;
 
 interface
@@ -180,4 +183,5 @@ begin
   Result := TBoldPropagatorServer.Instance.AdvancedPropagator.ClientHandler;
 end;
 
+initialization
 end.

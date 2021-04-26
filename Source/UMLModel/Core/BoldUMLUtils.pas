@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLUtils;
 
 interface
@@ -33,4 +36,3 @@ begin
 end;
 
 end.
-

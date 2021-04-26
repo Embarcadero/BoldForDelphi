@@ -1,6 +1,10 @@
+/////////////////////////////////////////////////////////
+
+
 unit BoldComboBox;
 
 {$UNDEF BOLDCOMCLIENT}
+{$INCLUDE bold.inc}
 
 interface
 
@@ -16,6 +20,7 @@ uses
   BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
   BoldDefs,
   BoldControlsDefs,
+  BoldControlPackDefs,  
   BoldHandles,
   BoldElements,
   BoldAbstractListHandle,
@@ -38,10 +43,12 @@ type
 
   TBoldComboListController = class(TBoldAbstractListAsFollowerListController)
   published
+     property DragMode;
+     property DropMode;
      property NilElementMode;
   end;
 
-  TBoldCustomComboBox = class(TCustomComboBox, IBoldValidateableComponent)
+  TBoldCustomComboBox = class(TCustomComboBox, IBoldValidateableComponent, IBoldOCLComponent)
   private
     fAlignment: TAlignment;
     fHandleFollower: TBoldElementHandleFollower;
@@ -51,6 +58,7 @@ type
     fBoldRowProperties: TBoldStringFollowerController;
     fBoldSelectChangeAction: TBoldComboSelectChangeAction;
     fBoldSetValueExpression: TBoldExpression;
+    fInternalChange: boolean;
     fColor: TColor;
     fEffectiveReadOnly: Boolean;
     fFocused: Boolean;
@@ -60,15 +68,18 @@ type
     fReadOnly: Boolean;
     fOnSelectChanged: TNotifyEvent;
     fIsEditEvent: boolean;
+    fProcessingClick: Integer;    
     fOnSelectChangedIsCalled:Boolean;
+    fAutoSearch: boolean;
     function GetBoldHandle: TBoldElementHandle;
     procedure SetBoldHandle(value: TBoldElementHandle);
     function GetFollower: TBoldFOllower;
     function GetBoldListHandle: TBoldAbstractListHandle;
     procedure SetBoldListHandle(value: TBoldAbstractListHandle);
     function GetListFollower: TBoldFOllower;
-      procedure _InsertItem(Follower: TBoldFollower);
+    procedure _InsertItem(Index: Integer; Follower: TBoldFollower);
     procedure _DeleteItem(Index: Integer; OwningFollower: TBoldFollower);
+    procedure _ReplaceItem(index: Integer; AFollower: TBoldFollower);
     procedure _RowAfterMakeUptoDate(Follower: TBoldFollower);
     procedure _AfterMakeUptoDate(Follower: TBoldFollower);
     procedure FontChanged(Sender: TObject);
@@ -102,6 +113,12 @@ type
     {$IFNDEF BOLDCOMCLIENT}
     function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
     {$ENDIF}
+    procedure WMChar(var Message: TWMChar); message WM_CHAR;
+    {IBoldOCLComponent}
+    function GetContextType: TBoldElementTypeInfo;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetVariableList: TBoldExternalVariableList;
+    function GetExpression: TBoldExpression;
   protected
     function HandleApplyException(E: Exception; Elem: TBoldElement; var discard: Boolean): boolean;
     procedure Change; override;
@@ -139,6 +156,8 @@ type
 //    property Items write SetItems;
     property ReadOnly: Boolean read FReadOnly write SetReadOnly default False;
     property Text: string read GetText write SetText;
+    procedure Click; override;
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -224,9 +243,9 @@ uses
   {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
   {$ENDIF}
-  BoldControlPackDefs,
   BoldListControlPack,
   BoldQueue,
+  BoldUtils,
   BoldGuiResourceStrings;
 
 { TBoldCustomComboBox }
@@ -234,15 +253,33 @@ uses
 type
   TWinControlHack = class(TWinControl) {We need access to Parents Font and Color property}
   end;
+  TBoldQueueableAccess = class(TBoldQueueable);
+  TBoldElementHandleAccess = class(TBoldElementHandle);
 
-procedure TBoldCustomComboBox._InsertItem(Follower: TBoldFollower);
+procedure TBoldCustomComboBox._InsertItem(Index: Integer; Follower: TBoldFollower);
 begin
-  Items.Insert(Follower.Index, '');
+  Items.Insert(Index, '');
+  if Assigned(Follower) then
+  begin
+    Follower.EnsureDisplayable;
+    Items[index] := TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower);
+  end;
 end;
 
 procedure TBoldCustomComboBox._DeleteItem(index: Integer; OwningFollower: TBoldFollower);
 begin
   Items.Delete(index);
+end;
+
+procedure TBoldCustomComboBox._ReplaceItem(index: Integer;
+  AFollower: TBoldFollower);
+var
+  s: string;
+begin
+  AFollower.EnsureDisplayable;
+  s := TBoldStringFollowerController(AFollower.Controller).GetCurrentAsString(AFollower);
+  if s <> Items[index] then
+    Items[index] := s;
 end;
 
 procedure TBoldCustomComboBox._RowAfterMakeUptoDate(Follower: TBoldFollower);
@@ -251,7 +288,9 @@ var
 begin
   index := Follower.index;
   if (index > -1) and (index < Items.Count) then
+  begin
     Items[index] := TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower);
+  end;
   Invalidate;
   // forces a redisplay of the edit-area, the windows component might go blank if the active row is removed and then reinserted
   fHandleFollower.Follower.MarkValueOutOfDate;
@@ -266,12 +305,19 @@ begin
 //  if not (Style = csSimple) and DroppedDown then
 //    PostMessage(Handle, CB_SHOWDROPDOWN, 0, 0); //FIXME Bad solution! CloseUp if changed while dropped down!
 
-  UpdateEffectiveColor;
-  UpdateEffectiveReadOnly;
-  UpdateEffectiveFont;
-  NewText := BoldProperties.GetCurrentAsString(Follower);
-  if inherited Text <> NewText then
-    SetEffectiveText(NewText);
+  if not fInternalChange then
+  begin
+    UpdateEffectiveColor;
+    UpdateEffectiveReadOnly;
+    UpdateEffectiveFont;
+    NewText := BoldProperties.GetCurrentAsString(Follower);
+    if inherited Text <> NewText then
+    begin
+      fInternalChange := true;
+      SetEffectiveText(NewText);
+      fInternalChange := false;
+    end;
+  end;
 end;
 
 procedure TBoldCustomComboBox.Change;
@@ -306,7 +352,9 @@ end;
 procedure TBoldCustomComboBox.CMExit(var Message: TCMExit);
 begin
   if not (csDestroying in ComponentState) and (Follower.Controller.ApplyPolicy = bapExit) then
+  begin
     Follower.Apply;
+  end;
   SetFocused(False);
   inherited;
 end;
@@ -328,7 +376,9 @@ begin
   if ParentFont then
   begin
     if Message.wParam <> 0 then
+{$WARN UNSAFE_CAST OFF}
       SetFont(TFont(Message.lParam))
+{$WARN UNSAFE_CAST ON}
     else
       SetFont(TWinControlHack(Parent).Font);
     ParentFont := True;
@@ -359,11 +409,9 @@ begin
   fBoldRowProperties.AfterMakeUptoDate := _RowAfterMakeUptoDate;
   fBoldRowProperties.OnGetContextType := GetContextForBoldRowProperties;
   fBoldListProperties := TBoldComboListController.Create(Self, fBoldRowProperties);
-  with fBoldListProperties do
-  begin
-    OnAfterInsertItem := _InsertItem;
-    OnAfterDeleteItem := _DeleteItem;
-  end;
+  fBoldListProperties.OnAfterInsertItem := _InsertItem;
+  fBoldListProperties.OnAfterDeleteItem := _DeleteItem;
+  fBoldListProperties.OnReplaceitem := _ReplaceItem;
   fHandleFollower := TBoldElementHandleFollower.Create(Owner, fBoldProperties);
   fListHandleFollower := TBoldListHandleFollower.Create(Owner, fBoldListProperties);
   fHandleFollower.PrioritizedQueuable := fListHandleFollower;
@@ -481,6 +529,26 @@ begin
   end;
 end;
 
+function TBoldCustomComboBox.GetContextType: TBoldElementTypeInfo;
+begin
+  result := GetContextForBoldProperties;
+end;
+
+function TBoldCustomComboBox.GetExpression: TBoldExpression;
+begin
+  result := self.BoldProperties.Expression;
+end;
+
+procedure TBoldCustomComboBox.SetExpression(const Value: TBoldExpression);
+begin
+  BoldProperties.Expression := Value;
+end;
+
+function TBoldCustomComboBox.GetVariableList: TBoldExternalVariableList;
+begin
+  result := BoldProperties.VariableList;
+end;
+
 function TBoldCustomComboBox.IsColorStored: Boolean;
 begin
   Result := not ParentColor;
@@ -499,17 +567,26 @@ begin
 end;
 
 procedure TBoldCustomComboBox.KeyPress(var Key: Char);
+var
+  Message: TMessage;
+//  lWideChar: WideChar;
+//  s: string;
+//  lKey: Char;
 begin
   inherited KeyPress(Key);
-  if (Key in [#32..#255]) then
+  if CharInSet(Key, [#32..#255]) then
   begin
+{    lWideChar := GetWideCharFromWMCharMsg(LastWMCHarMessage);
+    s := lWideChar;
+    lKey := s[1];
     if (Style <> csDropDownList) and
        (BoldSelectChangeAction <> bdcsSetReference) and
-       not BoldProperties.ValidateCharacter(Key, Follower) then
+       not BoldProperties.ValidateCharacter(lKey, Follower) then
     begin
       MessageBeep(0);
       Key := BOLDNULL;
     end;
+}
   end;
   if Key = BOLDESC then
   begin
@@ -517,13 +594,33 @@ begin
     SelectAll;
     Key := BOLDNULL;
   end;
+  if (Ord(Key) = 9) and DroppedDown then
+  begin
+    Message.Msg := CB_SETCURSEL;
+{$WARN UNSAFE_CAST OFF}
+    TWMCommand(Message).NotifyCode := CBN_SELCHANGE;
+{$WARN UNSAFE_CAST ON}
+    WndProc(Message);
+//    fAutoSearch := true;
+
+
+//    if ((Message.Msg = CB_SETCURSEL) and (BoldSelectChangeAction = bdcsSetReference)) or (TWMCommand(Message).NotifyCode = CBN_SELCHANGE) or (fAutoSearch) and not DroppedDown then
+//    if not (DroppedDown and (Message.Msg = 273) and (TWMCommand(Message).NotifyCode = CBN_SELCHANGE)) then
+
+//    PostMessage(Handle, CBN_CLOSEUP, 0, 0); //FIXME Bad solution! CloseUp if changed while dropped down!
+//    CloseUp;
+//    Invalidate;
+//    Follower.Apply;
+//    SelectAll;
+  end;
+  if Follower.IsInDisplayList then
+    Follower.DisplayAll;
 end;
 
 procedure TBoldCustomComboBox.SetBoldHandle(Value: TBoldElementHandle);
 begin
-  if assigned(Value) and (BoldSelectChangeAction = bdcsSetReference) and
-      not (Value is TBoldReferenceHandle) then
-    raise EBold.Create(sHandleMustBeReferenceHandle);
+  if assigned(Value) and (BoldSelectChangeAction = bdcsSetReference) and not Value.CanSetValue then
+    raise EBold.CreateFMt('The BoldHandle property must be a TBoldReferenceHandle when BoldSelectChangeAction is bdscSetReference. It is %s', [Value.ClassName]);
   fHandleFollower.BoldHandle := value;
 end;
 
@@ -679,18 +776,38 @@ var
   Discard: Boolean;
   LocalSelectedElement: TBoldElement;
 begin
+{$WARN UNSAFE_CAST OFF}
   CallInherited := True;
   if not (csDesigning in ComponentState) then
   begin
     case Message.Msg of
       CB_SETCURSEL,
-      WM_COMMAND:
-        if ((Message.Msg = CB_SETCURSEL) and (BoldSelectChangeAction = bdcsSetReference)) or
-           (TWMCommand(Message).NotifyCode = CBN_SELCHANGE) then
+      WM_COMMAND,
+      305:
+      begin
+//        CodeSite.Category := 'combo';
+//        CodeSite.Send(IntToStr(Message.Msg) + ':' + IntToStr(TWMCommand(Message).NotifyCode));
+//        CodeSite.Category := '';
+
+//        ( fAutoSearch and DroppedDown and (Message.Msg = CB_SETCURSEL) and (BoldSelectChangeAction = bdcsSetValue) and (TWMCommand(Message).NotifyCode = 0) )
+        if not ((Message.Msg = 334) and (TWMCommand(Message).NotifyCode = 0) and not fAutoSearch) then
+        if (
+          ( ( (Message.Msg = CB_SETCURSEL) and (BoldSelectChangeAction = bdcsSetReference) ) or (TWMCommand(Message).NotifyCode = CBN_SELCHANGE) or (fAutoSearch) and not DroppedDown)
+           or ((Message.Msg = 305) and DroppedDown)
+//           or (not (DroppedDown and (Message.Msg = WM_COMMAND) and (TWMCommand(Message).NotifyCode = CBN_SELCHANGE)))
+           or ( (Message.Msg = WM_COMMAND) and (TWMCommand(Message).NotifyCode = CBN_SELCHANGE) )
+           )
+           and not ( (Message.Msg = WM_COMMAND) and ( TWMCommand(Message).NotifyCode = 256 ) )
+           and not ( (Message.Msg = WM_COMMAND) and ( TWMCommand(Message).NotifyCode = 1024 ) )
+           and not ( (Message.Msg = WM_COMMAND) and ( TWMCommand(Message).NotifyCode = 3 ) )
+//           and not ( (Message.Msg = WM_COMMAND) and ( TWMCommand(Message).NotifyCode = 1 ) )
+           and not fInternalChange
+           then
         begin
-          if (Message.Msg = CB_SETCURSEL) and assigned(BoldListHandle) and (BoldListHandle.Count > Message.WParam) then
+//          CodeSite.Send(IntToStr(Message.Msg) + ':' + IntToStr(TWMCommand(Message).NotifyCode));
+          if (Message.Msg = CB_SETCURSEL) and assigned(BoldListHandle) and (Cardinal(BoldListHandle.Count) > Message.WParam) then
           begin
-            if Message.WParam = -1 then
+            if NativeInt(Message.WParam) = -1 then
               LocalSelectedElement := nil
             else
               LocalSelectedElement := BoldListHandle.List[Message.WParam]
@@ -703,7 +820,6 @@ begin
               CallInherited := not EffectiveReadOnly;
             bdcsSetValue:
             begin
-              Follower.DiscardChange;
               if Assigned(BoldHandle) and Assigned(BoldHandle.value) then
               begin
                 {$IFDEF BOLDCOMCLIENT} // BoldSetValueExpression
@@ -724,7 +840,23 @@ begin
                   (not (elementToAssignTo is TBoldMember) or
                    TBoldMember(ElementTOAssignTo).CanModify) then
                   try
-                    ElementToAssignTo.Assign(LocalSelectedElement);  // checkme take from follwer instead?
+                    if elementToAssignTo is TBoldObjectReference then
+                    begin
+                      ElementToAssignTo.Assign(LocalSelectedElement);
+                    end
+                    else
+                    begin
+                      if Assigned(LocalSelectedElement) then
+                        BoldProperties.MayHaveChanged(LocalSelectedElement.AsString, Follower)
+                      else
+                        BoldProperties.MayHaveChanged('', Follower);
+                      fInternalChange := true;
+                      try
+                        TBoldQueueableAccess(Follower).Display;
+                      finally
+                        fInternalChange := false;
+                      end;
+                    end;
                   except
                     on E: Exception do
                     begin
@@ -736,13 +868,13 @@ begin
                   end;
                 {$ENDIF}
               end;
-              CallInherited := false;
+              CallInherited := true;
             end;
             bdcsSetReference:
             begin
               Follower.DiscardChange;
-              if assigned(BoldHandle) and (BoldHandle is TBoldReferenceHandle) then
-                (BoldHandle as TBoldReferenceHandle).Value := LocalSelectedElement;
+              if assigned(BoldHandle) and BoldHandle.CanSetValue then
+                TBoldElementHandleAccess(BoldHandle).SetValue(LocalSelectedElement);
               CallInherited := Message.Msg = CB_SETCURSEL;
             end;
             bdcsSetListIndex:
@@ -779,7 +911,7 @@ begin
             end;
           end;
         end;
-
+      end;
       CB_SHOWDROPDOWN:
         if (Message.WParam=0) and EffectiveReadOnly then
           _AfterMakeUptoDate(Follower); {Restore text} //FIXME Maybe an UpdateEffectiveText?
@@ -787,6 +919,7 @@ begin
   end;
   if CallInherited then
     inherited WndProc(Message);
+{$WARN UNSAFE_CAST ON}
 end;
 
 procedure TBoldCustomComboBox.SetBoldListProperties(Value: TBoldComboListController);
@@ -795,14 +928,24 @@ begin
 end;
 
 function TBoldCustomComboBox.GetSelectedElement: TBoldElement;
+var
+  lFollower: TBoldFollower;
 begin
+{$WARN UNSAFE_CAST OFF}
   with ListFollower.RendererData as TBoldFollowerList do
   begin
     if (ItemIndex >= 0)and (ItemIndex < Count) then
-      Result := Followers[ItemIndex].Element
+    begin
+      lFollower := Followers[ItemIndex];
+      if Assigned(lFollower) then
+        Result := lFollower.Element
+      else
+        result := nil;
+    end
     else
       Result := nil;
   end;
+{$WARN UNSAFE_CAST ON}
 end;
 
 function TBoldCustomComboBox.GetBoldHandle: TBoldElementHandle;
@@ -812,7 +955,7 @@ end;
 
 function TBoldCustomComboBox.GetFollower: TBoldFOllower;
 begin
-    Result := fHandleFollower.Follower;
+  Result := fHandleFollower.Follower;
 end;
 
 function TBoldCustomComboBox.GetBoldListHandle: TBoldAbstractListHandle;
@@ -822,7 +965,7 @@ end;
 
 function TBoldCustomComboBox.GetListFollower: TBoldFOllower;
 begin
-   Result := fListHandleFollower.Follower;
+ Result := fListHandleFollower.Follower;
 end;
 
 function TBoldCustomComboBox.GetContextForBoldProperties: TBoldElementTypeInfo;
@@ -862,9 +1005,8 @@ end;
 
 procedure TBoldCustomComboBox.SetBoldSelectChangeAction(Value: TBoldComboSelectChangeAction);
 begin
-  if (Value = bdcsSetReference) and assigned(BoldHandle) and
-     not (BoldHandle is TBoldReferenceHandle) then
-    raise EBold.Create(sChangeActionCannotBeSetReference);
+  if (Value = bdcsSetReference) and assigned(BoldHandle) and not BoldHandle.CanSetValue then
+    raise EBold.Create('The BoldSelectChangeAction property can not be bdscSetReference when BoldHandle is not a TBoldReferenceHandle');
   fBoldSelectChangeAction := Value;
 end;
 
@@ -888,4 +1030,37 @@ begin
     ExceptionHandler.HandleApplyException(E, self, Elem, Discard, Result);
 end;
 
+procedure TBoldCustomComboBox.Click;
+var
+  aMsg: TWMCommand;
+begin
+  Inc(fProcessingClick);
+  try
+    inherited;
+    if fProcessingClick=1 then
+    begin
+      with aMsg do begin
+        Msg := WM_COMMAND;
+        NotifyCode := CBN_SELCHANGE;
+        ItemID := ItemIndex;
+        Ctl := Handle;
+        Result := 0;
+      end;
+{$WARN UNSAFE_CAST OFF}
+      WndProc(TMessage(aMsg));
+{$WARN UNSAFE_CAST ON}
+    end;
+  finally
+    Dec(fProcessingClick);
+  end;
+end;
+
+procedure TBoldCustomComboBox.WMChar(var Message: TWMChar);
+begin
+  fAutoSearch := true;
+  inherited;
+  fAutoSearch := false;
+end;
+
 end.
+

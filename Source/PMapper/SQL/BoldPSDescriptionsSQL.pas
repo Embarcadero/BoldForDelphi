@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPSDescriptionsSQL;
 
 interface
@@ -19,6 +22,11 @@ const
   TYPECOLUMN_TYPE = ftSmallint;
 
 type
+  //Copied from Data.DB
+  TIndexOptionExt = (ixPrimary, ixUnique, ixDescending, ixCaseInsensitive,
+    ixExpression, ixNonMaintained, ixNonClustered {ext});
+  TIndexOptionsExt = set of TIndexOptionExt;
+
   TBoldSQLSystemDescription = class;
   TBoldSQLDescriptionElement = class;
   TBoldSQLTableDescription = class;
@@ -32,6 +40,7 @@ type
   {---TBoldSQLSystemDescription---}
   TBoldSQLSystemDescription = class(TBoldPSSystemDescription)
   private
+    Query: IBoldExecQuery;
     fTables: TBoldSQLTableDescriptionList;
     fSQLDatabaseConfig: TBoldSQLDatabaseConfig;
     fNationalCharConversion: TBoldNationalCharConversion;
@@ -48,7 +57,7 @@ type
     destructor Destroy; override;
     procedure CleanPersistentStorage(PSParams: TBoldPSSQLParams);
     procedure CreatePersistentStorage(PSParams: TBoldPSParams); override;
-    procedure GenerateDatabaseScript(Script: TStrings; Separator: string); virtual;
+    procedure GenerateDatabaseScript(Script: TStrings); virtual;
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read fSQLDatabaseConfig;
     property SQLTablesList: TBoldSQLTableDescriptionList read fTables;
     property NationalCharConversion: TBoldNationalCharConversion read fNationalCharConversion;
@@ -58,12 +67,15 @@ type
   TBoldSQLDescriptionElement = class(TBoldPSDescriptionElement)
   private
     fSQLName: string;
+    fSQLNameUpper: string;
   protected
-    procedure SetSQLName(v: string); virtual;
-    function MappedSQLName(value: String): String;
+    function GetDebugInfo: string; override;
+    procedure SetSQLName(const v: string); virtual;
     function OwningSystem: TBoldSQLSystemdescription;
   public
     property SQLName: string read fSQLName write SetSQLName;
+    property SQLNameUpper: string read fSQLNameUpper;
+    function MappedSQLName(const value: String): String;
   end;
 
   {---TBoldSQLTableDescription---}
@@ -76,20 +88,20 @@ type
     fContainsStopTimeStamp: Boolean;
     function GetSystemDescription: TBoldSQLSystemDescription;
   protected
-    procedure SetSQLName(v: string); override;
+    procedure SetSQLName(const v: string); override;
     function TableExists(PSParams: TBoldPSSQLParams): boolean;
     procedure CreateTableBDE(PSParams: TBoldPSSQLParams);
     procedure CreateTableSQL(PSParams: TBoldPSSQLParams);
   public
     constructor Create(aOwner: TBoldPSDescriptionElement; Versioned: Boolean);
     destructor Destroy; override;
-    function AddColumn(const ColName: string; SQLColType, AllowNullAsSQL: String; ColType: TFieldType; ColSize: Integer; AllowNull: Boolean; DefaultDBValue: string): TBoldSQLColumnDescription;
-    procedure EnsureIndex(const Fields: string; Primary, Unique: boolean);
+    function AddColumn(const ColName: string; SQLColType, AllowNullAsSQL: String; ColType: TFieldType; ColSize: Integer; AllowNull: Boolean; const DefaultDBValue: string): TBoldSQLColumnDescription;
+    procedure EnsureIndex(const Fields: string; Primary, Unique, NonClustered: boolean);
     procedure CreateTable(PSParams: TBoldPSSQLParams);
     procedure DeleteTable(PSParams: TBoldPSSQLParams);
     procedure RetrieveSelectIdAndTypeStatement(S: TStrings);
-    procedure GenerateDatabaseScript(Script: TStrings; Separator: string);
-    function SQLForCreateTable(DataBase: IBoldDatabase): string;
+    procedure GenerateDatabaseScript(Script: TStrings);
+    function SQLForCreateTable(const DataBase: IBoldDatabase): string;
     function SQLForDropTable: string;
     property ColumnsList: TBoldSQLDescriptionList read fColumns;
     property IndexList: TBoldSQLIndexDescriptionList read fIndexes;
@@ -108,13 +120,14 @@ type
     fSQLAllowNull: string;
     fFieldType: TFieldType;
     fDefaultDBValue: String;
-    function GetTableDescription: TBoldSQLTableDescription;
+    function GetTableDescription: TBoldSQLTableDescription;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    procedure SetSQLName(v: string); override;
+    function GetDebugInfo: string; override;
+    procedure SetSQLName(const v: string); override;
   public
     procedure CreateBDEColumn(FieldDefs: TFieldDefs);
     constructor Create(aOwner: TBoldPSDescriptionElement);
-    function GetSQLForColumn(DataBase: IBoldDatabase): string;
+    function GetSQLForColumn(const DataBase: IBoldDatabase): string;
     property TableDescription: TBoldSQLTableDescription read GetTableDescription;
     property Size: integer read fSize write fSize;
     property Mandatory: Boolean read fMandatory write fMandatory;
@@ -127,55 +140,57 @@ type
   {---TBoldSQLIndexDescription---}
   TBoldSQLIndexDescription = class(TBoldPSDescriptionElement)
   private
-    fIndexOptions: TIndexOptions;
+    fIndexOptions: TIndexOptionsExt;
     fIndexedFields: string;
     function GetTableDescription: TBoldSQLTableDescription;
     function GetIndexedFieldsForSQL: String;
-  protected
-    property TableDescription: TBoldSQLTableDescription read GetTableDescription;
-    function GeneratedName: String;
   public
+    property TableDescription: TBoldSQLTableDescription read GetTableDescription;
     constructor Create(aOwner: TBoldPSDescriptionElement; const Fields: String);
+    class function NormalizeFields(const IndexedFields: string): string;
     function SQLForPrimaryKey: string;
     function SQLForSecondaryKey: string;
+    function GeneratedName: String;
     property IndexedFields: string read fIndexedFields write fIndexedFields;
     property IndexedFieldsForSQL: String read GetIndexedFieldsForSQL;
     procedure CreateBDEIndex(PSParams: TBoldPSSQLParams; IndexDefs: TIndexDefs);
-    property IndexOptions: TIndexOptions read fIndexOptions write fIndexOptions;
+    property IndexOptions: TIndexOptionsExt read fIndexOptions write fIndexOptions;
   end;
 
   {---TBoldSQLDescriptionList---}
   TBoldSQLDescriptionList = class(TBoldIndexableList)
   private
     fSystemDescription: TBoldSQLSystemDescription;
-    function GetItem(index: Integer): TBoldSQLDescriptionElement;
-    function GetItemBySQLName(SQLName: string): TBoldSQLDescriptionElement;
+    function GetItem(index: Integer): TBoldSQLDescriptionElement;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemBySQLName(const SQLName: string): TBoldSQLDescriptionElement;
   public
     constructor Create(SystemDescription: TBoldSQLSystemDescription);
-    procedure ToStrings(S: TStrings);                                     //Does not feel necessary..
+    procedure ToStrings(S: TStrings);
     property Items[index: Integer]: TBoldSQLDescriptionElement read GetItem; default;
-    property ItemsBySQLName[SQLName: string]: TBoldSQLDescriptionElement read GetItemBySQLName;
+    property ItemsBySQLName[const SQLName: string]: TBoldSQLDescriptionElement read GetItemBySQLName;
   end;
 
   {---TBoldSQLTableDescriptionList---}
   TBoldSQLTableDescriptionList = class(TBoldSQLDescriptionList)
   private
-    function GetItem(index: Integer): TBoldSQLTableDescription;
-    function GetItemBySQLName(SQLName: string): TBoldSQLTableDescription;
+    function GetItem(index: Integer): TBoldSQLTableDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemBySQLName(const SQLName: string): TBoldSQLTableDescription;
   public
     property Items[index: Integer]: TBoldSQLTableDescription read GetItem; default;
-    property ItemsBySQLName[SQLName: string]: TBoldSQLtableDescription read GetItemBySQLName;
+    property ItemsBySQLName[const SQLName: string]: TBoldSQLtableDescription read GetItemBySQLName;
   end;
 
   TBoldSQLIndexDescriptionList = class(TBoldIndexableList)
   private
-    function GetItem(index: integer): TBoldSQLIndexDescription;
-    function GetItemsByIndexFields(const IndexFields: string): TBoldSQLIndexDescription;
+    class var IX_SQLIndexFields: integer;
+    function GetItem(index: integer): TBoldSQLIndexDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemsByIndexFields(const IndexFields: string): TBoldSQLIndexDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     property items[index: integer]: TBoldSQLIndexDescription read GetItem; default;
     property ItemsByIndexFields[const IndexFields: string]: TBoldSQLIndexDescription read GetItemsByIndexFields;
   end;
+
 
 var
   BoldCleanDatabaseForced: Boolean = false;
@@ -188,15 +203,19 @@ uses
   BoldLogHandler,
   BoldQueryUserDlg,
   SysUtils,
-  BoldPMConsts,
   TypInfo,
+  {$IFDEF MSWINDOWS}
   Controls,
   Dialogs,
+  {$ENDIF}
+  {$IFDEF LINUX}
+  QControls,
+  QDialogs,
+  {$ENDIF}
   BoldHashIndexes;
 
 var
   IX_SQLDescriptionSQLName: integer = -1;
-  IX_SQLIndexFields: integer = -1;
 
 type
   {---TSQLDescriptorSQLNameIndex---}
@@ -216,60 +235,80 @@ begin
   Result := TBoldSQLDescriptionElement(Item).SQLName;
 end;
 
+function TBoldSQLIndexDescriptionList.GetItem(index: integer): TBoldSQLIndexDescription;
+begin
+  result := (inherited items[index]) as TBoldSQLIndexDescription;
+end;
+
+function TBoldSQLIndexDescriptionList.GetItemsByIndexFields(const IndexFields: string): TBoldSQLIndexDescription;
+begin
+  Result := TBoldSQLIndexDescription(TBoldStringHashIndex(Indexes[IX_SQLIndexFields]).FindByString(TBoldSQLIndexDescription.NormalizeFields(IndexFields)));
+end;
+
 {---TBoldSQLSystemDescription---}
 constructor TBoldSQLSystemDescription.Create(aOwner: TBoldPSDescriptionElement; SQLDatabaseConfig: TBoldSQLDataBaseConfig; NationalCharConversion: TBoldNationalCharConversion);
 begin
-  inherited create(aOwner);
+  inherited Create(aOwner);
   fTables := TBoldSQLTableDescriptionList.Create(self);
-  fSQLDatabaseConfig := TBoldSQLDataBaseConfig.Create;
-  fSQLDatabaseConfig.AssignConfig(SQLDatabaseConfig);
+  fSQLDatabaseConfig := SQLDatabaseConfig;
   fNationalCharConversion := NationalCharConversion;
 end;
 
 destructor TBoldSQLSystemDescription.Destroy;
 begin
   FreeAndNil(fTables);
-  FreeAndNil(fSQLDatabaseConfig);
   inherited;
 end;
 
 procedure TBoldSQLSystemDescription.InitializeKnownSystemtables(
   KnownTables: TStrings; PSParams: TBoldPSSQLParams);
 begin
-  // do nothing;
 end;
 
 
 procedure TBoldSQLSystemDescription.CreatePersistentStorage(PSParams: TBoldPSParams);
 var
-  i: integer;
   PsParamsSQL: TBoldPSSQLParams;
-begin
-  if not (PSParams is TBoldPSSQLParams) then
-    raise EBold.CreateFmt(sUnknownPSParamsType, [classname, PSParams.Classname]);
-  PSParamsSQL := PSParams as TBoldPSSQLParams;
 
-  CleanPersistentStorage(PSParamsSQL);
-
-  StartMetaDataTransaction(PSParamsSQL);
-  try
-    if BoldLog.ProcessInterruption then
-      exit;
-
-    BoldLog.LogHeader := sCreatingTables;
-    BoldLog.ProgressMax := SQLTablesList.Count-1;
-    for i := 0 to SQLTablesList.Count - 1 do
-    begin
-      BoldLog.Progress := i;
-      SQLTablesList[i].CreateTable(PsParamsSQL);
-      BoldLog.Sync;
+  procedure CreateTables;
+  var
+    i: integer;
+  begin
+    Query := PSParamsSQL.Database.GetExecQuery;
+    Query.ParamCheck := false;
+    Query.StartSQLBatch;
+    try
       if BoldLog.ProcessInterruption then
         exit;
+      BoldLog.LogHeader := 'Creating tables';
+      BoldLog.ProgressMax := SQLTablesList.Count-1;
+      for i := 0 to SQLTablesList.Count - 1 do
+      begin
+        BoldLog.Progress := i;
+        SQLTablesList[i].CreateTable(PsParamsSQL);
+        BoldLog.Sync;
+        if BoldLog.ProcessInterruption then
+          exit;
+      end;
+      Query.EndSQLBatch;
+      CommitMetaDataTransaction(PSParamsSQL);
+    except
+      RollBackMetaDataTransaction(PSParamsSQL);
+      Query.FailSQLBatch;
+      raise;
     end;
-    CommitMetaDataTransaction(PSParamsSQL);
-  except
-    RollBackMetaDataTransaction(PSParamsSQL);
-    raise;
+  end;
+
+begin
+  if not (PSParams is TBoldPSSQLParams) then
+    raise EBold.CreateFmt('%s.CreatePersistentStorage: Unknown type of PSParams: %s', [classname, PSParams.Classname]);
+  PSParamsSQL := PSParams as TBoldPSSQLParams;
+  CleanPersistentStorage(PSParamsSQL);
+  StartMetaDataTransaction(PSParamsSQL);
+  try
+    CreateTables;
+  finally
+    PSParamsSQL.Database.ReleaseExecQuery(Query);
   end;
 end;
 
@@ -279,7 +318,9 @@ begin
   if TableNameList.IndexOf(BoldExpandPrefix(IDTABLE_NAME, '', SQLDatabaseConfig.SystemTablePrefix, SQLDatabaseConfig.MaxDBIdentifierLength, NationalCharConversion)) > -1 then
     Result :=
       BoldCleanDatabaseForced or
-      (MessageDlg(sContinueDeleteBoldTables, mtWarning, [mbYes, mbNo], 0) = mrYes);
+      (MessageDlg('Persistent Storage Seems to Contain a Bold Database. ' +
+                         'Continuing Will Permanently Destroy Data. Continue?',
+                         mtWarning, [mbYes, mbNo], 0) = mrYes);
 end;
 
 procedure TBoldSQLSystemDescription.CleanPersistentStorage(PSParams: TBoldPSSQLParams);
@@ -311,18 +352,10 @@ begin
 end;
 
 function DeleteTableSQL: boolean;
-var
-  Query: IBoldExecQuery;
 begin
   result := true;
-
-  Query := PSParams.DataBase.GetExecQuery;
-  try
-    Query.AssignSQLText('DROP TABLE ' + Tablenamelist[i]); // do not localize
-    Query.ExecSQL;
-  finally
-    PSParams.dataBase.ReleaseExecQuery(Query);
-  end;
+  self.Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
+  self.Query.ExecSQL;
 end;
 
 function DeleteTable: Boolean;
@@ -331,11 +364,12 @@ var
   IsBoldTable: boolean;
 
 begin
+  Result:=False;
   IsBoldTable := Knowntables.IndexOf(TableNameList[i]) <> -1 ;
 
   if not IsBoldTable and (not PSParams.IgnoreUnknownTables) and
     not (Query in [qrYesAll, qrNoAll]) then
-    Query := QueryUser(sDeleteTable, Format(sDeleteNonBoldTable, [TableNameList[i]]));
+    Query := QueryUser('Delete Table', Format('Table %s does not seem to be a Bold table. Do you want to delete it.', [TableNameList[i]]));
 
   MayDelete := (Query in [qrYes, qrYesAll]) and (not PSParams.IgnoreUnknownTables);
 
@@ -350,7 +384,7 @@ end;
 
 begin
   Guard := TBoldGuard.Create(Knowntables, TableNameList);
-  BoldLog.LogHeader := sCleaningPS;
+  BoldLog.LogHeader := 'Cleaning Persistent Storage';
   Query := qrYes;
 
   TableNameList := TStringList.Create;
@@ -358,15 +392,13 @@ begin
 
 
   InitializeKnownSystemtables(KnownTables, PSParams);
-
-  // this is needed in ADO since the cached table seems to keep the BOLD_TABLEs table open even though it has been closed...
   PSParams.Database.ReleaseCachedObjects;
   StartMetaDataTransaction(PSParams);
   try
     PSParams.Database.AllTableNames('*', False, TableNameList);
 
     if not ContinueClearPS(TableNameList) then
-      raise EBold.Create(sCleaningPSAborted);
+      raise EBold.Create('Cleaning of Persistent Storage Aborted');
 
     BoldLog.ProgressMax := TableNameList.Count-1;
     for i := 0 to TableNameList.Count - 1 do
@@ -375,13 +407,13 @@ begin
       try
         if DeleteTable then
         begin
-          BoldLog.LogFmt(sDeletingTableX, [TableNameList[i]]);
+          BoldLog.LogFmt('Deleting Table: %s', [TableNameList[i]]);
         end
         else
-          BoldLog.LogFmt(sKeepingTableX, [TableNameList[i]]);
+          BoldLog.LogFmt('Keeping Table: %s', [TableNameList[i]]);
       except
         on e:Exception do
-          BoldLog.LogFmt(sErrorDeletingTable, [TableNameList[i], E.Message], ltError);
+          BoldLog.LogFmt('Error Deleting Table %s: %s', [TableNameList[i], E.Message], ltError);
       end;
       BoldLog.Sync;
       if BoldLog.ProcessInterruption then
@@ -396,7 +428,12 @@ begin
 end;
 
 {---TBoldSQLDescriptionElement---}
-function TBoldSQLDescriptionElement.MappedSQLName(value: String): String;
+function TBoldSQLDescriptionElement.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + SqlName;
+end;
+
+function TBoldSQLDescriptionElement.MappedSQLName(const value: String): String;
 var
   System: TBoldSQLSystemDescription;
 begin
@@ -417,9 +454,10 @@ begin
     result := nil;
 end;
 
-procedure TBoldSQLDescriptionElement.SetSQLName(v: string);
+procedure TBoldSQLDescriptionElement.SetSQLName(const v: string);
 begin
   fSQLName := MappedSQlName(v);
+  fSQLNameUpper := AnsiUpperCase(v);
 end;
 
 {---TBoldSQLTableDescription---}
@@ -439,35 +477,35 @@ begin
   inherited;
 end;
 
-function TBoldSQLTableDescription.SQLForCreateTable(DataBase: IBoldDatabase): string;
+function TBoldSQLTableDescription.SQLForCreateTable(const DataBase: IBoldDatabase): string;
 var
   i: integer;
   s: string;
 begin
-  Result := Format('CREATE TABLE %s (', [SQLName]); // do not localize
+  Result := Format('CREATE TABLE %s (', [SQLName]);
   for i := 0 to ColumnsList.Count - 1 do
   begin
     if i > 0 then
       Result := Result + ', ' + BOLDCRLF;
     s := (ColumnsList[i] as TBoldSQLColumnDescription).GetSQLForColumn(DataBase);
     Result := Result + '  ' + s;
-    BoldLog.Log(Format(sAddingColumn, [s]), ltDetail);
+    BoldLog.Log('Adding column: '+s, ltDetail);
   end;
   if SystemDescription.SQLDatabaseConfig.SupportsConstraintsInCreateTable and Assigned(PrimaryIndex) then
   begin
     Result := Result + ', ' + BOLDCRLF + '  ' + PrimaryIndex.SQLForPrimaryKey;
-    BoldLog.Log(Format(sAddingPrimaryIndex, [PrimaryIndex.SQLForPrimaryKey]), ltDetail);
+    BoldLog.Log('Adding Primary index: '+PrimaryIndex.SQLForPrimaryKey, ltDetail);
   end;
   Result := Result + ')';
 end;
 
 function TBoldSQLTableDescription.SQLForDropTable: string;
 begin
-  result := format('DROP TABLE %s', [SQLName]); // do not localize
+  result := format('DROP TABLE %s', [SQLName]);
 end;
 
 
-procedure TBoldSQLTableDescription.SetSQLName(v: string);
+procedure TBoldSQLTableDescription.SetSQLName(const v: string);
 begin
   if SQLName <> MappedSQLName(v) then
   begin
@@ -495,12 +533,9 @@ begin
   try
     TableName := SQLName;
     Exclusive := True;
-
-    // Create columns
     FieldDefs.Clear;
     for i := 0 to ColumnsList.Count - 1 do
       (ColumnsList[i] as TBoldSQLColumnDescription).CreateBDEColumn(FieldDefs);
-    // Create Indexes
     if IndexList.Count > MAXIMUMINDEXCOUNT then
       MaxIndex := MAXIMUMINDEXCOUNT
     else
@@ -520,26 +555,22 @@ var
   i: integer;
   Query: IBoldExecQuery;
 begin
-  Query := PSParams.Database.GetExecQuery;
-  try
-    Query.AssignSQLText(SQLForCreateTable(PSParams.Database));
-    Query.ExecSQL;
-    for i := 0 to IndexList.count-1 do
-      if (not SystemDescription.SQLDatabaseConfig.SupportsConstraintsInCreateTable) or
-        (IndexList[i] <> PrimaryIndex) then
-      begin
-        Query.AssignSQLText((IndexList[i] as TBoldSQLIndexDescription).SQLForSecondaryKey);
-        Query.ExecSQL;
-      end;
-  finally
-    PSParams.Database.ReleaseExecQuery(Query);
-  end;
+  Query := SystemDescription.Query;
+  Query.AssignSQLText(SQLForCreateTable(PSParams.Database));
+  Query.ExecSQL;
+  for i := 0 to IndexList.count-1 do
+    if (not SystemDescription.SQLDatabaseConfig.SupportsConstraintsInCreateTable) or
+      (IndexList[i] <> PrimaryIndex) then
+    begin
+      Query.AssignSQLText((IndexList[i] as TBoldSQLIndexDescription).SQLForSecondaryKey);
+      Query.ExecSQL;
+    end;
 end;
 
 
 procedure TBoldSQLTableDescription.CreateTable(PSParams: TBoldPSSQLParams);
 begin
-  BoldLog.LogFmtIndent(sCreatingTableX, [SQLName]);
+  BoldLog.LogFmtIndent('Creating Table: %s', [SQLName]);
   case SystemDescription.EffectiveGenerationMode(PSParams) of
     dbgTable: CreateTableBDE(PSParams);
     dbgQuery: CreateTableSQL(PSParams);
@@ -564,10 +595,10 @@ procedure TBoldSQLTableDescription.DeleteTable(PSParams: TBoldPSSQLParams);
 var
   Table: IBoldTable;
 begin
-  BoldLog.LogFmt(sLocatingTableX, [SQLName]);
+  BoldLog.LogFmt('Locating Table: %s', [SQLName]);
   if TableExists(PSParams) then
   begin
-    BoldLog.LogFmt(sDeletingTableX, [SQLName]);
+    BoldLog.LogFmt('Deleting Table: %s', [SQLName]);
     Table := PSParams.Database.GetTable;
     with table do
     try
@@ -580,10 +611,10 @@ begin
     end;
   end
   else
-    BoldLog.LogFmt(sTableXNotPresent, [SQLName]);
+    BoldLog.LogFmt('Table %s not Present', [SQLName]);
 end;
 
-function TBoldSQLTableDescription.AddColumn(const ColName: string; SQLColType, AllowNullAsSQL: String; ColType: TFieldType; ColSize: Integer; AllowNull: Boolean; DefaultDBValue: String): TBoldSQLColumnDescription;
+function TBoldSQLTableDescription.AddColumn(const ColName: string; SQLColType, AllowNullAsSQL: String; ColType: TFieldType; ColSize: Integer; AllowNull: Boolean; const DefaultDBValue: String): TBoldSQLColumnDescription;
 begin
   Result := TBoldSQLColumnDescription.Create(Self);
   Result.SQLName := ColName;
@@ -595,7 +626,7 @@ begin
   Result.DefaultDBValue := DefaultDBValue;
 end;
 
-procedure TBoldSQLTableDescription.EnsureIndex(const Fields: string; Primary, Unique: boolean);
+procedure TBoldSQLTableDescription.EnsureIndex(const Fields: string; Primary, Unique, NonClustered: boolean);
 var
   BoldSQLIndexDescription: TBoldSQLIndexDescription;
 begin
@@ -610,14 +641,16 @@ begin
   end;
   if Unique then
     BoldSQLIndexDescription.IndexOptions := BoldSQLIndexDescription.IndexOptions + [ixUnique];
+  if NonClustered then
+    BoldSQLIndexDescription.IndexOptions := BoldSQLIndexDescription.IndexOptions + [ixNonClustered];
 end;
 
 procedure TBoldSQLTableDescription.RetrieveSelectIdAndTypeStatement(S: TStrings);
 begin
   with S do
   begin
-    Append(Format('SELECT %s.%s, %s.%s',[SQLName, IDCOLUMN_NAME, SQLName, TYPECOLUMN_NAME])); // do not localize
-    Append(Format('FROM %s',[SQLName])); // do not localize
+    Append(Format('SELECT %s.%s, %s.%s',[SQLName, IDCOLUMN_NAME, SQLName, TYPECOLUMN_NAME]));
+    Append(Format('FROM %s',[SQLName]));
   end;
 end;
 
@@ -633,7 +666,7 @@ procedure TBoldSQLColumnDescription.CreateBDEColumn(FieldDefs: TFieldDefs);
 var
   FieldDef: TFieldDef;
 begin
-  BoldLog.LogFmt(sAddingColumnInfo,
+  BoldLog.LogFmt('Adding column: %s [%s, %d]',
                  [SQLName,
                   GetEnumName(TypeInfo(TFieldType), Ord(FieldType)), Size], ltDetail);
   FieldDef := FieldDefs.AddFieldDef;
@@ -644,8 +677,8 @@ begin
   if DefaultDBValue <> '' then
   begin
     BoldLog.Separator;
-    BoldLog.LogFmt(sColumnHasDefaultDBValue, [SQLName, DefaultDBValue], ltWarning);
-    BoldLog.Log(sUnsupportedInTableCreationMode);
+    BoldLog.LogFmt('Column %s has a default db value (%s)', [SQLName, DefaultDBValue], ltWarning);
+    BoldLog.Log('This is not supported when generating the database using TTable, please use TQuery-method instead if this default value is required');
     BoldLog.Separator;
   end;
 end;
@@ -655,7 +688,7 @@ begin
   Result := Owner as TBoldSQLTableDescription;
 end;
 
-procedure TBoldSQLColumnDescription.SetSQLName(v: string);
+procedure TBoldSQLColumnDescription.SetSQLName(const v: string);
 begin
   if SQLName <> v then
   begin
@@ -664,16 +697,21 @@ begin
   end;
 end;
 
-function TBoldSQLColumnDescription.GetSQLForColumn(DataBase: IBoldDatabase): string;
+function TBoldSQLColumnDescription.GetDebugInfo: string;
+begin
+  result := TableDescription.SqlName + '.' + SqlName;
+end;
+
+function TBoldSQLColumnDescription.GetSQLForColumn(const DataBase: IBoldDatabase): string;
 var
   DefaultValue: String;
 begin
   if (not assigned(DataBase) or Database.SupportsDefaultColumnValues) and
     (DefaultDbValue <> '') then
-    DefaultValue := 'DEFAULT ' + DefaultDbValue // do not localize
+    DefaultValue := 'DEFAULT '+DefaultDbValue
   else
     DefaultValue := '';
-  Result := Format('%s %s %s %s', [SQLName, SQLType, DefaultValue, SQLAllowNull]); // do not localize
+  Result := Format('%s %s %s %s', [SQLName, SQLType, DefaultValue, SQLAllowNull]);
 end;
 
 {---TBoldSQLIndexDescription---}
@@ -688,24 +726,47 @@ end;
 
 function TBoldSQLIndexDescription.SQLForPrimaryKey: string;
 begin
-  Result := Format('CONSTRAINT %s PRIMARY KEY (%s)', [generatedName, IndexedFieldsForSQL]); // do not localize
+  Result := Format('CONSTRAINT %s PRIMARY KEY (%s)', [generatedName, IndexedFieldsForSQL]);
 end;
 
 function TBoldSQLIndexDescription.SQLForSecondaryKey: string;
 var
-  Unique: string;
+  sType: string;
 begin
   if ixUnique in IndexOptions then
-    Unique := 'UNIQUE' // do not localize
+    sType := 'UNIQUE' // do not localize
+  else if ixNonClustered in IndexOptions then
+    sType := 'NONCLUSTERED' // do not localize
   else
-    Unique := '';
-  Result := Format('CREATE %s INDEX %s ON %s (%s)', [Unique, GeneratedName, TableDescription.SQLName, IndexedFieldsForSQL]); // do not localize
+    sType := '';
+  Result := Format('CREATE %s INDEX %s ON %s (%s)', [sType, GeneratedName, TableDescription.SQLName, IndexedFieldsForSQL]); // do not localize
 end;
 
 
 function TBoldSQLIndexDescription.GetTableDescription: TBoldSQLTableDescription;
 begin
   Result := Owner as TBoldSQLTableDescription;
+end;
+
+class function TBoldSQLIndexDescription.NormalizeFields(
+  const IndexedFields: string): string;
+var
+  sl: TStringList;
+begin
+  result := StringReplace(IndexedFields, ';', ',', [rfReplaceAll]);
+  result := StringReplace(result, ' ', '', [rfReplaceAll]);
+  if pos(',', result) > 1 then
+  begin
+    sl := TStringList.Create;
+    try
+      sl.CommaText := result;
+      sl.Sorted := true;
+      Result := sl.CommaText;
+    finally
+      sl.free;
+    end;
+  end;
+  result := StringReplace(Result, ',', ';', [rfReplaceAll]);
 end;
 
 procedure TBoldSQLIndexDescription.CreateBDEIndex(PSParams: TBoldPSSQLParams; IndexDefs: TIndexDefs);
@@ -715,16 +776,33 @@ var
   SQLName: string;
 begin
   SQLName := GeneratedName;
-  BoldLog.LogFmt(sAddingIndex, [SQLName, IndexedFields], ltDetail);
-  ActualOptions := IndexOptions;
+  BoldLog.LogFmt('Adding Index: %s on %s', [SQLName, IndexedFields], ltDetail);
+  //Conversion of TIndexOptionsEx to TIndexOptions
+  if ixPrimary in IndexOptions then begin
+    ActualOptions := ActualOptions + [db.ixPrimary];
+  end;
+  if ixUnique in IndexOptions then begin
+    ActualOptions := ActualOptions + [db.ixUnique];
+  end;
+  if ixDescending in IndexOptions then begin
+    ActualOptions := ActualOptions + [db.ixDescending];
+  end;
+  if ixCaseInsensitive in IndexOptions then begin
+    ActualOptions := ActualOptions + [db.ixCaseInsensitive];
+  end;
+  if ixExpression in IndexOptions then begin
+    ActualOptions := ActualOptions + [db.ixExpression];
+  end;
+  if ixNonMaintained in IndexOptions then begin
+    ActualOptions := ActualOptions + [db.ixNonMaintained];
+  end;
   ActualName := SQLName;
-  // Paradox complains if IndexOptions are empty.
   if not PSParams.Database.IsSQLBased then
   begin
     if ActualOptions = [] then
-      ActualOptions := [ixCaseInsensitive];
+      ActualOptions := [db.ixCaseInsensitive];
 
-    if ixPrimary in ActualOptions then
+    if db.ixPrimary in ActualOptions then
       ActualName := '';
   end;
   IndexDefs.Add(ActualName, IndexedFields, ActualOptions);
@@ -745,7 +823,7 @@ begin
   Result := TBoldSQLDescriptionElement(inherited Items[index]);
 end;
 
-function TBoldSQLDescriptionList.GetItemBySQLName(SQLName: string): TBoldSQLDescriptionElement;
+function TBoldSQLDescriptionList.GetItemBySQLName(const SQLName: string): TBoldSQLDescriptionElement;
 begin
   Result := TBoldSQLDescriptionElement(TSQLDescriptorSQLNameIndex(Indexes[IX_SQLDescriptionSQLName]).FindByString(
     BoldExpandName(SQLName, '', xtSQL,
@@ -769,7 +847,7 @@ begin
   Result := TBoldSQLTableDescription(inherited Items[index]);
 end;
 
-function TBoldSQLTableDescriptionList.GetItemBySQLName(SQLName: string): TBoldSQLTableDescription;
+function TBoldSQLTableDescriptionList.GetItemBySQLName(const SQLName: string): TBoldSQLTableDescription;
 begin
   Result := TBoldSQLTableDescription(TSQLDescriptorSQLNameIndex(Indexes[IX_SQLDescriptionSQLName]).FindByString(
     BoldExpandName(SQLName, '', xtSQL,
@@ -789,7 +867,7 @@ begin
   IndexNameLength := TableDescription.SystemDescription.SQLDatabaseConfig.MaxDBIdentifierLength;
   if IndexNameLength = -1 then
     IndexNameLength := TableDescription.SystemDescription.SQLDatabaseConfig.MaxIndexNameLength;
-  result := BoldExpandName('IX_'+TableDescription.SQLName+'_'+IndexedFields, // do not localize
+  result := BoldExpandName('IX_'+TableDescription.SQLName+'_'+StringReplace(IndexedFields, ';', '_', [rfReplaceAll]),
     '',
     xtSQL,
     IndexNameLength,
@@ -803,35 +881,26 @@ constructor TBoldSQLIndexDescriptionList.Create;
 begin
   inherited Create;
   SetIndexCapacity(1);
+  IX_SQLIndexFields := -1;
   SetIndexVariable(IX_SQLIndexFields, AddIndex(TSQLIndexFieldsIndex.Create));
-end;
-
-function TBoldSQLIndexDescriptionList.GetItem(index: integer): TBoldSQLIndexDescription;
-begin
-  result := (inherited items[index]) as TBoldSQLIndexDescription;
-end;
-
-function TBoldSQLIndexDescriptionList.GetItemsByIndexFields(const IndexFields: string): TBoldSQLIndexDescription;
-begin
-  Result := TBoldSQLIndexDescription(TSQLIndexFieldsIndex(Indexes[IX_SQLIndexFields]).FindByString(IndexFields));
 end;
 
 { TSQLIndexFieldsIndex }
 
 function TSQLIndexFieldsIndex.ItemAsKeyString(Item: TObject): string;
 begin
-  Result := TBoldSQLIndexDescription(Item).IndexedFields;
+  Result := TBoldSQLIndexDescription.NormalizeFields(TBoldSQLIndexDescription(Item).IndexedFields);
 end;
 
-procedure TBoldSQLSystemDescription.GenerateDatabaseScript(Script: TStrings; Separator: string);
+procedure TBoldSQLSystemDescription.GenerateDatabaseScript(Script: TStrings);
 var
   i: integer;
 begin
   for i := 0 to SQLTablesList.Count - 1 do
-    SQLTablesList[i].GenerateDatabaseScript(Script, Separator);
+    SQLTablesList[i].GenerateDatabaseScript(Script);
 end;
 
-procedure TBoldSQLTableDescription.GenerateDatabaseScript(Script: TStrings; Separator: string);
+procedure TBoldSQLTableDescription.GenerateDatabaseScript(Script: TStrings);
 var
   SQL: TStringList;
   Guard: IBoldGuard;
@@ -839,16 +908,18 @@ var
 begin
   Guard := TBoldGuard.create(SQL);
   SQL := TStringList.Create;
-  sql.Text := SQLForCreateTable(nil);
-  Script.Add(Separator);
+  sql.Text := SQLForCreateTable(nil) + SystemDescription.SQLDatabaseConfig.SqlScriptTerminator;
   Script.AddStrings(Sql);
+  if SystemDescription.SQLDatabaseConfig.SqlScriptSeparator<>'' then
+    Script.Add(SystemDescription.SQLDatabaseConfig.SqlScriptSeparator);
 
   for i := 0 to IndexList.count-1 do
     if IndexList[i] <> PrimaryIndex then
     begin
-      sql.Text := (IndexList[i] as TBoldSQLIndexDescription).SQLForSecondaryKey;
-      Script.Add(Separator);
+      sql.Text := (IndexList[i] as TBoldSQLIndexDescription).SQLForSecondaryKey + SystemDescription.SQLDatabaseConfig.SqlScriptTerminator;
       Script.AddStrings(Sql);
+      if SystemDescription.SQLDatabaseConfig.SqlScriptSeparator<>'' then
+        Script.Add(SystemDescription.SQLDatabaseConfig.SqlScriptSeparator);
     end;
 end;
 
@@ -868,7 +939,7 @@ procedure TBoldSQLSystemDescription.CommitMetaDataTransaction(PSParams: TBoldPSS
 begin
   if PsParams.Database.InTransaction then
   begin
-    BoldLog.Log(sCommittingToDB);
+    BoldLog.Log('Committing changes to metadata');
     PsParams.Database.Commit;
   end;
 end;
@@ -877,7 +948,7 @@ procedure TBoldSQLSystemDescription.RollBackMetaDataTransaction(PSParams: TBoldP
 begin
   if PsParams.Database.InTransaction then
   begin
-    BoldLog.Log(sRollingBackDB);
+    BoldLog.Log('Rolling back changes to metadata');
     PsParams.Database.RollBack;
   end;
 end;
@@ -888,4 +959,5 @@ begin
     PsParams.Database.StartTransaction;
 end;
 
+initialization
 end.

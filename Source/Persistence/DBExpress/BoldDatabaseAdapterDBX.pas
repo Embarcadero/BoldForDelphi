@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterDBX;
 
 interface
@@ -5,7 +8,6 @@ interface
 uses
   BoldAbstractDataBaseAdapter,
   BoldDBInterfaces,
-  DBXpress,
   SQLExpr,
   BoldDBXInterfaces;
 
@@ -35,7 +37,8 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 
 { TBoldDatabaseAdapterDBX }
 
@@ -70,5 +73,7 @@ procedure TBoldDatabaseAdapterDBX.SetDataBase(const Value: TSQLConnection);
 begin
   InternalDatabase := value;
 end;
+
+initialization
 
 end.

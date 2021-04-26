@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorApplication;
 
 interface
@@ -7,9 +10,12 @@ uses
   BoldAdvancedPropagator,
   BoldPropagatorServer,
   dialogs,
-  forms;
+  forms
+  ;
 
 implementation
+uses
+  BoldRev;
 
 initialization
   try

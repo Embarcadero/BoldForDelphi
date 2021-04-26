@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeNameSelector;
 
 interface
@@ -12,7 +15,7 @@ uses
   StdCtrls,
   BoldSystemRT,
   BoldElements,
-  ImgList, Menus;
+  ImgList, Menus, System.ImageList;
 
 type
   TNodeType = (ntClass, ntClasses, ntAttributes, ntList, ntAttribute, ntClassList,
@@ -48,7 +51,6 @@ uses
   BoldUtils;
 
 {$R *.dfm}
-{.$R BoldTypeNameSelector.res}
 
 { TfrmBoldTypeNameSelector }
 
@@ -66,16 +68,16 @@ end;
 
 procedure TfrmBoldTypeNameSelector.FormCreate(Sender: TObject);
 begin
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLMODELROOTBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLCLASSBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLCLASSESBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLATTRIBUTEBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLATTRIBUTESBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLLISTBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLCLASSLISTBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLATTRIBUTELISTBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLSYSTEMBITMAP', 16, [], clWhite); // do not localize
-  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLTYPEBITMAP', 16, [], clWhite); // do not localize
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLMODELROOTBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLCLASSBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLCLASSESBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLATTRIBUTEBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLATTRIBUTESBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLLISTBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLCLASSLISTBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLUMLATTRIBUTELISTBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLSYSTEMBITMAP', 16, [], clWhite);
+  ilImages.GetInstRes(HInstance, rtBitmap, 'SMALLTYPEBITMAP', 16, [], clWhite);
 end;
 
 procedure TfrmBoldTypeNameSelector.GenerateNodes(
@@ -85,96 +87,89 @@ var Index: Integer;
 begin
   with tvMetaTypes do
   begin
-    // add the root node
-    Node := Items.AddObject(nil, 'Types in the system', nil); // do not localize
-    SetImageIndex(Node, ntRoot);
+    Items.BeginUpdate;
+    try
+      Node := Items.AddObject(nil, 'Types in the system', nil);
+      SetImageIndex(Node, ntRoot);
 
-    if bvtClass in ApprovedTypes then
-    begin
-      if SystemTypeInfo.TopSortedClasses.Count > 0 then
+      if bvtClass in ApprovedTypes then
       begin
-        // add the classes root node
-        Node2 := Items.AddChildObject(Node, 'Classes', nil); // do not localize
-        SetImageIndex(Node2, ntClasses);
-        // add the classes
+        if SystemTypeInfo.TopSortedClasses.Count > 0 then
+        begin
+          Node2 := Items.AddChildObject(Node, 'Classes', nil);
+          SetImageIndex(Node2, ntClasses);
+          for Index := 0 to SystemTypeInfo.TopSortedClasses.Count - 1 do
+          begin
+            with SystemTypeInfo.TopSortedClasses[Index] do
+            begin
+              Node := Items.AddChildObject(Node2, ExpressionName, Pointer(SystemTypeInfo.TopSortedClasses[Index]));
+              SetImageIndex(Node, ntClass);
+              SelectCurrentNode(CurrentStringValue, Node);
+            end;
+          end;
+          Node2.AlphaSort;
+        end;
+      end;
+
+      if bvtList in ApprovedTypes then
+      begin
+        Node2 := Items.GetFirstNode;
+        ListRoot := Items.AddChildObject(Node2, 'Lists', nil);
+        SetImageIndex(ListRoot, ntList);
+        Node2 := Items.AddChildObject(ListRoot, 'Class lists', nil);
+        SetImageIndex(Node2, ntClassLists);
         for Index := 0 to SystemTypeInfo.TopSortedClasses.Count - 1 do
         begin
-          with SystemTypeInfo.TopSortedClasses[Index] do
-          begin
-            Node := Items.AddChildObject(Node2, ExpressionName, Pointer(SystemTypeInfo.TopSortedClasses[Index]));
-            SetImageIndex(Node, ntClass);
-            SelectCurrentNode(CurrentStringValue, Node);
-          end;
+          Node := Items.AddChildObject(Node2, SystemTypeInfo.TopSortedClasses[Index].ListTypeInfo.ExpressionName, Pointer(SystemTypeInfo.TopSortedClasses[Index].ListTypeInfo));
+          SetImageIndex(Node, ntClassList);
+          SelectCurrentNode(CurrentStringValue, Node);
+        end;
+        Node2.AlphaSort;
+        Node2 := Items.AddChildObject(ListRoot, 'Attribute lists', nil);
+        SetImageIndex(Node2, ntAttributeLists);
+        for Index := 0 to SystemTypeInfo.AttributeTypes.Count - 1 do
+        begin
+
+          Node := Items.AddChildObject(Node2, SystemTypeInfo.AttributeTypes[Index].ListTypeInfo.ExpressionName, Pointer(SystemTypeInfo.AttributeTypes[Index].ListTypeInfo));
+          SetImageIndex(Node, ntAttributeList);
+          SelectCurrentNode(CurrentStringValue, Node);
         end;
         Node2.AlphaSort;
       end;
-    end;
 
-    if bvtList in ApprovedTypes then
-    begin
-      // add the list root node
-      Node2 := Items.GetFirstNode;
-      ListRoot := Items.AddChildObject(Node2, 'Lists', nil); // do not localize
-      SetImageIndex(ListRoot, ntList);
-      // add the class list root node
-      Node2 := Items.AddChildObject(ListRoot, 'Class lists', nil); // do not localize
-      SetImageIndex(Node2, ntClassLists);
-
-      // add the class list nodes
-      for Index := 0 to SystemTypeInfo.TopSortedClasses.Count - 1 do
+      if bvtAttr in ApprovedTypes then
       begin
-        Node := Items.AddChildObject(Node2, SystemTypeInfo.ListTypeInfoByElement[SystemTypeInfo.TopSortedClasses[Index]].ExpressionName, Pointer(SystemTypeInfo.ListTypeInfoByElement[SystemTypeInfo.TopSortedClasses[Index]]));
-        SetImageIndex(Node, ntClassList);
-        SelectCurrentNode(CurrentStringValue, Node);
+        Node := Items.GetFirstNode;
+        Node2 := Items.AddChildObject(Node, 'Attributes', nil);
+        SetImageIndex(Node2, ntAttributes);
+        for Index := 0 to SystemTypeInfo.AttributeTypes.Count - 1 do
+        begin
+          Node := Items.AddChildObject(Node2, SystemTypeInfo.AttributeTypes[Index].ExpressionName, Pointer(SystemTypeInfo.AttributeTypes[Index]));
+          SetImageIndex(Node, ntAttribute);
+          SelectCurrentNode(CurrentStringValue, Node);
+        end;
+        Node2.AlphaSort;
       end;
-      Node2.AlphaSort;
 
-      // add the attribute list root node
-      Node2 := Items.AddChildObject(ListRoot, 'Attribute lists', nil); // do not localize
-      SetImageIndex(Node2, ntAttributeLists);
-
-      // add the attribute list nodes
-      for Index := 0 to SystemTypeInfo.AttributeTypes.Count - 1 do
+      if bvtSystem in ApprovedTypes then
       begin
-        Node := Items.AddChildObject(Node2, SystemTypeInfo.ListTypeInfoByElement[SystemTypeInfo.AttributeTypes[Index]].ExpressionName, Pointer(SystemTypeInfo.ListTypeInfoByElement[SystemTypeInfo.AttributeTypes[Index]]));
-        SetImageIndex(Node, ntAttributeList);
-        SelectCurrentNode(CurrentStringValue, Node);
+        Node := Items.GetFirstNode;
+        Node2 := Items.AddChildObject(Node, SystemTypeInfo.ExpressionName , Pointer(SystemTypeInfo));
+        SetImageIndex(Node2, ntSystem);
+        SelectCurrentNode(CurrentStringValue, Node2);
       end;
-      Node2.AlphaSort;
-    end;
 
-    if bvtAttr in ApprovedTypes then
-    begin
-      // add the attributes node
-      Node := Items.GetFirstNode;
-      Node2 := Items.AddChildObject(Node, 'Attributes', nil); // do not localize
-      SetImageIndex(Node2, ntAttributes);
-      for Index := 0 to SystemTypeInfo.AttributeTypes.Count - 1 do
+      if bvtType in ApprovedTypes then
       begin
-        // add the attribute nodes
-        Node := Items.AddChildObject(Node2, SystemTypeInfo.AttributeTypes[Index].ExpressionName, Pointer(SystemTypeInfo.AttributeTypes[Index]));
-        SetImageIndex(Node, ntAttribute);
-        SelectCurrentNode(CurrentStringValue, Node);
+        Node := Items.GetFirstNode;
+        Node2 := Items.AddChildObject(Node, SystemTypeInfo.TypeTypeInfo.ExpressionName, Pointer(SystemTypeInfo.TypeTypeInfo));
+        SetImageIndex(Node2, ntType);
+        SelectCurrentNode(CurrentStringValue, Node2);
       end;
-      Node2.AlphaSort;
+      Items.GetFirstNode.Expand(False);
+    finally
+      tvMetaTypes.Items.EndUpdate;
     end;
-
-    if bvtSystem in ApprovedTypes then
-    begin
-      Node := Items.GetFirstNode;
-      Node2 := Items.AddChildObject(Node, SystemTypeInfo.ExpressionName , Pointer(SystemTypeInfo));
-      SetImageIndex(Node2, ntSystem);
-      SelectCurrentNode(CurrentStringValue, Node2);
-    end;
-
-    if bvtType in ApprovedTypes then
-    begin
-      Node := Items.GetFirstNode;
-      Node2 := Items.AddChildObject(Node, SystemTypeInfo.TypeTypeInfo.ExpressionName, Pointer(SystemTypeInfo.TypeTypeInfo));
-      SetImageIndex(Node2, ntType);
-      SelectCurrentNode(CurrentStringValue, Node2);
-    end;
-    Items.GetFirstNode.Expand(False);
   end;
 end;
 

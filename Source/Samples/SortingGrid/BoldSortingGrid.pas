@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSortingGrid;
 
 interface
@@ -55,8 +58,8 @@ type
     property Comparer: TBoldComparer read GetComparer;
     property ListHandle: TBoldListHandle read GetListHandle;
   public
-    constructor Create(aOwner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(aOwner: TComponent); override;
+    destructor destroy; override;
     procedure DrawCell(ACol, aRow: Longint; ARect: TRect; AState: TGridDrawState); override;
     property OrderCol: integer read FOrderCol write SetOrderCol;
     property OrderDescending: Boolean read FOrderDescending write SetOrderDescending;
@@ -74,7 +77,8 @@ implementation
 uses
   SysUtils,
   Graphics,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 { TBoldSortingGrid }
 
 function TBoldSortingGrid.AdjustStringForNumericCompare(s: String): String;
@@ -104,7 +108,6 @@ begin
   begin
     Obj1 := Item1 as TBoldObject;
     Obj2 := Item2 as TBoldObject;
-    // if both objects are new, then sort them by ID, otherwise sort the new object after the old
     if Obj2.BoldObjectIsNew and Obj1.BoldObjectIsNew then
     begin
       result := StrToIntDef(Obj1.BoldObjectLocator.BoldObjectId.AsString, 0) - StrToIntDef(Obj2.BoldObjectLocator.BoldObjectId.AsString, 0);
@@ -260,22 +263,16 @@ var
   Col: integer;
 begin
   inherited;
-  // are we in the title?
   if (FixedRows = 0) or (csDesigning in ComponentState) or (y > RowHeights[0]) then
     exit;
-
-  // has sorting been disabled
   if not EnableSorting then
     exit;
-
-  // has the mouse moved since it was pressed?
   if (x <> fLastMouseDown.x) or (y <> fLastMouseDown.y) then
     exit;
-
+    
   Col := 0;
   while (x > 0) and (Col < ColCount) do
   begin
-    // Act only on the visible columns
     if (Col < FixedCols) or (Col >= LeftCol) then
     begin
       dec(x, ColWidths[Col]);
@@ -392,4 +389,5 @@ begin
   end;
 end;
 
+initialization
 end.

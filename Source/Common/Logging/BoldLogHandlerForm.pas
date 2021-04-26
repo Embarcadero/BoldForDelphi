@@ -1,11 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLogHandlerForm;
 
 interface
 
 uses
   Forms,
-  Classes,
-  BoldUtils,
   BoldDefs,
   BoldLogHandler,
   BoldLogReceiverInterface,
@@ -19,21 +20,17 @@ type
   TBoldLogHandlerReceiver = class(TInterfacedObject, IBoldLogReceiver)
   private
     fLogForm: TBoldLogForm;
-    fLogFormNotifier: TBoldPassthroughNotifier;
     fSessionName: String;
     function GetLogForm: TBoldLogForm;
     procedure HideProgressBar;
-    function GetLogFormNotifier: TBoldPassthroughNotifier;
   protected
     property LogForm: TBoldLogForm read GetLogForm;
-    property LogFormNotifier: TBoldPassthroughNotifier read GetLogFormNotifier;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
     procedure ProcessInterruption;
-    procedure Notification(AComponent: TComponent; Operation: TOperation);
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure Clear;
     procedure Hide;
     procedure Log(const s: string; LogType: TBoldLogType = ltInfo);
@@ -49,7 +46,8 @@ implementation
 
 uses
   SysUtils,
-  BoldCommonConst;
+  BoldUtils,
+  BoldRev;
 
 var
   LogHandlerForm: TBoldLogHandlerReceiver;
@@ -61,26 +59,22 @@ begin
   LogForm.Clear;
 end;
 
-destructor TBoldLogHandlerReceiver.Destroy;
+destructor TBoldLogHandlerReceiver.destroy;
 begin
   FreeAndNil(fLogForm);
-  FreeAndNil(fLogFormNotifier);
   inherited;
 end;
 
 procedure TBoldLogHandlerReceiver.EndLog;
 begin
-  Log(format(sLogDone, [formatDateTime('c', now), fSessionName]));
+  Log(format('%s: Done %s', [formatDateTime('c', now), fSessionName]));
   Hideprogressbar;
 end;
 
 function TBoldLogHandlerReceiver.GetLogForm: TBoldLogForm;
 begin
   if not Assigned(fLogForm) then
-  begin
     fLogForm := TBoldLogForm.Create(nil);
-    fLogForm.FreeNotification(LogFormNotifier);
-  end;
   Result := fLogForm;
 end;
 
@@ -112,9 +106,7 @@ end;
 
 procedure TBoldLogHandlerReceiver.SetLogHeader(const Value: string);
 begin
-  LogForm.AddLog('==================================');
-  LogForm.AddLog('==='+Value);
-  LogForm.AddLog('==================================');
+  LogForm.AddLog(Value);
 end;
 
 procedure TBoldLogHandlerReceiver.SetProgressMax(const Value: integer);
@@ -131,9 +123,9 @@ end;
 
 procedure TBoldLogHandlerReceiver.StartLog(const SessionName: String);
 begin
-  LogForm.Caption := Format(sLogFormCaption, [SessionName]);
+  LogForm.Caption := 'Logging Activity: ' + SessionName;
   fSessionName := SessionName;
-  Log(format(sLogStarting, [formatDateTime('c', now), SessionName])); // do not localize
+  Log(format('%s: Starting %s', [formatDateTime('c', now), SessionName]));
 end;
 
 procedure TBoldLogHandlerReceiver.ProcessInterruption;
@@ -151,21 +143,8 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure TBoldLogHandlerReceiver.Notification(AComponent: TComponent;
-  Operation: TOperation);
-begin
-  if (AComponent = fLogForm) and (Operation = opRemove) then
-    fLogForm := nil;
-end;
-
-function TBoldLogHandlerReceiver.GetLogFormNotifier: TBoldPassthroughNotifier;
-begin
-  if not assigned(fLogFormNotifier) then
-    fLogFormNotifier := TBoldPassthroughNotifier.CreateWithEvent(Notification);
-  result := fLogFormNotifier;
-end;
-
 initialization
+
   LogHandlerForm := TBoldLogHandlerReceiver.Create;
   BoldLog.RegisterLogReceiver(LogHandlerForm as IBoldLogReceiver);
 

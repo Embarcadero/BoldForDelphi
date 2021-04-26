@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRootedHandles;
 
 interface
@@ -23,11 +26,12 @@ type
     fInternalRootHandleSubscriber: TBoldPassthroughSubscriber;
     fValueSubscriber: TBoldPassthroughSubscriber;
     fDeriver: TBoldDeriver;
+    FOnBeginValueIdentityChanged: TNotifyEvent;
+    FOnEndValueIdentityChanged: TNotifyEvent;
     fResultElement: TBoldIndirectElement;
     fRootTypeName: String;
-    procedure SetRootTypeName(Value: string);
-    procedure ReadDesignTimeContext(Reader: TReader); // compatibility
-    procedure ReadDesignTimeHandle(Reader: TReader); // compatibility
+    procedure ReadDesignTimeContext(Reader: TReader);
+    procedure ReadDesignTimeHandle(Reader: TReader);
     procedure _ReceiveFromRoot(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure _ReceiveFromValue(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SetInternalRootHandle(Value: TBoldElementHandle);
@@ -35,11 +39,16 @@ type
     procedure _NotifyOutOfDate;
     function GetSubscribe: Boolean;
     function GetIsDeriving: Boolean;
+    function IsRootTypeNameStored: Boolean;
+    function GetRootTypeName: string;
+    function GetIsCurrent: boolean;
   protected
     procedure SubscribeToValue;
     procedure EffectiveRootValueChanged; virtual;
     function EffectiveRootValue: TBoldElement;
+    function GetStaticSystemHandle: TBoldAbstractSystemHandle; override;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
+    procedure SetRootTypeName(Value: string); virtual;    
     procedure Loaded; override;
     procedure SetEnabled(Value: Boolean); virtual;
     procedure SetSubscribe(Value: Boolean); virtual;
@@ -52,7 +61,9 @@ type
     function GetStaticRootType: TBoldElementTypeInfo;
     procedure ValueIdentityChanged;
     function GetRootHandle: TBoldElementHandle; virtual;
+    procedure InternalValueIdentityChanged; virtual;
     procedure SetRootHandle(const Value: TBoldElementHandle); virtual;
+    procedure DoAssign(Source: TPersistent); override;
     property InternalRootHandle: TBoldElementHandle read fInternalRootHandle write SetInternalRootHandle;
     property IsDeriving: Boolean read GetIsDeriving;
   public
@@ -63,18 +74,24 @@ type
     function IsRootLinkedTo(Handle: TBoldElementHandle): Boolean;
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; override;
     property StaticRootType: TBoldElementTypeInfo read GetStaticRootType;
+    function IsStaticSystemHandleStored: boolean; override;
+    property IsCurrent: boolean read GetIsCurrent;
  published
     property RootHandle: TBoldElementHandle read GetRootHandle write SetRootHandle;
     property Enabled: Boolean read FEnabled write SetEnabled default True;
-    property RootTypeName: string read fRootTypeName write SetRootTypeName;
+    property RootTypeName: string read GetRootTypeName write SetRootTypeName stored IsRootTypeNameStored;
+    property OnBeginValueIdentityChanged: TNotifyEvent read
+        FOnBeginValueIdentityChanged write FOnBeginValueIdentityChanged;
+    property OnEndValueIdentityChanged: TNotifyEvent read
+        FOnEndValueIdentityChanged write FOnEndValueIdentityChanged;
   end;
 
 implementation
 
 uses
+
   SysUtils,
   BoldDefs,
-  HandlesConst,
   BoldEnvironment;
 
 const
@@ -82,6 +99,7 @@ const
   breValueIdentityChanged = 43;
 
 {---TBoldRootedHandle---}
+
 constructor TBoldRootedHandle.Create(Owner: TComponent);
 begin
   inherited;
@@ -94,6 +112,17 @@ begin
   fDeriver := TBoldDeriver.Create(fResultElement);
   fDeriver.OnNotifyOutOfdate := _NotifyOutOfDate;
   fDeriver.OnDeriveAndSubscribe := DeriveAndSubscribe;
+end;
+
+procedure TBoldRootedHandle.DoAssign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TBoldRootedHandle then with TBoldRootedHandle(Source) do
+  begin
+    self.RootHandle := RootHandle;
+    self.RootTypeName := RootTypeName;
+    self.Enabled := Enabled;
+  end;
 end;
 
 procedure TBoldRootedHandle.Loaded;
@@ -110,6 +139,20 @@ begin
   end;
 end;
 
+function TBoldRootedHandle.GetStaticSystemHandle: TBoldAbstractSystemHandle;
+begin
+  if (RootHandle is TBoldNonSystemHandle) then
+    Result := TBoldNonSystemHandle(RootHandle).StaticSystemHandle
+  else
+  if (RootHandle is TBoldAbstractSystemHandle) then
+    Result := RootHandle as TBoldAbstractSystemHandle
+  else
+  if Assigned(RootHandle) then
+    Result := nil
+  else
+    Result := inherited GetStaticSystemHandle;
+end;
+
 function TBoldRootedHandle.GetStaticSystemTypeInfo: TBoldSystemTypeInfo;
 begin
   if Assigned(InternalRootHandle) then
@@ -120,9 +163,8 @@ end;
 
 procedure TBoldRootedHandle.EffectiveRootValueChanged;
 begin
-   Assert (Assigned(fDeriver));
+   Assert(Assigned(fDeriver));
    MarkSubscriptionOutOfdate;
-  // ValueIdentityChanged; // fix for unknown bug.. JaNo will look at this.
 end;
 
 procedure TBoldRootedHandle.SetInternalRootHandle(Value: TBoldElementHandle);
@@ -131,7 +173,7 @@ begin
   begin
     if (Value = self) or
     ((Value is TBoldRootedHandle) and TBoldRootedHandle(Value).IsRootLinkedTo(Self)) then
-      raise EBold.CreateFmt(sInternalRootHandle_CircRef, [ClassName]);
+      raise EBold.CreateFmt('%s.SetInternalRootHandle: Circular reference', [ClassName]);
     fInternalRootHandleSubscriber.CancelAllSubscriptions;
     fInternalRootHandle := Value;
     if Assigned(InternalRootHandle) then
@@ -150,7 +192,7 @@ begin
   else if Value <> FEnabled then
   begin
     FEnabled := Value;
-    SendEvent(self, beValueIdentityChanged); // can't call ValueIdentityChanged. We should send even when changing to not enabled
+    SendEvent(self, beValueIdentityChanged);
     if not Enabled then
       MarkSubscriptionOutOfDate;
   end;
@@ -177,7 +219,7 @@ begin
   if Assigned(InternalRootHandle) then
     Result := InternalRootHandle.Value
   else
-    Result:= nil;
+    Result := nil;
 end;
 
 procedure TBoldRootedHandle._ReceiveFromRoot(Originator: TObject;
@@ -232,20 +274,25 @@ end;
 
 function TBoldRootedHandle.GetStaticRootType: TBoldElementTypeInfo;
 begin
+  Result := nil;
   if assigned(InternalRootHandle) then
     result := InternalRootHandle.StaticBoldType
-  else if Assigned(StaticSystemTypeInfo) then
-    Result := StaticSystemTypeInfo.ElementTypeInfoByExpressionName[RootTypeName]
   else
-    Result := nil;
+  if Assigned(StaticSystemTypeInfo) then
+  begin
+    if (RootTypeName <> '') then
+      Result := StaticSystemTypeInfo.ElementTypeInfoByExpressionName[RootTypeName]
+    else
+      Result := TBoldAbstractSystemHandle.DefaultBoldSystemTypeInfo;    
+  end;
 end;
 
 procedure TBoldRootedHandle.DefineProperties(Filer: TFiler);
 begin
   inherited;
-  Filer.DefineProperty('TrackBold', ReadTrackBold, nil, False);                 // do not localize
-  Filer.DefineProperty('DesignTimeContext', ReadDesignTimeContext, nil, False); // do not localize
-  Filer.DefineProperty('DesignTimeHandle', ReadDesignTimeHandle, nil, False);   // do not localize
+  Filer.DefineProperty('TrackBold', ReadTrackBold, nil, False);
+  Filer.DefineProperty('DesignTimeContext', ReadDesignTimeContext, nil, False);
+  Filer.DefineProperty('DesignTimeHandle', ReadDesignTimeHandle, nil, False);
 end;
 
 procedure TBoldRootedHandle.ReadDesignTimeContext(Reader: TReader);
@@ -277,6 +324,16 @@ begin
     Result := TBoldRootedHandle(InternalRootHandle).IsRootLinkedTo(Handle)
   else
     Result := false;
+end;
+
+function TBoldRootedHandle.IsRootTypeNameStored: Boolean;
+begin
+  result := (fRootTypeName <> '');
+end;
+
+function TBoldRootedHandle.IsStaticSystemHandleStored: boolean;
+begin
+  result := inherited IsStaticSystemHandleStored and not (RootHandle is TBoldAbstractSystemHandle) and not (RootHandle is TBoldNonSystemHandle);
 end;
 
 procedure TBoldRootedHandle.SetRootTypeName(Value: string);
@@ -313,7 +370,7 @@ end;
 procedure TBoldRootedHandle.ValueIdentityChanged;
 begin
   if Enabled then
-    SendEvent(self, beValueIdentityChanged);
+    InternalValueIdentityChanged;
 end;
 
 function TBoldRootedHandle.GetRootHandle: TBoldElementHandle;
@@ -321,14 +378,49 @@ begin
   result := InternalRootHandle;
 end;
 
+function TBoldRootedHandle.GetRootTypeName: string;
+begin
+  result := fRootTypeName;
+  if (result = '') then
+  begin
+    if Assigned(RootHandle) then
+    begin
+      if Assigned(RootHandle.BoldType) then
+        result := RootHandle.BoldType.AsString
+    end
+    else
+    if Assigned(StaticSystemTypeInfo) then
+      result := StaticSystemTypeInfo.AsString
+  end;
+end;
+
 procedure TBoldRootedHandle.SetRootHandle(const Value: TBoldElementHandle);
 begin
   InternalRootHandle := value;
 end;
 
+function TBoldRootedHandle.GetIsCurrent: boolean;
+begin
+  Result := fDeriver.IsCurrent;
+end;
+
 function TBoldRootedHandle.GetIsDeriving: Boolean;
 begin
   Result := fDeriver.IsDeriving;
+end;
+
+procedure TBoldRootedHandle.InternalValueIdentityChanged;
+begin
+  if Assigned(FOnBeginValueIdentityChanged) then begin
+    FOnBeginValueIdentityChanged(Self);
+  end;
+  try
+    SendEvent(self, beValueIdentityChanged);
+  finally
+    if Assigned(FOnEndValueIdentityChanged) then begin
+      FOnEndValueIdentityChanged(Self);
+    end;
+  end;
 end;
 
 function TBoldRootedHandle.RefersToComponent(Component: TBoldSubscribableComponent): Boolean;
@@ -337,5 +429,7 @@ begin
   if not result and (Component is TBoldElementHandle) then
     result := IsRootLinkedTo(Component as TBoldElementHandle);
 end;
+
+initialization
 
 end.

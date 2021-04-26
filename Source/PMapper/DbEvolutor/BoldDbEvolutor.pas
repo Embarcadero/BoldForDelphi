@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDbEvolutor;
 
 interface
@@ -52,16 +55,18 @@ type
     procedure MoveDataAction(NewMemberMapping, OldMemberMapping: TBoldMemberMappingInfo; Param: TObject);
     procedure DetectTypeClashesAction(NewMemberMapping, OldMemberMapping: TBoldMemberMappingInfo; Param: TObject);
     procedure DetectMapperChange(NewMemberMapping, OldMemberMapping: TBoldMemberMappingInfo; Param: TObject);
-    procedure AddCommandToScript(Script: TStrings; s: string);
+    function DifferenceInColumns(const AColumns, BColumns: String): string;
   protected
     procedure InitializeTableData(TableList, ColumnList: TStringList; MappingInfo: TBoldSQLMappingInfo);
     procedure AddNewTables;
     procedure AddNewColumns;
     procedure AddNewInstances;
+    procedure AddNewIndexes;
     procedure MoveData;
     procedure DeleteOldInstances;
     procedure DropOldColumns;
     procedure DropOldTables;
+    procedure DropOldIndexes;
     procedure MergeOldDbTypes;
     procedure DetectTypeClashes;
     property OldMapping: TBoldSQLMappingInfo read fOldMapping;
@@ -97,21 +102,22 @@ uses
   BoldDbInterfaces,
   SysUtils,
   BoldUtils,
-  BoldPMConsts;
+  BoldGuard;
 
 { TBoldDataBaseEvolutor }
 
 procedure TBoldDataBaseEvolutor.AddNewColumns;
 var
-  i: integer;
+  i, dotIndex: integer;
   TableName, ColumnName: String;
   NewTable: TBoldSQLTableDescription;
   NewColumn: TBoldSQLColumnDescription;
 begin
   for i := 0 to NewColumns.Count - 1 do
   begin
-    TableName := Copy(NewColumns[i], 1, pos('.', NewColumns[i]) - 1);
-    ColumnName := Copy(NewColumns[i], pos('.', NewColumns[i]) + 1, maxint);
+    dotIndex := pos('.', NewColumns[i]);
+    TableName := Copy(NewColumns[i], 1, dotIndex - 1);
+    ColumnName := Copy(NewColumns[i], dotIndex + 1, maxint);
     if (OldColumns.IndexOf(NewColumns[i]) = -1) and (OldTables.IndexOf(TableName) <> -1) then
     begin
       NewTable := NewPSDescription.SQLTablesList.ItemsBySQLName[TableName];
@@ -122,48 +128,85 @@ begin
   end;
 end;
 
+function ContainsIndex(IndexDefs: TBoldIndexDescriptionArray; Columns: WideString): Boolean;
+var
+  i: Integer;
+begin
+  for I := 0 to Length(IndexDefs) - 1 do
+    if BoldNamesEqual(IndexDefs[i].IndexedColumns, Columns)  then
+    begin
+      Result := true;
+      Exit;
+    end;
+  Result := false;
+end;
+
+procedure TBoldDataBaseEvolutor.AddNewIndexes;
+var
+  Def, i: integer;
+  TableName: String;
+  BoldTable: TBoldSQLTableDescription;
+  AllTables: TStringList;
+  IndexDefs: TBoldIndexDescriptionArray;
+  g: IBoldGuard;
+begin
+  g := TBoldGuard.Create(AllTables);
+  AllTables := TStringList.Create;
+  PersistenceHandle.DataBaseInterface.AllTableNames('', true, AllTables);
+  AllTables.CaseSensitive := false;
+  for i := 0 to AllTables.Count - 1 do
+  begin
+    TableName := UpperCase(AllTables[i]);
+    BoldTable := NewPSDescription.SQLTablesList.ItemsBySQLName[TableName];
+    if not Assigned(BoldTable) then
+      Continue;
+    IndexDefs := PersistenceHandle.DataBaseInterface.GetIndexDescriptions(TableName);
+    for Def := 0 to BoldTable.IndexList.Count - 1 do
+    begin
+      if not ContainsIndex(IndexDefs, BoldTable.IndexList[Def].IndexedFields) then
+        Script.AddIndex(BoldTable.IndexList[Def]);
+    end;
+  end;
+end;
+
 procedure TBoldDataBaseEvolutor.AddNewInstances;
 var
   i, t: integer;
   NewTables: TStringList;
   OldExprName, ExprName: String;
   OldAllInstances: TBoldAllInstancesMappingArray;
+  g: IBoldGuard;
 begin
-  // in order not to add data more than once, we must loop over the PMapper, and not the mappinginfo
+  g := TBoldGuard.Create(NewTables);
   OldAllInstances := nil;
   NewTables := TStringList.Create;
-  try
-    for i := 0 to PMapper.ObjectPersistenceMappers.Count - 1 do
+  for i := 0 to PMapper.ObjectPersistenceMappers.Count - 1 do
+  begin
+    if assigned(PMapper.ObjectPersistenceMappers[i]) then
     begin
-      if assigned(PMapper.ObjectPersistenceMappers[i]) then
+      ExprName := PMapper.ObjectPersistenceMappers[i].ExpressionName;
+      OldExprName := TranslateClassExpressionName(ExprName, NewMapping, OldMapping);
+      if (OldExprName <> '') and HasOldInstances(OldExprName) then
       begin
-        ExprName := PMapper.ObjectPersistenceMappers[i].ExpressionName;
-        OldExprName := TranslateClassExpressionName(ExprName, NewMapping, OldMapping);
-        if (OldExprName <> '') and HasOldInstances(OldExprName) then
+        GetAllTablesForClass(ExprName, NewMapping, NewTables);
+        for t := 0 to NewTables.Count - 1 do
         begin
-          GetAllTablesForClass(ExprName, NewMapping, NewTables);
-          for t := 0 to NewTables.Count - 1 do
+          if not HasStorageMapping(OldExprName, NewTables[t], OldMapping)  then
           begin
-            if not HasStorageMapping(OldExprName, NewTables[t], OldMapping)  then
-            begin
-              OldAllInstances := OldMapping.GetAllInstancesMapping(OldExprName);
-              // what if more than 1 or = 0
-              if Length(OldAllInstances) = 1 then
-                Script.CopyInstances(
-                  ExprName,
-                  OldAllInstances[0].TableName,
-                  NewTables[t],
-                  GetCommonPrimaryKeyColumns(
-                    GetPrimaryIndexForExistingTable(OldAllInstances[0].TableName),
-                    GetPrimaryIndexForNewTable(NewTables[t])),
-                  OldMapping.GetDbTypeMapping(OldExprName))
-            end;
+            OldAllInstances := OldMapping.GetAllInstancesMapping(OldExprName);
+            if Length(OldAllInstances) = 1 then
+              Script.CopyInstances(
+                ExprName,
+                OldAllInstances[0].TableName,
+                NewTables[t],
+                GetCommonPrimaryKeyColumns(
+                  GetPrimaryIndexForExistingTable(OldAllInstances[0].TableName),
+                  GetPrimaryIndexForNewTable(NewTables[t])),
+                OldMapping.GetDbTypeMapping(OldExprName))
           end;
         end;
       end;
     end;
-  finally
-    NewTables.free;
   end;
 end;
 
@@ -180,7 +223,7 @@ begin
       Script.AddTable(NewTable);
 
       Script.AddSQLStatement(
-        format('INSERT INTO %s (%s) VALUES (''%s'')', [ // do not localize
+        format('INSERT INTO %s (%s) VALUES (''%s'')', [
           BoldExpandPrefix(TABLETABLE_NAME, '', PersistenceHandle.SQLDataBaseConfig.SystemTablePrefix, NewPSDescription.SQLDatabaseConfig.MaxDBIdentifierLength, NewPSDescription.NationalCharConversion),
           TABLENAMECOLUMN_NAME,
           Newtable.SQLName]));
@@ -221,7 +264,6 @@ begin
     OldExprName := OldMapping.ObjectStorageMappings[i].ClassExpressionName;
     OldTableName := OldMapping.ObjectStorageMappings[i].TableName;
     NewExprName := TranslateClassExpressionName(OldExprName, OldMapping, NewMapping);
-    // either the class does not exist anymore, or it is no longer stored in that table
     if HasOldInstances(OldExprName) and
       (Newtables.IndexOf(OldtableName) <> -1) and
       ((NewExprName = '') or not HasStorageMapping(NewExprName, OldTableName, NewMapping))  then
@@ -248,42 +290,78 @@ end;
 
 procedure TBoldDataBaseEvolutor.DropOldColumns;
 var
-  Def, i: integer;
-  TableName, ColumnName: String;
-  Table: IBoldTable;
+  Def, i, index, dotIndex: integer;
+  s, TableName, ColumnName: String;
   IndexedColumns: TStringList;
+  AllTables: TStringList;
+  IndexDefs: TBoldIndexDescriptionArray;
+  t: Integer;
+  g: IBoldGuard;
 begin
+  g := TBoldGuard.Create(AllTables, IndexedColumns);
   IndexedColumns := TStringList.Create;
   IndexedColumns.Sorted := true;
   OldColumns.Sort;
-  Table := PersistenceHandle.DataBaseInterface.GetTable;
-  try
-    for i := 0 to OldColumns.Count - 1 do
+  AllTables := TStringList.Create;
+  PersistenceHandle.DataBaseInterface.AllTableNames('', true, AllTables);
+  AllTables.CaseSensitive := false;
+  for i := 0 to OldColumns.Count - 1 do
+  begin
+    dotIndex := pos('.', OldColumns[i]);
+    s := Copy(OldColumns[i], 1, dotIndex - 1);
+    if s <> TableName then
     begin
-      TableName := Copy(OldColumns[i], 1, pos('.', OldColumns[i]) - 1);
-      ColumnName := Copy(OldColumns[i], pos('.', OldColumns[i]) + 1, maxint);
-      if (NewColumns.IndexOf(OldColumns[i]) = -1) and (NewTables.IndexOf(TableName) <> -1) then
-      begin
-        // first time and every new table
-        if (i = 0) or (TableName <> Table.TableName) then
-        begin
-          // retrieve fresh indexdefs
-          Table.Tablename := TableName;
-          Table.IndexDefs.Update;
-        end;
-        // see if any indices needs to be dropped
-        for Def := 0 to Table.IndexDefs.Count - 1 do
-        begin
-          IndexedColumns.CommaText := UpperCase(StringReplace(Table.IndexDefs[Def].Fields, ';', ',', [rfReplaceAll]));
-          if IndexedColumns.IndexOf(UpperCase(ColumnName)) <> -1 then
-            Script.DropIndex(Table.IndexDefs[Def].Name, Table.Tablename);
-        end;
-        Script.DropColumn(TableName, ColumnName);
-      end;
+      TableName := s;
+      index := AllTables.IndexOf(TableName);
+      if index < 0 then
+        continue;  // raise Exception.Create(TableName + ' not found at index ' + IntToStr(i));
+      IndexDefs := PersistenceHandle.DataBaseInterface.GetIndexDescriptions(TableName);
     end;
-  finally
-    IndexedColumns.Free;
-    PersistenceHandle.DataBaseInterface.releaseTable(Table);
+    ColumnName := Copy(OldColumns[i], dotIndex + 1, maxint);
+    if (NewColumns.IndexOf(OldColumns[i]) = -1) and (NewTables.IndexOf(TableName) <> -1) then
+    begin
+      for Def := 0 to Length(IndexDefs) - 1 do
+      begin
+        IndexedColumns.CommaText := UpperCase(StringReplace(IndexDefs[Def].IndexedColumns, ';', ',', [rfReplaceAll]));
+        if IndexedColumns.IndexOf(UpperCase(ColumnName)) <> -1 then
+        begin
+          if not fPreScript.HasDropIndex(IndexDefs[Def].IndexName, Tablename) then
+            Script.DropIndex(IndexDefs[Def].IndexName, Tablename);
+        end;
+      end;
+      if not fPreScript.HasDropColumn(TableName, ColumnName) then
+        Script.DropColumn(TableName, ColumnName);
+    end;
+  end;
+end;
+
+procedure TBoldDataBaseEvolutor.DropOldIndexes;
+var
+  Def, i: integer;
+  TableName: String;
+  BoldTable: TBoldSQLTableDescription;
+  AllTables: TStringList;
+  IndexDefs: TBoldIndexDescriptionArray;  
+  g: IBoldGuard;
+begin
+  g := TBoldGuard.Create(AllTables);
+  AllTables := TStringList.Create;
+  PersistenceHandle.DataBaseInterface.AllTableNames('', true, AllTables);
+  AllTables.CaseSensitive := false;
+  for i := 0 to AllTables.Count - 1 do
+  begin
+    TableName := UpperCase(AllTables[i]);
+    BoldTable := NewPSDescription.SQLTablesList.ItemsBySQLName[TableName];
+    if not Assigned(BoldTable) then
+      Continue;
+    IndexDefs := PersistenceHandle.DataBaseInterface.GetIndexDescriptions(TableName);
+    for Def := 0 to Length(IndexDefs) - 1 do
+    begin
+      if PersistenceHandle.SQLDataBaseConfig.EvolveDropsUnknownIndexes and
+        not Assigned(BoldTable.IndexList.ItemsByIndexFields[IndexDefs[Def].IndexedColumns]) and
+        not fPreScript.HasDropIndex(IndexDefs[Def].IndexName, Tablename) then
+          Script.DropIndex(IndexDefs[Def].IndexName, Tablename);
+    end;
   end;
 end;
 
@@ -296,7 +374,7 @@ begin
     begin
       Script.DropTable(OldTables[i]);
       Script.AddSQLStatement(
-        Format('DELETE FROM %s WHERE UPPER(%s)=''%s''', [ // do not localize
+        Format('DELETE FROM %s WHERE UPPER(%s)=''%s''', [
           BoldExpandPrefix(TABLETABLE_NAME, '', PersistenceHandle.SQLDataBaseConfig.SystemTablePrefix, NewPSDescription.SQLDatabaseConfig.MaxDBIdentifierLength, NewPSDescription.NationalCharConversion),
           TABLENAMECOLUMN_NAME,
           uppercase(OldTables[i])]));
@@ -306,9 +384,9 @@ end;
 procedure TBoldDataBaseEvolutor.CalculateScript;
 begin
   if PersistenceHandle.Active then
-    raise EBold.CreateFmt(sPersistenceHandleActive, [classname, PersistenceHandle.Name]);
+    raise EBold.CreateFmt('%s.CalculateScript: PersistenceHandle %s is active. unable to execute', [classname, PersistenceHandle.Name]);
 
-  BoldLog.LogHeader := sInitializingScript;
+  BoldLog.LogHeader := 'Initializing Script';
   BoldLog.ProgressMax := 10;
   try
     PMapper.OpenDatabase(false, false);
@@ -317,7 +395,7 @@ begin
     BoldLog.ProgressStep;
     fUnHandledMemberMappings.Clear;
     fUnhandledMemberMappings.FillFromList(OldMapping.MemberMappings);
-
+    
     if not GenericScript then
       LoadExistingInstances;
 
@@ -330,9 +408,13 @@ begin
     AddNewTables;       BoldLog.ProgressStep;
     AddNewColumns;      BoldLog.ProgressStep;
     AddNewINstances;    BoldLog.ProgressStep;
+    AddNewIndexes;      BoldLog.ProgressStep;
     MoveData;           BoldLog.ProgressStep;
-    DeleteOldInstances; BoldLog.ProgressStep;
-    DropOldColumns;     BoldLog.ProgressStep;
+    DropOldIndexes;     BoldLog.ProgressStep;
+    DeleteOldInstances;
+    BoldLog.ProgressStep;
+    DropOldColumns;
+    BoldLog.ProgressStep;
     DropOldTables;      BoldLog.ProgressStep;
     Script.OptimizeScript;
     MergeOldDbTypes;
@@ -385,23 +467,21 @@ end;
 
 function TBoldDataBaseEvolutor.HasStorageMapping(const ExpressionName, TableName: String; Mapping: TBoldSQLMappingInfo): Boolean;
 var
-  tables: TStringList;
+  Tables: TStringList;
   i: integer;
+  g: IBoldGuard;
 begin
+  g := TBoldGuard.Create(Tables);
   result := false;
   Tables := TStringList.Create;
-  try
-    GetAllTablesForClass(ExpressionName, Mapping, Tables);
-    for i := 0 to Tables.Count - 1 do
+  GetAllTablesForClass(ExpressionName, Mapping, Tables);
+  for i := 0 to Tables.Count - 1 do
+  begin
+    if SameText(Tables[i], TableName) then
     begin
-      if SameText(Tables[i], TableName) then
-      begin
-        result := true;
-        break;
-      end;
+      result := true;
+      break;
     end;
-  finally
-    Tables.Free;
   end;
 end;
 
@@ -414,23 +494,21 @@ procedure TBoldDataBaseEvolutor.InitializeTableData(TableList, ColumnList: TStri
 var
   i, j: integer;
   Columns: TStringList;
+  g: IBoldGuard;
 begin
+  g := TBoldGuard.Create(Columns);
   for i := 0 to MappingInfo.ObjectStorageMappings.Count - 1 do
     AddName(MappingInfo.ObjectStorageMappings[i].TableName, TableList);
   for i := 0 to MappingInfo.AllInstancesMappings.Count - 1 do
     AddName(MappingInfo.AllInstancesMappings[i].TableName, TableList);
   Columns := TStringList.Create;
-  try
-    for i := 0 to MappingInfo.MemberMappings.Count - 1 do
-    begin
-      AddName(MappingInfo.MemberMappings[i].TableName, TableList);
-      Columns.CommaText := MappingInfo.MemberMappings[i].Columns;
-      for j := 0 to Columns.Count - 1 do
-        AddName(MappingInfo.MemberMappings[i].TableName + '.' + Columns[j], ColumnList);
-    end;
-  finally
-    Columns.Free;
-  end
+  for i := 0 to MappingInfo.MemberMappings.Count - 1 do
+  begin
+    AddName(MappingInfo.MemberMappings[i].TableName, TableList);
+    Columns.CommaText := MappingInfo.MemberMappings[i].Columns;
+    for j := 0 to Columns.Count - 1 do
+      AddName(MappingInfo.MemberMappings[i].TableName+'.' + Columns[j], ColumnList);
+  end;
 end;
 
 procedure TBoldDataBaseEvolutor.LoadExistingInstances;
@@ -439,7 +517,7 @@ var
 begin
   query := PersistenceHandle.DataBaseInterface.GetQuery;
   try
-    query.AssignSQLText(format('SELECT DISTINCT BOLD_TYPE FROM %s', [OldRootTableName])); // do not localize
+    query.AssignSQLText(format('SELECT DISTINCT BOLD_TYPE FROM %s', [OldRootTableName]));
     Query.Open;
     while not QUery.Eof do
     begin
@@ -459,7 +537,6 @@ var
   OldMemberMappings: TBoldMemberMappingArray;
   NewMemberName, OldMemberName, NewExprName, OldExprName: String;
 begin
-  // in order not to move data more than once, we must loop over the PMapper, and not the mappinginfo
   OldMemberMappings := nil;
   NewMemberMappings := nil;
   for i := 0 to PMapper.ObjectPersistenceMappers.Count - 1 do
@@ -476,7 +553,6 @@ begin
           begin
             NewMemberName := PMapper.ObjectPersistenceMappers[i].MemberPersistenceMappers[j].ExpressionName;
             NewMemberMappings := NewMapping.GetMemberMappings(NewExprName, NewMemberName);
-            // do we need to worry about lengths = 0, lengths > 1?
             if length(NewMemberMappings) = 1 then
             begin
               OldMemberName := TranslateMemberName(NewExprName, NewMemberName, OldExprName, NewMapping, OldMapping);
@@ -514,26 +590,23 @@ procedure TBoldDataBaseEvolutor.MoveDataBetweenMappings(NewMemberMapping, OldMem
 var
   NewColumns, OldColumns: TStringList;
   i: integer;
+  g: IBoldGuard;
 begin
+  g := TBoldGuard.Create(NewColumns, OldColumns);
   NewColumns := TStringList.Create;
   OldColumns := TStringList.Create;
-  try
-    NewColumns.CommaText := NewMemberMapping.Columns;
-    OldColumns.CommaText := OldMemberMapping.Columns;
-    for i := 0 to MinIntValue([NewColumns.Count, OldColumns.Count]) - 1 do
-    begin
-      Script.MoveData(OldMemberMapping.TableName,
-        NewMemberMapping.TableName,
-        OldColumns[i],
-        NewColumns[i],
-        GetCommonPrimaryKeyColumns(
-          GetPrimaryIndexForExistingTable(OldMemberMapping.TableName),
-          GetPrimaryIndexForNewTable(NewMemberMapping.TableName)),
-        OldMapping.GetDbTypeMapping(OldMemberMapping.ClassExpressionName));
-    end;
-  finally
-    NewColumns.Free;
-    OldColumns.Free;
+  NewColumns.CommaText := NewMemberMapping.Columns;
+  OldColumns.CommaText := OldMemberMapping.Columns;
+  for i := 0 to MinIntValue([NewColumns.Count, OldColumns.Count]) - 1 do
+  begin
+    Script.MoveData(OldMemberMapping.TableName,
+      NewMemberMapping.TableName,
+      OldColumns[i],
+      NewColumns[i],
+      GetCommonPrimaryKeyColumns(
+        GetPrimaryIndexForExistingTable(OldMemberMapping.TableName),
+        GetPrimaryIndexForNewTable(NewMemberMapping.TableName)),
+      OldMapping.GetDbTypeMapping(OldMemberMapping.ClassExpressionName));
   end;
 end;
 
@@ -543,13 +616,12 @@ var
   tables: TStringList;
   TableName: String;
 begin
-  result := 'BOLD_OBJECT'; // do not localize
+  result := 'BOLD_OBJECT';
   Tables := TStringList.create;
   try
     if (OldMapping.ObjectStorageMappings.Count = 0) and
        (OldMapping.AllInstancesMappings.Count = 1) then
     begin
-      // there is only the rootclass, it has no objectstorage, only AllInstances-mapping
       TableName := OldMapping.AllInstancesMappings[0].TableName;
       Tables.Values[TableName] := IntToStr(StrToIntDef(Tables.Values[TableName], 0) + 1);
     end;
@@ -583,14 +655,13 @@ begin
   begin
     dbType := SourceMapping.GetDbTypeMapping(ExpressionName);
     if dbType = NO_CLASS then
-      raise EBold.CreateFmt(sUnableToFindDBID, [classname, expressionName]);
+      raise EBold.CreateFmt('%s.TranslateClassExpressionName: Unable to find source dbid for %s', [classname, expressionName]);
     for i := 0 to SourceMapping.DbTypeMappings.Count - 1 do
     begin
       TestName := SourceMapping.DbTypeMappings[i].ClassExpressionName;
       if (SourceMapping.DbTypeMappings[i].DbType = dbType) and
         (DestMapping.GetDbTypeMapping(TestName) <> NO_CLASS) then
       begin
-        // oh, we found the testname in the destination mapping, then it is what we were looking for.
         result := TestName;
         break;
       end;
@@ -619,7 +690,6 @@ begin
       Mapping := SourceMemberMappings[0].TableName + '.' + SourceMemberMappings[0].Columns;
       for i := 0 to SourceMapping.MemberMappings.Count - 1 do
       begin
-        // if they have the same class name, and the same mapping, it is the same member
         if SameText(SourceMapping.MemberMappings[i].ClassExpressionName, SourceExprName) and
            SameText(SourceMapping.MemberMappings[i].TableName + '.' + SourceMapping.MemberMappings[i].Columns, Mapping) then
         begin
@@ -646,7 +716,7 @@ begin
     fMergedMapping.WriteDataToDB(PersistenceHandle.DataBaseInterface);
   finally
     PersistenceHandle.DataBaseInterface.Close;
-  end;
+  end;  
 end;
 
 procedure TBoldDataBaseEvolutor.MergeOldDbTypes;
@@ -667,7 +737,6 @@ begin
     DbType := OldMapping.GetDbTypeMapping(OldExprName);
     if DbType = NO_CLASS then
     begin
-      // try to locate a previously added type with the same dbtype in the new typemapping
       for j := 0 to i - 1 do
       begin
         if NewMapping.DbTypeMappings[i].DbType = NewMapping.DbTypeMappings[j].dbtype then
@@ -698,9 +767,13 @@ begin
   dbScript.EndUpdate;
 
   MappingScript.BeginUpdate;
-  AddCommandToScript(MappingScript, PersistenceHandle.SQLDataBaseConfig.SqlScriptStartTransaction);
-  fMergedMapping.ScriptForWriteData(MappingScript, PersistenceHandle.SQLDataBaseConfig.SqlScriptSeparator, true, PersistenceHandle.SQLDataBaseConfig.SqlScriptTerminator);
-  AddCommandToScript(MappingScript, PersistenceHandle.SQLDataBaseConfig.SqlScriptCommitTransaction);
+  fMergedMapping.ScriptForWriteData(
+      PersistenceHandle.DatabaseInterface,
+      MappingScript,
+      True,
+      PersistenceHandle.SQLDataBaseConfig.SqlScriptSeparator,
+      PersistenceHandle.SQLDataBaseConfig.SqlScriptTerminator
+      );
   MappingScript.EndUpdate;
 end;
 
@@ -713,7 +786,6 @@ begin
   if OldDbType <> NO_CLASS then
   begin
     for i := UnhandledMemberMappings.Count - 1 downto 0 do
-      // if the dbtype, table and columns match then it is the same attribute...
       if (OldMapping.GetDbTypeMapping(UnhandledMemberMappings[i].ClassExpressionName) = OldDbType) and
         SameText(UnhandledMemberMappings[i].TableName, OldMemberMapping.TableName) and
         SameText(UnhandledMemberMappings[i].Columns, OldMemberMapping.Columns) then
@@ -724,10 +796,9 @@ end;
 
 procedure TBoldDataBaseEvolutor.DetectMapperChange(NewMemberMapping, OldMemberMapping: TBoldMemberMappingInfo; Param: TObject);
 begin
-  if (NewMemberMapping.MapperName <> OldMemberMapping.MapperName) and (OldMemberMapping.MapperName <> '') then
-  begin
+  if (OldMemberMapping.MapperName <> '') and not NewMemberMapping.CompareMapping(OldMemberMapping) then
     (Param as TStrings).Add(
-      format(sMemberChangedMapper, [
+      format('Member %s.%s changed mapper (%s->%s). Column[s] (%s) in table %s will be dropped and (%s) will be created in table %s, data loss!', [
         NewMemberMapping.ClassExpressionName,
         NewMemberMapping.MemberName,
         OldMemberMapping.MapperName,
@@ -737,7 +808,6 @@ begin
         NewMemberMapping.Columns,
         NewMemberMapping.TableName]));
   end;
-end;
 
 procedure TBoldDataBaseEvolutor.GenerateWarnings(Info: TStrings);
 var
@@ -754,7 +824,6 @@ begin
     if assigned(PMapper.ObjectPersistenceMappers[i]) and
       (length(NewMapping.GetObjectStorageMapping(PMapper.ObjectPersistenceMappers[i].ExpressionName)) = 0) then
     begin
-      // New class is persistent and abstract
       NewExprName := PMapper.ObjectPersistenceMappers[i].ExpressionName;
       oldExprName := TranslateClassExpressionName(NewExprName, NewMapping, OldMapping);
       if OldExprName <> '' then
@@ -762,9 +831,9 @@ begin
         if length(OldMapping.GetObjectStorageMapping(OldExprName)) > 0 then
         begin
           if GenericScript then
-            Info.Add(format(sClassBecameAbstract, [OldExprName, NewExprName]))
+            Info.Add(format('Class %s is concrete in old model, but %s is Abstract in new model', [OldExprName, NewExprName]))
           else if HasOldInstances(OldExprName) then
-            Info.Add(format(sUnableToHandleInstancesOfAbstract, [OldExprName, NewExprName]));
+            Info.Add(format('ERROR: There are instances of class %s, but %s is abstract in new model', [OldExprName, NewExprName]));
         end;
       end;
     end;
@@ -777,7 +846,7 @@ begin
     begin
       if HasOldInstances(UnhandledMemberMappings[0].ClassExpressionName) then
       begin
-        s := format(sDataStoredInXForYWillBeLost, [
+        s := format('Data stored in column %s.%s for member %s.%s will be lost', [
           UnhandledMemberMappings[0].TableName,
           UnhandledMemberMappings[0].columns,
           UnhandledMemberMappings[0].ClassExpressionName,
@@ -786,9 +855,9 @@ begin
         if newClassExpressionName <> UnhandledMemberMappings[0].ClassExpressionName then
         begin
           if NewClassExpressionname = '' then
-            s := s + sClassNoLongerExists
+            s := s + ' (class no longer exists)'
           else
-            s := s + format(sNewNameForClass, [NewClassExpressionName]);
+            s := s + format(' (class now called %s)', [NewClassExpressionName]);
         end;
         info.add(s);
       end;
@@ -804,7 +873,6 @@ var
   dbTypeMapping: TBoldDbType;
 begin
   dbTypeMapping := OldMapping.GetDbTypeMapping(OldExpressionName);
-  // Abstract classes has no ObjectStorage mapping
   result :=  (dbTypeMapping <> NO_CLASS) and (length(OldMapping.GetObjectStorageMapping(OldExpressionName)) > 0);
 end;
 
@@ -812,45 +880,38 @@ function TBoldDataBaseEvolutor.GetCommonPrimaryKeyColumns(const PrimaryKey1, Pri
 var
   i: integer;
   Fields1, Fields2: TStringList;
+  g: IBoldGuard;
 begin
+  g := TBoldGuard.Create(Fields1, Fields2);
   Fields1 := TStringList.Create;
   Fields2 := TStringList.Create;
-  result := ''; // perhaps should default to BOLD_ID...
-  try
-    Fields1.CommaText := PrimaryKey1;
-    Fields2.CommaText := UpperCase(PrimaryKey2);
-    Fields2.Sorted := true;
-    for i := Fields1.Count - 1 downto 0 do
-      if Fields2.IndexOf(UpperCase(Fields1[i])) = -1 then
-        Fields1.delete(i);
-    result := Fields1.CommaText;
-  finally
-    Fields1.Free;
-    Fields2.Free;
-  end;
+  result := '';
+  Fields1.CommaText := PrimaryKey1;
+  Fields2.CommaText := UpperCase(PrimaryKey2);
+  Fields2.Sorted := true;
+  for i := Fields1.Count - 1 downto 0 do
+    if Fields2.IndexOf(UpperCase(Fields1[i])) = -1 then
+      Fields1.delete(i);
+  result := Fields1.CommaText;
 end;
 
 function TBoldDataBaseEvolutor.GetPrimaryIndexForExistingTable(const TableName: String): String;
 var
-  Table: IBoldTable;
+  IndexDefs: TBoldIndexDescriptionArray;
   i: integer;
 begin
-  Table := PersistenceHandle.DataBaseInterface.GetTable;
-  try
-    Table.Tablename := tableName;
-    result := '';
-    Table.IndexDefs.Update;
-    for i := 0 to Table.IndexDefs.Count - 1 do
+  result := '';
+  IndexDefs := PersistenceHandle.DataBaseInterface.GetIndexDescriptions(TableName);
+  for i := 0 to Length(IndexDefs)-1 do
+  begin
+    if IndexDefs[i].IsPrimary then
     begin
-      if ixPrimary in Table.IndexDefs[i].Options then
-      begin
-        result := StringReplace(Table.IndexDefs[i].Fields, ';', ',', [rfReplaceAll]);
-        exit;
-      end;
+      result := StringReplace(IndexDefs[i].IndexedColumns, ';', ',', [rfReplaceAll]);
+      exit;
     end;
-  finally
-    PersistenceHandle.DataBaseInterface.ReleaseTable(Table);
   end;
+  if result = '' then
+    raise EBold.CreateFmt('%s.GetPrimaryIndexForExistingTable: Table "%s" has no primary key.', [ClassName, TableName]);
 end;
 
 function TBoldDataBaseEvolutor.GetPrimaryIndexForNewTable(const TableName: String): String;
@@ -858,13 +919,13 @@ var
   TableDesc: TBoldSQLTableDescription;
   i: integer;
 begin
-  result := '';
+  result := IDCOLUMN_NAME; // Fallback: see GetPrimaryIndexForExistingTable
   TableDesc := PMapper.PSSystemDescription.SQLTablesList.ItemsBySQLName[tableName];
   if assigned(TableDesc) then
     for i := 0 to TableDesc.IndexList.Count - 1 do
-      if ixPrimary in TableDesc.IndexList[i].IndexOptions then
+      if BoldPSDescriptionsSQL.ixPrimary in TableDesc.IndexList[i].IndexOptions then
       begin
-        result := TableDesc.IndexList[i].IndexedFieldsForSQL; // this has commas instead of semicolons as separator
+        result := TableDesc.IndexList[i].IndexedFieldsForSQL;
         exit;
       end;
 end;
@@ -877,24 +938,73 @@ end;
 procedure TBoldDataBaseEvolutor.DetectTypeClashesAction(NewMemberMapping, OldMemberMapping: TBoldMemberMappingInfo; Param: TObject);
 var
   i: integer;
-  columns: TStringList;
+  OldColumns: TStringList;
+  NewColumns: TStringList;
   ColumnDesc: TBoldSQlColumnDescription;
   TableDesc: TBoldSQLTableDescription;
+  SameTable: boolean;
+  SameTableAndMapper: boolean;
+  IsOrderedEvolve: boolean;
+  g: IBoldGuard;
 begin
-  if (NewMemberMapping.MapperName <> OldMemberMapping.MapperName) and (OldMemberMapping.MapperName <> '') then
+  if (OldMemberMapping.MapperName <> '') and (not NewMemberMapping.CompareMapping(OldMemberMapping)) then
   begin
-    Columns := TStringList.create;
-    Columns.CommaText := OldMemberMapping.Columns;
-    for i := 0 to Columns.Count - 1 do
-      fPreScript.DropColumn(OldMemberMapping.TableName, Columns[i]);
+    g := TBoldGuard.Create(NewColumns, OldColumns);
+    OldColumns := TStringList.create;
+    OldColumns.CommaText := OldMemberMapping.Columns;
+    NewColumns := TStringList.create;
+    NewColumns.CommaText := NewMemberMapping.Columns;
+    SameTable := (OldMemberMapping.TableName = NewMemberMapping.TableName);
+    SameTableAndMapper := SameTable and (OldMemberMapping.MapperName = NewMemberMapping.MapperName);
+    IsOrderedEvolve := SameTableAndMapper and (DifferenceInColumns(NewMemberMapping.Columns, OldMemberMapping.Columns) = NewColumns[0] + ORDERCOLUMN_SUFFIX);
+    if not IsOrderedEvolve and SameTable then
+      for i := 0 to OldColumns.Count - 1 do
+        fScript.DropColumn(OldMemberMapping.TableName, OldColumns[i]);
 
     TableDesc := NewPSDescription.SQLTablesList.ItemsBySQLName[NewMemberMapping.TableName];
-    Columns.CommaText := NewMemberMapping.Columns;
-    for i := 0 to Columns.Count - 1 do
+    if SameTable then
+    for i := 0 to NewColumns.Count - 1 do
     begin
-      ColumnDesc := TableDesc.ColumnsList.ItemsBySQLName[Columns[i]] as TBoldSQLColumnDescription;
-      fScript.AddColumn(ColumnDesc);
+      if not IsOrderedEvolve or (i = ORDERCOLUMN_INDEX) then
+      begin
+        ColumnDesc := TableDesc.ColumnsList.ItemsBySQLName[NewColumns[i]] as TBoldSQLColumnDescription;
+        fScript.AddColumn(ColumnDesc);
+      end;
     end;
+  end;
+end;
+
+function TBoldDataBaseEvolutor.DifferenceInColumns(const AColumns,
+  BColumns: String): string;
+var
+  i,j : integer;
+  a: TStringList;
+  b: TStringList;
+  c: TStringList;
+begin
+  a := TStringList.Create;
+  b := TStringList.Create;
+  c := TStringList.Create;
+  try
+    a.CommaText := AColumns;
+    b.CommaText := BColumns;
+    for i := 0 to a.Count - 1 do
+    begin
+      j := b.IndexOf(a[i]);
+      if j = -1 then
+        c.Add(a[i])
+    end;
+    for i := 0 to b.Count - 1 do
+    begin
+      j := a.IndexOf(b[i]);
+      if j = -1 then
+        c.Add(b[i])
+    end;
+    result := c.CommaText;
+  finally
+    a.free;
+    b.free;
+    c.free;
   end;
 end;
 
@@ -905,11 +1015,6 @@ begin
   Info.AddStrings(Script.InternalLog);
 end;
 
-procedure TBoldDataBaseEvolutor.AddCommandToScript(Script: TStrings; s: string);
-begin
-  Script.Add(s+PersistenceHandle.SQLDataBaseConfig.SqlScriptTerminator);
-  if PersistenceHandle.SQLDataBaseConfig.SqlScriptSeparator <> '' then
-    Script.Add(PersistenceHandle.SQLDataBaseConfig.SqlScriptSeparator);
-end;
+initialization
 
 end.

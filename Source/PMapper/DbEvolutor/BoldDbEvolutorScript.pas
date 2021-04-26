@@ -1,3 +1,5 @@
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDbEvolutorScript;
 
 interface
@@ -6,6 +8,7 @@ uses
   db,
   Classes,
   BoldDefs,
+  BoldBase,
   BoldLogHandler,
   BoldDBInterfaces,
   BoldPSDescriptionsSQL,
@@ -26,7 +29,7 @@ type
   TBoldMoveData = class;
   TBoldDataBaseEvolutorScript = class;
 
-  TBoldScriptOperation = class
+  TBoldScriptOperation = class(TBoldMemoryManagedObject)
   private
     fScript: TBoldDataBaseEvolutorScript;
   public
@@ -37,6 +40,8 @@ type
   TBoldTableOperation = class(TBoldScriptOperation)
   private
     fTableName: string;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; const TableName: String);
     property TableName: string read fTableName;
@@ -45,6 +50,8 @@ type
   TBoldAddTable = class(TBoldScriptOperation)
   private
     fTableDescr: TBoldSQLTableDescription;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; TableDescr: TBoldSQLTableDescription);
     procedure Execute;
@@ -60,6 +67,8 @@ type
   private
     fExpressionName: String;
     fDbType: TBoldDbType;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; const ExpressionName, TableName: String; DbType: TBoldDbType);
     procedure Execute;
@@ -70,6 +79,8 @@ type
   TBoldColumnOperation = class(TBoldTableOperation)
   private
     fColumnName: String;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; const TableName, ColumnName: String);
     property ColumnName: String read fColumnName;
@@ -78,6 +89,8 @@ type
   TBoldAddColumn = class(TBoldScriptOperation)
   private
     fColumnDesc: TBoldSQLColumnDescription;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; ColumnDesc: TBoldSQLColumnDescription);
     procedure Execute;
@@ -93,6 +106,8 @@ type
   private
     fIndexName: String;
     fTableName: String;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; const IndexName: String; const TableName: String);
     procedure Execute;
@@ -100,10 +115,23 @@ type
     property TableName: string read fTableName;
   end;
 
+  TBoldAddIndex = class(TBoldScriptOperation)
+  private
+    fIndexDescription: TBoldSQLIndexDescription;
+  protected
+    function GetDebugInfo: string; override;
+  public
+    constructor Create(Script: TBoldDataBaseEvolutorScript; IndexDescription: TBoldSQLIndexDescription);
+    procedure Execute;
+    property IndexDescription: TBoldSQLIndexDescription read fIndexDescription;
+  end;
+
   TBoldTwoTableOperation = class(TBoldScriptOperation)
   private
     fSourceTable: String;
     fTargetTable: String;
+  protected
+    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; const SourceTable, TargetTable: String);
     property SourceTable: String read fSourceTable;
@@ -142,6 +170,8 @@ type
     fdbTypes: string;
     fAlsoMoveData: TBoldMoveData;
     function GetSignature: String;
+  protected
+//    function GetDebugInfo: string; override;
   public
     constructor Create(Script: TBoldDataBaseEvolutorScript; const SourceTable, TargetTable, SourceColumn, TargetColumn, IdColumns: String; dbType: TBoldDbType);
     destructor Destroy; override;
@@ -162,6 +192,7 @@ type
     fDroppedTables: TBoldObjectArray;
     fMovedData: TBoldObjectArray;
     fDroppedIndices: TBoldObjectArray;
+    fAddedIndices: TBoldObjectArray;
     fScript: TStrings;
     fDataBase: IBoldDataBase;
     fSQLDataBaseConfig: TBoldSQLDatabaseConfig;
@@ -178,6 +209,7 @@ type
     function GetMovedData(index: integer): TBoldMoveData;
     function GetDeletedInstances(index: integer): TBoldDeleteInstances;
     function GetDroppedIndices(index: integer): TBoldDropIndex;
+    function GetAddedIndices(index: integer): TBoldAddIndex;
     procedure ExtendSchema;
     procedure AdjustContents;
     procedure ReduceSchema;
@@ -185,6 +217,8 @@ type
     procedure StartTransaction;
     procedure CommitTransaction;
     procedure RollBackTransaction;
+    function CopyInstancesExists(const sExpressionName, sSourceTable,
+     sTargetTable, sidColumns: string; aSourceDbType: TBoldDbType): Boolean;
   protected
     procedure Execute;
     property AddedTables[index: integer]: TBoldAddTable read GetAddedTables;
@@ -192,15 +226,21 @@ type
     property DroppedTables[index: integer]: TBoldDropTable read GetDroppedTables;
     property DroppedColumns[index: integer]: TBoldDropColumn read GetDroppedColumns;
     property DroppedIndices[index: integer]: TBoldDropIndex read GetDroppedIndices;
+    property AddedIndices[index: integer]: TBoldAddIndex read GetAddedIndices;
     property CopiedInstances[index: integer]: TBoldCopyInstances read GetCopiedInstances;
     property MovedData[index: integer]: TBoldMoveData read GetMovedData;
     property DeletedInstances[index: integer]: TBoldDeleteInstances read GetDeletedInstances;
   public
     constructor Create;
     destructor Destroy; override;
+    function HasDropColumn(const TableName, ColumnName: String): boolean;
+    function HasDropIndex(const IndexName: String; const TableName: string): boolean;
+    function HasAddIndex(IndexDescription: TBoldSQLIndexDescription): boolean;
+    function HasAddColumn(ColumnDesc: TBoldSQLColumnDescription): boolean;
     procedure AddTable(TableDescr: TBoldSQLTableDescription);
     procedure AddColumn(ColumnDesc: TBoldSQLColumnDescription);
     procedure DropIndex(const IndexName: String; const TableName: string);
+    procedure AddIndex(IndexDescription: TBoldSQLIndexDescription);
     procedure DropColumn(const TableName, ColumnName: String);
     procedure DropTable(const TableName: String);
     procedure CopyInstances(const ExpressionName, SourceTable, TargetTable, IdColumns: String; SourceDbType: TBoldDbType);
@@ -213,14 +253,13 @@ type
     property InternalLog: TStringList read fInternalLog;
   end;
 
-
 implementation
 
 uses
   SysUtils,
   BoldGuard,
   BoldUtils,
-  BoldPMConsts;
+  Boldrev;
 
 { TBoldAddTable }
 
@@ -235,9 +274,9 @@ var
   i: integer;
   index: TBoldSQLIndexDescription;
 begin
-  Script.Comment(sAddTable, [TableDescr.SQLName]);
+  Script.Comment('Add table %s', [TableDescr.SQLName]);
   Script.ExecuteSQL(TableDescr.SQLForCreateTable(Script.fDataBase), []);
-  for i := 0 to TableDescr.IndexList.Count - 1 do
+  for i := 0 to TableDescr.IndexList.Count-1 do
   begin
     index := TableDescr.IndexList[i] as TBoldSQLIndexDescription;
     if not (ixPrimary in Index.IndexOptions) then
@@ -245,26 +284,56 @@ begin
   end;
 end;
 
+function TBoldAddTable.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + TableDescr.SQLName;
+end;
+
 { TBoldDataBaseEvolutorScript }
 
 procedure TBoldDataBaseEvolutorScript.AddColumn(ColumnDesc: TBoldSQLColumnDescription);
-var
-  i: integer;
 begin
-  for i := 0 to fAddedColumns.Count - 1 do
-    if AddedColumns[i].ColumnDesc = ColumnDesc then
-      exit;
-  fAddedColumns.Add(TBoldAddColumn.Create(self, ColumnDesc));
+  if not HasAddColumn(ColumnDesc) then
+    fAddedColumns.Add(TBoldAddColumn.Create(self, ColumnDesc));
 end;
 
 procedure TBoldDataBaseEvolutorScript.AddTable(TableDescr: TBoldSQLTableDescription);
+var
+  i: integer;
 begin
+  for i := 0 to fAddedTables.Count - 1 do
+    if AddedTables[i].TableDescr = TableDescr then
+      exit;
   fAddedTables.Add(TBoldAddTable.Create(self, TableDescr));
+end;
+
+function TBoldDataBaseEvolutorScript.CopyInstancesExists(const sExpressionName,
+  sSourceTable, sTargetTable, sidColumns: string;
+  aSourceDbType: TBoldDbType): Boolean;
+var
+  i: Integer;
+  aCopyInstances: TBoldCopyInstances;
+begin
+  Result := False;
+  for i := 0 to (fCopiedInstances.Count - 1) do begin
+    aCopyInstances := GetCopiedInstances(i);
+    Result := (aCopyInstances.fExpressionName = sExpressionName)
+      and (aCopyInstances.fSourceTable = sSourceTable)
+      and (aCopyInstances.fTargetTable = sTargetTable)
+      and (aCopyInstances.fIdColumns = sidColumns)
+      and (aCopyInstances.fSourceDbType = aSourceDbType);
+    if Result then begin
+      Break;
+    end;
+  end;
 end;
 
 procedure TBoldDataBaseEvolutorScript.CopyInstances(const ExpressionName, SourceTable, TargetTable, IdColumns: String; SourceDbType: TBoldDbType);
 begin
-  fCopiedInstances.Add(TBoldCopyInstances.Create(self, ExpressionName, SourceTable, TargetTable, IdColumns, SourceDbType));
+  // prevent, that 2 identical instances of TBoldCopyInstance are added here:
+  if not CopyInstancesExists(ExpressionName, SourceTable, TargetTable, idColumns, SourceDbType) then begin
+    fCopiedInstances.Add(TBoldCopyInstances.Create(self, ExpressionName, SourceTable, TargetTable, IdColumns, SourceDbType));
+  end;
 end;
 
 constructor TBoldDataBaseEvolutorScript.Create;
@@ -276,9 +345,9 @@ begin
   fDeletedInstances := TBoldObjectArray.Create(10, [bcoDataOwner]);
   fDroppedColumns := TBoldObjectArray.Create(10, [bcoDataOwner]);
   fDroppedTables := TBoldObjectArray.Create(10, [bcoDataOwner]);
-  // the MoveData-list can not own its instances since they will be moved from there during OptimizeScript
   fMovedData := TBoldObjectArray.Create(10, []);
   fDroppedIndices := TBoldObjectArray.Create(10, [bcoDataOwner]);
+  fAddedIndices := TBoldObjectArray.Create(10, [bcoDataOwner]);  
   fSQLStatements := TStringList.Create;
   fInternalLog := TStringList.Create;
 end;
@@ -299,7 +368,8 @@ begin
   FreeAndNil(fDroppedColumns);
   FreeAndNil(fDroppedTables);
   FreeAndNil(fDroppedIndices);
-  for i := 0 to fMovedData.Count - 1 do
+  FreeAndNil(fAddedIndices);  
+  for i := 0 to fMovedData.Count-1 do
     fMovedData[i].Free;
   FreeAndNil(fMovedData);
   FreeAndNil(fSQLStatements);
@@ -308,19 +378,18 @@ begin
 end;
 
 procedure TBoldDataBaseEvolutorScript.DropColumn(const TableName, ColumnName: String);
-var
-  i: integer;
 begin
-  for i := 0 to fDroppedColumns.Count - 1 do
-    if SameText(DroppedColumns[i].TableName, TableName) and
-      SameText(DroppedColumns[i].ColumnName, ColumnName) then
-      exit;
-
-  fDroppedColumns.Add(TBoldDropColumn.Create(self, TableName, ColumnName));
+  if not HasDropColumn(TableName, ColumnName) then  
+    fDroppedColumns.Add(TBoldDropColumn.Create(self, TableName, ColumnName));
 end;
 
 procedure TBoldDataBaseEvolutorScript.DropTable(const TableName: String);
+var
+  i: integer;
 begin
+  for i := 0 to fDroppedTables.Count - 1 do
+    if DroppedTables[i].TableName = TableName then
+      exit;
   fDroppedTables.Add(TBoldDropTable.Create(self, TableName));
 end;
 
@@ -361,7 +430,7 @@ end;
 
 procedure TBoldDataBaseEvolutorScript.MoveData(const SourceTable, TargetTable, SourceColumn, TargetColumn, IdColumns: String; dbType: TBoldDbType);
 begin
-  if not SameText(TargetTable + '.' + TargetColumn, SourceTable + '.' + SourceColumn) then
+  if not SameText(TargetTable+'.'+TargetColumn, SourceTable+'.'+SourceColumn) then
     fMovedData.Add(TBoldMoveData.Create(self, SourceTable, TargetTable, SourceColumn, TargetColumn, IdColumns, dbType));
 end;
 
@@ -410,6 +479,12 @@ begin
   result := TBoldAddColumn(fAddedColumns[index]);
 end;
 
+function TBoldDataBaseEvolutorScript.GetAddedIndices(
+  index: integer): TBoldAddIndex;
+begin
+  result := fAddedIndices[Index] as TBoldAddIndex;
+end;
+
 function TBoldDataBaseEvolutorScript.GetDroppedColumns(index: integer): TBoldDropColumn;
 begin
   result := TBoldDropColumn(fDroppedColumns[index]);
@@ -429,6 +504,64 @@ function TBoldDataBaseEvolutorScript.GetMovedData(
   index: integer): TBoldMoveData;
 begin
   result := TBoldMoveData(fMovedData[index]);
+end;
+
+function TBoldDataBaseEvolutorScript.HasAddColumn(
+  ColumnDesc: TBoldSQLColumnDescription): boolean;
+  var
+  i: integer;
+begin
+  result := false;
+  for i := 0 to fAddedColumns.Count-1 do
+    if AddedColumns[i].ColumnDesc=ColumnDesc then
+    begin
+      result := true;
+      exit;
+    end;
+end;
+
+function TBoldDataBaseEvolutorScript.HasAddIndex(
+  IndexDescription: TBoldSQLIndexDescription): boolean;
+var
+  i: integer;
+begin
+  result := false;
+   for i := 0 to fAddedIndices.Count - 1 do
+     if AddedIndices[i].IndexDescription=IndexDescription then
+     begin
+       result := true;
+       exit;
+     end;
+end;
+
+function TBoldDataBaseEvolutorScript.HasDropColumn(const TableName,
+  ColumnName: String): boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for i := 0 to fDroppedColumns.Count - 1 do
+    if AnsiSameText(DroppedColumns[i].TableName, TableName) and
+      AnsiSameText(DroppedColumns[i].ColumnName, ColumnName) then
+      begin
+        result := true;
+        exit;
+      end;
+end;
+
+function TBoldDataBaseEvolutorScript.HasDropIndex(const IndexName,
+  TableName: string): boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for I := 0 to fDroppedIndices.Count - 1 do
+    if AnsiSameText(DroppedIndices[i].IndexName, IndexName)
+        and AnsiSameText(DroppedIndices[i].TableName, TableName) then
+        begin
+          result := true;
+          exit;
+        end;
 end;
 
 function TBoldDataBaseEvolutorScript.GetDeletedInstances(index: integer): TBoldDeleteInstances;
@@ -462,7 +595,7 @@ begin
   i := 0;
   while i < fMovedData.Count do
   begin
-    for j := fMovedData.Count - 1 downto i + 1 do
+    for j := fMovedData.Count-1 downto i+1 do
     begin
       if (MovedData[j].DbTypes = MovedData[i].DbTypes) and
          SameText(MovedData[j].SourceTable, MovedData[i].SourceTable) and
@@ -478,31 +611,40 @@ begin
 
   MoveDataSignatures := TStringList.Create;
   try
-    for i := 0 to fMovedData.Count - 1 do
+    for i := 0 to fMovedData.Count-1 do
       MoveDataSignatures.AddObject(MovedData[i].Signature, MovedData[i]);
     MoveDataSignatures.Sort;
-    for i := 1 to MoveDataSignatures.Count - 1 do
-      if MoveDataSignatures[i - 1] = MoveDataSignatures[i] then
+    for i := 1 to MoveDataSignatures.Count-1 do
+      if MoveDataSignatures[i-1] = MoveDataSignatures[i] then
       begin
-        MoveData1 := TBoldMoveData(MoveDataSignatures.Objects[i - 1]);
+        MoveData1 := TBoldMoveData(MoveDataSignatures.Objects[i-1]);
         MoveData2 := TBoldMoveData(MoveDataSignatures.Objects[i]);
-        MoveData2.fdbTypes := MoveData2.dbTypes + ', ' + MoveData1.dbTypes;
+        MoveData2.fdbTypes := MoveData2.dbTypes + ', '+ MoveData1.dbTypes;
         fMovedData.Remove(MoveData1);
-        MoveData1.Free;
+        MoveData1.Free; 
       end;
   finally
     MoveDataSignatures.free;
   end;
+
+
 end;
 
 procedure TBoldDataBaseEvolutorScript.DropIndex(const IndexName: String; const TableNAme: String);
 begin
-  fDroppedIndices.Add(TBoldDropIndex.Create(self, IndexName, TableName));
+  if not HasDropIndex(IndexName, TableName) then
+    fDroppedIndices.Add(TBoldDropIndex.Create(self, IndexName, TableName));
 end;
 
 function TBoldDataBaseEvolutorScript.GetDroppedIndices(index: integer): TBoldDropIndex;
 begin
   result := fDroppedIndices[Index] as TBoldDropIndex;
+end;
+
+procedure TBoldDataBaseEvolutorScript.AddIndex(IndexDescription: TBoldSQLIndexDescription);
+begin
+  if not HasAddIndex(IndexDescription) then
+    fAddedIndices.Add(TBoldAddIndex.Create(self, IndexDescription ));
 end;
 
 procedure TBoldDataBaseEvolutorScript.AddSQLStatement(const sql: String);
@@ -521,13 +663,13 @@ begin
   // and Interbase does not make metadata changes visible inside the transaction
   StartTransaction;
   try
-    for i := 0 to fCopiedInstances.Count - 1 do
+    for i := 0 to fCopiedInstances.Count-1 do
       CopiedInstances[i].Execute;
 
-    for i := 0 to fMovedData.Count - 1 do
+    for i := 0 to fMovedData.Count-1 do
       MovedData[i].Execute;
 
-    for i := 0 to fDeletedInstances.Count - 1 do
+    for i := 0 to fDeletedInstances.Count-1 do
       DeletedInstances[i].Execute;
 
     CommitTransaction;
@@ -541,25 +683,25 @@ procedure TBoldDataBaseEvolutorScript.ExtendSchema;
 var
   i: integer;
 begin
-  if fAddedTables.Count + fAddedColumns.Count = 0 then
+  if fAddedTables.Count + fAddedColumns.Count + fAddedIndices.Count = 0 then
     Exit;
   // wrap all non MetaData changes in a transaction.
   // Many databases do not allow them in a transaction,
   // and Interbase does not make metadata changes visible inside the transaction
-  if fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
-    StartTransaction;
+  StartTransaction;
   try
-    for i := 0 to fAddedTables.Count - 1 do
+    for i := 0 to fAddedTables.Count-1 do
       AddedTables[i].Execute;
 
-    for i := 0 to fAddedColumns.Count - 1 do
+    for i := 0 to fAddedColumns.Count-1 do
       AddedColumns[i].Execute;
 
-    if fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
-      CommitTransaction;
+    for i := 0 to fAddedIndices.Count-1 do
+      AddedIndices[i].Execute;
+
+    CommitTransaction;
   except
-    if fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
-      RollBackTransaction;
+    RollBackTransaction;
     raise;
   end;
 
@@ -571,8 +713,7 @@ var
 begin
   if fDroppedIndices.Count + fDroppedColumns.Count + fDroppedtables.Count = 0 then
     Exit;
-  if fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
-    StartTransaction;
+  StartTransaction;
   try
     for i := 0 to fDroppedIndices.Count - 1 do
       DroppedIndices[i].Execute;
@@ -583,11 +724,9 @@ begin
     for i := 0 to fDroppedTables.Count - 1 do
       DroppedTables[i].Execute;
 
-    if fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
-      CommitTransaction;
+    CommitTransaction;
   except
-    if fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
-      RollBackTransaction;
+    RollBackTransaction;
     raise;
   end;
 end;
@@ -620,6 +759,8 @@ end;
 
 procedure TBoldDataBaseEvolutorScript.StartTransaction;
 begin
+  if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
+    exit;
   if assigned(fDataBase) then
     fDataBase.StartTransaction;
   if assigned(fScript) then
@@ -627,7 +768,11 @@ begin
 end;
 
 procedure TBoldDataBaseEvolutorScript.CommitTransaction;
+const
+  sCommittingToDB = 'Committing changes to database';
 begin
+  if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
+    exit;
   if assigned(fDataBase) and fDatabase.InTransaction then
   begin
     BoldLog.Log(sCommittingToDB);
@@ -635,17 +780,21 @@ begin
   end;
   if assigned(fScript) then
     AddCommandToScript(fSQLDataBaseConfig.SqlScriptCommitTransaction);
-
 end;
 
 procedure TBoldDataBaseEvolutorScript.RollBackTransaction;
+const
+  sRollingBackDB = 'Rolling back database changes';
 begin
+  if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
+    exit;
   if assigned(fDataBase) and fDatabase.InTransaction then
   begin
     BoldLog.Log(sRollingBackDB);
     fDataBase.RollBack;
   end;
-  AddCommandToScript(fSQLDataBaseConfig.SqlScriptRollBackTransaction);
+  if assigned(fScript) then
+    AddCommandToScript(fSQLDataBaseConfig.SqlScriptRollBackTransaction);
 end;
 
 { TBoldAddColumn }
@@ -661,15 +810,14 @@ var
   i: integer;
   index: TBoldSQLIndexDescription;
 begin
-  Script.Comment(sAddColumn, [ColumnDesc.TableDescription.SQLName, ColumnDesc.SQLName]);
-  Script.ExecuteSQL( 'ALTER TABLE %s ADD %s', [ColumnDesc.TableDescription.SQLName, ColumnDesc.GetSQLForColumn(Script.fDataBase)]); // do not localize
+  Script.Comment('Add column %s.%s', [ColumnDesc.TableDescription.SQLName, ColumnDesc.SQLName]);
+  Script.ExecuteSQL( 'ALTER TABLE %s ADD %s', [ColumnDesc.TableDescription.SQLName, ColumnDesc.GetSQLForColumn(Script.fDataBase)]);
+  // There was code to also add index here, but we removed it as indexes are handled by separate AddIndex Operation
+end;
 
-  for i := 0 to ColumnDesc.TableDescription.IndexList.Count - 1 do
-  begin
-    Index := ColumnDesc.TableDescription.IndexList[i] as TBoldSQLIndexDescription;
-    if SameText(Index.IndexedFields, ColumnDesc.SQLName) then
-      Script.ExecuteSQL(Index.SQLForSecondaryKey, []);
-  end;
+function TBoldAddColumn.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + ColumnDesc.TableDescription.SQLName + '.' + ColumnDesc.SQLName;
 end;
 
 { TBoldCopyInstances }
@@ -700,7 +848,7 @@ var
   WhereConds: TStringList;
   SelectColumn: string;
 begin
-  Script.Comment(sAddInstanceOfClassToTable, [ExpressionName, TargetTable]);
+  Script.Comment('Add Instances of class %s to table %s', [ExpressionName, TargetTable]);
   SourceColumns := TStringList.Create;
   TargetColumns := TStringList.Create;
   IdColumnList := TStringList.Create;
@@ -709,7 +857,7 @@ begin
   try
     SourceTables.Add(SourceTable);
     IdColumnList.Commatext := IdColumns;
-    for i := 0 to IdColumnLIst.Count - 1 do
+    for i := 0 to IdColumnLIst.Count-1 do
     begin
       SourceColumns.Add(SourceTable + '.' + IdColumnList[i]);
       TargetColumns.Add(IdColumnList[i]);
@@ -717,28 +865,27 @@ begin
     LocalMoveData := MoveData;
     while assigned(LocalMoveData) do
     begin
-      Script.Comment(sMoveDataFromXtoY, [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
+      Script.Comment('Move data from %s.%s to %s.%s (dbtypes: %s)', [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
       if SourceTables.IndexOf(LocalMoveData.SourceTable) = -1 then
         SourceTables.Add(LocalMoveData.SourceTable);
       SelectColumn := LocalMoveData.SourceTable + '.' + LocalMoveData.SourceColumn;
-      // Renamed column needs alias
       if not SameText(LocalMoveData.SourceColumn, LocalMoveData.TargetColumn) then
-        SelectColumn := SelectColumn + ' AS ' + LocalMoveData.TargetColumn; // do not localize
+        SelectColumn := SelectColumn + ' AS ' + LocalMoveData.TargetColumn;
       SourceColumns.Add(SelectColumn);
       TargetColumns.Add(LocalMoveData.TargetColumn);
       LocalMoveData := LocalMoveData.AlsoMoveData;
     end;
 
-    sql := 'INSERT INTO %s (BOLD_TYPE, %s) SELECT %s.BOLD_TYPE, %s FROM %s%s'; // do not localize
+    sql := 'INSERT INTO %s (BOLD_TYPE, %s) SELECT %s.BOLD_TYPE, %s FROM %s%s';
 
-    for i := 1 to SourceTables.Count - 1 do
-      for j := 0 to IdColumnList.Count - 1 do
-        WhereConds.Add(Format('%s.%s = %s.%s', [ // do not localize
+    for i := 1 to SourceTables.Count-1 do
+      for j := 0 to IdColumnList.Count-1 do
+        WhereConds.Add(Format('%s.%s = %s.%s', [
           SourceTables[0], IdColumnList[j],
           SourceTables[i], IdColumnList[j]]));
 
     if SourceDbType <> NO_CLASS then
-      WhereConds.Add(Format('BOLD_TYPE = %d', [SourceDbType])); // do not localize
+      WhereConds.Add(Format('BOLD_TYPE = %d', [SourceDbType]));
 
     Script.ExecuteSQL(sql, [
       TargetTable,
@@ -746,7 +893,7 @@ begin
       SourceTable,
       BoldSeparateStringList(SourceColumns, ', ', '', ''),
       BoldSeparateStringList(SourceTables, ', ', '', ''),
-      BoldSeparateStringList(WhereConds, ' AND ', ' WHERE ', '')]); // do not localize
+      BoldSeparateStringList(WhereConds, ' AND ', ' WHERE ', '')]);
   finally
     SourceColumns.Free;
     SourceTables.Free;
@@ -767,8 +914,13 @@ end;
 
 procedure TBoldDeleteInstances.Execute;
 begin
-  Script.Comment(sDeleteInstancesOfClassFromTable, [ExpressionName, TableName]);
-  Script.ExecuteSQL('DELETE FROM %s WHERE BOLD_TYPE = %d', [TableName, DbType]); // do not localize
+  Script.Comment('Delete instances of %s from table %s', [ExpressionName, TableName]);
+  Script.ExecuteSQL('DELETE FROM %s WHERE BOLD_TYPE = %d', [TableName, DbType]);
+end;
+
+function TBoldDeleteInstances.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + ExpressionName;
 end;
 
 { TBoldTableOperation }
@@ -779,12 +931,22 @@ begin
   fTableName := TableName;
 end;
 
+function TBoldTableOperation.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + TableName;
+end;
+
 { TBoldColumnOperation }
 
 constructor TBoldColumnOperation.Create(Script: TBoldDataBaseEvolutorScript; const TableName, ColumnName: String);
 begin
   inherited Create(Script, TableName);
   fColumnName := ColumnName;
+end;
+
+function TBoldColumnOperation.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + ColumnName;
 end;
 
 { TBoldTwoTableOperation }
@@ -794,6 +956,11 @@ begin
   inherited Create(Script);
   fSourceTable := SourceTable;
   fTargetTable := TargetTable;
+end;
+
+function TBoldTwoTableOperation.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + SourceTable + '->' + TargetTable;
 end;
 
 { TBoldTwoColumnOperation }
@@ -839,34 +1006,34 @@ begin
   SelectColumns := TStringList.Create;
   IdColumnList := TStringList.Create;
   IdColumnJoins := TStringList.Create;
-
+  
   LocalMoveData := self;
   while assigned(LocalMoveData) do
   begin
-    Script.Comment(sMoveDataFromXtoY, [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
+    Script.Comment('Move data from %s.%s to %s.%s (dbtype: %s)', [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
     SourceColumns.Add(LocalMoveData.SourceColumn);
     TargetColumns.Add(LocalMoveData.TargetColumn);
     LocalMoveData := LocalMoveData.AlsoMoveData;
   end;
   if SameText(SourceTable, TargetTable) then
   begin
-    for i := 0 to SourceColumns.Count - 1 do
-      CopyStatements.Add(format('%s = %s', [TargetColumns[i], SourceColumns[i]])); // do not localize
-    Script.ExecuteSQL('UPDATE %s SET %s WHERE BOLD_TYPE IN (%s)', [TargetTable, BoldSeparateStringList(CopyStatements, ', ', '', ''), dbTypes]); // do not localize
+    for i := 0 to SourceColumns.Count-1 do
+      CopyStatements.Add(format('%s = %s', [TargetColumns[i], SourceColumns[i]]));
+    Script.ExecuteSQL('UPDATE %s SET %s WHERE BOLD_TYPE IN (%s)', [TargetTable, BoldSeparateStringList(CopyStatements, ', ', '', ''), dbTypes]);
   end
   else
   begin
     IdColumnList.CommaText := IdColumns;
-    for i := 0 to IdColumnList.Count - 1 do
-      IdColumnJoins.Add(format('Source.%s = Target.%s', [IdColumnList[i], IdColumnList[i]])); // do not localize
+    for i := 0 to IdColumnList.Count-1 do
+      IdColumnJoins.Add(format('Source.%s = Target.%s', [IdColumnList[i], IdColumnList[i]]));
 
-    for i := 0 to SourceColumns.Count - 1 do
-      SelectColumns.Add(format('%s = (SELECT %s FROM %s Source WHERE %s)', [ // do not localize
+    for i := 0 to SourceColumns.Count-1 do
+      SelectColumns.Add(format('%s = (SELECT %s FROM %s Source WHERE %s)', [
         SourceColumns[i],
         TargetColumns[i],
         SourceTable,
-        BoldSeparateStringList(IdColumnJoins, ' AND ', '', '')])); // do not localize
-    Script.ExecuteSQL('UPDATE %s Target SET %s WHERE BOLD_TYPE IN (%s)', [TargetTable, BoldSeparateStringList(SelectColumns, ', ', '', ''), DbTypes]); // do not localize
+        BoldSeparateStringList(IdColumnJoins, ' AND ', '', '')]));
+    Script.ExecuteSQL('UPDATE %s Target SET %s WHERE BOLD_TYPE IN (%s)', [TargetTable, BoldSeparateStringList(SelectColumns, ', ', '', ''), DbTypes]);
   end;
 end;
 
@@ -902,8 +1069,13 @@ end;
 
 procedure TBoldDropIndex.Execute;
 begin
-  Script.Comment(sDropIndex, [IndexName]);
+  Script.Comment('Drop index %s', [IndexName]);
   Script.ExecuteSQL(Script.fSqlDatabaseConfig.GetDropIndexQuery(TableName, IndexName), []);
+end;
+
+function TBoldDropIndex.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + TableName + '.' + IndexName;
 end;
 
 { TBoldScriptOperation }
@@ -918,7 +1090,7 @@ end;
 
 procedure TBoldDropColumn.Execute;
 begin
-  Script.Comment(sDropColumn, [TableName, ColumnName]);
+  Script.Comment('Drop column %s.%s', [TableName, ColumnName]);
   Script.ExecuteSQL(Script.fSqlDatabaseConfig.GetDropColumnQuery(TableName, ColumnName), []);
 end;
 
@@ -926,10 +1098,28 @@ end;
 
 procedure TBoldDropTable.Execute;
 begin
-  Script.Comment(sDropTable, [TableName]);
+  Script.Comment('Drop table %s', [TableName]);
   Script.ExecuteSQL(Script.fSqlDatabaseConfig.GetDropTableQuery(TableName), []);
 end;
 
+{ TBoldAddIndex }
+
+constructor TBoldAddIndex.Create(Script: TBoldDataBaseEvolutorScript; IndexDescription: TBoldSQLIndexDescription);
+begin
+  inherited Create(Script);
+  fIndexDescription := IndexDescription;
+end;
+
+procedure TBoldAddIndex.Execute;
+begin
+  Script.Comment('Create index %s %s:[%s] ', [IndexDescription.GeneratedName, IndexDescription.TableDescription.SQLNAme, IndexDescription.IndexedFields]);
+  Script.ExecuteSQL(IndexDescription.SQLForSecondaryKey, []);
+end;
+
+function TBoldAddIndex.GetDebugInfo: string;
+begin
+  result := ClassName + ':' + IndexDescription.IndexedFields;
+end;
+
+initialization
 end.
-
-

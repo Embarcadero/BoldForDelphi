@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclRTDebug;
 
 interface
@@ -16,4 +19,8 @@ type
 
 implementation
 
+uses
+  BoldRev;
+
+initialization
 end.

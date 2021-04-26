@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSOAPClientPersistenceHandles;
 
 interface
@@ -33,5 +36,7 @@ begin
     Controller.Connect(ConnectionHandle.BoldProvider, ObjectName);
   result := Controller;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceControllerSQL;
 
 interface
@@ -5,7 +8,9 @@ interface
 uses
   DB,
   Classes,
+  {$IFDEF BOLD_DELPHI6_OR_LATER}
   Variants,
+  {$ENDIF}
   BoldSubscription,
   BoldPersistenceController,
   BoldNameExpander,
@@ -88,7 +93,7 @@ type
   public
     constructor Create(MoldModel: TMoldModel; ADatabaseAdapter: TBoldAbstractDatabaseAdapter;
       TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent;
-      AClassesToHandle: TStrings); reintroduce;
+      AClassesToHandle: TStrings; AUpdateBoldDatabaseFirst: boolean); reintroduce;
     destructor Destroy; override;
     procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
   end;
@@ -193,12 +198,12 @@ implementation
 
 uses
   SysUtils,
+  BoldUtils,
   BoldDefs,
   BoldTaggedValueSupport,
   BoldStringId,
   BoldDefaultId,
-  Math,
-  ExPeConsts;
+  Math;
 
 function _GetTableName(MoldClass: TMoldClass): String;
 begin
@@ -229,7 +234,7 @@ end;
 function RemovePreAt(Member: TMoldMember): String;
 begin
   result := BoldExpandName(Member.ColumnName, Member.name, xtSQL, -1, Member.MoldClass.Model.NationalCharConversion);
-  if (Length(result) > 0) and {(result[1] = '@')} (result[1] in ['@', '_']) then {!!}
+  if (Length(result) > 0) and {(result[1] = '@')} CharInSet(result[1], ['@', '_']) then {!!}
     Result := Copy(result, 2, Length(result))
 end;
 
@@ -342,7 +347,7 @@ begin
     Result := DT.asDateTime
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     Result := BL.asBlob
-  else raise Exception.Create(sUnknownDataType);
+  else raise Exception.Create('Unknown data type');
 end;
 
 procedure VariantToBoldValue(B: IBoldValue; Value: Variant);
@@ -379,7 +384,7 @@ begin
     DT.asDateTime := Value
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     BL.asBlob := Value
-  else raise Exception.Create(sUnknownDataType);
+  else raise Exception.Create('Unknown data type');
 end;
 
 procedure SetBoldValueToNull(B: IBoldValue);
@@ -395,7 +400,6 @@ var
   DT: IBoldDateTimeContent;
   BL: IBoldBlobContent;
 begin
-  // all the below types support IBoldNullableValue
   if B.QueryInterface(IBoldNullableValue, Nullable) = S_OK then
     Nullable.SetContentToNull
   else if B.QueryInterface(IBoldStringContent, S) = S_OK then
@@ -416,7 +420,7 @@ begin
     DT.asDateTime := 0
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     BL.asBlob := ''
-  else raise Exception.Create(sUnknownDataType);
+  else raise Exception.Create('Unknown data type');
 end;
 
 function GetKeyCount(MoldClass: TMoldClass): Integer;
@@ -486,9 +490,9 @@ end;
 constructor TBoldExternalPersistenceControllerSQL.Create(
   MoldModel: TMoldModel; ADatabaseAdapter: TBoldAbstractDatabaseAdapter;
   TypeNameDictionary: TBoldTypeNameDictionary;
-  OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AClassesToHandle: TStrings);
+  OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AClassesToHandle: TStrings; AUpdateBoldDatabaseFirst: boolean);
 begin
-  inherited Create(MoldModel, TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates);
+  inherited Create(MoldModel, TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates, AUpdateBoldDatabaseFirst);
   FDatabaseAdapter := ADatabaseAdapter;
   FClassesToHandle := TStringList.Create;
   FClassesToHandle.Assign(AClassesToHandle);
@@ -536,6 +540,7 @@ procedure TBoldExternalPersistenceControllerSQL.PrepareFetchExternal(
 var
   FetchMembers: TBoldMemberIdList;
   i: integer;
+  lMember: TMoldMember;
 begin
   if Assigned(MemberIdList) and (MemberIdList.Count > 0) then
     FetchMembers := MemberIdList
@@ -543,17 +548,20 @@ begin
   begin
     FetchMembers := TBoldMemberIdList.Create;
     for i := 0 to MoldClass.AllBoldMembers.Count-1 do
-      if (MoldClass.AllBoldMembers[i].Storage in [bsExternal, bsExternalKey]) and
-         not MoldClass.AllBoldMembers[i].Derived and
-         not ((MoldClass.AllBoldMembers[i] is TMoldRole) and
-              (TMoldRole(MoldClass.AllBoldMembers[i]).Multi)) and
-         not (SameText(MoldClass.AllBoldMembers[i].TVByName['DelayedFetch'], 'True')) then // do not localize
+    begin
+      lMember := MoldClass.AllBoldMembers[i];
+      if (lMember.Storage in [bsExternal, bsExternalKey]) and
+         not lMember.Derived and
+         not ((lMember is TMoldRole) and
+              (TMoldRole(lMember).Multi)) and
+         not (SameText(lMember.TVByName['DelayedFetch'], 'True')) then
         FetchMembers.Add(TBoldMemberId.Create(i));
+    end;
   end;
 
   FetchContext := TFetchContext.Create(Self, ExternalKeys, ValueSpace, MoldClass,
     FetchMembers);
-
+    
   if FetchMembers <> MemberIdList then
     FetchMembers.Free;
 end;
@@ -565,8 +573,8 @@ begin
   begin
     TFetchContext(FetchContext).PostFetch;
     FetchContext.Free;
-  end;
-  inherited;
+  end;  
+  inherited;  
 end;
 
 procedure TBoldExternalPersistenceControllerSQL.FetchObject(
@@ -586,7 +594,7 @@ begin
   DBFieldName := FindExternalKeyColumns(MoldClass);
 
   BoldQuery := DatabaseAdapter.DatabaseInterface.GetQuery;
-  BoldQuery.AssignSQLText(Format('SELECT %S FROM %S', [ // do not localize
+  BoldQuery.AssignSQLText(Format('SELECT %S FROM %S', [
       StringReplace(DBFieldName, ';', ', ', [rfReplaceAll]), _GetTableName(MoldClass)]));
   BoldQuery.Open;
 
@@ -604,7 +612,7 @@ begin
       TBoldStringId(ExternalId).AsString := DBValue;
     end
     else
-      raise Exception.CreateFmt(sUnknownVarTypeLoadingObject, [MoldClass.name]);
+      raise Exception.CreateFmt('Unknown vartype when loading an external ID for %s', [MoldClass.name]);
     ExternalKeys.Add(ExternalId);
     ExternalId.Free;
     BoldQuery.Next;
@@ -632,7 +640,7 @@ begin
     ExternalKeys := TBoldObjectIdList.Create;
     try
       ExternalKeys.Add(ExternalKey);
-      AssignSQLText(Format('SELECT %S FROM %S WHERE %S', [ // do not localize
+      AssignSQLText(Format('SELECT %S FROM %S WHERE %S', [
         StringReplace(DBFieldName, ';', ', ', [rfReplaceAll]),
         _GetTableName(MoldClass), ExternalKeysToInternalSQL(MoldClass, ExternalKeys)]));
     finally
@@ -684,7 +692,7 @@ begin
     TBoldStringId(Result).AsString := DBValue;
   end
   else
-    raise Exception.CreateFmt(sUnknownVarTypeLoadingObject, [MoldClass.name]);
+    raise Exception.CreateFmt('Unknown vartype when loading an external ID for %s', [MoldClass.name]);
 end;
 
 function TBoldExternalPersistenceControllerSQL.GetMaxFetchBlockSize: integer;
@@ -724,13 +732,13 @@ begin
       Val(T, v, c);
       if c <> 0 then
         T := '''' + T + '''';
-      SQL := SQL + '(' + GetNextWord(S, ';') + ' = ' + T + ') AND '; // do not localize
+      SQL := SQL + '(' + GetNextWord(S, ';') + ' = ' + T + ') AND ';
     end;
     if Length(SQL) > 1 then
       SetLength(SQL, Length(SQL)-5);
     SQL := SQL + ')';
 
-    Result := Result + SQL + ' OR '; // do not localize
+    Result := Result + SQL + ' OR ';
   end;
 
   if Length(Result) > 0 then
@@ -760,7 +768,7 @@ begin
         else if KeyValue.QueryInterface(IBoldIntegerContent, IntContent) = S_OK then
           IntContent.AsInteger := StrToInt(GetNextWord(S, ';'))
         else
-          raise EBold.createFmt(sKeyTypeNotAutoHandled, [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
+          raise EBold.createFmt('Keytype not handled automatically: %s.%s', [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
       end;
     end;
   end;
@@ -796,7 +804,6 @@ begin
     ParamName := _GetColumnName(MoldClass.AllBoldMembers[MemberIdList[i].MemberIndex]);
 
     Query.ParamByName(ParamName).asVariant := BoldValueToVariant(BoldValue);
-//    Createparam(ftunknown, ParamName, ptInput, 0).asVariant := BoldValueToVariant(BoldValue);
   end;
 end;
 
@@ -850,11 +857,11 @@ begin
   begin
     SetLength(FieldNames, Length(FieldNames)-2);
     SetLength(Params, Length(Params)-2);
-    Result := Format('INSERT INTO %s (%s) VALUES (%s)', [_GetTableName(MoldClass), FieldNames, // do not localize
+    Result := Format('INSERT INTO %s (%s) VALUES (%s)', [_GetTableName(MoldClass), FieldNames,
       Params]);
   end
   else
-    Result := Format('INSERT INTO %s', [_GetTableName(MoldClass)]); // do not localize
+    Result := Format('INSERT INTO %s', [_GetTableName(MoldClass)]);
 end;
 
 
@@ -876,7 +883,7 @@ end;
 function TBoldExternalPersistenceControllerSQL.GenerateDeleteSQL(
   MoldClass: TMoldClass; ObjectContents: IBoldObjectContents): String;
 begin
-  Result := Format('DELETE FROM %S WHERE %S', [_GetTableName(MoldClass), // do not localize
+  Result := Format('DELETE FROM %S WHERE %S', [_GetTableName(MoldClass),
     ObjectContentsToInternalSQL(MoldClass, ObjectContents)]);
 end;
 
@@ -918,6 +925,7 @@ function TBoldExternalPersistenceControllerSQL.GenerateUpdateSQL(
 var
   i: integer;
   FieldNames: String;
+  lMember: TMoldMember;
 begin
   FieldNames := '';
 
@@ -925,17 +933,18 @@ begin
     if (MoldClass.AllBoldMembers[i].Storage in [bsExternal, bsExternalKey]) and
       not MoldClass.AllBoldMembers[i].Derived then
     begin
+      lMember := MoldClass.AllBoldMembers[i];    
       { Do not store multi links and non-embedded single links }
-      if (MoldClass.AllBoldMembers[i] is TMoldRole) and
-         (TMoldRole(MoldClass.AllBoldMembers[i]).Multi or
-         not TMoldRole(MoldClass.AllBoldMembers[i]).Embed) then
+      if (lMember is TMoldRole) and
+         (TMoldRole(lMember).Multi or
+         not TMoldRole(lMember).Embed) then
         Continue;
 
       { Only update the record if the member has been modified }
       if ObjectContents.ValueByIndex[i].BoldPersistenceState = bvpsModified then
       begin
-        FieldNames := FieldNames + _GetColumnName(MoldClass.AllBoldMembers[i]) + ' = :' +
-          _GetColumnName(MoldClass.AllBoldMembers[i]) + ', ';
+        FieldNames := FieldNames + _GetColumnName(lMember) + ' = :' +
+          _GetColumnName(lMember) + ', ';
       end;
     end;
 
@@ -943,8 +952,8 @@ begin
   if Length(FieldNames) > 0 then
   begin
     SetLength(FieldNames, Length(FieldNames)-2);
-    Result := Format('UPDATE %S SET %S', [_GetTableName(MoldClass), FieldNames]); // do not localize
-    Result := Result + ' WHERE ' + ObjectContentsToInternalSQL(MoldClass, ObjectContents); // do not localize
+    Result := Format('UPDATE %S SET %S', [_GetTableName(MoldClass), FieldNames]);
+    Result := Result + ' WHERE ' + ObjectContentsToInternalSQL(MoldClass, ObjectContents);
   end
   else
     Result := '';
@@ -956,15 +965,17 @@ procedure TBoldExternalPersistenceControllerSQL.GetExternalDirtyMembers(
 var
   i: integer;
   BoldValue: IBoldValue;
+  lMember: TMoldMember;
 begin
   for i := 0 to MoldClass.AllBoldMembers.Count-1 do
     if (MoldClass.AllBoldMembers[i].Storage in [bsExternal, bsExternalKey]) and
       not MoldClass.AllBoldMembers[i].Derived then
     begin
+      lMember := MoldClass.AllBoldMembers[i];
       { Do not store multi links and non-embedded single links }
-      if (MoldClass.AllBoldMembers[i] is TMoldRole) and
-         (TMoldRole(MoldClass.AllBoldMembers[i]).Multi or
-         not TMoldRole(MoldClass.AllBoldMembers[i]).Embed) then
+      if (lMember is TMoldRole) and
+         (TMoldRole(lMember).Multi or
+         not TMoldRole(lMember).Embed) then
         Continue;
 
       { Only add members that has been modified }
@@ -1053,22 +1064,22 @@ begin
 
 {!!}
     { Sanity check }
-    Assert((W1 <> '') and (W2 <> ''), Format(sRoleHasNoColumnNames, [
+    Assert((W1 <> '') and (W2 <> ''), Format('Role %s does not have any column names!', [
       Role.Association.name]));
     Assert(GetCharCount(';', W1) = GetCharCount(';', W2),
-      Format(sRoleEndCountMismatch, [
+      Format('Role %s does not have an equal amount of columns on both ends!', [
         Role.Association.name]));
 {!!}
 
     { Parse SQL }
     SQL := '';
     for i := 0 to GetCharCount(';', W1) do
-      SQL := SQL + '(' + GetNextWord(W1, ';') + ' = :' + GetNextWord(W2, ';') + ') AND'; // do not localize
+      SQL := SQL + '(' + GetNextWord(W1, ';') + ' = :' + GetNextWord(W2, ';') + ') AND';
 
     { Remove last ' AND' }
     SetLength(SQL, Length(SQL)-4);
 
-    SQL := Format('SELECT %S FROM %S WHERE (%S)', [ // do not localize
+    SQL := Format('SELECT %S FROM %S WHERE (%S)', [
       StringReplace(FindExternalKeyColumns(Role.OtherEnd.MoldClass), ';', ', ', [rfReplaceAll]),
       _GetTableName(Role.OtherEnd.MoldClass),
       SQL]);
@@ -1134,7 +1145,7 @@ begin
     end
     else
       raise Exception.CreateFmt(
-        sUnknownVarTypeLoadingSingleID,
+        'Unknown vartype when loading an external ID for singlelink %s.%s',
         [MoldClass.name, Role.name]);
     if Value.QueryInterface(IBoldObjectIdRef, IdRef) = S_OK then
       PersistenceController.SetSingleLink(IdRef, ExternalId,
@@ -1149,7 +1160,7 @@ procedure TMultiRoleFetchObject.Fetch(Source: IBoldQuery;
 var
   Value: IBoldValue;
   OtherEndQuery: IBoldQuery;
-  IdRefList: IBoldObjectIdListRef;
+  IdRefList: IBoldObjectIdListRef; 
   KeyNames: String;
   DBValue: Variant;
   ExternalId: TBoldObjectId;
@@ -1180,7 +1191,7 @@ begin
       end
       else
         raise Exception.CreateFmt(
-          sUnknownVarTypeLoadingSingleID,
+          'Unknown vartype when loading an external ID for singlelink %s.%s',
           [MoldClass.name, Role.name]);
       OtherEndQuery.Next;
     end;
@@ -1296,7 +1307,7 @@ begin
       SQL := SQL + S[i] + ', ';
     SetLength(SQL, Length(SQL)-2);
 
-    SQL := Format('SELECT %S FROM %S WHERE %S', [ // do not localize
+    SQL := Format('SELECT %S FROM %S WHERE %S', [
       SQL, _GetTableName(MoldClass), PersistenceController.ExternalKeysToInternalSQL(MoldClass, ExternalKeys)]);
   finally
     S.Free;
@@ -1322,7 +1333,7 @@ begin
          FetchObjectList.MoldClass, ObjectContents, Source) then
       FetchObjectList[i].Fetch(Source, ObjectContents)
     else
-      raise Exception.Create(sObjectNoLongerInDB);
+      raise Exception.Create('Object no longer exists in database');
   end;
 end;
 
@@ -1330,6 +1341,7 @@ procedure TFetchContext.PostFetch;
 begin
   { Do nothing }
 end;
+
 
 function TBoldExternalPersistenceControllerSQL.ObjectContentsToInternalSQL(
   MoldClass: TMoldClass; ObjectContents: IBoldObjectContents): String;
@@ -1351,4 +1363,5 @@ begin
   end;
 end;
 
+initialization
 end.

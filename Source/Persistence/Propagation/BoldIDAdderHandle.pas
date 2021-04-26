@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIDAdderHandle;
 
 interface
@@ -50,8 +53,7 @@ uses
   SysUtils,
   BoldUtils,
   BoldIDAdder,
-  dialogs,
-  BoldPMConsts;
+  dialogs;
 
 { TBoldIDAdderHandle }
 
@@ -75,18 +77,12 @@ end;
 procedure TBoldIDAdderHandle.DefineProperties(Filer: TFiler);
 begin
   inherited;
-  // property AutoStart moved to TBoldListenerHandle
-  Filer.DefineProperty('AutoStart', ReadObsoleteAutoStartProperty, nil, True); // do not localize
-  // property AutoExtendLease moved to TBoldListenerHandle
-  Filer.DefineProperty('AutoExtendLease', ReadObsoleteAutoExtendLeaseProperty, nil, True); // do not localize
-  // property LeaseDuration moved to TBoldListenerHandle
-  Filer.DefineProperty('LeaseDuration', ReadObsoleteLeaseDurationProperty, nil, True); // do not localize
-  // property Polling interval moved to TBoldListenerHandle
-  Filer.DefineProperty('PollingInterval', ReadObsoletePollingIntervalProperty, nil, True); // do not localize
-  // property MachineName moved to TBoldPropagatorHandleCOM
-  Filer.DefineProperty('MachineName', ReadObsoleteMachineNameProperty, nil, True); // do not localize
-  // event handler OnRegistrationFailed moved to TBoldListenerHandle
-  Filer.DefineProperty('OnRegistrationFailed', ReadObsoleteOnRegistrationFailedEventHandler, nil, True); // do not localize
+  Filer.DefineProperty('AutoStart', ReadObsoleteAutoStartProperty, nil, True);
+  Filer.DefineProperty('AutoExtendLease', ReadObsoleteAutoExtendLeaseProperty, nil, True);
+  Filer.DefineProperty('LeaseDuration', ReadObsoleteLeaseDurationProperty, nil, True);
+  Filer.DefineProperty('PollingInterval', ReadObsoletePollingIntervalProperty, nil, True);
+  Filer.DefineProperty('MachineName', ReadObsoleteMachineNameProperty, nil, True);
+  Filer.DefineProperty('OnRegistrationFailed', ReadObsoleteOnRegistrationFailedEventHandler, nil, True);
 end;
 
 destructor TBoldIDAdderHandle.Destroy;
@@ -102,10 +98,10 @@ var
 begin
   OldPropertyValue := Reader.ReadBoolean;
   if OldPropertyValue then
-    ValueAsString := 'True' // do not localize
+    ValueAsString := 'True'
   else
-    ValueAsString := 'False'; // do not localize
-  ReadObsoleteProperty(Reader, 'AutoExtendLease', 'AutoExtendLease', ValueAsString, 'TBoldListenerHandle'); // do not localize
+    ValueAsString := 'False';
+  ReadObsoleteProperty(Reader, 'AutoExtendLease', 'AutoExtendLease', ValueAsString, 'TBoldListenerHandle');
 end;
 
 procedure TBoldIDAdderHandle.ReadObsoleteAutoStartProperty(Reader: TReader);
@@ -115,10 +111,10 @@ var
 begin
   OldPropertyValue := Reader.ReadBoolean;
   if OldPropertyValue then
-    ValueAsString := 'True' // do not localize
+    ValueAsString := 'True'
   else
-    ValueAsString := 'False'; // do not localize
-  ReadObsoleteProperty(Reader, 'AutoStart', 'AutoStart', ValueAsString, 'TBoldListenerHandle'); // do not localize
+    ValueAsString := 'False';
+  ReadObsoleteProperty(Reader, 'AutoStart', 'AutoStart', ValueAsString, 'TBoldListenerHandle');
 end;
 
 procedure TBoldIDAdderHandle.ReadObsoleteLeaseDurationProperty(Reader: TReader);
@@ -128,7 +124,7 @@ var
 begin
   OldPropertyValue := Reader.ReadInteger;
   ValueAsString := IntToStr(OldPropertyValue);
-  ReadObsoleteProperty(Reader, 'LeaseDuration', 'LeaseDuration', ValueAsString, 'TBoldListenerHandle'); // do not localize
+  ReadObsoleteProperty(Reader, 'LeaseDuration', 'LeaseDuration', ValueAsString, 'TBoldListenerHandle');
 end;
 
 procedure TBoldIDAdderHandle.ReadObsoleteMachineNameProperty(Reader: TReader);
@@ -136,7 +132,7 @@ var
   OldPropertyValue: string;
 begin
   OldPropertyValue := Reader.ReadString;
-  ReadObsoleteProperty(Reader, 'MachineName', 'ServerHost', OldPropertyValue, 'TBoldPropagatorHandleCom'); // do not localize
+  ReadObsoleteProperty(Reader, 'MachineName', 'ServerHost', OldPropertyValue, 'TBoldPropagatorHandleCom');
 end;
 
 procedure TBoldIDAdderHandle.ReadObsoleteOnRegistrationFailedEventHandler(
@@ -145,7 +141,7 @@ var
   OldPropertyValue: string;
 begin
   OldPropertyValue := Reader.ReadString;
-  ReadObsoleteProperty(Reader, 'OnRegistrationFailed', 'OnRegistrationFailed', OldPropertyValue, 'TBoldListenerHandle'); // do not localize
+  ReadObsoleteProperty(Reader, 'OnRegistrationFailed', 'OnRegistrationFailed', OldPropertyValue, 'TBoldListenerHandle');
 end;
 
 procedure TBoldIDAdderHandle.ReadObsoletePollingIntervalProperty(Reader: TReader);
@@ -155,14 +151,14 @@ var
 begin
   OldPropertyValue := Reader.ReadInteger;
   ValueAsString := IntToStr(OldPropertyValue);
-  ReadObsoleteProperty(Reader, 'PollingInterval', 'PollingInterval', ValueAsString, 'TBoldListenerHandle'); // do not localize
+  ReadObsoleteProperty(Reader, 'PollingInterval', 'PollingInterval', ValueAsString, 'TBoldListenerHandle');
 end;
 
 procedure TBoldIDAdderHandle.ReadObsoleteProperty(Reader: TReader;
   const PropertyName, NewPropertyName, OldPropertyValue, ComponentName: string);
 begin
   if (csDesigning in ComponentState) then
-    MessageDlg(Format(sPropertyHasMoved,
+    MessageDlg(Format('%s.%s has been moved to component (%s.%s). Old value was "%s"',
                       [ClassName, PropertyName, ComponentName, NewPropertyName, OldPropertyValue]), mtWarning, [mbOK], 0);
 end;
 
@@ -203,5 +199,7 @@ begin
   else
     fPTSubscriber.CancelAllSubscriptions;
 end;
+
+initialization
 
 end.

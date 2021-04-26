@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldVariableHandle;
 
 interface
@@ -23,6 +26,7 @@ type
     function GetValue: TBoldElement; override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     procedure StaticBoldTypeChanged; override;
+    procedure DoAssign(Source: TPersistent); override;    
   public
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
@@ -39,18 +43,25 @@ uses
   BoldSubscription,
   BoldDefs,
   BoldSystemRT,
-  HandlesConst;
+  BoldRev;
 
 { TBoldVariableHandle }
 
 constructor TBoldVariableHandle.Create(owner: TComponent);
-var
-  s: TStringList;
 begin
   inherited;
-  s := TStringList.Create;
-  s.OnChange := InitialvaluesChanged;
-  fInitialValues := s;
+  fInitialValues := TStringList.Create;
+  fInitialValues.OnChange := InitialvaluesChanged;
+end;
+
+procedure TBoldVariableHandle.DoAssign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TBoldVariableHandle then with TBoldVariableHandle(Source) do
+  begin
+    self.ValueTypeName := ValueTypeName;
+    self.InitialValues.Assign(InitialValues);
+  end;
 end;
 
 procedure TBoldVariableHandle.CreateVariableElement;
@@ -73,7 +84,7 @@ begin
   end;
 end;
 
-destructor TBoldVariableHandle.Destroy;
+destructor TBoldVariableHandle.destroy;
 begin
   FreePublisher;
   FreeAndNil(fInitialValues);
@@ -83,11 +94,11 @@ end;
 
 function TBoldVariableHandle.GetStaticBoldType: TBoldElementTypeInfo;
 begin
-  if assigned(StaticSystemHandle) then
+  if assigned(StaticSystemTypeInfo) then
   begin
-    result := StaticSystemHandle.StaticSystemTypeInfo.ElementTypeInfoByExpressionName[ValueTypeName];
+    Result := StaticSystemTypeInfo.ElementTypeInfoByExpressionName[ValueTypeName];
     if assigned(result) and not (result.BoldValueType in [bvtAttr, bvtList]) then
-      raise EBold.CreateFmt(sOnlyListsAndAttributeTypesAllowed, [ClassName, ValueTypeName]);
+      raise EBold.CreateFmt('%s.GetStaticBoldType: Only lists and attributes are allowed as types (expr: %s)', [ClassName, ValueTypeName]);
   end
   else
     result := nil;
@@ -97,10 +108,10 @@ function TBoldVariableHandle.GetValue: TBoldElement;
 begin
   if not (csDesigning in ComponentState) and not (csLoading in ComponentState) then
   begin
-    if not assigned(StaticSystemHandle) then
-      raise EBold.CreateFmt(sNoSystemHandle, [classname, 'GetValue', name]); // do not localize
+//    if not assigned(StaticSystemHandle) then
+//      raise EBold.CreateFmt('%s.Getvalue: %s is not connected to a systemhandle', [classname, name]);
     if not assigned(StaticBoldType) then
-      raise EBold.CreateFmt(sValueTypeNameInvalid, [classname, name, ValueTypeName]);
+      raise EBold.CreateFmt('%s.Getvalue: The ValueTypeName of %s does not seem to be valid (%s)', [classname, name, ValueTypeName]);
   end;
 
   if {not (csDesigning in ComponentState) and}
@@ -148,4 +159,5 @@ begin
     result := nil;
 end;
 
+initialization
 end.

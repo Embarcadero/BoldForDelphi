@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMath;
 
 interface
@@ -11,8 +14,7 @@ function MinIntValue(const Data: array of Integer): Integer;
 implementation
 
 uses
-  SysUtils,
-  BoldUtils;
+  BoldRev;
 
 function Floor(X: Extended): Integer;
 begin
@@ -61,5 +63,7 @@ begin
     if Result > Data[I] then
       Result := Data[I];
 end;
+
+initialization
 
 end.

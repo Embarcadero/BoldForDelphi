@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListenerThread;
 
 interface
@@ -9,7 +12,8 @@ uses
   Messages,
   BoldThreadSafeQueue,
   BoldPropagatorInterfaces_TLB,
-  BoldDefs;
+  BoldDefs
+  ;
 
 type
   {forward declarations}
@@ -62,7 +66,6 @@ type
   protected
     procedure WaitUntilInterfaceUnmarshaled;
     procedure UnMarshalInterface;
-    procedure RaiseSysErrorMessage(const CausedIn: string);
   public
     constructor Create(CreateSuspended: Boolean);
     destructor Destroy; override;
@@ -80,7 +83,7 @@ type
     property BoldClientID: TBoldClientID read getBoldClientID;
     property Registered: Boolean read GetRegistered;
     property Initialized: Boolean read GetInitialized;
-    property Queue: TBoldThreadSafeStringQueue read GetQueue;
+    property InQueue: TBoldThreadSafeStringQueue read GetQueue;
     property LeaseDuration: integer read fLeaseDuration write setLeaseDuration;
     property ExtendLeaseAfter: integer read fExtendLeaseAfter write SetExtendLeaseAfter;
     property PollingInterval: integer read fPollingInterval write setPollingInterval;
@@ -97,12 +100,8 @@ implementation
 
 uses
   SysUtils,
-  BoldPMConsts,
   BoldPropagatorConstants,
   ActiveX;
-
-const
-  GenericSysErrorMessage = '%s.%s: %s';
 
 constructor TBoldListenerThread.Create(CreateSuspended: Boolean);
 begin
@@ -150,12 +149,11 @@ begin
     while not Terminated do
     begin
       res := Integer(GetMessage(rMsg, 0, 0, 0));
-      // if not terminating thread
       if ((res <> -1) and (res <> 0)) then
         if not Assigned(fBoldListenerCOM) then
         begin
           try
-            fBoldListenerCOM := TBoldListenerCOM.Create(Queue, PollingInterval,
+            fBoldListenerCOM := TBoldListenerCOM.Create(InQueue, PollingInterval,
                                                       LeaseDuration, ExtendLeaseAfter,
                                                       AutoExtendLease,
                                                       ClientIdentifierString);
@@ -164,28 +162,28 @@ begin
             FBoldListenerCOM.OnExtendLeaseFailed := DoExtendLeaseFailedSynchronized;
           except on E: Exception do
             begin
-              fErrorMessage := Format(sInitializationLineMissing, [E.Message]);
+              fErrorMessage := Format('%s. You must add the following line to the initialization section of the application: TBoldListenerCOMFactory.Create(ComServer)', [E.Message]);
               DoThreadErrorSynchronized(fErrorMessage);
-            end;
+            end;              
           end;
         end;
       try
-        if res = -1 then     // error occured
+        if res = -1 then
           Terminate
-        else if res = 0 then // terminate signaled
+        else if res = 0 then
           Terminate
         else case rMsg.message of
-          BM_THRD_UNREGISTER: // unregister with propagator
+          BM_THRD_UNREGISTER:
             UnRegisterWithPropagator;
-          BM_THRD_REGISTER:  // unregister with propagator
+          BM_THRD_REGISTER:
             RegisterWithPropagator;
-          BM_UNMARSHAL_INTERFACE: //unmarshal interface
+          BM_UNMARSHAL_INTERFACE:
             UnMarshalInterface;
-          BM_EXTEND_LEASE: //extend lease
+          BM_EXTEND_LEASE:
             InternalExtendLease;
           else
             DispatchMessage(rMsg);
-        end; //case
+        end;
       except
         on e: Exception do
         begin
@@ -193,7 +191,7 @@ begin
           raise;
         end;
       end;
-    end;//while
+    end;
   finally
     if Assigned(fBoldListenerCOM) then
       InterfaceForRefCounting := nil;
@@ -208,7 +206,7 @@ begin
   if Result then
     try
       if PostThreadMessage(ThreadID, BM_EXTEND_LEASE, 0, 0) = false then
-        RaiseSysErrorMessage('ExtendLease'); // do not localize
+        Raise EBold.CreateFmt('%s.ExtendLease: %s', [ClassName, SysErrorMessage(GetLastError)]);
       WaitForSingleObject(fDoneExtendLease, 3 * TIMEOUT);
       Result := (WaitForSingleObject(fExtendLeaseSucceeded, 0) = WAIT_OBJECT_0);
     finally
@@ -220,7 +218,7 @@ end;
 function TBoldListenerThread.GetQueue: TBoldThreadSafeStringQueue;
 begin
   if not Assigned(fQueue) then
-    fQueue := TBoldThreadSafeStringQueue.Create('Listener InQueue'); // do not localize
+    fQueue := TBoldThreadSafeStringQueue.Create('Listener InQueue');
   Result := fQueue;
 end;
 
@@ -275,7 +273,7 @@ begin
     end;
     UnRegister;
     if PostThreadMessage(ThreadID, WM_QUIT, 0, 0) = false then
-      RaiseSysErrorMessage('Quit'); // do not localize
+       Raise EBold.CreateFmt('%s.TerminateThread: %s', [ClassName, SysErrorMessage(GetLastError)]);
 
     if wait then
     begin
@@ -291,7 +289,7 @@ begin
   if Initialized and Registered and not (Suspended)then
   begin
     if PostThreadMessage(self.ThreadID, BM_THRD_UNREGISTER, 0, 0) = false then
-      RaiseSysErrorMessage('UnRegister'); // do not localize
+      raise EBold.CreateFmt('%s.TerminateThread: %s', [ClassName, SysErrorMessage(GetLastError)]);
     WaitUntilUnregistered;
   end;
 end;
@@ -324,7 +322,7 @@ procedure TBoldListenerThread.EnsureMessageQueue;
 var
   rMsg: TMsg;
 begin
-  PeekMessage (rMsg, 0, 0, 0, PM_NOREMOVE);  // force thread message queue!
+  PeekMessage (rMsg, 0, 0, 0, PM_NOREMOVE);
 end;
 
 function TBoldListenerThread.getBoldClientID: TBoldClientID;
@@ -362,7 +360,7 @@ begin
   begin
     CoMarshalInterThreadInterfaceInStream(IID_IBoldClientHandler,Value,IStream(FInterfaceStream));
     if PostThreadMessage(ThreadID, BM_UNMARSHAL_INTERFACE, 0, 0) = False then
-      RaiseSysErrorMessage('SetPropagator'); // do not localize
+      raise EBold.CreateFmt('%s.SetPropagator: %s', [ClassName, SysErrorMessage(GetLastError)]);
     WaitUntilInterfaceUnmarshaled;
   end
   else if Assigned(fBoldListenerCOM) then
@@ -467,11 +465,6 @@ begin
   fExtendLeaseAfter := Value;
   if Assigned(fBoldListenerCOM) then
     fBoldListenerCOM.ExtendLeaseAfter := fExtendLeaseAfter;
-end;
-
-procedure TBoldListenerThread.RaiseSysErrorMessage(const CausedIn: string);
-begin
-  raise EBold.CreateFmt(GenericSysErrorMessage, [ClassName, CausedIn, SysErrorMessage(GetLastError)]);
 end;
 
 end.

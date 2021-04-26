@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMWideString;
 
 interface
@@ -26,11 +29,11 @@ type
     function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
     function GetColumnSize(ColumnIndex: Integer): Integer; override;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
   public
     constructor CreateFromMold(Moldmember: TMoldMember; MoldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
     class function CanStore(const ContentName: string): Boolean; override;
   end;
 
@@ -66,8 +69,8 @@ begin
 end;
 
 function TBoldPMWideString.CompareField(
-  ObjectContent: IBoldObjectContents; Field: IBoldField;
-  ColumnIndex: integer; ValueSpace: IBoldValueSpace;
+  const ObjectContent: IBoldObjectContents; const Field: IBoldField;
+  ColumnIndex: integer; const ValueSpace: IBoldValueSpace;
   TranslationList: TBoldIdTranslationList): Boolean;
 var
   aWideString: IBoldWideStringContent;
@@ -97,9 +100,9 @@ begin
 end;
 
 procedure TBoldPMWideString.ValueFromField(
-  OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents;
-  ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
-  Field: IBoldField; ColumnIndex: Integer);
+  OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents;
+  const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
+  const Field: IBoldField; ColumnIndex: Integer);
 var
   aWideString: IBoldWideStringContent;
 begin
@@ -117,7 +120,7 @@ begin
 end;
 
 procedure TBoldPMWideString.ValueToParam(
-  ObjectContent: IBoldObjectContents; Param: IBoldParameter;
+  const ObjectContent: IBoldObjectContents; const Param: IBoldParameter;
   ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 var
   aWideString: IBoldWideStringContent;

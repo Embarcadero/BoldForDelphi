@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterDOA;
 
 interface
@@ -22,7 +25,7 @@ type
     procedure ReleaseBoldDatabase; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
   published
     property DataBase: TOracleSession read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -35,16 +38,16 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  DOAConsts;
+  BoldRev;
 
-{ TBoldDatabaseAdapterDOA }
+{ TBoldDatabaseAdapterDOA }      
 
 destructor TBoldDatabaseAdapterDOA.destroy;
 begin
   Changed;
   FreePublisher;
   FreeAndNil(fBoldDatabase);
-  inherited;
+  inherited;                   
 end;
 
 function TBoldDatabaseAdapterDOA.GetDataBase: TOracleSession;
@@ -55,7 +58,7 @@ end;
 function TBoldDatabaseAdapterDOA.GetDataBaseInterface: IBoldDatabase;
 begin
   if not assigned(Database) then
-    raise EBold.CreateFmt(sAdapterNotConnected, [classname]);
+    raise EBold.CreateFmt('%s.GetDatabaseInterface: The adapter is not connected to an OracleSession', [classname]); 
   if not assigned(fBoldDatabase) then
     fBoldDatabase := TBoldDOADataBase.create(Database, SQLDataBaseConfig);
   result := fBoldDatabase;
@@ -70,5 +73,7 @@ procedure TBoldDatabaseAdapterDOA.SetDataBase(const Value: TOracleSession);
 begin
   InternalDatabase := value;
 end;
+
+initialization
 
 end.

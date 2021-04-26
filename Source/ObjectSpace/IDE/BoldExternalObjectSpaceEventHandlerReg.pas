@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalObjectSpaceEventHandlerReg;
 
 interface
@@ -36,3 +39,4 @@ begin
 end;
 
 end.
+

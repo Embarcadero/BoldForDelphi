@@ -1,3 +1,6 @@
+/////////////////////////////////////////////////////////
+
+
 unit BoldNumericControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -20,9 +23,9 @@ type
   TBoldIntegerFollowerController = class;
 
   {TBoldAsIntegerRenderer}
-  TBoldGetAsIntegerEvent = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): Integer of object;
-  TBoldSetAsIntegerEvent = procedure (Element: TBoldElement; const Value: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldIntegerIsChangedEvent = function (RenderData: TBoldIntegerRendererData; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
+  TBoldGetAsIntegerEvent = function (aFollower: TBoldFollower): Integer of object;
+  TBoldSetAsIntegerEvent = procedure (aFollower: TBoldFollower; const Value: Integer) of object;
+  TBoldIntegerIsChangedEvent = function (aFollower: TBoldFollower; const NewValue: Integer): Boolean of object;
 
   { TBoldIntegerRendererData }
   TBoldIntegerRendererData = class(TBoldRendererData)
@@ -42,16 +45,16 @@ type
     FOnIsChanged: TBoldIntegerIsChangedEvent;
   protected
     function GetRendererDataClass: TBoldRendererDataClass; override;
-    function DefaultGetAsIntegerAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Integer; virtual;
-    procedure DefaultSetAsInteger(Element: TBoldElement; const Value: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
-    function GetAsIntegerAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Integer; virtual;
-    procedure SetAsInteger(Element: TBoldElement; const Value: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
+    function DefaultGetAsIntegerAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): Integer; virtual;
+    procedure DefaultSetAsInteger(aFollower: TBoldFollower; const Value: Integer); virtual;
+    function GetAsIntegerAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): Integer; virtual;
+    procedure SetAsInteger(aFollower: TBoldFollower; const Value: Integer); virtual;
   public
     class function DefaultRenderer: TBoldAsIntegerRenderer;
-    function DefaultIsChanged(RendererData: TBoldIntegerRendererData; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
-    function DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean; override;
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
-    function IsChanged(RendererData: TBoldIntegerRendererData; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+    function DefaultIsChanged(aFollower: TBoldFollower; const NewValue: Integer): Boolean;
+    function DefaultMayModify(aFollower: TBoldFollower): Boolean; override;
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); override;
+    function IsChanged(aFollower: TBoldFollower; const NewValue: Integer): Boolean;
   published
     property OnGetAsInteger: TBoldGetAsIntegerEvent read FOnGetAsInteger write FOnGetAsInteger;
     property OnSetAsInteger: TBoldSetAsIntegerEvent read FOnSetAsInteger write FOnSetAsInteger;
@@ -83,7 +86,8 @@ uses
   BoldUtils,
   BoldGuiResourceStrings,
   BoldAttributes,
-  BoldControlPackDefs;
+  BoldControlPackDefs,
+  BoldGuard;
 
 var
   DefaultAsIntegerRenderer: TBoldAsIntegerRenderer = nil;
@@ -99,14 +103,14 @@ begin
   Result := TBoldIntegerRendererData;
 end;
 
-function TBoldAsIntegerRenderer.DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean;
+function TBoldAsIntegerRenderer.DefaultMayModify(aFollower: TBoldFollower): Boolean;
 {$IFNDEF BOLDCOMCLIENT} // defaultMayModify
 var
   ValueElement: TBoldElement;
 begin
   // Note! We don't call inherited DefaultMayModify to prevent evaluation of expression two times!
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  result := (ValueElement is TBANumeric) and ValueElement.ObserverMayModify(Subscriber)
+  ValueElement := aFollower.Value;
+  result := (ValueElement is TBANumeric) and ValueElement.ObserverMayModify(aFollower.Subscriber)
 end;
 {$ELSE}
 begin
@@ -114,17 +118,19 @@ begin
 end;
 {$ENDIF}
 
-function TBoldAsIntegerRenderer.DefaultGetAsIntegerAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Integer;
+function TBoldAsIntegerRenderer.DefaultGetAsIntegerAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): Integer;
 var
   {$IFDEF BOLDCOMCLIENT} // defaultGet
   el: IBoldElement;
   attr: IBoldAttribute;
   {$ELSE}
   IndirectElement: TBoldIndirectElement;
+  lResultElement: TBoldElement;
+  lGuard: IBoldGuard;
   {$ENDIF}
 begin
   Result := 0;
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
     {$IFDEF BOLDCOMCLIENT} // defaultGet
     if assigned(Subscriber) then
@@ -136,33 +142,35 @@ begin
     else
       raise EBold.CreateFmt(sCantGetIntegerValue, [el.AsString])
     {$ELSE}
-    IndirectElement := TBoldIndirectElement.Create;
-    try
-      Element.EvaluateAndSubscribeToExpression(Expression, Subscriber, IndirectElement, False, False, VariableList);
-      if Assigned(IndirectElement.Value) then
-      begin
-        if (IndirectElement.Value is TBAInteger) then
-          Result := (IndirectElement.Value as TBAInteger).AsInteger
-        else if (IndirectElement.Value is TBANumeric) then
-          Result := Round((IndirectElement.Value as TBANumeric).AsFloat)
-        else
-          raise EBold.CreateFmt(sCantGetIntegerValue, [IndirectElement.Value.ClassName])
-      end;
-    finally
-      IndirectElement.Free;
+    lResultElement := aFollower.Value;
+    if not Assigned(lResultElement) then
+    begin
+      lGuard:= TBoldGuard.Create(IndirectElement);
+      IndirectElement := TBoldIndirectElement.Create;
+      aFollower.Element.EvaluateAndSubscribeToExpression(aFollower.AssertedController.Expression, Subscriber, IndirectElement, False, False, aFollower.Controller.GetVariableListAndSubscribe(Subscriber));
+      lResultElement := IndirectElement.Value;
+    end;
+    if Assigned(lResultElement) then
+    begin
+      if (lResultElement is TBAInteger) then
+        Result := TBAInteger(lResultElement).AsInteger
+      else if (lResultElement is TBANumeric) then
+        Result := Round(TBANumeric(lResultElement).AsFloat)
+      else
+        raise EBold.CreateFmt(sCantGetIntegerValue, [lResultElement.ClassName])
     end;
     {$ENDIF}
   end;
 end;
 
-procedure TBoldAsIntegerRenderer.DefaultSetAsInteger(Element: TBoldElement; const Value: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsIntegerRenderer.DefaultSetAsInteger(aFollower: TBoldFollower; const Value: Integer);
 var
   ValueElement: TBoldElement;
   {$IFDEF BOLDCOMCLIENT} // defaultSet
   Attr: IBoldAttribute;
   {$ENDIF}
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   {$IFDEF BOLDCOMCLIENT} // defaultSet
   if assigned(ValueElement) and (ValueElement.QueryInterface(IBoldAttribute, attr) = S_OK) then
     attr.AsVariant := Value
@@ -170,59 +178,54 @@ begin
     raise EBold.CreateFmt(sCantSetIntegerValue, [ValueElement.AsString]);
   {$ELSE}
   if ValueElement is TBANumeric then
-    (ValueElement as TBANumeric).AsInteger := Value
+    TBANumeric(ValueElement).AsInteger := Value
   else
     raise EBold.CreateFmt(sCantSetIntegerValue, [ValueElement.ClassName]);
   {$ENDIF}
 end;
 
-function TBoldAsIntegerRenderer.GetAsIntegerAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Integer;
+function TBoldAsIntegerRenderer.GetAsIntegerAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): Integer;
 begin
   if Assigned(OnSubscribe) and Assigned(Subscriber) then
   begin
-    if Assigned(Element) then
-      OnSubscribe(Element, Representation, Expression, Subscriber);
+    if Assigned(aFollower.Element) then
+      OnSubscribe(aFollower, Subscriber);
     Subscriber := nil;
   end;
   if Assigned(OnGetAsInteger) then
-    Result := OnGetAsInteger(Element, Representation, Expression)
+    Result := OnGetAsInteger(aFollower)
   else
-    Result := DefaultGetAsIntegerAndSubscribe(Element, Representation, Expression, VariableList, Subscriber);
+    Result := DefaultGetAsIntegerAndSubscribe(aFollower, Subscriber);
 end;
 
-procedure TBoldAsIntegerRenderer.SetAsInteger(Element: TBoldElement; const Value: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsIntegerRenderer.SetAsInteger(aFollower: TBoldFollower; const Value: Integer);
 begin
   if Assigned(FOnSetAsInteger) then
-    OnSetAsInteger(Element, Value, Representation, Expression)
+    OnSetAsInteger(aFollower, Value)
   else
-    DefaultSetAsInteger(Element, Value, Representation, Expression, VariableList)
+    DefaultSetAsInteger(aFollower, Value)
 end;
 
-procedure TBoldAsIntegerRenderer.MakeUpToDateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsIntegerRenderer.MakeUpToDateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
   Value: Integer;
-  Controller: TBoldIntegerFollowerController;
 begin
-  Controller := FollowerController as TBoldIntegerFollowerController;
-  Value := GetAsIntegerAndSubscribe(Element, Controller.Representation, Controller.Expression, Controller.GetVariableListAndSubscribe(Subscriber) ,Subscriber);
-  with (RendererData as TBoldIntegerRendererData) do
-  begin
-    OldIntegerValue := Value;
-    CurrentIntegerValue := Value;
-  end;
+  Value := GetAsIntegerAndSubscribe(aFollower ,Subscriber);
+  (aFollower.RendererData as TBoldIntegerRendererData).OldIntegerValue := Value;
+  (aFollower.RendererData as TBoldIntegerRendererData).CurrentIntegerValue := Value;
 end;
 
-function TBoldAsIntegerRenderer.DefaultIsChanged(RendererData: TBoldIntegerRendererData; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsIntegerRenderer.DefaultIsChanged(aFollower: TBoldFollower; const NewValue: Integer): Boolean;
 begin
-  Result := NewValue <> RendererData.OldIntegerValue;
+  Result := NewValue <> TBoldIntegerRendererData(aFollower.RendererData).OldIntegerValue;
 end;
 
-function TBoldAsIntegerRenderer.IsChanged(RendererData: TBoldIntegerRendererData; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsIntegerRenderer.IsChanged(aFollower: TBoldFollower; const NewValue: Integer): Boolean;
 begin
   if Assigned(FOnIsChanged) then
-    Result := FOnIsChanged(RendererData, NewValue, Representation, Expression)
+    Result := FOnIsChanged(aFollower, NewValue)
   else
-    Result := DefaultIsChanged(RendererData, NewValue, Representation, Expression, VariableList);
+    Result := DefaultIsChanged(aFollower, NewValue);
 end;
 
 { TBoldIntegerFollowerController }
@@ -252,7 +255,10 @@ end;
 
 procedure TBoldIntegerFollowerController.MakeClean(Follower: TBoldFollower);
 begin
-  ReleaseChangedValue(Follower);
+//  if (ApplyPolicy <> bapChange) or EffectiveRenderer.ChangedValueEventsAssigned then
+  begin
+    ReleaseChangedValue(Follower); // note, must do first, since set can change element
+  end;
   SetAsInteger(GetCurrentAsInteger(Follower), Follower);
 end;
 
@@ -263,15 +269,23 @@ end;
 
 procedure TBoldIntegerFollowerController.SetAsInteger(Value: Integer; Follower: TBoldFollower);
 begin
-  EffectiveAsIntegerRenderer.SetAsInteger(Follower.Element, Value, Representation, Expression, GetVariableListAndSubscribe(follower.Subscriber));
+  EffectiveAsIntegerRenderer.SetAsInteger(Follower, Value);
 end;
 
 procedure TBoldIntegerFollowerController.MayHaveChanged(NewValue: Integer; Follower: TBoldFollower);
+var
+  lIsChanged: boolean;
+  lRendererData: TBoldIntegerRendererData;
 begin
   if Follower.State in bfsDisplayable then
   begin
-    (Follower.RendererData as TBoldIntegerRendererData).CurrentIntegerValue := NewValue;
-    Follower.ControlledValueChanged(EffectiveAsIntegerRenderer.IsChanged(Follower.RendererData as TBoldIntegerRendererData, NewValue, Representation, Expression, GetVariableListAndSubscribe(follower.Subscriber)));
+    lRendererData := (Follower.RendererData as TBoldIntegerRendererData);
+    lRendererData.CurrentIntegerValue := NewValue;
+    lIsChanged := EffectiveAsIntegerRenderer.IsChanged(Follower, NewValue);
+    if lIsChanged then
+    begin
+      Follower.ControlledValueChanged;
+    end;
   end;
 end;
 
@@ -282,4 +296,5 @@ finalization
   FreeAndNil(DefaultAsIntegerRenderer);
 
 end.
+
 

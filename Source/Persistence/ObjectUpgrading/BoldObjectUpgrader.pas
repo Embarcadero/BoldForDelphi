@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectUpgrader;
 
 interface
@@ -80,8 +83,7 @@ uses
   BoldPMappersSQL,
   BoldUtils,
   BoldGuard,
-  BoldDomainElement,
-  BoldCoreConsts;
+  BoldDomainElement;
 
 { TBoldObjectUpgrader }
 
@@ -132,21 +134,19 @@ var
   ObjectList: TBoldObjectlist;
 begin
   Guard := TBoldGuard.Create(Objectlist, IdList, MemberPMList);
-
+  
   MemberPMList := TBoldMemberPersistenceMapperList.Create;
   MemberPMList.OwnsEntries := false;
   IdList := TBoldObjectIdList.Create;
   Objectlist := TBoldObjectList.Create;
 
-  // this procedure loads an object into the local objectlayer using the external persistencemapper,
-  // but bypassing the code for using the ObjectUpgrader
   IdList.Add(ObjectId);
   ObjectMapper := ObjectMapperForId(ObjectId);
   ObjectMapper.BuildMemberFetchLists(nil, MemberPMList, nil, fmNormal);
   ObjectMapper.HandleFetchData(ObjectId, ValueSpacePmIn, nil, query, MemberPMList, fmNormal, nil);
 
   Objectlist.Add(BoldSystem.EnsuredLocatorByID[ObjectId].BoldObject);
-
+  
   TBoldExposedSystem(BoldSystem).SystemPersistenceHandler.EndFetchForAll(ObjectList, nil);
 end;
 
@@ -175,7 +175,7 @@ begin
         UpgradeWholeClass.Add(IntToStr(ObjectMapper.BoldDbType))
       else if ConfigItem.UpgradeOlderThanVersion < CurrentVersion then
       begin
-        Script.Add(format('UPDATE %s SET %s = %d WHERE (%s = %d) AND (%s >= %d) AND (%s <> %d)', [ // do not localize
+        Script.Add(format('UPDATE %s SET %s = %d WHERE (%s = %d) AND (%s >= %d) AND (%s <> %d)', [
             RootTable,
             VersionColumn, CurrentVersion,
             TYPECOLUMN_NAME, ObjectMapper.BoldDbType,
@@ -185,7 +185,7 @@ begin
     end;
   end;
   if UpgradeWholeClass.Count <> 0 then
-    Script.Add(format('UPDATE %s SET %s = %d WHERE %s IN (%s) AND (%s <> %d)', [ // do not localize
+    Script.Add(format('UPDATE %s SET %s = %d WHERE %s IN (%s) AND (%s <> %d)', [
             RootTable,
             VersionColumn, CurrentVersion,
             TYPECOLUMN_NAME, BoldSeparateStringList(UpgradeWholeClass, ', ', '', ''),
@@ -203,9 +203,9 @@ begin
     aSystemTypeInfo := SystemTypeInfo;
     aPController := PersistenceController;
     if not assigned(aSystemTypeInfo) then
-      raise EBold.CreateFmt(sMissingTypeInfo, [classname]);
+      raise EBold.CreateFmt('%s.GetBoldSystem: Missing System Type Info', [classname]);
     if not assigned(aPController) then
-      raise EBold.CreateFmt(sMissingPersistenceController, [classname]);
+      raise EBold.CreateFmt('%s.GetBoldSystem: Missing Persistence Controller', [classname]);
     fBoldSystem := TBoldSystem.CreateWithTypeInfo(nil, aSystemTypeInfo, aPController)
   end;
   result := fBoldSystem;
@@ -234,7 +234,7 @@ end;
 procedure TBoldObjectUpgrader.ReleaseBoldSystem;
 begin
   if (fNestingLevel <> 0) then
-    raise EBold.CreateFmt(sCannotReleaseInOperation, [classname]);
+    raise EBold.CreateFmt('%s.ReleaseBoldSystem: can not release the system while in an upgrade operation', [classname]);
   FreeAndNil(fBoldSystem);
 end;
 
@@ -248,13 +248,16 @@ var
   ConfigItem: TBoldObjectUpgraderConfigurationItemWithEvent;
 begin
   ConfigItem := Config.ItemByName[Obj.BoldClassTypeInfo.Expressionname] as TBoldObjectUpgraderConfigurationItemWithEvent;
+{$IFNDEF CompareToOldValues}
   Obj.MarkObjectDirty;
+{$ENDIF}
   if assigned(ConfigItem) and assigned(ConfigItem.OnUpgradeObject) then
     ConfigItem.OnUpgradeObject(Obj)
   else if assigned(OnUpgradeObject) then
     OnUpgradeObject(Obj);
-  // in case some user decides to call discard on the object, we better dirtify it again.
+{$IFNDEF CompareToOldValues}
   Obj.MarkObjectDirty;
+{$ENDIF}
 end;
 
 procedure TBoldObjectUpgrader.UpgradeObjectById(ObjectId: TBoldObjectId; Query: IBoldQuery);
@@ -296,5 +299,5 @@ begin
   result := Config.ConfigOwner.GetNamePath +'._'+ExpressionName+'_';
 end;
 
+initialization
 end.
-

@@ -1,12 +1,20 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractPropertyEditors;
 
 interface
 
 uses
+  {$IFDEF BOLD_CLX}
+  Types,
+  QGraphics,
+  {$ELSE}
   Windows,
   Graphics,
-  DesignEditors,
-  EditIntf;
+  {$ENDIF}
+  DesignEditors{,
+  EditIntf};
 
 type
   { forward declarations }
@@ -194,14 +202,15 @@ var
   EditPos: TOTAEditpos;
   CharPos: TOTACharpos;
 begin
-  if Supports(BorlandIDEServices, IOTAEditorServices, EditorServices) then
+  if (s <> '') and
+     Supports(BorlandIDEServices, IOTAEditorServices, EditorServices) then
   begin
     EditPos := EditorServices.TopBuffer.TopView.CursorPos;
     EditorServices.TopBuffer.TopView.ConvertPos(True, EditPos, CharPos);
     CurPos := EditorServices.TopBuffer.TopView.CharPosToPos(CharPos);
     Writer := EditorServices.TopBuffer.CreateUndoableWriter;
     Writer.CopyTo(CurPos);
-    Writer.Insert(PAnsiChar(s));      // marco to be fixed
+    Writer.Insert(PAnsiChar({$IFDEF BOLD_UNICODE}AnsiString{$ENDIF}(s)));
   end;
 end;
 

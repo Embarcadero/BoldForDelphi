@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEController;
 
 interface
@@ -9,6 +12,7 @@ uses
   BoldSystem,
   BoldDBInterfaces,
   BoldSQLDatabaseConfig,
+  BoldIndexCollection,
   BoldAbstractPersistenceHandleDB;
 
 type
@@ -16,11 +20,13 @@ type
   private
     fPHandle: TBoldAbstractPersistenceHandleDB;
     fSQLDatabaseConfig: TBoldSQLDatabaseConfig;
+    fCustomIndexes: TBoldIndexCollection;
   protected
     function GetDataBaseInterface: IBoldDatabase; override;
     function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig; override;
+    function GetCustomIndexes: TBoldIndexCollection; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
   end;
 
   TBoldOLLEController = class
@@ -41,8 +47,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  OLLEConsts;
+  BoldUtils;
+
 
 { TBoldOLLEController }
 
@@ -53,7 +59,7 @@ begin
   fMimicPHandle.fPHandle := PersistenceHandle;
   fMimicPHandle.BoldModel := fOlleDM.BoldModel1;
   fMimicPHandle.SQLDatabaseConfig.AssignConfig(PersistenceHandle.SQLDatabaseConfig);
-  fMimicPHandle.SQLDataBaseConfig.SystemTablePrefix := 'OLLE'; // do not localize
+  fMimicPHandle.SQLDataBaseConfig.SystemTablePrefix := 'OLLE';
   fOlleDM.BoldObjectInfoSystem.PersistenceHandle := fMimicPHandle;
 end;
 
@@ -78,7 +84,7 @@ begin
   if value <> Persistent then
   begin
     if fOlleDm.BoldObjectInfoSystem.Active then
-      raise Exception.CreateFmt(sCannotChangePersistenceWhenActive, [ClassName]);
+      raise Exception.Create( 'TBoldOLLEController: Can not change Persistent-property when the OLLE system is active' );
     if Value then
       fOlleDM.BoldObjectInfoSystem.PersistenceHandle := fMimicPHandle
     else
@@ -91,7 +97,15 @@ end;
 destructor TBoldPHandleMimic.destroy;
 begin
   FreeAndNil(fSQLDatabaseConfig);
+  FreeAndNil(fCustomIndexes);
   inherited;
+end;
+
+function TBoldPHandleMimic.GetCustomIndexes: TBoldIndexCollection;
+begin
+  if not assigned(fCustomIndexes) then
+    fCustomIndexes := TBoldIndexCollection.Create(nil);
+  result := fCustomIndexes;
 end;
 
 function TBoldPHandleMimic.GetDataBaseInterface: IBoldDatabase;
@@ -105,5 +119,7 @@ begin
     fSQLDatabaseConfig := TBoldSQLDataBaseConfig.Create;
   result := fSQLDatabaseConfig;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPSParamsDefault;
 
 interface
@@ -11,5 +14,11 @@ type
 
 
 implementation
+
+uses
+  BoldRev;
+
+
+initialization
 
 end.

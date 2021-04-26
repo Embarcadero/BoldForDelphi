@@ -1,6 +1,10 @@
+/////////////////////////////////////////////////////////
+
+
 unit BoldTreeView;
 
 {$UNDEF BOLDCOMCLIENT}
+{$INCLUDE bold.inc}
 
 interface
 
@@ -16,7 +20,7 @@ uses
   BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
   {$IFNDEF BOLDCOMCLIENT} // uses
   BoldSystem, // IFNDEF BOLDCOMCLIENT
-  BoldGui,  // IFNDEF BOLDCOMCLIENT
+  BoldGui, // IFNDEF BOLDCOMCLIENT
   {$ENDIF}
   BoldElements,
   BoldHandles,
@@ -35,6 +39,9 @@ type
   TBoldCustomTreeView = class;
   TBoldTreeView = class;
   TBoldTreeNode = class;
+
+  TDestroyWndNotifyEvent = procedure (Sender: TObject) of object;
+  TCreateWndNotifyEvent = procedure (Sender: TObject) of object;
 
   {---TBoldTreeNode---}
   TBoldTreeNode = class(TTreeNode)
@@ -56,21 +63,21 @@ type
   end;
 
   {---TBoldCustomTreeView---}
-  TBoldCustomTreeView = class(TCustomTreeView, IBoldValidateableComponent)
+  TBoldCustomTreeView = class(TTreeView, IBoldValidateableComponent)
   private
     fHandleFollower: TBoldElementHandleFollower;
-    FTreeController: TBoldTreeFollowerController;
-    FMaxLevels: Integer;
-    FAutoExpandLevels: Integer;
-    FSelectInserted: Boolean;
-    FSelectedIndexDelta: Integer;
+    fTreeController: TBoldTreeFollowerController;
+    fMaxLevels: Integer;
+    fAutoExpandLevels: Integer;
+    fSelectInserted: Boolean;
+    fSelectedIndexDelta: Integer;
     fSelectedImageIndex: integer;
     fStateImageSelected: integer;
     fStateImageUnselected: integer;
-    FNodeExpansion: TBoldNodeExpansionMethod;
-    FDragFollower: TBoldFollower;
-    FEditFollower: TBoldFollower;
-    FUpdateCount: Integer;
+    fNodeExpansion: TBoldNodeExpansionMethod;
+    fDragFollower: TBoldFollower;
+    fEditFollower: TBoldFollower;
+    fUpdateCount: Integer;
     fMultiSelect: Boolean;
     fSelectAnchor: TBoldTreeNode;
     fLastSelectedNode: TBoldTreeNode;
@@ -82,6 +89,9 @@ type
     fSelectedElementPreUpdate: TBoldElement;
     fSelectedNodeDescriptionPreUpdate: TBoldNodeDescription;
     fNodesHaveBeenDeleted: Boolean;
+    FItemsRecreated: Boolean;
+    FOnDestroyWnd: TDestroyWndNotifyEvent;
+    FOnCreateWnd: TCreateWndNotifyEvent;
     procedure _CustomDrawItem(Sender: TCustomTreeView; Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
     procedure ClearAllSelections;
     procedure SetBoldHandle(Value: TBoldElementHandle);
@@ -99,7 +109,7 @@ type
     procedure SetMultiSelect(NewValue: Boolean);
     procedure UpdateMultiSelect(Node: TBoldTreeNode; Shift: TShiftState; MouseDirection: TBoldMouseDirection);
     {$IFNDEF BOLDCOMCLIENT}
-    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
+    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: string): Boolean;
     {$ENDIF}
     property MultiSelect: Boolean read fMultiSelect write SetMultiSelect default false;
     function GetPopupElement: TBoldElement;
@@ -117,7 +127,7 @@ type
     function CreateNode: TTreeNode; override;
     procedure CreateWnd; override;
     procedure DestroyWnd; override;
-    procedure DeleteNode(Follower: TBoldFollower); virtual;
+    procedure DeleteNode(Index: integer; Follower: TBoldFollower); virtual;
     procedure DisplayText(Follower: TBoldFollower); virtual;
     procedure DisplayIcon(Follower: TBoldFollower); virtual;
     procedure DoEndDrag(Target: TObject; X, Y: Integer); override;
@@ -128,7 +138,7 @@ type
     procedure Edit(const Item: TTVItem); override;
     procedure Expand(Node: TTreeNode); override;
     function GetPopupMenu: TPopupMenu; override;
-    procedure InsertNode(Follower: TBoldFollower); virtual;
+    procedure InsertNode(Index: integer; Follower: TBoldFollower); virtual;
     procedure KeyUp(var Key: Word; Shift: TShiftState); override;
 
     procedure KeyPress(var Key: Char); override;
@@ -140,7 +150,7 @@ type
     function TreeFollowerControllerClass: TBoldTreeFollowerControllerClass; virtual;
     {To be published}
     property AutoExpandLevels: Integer read FAutoExpandLevels write SetAutoExpandLevels default -1;
-    property BoldHandle: TBoldElementHandle read GetBoldHandle  write SetBoldHandle;
+    property BoldHandle: TBoldElementHandle read GetBoldHandle write SetBoldHandle;
     property BoldProperties: TBoldTreeFollowerController read FTreeController write SetTreeController;
     property MaxLevels: Integer read FMaxLevels write SetMaxLevels default -1;
     property NodeExpansion: TBoldNodeExpansionMethod read FNodeExpansion write FNodeExpansion default neDemand;
@@ -152,16 +162,19 @@ type
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
+//    procedure LogNodes;
     procedure DragDrop(Source: TObject; X, Y: Integer); override;
     function GetElementAt(X, Y: Integer): TBoldElement;
     function GetFollowerAt(X, Y: Integer): TBoldFollower;
     procedure FillListWithSelectedObjects(List: TBoldObjectList);
-    function FindListPartByNames(const NodeDescName, ListPartName: String): TBoldGenericListPart;
+    function FindListPartByNames(const NodeDescName, ListPartName: string): TBoldGenericListPart;
     property CurrentFollower: TBoldFollower read GetCurrentFollower;
     property CurrentElement: TBoldElement read GetCurrentElement;
     property PopupElement: TBoldElement read GetPopupElement;
     property Selected: TBoldTreeNode read GetSelected write SetSelected;
     property RootFollower: TBoldFollower read GetRootFollower;
+    property OnDestroyWnd: TDestroyWndNotifyEvent read FOnDestroyWnd write FOnDestroyWnd;
+    property OnCreateWnd: TCreateWndNotifyEvent read FOnCreateWnd write FOnCreateWnd;
   end;
 
   {---TBoldTreeView---}
@@ -243,12 +256,14 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils, BoldQueue;
 
 {---TBoldTreeNode---}
+
 function TBoldTreeNode.GetNodeDescription: TBoldNodeDescription;
 var
   I: Integer;
+  bnd: TBoldNodeDescriptions;
 begin
   // Check if cache is accurate.
   if Assigned(FNodeDescription) and (FNodeDescription.NodeFollowerController = Follower.Controller) then
@@ -258,16 +273,14 @@ begin
   else
   begin
     I := 0;
-    with TBoldTreeView(TreeView).BoldProperties.NodeDescriptions do
-    begin
-      while (I<Count) and (Items[I].NodeFollowerController <> Follower.Controller) do
-        Inc(I);
-      if (Items[I].NodeFollowerController = Follower.Controller) then
-        FNodeDescription := Items[I]
-      else
-        FNodeDescription := nil;
-      Result := FNodeDescription;
-    end;
+    bnd:=TBoldTreeView(TreeView).BoldProperties.NodeDescriptions;
+    while (I < bnd.Count) and (bnd.Items[I].NodeFollowerController <> Follower.Controller) do
+      Inc(I);
+    if (bnd.Items[I].NodeFollowerController = Follower.Controller) then
+      FNodeDescription := bnd.Items[I]
+    else
+      FNodeDescription := nil;
+    Result := FNodeDescription;
   end;
 end;
 
@@ -283,23 +296,23 @@ end;
 
 {---TBoldCustomTreeView---}
 (*Constructor and destructor*)
+
 constructor TBoldCustomTreeView.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
-  FTreeController := TreeFollowerControllerClass.Create(Self);
-  FTreeController.OnAfterInsertItem := InsertNode;
-  FTreeController.OnBeforeDeleteItem := DeleteNode;
-  FTreeController.OnIconChanged := DisplayIcon;
-  FTreeController.OnTextChanged := DisplayText;
-  FTreeController.OnGetContextType := GetContextType;
-  FTreeController.AfterMakeUptoDate := AfterMakeUptoDate;
-  FTreeController.BeforeMakeUptoDate := BeforeMakeUptoDate;
-
+  fTreeController := TreeFollowerControllerClass.Create(Self);
+  fTreeController.OnAfterInsertItem := InsertNode;
+  fTreeController.OnBeforeDeleteItem := DeleteNode;
+  fTreeController.OnIconChanged := DisplayIcon;
+  fTreeController.OnTextChanged := DisplayText;
+  fTreeController.OnGetContextType := GetContextType;
+  fTreeController.AfterMakeUptoDate := AfterMakeUptoDate;
+  fTreeController.BeforeMakeUptoDate := BeforeMakeUptoDate;
 
   fHandleFollower := TBoldElementHandleFollower.Create(Owner, FTreeController);
-  FMaxLevels := -1;
-  FAutoExpandLevels := -1;
-  FNodeExpansion := neDemand;
+  fMaxLevels := -1;
+  fAutoExpandLevels := -1;
+  fNodeExpansion := neDemand;
   fSelectedImageIndex := -1;
   fStateImageSelected := -1;
   fStateImageUnselected := -1;
@@ -309,7 +322,7 @@ end;
 destructor TBoldCustomTreeView.Destroy;
 begin
   FreeAndNil(fHandleFollower);
-  FreeAndNil(FTreeController);
+  FreeAndNil(fTreeController);
   inherited Destroy;
 end;
 
@@ -341,24 +354,24 @@ procedure TBoldCustomTreeView.SetMaxLevels(Value: Integer);
   var
     I: Integer;
   begin
-    for I := 0 to Follower.SubFollowerCount-1 do
+    for I := 0 to Follower.SubFollowerCount - 1 do
     begin
       //Update this node
-      if (Follower.SubFollowers[I].Controller as TBoldNodeFollowerController).HideNodeWithNoChildren   then
+      if (Follower.SubFollowers[I].Controller as TBoldNodeFollowerController).HideNodeWithNoChildren then
         DoInsertHiddenNode(Follower.SubFollowers[I])
       else
         SetNodeState(TBoldTreeNode(Follower.SubFollowers[I].ControlData));
       //Recurse through subfollowers
-      if Follower.SubFollowers[I].Active and (Follower.SubFollowers[I].SubFollowerCount>=BoldNodeListIndex) and Follower.SubFollowers[I].SubFollowers[BoldNodeListIndex].Active then
-          DoList(Level+1, Follower.SubFollowers[I].SubFollowers[BoldNodeListIndex])
+      if Follower.SubFollowers[I].Active and (Follower.SubFollowers[I].SubFollowerCount >= BoldNodeListIndex) and Follower.SubFollowers[I].SubFollowers[BoldNodeListIndex].Active then
+        DoList(Level + 1, Follower.SubFollowers[I].SubFollowers[BoldNodeListIndex])
     end;
   end;
 
 begin
   RootFollower.EnsureDisplayable;
-  if Value<-1 then
+  if Value < -1 then
     Value := -1;
-  if (Value<>FMaxLevels) then
+  if (Value <> FMaxLevels) then
   begin
     FMaxLevels := Value;
     BeginUpdate;
@@ -376,7 +389,7 @@ var
   Node: TBoldTreeNode;
 begin
   RootFollower.EnsureDisplayable;
-  if Value<-1 then
+  if Value < -1 then
     Value := -1;
   FAutoExpandLevels := Value;
   if (FAutoExpandLevels <> -1) then
@@ -384,7 +397,7 @@ begin
     I := 0;
     BeginUpdate;
     try
-      while (I<Items.Count) do
+      while (I < Items.Count) do
       begin
         Node := TBoldTreeNode(Items[I]);
         Node.Expanded := Node.Level <= FAutoExpandLevels;
@@ -437,13 +450,22 @@ procedure TBoldCustomTreeView.CreateWnd;
 begin
   inherited createWnd;
   RootFollower.Active := true;
+
+  if FItemsRecreated then begin
+    if Assigned(FOnCreateWnd) then FOnCreateWnd(Self);
+    FItemsRecreated := False;
+  end;
 end;
 
 procedure TBoldCustomTreeView.DestroyWnd;
 begin
+  if CreateWndRestores and (Items.Count > 0) and (csRecreating in ControlState) then begin
+    FItemsRecreated := True;
+    if Assigned(FOnDestroyWnd) then FOnDestroyWnd(Self);
+  end;
   RootFollower.Active := false;
   Items.Clear;
-  Inherited DestroyWnd;
+  inherited DestroyWnd;
 end;
 
 function TBoldCustomTreeView.GetSelected: TBoldTreeNode;
@@ -469,6 +491,7 @@ begin
 end;
 
 (*Display values add and remove of nodes*)
+
 procedure TBoldCustomTreeView.DisplayText(Follower: TBoldFollower);
 var
   Node: TTreeNode;
@@ -546,12 +569,16 @@ var
   ParentNode: TTreeNode;
   PrevSiblingNode: TTreeNode;
   I: Integer;
+  lBoldTreeNode: TBoldTreeNode;
+  s: string;
+//  TextController: TBoldStringFollowerController;
+//  lTextFollower: TBoldFollower;
 begin
-
+  s := '';
   ParentNode := nil;
   PrevSiblingNode := nil;
   I := Follower.Index;
-  while not Assigned(PrevSiblingNode) and (I<Follower.OwningFollower.SubFollowerCount) do
+  while not Assigned(PrevSiblingNode) and (I < Follower.OwningFollower.SubFollowerCount) do
   begin
     PrevSiblingNode := (Follower.OwningFollower.SubFollowers[I].ControlData as TBoldTreeNode);
     Inc(I);
@@ -559,26 +586,29 @@ begin
 
   if Assigned(PrevSiblingNode) then
   begin
-    Result := TBoldTreeNode(Items.Insert(PrevSiblingNode, ''))
-  end
-  else
+    lBoldTreeNode := Items.Insert(PrevSiblingNode, s) as TBoldTreeNode; //Add node as first sibling
+  end else // if not add it to the ParentNode
   begin
 
     if Assigned(Follower.owningFollower.owningFollower) then
     begin
       if Assigned(Follower.owningFollower.owningFollower.ControlData) then
+      begin
         ParentNode := (Follower.owningFollower.owningFollower.ControlData as TBoldTreeNode)
-      else
+      end else
+      begin
+        // if Parent Tree Node doesn't exit then insert it also
         ParentNode := DoInsertVisibleNode(Follower.owningFollower.owningFollower);
+      end;
     end;
-
-    Result := TBoldTreeNode(Items.AddChild(ParentNode, ''));
+    lBoldTreeNode := TBoldTreeNode(Items.AddChild(ParentNode, s));
   end;
 
-  Result.Follower := Follower;
-  Follower.ControlData := Result;
+  lBoldTreeNode.Follower := Follower;
+  Follower.ControlData := lBoldTreeNode;
 
-  SetNodeState(Result);
+  SetNodeState(lBoldTreeNode);
+  Result := lBoldTreeNode;
 end;
 
 procedure TBoldCustomTreeView.DoInsertHiddenNode(Follower: TBoldFollower);
@@ -639,14 +669,13 @@ begin
   begin
     //Nodes with HideNodeWithNoChildren is always fully shown
     Controller.SetActiveRange(Follower, BoldNodeListIndex, BoldNodeTextIndex);
-  end
-  else
+  end else
   begin
     if (((MaxLevels = -1) or (Node.Level < MaxLevels)) and not Node.ExistsInParent) then
     begin
       if (NodeExpansion = neAll) or
-         (Node.Level <= AutoExpandLevels) or
-         ((NodeExpansion = neVisible) and Node.IsVisible) then
+        (Node.Level <= AutoExpandLevels) or
+        ((NodeExpansion = neVisible) and Node.IsVisible) then
       begin
         BeginUpdate;
         try
@@ -663,11 +692,10 @@ begin
         finally
           EndUpdate;
         end;
-      end
-      else
+      end else
       begin
         if ((Follower.SubFollowerCount = 0) or
-            (not Follower.SubFollowers[BoldNodeListIndex].Active)) then
+          (not Follower.SubFollowers[BoldNodeListIndex].Active)) then
         begin
           //Only set node in "ExpandOnDemand" mode if it's not expanded already!
           Node.HasChildren := (Controller.Items[BoldNodeListIndex] as TBoldGenericListController).CanHaveSubFollowers;
@@ -686,31 +714,38 @@ begin
   end;
 end;
 
-procedure TBoldCustomTreeView.InsertNode(Follower: TBoldFollower);
+procedure TBoldCustomTreeView.InsertNode(Index: integer; Follower: TBoldFollower);
 var
   NewNode: TBoldTreeNode;
+  lIsVisible: Boolean;
 begin
-  if not (Follower.Controller as TBoldNodeFollowerController).HideNodeWithNoChildren then
+  Assert(Assigned(Follower));
+  lIsVisible := {Assigned(Follower) and} not (Follower.Controller as TBoldNodeFollowerController).HideNodeWithNoChildren;
+  if lIsVisible then
   begin
     NewNode := DoInsertVisibleNode(Follower);
     if not fNodesHaveBeenDeleted and FSelectInserted and (FUpdateCount < 1) then
+    begin
       Selected := NewNode;
+    end;
     if assigned(fSelectedNodePreUpdate) and
       (Follower.Element = fSelectedElementPreUpdate) and
       (tBoldTreeNode(follower.ControlData).NodeDescription = fSelectedNodeDescriptionPreUpdate) then
-        Selected := tBoldTreeNode(follower.ControlData);
-  end
-  else
+    begin
+      Selected := tBoldTreeNode(follower.ControlData);
+    end;
+  end else
   begin
     DoInsertHiddenNode(Follower);
   end;
 end;
 
-procedure TBoldCustomTreeView.DeleteNode(Follower: TBoldFollower);
+procedure TBoldCustomTreeView.DeleteNode(Index: integer; Follower: TBoldFollower);
 var
   ParentNode: TBoldTreeNode;
 begin
-  if Assigned(Follower.ControlData) then
+  Assert(Assigned(Follower));
+  if {Assigned(Follower) and} Assigned(Follower.ControlData) then
   begin
     ParentNode := (Follower.ControlData as TBoldTreeNode).Parent as TBoldTreeNode;
     if fSelectedNodePreUpdate = (Follower.ControlData as TBoldTreeNode) then
@@ -723,26 +758,30 @@ begin
     (Follower.ControlData as TBoldTreeNode).Delete;
     Follower.ControlData := nil;
     if Assigned(ParentNode) and
-       ParentNode.HideNodeIfNoVisibleChildren and
-       not ParentNode.HasChildren then
+      ParentNode.HideNodeIfNoVisibleChildren and
+      not ParentNode.HasChildren then
     begin
       (ParentNode.Follower.Controller as TBoldNodeFollowerController).SetActiveRange(ParentNode.Follower, BoldNodeListIndex, BoldNodeListIndex);
-      DeleteNode(ParentNode.Follower);
+      DeleteNode(Index, ParentNode.Follower);
     end;
   end;
 end;
 
 
 (*Test editing*)
+
 function TBoldCustomTreeView.CanEdit(Node: TTreeNode): Boolean;
+var
+  lTextFollower: TBoldFollower;
 begin
   FEditFollower := nil;
   Result := inherited CanEdit(Node);
-  if Assigned(TBoldTreeNode(Node).Follower) then
+  if result and Assigned(TBoldTreeNode(Node).Follower) then
   begin
-    Result := Result and TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeTextIndex].Controller.MayModify(TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeTextIndex]);
+    lTextFollower := TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeTextIndex];
+    Result := lTextFollower.Controller.MayModify(lTextFollower);
     if Result then
-      FEditFollower := TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeTextIndex];
+      FEditFollower := lTextFollower;
   end;
 end;
 
@@ -750,7 +789,7 @@ procedure TBoldCustomTreeView.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if Assigned(FEditFollower) and (Key > #32) and
-     not (FEditFollower.Controller as TBoldStringFollowerController).ValidateCharacter(Key, FEditFollower) then
+    not (FEditFollower.Controller as TBoldStringFollowerController).ValidateCharacter(Key, FEditFollower) then
   begin
     MessageBeep(0);
     Key := #0;
@@ -762,11 +801,13 @@ var
   S: string;
   Node: TTreeNode;
 
-  function GetNodeFromItem(Item: TTVItem):TTreeNode;
+  function GetNodeFromItem(Item: TTVItem): TTreeNode;
   begin
     with Item do
-    if (state and TVIF_PARAM) <> 0 then Result := Pointer(lParam)
-    else Result := Items.GetNode(hItem);
+      if (state and TVIF_PARAM) <> 0 then Result := Pointer(lParam)
+  {$WARN UNSAFE_CAST OFF}
+      else Result := Items.GetNode(hItem);
+  {$WARN UNSAFE_CAST ON}
   end;
 
 begin
@@ -907,6 +948,7 @@ begin
 end;
 
 (*Popup menu*)
+
 function TBoldCustomTreeView.GetPopupmenu: TPopupMenu;
 begin
   Result := inherited GetPopupMenu;
@@ -915,33 +957,36 @@ begin
 end;
 
 (*Expand and collapse*)
+
 function TBoldCustomTreeView.CanExpand(Node: TTreeNode): Boolean;
 var
   I: Integer;
   ChildNode: TBoldTreeNode;
+  lFollower: TBoldFollower;
 begin
-  Result := inherited CanExpand(Node) and Assigned(TBoldTreeNode(Node).Follower) and ((MaxLevels=-1) or (Node.Level<MaxLevels)) and not TBoldTreeNode(Node).ExistsInParent;
+  lFollower := TBoldTreeNode(Node).Follower;
+  Result := inherited CanExpand(Node) and Assigned(lFollower) and ((MaxLevels = -1) or (Node.Level < MaxLevels)) and not TBoldTreeNode(Node).ExistsInParent;
   if Result then
   begin
     BeginUpdate;
     try
-      if ((TBoldTreeNode(Node).Follower.SubFollowerCount = 0) or
-          (not TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeListIndex].Active)) then
+      if ((lFollower.SubFollowerCount = 0) or
+        (not lFollower.SubFollowers[BoldNodeListIndex].Active)) then
       begin
         Node.HasChildren := False;
-        (TBoldTreeNode(Node).Follower.Controller as TBoldNodeFollowerController).SetActiveRange(TBoldTreeNode(Node).Follower, BoldNodeListIndex, BoldNodeTextIndex);
-        TBoldTreeNode(Node).Follower.EnsureDisplayable;
+        (lFollower.Controller as TBoldNodeFollowerController).SetActiveRange(lFollower, BoldNodeListIndex, BoldNodeTextIndex);
+        lFollower.EnsureDisplayable;
       end;
       if (FNodeExpansion = neVisible) and
-         (TBoldTreeNode(Node).Follower.SubFollowerCount > BoldNodeListIndex) then
+        (lFollower.SubFollowerCount > BoldNodeListIndex) then
       begin
-        for I := 0 to TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeListIndex].SubFollowerCount-1 do
+        for I := 0 to lFollower.SubFollowers[BoldNodeListIndex].SubFollowerCount - 1 do
         begin
-          ChildNode := (TBoldTreeNode(Node).Follower.SubFollowers[BoldNodeListIndex].SubFollowers[I].ControlData as TBoldTreeNode);
+          ChildNode := (lFollower.SubFollowers[BoldNodeListIndex].SubFollowers[I].ControlData as TBoldTreeNode);
           if Assigned(ChildNode) and
-             ((MaxLevels = -1) or (ChildNode.Level < MaxLevels)) and
-             not TBoldTreeNode(ChildNode).ExistsInParent and
-             ((ChildNode.Follower.SubFollowerCount = 0) or (not ChildNode.Follower.SubFollowers[BoldNodeListIndex].Active)) then
+            ((MaxLevels = -1) or (ChildNode.Level < MaxLevels)) and
+            not TBoldTreeNode(ChildNode).ExistsInParent and
+            ((ChildNode.Follower.SubFollowerCount = 0) or (not ChildNode.Follower.SubFollowers[BoldNodeListIndex].Active)) then
           begin
             ChildNode.HasChildren := False;
             (ChildNode.Follower.Controller as TBoldNodeFollowerController).SetActiveRange(ChildNode.Follower, BoldNodeListIndex, BoldNodeTextIndex);
@@ -976,6 +1021,7 @@ begin
 end;
 
 (*Other*)
+
 function TBoldCustomTreeView.CanChange(Node: TTreeNode): Boolean;
 begin
   Result := inherited CanChange(Node);
@@ -1027,10 +1073,11 @@ begin
 end;
 
 {$IFNDEF BOLDCOMCLIENT}
-function TBoldCustomTreeView.ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
+
+function TBoldCustomTreeView.ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: string): Boolean;
 var
   j, i: integer;
-  BaseName: String;
+  BaseName: string;
   Context: TBoldElementTypeInfo;
 begin
   // We want to evaluate everything. Thus suboptimized expressions.
@@ -1043,28 +1090,28 @@ begin
       with BoldProperties.NodeDescriptions[i] do
       begin
         Context := NodeFollowerController.ContextType;
-        BaseName:= format('%s%s.Node[%d:%s]', [NamePrefix, self.Name, i, Name]); // do not localize
+        BaseName := format('%s%s.Node[%d:%s]', [NamePrefix, self.Name, i, Name]); // do not localize
 
         Result := ComponentValidator.ValidateExpressionInContext('', Context, BaseName);
 
         if Assigned(Context) then
         begin
           Result := ComponentValidator.ValidateExpressionInContext(
-                      IconController.Expression,
-                      Context,
-                      BaseName + '.IconController') and Result; // do not localize
+            IconController.Expression,
+            Context,
+            BaseName + '.IconController') and Result; // do not localize
 
           Result := ComponentValidator.ValidateExpressionInContext(
-                      TextController.Expression,
-                      Context,
-                      BaseName + '.TextController') and Result; // do not localize
+            TextController.Expression,
+            Context,
+            BaseName + '.TextController') and Result; // do not localize
 
           for j := 0 to ListController.Parts.Count - 1 do
           begin
             Result := ComponentValidator.ValidateExpressionInContext(
-                        ListController.Parts[j].ControllerExpression,
-                        Context,
-                        BaseName + format('.ListPart[%d]', [j])) and Result; // do not localize
+              ListController.Parts[j].ControllerExpression,
+              Context,
+              BaseName + format('.ListPart[%d]', [j])) and Result; // do not localize
           end;
         end;
       end;
@@ -1074,7 +1121,7 @@ end;
 
 function TBoldCustomTreeView.TreeFollowerControllerClass: TBoldTreeFollowerControllerClass;
 begin
-  result := TBoldTreeFollowerController;
+  Result := TBoldTreeFollowerController;
 end;
 
 procedure TBoldCustomTreeView.SetMultiSelect(NewValue: Boolean);
@@ -1186,12 +1233,15 @@ end;
 destructor TBoldTreeNode.destroy;
 begin
   inherited;
+  if Assigned(FFollower) and (FFollower.ControlData = self) then
+    FFollower.ControlData := nil;
   if TreeView.fLastSelectedNode = self then
     TreeView.fLastSelectedNode := nil;
   if TreeView.fSelectAnchor = self then
     TreeView.fSelectAnchor := nil;
   if TreeView.fPopupNode = self then
     TreeView.fPopupNode := nil;
+  FFollower := nil;
 end;
 
 function TBoldTreeNode.GetTreeView: TBoldTreeView;
@@ -1214,7 +1264,7 @@ end;
 
 procedure TBoldTreeNode.UpdateIcon;
 begin
-  if assigned(Follower) and assigned(Follower.SubFollowers[1]) then
+  if assigned(Follower) and assigned(Follower.Controller) and assigned(Follower.SubFollowers[1]) then
     Follower.SubFollowers[1].MarkValueOutOfDate;
 end;
 
@@ -1240,7 +1290,36 @@ begin
     UpdateMultiSelect(Selected as TBoldTreeNode, Shift, dirMouseDown);
 end;
 
-function TBoldCustomTreeView.FindListPartByNames(const NodeDescName, ListPartName: String): TBoldGenericListPart;
+//procedure TBoldCustomTreeView.LogNodes;
+//var
+//  lIndex: Integer;
+//  lBoldTreeNode: TBoldTreeNode;
+//  lBoldFollowerController: TBoldFollowerController;
+//begin
+//  CodeSite.Category := 'LogNodes';
+//  CodeSite.Send('**** Start LogNodes ***');
+//
+//  for lIndex := 0 to Items.Count - 1 do
+//  begin
+//    lBoldTreeNode := Items[lIndex] as TBoldTreeNode;
+//    if Assigned(lBoldTreeNode.Follower) then
+//    begin
+//      CodeSite.Send('lBoldTreeNode.Follower ', Integer(lBoldTreeNode.Follower));
+//      Assert(lBoldTreeNode.Follower is TBoldFollower);
+//      lBoldFollowerController := lBoldTreeNode.Follower.AssertedController;
+//      CodeSite.Send('Integer(lBoldFollowerController)', Integer(lBoldFollowerController));
+//      CodeSite.Send(lBoldFollowerController.ClassName);
+//      if not (lBoldFollowerController is TBoldNodeFollowerController) then
+//      begin
+//        raise exception.Create('Improper Controller has been assigned');
+//      end;
+//    end;
+//  end;
+//  CodeSite.Send('**** End LogNodes ***');
+//  CodeSite.Category := '';
+//end;
+
+function TBoldCustomTreeView.FindListPartByNames(const NodeDescName, ListPartName: string): TBoldGenericListPart;
 var
   NodeDesc: TBoldNodeDescription;
 begin
@@ -1256,9 +1335,11 @@ var
   Follower: TBoldfollower;
   aColor: TColor;
   TextController: TBoldStringFollowerController;
+  lBoldTreeNode: TBoldTreeNode;
 begin
-  Follower := (Node as TBoldTreeNode).Follower;
-  if assigned(Follower) then
+  lBoldTreeNode := Node as TBoldTreeNode;
+  Follower := lBoldTreeNode.Follower;
+  if assigned(Follower) and not Follower.IsInDisplayList and Assigned(Follower.Controller) then
   begin
     TextController := (Follower.Controller as TBoldNodeFollowerController).TextFollowerController;
     if not (cdsSelected in State) then
@@ -1271,3 +1352,5 @@ begin
 end;
 
 end.
+
+

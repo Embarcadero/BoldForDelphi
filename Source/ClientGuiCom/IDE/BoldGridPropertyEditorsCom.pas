@@ -1,18 +1,31 @@
-// MANUALLY UPDATED
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGridPropertyEditorsCom;
 
 interface
 
 uses
+  {$IFDEF BOLD_DELPHI5_OR_LATER}
+  Contnrs,
+  {$ENDIF}
+  {$IFDEF BOLD_DELPHI6_OR_LATER}
   DesignIntf,
   DesignEditors,
+  {$ELSE}
+  DsgnIntf,
+  {$ENDIF}
   TypInfo;
 
 type
   { TBoldColumnsEditor }
   TBoldColumnsEditorCom = class(TComponentEditor)
   private
+    {$IFDEF BOLD_DELPHI6_OR_LATER}
     procedure EditPropertyColumns(const PropertyEditor: IProperty);
+    {$ELSE}
+    procedure EditPropertyColumns(PropertyEditor: TPropertyEditor);
+    {$ENDIF}
   public
     procedure EmptyColumns;
     procedure CreateDefaultColumns;
@@ -26,7 +39,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
   BoldGridCom;
 
@@ -35,7 +47,11 @@ type
 
 
 {---TBoldColumnsEditor---}
+{$IFDEF BOLD_DELPHI6_OR_LATER}
 procedure TBoldColumnsEditorCom.EditPropertyColumns(const PropertyEditor: IProperty);
+{$ELSE}
+procedure TBoldColumnsEditorCom.EditPropertyColumns(PropertyEditor: TPropertyEditor);
+{$ENDIF}
 begin
   if SameText(PropertyEditor.GetName, 'Columns') then
     PropertyEditor.Edit;
@@ -43,18 +59,30 @@ end;
 
 procedure TBoldColumnsEditorCom.Edit;
 var
+{$IFDEF BOLD_DELPHI6_OR_LATER}
   Components: IDesignerSelections;
+{$ELSE}
+  Components: TDesignerSelectionList;
+{$ENDIF}
 begin
+{$IFDEF BOLD_DELPHI6_OR_LATER}
   Components := TDesignerSelections.Create;
+{$ELSE}
+  Components := TDesignerSelectionList.Create;
+{$ENDIF}
   try
     Components.Add(Component);
     GetComponentProperties(Components,
                            tkProperties,
                            Designer,
-                           EditPropertyColumns,
-                           nil);
+                           EditPropertyColumns
+                           {$IFDEF BOLD_DELPHI6_OR_LATER}, nil{$ENDIF});
   finally
+    {$IFDEF BOLD_DELPHI6_OR_LATER}
     Components := nil;
+    {$ELSE}
+    Components.Free;
+    {$ENDIF}
   end;
 end;
 
@@ -72,7 +100,6 @@ begin
   begin
     DeleteAllColumns;
     AddColumn;
-    // This is done because the grid screws up the column widths
     AddColumn;
     Columns[1].Free;
   end;
@@ -83,7 +110,7 @@ begin
   case Index of
     0: Edit;
     1:{ CreateDefaultColumns;
-    2: }EmptyColumns;  // manual fix
+    2: }EmptyColumns;
   end;
 end;
 
@@ -92,13 +119,13 @@ begin
   case index of
     0: Result := '&Edit Columns';
     1:{ Result := 'Create Default Columns';
-    2: }Result := 'Clear all Columns';  // manual fix
+    2: }Result := 'Clear all Columns';
   end;
 end;
 
 function TBoldColumnsEditorCom.GetVerbCount: Integer;
 begin
-  Result := 2;     // manual fix
+  Result := 2;
 end;
 
 initialization

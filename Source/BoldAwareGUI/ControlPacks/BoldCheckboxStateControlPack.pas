@@ -1,3 +1,7 @@
+
+{ Global compiler directives }
+{$include bold.inc}
+
 unit BoldCheckboxStateControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -18,10 +22,10 @@ type
   TBoldCheckBoxRendererData = class;
 
   { TBoldAsCheckBoxStateRenderer }
-  TBoldGetAsCheckBoxState = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): TCheckBoxState of object;
-  TBoldSetAsCheckBoxState = procedure (Element: TBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldValidateCheckBoxState = function (Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
-  TBoldCheckBoxIsChanged = function (RendererData: TBoldCheckBoxRendererData; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
+  TBoldGetAsCheckBoxState = function (aFollower: TBoldFollower): TCheckBoxState of object;
+  TBoldSetAsCheckBoxState = procedure (aFollower: TBoldFollower; newValue: TCheckBoxState) of object;
+  TBoldValidateCheckBoxState = function (aFollower: TBoldFollower; Value: TCheckBoxState): Boolean of object;
+  TBoldCheckBoxIsChanged = function (Follower: TBoldFollower; NewValue: TCheckBoxState): Boolean of object;
 
   { TBoldCheckBoxRendererData }
   TBoldCheckBoxRendererData = class(TBoldRendererData)
@@ -44,15 +48,15 @@ type
     function GetRendererDataClass: TBoldRendererDataClass; override;
   public
     class function DefaultRenderer: TBoldAsCheckBoxStateRenderer;
-    class function DefaultGetAsCheckBoxStateAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TCheckBoxState; virtual;
-    class procedure DefaultSetAsCheckBoxState(Element: TBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
-    class function DefaultValidateCheckBoxState(Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;  VariableList: TBoldExternalVariableList): Boolean; virtual;
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
-    function DefaultIsChanged(RendererData: TBoldCheckBoxRendererData; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;  VariableList: TBoldExternalVariableList): Boolean;
-    function GetAsCheckBoxStateAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TCheckBoxState; virtual;
-    procedure SetAsCheckBoxState(Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
-    function ValidateCheckBoxState(Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;VariableList: TBoldExternalVariableList): Boolean; virtual;
-    function IsChanged(RendererData: TBoldCheckBoxRendererData; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+    class function DefaultGetAsCheckBoxStateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TCheckBoxState; virtual;
+    class procedure DefaultSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState); virtual;
+    class function DefaultValidateCheckBoxState(aFollower: TBoldFollower; Value: TCheckBoxState): Boolean; virtual;
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); override;
+    function DefaultIsChanged(Follower: TBoldFollower; NewValue: TCheckBoxState): Boolean;
+    function GetAsCheckBoxStateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TCheckBoxState; virtual;
+    procedure SetAsCheckBoxState(aFollower: TBoldFollower; Value: TCheckBoxState); virtual;
+    function ValidateCheckBoxState(aFollower: TBoldFollower; Value: TCheckBoxState): Boolean; virtual;
+    function IsChanged(Follower: TBoldFollower; NewValue: TCheckBoxState): Boolean;
   published
     property OnGetAsCheckBoxState: TBoldGetAsCheckBoxState read FOnGetAsCheckBoxState write FOnGetAsCheckBoxState;
     property OnSetAsCheckBoxState: TBoldSetAsCheckBoxState read FOnSetAsCheckBoxState write FOnSetAsCheckBoxState;
@@ -85,7 +89,8 @@ uses
   SysUtils,
   BoldGuiResourceStrings,
   BoldControlPackDefs,
-  BoldAttributes;
+  BoldAttributes,
+  BoldGuard;
 
 var
   DefaultAsCheckBoxStateRenderer: TBoldAsCheckBoxStateRenderer;
@@ -122,52 +127,65 @@ end;
 
 procedure TBoldCheckBoxStateFollowerController.SetAsCheckBoxState(Value: TCheckBoxState; Follower: TBoldFollower);
 begin
-  EffectiveAsCheckBoxStateRenderer.SetAsCheckBoxState(Follower.Element, Value, Representation, Expression, VariableList);
+  EffectiveAsCheckBoxStateRenderer.SetAsCheckBoxState(Follower, Value);
 end;
 
 function TBoldCheckBoxStateFollowerController.ValidateCheckBoxState(Value: TCheckBoxState; Follower: TBoldFollower): Boolean;
 begin
-  Result := EffectiveAsCheckBoxStateRenderer.ValidateCheckBoxState(Follower.Element, Value, Representation, Expression, VariableList);
+  Result := EffectiveAsCheckBoxStateRenderer.ValidateCheckBoxState(Follower, Value);
 end;
 
 procedure TBoldCheckBoxStateFollowerController.MayHaveChanged(NewValue: TCheckBoxState; Follower: TBoldFollower);
+var
+  lIsChanged: boolean;
+  lRendererData: TBoldCheckBoxRendererData;
 begin
   if Follower.State in bfsDisplayable then
   begin
-    (Follower.RendererData as TBoldCheckBoxRendererData).CurrentValue := NewValue;
-    Follower.ControlledValueChanged(EffectiveAsCheckBoxStateRenderer.IsChanged(Follower.RendererData as TBoldCheckBoxRendererData, NewValue, Representation, Expression, VariableList));
+    lRendererData := Follower.RendererData as TBoldCheckBoxRendererData;
+    lRendererData.CurrentValue := NewValue;
+    lIsChanged := EffectiveAsCheckBoxStateRenderer.IsChanged(Follower, NewValue);
+    if lIsChanged then
+    begin
+      Follower.ControlledValueChanged;
+    end;
   end;
 end;
 
 procedure TBoldCheckBoxStateFollowerController.MakeClean(Follower: TBoldFollower);
 begin
-  ReleaseChangedValue(Follower); // note, must do first, since set can change element
+//  if (ApplyPolicy <> bapChange) or EffectiveRenderer.ChangedValueEventsAssigned then
+  begin
+    ReleaseChangedValue(Follower); // note, must do first, since set can change element
+  end;
   SetAsCheckBoxState(GetCurrentAsCheckBoxState(Follower), Follower);
 end;
 
 { TBoldAsCheckBoxStateRenderer }
-procedure TBoldAsCheckBoxStateRenderer.MakeUpToDateANdSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsCheckBoxStateRenderer.MakeUpToDateANdSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
   s: TCheckBoxState;
-  Controller: TBoldCheckBoxStateFollowerController;
+  lRendererData: TBoldCheckBoxRendererData;
 begin
-  Controller := FollowerController as TBoldCheckBoxStateFollowerController;
-  s := GetAsCheckBoxStateAndSubscribe(Element, Controller.Representation, Controller.Expression,  Controller.GetVariableListAndSubscribe(Subscriber), Subscriber);
-  (RendererData as TBoldCheckBoxRendererData).OldValue := s;
-  (RendererData as TBoldCheckBoxRendererData).CurrentValue := s;
+  s := GetAsCheckBoxStateAndSubscribe(aFollower, Subscriber);
+  lRendererData := (aFollower.RendererData as TBoldCheckBoxRendererData);
+  lRendererData.OldValue := s;
+  lRendererData.CurrentValue := s;
 end;
 
-class function TBoldAsCheckBoxStateRenderer.DefaultGetAsCheckBoxStateAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TCheckBoxState;
+class function TBoldAsCheckBoxStateRenderer.DefaultGetAsCheckBoxStateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TCheckBoxState;
 var
   {$IFDEF BOLDCOMCLIENT} // DefaultGet
   e: IBoldElement;
   Attribute: IBoldAttribute;
   {$ELSE}
   E: TBoldIndirectElement;
+  lResultElement: TBoldElement;
+  lGuard: IBoldGuard;
   {$ENDIF}
 begin
   Result := cbGrayed;
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
     {$IFDEF BOLDCOMCLIENT} // defaultGet
     if assigned(Subscriber) then
@@ -184,32 +202,34 @@ begin
         Result := cbUnchecked;
     end;
     {$ELSE}
-    E := TBoldIndirectElement.Create;
-    try
-      Element.EvaluateAndSubscribeToExpression(Expression, Subscriber, E, False, False, VariableList);
-      if E.Value is TBABoolean then
-        with E.Value as TBABoolean do
-          if IsNull then
-            Result := cbGrayed
-          else if AsBoolean then
-            Result := cbChecked
-          else
-            Result := cbUnchecked;
-    finally
-      E.Free;
+    lResultElement := aFollower.Value;
+    if not Assigned(lResultElement) then
+    begin
+      lGuard:= TBoldGuard.Create(E);
+      e := TBoldIndirectElement.Create;
+      aFollower.Element.EvaluateAndSubscribeToExpression(aFollower.AssertedController.Expression, Subscriber, E, False, False, aFollower.Controller.GetVariableListAndSubscribe(Subscriber));
+      lResultElement := e.Value;
     end;
+    if lResultElement is TBABoolean then
+      with lResultElement as TBABoolean do
+        if IsNull then
+          Result := cbGrayed
+        else if AsBoolean then
+          Result := cbChecked
+        else
+          Result := cbUnchecked;
     {$ENDIF}
   end;
 end;
 
-class procedure TBoldAsCheckBoxStateRenderer.DefaultSetAsCheckBoxState(Element: TBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+class procedure TBoldAsCheckBoxStateRenderer.DefaultSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
 var
   ValueElement: TBoldElement;
   {$IFDEF BOLDCOMCLIENT} // defaulSet
   Attribute: IBoldAttribute;
   {$ENDIF}
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   {$IFDEF BOLDCOMCLIENT} // defaultSet
   if valueElement.QueryInterface(IBoldAttribute, Attribute) = S_OK then
   begin
@@ -234,7 +254,7 @@ begin
   {$ENDIF}
   end
   else
-    raise EBold.CreateFmt(sCannotSetValue, [ClassName]);
+    raise EBold.CreateFmt('%s: Can''t set value', [ClassName]);
 end;
 
 function TBoldAsCheckBoxStateRenderer.GetRendererDataClass: TBoldRendererDataClass;
@@ -242,40 +262,40 @@ begin
   Result := TBoldCheckBoxRendererData;
 end;
 
-  class function TBoldAsCheckBoxStateRenderer.DefaultValidateCheckBoxState(Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+class function TBoldAsCheckBoxStateRenderer.DefaultValidateCheckBoxState(aFollower: TBoldFollower; Value: TCheckBoxState): Boolean;
 begin
   Result := True;
 end;
 
-function TBoldAsCheckBoxStateRenderer.GetAsCheckBoxStateAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TCheckBoxState;
+function TBoldAsCheckBoxStateRenderer.GetAsCheckBoxStateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TCheckBoxState;
 begin
   if Assigned(OnSubscribe) and Assigned(Subscriber) then
   begin
-    if Assigned(Element) then
-       OnSubscribe(Element, Representation, Expression, Subscriber);
+    if Assigned(aFollower.Element) then
+       OnSubscribe(aFollower, Subscriber);
     Subscriber := nil;
   end;
 
   if Assigned(OnGetAsCheckBoxState) then
-    Result := OnGetAsCheckBoxState(Element, Representation, Expression)
+    Result := OnGetAsCheckBoxState(aFollower)
   else
-    Result := DefaultGetAsCheckBoxStateAndSubscribe(Element, Representation, Expression, VariableList, Subscriber);
+    Result := DefaultGetAsCheckBoxStateAndSubscribe(aFollower, Subscriber);
 end;
 
-procedure TBoldAsCheckBoxStateRenderer.SetAsCheckBoxState(Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;VariableList: TBoldExternalVariableList);
+procedure TBoldAsCheckBoxStateRenderer.SetAsCheckBoxState(aFollower: TBoldFollower; Value: TCheckBoxState);
 begin
   if Assigned(OnSetAsCheckBoxState) then
-    OnSetAsCheckBoxState(Element, Value, Representation, Expression)
+    OnSetAsCheckBoxState(aFollower, Value)
   else
-    DefaultSetAsCheckBoxState(Element, Value, Representation, Expression, VariableList);
+    DefaultSetAsCheckBoxState(aFollower, Value);
 end;
 
-function TBoldAsCheckBoxStateRenderer.ValidateCheckBoxState(Element: TBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsCheckBoxStateRenderer.ValidateCheckBoxState(aFollower: TBoldFollower; Value: TCheckBoxState): Boolean;
 begin
   if Assigned(OnValidateCheckBoxState) then
-    Result := OnValidateCheckBoxState(Element, Value, Representation, Expression)
+    Result := OnValidateCheckBoxState(aFollower, Value)
   else
-    Result := DefaultValidateCheckBoxState(Element, Value, Representation, Expression, VariableList);
+    Result := DefaultValidateCheckBoxState(aFollower, Value);
 end;
 
   class function TBoldAsCheckBoxStateRenderer.DefaultRenderer: TBoldAsCheckBoxStateRenderer;
@@ -283,17 +303,17 @@ begin
   Result := DefaultAsCheckBoxStateRenderer;
 end;
 
-function TBoldAsCheckBoxStateRenderer.DefaultIsChanged(RendererData: TBoldCheckBoxRendererData; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsCheckBoxStateRenderer.DefaultIsChanged(Follower: TBoldFollower; NewValue: TCheckBoxState): Boolean;
 begin
-  Result := NewValue <> TBoldCheckBoxRendererData(RendererData).OldValue;
+  Result := NewValue <> TBoldCheckBoxRendererData(Follower.RendererData).OldValue;
 end;
 
-function TBoldAsCheckBoxStateRenderer.IsChanged(RendererData: TBoldCheckBoxRendererData; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsCheckBoxStateRenderer.IsChanged(Follower: TBoldFollower; NewValue: TCheckBoxState): Boolean;
 begin
   if Assigned(fOnIsChanged) then
-    Result := fOnIsChanged(RendererData, NewValue, Representation, Expression)
+    Result := fOnIsChanged(Follower, NewValue)
   else
-    Result := DefaultIsChanged(RendererData, NewValue, Representation, Expression, VariableList);
+    Result := DefaultIsChanged(Follower, NewValue);
 end;
 
 initialization
@@ -303,3 +323,4 @@ finalization
   FreeAndNil(DefaultAsCheckBoxStateRenderer);
 
 end.
+

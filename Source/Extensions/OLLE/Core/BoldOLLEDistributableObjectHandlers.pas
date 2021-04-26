@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEDistributableObjectHandlers;
 
 interface
@@ -22,11 +25,13 @@ uses
   BoldDbInterfaces,
   BoldOLLEdmmain;
 
+
+
 const
   BOLD_OLL_IDATTRIBUTECOLUMN_NAME = 'LOCALID';
   BOLD_OLL_PSIDATTRIBUTECOLUMN_NAME = 'GLOBALID';
   BOLD_OLL_NAMEOFCLASSATTRIBUTECOLUMN_NAME = 'NAMEOFCLASS';
-
+  
 type
   TBoldPSId = string;
   TBoldDistributableObjectHandler = class;
@@ -53,13 +58,11 @@ type
     fBrokenLinkResolver: TBoldBrokenLinkResolver;
     fMyTransaction: Boolean;
     fTheMapping: TMapping;
-//    function GetDatabase: IBoldDatabase;
     function TheMapping: TMapping;
     function LookupInfoByLocalId(LocalId: TBoldDefaultId): TDistributableObjectInfo;
     procedure AddToMapping(anObj: TDistributableObjectInfo);
     procedure GetLocalIdsFor(InfoObjects: TDistributableObjectInfoList; IdList: TBoldObjectIdList);
     function GetForeignPSInfo(PSId: TBoldPSId): TForeignPSInfo;
-//    function NewLocalClassIdFor(ClassId: TBoldClassIdWithExpressionName): TBoldClassId;
     procedure ExtractAllIds(IdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; OutIdList: TBoldObjectIdList);
     procedure Fetch(IdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace);
     procedure GetInfoObjectsFor(IdList: TBoldObjectIdList; InfoObjectList: TDistributableObjectInfoList; RemainingIdList: TBoldObjectIdList);
@@ -117,7 +120,6 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  OlleConsts,
   BoldDomainElement;
 
 procedure AddObjectToIdList(aDistributableInfo: TDistributableObjectInfo; anIdList: TBoldObjectIdList);
@@ -155,10 +157,10 @@ begin
     begin
       anObject := InfoObjects[i];
       if not (anObject is TForeignObjectInfo) then
-        raise EBold.CreateFmt(sObjectNotForeign, [Classname]);
+        raise EBold.CreateFmt('%s.EnsureForeignInfo: Object is not a foreign object', [Classname]);
       aForeignObjectInfo := anObject as TForeignObjectInfo;
       if not (aForeignObjectInfo.Owner = Owner) then
-        raise EBold.CreateFmt(sWrongOwner, [Classname]);
+        raise EBold.CreateFmt('%s.EnsureForeignInfo: Wrong owner', [Classname]);
       anObjectId.AsInteger := aForeignObjectInfo.LocalId;
       aForeignObjectInfo.Put(ValueSpace, HoldList.IdInList[anObjectId], NewLocalTimeStamp);
     end;
@@ -198,8 +200,6 @@ begin
 
       VerifyAssociations(ValueSpace, IdList2, HoldList2);
       Update(ValueSpace, IdList2, TranslationList2, NewLocalTimeStamp);
-
-//    FVS.ApplyTranslationList(TranslationList2);     Done by Update
       IdList2.ApplyTranslationList(TranslationList2);
       HoldList2.ApplyTranslationList(TranslationList2);
 
@@ -238,7 +238,7 @@ begin
     try
       OwnerForeignPSInfo := GetForeignPSInfo(Owner);
       if OwnerForeignPSInfo.IsCheckingIn then
-        raise EBold.CreateFmt(sObjectsAlreadyBeingCheckedIn, [Classname]);
+        raise EBold.CreateFmt('%s.StartCheckIn: Already checking in objects for this persistent storage', [Classname]);
       Fetch(Idlist, ValueSpace);
       StartCheckInObjects(ValueSpace, IdList, ReleaseList, OwnerForeignPSInfo);
       ReleaseObjects(ValueSpace, ReleaseList);
@@ -347,7 +347,6 @@ var
   aValueSpace: TBoldFreeStandingValueSpace;
 
   function DifferentTimeStamp: Boolean;
-  // This function exists to remove a weird bug that probably has to do with releasing interfaces.
   var
     anObjectContents: IBOldObjectContents;
   begin
@@ -361,7 +360,7 @@ begin
   anObjectIdList := TBoldObjectIdList.Create;
   aValueSpace := TBoldFreeStandingValueSpace.Create;
   try
-    GetForeignPSInfo(Owner).EvaluateExpression('ownedObjectInfos.heldObjectInfo', anElement); // do not localize
+    GetForeignPSInfo(Owner).EvaluateExpression('ownedObjectInfos.heldObjectInfo', anElement);
     anObjectList := anElement.Value as TBoldObjectList;
     anObjectList.EnsureObjects;
     for i := 0 to anObjectList.Count-1 do
@@ -389,6 +388,7 @@ begin
   for i := 0 to anObjectList.Count-1 do
     AddObjectToIdList(anObjectList[i], Objects);
 end;
+
 
 { TOwnObjectHandler }
 
@@ -424,8 +424,6 @@ begin
 
       VerifyAssociations(ValueSpace, IdList2, IdList2);
       Update(ValueSpace, IdList2, TranslationList2, NewTimeStamp);
-
-//    FVS.ApplyTranslationList(TranslationList2);     Done by Update
       IdList2.ApplyTranslationList(TranslationList2);
       ReleaseList2.ApplyTranslationList(TranslationList2);
 
@@ -465,7 +463,7 @@ begin
     begin
       anObject := InfoObjects[i];
       if not (anObject is TOwnObjectInfo) then
-        raise EBold.CreateFmt(sObjectNotOwned, [Classname, 'CheckInObjects']); // do not localize
+        raise EBold.CreateFmt('%s.CheckInObjects: Object is not an owned object', [Classname]);
       anOwnObjectInfo := anObject as TOwnObjectInfo;
       anObjectId.AsInteger := anOwnObjectInfo.LocalId;
       anOwnObjectInfo.CheckIn(ValueSpace, ReleaseList.IdInList[anObjectId], Holder);
@@ -476,7 +474,7 @@ begin
       anOwnObjectInfo.LocalId := (NewInfoIds[i] as TBoldDefaultId).AsInteger;
       AddToMapping(anOwnObjectInfo);
       anOwnObjectInfo.CheckedOutObjectInfo := TCheckedOutObjectInfo.Create(OllSystem);
-      anOwnObjectInfo.CheckedOutObjectInfo.Holder := Holder; // Needed for those objects that aren't released
+      anOwnObjectInfo.CheckedOutObjectInfo.Holder := Holder;
       anOwnObjectInfo.CheckIn(ValueSpace, ReleaseList.IdInList[NewInfoIds[i]], Holder);
     end;
   finally
@@ -552,7 +550,7 @@ begin
   try
     aForeignPS := GetForeignPSInfo(ForeignPS);
     if aForeignPS.IsSynching then
-      raise EBold.CreateFmt(sSynchInProgress, [classname]);
+      raise EBold.CreateFmt('%s.GetSynch: There is already an ongoing synch that must either be acknowledged or failed.', [classname]);
 
     ChangedObjects := TBoldObjectIdList.Create;
     HoldList := TBoldObjectIdList.Create;
@@ -583,7 +581,6 @@ begin
       HoldList.Free;
       aCond.Free;
       InfoObjects.Free;
-      MissingIds.Free;
     end;
 
     OllSystem.UpdateDatabase;
@@ -665,7 +662,7 @@ begin
     for i := 0 to InfoObjects.Count - 1 do
     begin
       if not (InfoObjects[i] is TOwnObjectInfo) then
-        raise EBold.CreateFmt(sObjectNotOwned, [Classname, 'UnCheckOutObjects']); // do not localize
+        raise EBold.CreateFmt('%s.UnCheckOutObjects: Object is not an owned object', [Classname]);
       anOwnObjectInfo := InfoObjects[i] as TOwnObjectInfo;
       anOwnObjectInfo.UnCheckOut(Holder);
     end;
@@ -693,7 +690,7 @@ begin
       aCondition.WhereFragment :=  BOLD_OLL_PSIDATTRIBUTECOLUMN_NAME + ' = ''' + PSId + '''';
       OllSystem.PersistenceController.PMFetchIDListWithCondition(PSInfoObjectIdList, OllSystem.AsIBoldvalueSpace[bdepPMIn], fmNormal, aCondition, 0);
     end else}
-      SearchByOcl('ForeignPSInfo.allInstances->select(globalId = ''' + PSId + ''')', PSInfoObjectIdList); // do not localize
+      SearchByOcl('ForeignPSInfo.allInstances->select(globalId = ''' + PSId + ''')', PSInfoObjectIdList);
     if PSInfoObjectIdList.Count = 0 then
     begin
       result := TForeignPSInfo.Create(OllSystem);
@@ -809,8 +806,8 @@ begin
       aCondition := TBoldSQLCondition.Create;
       FoundIds := TBoldObjectIdList.Create;
       try
-        aCondition.TopSortedIndex := OllSystem.BoldSystemTypeInfo.ClassTypeInfoByModelName['DistributableObjectInfo'].TopSortedIndex; // do not localize
-        aCondition.WhereFragment :=  BOLD_OLL_IDATTRIBUTECOLUMN_NAME + ' IN (' + IdListToSQL(RemainingIds) + ')'; // do not localize
+        aCondition.TopSortedIndex := OllSystem.BoldSystemTypeInfo.ClassTypeInfoByModelName['DistributableObjectInfo'].TopSortedIndex;
+        aCondition.WhereFragment :=  BOLD_OLL_IDATTRIBUTECOLUMN_NAME + ' IN (' + IdListToSQL(RemainingIds) + ')';
         OllSystem.GetAllWithCondition(FetchedInfoObjs, aCondition);
         FetchedInfoObjs.EnsureObjects;
         for i := 0 to FetchedInfoObjs.Count-1 do
@@ -860,8 +857,7 @@ begin
   begin
     anObject := ValueSpace.ObjectContentsByObjectId[IdList[i]];
     for j := 0 to anObject.MemberCount-1 do
-      if assigned(anObject.ValueByIndex[j]) then
-        anObject.ValueByIndex[j].BoldPersistenceState := bvpsModified;
+      anObject.ValueByIndex[j].BoldPersistenceState := bvpsModified;
     if IdList[i] is TBoldGlobalId then
     begin
       if anObject.BoldExistenceState = besDeleted then
@@ -958,11 +954,9 @@ var
             VerifyObjectRoles(ValueSpace.ObjectContentsByObjectId[anIdRefPair.Id2]);
         end else if aMember.QueryInterface(IBoldObjectIdListRef, anIdListRef) = S_OK then
         begin
-//          VerifyAllInList(anIdListRef.IdList);
         end else if aMember.QueryInterface(IBoldObjectIdListRefPair, anIdListRefPair) = S_OK then
         begin
-//          VerifyAllInList(anIdListRefPair.anIdListRefPair.IdList1);
-//          VerifyAllInList(anIdListRefPair.anIdListRefPair.IdList2);
+
         end;
       end;
     end;
@@ -979,7 +973,6 @@ var
       aMember := ObjectContents.ValueByIndex[j];
       if assigned(aMember) then
       begin
-        // FIXME: Doesn't work for non-embedded singlelinks, but that requires access to the model
         if ((aMember.QueryInterface(IBoldObjectIdRef, anIdRef) = S_OK) and
             (anIdRef.Id is TBoldGlobalId) and
             (not ValueSpace.HasContentsForId[anIdRef.Id])) or
@@ -990,12 +983,11 @@ var
           begin
             if not BrokenLinkResolver.ResolveBrokenLink(ObjectContents, j, HoldList.IdInList[IdList[i]]) then
             begin
-              raise EBoldFeatureNotImplementedYet.CreateFmt(sCannotFailIndividualObjects, [classname]);
-//              CascadeToNeighbours;
-//              ValueSpace.deleteobject
+              raise EBoldFeatureNotImplementedYet.CreateFmt('%s.VerifyAssociations: Failing inidividual objects not implemented', [classname]);
+
             end;
           end else
-            raise EBold.Create(sUnresolvedLink);
+            raise EBold.Create('Operation failed: Unresolved link');
       end;
     end;
   end;
@@ -1072,11 +1064,11 @@ var
   begin
     aMember := ObjectContents.ValueByIndex[MemberIndex];
     if (aMember.QueryInterface(IBoldObjectIdRef, anIdRef) = S_OK) then
-      anIdRef.SetFromId(nil)
+      anIdRef.SetFromId(nil, false)
     else if (aMember.QueryInterface(IBoldObjectIdRefPair, anIdRefPair) = S_OK) then
       anIdRefPair.SetFromIds(nil, nil)
     else
-      raise EBoldInternal.CreateFmt(sMemberNotSingleLink, [Classname]);
+      raise EBoldInternal.CreateFmt('%.ResolveBrokenLink: Member is not a singlelink', [Classname]);
   end;
 
 begin
@@ -1088,10 +1080,10 @@ begin
 
   case ResolveAction of
     blraCut: Cut;
-    blraAbort: raise EBold.Create(sUnresolvedLink);
+    blraAbort: raise EBold.Create('Operation failed: Unresolved link');
     blraFailObject: result := False;
     blraIgnore:;
-    blraMissing: raise EBoldFeatureNotImplementedYet.Create(sMissingObjectsNotImplemented);
+    blraMissing: raise EBoldFeatureNotImplementedYet.Create('Missing Objects not implemented');
   end;
 end;
 
@@ -1110,7 +1102,7 @@ begin
     end;
   finally
     TempId.Free;
-  end;
+  end;   
 end;
 
 procedure TBoldDistributableObjectHandler.NewOwnInfoObjectsFor(
@@ -1161,7 +1153,7 @@ var
 begin
   if not assigned(fTheMapping) then
   begin
-    Mappings := fOllSystem.ClassByExpressionName['Mapping']; // do not localize
+    Mappings := fOllSystem.ClassByExpressionName['Mapping'];
     if Mappings.Count = 0 then
       fTheMapping := TMapping.Create(fOllSystem)
     else
@@ -1179,4 +1171,5 @@ begin
   TheMapping.M_ObjectInfo.Add(anObj);
 end;
 
+initialization
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldActions;
 
 interface
@@ -81,7 +84,6 @@ implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldDefs,
   Controls,
   Dialogs,
@@ -104,7 +106,7 @@ end;
 constructor TBoldUpdateDBAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sUpdateDB;
+  Caption := 'Update DB';
 end;
 
 procedure TBoldUpdateDBAction.ExecuteTarget(Target: TObject);
@@ -120,9 +122,9 @@ constructor TBoldActivateSystemAction.Create(AOwner: TComponent);
 begin
   inherited;
   fHandleIdentitySubscriber := TBoldPassthroughSubscriber.Create(_Receive);
-  fOpenCaption := sOpenSystem;
-  fCloseCaption := sCloseSystem;
-  fSaveQuestion := sThereAreDirtyObjects;
+  fOpenCaption := 'Open system';
+  fCloseCaption := 'Close system';
+  fSaveQuestion := 'There are dirty objects. Save them before closing system?';
   UpdateCaption;
 end;
 
@@ -151,7 +153,7 @@ begin
         saYes: BoldSystemHandle.UpdateDatabase;
         saNo: BoldSystemHandle.System.Discard;
         saFail: if BoldSystemHandle.System.DirtyObjects.Count > 0 then
-                raise EBold.Create(sClosingWithDirtyObjects);
+                raise EBold.Create('Closing system with dirty objects!!');
       end;
     if Update then
       BoldSystemHandle.Active := not BoldSystemHandle.Active;
@@ -256,8 +258,6 @@ begin
   else
     Caption := '';
 
-  // The statusbar seems to have a bug, it does not correctly update its caption...
-  // even this does not make it work fully... Bug in VCL
 
   if Target is TStatusBar then
     (Target as TStatusBar).SimpleText := Caption;
@@ -275,5 +275,7 @@ procedure TBoldSystemHandleAction.SetBoldSystemHandle(
 begin
   BoldElementHandle := Value;
 end;
+
+initialization
 
 end.

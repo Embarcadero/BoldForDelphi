@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTextStream;
 
 interface
@@ -16,7 +19,6 @@ type
   { forward declarations }
   TBoldTextStream = class;
   TITextStream = class;
-  // For backward comaptibility
   TTextStream = TBoldTextStream;
 
   { TBoldTextStream }
@@ -85,14 +87,14 @@ end;
 
 procedure TBoldTextStream.StartBlock;
 begin
-  Writeln('begin'); // do not localize
+  Writeln('begin');
   Indent;
 end;
 
 procedure TBoldTextStream.EndBlock(const AddNewLine: boolean);
 begin
   Dedent;
-  Writeln('end;'); // do not localize
+  Writeln('end;');
   if AddNewLine then
     NewLine;
 end;
@@ -170,5 +172,7 @@ procedure TBoldTextStream.Clear;
 begin
   Size := 0;
 end;
+
+initialization
 
 end.

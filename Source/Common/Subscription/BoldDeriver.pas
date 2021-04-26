@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDeriver;
 
 interface
@@ -21,13 +24,15 @@ type
 
   { TBoldAbstractDeriver }
   TBoldAbstractDeriver = class(TBoldSubscriber)
-  private
-    fDerivedObject: TObject;
-    fSubscribe: Boolean;
-    procedure SetDeriverState(Value: TBoldDeriverState);
-    procedure SetSubscribe(value: boolean);
+  strict private
     function GetIsDeriving: Boolean;
-  protected
+    function GetIsCurrent: Boolean;
+    procedure DeriveAndSubscribe(subscribe: Boolean);
+  strict protected
+    procedure SetSubscribe(value: boolean); virtual;
+    function GetSubscribe: Boolean; virtual;
+    function GetDerivedObject: TObject; virtual; abstract;
+    procedure SetDeriverState(Value: TBoldDeriverState);
     procedure SetInternalDeriverState(const Value: TBoldDeriverState); virtual; abstract;
     function GetInternalDeriverState: TBoldDeriverState; virtual; abstract;
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent;
@@ -36,28 +41,27 @@ type
     procedure DoDeriveAndSubscribe(subscribe: Boolean); virtual; abstract;
     procedure DoNotifyOutOfDate; virtual;
     procedure DoReverseDerive; virtual;
-    function GetCanReverseDerive: Boolean; virtual; abstract;
+    function GetCanReverseDerive: Boolean; virtual; abstract;    
     property InternalDeriverState: TBoldDeriverState read GetInternalDeriverState write SetInternalDeriverState;
+    function GetContextString: string; override;    
   public
-    constructor Create(DerivedObject: TObject);
     procedure MarkSubscriptionOutOfdate;
     procedure MarkOutOfdate;
     procedure EnsureCurrent;
     procedure Derive;
     procedure ReverseDerive;
-    property DerivedObject: TObject read fDerivedObject;
-    property Subscribe: Boolean read fSubscribe write SetSubscribe;
+    property DerivedObject: TObject read GetDerivedObject;
+    property Subscribe: Boolean read GetSubscribe write SetSubscribe;
     property IsDeriving: Boolean read GetIsDeriving;
-    property CanReverseDerive: Boolean read GetCanReverseDerive;
+    property IsCurrent: Boolean read GetIsCurrent;
   end;
 
-  { TBoldEventPluggedDeriver }
-  TBoldEventPluggedDeriver = class(TBoldAbstractDeriver)
-  private
-    fOnDeriveAndSubscribe: TBoldDeriveAndResubscribe;
+  TBoldEventPluggedDeriver = class (TBoldAbstractDeriver)
+  strict private
+    fOnderiveAndSubscribe: TBoldDeriveAndResubscribe;
     fOnReverseDerive: TBoldReverseDerive;
     fOnNotifyOutOfDate: TBoldJustNotifyEvent;
-  protected
+  strict protected
     procedure DoDeriveAndSubscribe(subscribe: Boolean); override;
     procedure DoNotifyOutOfDate; override;
     procedure DoReverseDerive; override;
@@ -70,11 +74,18 @@ type
 
   { TBoldDeriver }
   TBoldDeriver = class(TBoldEventPluggedDeriver)
-  private
+  strict private
+    fDerivedObject: TObject;
     fInternalDeriverState: TBoldDeriverState;
-  protected
+    fSubscribe: Boolean;
+  strict protected
+    procedure SetSubscribe(value: boolean); override;
+    function GetSubscribe: Boolean; override;
     procedure SetInternalDeriverState(const Value: TBoldDeriverState); override;
     function GetInternalDeriverState: TBoldDeriverState; override;
+    function GetDerivedObject: TObject; override;
+  public 
+    constructor Create(DerivedObject: TObject);
   end;
 
 const
@@ -83,28 +94,27 @@ const
 implementation
 
 uses
-SysUtils,
-  BoldCommonConst;
-
+  SysUtils,
+  Classes,
+  BoldSystem,
+  BoldRev;
 
 { TBoldDeriver }
-
-constructor TBoldAbstractDeriver.Create(DerivedObject: TObject);
-begin
-  inherited Create;
-  fDerivedObject := DerivedObject;
-  Subscribe := True;
-end;
-
 procedure TBoldAbstractDeriver.Derive;
 var
   NewState: TBoldDeriverState;
 begin
-  NewState := bdsSubscriptionOutOfdate;
+  if Subscribe then
+    NewState := bdsSubscriptionOutOfdate
+  else
+    NewState := bdsOutOfdate;
   try
     repeat
       if (DeriverState = bdsSubscriptionOutOfdate) then
+      begin
+        CancelAllSubscriptions;
         DeriverState := bdsDerivingAndSubscribing
+      end
       else
         DeriverState := bdsDeriving;
       if not (DeriverState in bdsIsDeriving) then
@@ -116,25 +126,52 @@ begin
   end;
 end;
 
+procedure TBoldAbstractDeriver.DeriveAndSubscribe(subscribe: Boolean);
+begin;
+  DoDeriveAndSubscribe(Subscribe);
+end;
+
 procedure TBoldAbstractDeriver.DoNotifyOutOfDate;
 begin
-  // no action
 end;
 
 procedure TBoldAbstractDeriver.DoReverseDerive;
 begin
-  raise EBold.CreateFmt(sCannotReverseDerive, [ClassName]);
+  raise EBold.CreateFmt('%s: can''t reverse derive', [ClassName]);
 end;
 
 procedure TBoldAbstractDeriver.EnsureCurrent;
-begin
+begin 
   if (DeriverState in [bdsOutOfDate, bdsSubscriptionOutOfDate]) then
     Derive;
+end;
+
+function TBoldAbstractDeriver.GetContextString: string;
+begin
+  result := '';
+  if Assigned(DerivedObject) then
+    if DerivedObject is TComponent then
+      result := TComponent(DerivedObject).Name
+    else
+    if DerivedObject is TBoldSubscribableObject then
+      result := TBoldSubscribableObject(DerivedObject).ContextString
+    else
+      Result := DerivedObject.ClassName;
+end;
+
+function TBoldAbstractDeriver.GetIsCurrent: Boolean;
+begin
+  result := DeriverState = bdsCurrent;
 end;
 
 function TBoldAbstractDeriver.GetIsDeriving: Boolean;
 begin
   Result := DeriverState in bdsIsDeriving;
+end;
+
+function TBoldAbstractDeriver.GetSubscribe: Boolean;
+begin
+  Result := true;
 end;
 
 procedure TBoldAbstractDeriver.MarkSubscriptionOutOfdate;
@@ -144,7 +181,6 @@ end;
 
 procedure TBoldAbstractDeriver.MarkOutOfdate;
 begin
-  // avoids going from Subscriptionoutofdate to OutOfDate
   if DeriverState = bdsCurrent then
     DeriverState := bdsOutOfDate;
 end;
@@ -165,7 +201,7 @@ begin
           DeriverState := bdsReverseDerivingSubscriptionOutOfDate;
       end;
   else
-    raise EBold.CreateFmt(sUnknownMessageReceived, [ClassName, RequestedEvent]);
+    raise EBold.CreateFmt('%s.Receive: Unknown message received (%d)', [ClassName, RequestedEvent]);
   end;
 end;
 
@@ -178,15 +214,13 @@ procedure TBoldAbstractDeriver.SetDeriverState(Value: TBoldDeriverState);
 var
   OldState: TBoldDeriverState;
 begin
-  // FIXME check legal transitions;
-  if Value <> DeriverState then
+  OldState := InternalDeriverState;
+  if Value <> OldState then
   begin
-    OldState := InternalDeriverState;
-    // exit actions - None...
+    if not (OldState in [bdsCurrent, bdsOutOfDate, bdsSubscriptionOutOfDate, bdsDeriving, bdsDerivingAndSubscribing, bdsReverseDeriving, bdsReverseDerivingSubscriptionOutOfDate]) then
+      raise Exception.Create('TBoldAbstractDeriver.SetDeriverState old state is ' + IntToStr(Integer(oldState)));
     InternalDeriverState := Value;
-
-    // entry actions
-    if (OldState <> bdsOutOfDate) and // Check on OldState is primarily an optimization not to notify multiple times!
+    if (OldState <> bdsOutOfDate) and
       (value in [bdsOutOfDate, bdsSubscriptionOutOfDate]) then
       DoNotifyOutOfDate;
 
@@ -195,14 +229,20 @@ begin
       bdsReverseDerivingSubscriptionOutOfDate:
         CancelAllSubscriptions;
       bdsDerivingAndSubscribing:
-        DoDeriveAndSubscribe(True);
+        DeriveAndSubscribe(True);
       bdsDeriving:
-        DoDeriveAndSubscribe(False);
+        DeriveAndSubscribe(False);
     end;
   end
 end;
 
 procedure TBoldAbstractDeriver.SetSubscribe(value: boolean);
+begin
+  raise Exception.Create('Subscribe not settable for this class');
+                                                 
+end;
+
+procedure TBoldDeriver.SetSubscribe(value: boolean);
 begin
   if value <> Subscribe then
   begin
@@ -235,10 +275,15 @@ end;
 
 procedure TBoldEventPluggedDeriver.DoReverseDerive;
 begin
-  SetDeriverState(bdsReverseDeriving);
-  if Assigned(fOnReverseDerive) then
+  if DeriverState = bdsSubscriptionOutOfDate then begin
+    SetDeriverState(bdsReverseDerivingSubscriptionOutOfDate);
+  end else begin
+    SetDeriverState(bdsReverseDeriving);
+  end;
+  if Assigned(fOnReverseDerive) then begin
     fOnReverseDerive(DerivedObject);
-  case deriverstate of
+  end;
+  case DeriverState of
     bdsReverseDeriving: SetDeriverState(bdsOutOfDate);
     bdsReverseDerivingSubscriptionOutOfDate: SetDeriverState(bdsSubscriptionOutOfDate);
   end;
@@ -249,15 +294,34 @@ begin
   Result := Assigned(OnReverseDerive);
 end;
 
+function TBoldDeriver.GetSubscribe: Boolean;
+begin
+  Result := fSubscribe;
+end;
+
 procedure TBoldDeriver.SetInternalDeriverState(
   const Value: TBoldDeriverState);
 begin
   FInternalDeriverState := Value;
 end;
 
+constructor TBoldDeriver.Create(DerivedObject: TObject);
+begin
+  inherited Create;
+  fDerivedObject := DerivedObject;
+  Subscribe := true;
+end;
+
+function TBoldDeriver.GetDerivedObject: TObject;
+begin
+  Result := fDerivedObject;
+end;
+
 function TBoldDeriver.GetInternalDeriverState: TBoldDeriverState;
 begin
   Result := FInternalDeriverState;
 end;
+
+initialization
 
 end.

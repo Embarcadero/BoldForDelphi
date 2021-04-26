@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListHandleFollower;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -12,39 +15,34 @@ uses
   BoldSubscription,
   BoldControlPack,
   BoldListListControlPack,
-  BoldAbstractListHandle;
+  BoldAbstractListHandle,
+  BoldHandles;
 
-// Note, Currently subscibes to value-identity-change via element of handle, until
-// subscribability has been added to the handle.
 
 type
   { forward declarations }
   TBoldListHandleFollower = class;
 
   { TBoldListHandleFollower }
-  TBoldListHandleFollower = class(TBoldQueueable)
+  TBoldListHandleFollower = class(TBoldAbstractHandleFollower)
   private
     fBoldHandle: TBoldAbstractListHandle;
-    fFollower: TBoldFollower;
     fFollowerValueCurrent: Boolean;
     fHandleIndexLock: Boolean;
-    fSubscriber: TBoldSubscriber;
     procedure SetFollowerValueCurrent(value: Boolean);
     procedure SetBoldHandle(value: TBoldAbstractListHandle);
     property FollowerValueCurrent: Boolean read fFollowerValueCurrent write SetFollowerValueCurrent;
   protected
-    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetBoldHandle: TBoldElementHandle; override;
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); override;
     procedure Display; override;
-    property Subscriber: TBoldSubscriber read fSubscriber;
   public
     procedure Apply; override;
     procedure DiscardChange; override;
     procedure SetFollowerIndex(index: integer);
     property BoldHandle: TBoldAbstractListHandle read FBoldHandle write SetBoldHandle;
     property HandleIndexLock: boolean read fHandleIndexLock write fHandleIndexLock default True;
-    property Follower: TBoldFollower read fFollower;
-    constructor Create(MatchObject: TObject; Controller: TBoldAbstractListAsFollowerListController);
-    destructor Destroy; override;
+    constructor Create(AMatchObject: TObject; Controller: TBoldAbstractListAsFollowerListController);
   end;
 
 implementation
@@ -69,22 +67,12 @@ begin
   end;
 end;
 
-constructor TBoldListHandleFollower.Create(MatchObject: TObject;
+constructor TBoldListHandleFollower.Create(AMatchObject: TObject;
   Controller: TBoldAbstractListAsFollowerListController);
 begin
-  inherited Create(nil);
-  fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
-  fFollower := TBoldFollower.Create(MatchObject, Controller);
-  fFollower.PrioritizedQueuable := Self;
+  inherited Create(AMatchObject, Controller);
   fFollowerValueCurrent := true;
   fHandleIndexLock := true;
-end;
-
-destructor TBoldListHandleFollower.Destroy;
-begin
-  FreeAndNil(fFollower);
-  FreeAndNil(fSubscriber);
-  inherited;
 end;
 
 procedure TBoldListHandleFollower.SetBoldHandle(
@@ -93,7 +81,6 @@ begin
   if (value <> BoldHandle) then
   begin
     fBoldHandle := Value;
-    // will force subscription on Handle
     FollowerValueCurrent := false;
   end;
 end;
@@ -119,13 +106,13 @@ procedure TBoldListHandleFollower.SetFollowerValueCurrent(value: Boolean);
     Assert(Assigned(Follower));
     if Assigned(BoldHandle) then
     begin
-      fFollower.Element := BoldHandle.List;
+      Follower.Element := BoldHandle.List;
       if (HandleIndexLock) then
-        SetfollowerIndex((Follower.Controller as TBoldAbstractListAsFollowerListController).ListIndex(BoldHandle.CurrentIndex));
+        SetFollowerIndex((Follower.Controller as TBoldAbstractListAsFollowerListController).ListIndex(BoldHandle.CurrentIndex));
     end
     else
     begin
-      fFollower.Element := nil;
+      Follower.Element := nil;
     end;
   end;
 
@@ -133,8 +120,8 @@ procedure TBoldListHandleFollower.SetFollowerValueCurrent(value: Boolean);
   begin
     if Assigned(BoldHandle) then
     begin
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breListIdentityChanged); // FIXME
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breHandleIndexChanged); // FIXME
+      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breListIdentityChanged);
+      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breHandleIndexChanged);
     end;
   end;
 
@@ -150,7 +137,7 @@ begin
     if Value then
     begin
       PropagateValue;
-      RemoveFromDisplayList;
+      RemoveFromDisplayList(false);
       Subscribe;
     end
     else
@@ -177,5 +164,11 @@ begin
     BoldHandle.CurrentIndex := NewHandleIndex;
 end;
 
-end.
+function TBoldListHandleFollower.GetBoldHandle: TBoldElementHandle;
+begin
+  result := fBoldHandle;
+end;
 
+
+initialization
+end.

@@ -1,44 +1,39 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComObjectSpace_TLB;
 
-// ************************************************************************ //
-// WARNING                                                                    
-// -------                                                                    
-// The types declared in this file were generated from data read from a       
-// Type Library. If this type library is explicitly or indirectly (via        
-// another type library referring to this type library) re-imported, or the   
-// 'Refresh' command of the Type Library Editor activated while editing the
-// Type Library, the contents of this file will be regenerated and all
-// manual modifications will be lost.
-// ************************************************************************ //
 
-// PASTLWTR : 1.1
-// File generated on 2002-05-02 15:54:08 from Type Library described below.
 
-// ************************************************************************  //
-// Type Lib: D:\bold\BfD\Source\ObjectSpace\COM\BoldComObjectSpace.tlb (1)
-// LIBID: {D28A8F60-C8DD-11D3-89A9-444553540000}
-// LCID: 0
-// Helpfile:
-// DepndLst:
-//   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
-//   (2) v4.0 StdVCL, (C:\WINNT\System32\STDVCL40.DLL)
-// ************************************************************************ //
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{$TYPEDADDRESS OFF}
 
 interface
 
 uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
-  
 
-// *********************************************************************//
-// GUIDS declared in the TypeLibrary. Following prefixes are used:        
-//   Type Libraries     : LIBID_xxxx                                      
-//   CoClasses          : CLASS_xxxx                                      
-//   DISPInterfaces     : DIID_xxxx                                       
-//   Non-DISP interfaces: IID_xxxx                                        
-// *********************************************************************//
+
+
+
+
+
 const
-  // TypeLibrary Major and minor versions
   BoldComObjectSpaceMajorVersion = 1;
   BoldComObjectSpaceMinorVersion = 0;
 
@@ -67,9 +62,7 @@ const
   IID_IBoldElementHandle: TGUID = '{71446D80-01C9-4E3C-95A7-D74445C0776C}';
 type
 
-// *********************************************************************//
-// Forward declaration of types defined in TypeLibrary                    
-// *********************************************************************//
+
   IBoldElement = interface;
   IBoldElementDisp = dispinterface;
   IBoldMetaElement = interface;
@@ -113,11 +106,9 @@ type
   IBoldElementHandle = interface;
   IBoldElementHandleDisp = dispinterface;
 
-// *********************************************************************//
-// Interface: IBoldElement
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E8E2859A-0BAA-4DD9-8B26-A0AE5DEC87DF}
-// *********************************************************************//
+
+
+
   IBoldElement = interface(IDispatch)
     ['{E8E2859A-0BAA-4DD9-8B26-A0AE5DEC87DF}']
     procedure AddSmallSubscription(const ClientId: WideString; SubscriberId: Integer; 
@@ -178,11 +169,9 @@ type
     property HasAdaptee: WordBool read Get_HasAdaptee;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldElementDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E8E2859A-0BAA-4DD9-8B26-A0AE5DEC87DF}
-// *********************************************************************//
+
+
+
   IBoldElementDisp = dispinterface
     ['{E8E2859A-0BAA-4DD9-8B26-A0AE5DEC87DF}']
     procedure AddSmallSubscription(const ClientId: WideString; SubscriberId: Integer; 
@@ -232,11 +221,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldMetaElement
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {78994402-CA6E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldMetaElement = interface(IBoldElement)
     ['{78994402-CA6E-11D3-89A9-444553540000}']
     function Get_DelphiName: WideString; safecall;
@@ -247,11 +234,9 @@ type
     property ModelName: WideString read Get_ModelName;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldMetaElementDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {78994402-CA6E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldMetaElementDisp = dispinterface
     ['{78994402-CA6E-11D3-89A9-444553540000}']
     property DelphiName: WideString readonly dispid 201;
@@ -304,11 +289,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldElementTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {78994404-CA6E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldElementTypeInfo = interface(IBoldMetaElement)
     ['{78994404-CA6E-11D3-89A9-444553540000}']
     function ConformsTo(const ElementTypeInfo: IBoldElementTypeInfo): WordBool; safecall;
@@ -318,11 +301,9 @@ type
     property SystemTypeInfo: IBoldSystemTypeInfo read Get_SystemTypeInfo;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldElementTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {78994404-CA6E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldElementTypeInfoDisp = dispinterface
     ['{78994404-CA6E-11D3-89A9-444553540000}']
     function ConformsTo(const ElementTypeInfo: IBoldElementTypeInfo): WordBool; dispid 301;
@@ -378,20 +359,16 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldTypeTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {68A9FC6D-D646-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldTypeTypeInfo = interface(IBoldElementTypeInfo)
     ['{68A9FC6D-D646-11D3-89A9-444553540000}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldTypeTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {68A9FC6D-D646-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldTypeTypeInfoDisp = dispinterface
     ['{68A9FC6D-D646-11D3-89A9-444553540000}']
     function ConformsTo(const ElementTypeInfo: IBoldElementTypeInfo): WordBool; dispid 301;
@@ -447,11 +424,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldClassTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6924-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldClassTypeInfo = interface(IBoldElementTypeInfo)
     ['{969E6924-D4A6-11D3-89A9-444553540000}']
     function LeastCommonSuperClass(const ClassTypeInfo: IBoldClassTypeInfo): IBoldClassTypeInfo; safecall;
@@ -481,11 +456,9 @@ type
     property TopSortedIndex: Integer read Get_TopSortedIndex;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldClassTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6924-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldClassTypeInfoDisp = dispinterface
     ['{969E6924-D4A6-11D3-89A9-444553540000}']
     function LeastCommonSuperClass(const ClassTypeInfo: IBoldClassTypeInfo): IBoldClassTypeInfo; dispid 401;
@@ -554,20 +527,16 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldNilTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6926-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldNilTypeInfo = interface(IBoldClassTypeInfo)
     ['{969E6926-D4A6-11D3-89A9-444553540000}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldNilTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6926-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldNilTypeInfoDisp = dispinterface
     ['{969E6926-D4A6-11D3-89A9-444553540000}']
     function LeastCommonSuperClass(const ClassTypeInfo: IBoldClassTypeInfo): IBoldClassTypeInfo; dispid 401;
@@ -636,22 +605,18 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldListTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6928-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldListTypeInfo = interface(IBoldElementTypeInfo)
     ['{969E6928-D4A6-11D3-89A9-444553540000}']
     function Get_ListElementTypeInfo: IBoldElementTypeInfo; safecall;
     property ListElementTypeInfo: IBoldElementTypeInfo read Get_ListElementTypeInfo;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldListTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6928-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldListTypeInfoDisp = dispinterface
     ['{969E6928-D4A6-11D3-89A9-444553540000}']
     property ListElementTypeInfo: IBoldElementTypeInfo readonly dispid 401;
@@ -708,22 +673,18 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldAttributeTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E692A-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldAttributeTypeInfo = interface(IBoldElementTypeInfo)
     ['{969E692A-D4A6-11D3-89A9-444553540000}']
     function Get_SuperAttributeTypeInfo: IBoldAttributeTypeInfo; safecall;
     property SuperAttributeTypeInfo: IBoldAttributeTypeInfo read Get_SuperAttributeTypeInfo;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldAttributeTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E692A-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldAttributeTypeInfoDisp = dispinterface
     ['{969E692A-D4A6-11D3-89A9-444553540000}']
     property SuperAttributeTypeInfo: IBoldAttributeTypeInfo readonly dispid 401;
@@ -780,11 +741,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldSystemTypeInfo
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6922-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldSystemTypeInfo = interface(IBoldElementTypeInfo)
     ['{969E6922-D4A6-11D3-89A9-444553540000}']
     function Get_AttributeTypeInfoByExpressionName(const Name: WideString): IBoldAttributeTypeInfo; safecall;
@@ -827,11 +786,9 @@ type
     property ValueTypeNameList: IUnknown read Get_ValueTypeNameList;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldSystemTypeInfoDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {969E6922-D4A6-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldSystemTypeInfoDisp = dispinterface
     ['{969E6922-D4A6-11D3-89A9-444553540000}']
     property AttributeTypeInfoByExpressionName[const Name: WideString]: IBoldAttributeTypeInfo readonly dispid 401;
@@ -906,11 +863,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldDomainElement
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {78994406-CA6E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldDomainElement = interface(IBoldElement)
     ['{78994406-CA6E-11D3-89A9-444553540000}']
     function Get_BoldDirty: WordBool; safecall;
@@ -923,11 +878,9 @@ type
     property OwningElement: IBoldDomainElement read Get_OwningElement;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldDomainElementDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {78994406-CA6E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldDomainElementDisp = dispinterface
     ['{78994406-CA6E-11D3-89A9-444553540000}']
     property BoldDirty: WordBool readonly dispid 201;
@@ -981,11 +934,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldObject
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C21FF-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldObject = interface(IBoldDomainElement)
     ['{7C5C21FF-D247-11D3-89A9-444553540000}']
     procedure BoldMakePersistent; safecall;
@@ -1022,11 +973,9 @@ type
     property SessionId: OleVariant read Get_SessionId;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldObjectDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C21FF-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldObjectDisp = dispinterface
     ['{7C5C21FF-D247-11D3-89A9-444553540000}']
     procedure BoldMakePersistent; dispid 301;
@@ -1099,11 +1048,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldMember
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C2201-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldMember = interface(IBoldDomainElement)
     ['{7C5C2201-D247-11D3-89A9-444553540000}']
     function Clone: IBoldMember; safecall;
@@ -1126,11 +1073,9 @@ type
     property OwningObject: IBoldObject read Get_OwningObject;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldMemberDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C2201-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldMemberDisp = dispinterface
     ['{7C5C2201-D247-11D3-89A9-444553540000}']
     function Clone: IBoldMember; dispid 301;
@@ -1195,11 +1140,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldAttribute
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C25A5-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldAttribute = interface(IBoldMember)
     ['{7C5C25A5-D247-11D3-89A9-444553540000}']
     procedure SetToNull; safecall;
@@ -1211,11 +1154,9 @@ type
     property IsNull: WordBool read Get_IsNull;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldAttributeDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C25A5-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldAttributeDisp = dispinterface
     ['{7C5C25A5-D247-11D3-89A9-444553540000}']
     procedure SetToNull; dispid 401;
@@ -1284,11 +1225,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldObjectReference
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C2608-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldObjectReference = interface(IBoldMember)
     ['{7C5C2608-D247-11D3-89A9-444553540000}']
     function CanSet(const NewObject: IBoldObject): WordBool; safecall;
@@ -1299,11 +1238,9 @@ type
     property BoldRoleRTInfo: IUnknown read Get_BoldRoleRTInfo;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldObjectReferenceDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {7C5C2608-D247-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldObjectReferenceDisp = dispinterface
     ['{7C5C2608-D247-11D3-89A9-444553540000}']
     function CanSet(const NewObject: IBoldObject): WordBool; dispid 401;
@@ -1371,11 +1308,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldListCore
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {4153813B-4DE9-4A17-B747-7091A839BBFA}
-// *********************************************************************//
+
+
+
   IBoldListCore = interface(IBoldMember)
     ['{4153813B-4DE9-4A17-B747-7091A839BBFA}']
     procedure AddList(const List: IBoldListCore); safecall;
@@ -1398,11 +1333,9 @@ type
     property DuplicateMode: Integer read Get_DuplicateMode write Set_DuplicateMode;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldListCoreDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {4153813B-4DE9-4A17-B747-7091A839BBFA}
-// *********************************************************************//
+
+
+
   IBoldListCoreDisp = dispinterface
     ['{4153813B-4DE9-4A17-B747-7091A839BBFA}']
     procedure AddList(const List: IBoldListCore); dispid 401;
@@ -1481,11 +1414,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldList
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {798895F6-E991-432B-9F37-7998BA769199}
-// *********************************************************************//
+
+
+
   IBoldList = interface(IBoldListCore)
     ['{798895F6-E991-432B-9F37-7998BA769199}']
     procedure Add(const Element: IBoldElement); safecall;
@@ -1502,11 +1433,9 @@ type
     property Elements[Index: Integer]: IBoldElement read Get_Elements write Set_Elements;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldListDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {798895F6-E991-432B-9F37-7998BA769199}
-// *********************************************************************//
+
+
+
   IBoldListDisp = dispinterface
     ['{798895F6-E991-432B-9F37-7998BA769199}']
     procedure Add(const Element: IBoldElement); dispid 501;
@@ -1595,11 +1524,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldObjectList
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {75A31152-D30E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldObjectList = interface(IBoldList)
     ['{75A31152-D30E-11D3-89A9-444553540000}']
     function Get_BoldObjects(Index: Integer): IBoldObject; safecall;
@@ -1612,11 +1539,9 @@ type
     property SubscribeToObjectsInList: WordBool read Get_SubscribeToObjectsInList write Set_SubscribeToObjectsInList;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldObjectListDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {75A31152-D30E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldObjectListDisp = dispinterface
     ['{75A31152-D30E-11D3-89A9-444553540000}']
     property BoldObjects[Index: Integer]: IBoldObject dispid 601;
@@ -1708,11 +1633,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldMemberList
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {75A31154-D30E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldMemberList = interface(IBoldList)
     ['{75A31154-D30E-11D3-89A9-444553540000}']
     function Get_BoldMembers(Index: Integer): IBoldMember; safecall;
@@ -1720,11 +1643,9 @@ type
     property BoldMembers[Index: Integer]: IBoldMember read Get_BoldMembers write Set_BoldMembers;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldMemberListDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {75A31154-D30E-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldMemberListDisp = dispinterface
     ['{75A31154-D30E-11D3-89A9-444553540000}']
     property BoldMembers[Index: Integer]: IBoldMember dispid 601;
@@ -1814,11 +1735,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldSystem
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {8A530C40-D017-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldSystem = interface(IBoldDomainElement)
     ['{8A530C40-D017-11D3-89A9-444553540000}']
     function CreateNewMember(const ExpressionName: WideString): IBoldMember; safecall;
@@ -1840,11 +1759,9 @@ type
     property LoadedObjects: IBoldObjectList read Get_LoadedObjects;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldSystemDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {8A530C40-D017-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldSystemDisp = dispinterface
     ['{8A530C40-D017-11D3-89A9-444553540000}']
     function CreateNewMember(const ExpressionName: WideString): IBoldMember; dispid 301;
@@ -1911,20 +1828,16 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldBlob
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {68A9F8C2-D646-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldBlob = interface(IBoldAttribute)
     ['{68A9F8C2-D646-11D3-89A9-444553540000}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldBlobDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {68A9F8C2-D646-11D3-89A9-444553540000}
-// *********************************************************************//
+
+
+
   IBoldBlobDisp = dispinterface
     ['{68A9F8C2-D646-11D3-89A9-444553540000}']
     procedure SetToNull; dispid 401;
@@ -1993,11 +1906,9 @@ type
     property HasAdaptee: WordBool readonly dispid 129;
   end;
 
-// *********************************************************************//
-// Interface: IBoldElementHandle
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {71446D80-01C9-4E3C-95A7-D74445C0776C}
-// *********************************************************************//
+
+
+
   IBoldElementHandle = interface(IDispatch)
     ['{71446D80-01C9-4E3C-95A7-D74445C0776C}']
     procedure AddSmallSubscription(const ClientId: WideString; SubscriberId: Integer; 
@@ -2015,11 +1926,9 @@ type
     function SetData(DataFlags: Integer; const Value: IBoldElement; NamedValues: OleVariant): WordBool; safecall;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldElementHandleDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {71446D80-01C9-4E3C-95A7-D74445C0776C}
-// *********************************************************************//
+
+
+
   IBoldElementHandleDisp = dispinterface
     ['{71446D80-01C9-4E3C-95A7-D74445C0776C}']
     procedure AddSmallSubscription(const ClientId: WideString; SubscriberId: Integer; 

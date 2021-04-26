@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandlePTWithModel;
 
 interface
@@ -27,7 +30,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 const
   breModelDestroyed = 42;
@@ -57,7 +61,7 @@ end;
 procedure TBoldPersistenceHandlePassthroughWithModel.ModelChanged;
 begin
   ReleasePersistenceController;
-  SendEvent(self, beValueIdentityChanged);  // type change regarded as idenitychange
+  SendEvent(self, beValueIdentityChanged);
 end;
 
 destructor TBoldPersistenceHandlePassthroughWithModel.Destroy;
@@ -77,4 +81,5 @@ begin
   end;
 end;
 
+initialization
 end.

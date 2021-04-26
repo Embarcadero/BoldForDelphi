@@ -7,19 +7,19 @@
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>16.1</ProjectVersion>
+        <ProjectVersion>19.2</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Android' and '$(Base)'=='true') or '$(Base_Android)'!=''">
-        <Base_Android>true</Base_Android>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
-        <Base_Win32>true</Base_Win32>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
@@ -62,15 +62,17 @@
         <GenDll>true</GenDll>
         <DCC_E>false</DCC_E>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Android)'!=''">
-        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=preferExternal;largeHeap=False;theme=TitleBar;hardwareAccelerated=true</VerInfo_Keys>
-        <BT_BuildType>Debug</BT_BuildType>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -85,7 +87,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <DCC_Define>BOLD_DELPHI;$(DCC_Define)</DCC_Define>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <ItemGroup>
@@ -146,7 +148,6 @@
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldOclSemantics.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldOclSymbolImplementations.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldORed.pas"/>
-        <DCCReference Include="Source\ObjectSpace\Ocl\BoldRegularExpression.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldSSExcept.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldSSLexU.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldSSYaccU.pas"/>
@@ -181,7 +182,6 @@
         <DCCReference Include="Source\Common\Handles\BoldHandle.pas"/>
         <DCCReference Include="Source\Common\HTTP\BoldDataBlock.pas"/>
         <DCCReference Include="Source\Common\HTTP\BoldWebConnection.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldAbout.pas"/>
         <DCCReference Include="Source\Common\IDE\BoldAbstractPropertyEditors.pas"/>
         <DCCReference Include="Source\Common\IDE\BoldDefsDT.pas"/>
         <DCCReference Include="Source\Common\IDE\BoldExpert.pas"/>
@@ -221,6 +221,7 @@
         <DCCReference Include="Source\Common\Subscription\BoldSubscription.pas"/>
         <DCCReference Include="Source\Common\Support\BoldBase64.pas"/>
         <DCCReference Include="Source\Common\Support\BoldCollections.pas"/>
+        <DCCReference Include="Source\Common\Support\BoldIndexCollection.pas"/>
         <DCCReference Include="Source\Common\Support\BoldCommonBitmaps.pas"/>
         <DCCReference Include="Source\Common\Support\BoldControlPackDefs.pas"/>
         <DCCReference Include="Source\Common\Support\BoldControlsDefs.pas"/>
@@ -281,11 +282,13 @@
         <DCCReference Include="Source\Handles\Core\BoldListHandle.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldOclRepository.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldOclVariables.pas"/>
+        <DCCReference Include="Source\ObjectSpace\BORepresentation\BoldOSSMessage.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldPlaceableSubscriber.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldReferenceHandle.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldRootedHandles.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldSortedHandle.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldSQLHandle.pas"/>
+        <DCCReference Include="Source\Handles\Core\BoldRawSQLHandle.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldSystemHandle.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldVariableDefinition.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldVariableHandle.pas"/>
@@ -446,9 +449,6 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="Android">False</Platform>
-                <Platform value="iOSDevice">False</Platform>
-                <Platform value="iOSSimulator">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>

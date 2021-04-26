@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientHandlerExportHandle;
 
 interface
@@ -43,7 +46,6 @@ end;
 function TBoldClientHandlerExportHandle.GetComObject: IUnknown;
 begin
   Result := CreateComObject(TBoldPropagatorServer.Instance.ClientHandlerCLSID);
-//Result :=  TBoldClientHandlerCOM.CreateFromFactory(ClientHandlerCOMFactory, nil) as IUnknown;
 end;
 
 function TBoldClientHandlerExportHandle.GetHandledObject: TObject;
@@ -51,4 +53,5 @@ begin
   Result := nil;
 end;
 
+initialization
 end.

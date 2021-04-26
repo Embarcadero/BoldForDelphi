@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComClientHandles;
 
 interface
@@ -31,12 +34,13 @@ type
     FServerEvents: Boolean;
     FServerHost: string;
     FServerName: string;
-    FSubscriber: TBoldPassthroughSubscriber;
+    FSubscriber: TBoldExtendedPassthroughSubscriber;
     FThreaded: Boolean;
-    FECode: HResult;    function GetBoldProvider: IBoldProvider;
+    FECode: HResult;
+    function GetBoldProvider: IBoldProvider;
     function GetConnected: Boolean;
     function GetServerCLSID: string;
-    function GetSubscriber: TBoldPassthroughSubscriber;
+    function GetSubscriber: TBoldExtendedPassthroughSubscriber;
     procedure ReceiveExtended(Originator: TObject; OriginalEvent: TBoldEvent;
       RequestedEvent: TBoldRequestedEvent; const Args: array of const);
     procedure SetConnected(Value: Boolean);
@@ -45,7 +49,7 @@ type
     procedure SetServerHost(const Value: string);
     procedure SetServerName(const Value: string);
     procedure SetThreaded(Value: Boolean);
-    property Subscriber: TBoldPassthroughSubscriber read GetSubscriber;
+    property Subscriber: TBoldExtendedPassthroughSubscriber read GetSubscriber;
   protected
     function GetHandledObject: TObject; override;
     procedure Loaded; override;
@@ -54,7 +58,7 @@ type
     destructor Destroy; override;
     property BoldProvider: IBoldProvider read GetBoldProvider;
     property Connected: Boolean read GetConnected write SetConnected;
-    property ECode: HResult read FECode;
+    property ECode: HResult read FECode;    
   published
     property AfterConnect: TNotifyEvent read FAfterConnect write FAfterConnect;
     property AfterDisconnect: TNotifyEvent read FAfterDisconnect write FAfterDisconnect;
@@ -116,7 +120,6 @@ implementation
 uses
   SysUtils,
   ComObj,
-  BoldComConst,
   BoldComUtils;
 
 {-- TBoldComConnectionHandle -----------------------------------------------------}
@@ -132,7 +135,6 @@ end;
 
 destructor TBoldComConnectionHandle.Destroy;
 begin
-  // if constructor fails because typelib not loaded, then we have no fConnection)
   if assigned(fConnection) then
     Connected := False;
   FreeAndNil(FConnection);
@@ -168,10 +170,10 @@ begin
     Result := '';
 end;
 
-function TBoldComConnectionHandle.GetSubscriber: TBoldPassthroughSubscriber;
+function TBoldComConnectionHandle.GetSubscriber: TBoldExtendedPassthroughSubscriber;
 begin
   if not Assigned(FSubscriber) then
-    FSubscriber := TBoldPassthroughSubscriber.CreateWithExtendedReceive(ReceiveExtended);
+    FSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(ReceiveExtended);
   Result := FSubscriber;
 end;
 
@@ -190,7 +192,7 @@ procedure TBoldComConnectionHandle.ReceiveExtended(Originator: TObject; Original
     case VR.VType of
       vtInteger: result := VR.VInteger;
       else
-        raise Exception.Create(sUnknownHResultType);
+        raise Exception.Create('unknown type in GetHResult');
     end;
   end;
 
@@ -211,7 +213,6 @@ begin
     bceConnecting:
     begin
       SendEvent(Self,OriginalEvent);
-//      if Assigned(BeforeConnect) then BeforeConnect(Self);
     end;
     bceConnectFailed:
     begin
@@ -240,17 +241,16 @@ var
 begin
   if Value then
   begin
-    // Connect
     if FConnection.ConnectionState <> bceDisconnected then Exit;
     if ServerCLSID = '' then
     begin
       if ServerName = '' then
-        raise EBoldCom.Create(sUnspecifiedServer);
+        raise EBoldCom.Create('Cannot connect, no server specified.');
       try
         ClassID := ProgIDToClassId(ServerName);
       except
         on Exception do
-          raise EBoldCom.Create(sInvalidServerName);
+          raise EBoldCom.Create('Cannot connect, invalid server name.');
       end;
     end
     else
@@ -260,7 +260,6 @@ begin
   end
   else
   begin
-    // Disconnect
     if FConnection.ConnectionState <> bceConnected then
       Exit;
     FConnection.Disconnect;
@@ -272,7 +271,7 @@ begin
   if Value <> ServerCLSID then
   begin
     if FConnection.ConnectionState <> bceDisconnected then
-      raise EBoldCom.CreateFmt(sCannotChangePropertyWhenActive, ['ServerCLSID']); // do not localize
+      raise EBoldCom.Create('Cannot change ServerCLSID on active connection.');
     if Value = '' then
       FillChar(FServerCLSID, SizeOf(FServerCLSID), 0)
     else begin
@@ -304,7 +303,7 @@ begin
   if Value <> FServerHost then
   begin
     if FConnection.ConnectionState <> bceDisconnected then
-      raise EBoldCom.CreateFmt(sCannotChangePropertyWhenActive, ['ServerHost']); // do not localize
+      raise EBoldCom.Create('Cannot change ServerHost on active connection.');
     FServerHost := Value;
   end;
 end;
@@ -314,7 +313,7 @@ begin
   if Value <> ServerName then
   begin
     if FConnection.ConnectionState <> bceDisconnected then
-      raise EBoldCom.CreateFmt(sCannotChangePropertyWhenActive, ['ServerName']); // do not localize
+      raise EBoldCom.Create('Cannot change ServerName on active connection.');
     FServerName := Value;
     if (FServerName <> '') and not (csReading in ComponentState) then
     begin
@@ -332,7 +331,7 @@ begin
   if Value <> FThreaded then
   begin
     if FConnection.ConnectionState <> bceDisconnected then
-      raise EBoldCom.CreateFmt(sCannotChangePropertyWhenActive, ['Threaded']); // do not localize
+      raise EBoldCom.Create('Cannot change Threaded on active connection.');
     FThreaded := Value;
   end;
 end;
@@ -428,7 +427,7 @@ begin
   begin
     if Value then
     begin
-      inherited; // does the actual setting
+      inherited;
       if Connected then
         DoConnect;
     end
@@ -436,7 +435,7 @@ begin
     begin
       if Connected then
         DoDisconnect;
-      inherited; // does the actual setting
+      inherited;
     end;
   end;
 end;
@@ -465,11 +464,11 @@ begin
     if Connected then
     begin
       DoDisconnect;
-      inherited; // does the actual setting
+      inherited;
       DoConnect;
     end
     else
-      inherited; // does the actual setting
+      inherited;
   end;
 end;
 
@@ -489,5 +488,7 @@ begin
   end;
   Result := FComObject;
 end;
+
+initialization
 
 end.

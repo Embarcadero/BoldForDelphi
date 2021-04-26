@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelDataModule;
 
 interface
@@ -47,10 +50,10 @@ begin
     dmModelEdit := TdmModelEdit.Create(nil);
     DataModuleEnsured := true;
   end;
-end;
+end;  
 
 {$R *.dfm}
-
+               
 initialization
 finalization
   if DataModuleEnsured and assigned(dmModelEdit) then

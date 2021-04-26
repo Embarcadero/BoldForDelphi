@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMappersDefault;
 
 interface
@@ -20,10 +23,13 @@ uses
   BoldPSParams,
   BoldPSDescriptions,
   BoldPSDescriptionsSQL,
+  BoldIndexCollection,
   BoldPSDescriptionsDefault,
   BoldSQLMappingInfo,
   BoldPMappers,
-  BoldPMappersSQL;
+  BoldPMappersSQL,
+  BoldElements;
+
 
 const
   MEMBERIDCOLUMN_NAME = 'MEMBER_ID';
@@ -37,6 +43,8 @@ type
   TBoldModelVersionMember = class;
   EBoldCantGetID = class(EBold);
 
+  TGetNewTimeStampEvent = procedure(out aCurrentTimeStamp: integer; out aLastClockTimestamp: integer; out aLastClock: TDateTime; out aTheNowValue: TDateTime; aClockLogGranularity: TDateTime) of object;
+  TIDIncrementEvent = function(aNumberOfIdsToReserve: integer): integer of object;
 
  { TBoldSystemDefaultMapper }
   TBoldSystemDefaultMapper = class(TBoldSystemSQLMapper)
@@ -44,6 +52,7 @@ type
     fNextDBID: Longint;
     fLastReservedDBID: Longint;
     fReservedCount: Longint;
+    fCustomIndexes: TBoldIndexCollection;
     fXFilesTimeStampColumn: TBoldSQLColumnDescription;
     fXFilesGlobalIdColumn: TBoldSQLColumnDescription;
     fTimeStampTableTimeStampColumn: TBoldSQLColumnDescription;
@@ -53,8 +62,8 @@ type
     fClockLogTableThisTimeStampColumn: TBoldSQLColumnDescription;
     fClockLogTableThisClockColumn: TBoldSQLColumnDescription;
     fClockLogTableLastClockColumn: TBoldSQLColumnDescription;
-    function GetPSSystemDescription: TBoldDefaultSystemDescription;
-    function GetRootClassObjectPersistenceMapper: TBoldObjectDefaultMapper;
+    function GetPSSystemDescription: TBoldDefaultSystemDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRootClassObjectPersistenceMapper: TBoldObjectDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure GetChangePointsQuery(Query: IBoldQuery; IdList: TBoldObjectIdList; StartTime: TBoldTimestampType; EndTime: TBoldTimestampType; NameSpace: TBoldSqlnameSpace);
   protected
     function CreatePSParams: TBoldPSParams; override;
@@ -65,29 +74,32 @@ type
     property ReservedCount: Longint read fReservedCount write fReservedCount;
     function NewGlobalIdFromQuery(aQuery: IBoldQuery; BoldDbTypeColumn: Integer): TBoldObjectId;
     procedure GetNewTimeStamp; override;
-    procedure FetchDeletedObjects(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace); override;
+    procedure FetchDeletedObjects(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace); override;
     procedure InitializeBoldDbType; override;
     function CreateMappingInfo: TBoldSQLMappingInfo; override;
     procedure InitializePSDescriptions; override;
     function EnsurePrecondition(Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList): Boolean; override;
     function EnsureOptimisticLocking(Precondition: TBoldOptimisticLockingPrecondition; TranslationList: TBoldIdTranslationList): Boolean;
   public
-    constructor CreateFromMold(moldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; SQlDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
+    constructor CreateFromMold(moldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary;
+      CustomIndexes: TBoldIndexCollection; SQlDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
     procedure PMFetchClassWithCondition(ObjectIDList: TBoldObjectIdList;
-                                        ValueSpace: IBoldValueSpace;
+                                        const ValueSpace: IBoldValueSpace;
                                         BoldCondition: TBoldCondition;
                                         FetchMode: Integer;
                                         TranslationList: TBoldIdTranslationList); override;
-    function GetListUsingQuery(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; aQuery: IBoldQuery; FetchMode: Integer; TranslationList: TBoldIdTranslationList; TimeStamp: TBoldTimeStampType; MaxAnswers: integer = -1; Offset: integer = -1): integer;
+    function GetListUsingQuery(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; const aQuery: IBoldQuery; ClassId, BoldDbTypeColumn, ObjectIdColumn: integer; FetchMode: Integer; TranslationList: TBoldIdTranslationList; TimeStamp: TBoldTimeStampType; MaxAnswers: integer = -1; Offset: integer = -1): integer;
     function EnsureTable(const TableName: string; TableVersioned: Boolean): TBoldSQLTableDescription; override;
     function EnsureColumn(const TableName, ColumnName, SQLType, SQLAllowNull: string; const BDEType: TFieldType; Length: Integer; const AllowNull, InVersionedTable: Boolean; const DefaultDBValue: String): TBoldSQLColumnDescription;
-    procedure EnsureIndex(const TableName, Fields: string; const PrimaryIndex, Unique, InVersionedTable: Boolean);
+    procedure EnsureIndex(const TableName, Fields: string; const PrimaryIndex,
+        Unique, NonClustered, InVersionedTable: Boolean);
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
     procedure PMTimeForTimestamp(Timestamp: TBoldTimestampType; var ClockTime: TDateTime); override;
-    function NewIdFromQuery(aQuery: IBoldQuery; BoldDbTypeColumn, ObjectIdColumn: integer; Timestamp: TBoldTimeStampType): TBoldObjectId;
+    function NewIdFromQuery(const aQuery: IBoldQuery; ClassId, BoldDbTypeColumn, ObjectIdColumn: integer; Timestamp: TBoldTimeStampType): TBoldObjectId;
+    function CanEvaluateInPS(sOCL: string; aSystem: TBoldElement;  aContext: TBoldElementTypeInfo = nil; const aVariableList: TBoldExternalVariableList = nil): Boolean; override;
     property PSSystemDescription: TBoldDefaultSystemDescription read GetPSSystemDescription;
     property RootClassObjectPersistenceMapper: TBoldObjectDefaultMapper read GetRootClassObjectPersistenceMapper;
     property XFilesTimeStampColumn: TBoldSQLColumnDescription read fXFilesTimeStampColumn;
@@ -101,51 +113,73 @@ type
     property TimeStampTableTimeStampColumn: TBoldSQLColumnDescription read fTimeStampTableTimeStampColumn;
   end;
 
+  TQueryCacheEntry = record
+    MemberList: TBoldMemberIdList;
+    SqlStrings: TStringList;
+    FetchMode: Integer;
+    MemberPMList: TBoldMemberPersistenceMapperList;
+    CustomMembers: TBoldMemberPersistenceMapperList;
+  end;
+
+  TPMCreateCacheEntry = record
+    SqlStrings: TStringList;
+    MemberPMList: TBoldMemberPersistenceMapperList;
+  end;
+
+  TQueryCache = array of TQueryCacheEntry;
+  TPMCreateCache = array of TPMCreateCacheEntry;
+
   { TBoldObjectDefaultMapper }
   TBoldObjectDefaultMapper = class(TBoldObjectSQLMapper)
   private
     fSubClassesID: string;
     fModelVersionMember: TBoldModelVersionMember;
     fOptimisticLockingMode: TBoldOptimisticLockingMode;
-    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
+    fQueryCache: TQueryCache;
+    fPMCreateCache: TPMCreateCache;
+    fSingleLinkList: TBoldMemberIdList;
+    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure PMUpdateStopTime(ObjectIDList: TBoldObjectIdList);
     procedure GetChangePoints(ObjectIDList: TBoldObjectIdList; Condition: TBoldChangePointCondition; NameSpace: TBoldSqlnameSpace);
-    procedure PMMultiPurposeRetrieveExactIdList(ObjectsToFetch: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList; FailureList: TBoldObjectIdList; TimeStamp: TBoldTimeStampType);
-
-    procedure HandleCompareData(FetchedId: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
-    function CompareFieldsToMembers(ObjectID: TBoldObjectId; ValueSpace: IBoldValueSpace; DataSet: IBoldDataSet; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList): Boolean;
-    procedure DetectLinkClassDuplicates(ObjectIdList: TBoldObjectidList; ValueSpace: IBoldvalueSpace; TranslationList: TBoldIdTranslationList; DuplicateList: TBoldObjectIdList);
+    procedure PMMultiPurposeRetrieveExactIdList(ObjectsToFetch: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList; FailureList: TBoldObjectIdList; TimeStamp: TBoldTimeStampType);
+    function FindInCache(MemberIdList: TBoldMemberIdList; FetchMode: integer; var MemberPMList, CustomMembers: TBoldMemberPersistenceMapperList; var ASql: TStringList): boolean;
+    procedure HandleCompareData(FetchedId: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
+    function CompareFieldsToMembers(ObjectID: TBoldObjectId; const ValueSpace: IBoldValueSpace; const DataSet: IBoldDataSet; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList): Boolean;
+    procedure DetectLinkClassDuplicates(ObjectIdList: TBoldObjectidList; const ValueSpace: IBoldvalueSpace; TranslationList: TBoldIdTranslationList; DuplicateList: TBoldObjectIdList);
     procedure GenerateMappingInfo(ExpressionName: String; MoldClass: TMoldClass);
-    procedure PMTemporalUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldvalueSpace; TranslationList: TBoldIdTranslationList);
-    procedure FetchPreviousSingleLinkValues(ObjectIdList: TBoldObjectIdLIst; Old_Values: IBoldvalueSpace);
-    procedure MakeIDsExactUsingTable(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; Table: TBoldSQLTableDescription);
-    function InternalIdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: integer; Parameterized: IBoldParameterized): String;
-    procedure InternalMakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+    procedure PMTemporalUpdate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldvalueSpace; TranslationList: TBoldIdTranslationList);
+    procedure FetchPreviousSingleLinkValues(ObjectIdList: TBoldObjectIdLIst; const Old_Values: IBoldvalueSpace);
+    procedure MakeIDsExactUsingTable(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; Table: TBoldSQLTableDescription; EnsureAll: Boolean; HandleNonExisting: Boolean);
+    function InternalIdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean; const Parameterized: IBoldParameterized): String;
+    procedure InternalMakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; EnsureAll: Boolean; HandleNonExisting: Boolean);
+    procedure FetchRawSqlCondition(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; RawCondition: TBoldRawSqlCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList);    
   protected
     procedure JoinSQLTableByKey(SQL: TStringList; MainTable, JoinTable: TBoldSQLTableDescription); override;
     procedure SQLForID(Table: TBoldSQLTableDescription; SQL: TStrings; UseAlias: Boolean); override;
     procedure SQLForDistributed(SQL: TStrings; const SQLStyle: TBoldSQLStyle); override;
     procedure PMFetchWithCondition(ObjectIDList: TBoldObjectIdList;
-      ValueSpace: IBoldValueSpace; BoldCondition: TBoldCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList); override;
-    function NextExternalObjectId(ValueSpace: IBoldValueSpace; ObjectId: TBoldObjectId): TBoldObjectId; override;
+      const ValueSpace: IBoldValueSpace; BoldCondition: TBoldCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList); override;
+    function NextExternalObjectId(const ValueSpace: IBoldValueSpace; ObjectId: TBoldObjectId): TBoldObjectId; override;
     function DistributableTable: TBoldSQLTableDescription; override;
-    procedure PMCompareExactIDList(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
+    procedure PMCompareExactIDList(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
     procedure InitializePSDescriptions; override;
+    procedure FillInMembers(MyMoldClass, CurrentMoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary); override;
   public
     constructor CreateFromMold(moldClass: TMoldClass; Owner: TBoldSystemPersistenceMapper; TypeNameDictionary: TBoldTypeNameDictionary); override;
+    destructor Destroy; override;
     procedure SQLForKey(Table: TBoldSQLTableDescription; SQL: TStrings; const SQLStyle: TBoldSQLStyle; useAlias: Boolean); override;
     function UpdatesMembersInTable(aTable: TBoldSQLTableDescription): Boolean; override;
-    function IdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: integer; Query: IBoldExecQuery): String; overload;
-    function IdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: integer; Query: IBoldQuery): String; overload;
-    procedure MakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
-    procedure PMFetchExactIDList(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList); override;
-    procedure PMDelete(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList); override;
-    procedure PMCreate(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList); override;
-    procedure PMUpdate(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList); override;
-    procedure DistributableInfoFromQuery(ObjectID: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; DataSet: IBoldDataSet);
-    procedure HandleFetchData(FetchedId: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
-    procedure PortObject(ObjectId: TBoldObjectId; Query: IBoldQuery);
-    function IsOldVersion(Query: IBoldQuery): Boolean;
+    function IdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean; const Query: IBoldExecQuery): String; overload;
+    function IdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean; const Query: IBoldQuery): String; overload;
+    procedure MakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
+    procedure PMFetchExactIDList(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList); override;
+    procedure PMDelete(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; const Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList); override;
+    procedure PMCreate(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList); override;
+    procedure PMUpdate(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; const Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList); override;
+    procedure DistributableInfoFromQuery(ObjectID: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const DataSet: IBoldDataSet);
+    procedure HandleFetchData(FetchedId: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
+    procedure PortObject(ObjectId: TBoldObjectId; const Query: IBoldQuery);
+    function IsOldVersion(const Query: IBoldQuery): Boolean;
     property SubClassesID: string read fSubClassesID write fSubClassesId;
     property SystemPersistenceMapper: TBoldSystemDefaultMapper read GetSystemPersistenceMapper;
     property ModelVersionMember: TBoldModelVersionMember read fModelVersionMember;
@@ -155,14 +189,15 @@ type
   TBoldMemberDefaultMapper = class(TBoldMemberSQLMapper)
   private
     procedure GenerateMappingInfo(MoldClass: TMoldClass; MoldMember: TMoldMember);
-    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
-    function GetObjectPersistenceMapper: TBoldObjectDefaultMapper;
+    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetObjectPersistenceMapper: TBoldObjectDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    function CheckEitherNull(field: IBoldField; Value: IBoldValue; var Equal: Boolean): Boolean;
+    FColumnIndex: Boolean;
+    function CheckEitherNull(const field: IBoldField; const Value: IBoldValue; var Equal: Boolean): Boolean;
     function GetAllowNullAsSQL: string; override;
     procedure GetChangePoints(ObjectIDList: TBoldObjectIdList; Condition: TBoldChangePointCondition; NameSpace: TBoldSqlnameSpace); virtual;
-    function CompareFields(ObjectContent: IBoldObjectContents; DataSet: IBoldDataSet; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; virtual; abstract;
+    function CompareFields(const ObjectContent: IBoldObjectContents; const DataSet: IBoldDataSet; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; virtual; abstract;
     procedure InitializePSDescriptions; override;
     function RequiresMemberMapping: Boolean; virtual;
     function FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string; virtual;
@@ -170,7 +205,7 @@ type
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList;
-                   ValueSpace: IBoldValueSpace;
+                   const ValueSpace: IBoldValueSpace;
                    FetchMode: Integer;
                    TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList); override;
     property ObjectPersistenceMapper: TBoldObjectDefaultMapper read GetObjectPersistenceMapper;
@@ -193,15 +228,16 @@ type
   protected
     function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
     function FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
-    function IsDirty(ObjectContents: IBoldObjectContents): Boolean; override;
-    function ShouldFetch(ObjectContents: IBoldObjectContents): Boolean; override;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); override;
-    function VersionFromQuery(Query: IBoldQuery): Integer;
+    function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; override;
+    function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; override;
+    function VersionFromQuery(const Query: IBoldQuery): Integer;
     property VersionNumber: Integer read fVersionNumber write fVersionNumber;
   end;
 
@@ -210,14 +246,32 @@ type
   protected
     function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
     function FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
-    function IsDirty(ObjectContents: IBoldObjectContents): Boolean; override;
-    function ShouldFetch(ObjectContents: IBoldObjectContents): Boolean; override;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); override;
+    function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; override;
+    function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; override;
+  end;
+
+  { TBoldNonXFileTimeStampMember }
+  TBoldNonXFileTimeStampMember = class(TBoldSingleColumnMember)
+  protected
+    function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
+    function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string; override;
+    function SupportsComparingWithoutValue: Boolean; override;
+  public
+    constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
+    function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; override;
+    function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; override;
   end;
 
   TBoldXFilesMembers = class(TBoldSingleColumnMember)
@@ -231,15 +285,16 @@ type
   protected
     function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
     function FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string; override;
     function SupportsComparingWithoutValue: Boolean; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
-    function IsDirty(ObjectContents: IBoldObjectContents): Boolean; override;
-    function ShouldFetch(ObjectContents: IBoldObjectContents): Boolean; override;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); override;
+    function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; override;
+    function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; override;
   end;
 
   { TBoldTimeStampMember }
@@ -247,15 +302,17 @@ type
   protected
     function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
     function FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
-    function IsDirty(ObjectContents: IBoldObjectContents): Boolean; override;
-    function ShouldFetch(ObjectContents: IBoldObjectContents): Boolean; override;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); override;
+    function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; override;
+    function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; override;
   end;
+
 
   TExternalIdGenerator = function: string;
 
@@ -266,6 +323,9 @@ type
 
 var
   ExternalIDGenerator: TExternalIdGenerator;
+  NewTimeStampEvent: TGetNewTimeStampEvent;
+  IDIncrementEvent: TIDIncrementEvent;
+  CompatibilityMode: boolean;
 
 implementation
 
@@ -289,22 +349,207 @@ uses
   BoldSqlQueryGenerator,
   BoldGUIDUtils,
   BoldGuard,
+  {$IFDEF RIL}
+  {$IFNDEF BOLD_UNICODE}
+  StringBuilder,
+  {$ENDIF}
+  {$ENDIF}
   BoldDefaultStreamNames,
-  BoldPMConsts;
+  BoldPMConsts,
+  BoldOCL,
+  BoldOclLightWeightNodeMaker,
+  BoldOCLClasses,
+  BoldSystem,
+  BoldSystemRT,
+  BoldContainers,
+  BoldIndex,
+  BoldIndexableList;
 
 const
   TIMESTAMPMEMBERINDEX = -2;
 
 {--Supporting functions/procedures---}
 
+function TBoldSystemDefaultMapper.GetPSSystemDescription: TBoldDefaultSystemDescription;
+begin
+  result := (inherited PSSystemDescription) as TBoldDefaultSystemDescription;
+end;
+
+function TBoldObjectDefaultMapper.GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
+begin
+  result := (inherited SystemPersistenceMapper) as TBoldSystemDefaultMapper;
+end;
+
+function TBoldSystemDefaultMapper.GetRootClassObjectPersistenceMapper: TBoldObjectDefaultMapper;
+begin
+  result := (inherited RootClassObjectPersistenceMapper) as TBoldObjectDefaultMapper;
+end;
+
+function TBoldMemberDefaultMapper.GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
+begin
+  result := inherited SystemPersistenceMapper as TBoldSystemDefaultMapper;
+end;
+
+function TBoldMemberDefaultMapper.GetObjectPersistenceMapper: TBoldObjectDefaultMapper;
+begin
+  result := (inherited ObjectPersistenceMapper) as TBoldObjectDefaultMapper;
+end;
+
 { TBoldSystemDefaultMapper }
-constructor TBoldSystemDefaultMapper.CreateFromMold(moldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; SQlDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
+
+function TBoldSystemDefaultMapper.CanEvaluateInPS(sOCL: string;
+  aSystem: TBoldElement; aContext: TBoldElementTypeInfo;
+  const aVariableList: TBoldExternalVariableList): Boolean;
+var
+  i: Integer;
+  aResultEntry: TBoldOclEntry;
+  aEnv: TBoldOclEnvironment;
+  aOLWNodeMaker: TBoldOLWNodeMaker;
+  aOCLCondition: TBoldOCLCondition;
+  aSQLNodeResolver: TBoldSqlNodeResolver;
+  aSQLNodeMaker: TBoldSQLNodeMaker;
+  aBoldSystem: TBoldSystem;
+  aBoldOCL: TBoldOCL;
+  aResultType: TBoldElementTypeInfo;
+  aClassTypeInfo: TBoldClassTypeInfo;
+  aGlobalNameSpace: TBoldSqlNameSpace;
+  aSQlGenerator: TBoldSQLQueryGenerator;
+  aVariableIDLists: TBoldObjectArray;
+
+  procedure FixQueriesForEnv(VarBinding: TBoldSQLVariableBinding; Context: TBoldObjectIdList; NameSpace: TBoldSqlNameSpace);
+  var
+    MainTableRef: TBoldSqlTableReference;
+    BoldID: TBoldDefaultID;
+  begin
+    if CompareText(VarBinding.VariableName, 'SELF') = 0 then // do not localize
+    begin
+      VarBinding.NewQuery(NameSpace);
+
+      MainTableRef := VarBinding.TableReferenceForTable(VarBinding.ObjectMapper.MainTable, VarBinding.Query, true);
+      VarBinding.Context := aOclCondition.Context;
+      VarBinding.Query.AddWCF(TBoldSQLWCFBinaryInfix.CreateWCFForIdList(MainTableRef.GetColumnReference(IDCOLUMN_NAME), aOclCondition.Context));
+    end else if VarBinding.IsExternal and (VarBinding.TopSortedIndex > -1) then
+    begin
+      VarBinding.NewQuery(NameSpace);
+
+      MainTableRef := VarBinding.TableReferenceForTable(VarBinding.ObjectMapper.MainTable, VarBinding.Query, true);
+      VarBinding.Context := TBoldObjectIdList.Create;
+      aVariableIDLists.Add(VarBinding.Context);
+      BoldID := TBoldDefaultID.CreateWithClassID(VarBinding.ObjectMapper.TopSortedIndex, True);
+      BoldID.AsInteger := VarBinding.ExternalVarvalue;
+      VarBinding.Context.Add(BoldID);
+      VarBinding.Query.AddWCF(TBoldSQLWCFBinaryInfix.CreateWCFForIdList(MainTableRef.GetColumnReference(IDCOLUMN_NAME), VarBinding.Context));
+    end;
+  end;
+
+begin
+  Result := False;
+  // Let all objects point to nil, so there are no problems on free
+  aResultEntry := nil;
+  aEnv := nil;
+  aOLWNodeMaker := nil;
+  aOCLCondition := nil;
+  aSQlNodeResolver := nil;
+  aSQLNodeMaker := nil;
+  aSQLGenerator := nil;
+  aGlobalNameSpace := nil;
+
+  // On empty OCL a PS evaluation is unnecessary (objects are loaded already).
+  // System parameter must be type of TBoldSystem (see TBoldPersistenceController).
+  // Also OCL evaluator must be type of TBoldOCL, otherwise validation is not possible.
+  if (sOCL = '') or not ((aSystem is TBoldSystem) and
+     (TBoldSystem(aSystem).Evaluator is TBoldOCL)) then
+  begin
+    Exit;
+  end;
+
+  // Validation does not work with collection as context, though evaluation
+  // would be possible. Therefore always use ListElementTypeInfo.
+  if Assigned(aContext) and (aContext is TBoldListTypeInfo) then begin
+    aContext := TBoldListTypeInfo(aContext).ListElementTypeInfo;
+  end;
+
+  aBoldSystem := TBoldSystem(aSystem);
+  aBoldOCL := TBoldOcl(aBoldSystem.Evaluator);
+  aVariableIDLists := TBoldObjectArray.Create(0, [bcoDataOwner]);
+  Result := True;
+  try
+    try
+      aEnv := TBoldOclEnvironment.Create(aBoldOCL.GlobalEnv);
+      // OCL semantic check
+      aResultEntry := aBoldOCL.SemanticCheck(sOCL, aContext, aVariableList, true, aEnv);
+      aOLWNodeMaker := TBoldOLWNodeMaker.Create(aResultEntry.Ocl, aBoldSystem.BoldSystemTypeInfo, aBoldSystem, aEnv);
+      aResultEntry.Ocl.AcceptVisitor(aOLWNodeMaker);
+      // Can OCL be evaluated in PS in general?
+      if not aOLWNodeMaker.Failed then begin
+        aOCLCondition := TBoldOclCondition.Create;
+        aOCLCondition.OclExpr := sOCL;
+
+        for i := 0 to aOLWNodeMaker.ExternalVarBindings.Count - 1 do
+          aOCLCondition.Env.Add(TBoldOLWVariableBinding(aOLWNodeMaker.ExternalVarBindings[i]));
+        aOLWNodeMaker.ExternalVarBindings.Clear;
+
+        aOCLCondition.RootNode := aOLWNodeMaker.RootNode;
+
+        aResultType := aResultEntry.Ocl.BoldType;
+        if aResultType is TBoldListTypeInfo then begin
+          aClassTypeInfo := TBoldListTypeInfo(aResultType).ListElementTypeInfo as TBoldClassTypeInfo;
+        end else begin
+          aClassTypeInfo := aResultType as TBoldClassTypeInfo;
+        end;
+        aOCLCondition.TopSortedIndex := aClassTypeInfo.TopSortedIndex;
+
+        // Can all parts of OCLs be translated to SQL symbols?
+        aSQLNodeMaker := TBoldSQLNodeMaker.Create(aOCLCondition);
+        aSQLNodeMaker.Execute;
+
+        aSQLNodeResolver := TBoldSqlNodeResolver.Create(Self, aSQLNodeMaker.RootNode, aSQLNodeMaker.SQLVarBindings);
+        aSQLNodeResolver.Execute;
+        // Finally the real check, which checks every symbol (AcceptVisitor).
+        aGlobalNameSpace := TBoldSqlnameSpace.Create;
+
+        aSQlGenerator := TBoldSqlQueryGenerator.Create(aGlobalNameSpace);
+        for i := 0 to aSQLNodeMaker.SQLVarBindings.Count - 1 do begin
+          aSQLNodeMaker.SQLVarBindings[i].AcceptVisitor(aSQlGenerator);
+          FixQueriesForEnv(aSQLNodeMaker.SQLVarBindings[i] as TBoldSqlVariableBinding, aOclCondition.Context, aGlobalNameSpace);
+        end;
+
+        aSQLNodeMaker.RootNode.AcceptVisitor(aSQlGenerator);
+      end else begin
+        Result := False;
+      end;
+    except
+      Result := False;
+    end;
+  finally
+    if Assigned(aResultEntry) then begin
+      if aResultEntry.OwnedByDictionary then begin
+        aResultEntry.UsedByOtherEvaluation := false
+      end else begin
+        aResultEntry.Free;
+      end;
+    end;
+    aEnv.Free;
+    aOLWNodeMaker.Free;
+    aOCLCondition.Free;
+    aSQLGenerator.Free;
+    aSQlNodeResolver.Free;
+    aGlobalNameSpace.Free;
+    aSQLNodeMaker.Free;
+    aVariableIDLists.Free;
+  end;
+end;
+
+constructor TBoldSystemDefaultMapper.CreateFromMold(moldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary;
+  CustomIndexes: TBoldIndexCollection; SQlDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
 begin
   inherited;
   NextDBID := -1;
   LastReservedDBID := -2;
   ReservedCount := 0;
+  fCustomIndexes := CustomIndexes;
 end;
+
 
 procedure TBoldSystemDefaultMapper.ReserveID;
 begin
@@ -355,15 +600,15 @@ begin
       if TableVersioned then
       begin
         AddColumn(TIMESTAMPSTARTCOLUMNNAME, SQLDataBaseConfig.ColumnTypeForInteger, SQLDataBaseConfig.EffectiveSQLforNotNull, BOLDTIMESTAMPFIELDTYPE, 0, false, SQLDataBaseConfig.CorrectlyQuotedDefaultValue('0'));
-        EnsureIndex(IDCOLUMN_NAME + ';' + TIMESTAMPSTARTCOLUMNNAME, True, True);
+        EnsureIndex(IDCOLUMN_NAME + ';' + TIMESTAMPSTARTCOLUMNNAME, True, True, False);
         // the following two indices improves performance alot in Interbase, and seems to have no negative impact in SQLServer.
-        EnsureIndex(TIMESTAMPSTARTCOLUMNNAME, false, false);
-        EnsureIndex(IDCOLUMN_NAME, false, false);
+        EnsureIndex(TIMESTAMPSTARTCOLUMNNAME, false, false, false);
+        EnsureIndex(IDCOLUMN_NAME, false, false, false);
       end
       else
-        EnsureIndex(IDCOLUMN_NAME, True, True);
+        EnsureIndex(IDCOLUMN_NAME, True, True, false);
 
-      EnsureIndex(TYPECOLUMN_NAME, False, False);
+      EnsureIndex(TYPECOLUMN_NAME, False, False, false);
     end;
     Result := Result;
   end;
@@ -392,62 +637,77 @@ begin
   end;
 end;
 
-procedure TBoldSystemDefaultMapper.EnsureIndex(const TableName, Fields: string; const PrimaryIndex, Unique, InVersionedTable: Boolean);
+procedure TBoldSystemDefaultMapper.EnsureIndex(const TableName, Fields: string;
+    const PrimaryIndex, Unique, NonClustered, InVersionedTable: Boolean);
 var
   Table: TBoldSQLTableDescription;
 begin
   EnsureTable(TableName, InVersionedTable);
   Table := PSSystemDescription.SQLTablesList.ItemsBySQLName[TableName];
-  Table.EnsureIndex(Fields, PrimaryIndex, Unique);
+  Table.EnsureIndex(Fields, PrimaryIndex, Unique, NonClustered);
 end;
 
-function TBoldSystemDefaultMapper.NewIdFromQuery(aQuery: IBoldQuery; BoldDbTypeColumn, ObjectIdColumn: integer; Timestamp: TBoldTimeStampType): TBoldObjectId;
+function TBoldSystemDefaultMapper.NewIdFromQuery(const aQuery: IBoldQuery; ClassId, BoldDbTypeColumn, ObjectIdColumn: integer; Timestamp: TBoldTimeStampType): TBoldObjectId;
 var
   ObjectId: TBoldDefaultId;
   TopSortedIndex: integer;
 begin
   if BoldDbTypeColumn = -1 then
-    TopSortedIndex := NO_CLASS
+    TopSortedIndex := ClassId
   else
     TopSortedIndex := topSortedIndexForBoldDbType(aQuery.Fields[BoldDbTypeColumn].AsInteger);
 
   if TimeStamp <> BoldMaxTimeStamp then
-    ObjectId := TBoldTimestampedDefaultId.createWithTimeAndClassId(TimeStamp, TopSortedIndex, true)
+    ObjectId := TBoldTimestampedDefaultId.createWithTimeAndClassId(TimeStamp, TopSortedIndex, BoldDbTypeColumn <> -1)
   else
-    ObjectId := TBoldDefaultId.CreateWithClassId(TopSortedIndex, true);
+    ObjectId := TBoldDefaultId.CreateWithClassId(TopSortedIndex, BoldDbTypeColumn <> -1);
 
   ObjectId.AsInteger := aQuery.Fields[ObjectIdColumn].AsInteger;
   result := ObjectId;
 end;
 
-function TBoldSystemDefaultMapper.GetListUsingQuery(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; aQuery: IBoldQuery; FetchMode: Integer; TranslationList: TBoldIdTranslationList; TimeStamp: TBoldTimeStampType; MaxAnswers: integer = -1; Offset: integer = -1): integer;
+function TBoldSystemDefaultMapper.GetListUsingQuery(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; const aQuery: IBoldQuery; ClassId, BoldDbTypeColumn, ObjectIdColumn: integer; FetchMode: Integer; TranslationList: TBoldIdTranslationList; TimeStamp: TBoldTimeStampType; MaxAnswers: integer = -1; Offset: integer = -1): integer;
 var
   ObjectId: TBoldObjectId;
   Counter: integer;
+  RecordsToProcess: integer;
 begin
+  Result := 0;
   aQuery.Open;
   if offset <> -1 then
-    aQuery.MoveBy(Offset);
-  // when MaxAnswer = -1 the while-test will never occur and we will get all the answers
+  begin
+    RecordsToProcess := aQuery.RecordCount - Offset {- aQuery.RecNo};
+    if Offset <> 0 then
+      aQuery.MoveBy(Offset);
+  end
+  else
+    RecordsToProcess := aQuery.RecordCount {- aQuery.RecNo};
+// when MaxAnswer = -1 the while-test will never occur and we will get all the answers
   Counter := MaxAnswers;
+
+  if (MaxAnswers <> -1) and (MaxAnswers < RecordsToProcess) then
+    RecordsToProcess := MaxAnswers;
+  ObjectIDList.Capacity := ObjectIDList.Count + RecordsToProcess;
+  TranslationList.Capacity := TranslationList.Count + RecordsToProcess;
+
   while not aQuery.EOF and (Counter <> 0) do
   begin
     if TimeStamp = BOLDINVALIDTIMESTAMP then
-      ObjectId := NewIdFromQuery(aQuery, 1, 0, aQuery.FieldByName(TIMESTAMPSTARTCOLUMNNAME).AsInteger)
+      ObjectId := NewIdFromQuery(aQuery, ClassId, BoldDbTypeColumn, ObjectIdColumn, aQuery.FieldByUpperCaseName(TIMESTAMPSTARTCOLUMNNAMEUPPER).AsInteger)
     else
-      ObjectId := NewIdFromQuery(aQuery, 1, 0, TimeStamp);
+      ObjectId := NewIdFromQuery(aQuery, ClassId, BoldDbTypeColumn, ObjectIdColumn, TimeStamp);
     ValueSpace.EnsureObjectId(TranslationList.TranslateToNewId[ObjectId]);
     ObjectIDList.Add(ObjectId);
-    TranslationList.AddTranslation(nil, ObjectId);
+    INC(Result);
+    TranslationList.AddTranslationAdoptNew(nil, ObjectId);
     SendExtendedEvent(bpeFetchId, [ObjectId]);
-    ObjectId.Free;
     aQuery.Next;
     dec(Counter);
   end;
-  if (MaxAnswers < 0)  or (Counter > 0) then
+{  if (MaxAnswers < 0)  or (Counter > 0) then
     result := MaxAnswers - Counter
   else
-    result := aQuery.RecordCount;
+    result := aQuery.RecordCount;}
 end;
 
 function TBoldSystemDefaultMapper.EnsurePrecondition(Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList): Boolean;
@@ -473,10 +733,25 @@ begin
     Precondition.AddFailedObject(Newlist[i]);
 end;
 
+function ContainsMemberId(MemberIdList: TBoldMemberIdList; MemberIndex: integer): boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for I := 0 to MemberIdList.Count - 1 do
+  begin
+    if MemberIdList[i].MemberIndex = MemberIndex then
+    begin
+      result := true;
+      exit;
+    end;
+  end;
+end;
+
 var
   OldMemberIdList: TBoldMemberIdList;
-  SingleObjectList: TBoldObjectIdList;
-  TimeStampedObjects: TBoldObjectIdList;
+  SingleClassList: TBoldObjectIdList;
+  XFileTimeStampedObjects: TBoldObjectIdList;
   ObjectContents: IBoldObjectContents;
   Value: IBoldValue;
   ObjectIdList: TBoldObjectIdList;
@@ -484,59 +759,134 @@ var
   ObjectMapper: TBoldObjectDefaultmapper;
   FailureList: TBoldObjectIdList;
   BoldGuard: IBoldGuard;
+  TopSortedIndex: integer;
+  MemberCount: integer;
+  FetchBlockSize: integer;
 begin
-  BoldGuard := TBoldGuard.Create(TimeStampedObjects, ObjectIdList, FailureList,
-                                 SingleObjectlist, OldMemberIdList);
+  BoldGuard := TBoldGuard.Create(XFileTimeStampedObjects, ObjectIdList, FailureList,
+                                 SingleClassList, OldMemberIdList);
   OldMemberIdList := TBoldMemberIdList.Create;
-  SingleObjectList := TBoldObjectIdList.Create;
-  TimeStampedObjects := TBoldObjectIdList.Create;
+  SingleClassList := TBoldObjectIdList.Create;
+  XFileTimeStampedObjects := TBoldObjectIdList.Create;
   ObjectIdList := TBoldObjectIdList.Create;
   FailureList := TBoldObjectIdList.Create;
+  FetchBlockSize := SQLDataBaseConfig.FetchBlockSize;
 
   Precondition.valueSpace.AllObjectIds(ObjectidList, true);
-  for i := 0 to ObjectIdList.Count - 1 do
+
+  for i := ObjectIdList.Count - 1 downto 0 do
   begin
     ObjectContents := Precondition.ValueSpace.ObjectContentsByObjectId[ObjectIdList[i]];
-    if assigned(ObjectContents) then
+    // remove objects with no ObjectContents
+    if not assigned(ObjectContents) then
+      ObjectIdList.RemoveByIndex(i);
+  end;
+
+  while ObjectIdList.count > 0 do
+  begin
+    TopSortedIndex := ObjectIdList[ObjectIdList.count-1].TopSortedIndex;
+    SingleClassList.Clear;
+    SingleClassList.Add(ObjectIdList[ObjectIdList.count-1]);
+    ObjectIdList.RemoveByIndex(ObjectIdList.count-1);
+    for I := ObjectIdList.Count - 1 downto 0 do
     begin
-      OldMemberIdList.Clear;
-
-      if ObjectContents.TimeStamp <> -1 then
-        TimeStampedObjects.Add(ObjectIdList[i]);
-
-      for MemberIx := 0 to ObjectContents.MemberCount - 1 do
+      // collect objects of same class in SingleClassList
+      if TopSortedIndex = ObjectIdList[i].TopSortedIndex then
       begin
-        Value := ObjectContents.ValueByIndex[MemberIx];
-        if assigned(Value) then
-          OldMemberIdList.Add(TBoldmemberId.Create(MemberIx));
-      end;
-
-      // we must compare the object even if it has no dirty members
-      // since it might be a delete and the object in the db might
-      // be deleted already. if it is timestamped however, we will
-      // detect it more cheap that way
-      if (OldMemberIdList.Count > 0) or (ObjectContents.TimeStamp = -1) then
-      begin
-        SingleObjectList.Clear;
-        SingleObjectList.Add(ObjectIdList[i]);
-        failureList.Clear;
-        ObjectMapper := ObjectPersistenceMappers[ObjectIdList[i].TopSortedIndex] as TBoldObjectDefaultMapper;
-        Objectmapper.PMCompareExactIDList(SingleObjectList, Precondition.ValueSpace, OldMemberIdList, translationList, FailureList);
-        MergeFailures(precondition.FailureList, FailureList);
+        SingleClassList.Add(ObjectIdList[i]);
+        ObjectIdList.RemoveByIndex(i);
+        if SingleClassList.count = FetchBlockSize then
+          break;
       end;
     end;
+    OldMemberIdList.Clear;
+
+    // process one object
+    ObjectContents := Precondition.ValueSpace.ObjectContentsByObjectId[SingleClassList[SingleClassList.count-1]];
+    if ObjectContents.TimeStamp <> -1 then
+      if UseXFiles then
+        XFileTimeStampedObjects.AddIfNotInList(SingleClassList[SingleClassList.count-1])
+      else
+        OldMemberIdList.Add(TBoldMemberId.Create(TIMESTAMPMEMBERINDEX));
+
+    for MemberIx := 0 to ObjectContents.MemberCount - 1 do
+    begin
+      Value := ObjectContents.ValueByIndex[MemberIx];
+      if assigned(Value) then
+      begin
+        OldMemberIdList.Add(TBoldMemberId.Create(MemberIx));
+      end;
+    end;
+    // loop and compare other objects, if they need exact same members as first object
+    // then keep them in SingleClassList and fetch them together
+    // otherwise return the object to ObjectIdList to be processed in the next pass
+    for i := SingleClassList.count - 2 downto 0 do // -2 is on purpose to skip the object we processed above
+    begin
+      ObjectContents := Precondition.ValueSpace.ObjectContentsByObjectId[SingleClassList[i]];
+      MemberCount := 0;
+      begin
+        if ObjectContents.TimeStamp <> -1 then
+        begin
+          if UseXFiles then
+            XFileTimeStampedObjects.AddIfNotInList(SingleClassList[i])
+          else
+          begin
+            if not ContainsMemberId(OldMemberIdList, TIMESTAMPMEMBERINDEX) then
+            begin // put the object back in the ObjectIdList
+              ObjectIdList.Add(SingleClassList[i]);
+              SingleClassList.RemoveByIndex(i);
+              continue;
+            end
+            else
+              Inc(MemberCount);
+          end;
+        end;
+        for MemberIx := 0 to ObjectContents.MemberCount - 1 do
+        begin
+          Value := ObjectContents.ValueByIndex[MemberIx];
+          if assigned(Value) then
+          begin
+            if not ContainsMemberId(OldMemberIdList, MemberIx) then
+            begin  // set MemberCount to number we're sure won't match so it will be removed
+              MemberCount := MaxInt;
+              break;
+            end
+            else
+              Inc(MemberCount);
+          end;
+        end;
+        // now also make sure the OldMemberIdList doesn't contain more members
+        if MemberCount <> OldMemberIdList.Count  then
+        begin  // put the object back in the ObjectIdList
+          ObjectIdList.Add(SingleClassList[i]);
+          SingleClassList.RemoveByIndex(i);
+        end
+      end
+    end;
+
+    // we must compare the object even if it has no dirty members
+    // since it might be a delete and the object in the db might
+    // be deleted already. if it is timestamped however, we will
+    // detect it more cheap that way
+    if (OldMemberIdList.Count > 0) or (ObjectContents.TimeStamp = -1) then
+    begin
+      failureList.Clear;
+      ObjectMapper := ObjectPersistenceMappers[TopSortedIndex] as TBoldObjectDefaultMapper;
+      Objectmapper.PMCompareExactIDList(SingleClassList, Precondition.ValueSpace, OldMemberIdList, translationList, FailureList);
+      MergeFailures(precondition.FailureList, FailureList);
+    end;
   end;
-  if TimeStampedObjects.Count > 0 then
+  if XFileTimeStampedObjects.Count > 0 then
   begin
     OldMemberIdList.clear;
     FailureList.Clear;
     OldMemberIdList.Add(TBoldMemberId.Create(TIMESTAMPMEMBERINDEX));
-    RootClassObjectPersistenceMapper.PMCompareExactIDList(TimeStampedObjects, Precondition.ValueSpace, OldMemberIdList, translationlist, FailureList);
+    RootClassObjectPersistenceMapper.PMCompareExactIDList(XFileTimeStampedObjects, Precondition.ValueSpace, OldMemberIdList, translationlist, FailureList);
     if FailureList.Count > 0 then
     begin
-      BoldLog.Log(sOptimisticLockingFailedOnTimeStamp);
+      BoldLog.Log('Optimistic Locking failed on timestamp for the following Objects');
       for i := 0 to FailureList.Count - 1 do
-        BoldLog.LogFmt(sOptimisticLockFailedLog,
+        BoldLog.LogFmt('%s: Id %s',
           [
             ObjectPersistenceMappers[FailureList[i].TopSortedIndex].ExpressionName,
             FailureList[i].AsString
@@ -611,31 +961,9 @@ begin
 end;
 
 constructor TBoldObjectDefaultMapper.CreateFromMold(moldClass: TMoldClass; Owner: TBoldSystemPersistenceMapper; TypeNameDictionary: TBoldTypeNameDictionary);
-var
-  i: integer;
 begin
   inherited;
   fOptimisticLockingMode := MoldClass.EffectiveOptimisticLocking;
-  if SystemPersistenceMapper.UseModelVersion then
-  begin
-    fModelVersionMember := TBoldModelVersionMember.CreateFromMold(nil, MoldClass, self, -1, TypeNameDictionary);
-    MemberPersistenceMappers.Add(fModelVersionMember);
-  end;
-  if SystemPersistenceMapper.UseReadOnly then
-    MemberPersistenceMappers.Add(TBoldReadOnlynessMember.CreateFromMold(nil, MoldClass, self, -1, TypeNameDictionary));
-
-
-  if SystemPersistenceMapper.UseXFiles then
-  begin
-    if SystemPersistenceMapper.UseTimestamp then
-      MemberPersistenceMappers.Add(TBoldTimeStampMember.CreateFromMold(nil, MoldClass, self, -1, TypeNameDictionary));
-    if SystemPersistenceMapper.UseGlobalId then
-      MemberPersistenceMappers.Add(TBoldGlobalIdMember.CreateFromMold(nil, MoldClass, self, -1, TypeNameDictionary));
-  end;
-
-  fObjectIdClass := BOLDDEFAULTIDNAME;
-  for i := 0 to MoldClass.AllPossibleNames.Count - 1 do
-    GenerateMappingInfo(MoldClass.AllPossibleNames[i], MoldClass);
 end;
 
 type
@@ -644,44 +972,41 @@ type
     dbType: TBoldDbType;
   end;
 
-
-
-procedure TBoldObjectDefaultMapper.InternalMakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.InternalMakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; EnsureAll: Boolean; HandleNonExisting: Boolean);
 var
   i: integer;
   ObjectMapper: TBoldObjectDefaultMapper;
 begin
   if assigned(MainTable) then
-    MakeIDsExactUsingTable(ObjectIDList, TranslationList, MainTable)
+    MakeIDsExactUsingTable(ObjectIDList, TranslationList, MainTable, not SystemPersistenceMapper.UseXFiles, HandleNonExisting)
   else
   begin
     for i := 0 to SystemPersistenceMapper.ObjectPersistenceMappers.Count-1 do
     begin
       ObjectMapper := SystemPersistenceMapper.ObjectPersistenceMappers[i] as TBoldObjectDefaultMapper;
       if assigned(ObjectMapper) and (ObjectMapper.SuperClass = self) then
-        ObjectMapper.InternalMakeIDsExact(objectidlist, TranslationList);
+        ObjectMapper.InternalMakeIDsExact(objectidlist, TranslationList, not SystemPersistenceMapper.UseXFiles, HandleNonExisting);
     end;
   end;
 end;
 
-
-procedure TBoldObjectDefaultMapper.MakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.MakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean);
 var
   i: Integer;
   MissingIds: TBoldObjectIdList;
 begin
   if ObjectIDList.Count = 0 then
     exit;
-  InternalMakeIDsExact(ObjectIDList, TranslationList);
   MissingIds := TBoldObjectIdList.Create;
   try
+    MakeIDsExactUsingTable(ObjectIDList, TranslationList, MainTable, not SystemPersistenceMapper.UseXFiles, HandleNonExisting);
     if SystemPersistenceMapper.UseXFiles then
     begin
       for i := 0 to ObjectIDList.Count-1 do
         if TranslationList.TranslateToNewId[ObjectIdList[i]] = ObjectIdList[i] then
           MissingIds.Add(ObjectIdList[i]);
       if MissingIds.Count > 0 then
-        MakeIDsExactUsingTable(MissingIds, TranslationList, SystemPersistenceMapper.PSSystemDescription.XFilestable);
+        MakeIDsExactUsingTable(MissingIds, TranslationList, SystemPersistenceMapper.PSSystemDescription.XFilestable, true, HandleNonExisting);
     end;
   finally
     MissingIds.Free;
@@ -690,34 +1015,64 @@ end;
 
 procedure TBoldObjectDefaultMapper.SQLForID(Table: TBoldSQLTableDescription; SQL: TStrings; useAlias: Boolean);
 begin
-  SQL.Append(Format('%s.%s', [Tablealias(Table, useAlias), IDCOLUMN_NAME])); // do not localize
+  SQL.Append(Format('%s.%s', [Tablealias(Table, useAlias), IDCOLUMN_NAME]))
 end;
 
 procedure TBoldObjectDefaultMapper.SQLForKey(Table: TBoldSQLTableDescription; SQL: TStrings; const SQLStyle: TBoldSQLStyle; useAlias: Boolean);
 var
-  tableQualifier, ColumnString: string;
+  tableQualifier,
+  ColumnString: string;
 begin
   tableQualifier := '';
   if (Table = MainTable) and useAlias then
     tableQualifier := TableAlias(Table, useALias) + '.';
 
   case SQLStyle of
-    ssColumns: ColumnString := tableQualifier + '%s';
-    ssParameters: ColumnString := ':' + tableQualifier + '%s';
+    ssColumns   : ColumnString := tableQualifier;
+    ssParameters: ColumnString := ':' + tableQualifier;
   end;
 
-  SQL.Append(Format(ColumnString, [Table.ColumnsList[0].SQLName]));
-  SQL.Append(Format(ColumnString, [Table.ColumnsList[1].SQLName]));
+  SQL.Append(ColumnString+Table.ColumnsList[0].SQLName);
+  SQL.Append(ColumnString+Table.ColumnsList[1].SQLName);
 end;
 
 procedure TBoldObjectDefaultMapper.JoinSQLTableByKey(SQL: TStringList; MainTable, JoinTable: TBoldSQLTableDescription);
-const
-  SQLEQUALITY = '%s.%s = %s.%s';
+{$IFDEF RIL}
+var
+  SB: TStringBuilder;
 begin
-  SQL.Append(Format(SQLEQUALITY, [TableAlias(JoinTable, True), IDCOLUMN_NAME, TableAlias(MainTable, True), IDCOLUMN_NAME]));
+    SB := TStringBuilder.Create();
+  //SQL.Append(Format('%s.%s = %s.%s', [TableAlias(JoinTable, True), IDCOLUMN_NAME, TableAlias(MainTable, True), IDCOLUMN_NAME]));
+    SB.Append(TableAlias(JoinTable, True));
+    SB.Append('.');
+    SB.Append(IDCOLUMN_NAME);
+    SB.Append(' = ');
+    SB.Append(TableAlias(MainTable, True));
+    SB.Append('.');
+    SB.Append(IDCOLUMN_NAME);
+  SQL.Append(SB.Tostring);
   if Versioned then
-    SQL.Append(Format(SQLEQUALITY, [TableAlias(JoinTable, True), TIMESTAMPSTARTCOLUMNNAME, TableAlias(MainTable, True), TIMESTAMPSTARTCOLUMNNAME]));
+  begin
+    // SQL.Append(Format('%s.%s = %s.%s', [TableAlias(JoinTable, True), TIMESTAMPSTARTCOLUMNNAME, TableAlias(MainTable, True), TIMESTAMPSTARTCOLUMNNAME]));
+      SB.Clear;
+      SB.Append(TableAlias(JoinTable, True));
+      SB.Append('.');
+      SB.Append(TIMESTAMPSTARTCOLUMNNAME);
+      SB.Append(' = ');
+      SB.Append(TableAlias(MainTable, True));
+      SB.Append('.');
+      SB.Append(TIMESTAMPSTARTCOLUMNNAME);
+    SQL.Append(SB.Tostring);
+  end;
+  FreeAndNil(SB);
 end;
+{$ELSE}
+begin
+  SQL.Append(Format('%s.%s = %s.%s', [TableAlias(JoinTable, True), IDCOLUMN_NAME, TableAlias(MainTable, True), IDCOLUMN_NAME]));
+  if Versioned then
+    SQL.Append(Format('%s.%s = %s.%s', [TableAlias(JoinTable, True), TIMESTAMPSTARTCOLUMNNAME, TableAlias(MainTable, True), TIMESTAMPSTARTCOLUMNNAME]));
+end;
+{$ENDIF}
 
 procedure TBoldObjectDefaultMapper.PMUpdateStopTime(ObjectIDList: TBoldObjectIdList);
 var
@@ -731,7 +1086,7 @@ begin
     for i := 0 to ObjectIdList.Count - 1 do
       IdStringList.Add(ObjectIdList[i].AsString);
 
-    UpdateQuery.AssignSQLText(format('UPDATE %s SET %s = %d WHERE %s in (%s) AND (%s = %d)', // do not localize
+    UpdateQuery.AssignSQLText(format('UPDATE %s SET %s = %d WHERE %s in (%s) AND (%s = %d)',
       [SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName,
        TIMESTAMPSTOPCOLUMNNAME,
        SystemPersistenceMapper.CurrentTimeStamp - 1,
@@ -748,27 +1103,55 @@ begin
   end;
 end;
 
-procedure TBoldObjectDefaultMapper.PMCreate(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.PMCreate(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
+
 var
+  aQuery: IBoldExecQuery;
+  Row: Integer;
+  SQL: TStringList;
+
+  procedure ExecuteQuery;
+  var
+    i: integer;
+  begin
+    aQuery.Params.EndUpdate;
+    aQuery.SQLStrings.EndUpdate;
+//    aQuery.ParamCheck := true;
+    aQuery.ExecSQL;
+    aQuery.Params.BeginUpdate;
+    aQuery.SQLStrings.BeginUpdate;
+//    aQuery.ParamCheck := false;
+    aQuery.Params.Clear;
+    aQuery.AssignSQL(SQL);
+    Row := 0;
+  end;
+var
+{$IFDEF RIL}
+  SB: TStringBuilder;
+{$ENDIF}
   I, T, A: Integer;
   TickCounter: integer;
-  aQuery: IBoldExecQuery;
-  sql, TempList: TStringList;
-
+  TempList: TStringList;
   MemberPMList: TBoldMemberPersistenceMapperList;
   MemberPMapper: TBoldMemberDefaultMapper;
   NewID: TBoldObjectId;
   DuplicateList: TBoldObjectIdList;
+  IdColumnParam: IBoldParameter;
+  TypeColumnParam: IBoldParameter;
   BoldGuard: IBoldGuard;
+  FoundInCache: boolean;
+  StoreInCache: boolean;
+  UseParams: boolean;
+  Limit: integer;
+  ObjectCount: Integer;
 begin
-  BoldGuard := TBoldGuard.Create(MemberPMList);
-  MemberPMList := TBoldMemberPersistenceMapperList.Create;
-  MemberPMList.OwnsEntries := False;
+  BoldGuard := TBoldGuard.Create({MemberPMList}{$IFDEF RIL}SB{$ENDIF},TempList);
+  {$IFDEF RIL}
+  SB := TStringBuilder.Create;
+  {$ENDIF}
   Tickcounter := 0;
   if IsLinkClass and (not Versioned) then
   begin
-    // this will update link-objects rather than create new if they are already in the database
-    // this happens only if two applications link the same two objects at the same time
     DuplicateList := TBoldObjectidList.Create;
     try
       DetectLinkClassDuplicates(ObjectIdList, ValueSpace, TranslationList, DuplicateList);
@@ -784,95 +1167,173 @@ begin
     if ObjectIdList.Count = 0 then
       exit;
   end;
-
+  Limit := SystemPersistenceMapper.SQLDataBaseConfig.MultiRowInsertLimit;
+  UseParams := SystemPersistenceMapper.SQLDataBaseConfig.UseParamsForInteger;
   aQuery := SystemPersistenceMapper.GetExecQuery;
-  sql := TStringList.Create;
+  aQuery.ParamCheck := true;
+  TempList := TStringList.Create;
+  aQuery.SQLStrings.BeginUpdate;
+  aQuery.Params.BeginUpdate;
+  aQuery.Params.clear;
+  FoundInCache := useParams and (Limit = 1) and (Length(fPMCreateCache) > 0);
   try
     for T := 0 to AllTables.Count - 1 do
     begin
-      // Clear the memberlist, as we reuse it.
-      while MemberPMList.Count > 0 do
-        MemberPMList.RemoveByIndex(0);
-      // Fill it with members to use.
-      // FIXME: This will probably not work for members with several tables... /JoHo
-      for A := 0 to MemberPersistenceMappers.Count - 1 do
+      StoreInCache := false;
+      if not FoundInCache then
       begin
-        MemberPMapper := MemberPersistenceMappers[A] as TBoldMemberDefaultMapper;
-        if assigned(MemberPMapper) and
-          MemberPMapper.IsStoredInObject and not MemberPMapper.CustomCreateUpDate and
-          ((MemberPMapper.ColumnDescriptions[0] as TBoldSQLColumnDescription).TableDescription = AllTables[T]) then
-          MemberPMList.Add(MemberPMapper);
-      end;
-
-      //	Create insert query.
-      sql.Clear;
-      aQuery.ClearParams;
-      TempList := TStringList.Create;
-      SQLForMembers(AllTables[T], TempLIst, MemberPMList, ssColumns, True, False, False);
-
-      if Alltables[T].Versioned then
-      begin
-        TempList.Add(TIMESTAMPSTARTCOLUMNNAME);
-        if allTables[T].ContainsStopTimeStamp then
-          TempList.Add(TIMESTAMPSTOPCOLUMNNAME);
-      end;
-
-      BoldAppendToStrings(SQL, Format('INSERT INTO %s (%s) ', [AllTables[T].SQLName, // do not localize
-                                                                  BoldSeparateStringList(TempLIst, ', ', '', '')]), True);
-
-      TempList.Clear;
-      SQLForMembers(AllTables[T], TempList, MemberPMList, ssParameters, True, False, False);
-
-      if Alltables[T].Versioned then
-      begin
-        TempList.Add(':' + TIMESTAMPSTARTCOLUMNNAME);
-        if allTables[T].ContainsStopTimeStamp then
-          TempList.Add(':' + TIMESTAMPSTOPCOLUMNNAME);
-      end;
-
-      BoldAppendToStrings(SQL, Format('VALUES (%s) ', [BoldSeparateStringList(TempLIst, ', ', '', '')]), True); // do not localize
-      TempLIst.Free;
-
-      aQuery.AssignSQL(SQL);
-      aQuery.StartSQLBatch;
-      try
-        for I := 0 to ObjectIDList.Count - 1 do
+        MemberPMList := TBoldMemberPersistenceMapperList.Create;
+        MemberPMList.OwnsEntries := False;
+        aQuery.ClearParams;
+        for A := 0 to MemberPersistenceMappers.Count - 1 do
         begin
-          // All tables have id and type as column 0 and 1 respectively
-          NewID := TranslationList.TranslateToNewID[ObjectIDList[I]];
-          aQuery.ParamByName(IDCOLUMN_NAME).AsInteger := (NewId as TBoldDefaultId).AsInteger;
-          aQuery.ParamByName(TYPECOLUMN_NAME).AsSmallInt := SystemPersistenceMapper.BoldDbTypeForTopSortedIndex(NewId.topSortedIndex);
-
-          ValuesToParamsByMemberList(ObjectIDList[I], ValueSpace, aQuery, MemberPMList, TranslationList, dsmCreate);
-
-          if Alltables[T].Versioned then
-          begin
-            if versioned then
-              aQuery.ParamByName(TIMESTAMPSTARTCOLUMNNAME).AsInteger := SystemPersistenceMapper.CurrentTimeStamp
-            else
-              aQuery.ParamByName(TIMESTAMPSTARTCOLUMNNAME).AsInteger := 0;
-
-            if allTables[T].ContainsStopTimeStamp then
-              aQuery.ParamByName(TIMESTAMPSTOPCOLUMNNAME).AsInteger := BOLDMAXTIMESTAMP;
-          end;
-
-          Inc(TickCounter);
-          if (TickCounter MOD AllTables.Count) = 0 then
-          begin
-            SystemPersistenceMapper.SendExtendedEvent(bpeCreateObject, [ObjectIdList[i], ValueSpace]);
-            TickCounter := 0;
-          end;
-          aQuery.ExecSQL;
+          MemberPMapper := MemberPersistenceMappers[A] as TBoldMemberDefaultMapper;
+          if assigned(MemberPMapper) and
+            MemberPMapper.IsStoredInObject and not MemberPMapper.CustomCreateUpDate and
+            ((MemberPMapper.ColumnDescriptions[0] as TBoldSQLColumnDescription).TableDescription = AllTables[T]) then
+            MemberPMList.Add(MemberPMapper);
         end;
-        aQuery.EndSQLBatch;
-      except
-        aQuery.FailSQLBatch;
-        raise;
+        SQL := TStringList.Create;
+        TempList.clear;
+        SQLForMembers(AllTables[T], TempList, MemberPMList, ssColumns, True, False, False);
+
+        if Alltables[T].Versioned then
+        begin
+          TempList.Add(TIMESTAMPSTARTCOLUMNNAME);
+          if allTables[T].ContainsStopTimeStamp then
+            TempList.Add(TIMESTAMPSTOPCOLUMNNAME);
+        end;
+
+        {$IFDEF RIL}
+        //BoldAppendToStrings(SQL, Format('INSERT INTO %s (%s) ', [AllTables[T].SQLName, BoldSeparateStringList(TempLIst, ', ', '', '')]), True);
+          SB.Clear;
+          SB.Append('INSERT INTO ');
+          SB.Append(AllTables[T].SQLName);
+          SB.Append(' (');
+          SB.Append(BoldSeparateStringList(TempLIst, ', ', '', ''));
+          SB.Append(') ');
+        BoldAppendToStrings(SQL, SB.ToString, True);
+        {$ELSE}
+        BoldAppendToStrings(SQL, Format('INSERT INTO %s (%s) ', [AllTables[T].SQLName,
+                                                                 BoldSeparateStringList(TempList, ', ', '', '')]), True);
+        {$ENDIF}
+
+        if UseParams then
+        begin
+          TempList.Clear;
+          SQLForMembers(AllTables[T], TempList, MemberPMList, ssParameters, True, False, False);
+        end;
+
+        if Alltables[T].Versioned then
+        begin
+          TempList.Add(':' + TIMESTAMPSTARTCOLUMNNAME);
+          if allTables[T].ContainsStopTimeStamp then
+            TempList.Add(':' + TIMESTAMPSTOPCOLUMNNAME);
+        end;
+
+        {$IFDEF RIL}
+        SB.Clear;
+        SB.Append('VALUES ');
+        if UseParams then
+        begin
+          SB.Append('(');
+          SB.Append(BoldSeparateStringList(TempLIst, ', ', '', ''));
+          SB.Append(') ');
+        end;
+        BoldAppendToStrings(SQL, SB.ToString, True);
+
+        {$ELSE}
+        BoldAppendToStrings(SQL, Format('VALUES (%s) ', [BoldSeparateStringList(TempLIst, ', ', '', '')]), True);
+        {$ENDIF}
+        // store in cache
+        StoreInCache := UseParams and (Limit = 1);
+        if StoreInCache then
+        begin
+          i := Length(fPMCreateCache);
+          SetLength(fPMCreateCache, i+1);
+          fPMCreateCache[i].SqlStrings := Sql;
+          fPMCreateCache[i].MemberPMList := MemberPMList;
+        end;
+      end
+      else
+      begin
+        SQL := fPMCreateCache[T].SqlStrings;
+        MemberPMList := fPMCreateCache[T].MemberPMList;
+      end;
+      aQuery.ClearParams;
+      aQuery.AssignSQL(SQL);
+      Row := 0;
+      SB.Clear;
+      for I := 0 to ObjectIDList.Count-1 do
+      begin
+        NewID := TranslationList.TranslateToNewID[ObjectIDList[I]];
+        if UseParams then
+        begin
+          IdColumnParam := aQuery.CreateParam(ftInteger, IDCOLUMN_NAME);
+          TypeColumnParam := aQuery.CreateParam(ftSmallInt, TYPECOLUMN_NAME);
+          IdColumnParam.AsInteger := (NewId as TBoldDefaultId).AsInteger;
+          TypeColumnParam.AsSmallInt := SystemPersistenceMapper.BoldDbTypeForTopSortedIndex(NewId.topSortedIndex)
+        end
+        else
+        begin
+          SB.Append( Format('(%s,%d', [NewId.AsString, SystemPersistenceMapper.BoldDbTypeForTopSortedIndex(NewId.topSortedIndex)]) );
+        end;
+        TempList.Clear;
+        ValuesToQueryByMemberList(ObjectIDList[I], ValueSpace, aQuery, TempList, MemberPMList, TranslationList, dsmCreate);
+        SB.Append(TempList.text);
+        SB.Replace(#13#10, '');
+        if Alltables[T].Versioned then
+        begin
+          if versioned then
+          begin
+            aQuery.EnsureParamByName(TIMESTAMPSTARTCOLUMNNAME).AsInteger := SystemPersistenceMapper.CurrentTimeStamp;
+            SB.Append(',:'+TIMESTAMPSTARTCOLUMNNAME);
+          end
+          else
+          begin
+            aQuery.EnsureParamByName(TIMESTAMPSTARTCOLUMNNAME).AsInteger := 0;
+            SB.Append(',:'+TIMESTAMPSTARTCOLUMNNAME);
+          end;
+
+          if allTables[T].ContainsStopTimeStamp then
+          begin
+            aQuery.EnsureParamByName(TIMESTAMPSTOPCOLUMNNAME).AsInteger := BOLDMAXTIMESTAMP;
+            SB.Append(',:'+TIMESTAMPSTOPCOLUMNNAME);
+          end;
+        end;
+        Inc(TickCounter);
+        if (TickCounter MOD AllTables.Count) = 0 then
+        begin
+          SystemPersistenceMapper.SendExtendedEvent(bpeCreateObject, [ObjectIdList[i], ValueSpace]);
+          TickCounter := 0;
+        end;
+        inc(Row);
+        if UseParams or (i = ObjectIDList.Count-1) or (Row = Limit) or (aQuery.ParamCount + aQuery.BatchQueryParamCount >= SystemPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams) then
+        begin
+          if not UseParams then
+            SB.Append(')');
+          aQuery.SQLStrings.Add(SB.ToString);
+          SB.Clear;
+          ExecuteQuery;
+        end
+        else
+        if not UseParams then
+        begin
+          SB.Append('),');
+        end;
+      end;
+      if not StoreInCache then
+      begin
+        MemberPMList.free;
+        SQl.free;
       end;
     end;
   finally
+    aQuery.SQLStrings.Clear;
+    aQuery.SQLStrings.EndUpdate;
+    aQuery.Params.Clear;
+    aQuery.Params.EndUpdate;
     SystemPersistenceMapper.ReleaseExecQuery(aQuery);
-    sql.Free;
   end;
   for A := 0 to MemberPersistenceMappers.Count - 1 do
   begin
@@ -884,7 +1345,7 @@ begin
   end;
 end;
 
-procedure TBoldObjectDefaultMapper.PMTemporalUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldvalueSpace; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.PMTemporalUpdate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldvalueSpace; TranslationList: TBoldIdTranslationList);
 var
   aQuery: IBoldExecQuery;
   OldDataQuery: IBoldQuery;
@@ -909,10 +1370,8 @@ begin
     begin
       if Alltables[T] <> SystemPersistenceMapper.PSSystemDescription.XFilestable then
       begin
-        // Clear the memberlist, as we reuse it.
         MemberPMList.Clear;
-        // Fill it with members to use.
-        // FIXME: This will probably not work for members with several tables... /JoHo
+
         for A := 0 to MemberPersistenceMappers.Count - 1 do
         begin
           MemberPMapper := MemberPersistenceMappers[A] as TBoldMemberDefaultMapper;
@@ -922,8 +1381,6 @@ begin
             MemberPMList.Add(MemberPMapper);
         end;
 
-        //	Create insert query.
-
         SQL.Clear;
         TempList.Clear;
 
@@ -931,18 +1388,18 @@ begin
           TempList.Add(ObjectIdLIst[i].AsString);
 
         if AllTables[T].ContainsStopTimeStamp then
-          OldDataQuery.AssignSQLText(format('SELECT * FROM %s WHERE (%s in %s) AND (%s = %d)', [ // do not localize
+          OldDataQuery.AssignSQLText(format('SELECT * FROM %s WHERE (%s in %s) AND (%s = %d)', [
             Alltables[T].SQlname, IDCOLUMN_NAME,
             BoldSeparateStringlist(TempList, ', ', '(', ')'),
             TIMESTAMPSTOPCOLUMNNAME,
             SystemPersistenceMapper.CurrentTimeStamp - 1]))
         else
           OldDataQuery.AssignSQLText(format(
-             'SELECT DataTable.* FROM %0:s DataTable, %1:s RootTable ' + // do not localize
-             'WHERE (DataTable.%2:s in %3:s) AND ' + // do not localize
-               '(DataTable.%2:s = RootTable.%2:s) AND ' + // do not localize
-               '(DataTable.%4:s = RootTable.%4:s) AND ' + // do not localize
-               '(RootTable.%5:s = %6:d)', [ // do not localize
+             'SELECT DataTable.* FROM %0:s DataTable, %1:s RootTable '+
+             'WHERE (DataTable.%2:s in %3:s) AND '+
+               '(DataTable.%2:s = RootTable.%2:s) AND '+
+               '(DataTable.%4:s = RootTable.%4:s) AND '+
+               '(RootTable.%5:s = %6:d)', [
             Alltables[T].SQlname,
             SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName,
             IDCOLUMN_NAME,
@@ -957,7 +1414,7 @@ begin
         for i := 0 to OldDataQuery.FieldCount - 1 do
           TempList.Add(OldDataQuery.Fields[i].FieldName);
 
-        BoldAppendToStrings(SQL, Format('INSERT INTO %s (%s) ', [AllTables[T].SQLName, // do not localize
+        BoldAppendToStrings(SQL, Format('INSERT INTO %s (%s) ', [AllTables[T].SQLName,
                                                                     BoldSeparateStringList(TempLIst, ', ', '', '')]), True);
 
         TempList.Clear;
@@ -972,25 +1429,20 @@ begin
             TypeColumnIndex := i;
         end;
 
-        BoldAppendToStrings(SQL, Format('VALUES (%s) ', [BoldSeparateStringList(TempLIst, ', ', '', '')]), True); // do not localize
+        BoldAppendToStrings(SQL, Format('VALUES (%s) ', [BoldSeparateStringList(TempLIst, ', ', '', '')]), True);
 
         if (IdColumnIndex = -1) or (TypeColumnIndex = -1) then
-          raise EBoldInternal.CreateFmt(sTypeAndIDColumnMissing, [classname, aQuery.SQLText]);
+          raise EBoldInternal.CreateFmt('%s.PMTemporalUpdate: Unable to find either type or ID column in SQL-statement (%s)', [classname, aQuery.SQLText]);
 
 
         aQuery.AssignSQL(SQL);
         while not OldDataQuery.Eof do
         begin
-          NewId := SystemPersistenceMapper.NewIdFromQuery(OldDataQuery, TypeColumnIndex, IdColumnIndex, BOLDMAXTIMESTAMP);
+          NewId := SystemPersistenceMapper.NewIdFromQuery(OldDataQuery, NO_CLASS, TypeColumnIndex, IdColumnIndex, BOLDMAXTIMESTAMP);
           try
-            // copy all old data
             for i := 0 to OldDataQuery.FieldCount - 1 do
               aQuery.ParamByName(OldDataQuery.Fields[i].FieldName).AssignFieldValue(OldDataQuery.Fields[i]);
-
-            // fill with known new data.
             ValuesToParamsByMemberList(NewId, ValueSpace, aQuery, MemberPMList, TranslationList, dsmUpdate);
-
-            // set the timestamps
             aQuery.ParamByName(TIMESTAMPSTARTCOLUMNNAME).AsInteger := SystemPersistenceMapper.CurrentTimeStamp;
             if allTables[T].ContainsStopTimeStamp then
               aQuery.ParamByName(TIMESTAMPSTOPCOLUMNNAME).AsInteger := BOLDMAXTIMESTAMP;
@@ -1026,9 +1478,9 @@ begin
     SystemPersistenceMapper.ReleaseQuery(OldDataQuery);
     SQL.Free;
   end;
-end;
+end;  
 
-procedure TBoldObjectDefaultMapper.PMUpdate(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.PMUpdate(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; const Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 var
   aQuery: IBoldExecQuery;
   I, T, A: Integer;
@@ -1037,9 +1489,10 @@ var
   MemberPMapper: TBoldMemberDefaultMapper;
   ObjectContents: IBoldObjectContents;
   sql: TStringList;
+  UseParams: boolean;
   BoldGuard: IBoldGuard;
 begin
-  BoldGuard := TBoldGuard.Create(MemberPMList, SQL);
+  BoldGuard := TBoldGuard.Create(MemberPMList, SQL, TempList);
   if Versioned then
   begin
     PMTemporalUpdate(ObjectIdList, ValueSpace, TranslationList);
@@ -1051,66 +1504,72 @@ begin
   if Assigned(Old_Values) then
     FetchPreviousSingleLinkValues(ObjectIdList, Old_Values);
 
+  UseParams := SystemPersistenceMapper.SQLDataBaseConfig.UseParamsForInteger;
   aQuery := SystemPersistenceMapper.GetExecQuery;
+  aQuery.ParamCheck := false;
+  aQuery.SQLStrings.BeginUpdate;
   sql := TStringList.Create;
+  TempList := TStringList.Create;
   try
-    aQuery.StartSQLBatch;
-    try
-      for T := 0 to AllTables.Count - 1 do
+    for T := 0 to AllTables.Count - 1 do
+    begin
+      if UpdatesMembersInTable(AllTables[T]) then
       begin
-        if UpdatesMembersInTable(AllTables[T]) then
+        for I := 0 to ObjectIDList.Count - 1 do
         begin
-          for I := 0 to ObjectIDList.Count - 1 do
+          ObjectContents := ValueSpace.ObjectContentsByObjectId[ObjectIDList[I]];
+          MemberPMList.Clear;
+          for A := 0 to MemberPersistenceMappers.Count - 1 do
           begin
-            ObjectContents := ValueSpace.ObjectContentsByObjectId[ObjectIDList[I]];
+            MemberPMapper := MemberPersistenceMappers[A] as TBoldMemberDefaultMapper;
+            if assigned(MemberPMapper) and
+              MemberPMapper.IsStoredInObject and not MemberPMapper.CustomCreateUpDate and
+              MemberPMapper.IsDirty(ObjectContents) and
+              ((MemberPMapper.ColumnDescriptions[0] as TBoldSQLColumnDescription).TableDescription = AllTables[T]) then
+              MemberPMList.Add(MemberPMapper);
+          end;
 
-            // Clear the memberlist, as we reuse it.
-            while MemberPMList.Count > 0 do
-              MemberPMList.RemoveByIndex(0);
-
-            // Fill it with members to use.
-            for A := 0 to MemberPersistenceMappers.Count - 1 do
+          if MemberPMLIst.Count > 0 then
+          begin
+            SQL.Clear;
+            BoldAppendToStrings(SQL, Format('UPDATE %s SET ', [AllTables[T].SQLName]), True);
+            if UseParams then
             begin
-              MemberPMapper := MemberPersistenceMappers[A] as TBoldMemberDefaultMapper;
-              if assigned(MemberPMapper) and
-                MemberPMapper.IsStoredInObject and not MemberPMapper.CustomCreateUpDate and
-                MemberPMapper.IsDirty(ObjectContents) and
-                ((MemberPMapper.ColumnDescriptions[0] as TBoldSQLColumnDescription).TableDescription = AllTables[T]) then
-                MemberPMList.Add(MemberPMapper);
-            end;
-
-            if MemberPMLIst.Count > 0 then
-            begin
-              TempList := TStringList.Create;
+              TempList.Clear;
               SQLForMembers(AllTables[T], TempList, MemberPMList, ssValues, False, False, False);
-
-              SQL.Clear;
-              BoldAppendToStrings(SQL, Format('UPDATE %s', [AllTables[T].SQLName]), True); // do not localize
-              BoldAppendToStrings(SQL, Format('SET %s', [BoldSeparateStringList(TempLIst, ', ', '', '')]), True); // do not localize
-              BoldAppendToStrings(SQL, Format('WHERE %s = :%0:s', [IDCOLUMN_NAME]), True); // do not localize
-
-              TempList.Free;
-
-              aQuery.ClearParams;
-              aQuery.AssignSQL(sql);
-
-              aQuery.ParamByName(IDCOLUMN_NAME).AsInteger := (TranslationList.TranslateToNewID[ObjectIDList[I]] as TBoldDefaultId).asInteger;
-              ValuesToParamsByMemberList(ObjectIDList[I], ValueSpace, aQuery, MemberPMList, TranslationList, dsmUpdate);
-              SystemPersistenceMapper.SendExtendedEvent(bpeUpdateObject, [ObjectIDList[I], ValueSpace, aQuery]);
-              aQuery.ExecSQL;
+              BoldAppendToStrings(SQL, BoldSeparateStringList(TempLIst, ', ', '', ''), True);
             end;
+            aQuery.ClearParams;
+            aQuery.AssignSQL(sql);
+
+            TempList.Clear;
+            ValuesToQueryByMemberList(ObjectIDList[I], ValueSpace, aQuery, TempList, MemberPMList, TranslationList, dsmUpdate);
+            aQuery.SQLStrings.Add(TempList.Text);
+            if UseParams then
+            begin
+              aQuery.CreateParam(ftInteger, IDCOLUMN_NAME).AsInteger := (TranslationList.TranslateToNewID[ObjectIDList[I]] as TBoldDefaultId).asInteger;
+              BoldAppendToStrings(aQuery.SQLStrings, Format(' WHERE %s = :%0:s', [IDCOLUMN_NAME]), True);
+            end
+            else
+              BoldAppendToStrings(aQuery.SQLStrings, Format(' WHERE %s = %s', [IDCOLUMN_NAME, ObjectIDList[I].AsString]), True);
+
+            SystemPersistenceMapper.SendExtendedEvent(bpeUpdateObject, [ObjectIDList[I], ValueSpace, aQuery]);
+            aQuery.SQLStrings.EndUpdate;
+            aQuery.ParamCheck := true;
+            aQuery.ExecSQL;
+            aQuery.ParamCheck := false;
+            aQuery.SQLStrings.BeginUpdate;
           end;
         end;
       end;
-      aQuery.EndSQLBatch;
-    except
-      aQuery.FailSQLBatch;
-      raise;
     end;
   finally
+    aQuery.SQLStrings.Clear;
+    aQuery.ClearParams;
+    aQuery.SQLStrings.EndUpdate;
     SystemPersistenceMapper.ReleaseExecQuery(aQuery);
   end;
-
+  
   for A := 0 to MemberPersistenceMappers.Count - 1 do
   begin
     with MemberPersistenceMappers[A] do
@@ -1121,8 +1580,8 @@ begin
   end;
 end;
 
-procedure TBoldObjectDefaultMapper.PMDelete(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
-              Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.PMDelete(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;
+              const Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 var
   I, T: Integer;
   aQuery: IBoldExecQuery;
@@ -1155,6 +1614,8 @@ begin
   lst := TStringList.Create;
   FetchBlockSize := SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize;
   aQuery := SystemPersistenceMapper.GetExecQuery;
+  aQuery.ParamCheck := false;
+  aQuery.ClearParams;
   try
     ObjectCount := ObjectIDList.Count - 1;
     for Block := 0 to (ObjectCount div FetchBlockSize) do
@@ -1165,14 +1626,10 @@ begin
 
       for i := start to stop do
         SystemPersistenceMapper.SendExtendedEvent(bpeDeleteObject, [ObjectIDList[I], ValueSpace]);
+      BoldAppendToStrings(lst, 'DELETE FROM %s ', false);
+      IdListString := IdListSegmentToWhereFragment(ObjectIdList, start, stop, false, aQuery);
 
-      // Construct the delete statement with a placeholder for table-name
-      BoldAppendToStrings(lst, 'DELETE FROM %s', True); // do not localize
-      IdListString := IdListSegmentToWhereFragment(ObjectIdList, start, stop, aQuery);
-
-      BoldAppendToStrings(lst, Format('WHERE %%s %s', [IdListString]), True); // do not localize
-
-      //Execute SQLStatement on all tables except the xfiles table
+      BoldAppendToStrings(lst, Format(' WHERE %%s %s', [IdListString]), false);
       for T := 0 to AllTables.Count - 1 do
       begin
         if AllTables[t] <> SystemPersistenceMapper.PSSystemDescription.XFilestable then
@@ -1183,14 +1640,13 @@ begin
         begin
           if AllTables[t].ColumnsList.IndexOf(SystemPersistenceMapper.XFilesTimeStampColumn)<> -1 then
           begin
-            aQuery.AssignSQLText(Format('UPDATE %s SET %s = %d WHERE %s %s', // do not localize
+            aQuery.AssignSQLText(Format('UPDATE %s SET %s = %d WHERE %s %s',
               [AllTables[T].SQLName, SystemPersistenceMapper.XFilesTimeStampColumn.SQLName,
                SystemPersistenceMapper.CurrentTimeStamp, IDCOLUMN_NAME, IdListString]));
             aQuery.ExecSQL;
           end;
         end;
       end;
-
     end;
 
     for I := 0 to ObjectIDList.Count - 1 do
@@ -1203,13 +1659,47 @@ begin
   end;
 end;
 
-procedure TBoldObjectDefaultMapper.PMMultiPurposeRetrieveExactIdList(ObjectsToFetch: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList; FailureList: TBoldObjectIdList; TimeStamp: TBoldTimeStampType);
+procedure LogLateFetch(SQLHits: integer; ExpressionName: String);
+begin
+  BoldPMLogFmt('Fetched %d objects of class %s', [SQLHits, ExpressionName]);
+  (*
+  if SQLHits = 1 then
+  try
+    raise Exception.CreateFmt('Fetched %d objects of class %s', [SQLHits, ExpressionName]);
+  except
+    on E: Exception do
+      TATErrorManager.LogLastException(E,'Fetch trace', 20);
+  end;
+  *)
+end;
+
+function TBoldObjectDefaultMapper.FindInCache(MemberIdList: TBoldMemberIdList;
+  FetchMode: integer; var MemberPMList, CustomMembers: TBoldMemberPersistenceMapperList;
+  var ASql: TStringList): boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for I := Length(fQueryCache) - 1 downto 0 do
+    if (fQueryCache[i].fetchMode = FetchMode) and
+       ((not Assigned(MemberIdList) and not Assigned(fQueryCache[i].MemberList))
+       or (Assigned(MemberIdList) and (MemberIdList.IsEqual(fQueryCache[i].MemberList)))) then
+    begin
+      result := true;
+      MemberPMList := fQueryCache[i].MemberPMList;
+      CustomMembers := fQueryCache[i].CustomMembers;
+      ASQL := fQueryCache[i].SqlStrings;
+      exit;
+    end;
+end;
+
+procedure TBoldObjectDefaultMapper.PMMultiPurposeRetrieveExactIdList(ObjectsToFetch: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList; FailureList: TBoldObjectIdList; TimeStamp: TBoldTimeStampType);
 var
   Start, Stop: integer;
   CustomMembers,
   MemberPMList: TBoldMemberPersistenceMapperList;
   aQuery: IBoldQuery;
-  TempLIst: TStringList;
+  TempList: TStringList;
   Block,
   ObjectCount: Longint;
   i: Integer;
@@ -1219,76 +1709,85 @@ var
   sql: TStringList;
   FetchBlockSize: integer;
   RefetchIdList: TBoldObjectIdList;
+  Guard: IBoldGuard;
+  FoundInCache: boolean;
 begin
-  MemberPMList := TBoldMemberPersistenceMapperList.Create;
-  MemberPMList.OwnsEntries := False;
-  CustomMembers := TBoldMemberPersistenceMapperList.Create;
-  CustomMembers.OwnsEntries := False;
-  aQuery := SystemPersistenceMapper.GetQuery;
-  TempLIst := TStringList.Create;
-  sql := TStringList.Create;
+  Guard := TBoldGuard.Create(TempList, RefetchIdList);
+  FoundInCache := FindInCache(MemberIdList, FetchMode, MemberPMList, CustomMembers, sql);
+  if not FoundInCache then
+  begin
+    sql := TStringList.Create;
+    MemberPMList := TBoldMemberPersistenceMapperList.Create;
+    MemberPMList.OwnsEntries := False;
+    CustomMembers := TBoldMemberPersistenceMapperList.Create;
+    CustomMembers.OwnsEntries := False;
+    BuildMemberFetchLists(MemberIdList, MemberPMLIst, CustomMembers, FetchMode);
+  end;
+  TempList := TStringList.Create;
   RefetchIdList := TBoldObjectIdList.Create;
   FetchBlockSize := SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize;
-
+  aQuery := SystemPersistenceMapper.GetQuery;
   try
-    BuildMemberFetchLists(MemberIdList, MemberPMLIst, CustomMembers, FetchMode);
-
     try
       if SystemPersistenceMapper.SupportsObjectUpgrading then
         SystemPersistenceMapper.ObjectUpgrader.StartTransaction;
 
-      // if the memberidlist is empty, then we must fetch the objects to make sure they still exist in the database
-      // this ensures optimistic locking on deleted objects.
-      // The below test will skip fetching the object if we are fetching only "custom members"
+
       if (MemberPMList.Count > 0) or not assigned(MemberIdList) or (MemberIdList.Count = 0) then
       begin
+{
         if assigned(MissingList) then
           MissingList.AddList(ObjectsToFetch);
-
-        //  We do not want to retrieve more than FetchBlockSize objects at a time
-
+}
         ObjectCount := ObjectsToFetch.Count - 1;
+        if assigned(MissingList) then
+        begin
+          MissingList.Capacity := ObjectCount+1;
+          for I := ObjectsToFetch.Count - 1 downto 0 do
+            MissingList.Add(ObjectsToFetch[i]);
+        end;
+
+        if not FoundInCache then
+          RetrieveSelectStatement(SQL, MemberPMList, FetchMode, Versioned);
         for Block := 0 to (ObjectCount div FetchBlockSize) do
         begin
-          sql.clear;
-          RetrieveSelectStatement(SQL, MemberPMList, FetchMode, Versioned);
-
           Start := Block * FetchBlockSize;
           Stop := MinIntValue([Pred(Succ(Block) * FetchBlockSize), ObjectCount]);
           if Stop >= Start then
           begin
             aQuery.ClearParams;
-            BoldAppendToStrings(SQL, IdListSegmentToWhereFragment(ObjectsToFetch, Start, Stop, aQuery), False);
+            TempList.Assign(SQL);
+            BoldAppendToStrings(TempList, IdListSegmentToWhereFragment(ObjectsToFetch, Start, Stop, true, aQuery), False);
 
             if versioned then
-              RetrieveTimeStampCondition(SQL, TimeStamp, true, 'AND', false); // do not localize
+              RetrieveTimeStampCondition(TempList, TimeStamp, true, 'AND', false);
 
+            aQuery.SQLText := TempList.Text;
             SQLHits := 0;
-            aQuery.AssignSQL(SQL);
             aQuery.Open;
             while not aQuery.EOF do
             begin
               Inc(SQLHits);
 
-              tempId := (SystemPersistenceMapper as TBoldSystemDefaultMapper).NewIdFromQuery(aQuery, 1, 0, timeStamp);
+              tempId := (SystemPersistenceMapper as TBoldSystemDefaultMapper).NewIdFromQuery(aQuery, NO_CLASS, 1, 0, timeStamp);
               NewId := ObjectsToFetch.IDByID[TempId];
               TempId.Free;
 
               if not assigned(NewId) then
-                raise EBoldInternal.CreateFmt(sUninvitedObjectReturnedFromDB, [classname, aQuery.Fields[0].AsInteger]);
+                raise EBoldInternal.CreateFmt('%s.PMMultiPurposeRetrieveExactIdList: Database returned object we didn''t ask for (ID: %d)', [classname, aQuery.Fields[0].AsInteger]);
 
               if assigned(MissingList) then
               begin
                 i := MissingList.IndexByID[NewId];
                 if i <> -1 then
-                  MissingList.RemoveByIndex(i)
+                  MissingList.RemoveByIndex(i);
               end;
 
               if not NewId.TopSortedIndexExact then
                 NewId := TranslationList.TranslateToNewID[NewId];
 
               if not NewId.TopSortedIndexExact then
-                raise EBoldInternal.CreateFmt(sIDExactnessFailure, [classname]);
+                raise EBoldInternal.CreateFmt('%s.PMMultiPurposeRetrieveExactIdList: Got an Id with no or only approx class!', [classname]);
 
               if (TimeStamp = BOLDMAXTIMESTAMP) and not assigned(MemberIdList) and SystemPersistenceMapper.SupportsObjectUpgrading and IsOldVersion(aQuery) then
               begin
@@ -1312,21 +1811,29 @@ begin
 
               aQuery.Next;
             end;
+            aQuery.ClearParams;
             aQuery.Close;
-            BoldPMLogFmt(sLogFetchedXobjectsOfY, [SQLHits, ExpressionName]);
+            if BoldPMLogHandler<>nil then
+		          LogLateFetch(SQLHits, ExpressionName);
           end;
         end;
 
         if assigned(MissingList) and (FetchMode <> fmDistributable) and (MissingList.Count > 0) then
         begin
-          BoldPMLogFmt(sLogXObjectsOfYMissing, [MissingList.Count, ExpressionName]);
-
-          for i := 0 to MissingList.Count - 1 do
-          begin
-            ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[MissingList[i]];
-            ObjectContents.BoldExistenceState := besDeleted;
-            ObjectContents.IsReadOnly := true;
-          end;
+          if BoldPMLogHandler<>nil then
+            BoldPMLogFmt('%d objects of type %s were missing', [MissingList.Count, ExpressionName]);
+//          if not SystemPersistenceMapper.SQLDataBaseConfig.IgnoreMissingObjects then
+            for i := 0 to MissingList.Count-1 do
+            begin
+              if SystemPersistenceMapper.SQLDataBaseConfig.IgnoreMissingObjects then
+                TranslationList.AddTranslationAdoptNew(MissingList[i], TBoldNonExistingObjectId.CreateWithClassID(MissingList[i].TopSortedIndex, MissingList[i].TopSortedIndexExact))
+              else
+              begin
+                ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[MissingList[i]];
+                ObjectContents.BoldExistenceState := besDeleted;
+                ObjectContents.IsReadOnly := true;
+              end;
+            end;
         end;
 
       end;
@@ -1345,16 +1852,23 @@ begin
     for i := 0 to CustomMembers.Count - 1 do
       CustomMembers[i].PMFetch(ObjectsToFetch, ValueSpace, FetchMode, TranslationList, failureList);
   finally
-    sql.Free;
-    MemberPMList.Free;
-    CustomMembers.Free;
     SystemPersistenceMapper.ReleaseQuery(aQuery);
-    TempLIst.Free;
-    RefetchIdList.Free;
+    if not FoundInCache then
+    begin
+      // store in cache
+      i := Length(fQueryCache);
+      SetLength(fQueryCache, i+1);
+      if Assigned(MemberIdList) then
+        fQueryCache[i].MemberList := MemberIdList.Clone;
+      fQueryCache[i].SqlStrings := Sql;
+      fQueryCache[i].FetchMode := FetchMode;
+      fQueryCache[i].MemberPMList := MemberPMList;
+      fQueryCache[i].CustomMembers := CustomMembers;
+    end;
   end;
 end;
 
-function TBoldObjectDefaultMapper.CompareFieldsToMembers(ObjectID: TBoldObjectId; ValueSpace: IBoldValueSpace; DataSet: IBoldDataSet; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList): Boolean;
+function TBoldObjectDefaultMapper.CompareFieldsToMembers(ObjectID: TBoldObjectId; const ValueSpace: IBoldValueSpace; const DataSet: IBoldDataSet; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList): Boolean;
 var
   i: integer;
   ObjectContents: IBoldObjectContents;
@@ -1366,14 +1880,14 @@ begin
       result := result and TBoldMemberDefaultMapper(Memberlist[i]).CompareFields(ObjectContents, DataSet, ValueSpace, Translationlist);
 end;
 
-procedure TBoldObjectDefaultMapper.HandleCompareData(FetchedId: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
+procedure TBoldObjectDefaultMapper.HandleCompareData(FetchedId: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
 begin
   if not CompareFieldsToMembers(FetchedId, ValueSpace, Query, MemberPMList, TranslationList) and
     not FailureList.IdInList[FetchedId] then
     FailureList.Add(FetchedId);
 end;
 
-procedure TBoldObjectDefaultMapper.PMCompareExactIDList(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
+procedure TBoldObjectDefaultMapper.PMCompareExactIDList(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
 var
   MissingList: TBoldObjectIdList;
   i: integer;
@@ -1385,28 +1899,26 @@ begin
   PMMultiPurposeRetrieveExactIdList(ObjectIdList, ValueSpace, MemberIdList, fmCompare, translationList, MissingList, FailureList, BoldMaxTimeStamp);
   if MissingList.Count > 0 then
   begin
-    BoldLog.LogFmt(sOptimisticLockingFailedForNonExisting, [expressionName]);
+    BoldLog.LogFmt('Optimistic Locking failed for the following objects of type %s because they did not exist in the database:', [expressionName]);
       for i := 0 to MissingList.Count - 1 do
-        BoldLog.LogFmt(sLogIdAsString, [MissingList[i].AsString]);
+        BoldLog.Log('Id: ' + MissingList[i].AsString);
     FailureList.AddList(MissingList);
   end;
 end;
 
-procedure TBoldObjectDefaultMapper.HandleFetchData(FetchedId: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
+procedure TBoldObjectDefaultMapper.HandleFetchData(FetchedId: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Query: IBoldQuery; MemberPMList: TBoldMemberPersistenceMapperList; FetchMode: integer; FailureList: TBoldObjectIdList);
 begin
   ValuesFromFieldsByMemberList(FetchedId, ValueSpace, TranslationList, Query, MemberPMList);
   if FetchMode = fmDistributable then
     DistributableInfoFromQuery(FetchedId, ValueSpace, TranslationList, Query);
 end;
 
-procedure TBoldObjectDefaultMapper.PMFetchExactIDList(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList);
+procedure TBoldObjectDefaultMapper.PMFetchExactIDList(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList);
 var
   i: integer;
   TimeStamp: TBoldTimeStampType;
   ListOfOtherTimeStamps, ObjectsToFetch: TBoldObjectIdList;
 begin
-  // Note, when the list gets here it contains only object of one class, from one
-  // Bold, that are not previously present in the Bold (or possibly a forced fetch)
   if objectIdList.Count = 0 then
     exit;
 
@@ -1445,23 +1957,78 @@ begin
   end;
 end;
 
-procedure TBoldObjectDefaultMapper.PMFetchWithCondition(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; BoldCondition: TBoldCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectDefaultMapper.FetchRawSqlCondition(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;  RawCondition: TBoldRawSqlCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList);
 var
   aQuery: IBoldQuery;
-  WhereToken: string;
-  fromLine: String;
-  JoinLine: String;
-  RootTableName: string;
-  JoinCondition: string;
+begin
+  aQuery := SystemPersistenceMapper.GetQuery;
+  try
+    aQuery.AssignSQLText(RawCondition.SQL);
+    aQuery.AssignParams(RawCondition.Params);
+    RawCondition.AvailableAnswers := (SystemPersistenceMapper as TBoldSystemDefaultMapper).GetListUsingQuery(ObjectIDList, ValueSpace, aQuery, RawCondition.TopSortedIndex, -1, 0, FetchMode, TranslationList, RawCondition.Time, RawCondition.MaxAnswers, RawCondition.Offset);
+  finally
+    SystemPersistenceMapper.ReleaseQuery(aQuery);
+  end;
+end;
+
+procedure TBoldObjectDefaultMapper.FillInMembers(MyMoldClass,
+  CurrentMoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary);
+var
+  i: integer;
+begin
+  fOptimisticLockingMode := MyMoldClass.EffectiveOptimisticLocking;
+  if SystemPersistenceMapper.UseModelVersion then
+  begin
+    fModelVersionMember := TBoldModelVersionMember.CreateFromMold(nil, MyMoldClass, self, -1, TypeNameDictionary);
+    MemberPersistenceMappers.Add(fModelVersionMember);
+  end;
+  if SystemPersistenceMapper.UseReadOnly then
+    MemberPersistenceMappers.Add(TBoldReadOnlynessMember.CreateFromMold(nil, MyMoldClass, self, -1, TypeNameDictionary));
+
+
+  if SystemPersistenceMapper.UseXFiles then
+  begin
+    if SystemPersistenceMapper.UseTimestamp then
+      MemberPersistenceMappers.Add(TBoldTimeStampMember.CreateFromMold(nil, MyMoldClass, self, -1, TypeNameDictionary));
+    if SystemPersistenceMapper.UseGlobalId then
+      MemberPersistenceMappers.Add(TBoldGlobalIdMember.CreateFromMold(nil, MyMoldClass, self, -1, TypeNameDictionary));
+  end
+  else
+  begin
+    if SystemPersistenceMapper.UseTimestamp and (not MyMoldClass.IsRootClass )then
+      MemberPersistenceMappers.Add(TBoldNonXFileTimeStampMember.CreateFromMold(nil, MyMoldClass, self, -1, TypeNameDictionary));
+  end;
+
+  fObjectIdClass := BOLDDEFAULTIDNAME;
+  for i := 0 to MyMoldClass.AllPossibleNames.Count - 1 do
+    GenerateMappingInfo(MyMoldClass.AllPossibleNames[i], MyMoldClass);
+  inherited;
+end;
+
+procedure TBoldObjectDefaultMapper.PMFetchWithCondition(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; BoldCondition: TBoldCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList);
+var
+  aQuery: IBoldQuery;
+  WhereToken,
+  fromLine, JoinLine,
+  RootTableName, JoinCondition,
+  sCurrentMappingInfo: string;
   i, j: Integer;
   timeStamp: TBoldTimeStampType;
   MappingInfo: TBoldAllInstancesMappingArray;
   SQL: TStringList;
   SQLCondition: TBoldSQLCondition;
+{$IFDEF RIL}
+  SB: TStringBuilder;
+{$ENDIF}
 begin
   if not assigned(BoldCondition) or (BoldCondition is TBoldConditionWithClass) then
   begin
-    if BoldCondition is TBoldSQLCondition then
+    if BoldCondition is TBoldRawSqlCondition then
+    begin
+      FetchRawSqlCondition(ObjectIDList, ValueSpace, TBoldRawSqlCondition(BoldCondition), FetchMode, TranslationList);
+      Exit;
+    end
+    else if BoldCondition is TBoldSQLCondition then
       SQLCondition := BoldCondition as TBoldSQLCondition
     else
       SQLCondition := nil;
@@ -1469,11 +2036,16 @@ begin
     MappingInfo := SystemPersistenceMapper.MappingInfo.GetAllInstancesMapping(ExpressionName);
     aQuery := SystemPersistenceMapper.GetQuery;
     sql := TStringList.Create;
+    {$IFDEF RIL}
+    SB := TStringBuilder.Create;
+    {$ENDIF}
     try
       for i := 0 to length(MappingInfo) - 1 do
       begin
+        sCurrentMappingInfo := MappingInfo[i].TableName;
+
         sql.Clear;
-        WhereToken := 'WHERE'; // Do not localize
+        WhereToken := 'WHERE';
 
         if assigned(BoldCondition) then
           timeStamp := (BoldCondition as TBoldConditionWithClass).Time
@@ -1482,19 +2054,33 @@ begin
 
         if (BoldCondition is TBoldTimestampCondition) then
         begin
-          SQL.Add(format('SELECT %s, %s', [IDCOLUMN_NAME, TYPECOLUMN_NAME])); // Do not localize
-          SQL.Add(format('FROM %s', [(SystemPersistenceMapper.PSSystemDescription as TBoldDefaultSystemDescription).XFilestable.SQLName])); // Do not localize
-          SQL.Add(format('WHERE %s > %d', [SystemPersistenceMapper.XFilesTimeStampColumn.SQLname, (BoldCondition as TBoldTimestampCondition).Timestamp])); // Do not localize
+          SQL.Add(format('SELECT %s, %s', [IDCOLUMN_NAME, TYPECOLUMN_NAME]));
+          SQL.Add(format('FROM %s', [(SystemPersistenceMapper.PSSystemDescription as TBoldDefaultSystemDescription).XFilestable.SQLName]));
+          SQL.Add(format('WHERE %s > %d', [SystemPersistenceMapper.XFilesTimeStampColumn.SQLname, (BoldCondition as TBoldTimestampCondition).Timestamp]));
           aQuery.AssignSQL(SQL);
         end
         else
         begin
-          SQL.Append(Format('SELECT %s.%s, %s.%s', [MappingInfo[i].TableName, IDCOLUMN_NAME, MappingInfo[i].TableName, TYPECOLUMN_NAME])); // do not localize
-          FromLine := Format('FROM %s', [MappingInfo[i].TableName]); // do not localize
+          {$IFDEF RIL}
+          SB.Clear;
+            SB.Append('SELECT ');
+            SB.Append(sCurrentMappingInfo);
+            SB.Append('.');
+            SB.Append(IDCOLUMN_NAME);
+            SB.Append(', ');
+            SB.Append(sCurrentMappingInfo);
+            SB.Append('.');
+            SB.Append(TYPECOLUMN_NAME);
+          SQL.Append(SB.ToString);
+
+          FromLine := 'FROM '+sCurrentMappingInfo;
+          {$ELSE}
+          SQL.Append(Format('SELECT %s.%s, %s.%s', [MappingInfo[i].TableName, IDCOLUMN_NAME, MappingInfo[i].TableName, TYPECOLUMN_NAME]));
+          FromLine := Format('FROM %s', [MappingInfo[i].TableName]);
+          {$ENDIF}
+
           JoinLine := '';
           RootTableName := SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName;
-
-          // add the rest of the tables
           if assigned(SQLCondition) and
              SQLCondition.JoinInheritedTables and
              ((SQLCondition.whereFragment <> '') or
@@ -1502,35 +2088,35 @@ begin
           begin
 
             for j := 0 to AllTables.count - 1 do
-              if not SameText(Alltables[j].SQLName, MappingInfo[i].TableName) and
+              if not SameText(Alltables[j].SQLName, sCurrentMappingInfo) and
                 (AllTables[j] <> SystemPersistenceMapper.PSSystemDescription.XFilestable) then
               begin
-                JoinCondition := format('(%s.%s = %s.%s)', // do not localize
-                  [MappingInfo[i].TableName, IDCOLUMN_NAME, AllTables[j].SQLName, IDCOLUMN_NAME]);
+                JoinCondition := format('(%s.%s = %s.%s)',
+                  [sCurrentMappingInfo, IDCOLUMN_NAME, AllTables[j].SQLName, IDCOLUMN_NAME]);
 
                 if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins then
-                  fromLine := fromLine + format(' left join %s on %s ', [AllTables[j].SQLName, JoinCondition]) // do not localize
+                  fromLine := fromLine + format(' left join %s on %s ', [AllTables[j].SQLName, JoinCondition])
                 else
                 begin
-                  fromLine := fromLine + format(', %s', [AllTables[j].SQLName]); // do not localize
-                  JoinLine := JoinLine + format('%s %s ', [WhereToken, joinCondition]); // do not localize
-                  WhereToken := 'AND'; // do not localize
+                  fromLine := fromLine + format(', %s', [AllTables[j].SQLName]);
+                  JoinLine := JoinLine + format('%s %s ', [WhereToken, joinCondition]);
+                  WhereToken := 'AND';
                 end
               end;
           end
           else if Versioned and
-                  not SameText(MappingInfo[i].TableName, RootTableName) then
+                  not SameText(sCurrentMappingInfo, RootTableName) then
           begin
-            joinCondition := format('(%s.%s = %s.%s) ', // do not localize
-                  [MappingInfo[i].TableName, IDCOLUMN_NAME, RootTableName, IDCOLUMN_NAME]);
+            joinCondition := format('(%s.%s = %s.%s) ',
+                  [sCurrentMappingInfo, IDCOLUMN_NAME, RootTableName, IDCOLUMN_NAME]);
 
             if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins then
-              fromLine := fromLine + format(' left join %s on %s ', [RootTableName, JoinCondition]) // do not localize
+              fromLine := fromLine + format(' left join %s on %s ', [RootTableName, JoinCondition])
             else
             begin
-              fromLine := FromLine + ', ' + RootTableName; // do not localize
-              JoinLine := JoinLine + format(' %s %s ', [WhereToken, joincondition]); // do not localize
-              WhereToken := 'AND'; // do not localize
+              fromLine := FromLine + ', ' + RootTableName;
+              JoinLine := JoinLine + format(' %s %s ', [WhereToken, joincondition]);
+              WhereToken := 'AND';
             end;
           end;
           SQL.Add(fromLine);
@@ -1540,21 +2126,21 @@ begin
           if Versioned then
           begin
             RetrieveTimeStampCondition(sql, TimeStamp, false, WhereToken, false);
-            WhereToken := 'AND'; // do not localize
+            WhereToken := 'AND';
           end;
 
           if MappingInfo[i].ClassIdRequired then
           begin
-            SQL.Add(Format('%s %s.%s in (%s)', [WhereToken, MappingInfo[i].TableName, TYPECOLUMN_NAME, SubClassesID])); // do not localize
-            WhereToken := 'AND'; // do not localize
+            SQL.Add(Format('%s %s.%s in (%s)', [WhereToken, sCurrentMappingInfo, TYPECOLUMN_NAME, SubClassesID]));
+            WhereToken := 'AND';
           end;
 
           if assigned(SQLCondition) then
           begin
-            if SQLCondition.whereFragment <> '' then // do not localize
-              SQL.Append(Format('%s (%s)', [WhereToken, SQLCondition.whereFragment])); // do not localize
-            if SQLCondition.orderBy <> '' then // do not localize
-              SQL.Append(Format('ORDER BY %s', [SQLCondition.orderBy])); // do not localize
+            if SQLCondition.whereFragment <> '' then
+              SQL.Append(Format('%s (%s)', [WhereToken, SQLCondition.whereFragment]));
+            if SQLCondition.orderBy <> '' then
+              SQL.Append(Format('ORDER BY %s', [SQLCondition.orderBy]));
           end;
 
           aQuery.AssignSQL(SQL);
@@ -1562,60 +2148,110 @@ begin
           if assigned(SQLCondition) then
             aQuery.AssignParams(SQLCondition.Params);
 
+          if assigned(SQLCondition) and Assigned(SystemPersistenceMapper.OnPsEvaluate) then
+            SystemPersistenceMapper.OnPsEvaluate(aQuery);
          end;
-        BoldCondition.AvailableAnswers := (SystemPersistenceMapper as TBoldSystemDefaultMapper).GetListUsingQuery(ObjectIDList, ValueSpace, aQuery, FetchMode, TranslationList, TimeStamp, BoldCondition.MaxAnswers, BoldCondition.Offset);
-        BoldPMLogFmt(sLogFetchedXObjectsOfYFromTableZ, [ObjectIdList.Count, ExpressionName, MappingInfo[i].tableName]);
+        BoldCondition.AvailableAnswers := (SystemPersistenceMapper as TBoldSystemDefaultMapper).GetListUsingQuery(ObjectIDList, ValueSpace, aQuery, NO_CLASS ,1, 0, FetchMode, TranslationList, TimeStamp, BoldCondition.MaxAnswers, BoldCondition.Offset);
+        {$IFDEF RIL}
+        //BoldPMLogFmt('Fetched %d IDs in class %s from table %s', [ObjectIdList.Count, ExpressionName, MappingInfo[i].tableName]);
+        if BoldPMLogHandler<>nil then { skip formating if the string is not used anyway... //ril }
+        begin
+          SB.Clear;
+            SB.Append('Fetched ');
+            SB.Append(IntToStr(ObjectIdList.Count));
+            SB.Append(' IDs in class ');
+            SB.Append(ExpressionName);
+            SB.Append(' from table ');
+            SB.Append(sCurrentMappingInfo);
+          BoldPMLogFmt(SB.ToSTring, []);
+        end;
+        {$ELSE}
+        BoldPMLogFmt('Fetched %d IDs in class %s from table %s', [ObjectIdList.Count, ExpressionName, MappingInfo[i].tableName]);
+        {$ENDIF}
       end;
     finally
       SystemPersistenceMapper.ReleaseQuery(aQuery);
       sql.Free;
+      {$IFDEF RIL}
+      FreeAndNil(SB);
+      {$ENDIF}
     end;
   end
   else
-    raise EBold.CreateFmt(sUnknownConditionType, [BoldCondition.ClassName]);
+    raise EBold.CreateFmt('Unknown type of condition (%s)', [BoldCondition.ClassName]);
 end;
 
-function TBoldObjectDefaultMapper.NextExternalObjectId(ValueSpace: IBoldValueSpace; ObjectId: TBoldObjectId): TBoldObjectId;
+function TBoldObjectDefaultMapper.NextExternalObjectId(const ValueSpace: IBoldValueSpace; ObjectId: TBoldObjectId): TBoldObjectId;
 var
   aQuery: IBoldQuery;
   aExecQuery: IBoldExecQuery;
   NewID: Longint;
   SystemDefaultMapper: TBoldSystemDefaultMapper;
 begin
+  NewId := -1;
   SystemDefaultMapper := SystemPersistenceMapper as TBoldSystemDefaultMapper;
   if SystemDefaultMapper.NextDBID > SystemDefaultMapper.LastReservedDBID then
   begin
-    SystemDefaultMapper.StartTransaction(ValueSpace);
-    aQuery := SystemDefaultMapper.GetQuery;
-    aExecQuery := SystemDefaultMapper.GetExecQuery;
-    try
-      try
-        aExecQuery.AssignSQLText(Format('UPDATE %s SET %s = %s + %d', [ // do not localize
-                                  SystemDefaultMapper.PSSystemDescription.IdTable.SQLName,
-                                  IDCOLUMN_NAME,
-                                  IDCOLUMN_NAME,
-                                  SystemDefaultMapper.ReservedCount]));
-        aExecQuery.ExecSQL;
-        aQuery.AssignSQLText(Format('SELECT %s FROM %s', [ // do not localize
-                               IDCOLUMN_NAME,
-                               SystemDefaultMapper.PSSystemDescription.IdTable.SQLName]));
-        aQuery.Open;
-        NewID := aQuery.Fields[0].AsInteger;
-        aQuery.Close;
-        SystemDefaultMapper.Commit(ValueSpace);
-        SystemDefaultMapper.NextDBID := NewID - SystemDefaultMapper.ReservedCount;
-        SystemDefaultMapper.LastReservedDBID := SystemDefaultMapper.NextDBID + SystemDefaultMapper.ReservedCount - 1;
-      except
-        on e: EDatabaseError do
-        begin
-          SystemDefaultMapper.RollBack(ValueSpace);
-          raise EBoldCantGetID.CreateFmt(sCannotGetID, [e.ClassName, e.message]);
+    // plugin ID increment here
+    if Assigned(IDIncrementEvent) then
+    begin
+      NewID := IDIncrementEvent(SystemDefaultMapper.ReservedCount);
+      if CompatibilityMode then
+      begin
+        aExecQuery := SystemDefaultMapper.GetExecQuery;
+        try
+          try
+            aExecQuery.AssignSQLText(Format('UPDATE %s SET %s = %s + %d', [// do not localize
+              SystemDefaultMapper.PSSystemDescription.IdTable.SQLName,
+                IDCOLUMN_NAME,
+                IDCOLUMN_NAME,
+                SystemDefaultMapper.ReservedCount]));
+            aExecQuery.ExecSQL;
+          except
+            on E: EDatabaseError do
+            begin
+              raise EBoldCantGetID.CreateFmt('Can''t get ID (%s: %s)!', [e.ClassName, e.message]);
+            end;
+          end;
+        finally
+          SystemDefaultMapper.ReleaseExecQuery(aExecQuery);
         end;
       end;
-    finally
-      SystemDefaultMapper.ReleaseQuery(aQuery);
-      SystemDefaultMapper.ReleaseExecQuery(aExecQuery);
+    end
+    else
+    begin
+      SystemDefaultMapper.StartTransaction(ValueSpace);
+      aQuery := SystemDefaultMapper.GetQuery;
+      aExecQuery := SystemDefaultMapper.GetExecQuery;
+      try
+        try
+          aExecQuery.AssignSQLText(Format('UPDATE %s SET %s = %s + %d', [
+                                    SystemDefaultMapper.PSSystemDescription.IdTable.SQLName,
+                                    IDCOLUMN_NAME,
+                                    IDCOLUMN_NAME,
+                                    SystemDefaultMapper.ReservedCount]));
+          aExecQuery.ExecSQL;
+          aQuery.AssignSQLText(Format('SELECT %s FROM %s', [
+                                 IDCOLUMN_NAME,
+                                 SystemDefaultMapper.PSSystemDescription.IdTable.SQLName]));
+          aQuery.Open;
+          NewID := aQuery.Fields[0].AsInteger;
+          aQuery.Close;
+          SystemDefaultMapper.Commit(ValueSpace);
+        except
+          on e: EDatabaseError do
+          begin
+            SystemDefaultMapper.RollBack(ValueSpace);
+            raise EBoldCantGetID.CreateFmt('Can''t get ID (%s: %s)!', [e.ClassName, e.message]);
+          end;
+        end;
+      finally
+        SystemDefaultMapper.ReleaseQuery(aQuery);
+        SystemDefaultMapper.ReleaseExecQuery(aExecQuery);
+      end;
     end;
+    SystemDefaultMapper.NextDBID := NewID - SystemDefaultMapper.ReservedCount;
+    SystemDefaultMapper.LastReservedDBID := SystemDefaultMapper.NextDBID + SystemDefaultMapper.ReservedCount - 1;
   end;
   SystemDefaultMapper.ReservedCount := 0;
 
@@ -1625,25 +2261,131 @@ begin
   SystemDefaultMapper.NextDBID := SystemDefaultMapper.NextDBID + 1;
 end;
 
-procedure TBoldObjectDefaultMapper.FetchPreviousSingleLinkValues(ObjectIdList: TBoldObjectIdLIst; Old_Values: IBoldvalueSpace);
+procedure TBoldObjectDefaultMapper.FetchPreviousSingleLinkValues(ObjectIdList: TBoldObjectIdLIst; const Old_Values: IBoldvalueSpace);
 var
   i: integer;
-  SingleLinkList: TBoldMemberIdList;
-  BoldGuard: IBoldGuard;
 begin
-  BoldGuard := TBoldGuard.Create(SingleLinkList);
-  SingleLinkList := TBoldMemberIdList.Create;
-
-  for i := 0 to MemberPersistenceMappers.Count - 1 do
-    if MemberPersistenceMappers[i] is TBoldEmbeddedSingleLinkDefaultMapper then
-      SingleLinkList.Add(TBoldmemberId.Create(MemberPersistenceMappers[i].MemberIndex));
-  if SingleLinkList.Count > 0 then
-    PMFetchExactIDList(ObjectIdList, Old_Values, SingleLInkList, fmNormal, nil, nil);
+  if not Assigned(fSingleLinkList) then
+  begin
+    fSingleLinkList := TBoldMemberIdList.Create;
+    for i := 0 to MemberPersistenceMappers.Count - 1 do
+      if MemberPersistenceMappers[i] is TBoldEmbeddedSingleLinkDefaultMapper then
+        fSingleLinkList.Add(TBoldmemberId.Create(MemberPersistenceMappers[i].MemberIndex));
+  end;
+  if fSingleLinkList.Count > 0 then
+    PMFetchExactIDList(ObjectIdList, Old_Values, fSingleLInkList, fmNormal, nil, nil);
 end;
 
 procedure TBoldObjectDefaultMapper.MakeIDsExactUsingTable(
   ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList;
-  Table: TBoldSQLTableDescription);
+  Table: TBoldSQLTableDescription; EnsureAll: Boolean;
+  HandleNonExisting: Boolean);
+{$IFDEF RIL}
+var
+  Block,
+  ObjectCount: Longint;
+  topSortedIndex, I, j: Integer;
+  tempId: TBoldObjectId;
+  aQuery: IBoldQuery;
+  lst: TStringList;
+  Start, Stop: integer;
+  WhereFragment: string;
+  LittleObject: TLittleClass;
+  Ids: TList;
+  FetchBlockSize: integer;
+  sTestCompare: string;
+  Found: boolean;
+  SB: TStringBuilder;
+begin
+  if ObjectIDList.Count = 0 then
+    exit;
+  lst := TStringList.Create;
+  SB := TStringBuilder.Create;
+  Ids := TList.Create;
+  aQuery := SystemPersistenceMapper.GetQuery;
+  FetchBlockSize := SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize;
+  try
+    ObjectCount := ObjectIDList.Count - 1;
+    for Block := 0 to (ObjectCount div FetchBlockSize) do
+    begin
+      lst.Clear;
+      aQuery.ClearParams;
+      Table.RetrieveSelectIdAndTypeStatement(lst);
+      Start := Block * FetchBlockSize;
+      Stop := MinIntValue([Pred(Succ(Block) * FetchBlockSize), ObjectCount]);
+
+      WhereFragment := IdListSegmentToWhereFragment(ObjectIDList, start, stop, true, aquery);
+      {<*>}
+      //BoldAppendToStrings(lst, Format(' WHERE %s %s', [IDCOLUMN_NAME, WhereFragment]), True);
+      {
+      sTestCompare := Format(' WHERE %s %s', [IDCOLUMN_NAME, WhereFragment]);
+      }
+		SB.Clear;
+        SB.Append(' WHERE ');
+        SB.Append(IDCOLUMN_NAME);
+        SB.Append(' ');
+        SB.Append(WhereFragment);
+      {
+      if S<>sTestCompare then
+        raise Exception.CreateFmt('Optimize error in TBoldObjectDefaultMapper.MakeIDsExactUsingTable %s<>%s', [S, sTestCompare]);
+      }
+      BoldAppendToStrings(lst, SB.ToString, True);
+      {</*>}
+
+      aQuery.AssignSQL(lst);
+      aQuery.Open;
+      Ids.Count := 0;
+      // commented out as Query.RecordCount can be slow
+//      if aQuery.RecordCount > Ids.Capacity then
+//        Ids.Capacity := aQuery.RecordCount;
+      TranslationList.Capacity := aQuery.RecordCount;
+      try
+        while not aQuery.EOF do
+        begin
+          LittleObject := TLittleClass.Create;
+          LittleObject.Id := aQuery.Fields[0].AsInteger;
+          LittleObject.DbType := aQuery.Fields[1].AsInteger;
+          Ids.Add(LittleObject);
+          aQuery.next;
+        end;
+        for i := Start to Stop do
+        begin
+          Found := false;
+          for j := 0 to Ids.Count - 1 do
+          begin
+            if TBoldDefaultId(ObjectIdList[i]).AsInteger = TLittleClass(Ids[j]).Id then
+            begin
+              Found := true;
+              TopSortedIndex := SystemPersistenceMapper.topSortedIndexForBoldDbType(TLittleClass(Ids[j]).dbType);
+              tempId := ObjectIdList[i].CloneWithClassId(TopSortedIndex, true);
+              TranslationList.AddTranslationAdoptNew(ObjectIdList[i], tempId);
+              Break;
+            end;
+          end;
+          if not Found and not SystemPersistenceMapper.SQLDataBaseConfig.IgnoreMissingObjects then
+          begin
+            if HandleNonExisting then
+            begin
+              tempId := TBoldNonExistingObjectId.Create;
+              TranslationList.AddTranslationAdoptNew(ObjectIdList[i], tempId);
+            end
+            else if EnsureAll then
+              Raise EBoldObjectNotInPs.CreateFmt('Id %d not found in table %s', [TBoldDefaultId(ObjectIdList[i]).AsInteger, Table.SQLName]);
+          end;
+        end;
+      finally
+        aQuery.close;
+        for j := 0 to Ids.Count - 1 do
+          tObject(Ids[j]).Free;
+      end;
+    end;
+  finally
+    SystemPersistenceMapper.ReleaseQuery(aQuery);
+    lst.Free;
+    FreeAndNil(SB);
+    Ids.free;
+  end;
+{$ELSE}
 var
   Block,
   ObjectCount: Longint;
@@ -1659,11 +2401,11 @@ var
 begin
   if ObjectIDList.Count = 0 then
     exit;
-  lst := TStringList.Create;
   aQuery := SystemPersistenceMapper.GetQuery;
   FetchBlockSize := SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize;
+  Ids := TList.Create;
+  lst := TStringList.Create;
   try
-    //  We do not want to retrieve more than BLOCKSIZE objects at a time
     ObjectCount := ObjectIDList.Count - 1;
     for Block := 0 to (ObjectCount div FetchBlockSize) do
     begin
@@ -1672,11 +2414,13 @@ begin
       Start := Block * FetchBlockSize;
       Stop := MinIntValue([Pred(Succ(Block) * FetchBlockSize), ObjectCount]);
 
-      WhereFragment := IdListSegmentToWhereFragment(ObjectIDList, start, stop, aquery);
-      BoldAppendToStrings(lst, Format(' WHERE %s %s', [IDCOLUMN_NAME, WhereFragment]), True); // do not localize
+      WhereFragment := IdListSegmentToWhereFragment(ObjectIDList, start, stop, true, aquery);
+      BoldAppendToStrings(lst, Format(' WHERE %s %s', [IDCOLUMN_NAME, WhereFragment]), True);
       aQuery.AssignSQL(lst);
       aQuery.Open;
-      Ids := TList.Create;
+      Ids.Count := 0;
+      if Stop - Start >= Ids.Capacity then
+        Ids.Capacity := Stop - Start +1;
       try
         while not aQuery.EOF do
         begin
@@ -1688,7 +2432,6 @@ begin
         end;
         for i := 0 to ObjectIdList.Count - 1 do
         begin
-          // fixme: Square
           for j := 0 to Ids.Count - 1 do
           begin
             if TBoldDefaultId(ObjectIdList[i]).AsInteger = TLittleClass(Ids[j]).Id then
@@ -1704,29 +2447,69 @@ begin
         aQuery.close;
         for j := 0 to Ids.Count - 1 do
           tObject(Ids[j]).Free;
-        Ids.Free;
       end;
     end;
   finally
     SystemPersistenceMapper.ReleaseQuery(aQuery);
     lst.Free;
+    Ids.Free;
   end;
+{$ENDIF}
 end;
 
 function TBoldObjectDefaultMapper.InternalIdListSegmentToWhereFragment(
-  IdList: TBoldObjectIdList; Start, Stop: integer;
-  Parameterized: IBoldParameterized): String;
+  IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean;
+  const Parameterized: IBoldParameterized): String;
 
   function GetParamStr(IdIndex, ParamIndex: integer; UseParams: Boolean): String;
   begin
     if UseParams then
     begin
-      result := ':ID' + IntToStr(ParamIndex); // do not localize
-      Parameterized.CreateParam(ftInteger, 'ID' + IntToStr(ParamIndex), ptInput, SizeOf(Integer)).AsInteger := (IdList[IdIndex] as TBoldDefaultId).AsInteger; // do not localize
+      result := ':ID'+IntToStr(ParamIndex);
+      Assert(IdList[IdIndex] is TBoldDefaultId, IdList[IdIndex].ClassName); 
+      Parameterized.CreateParam(ftInteger, 'ID'+IntToStr(ParamIndex)).AsInteger := (IdList[IdIndex] as TBoldDefaultId).AsInteger;
     end
     else
       result := IdList[Idindex].asString
   end;
+{$IFDEF RIL}
+var
+  i,j: integer;
+  TempList: TStringList;
+  ParamCount: integer;
+  UseParams: Boolean;
+  SB: TStringBuilder;
+begin
+
+  ParamCount := stop-start + 1;
+  UseParams := AllowParms and (ParamCount <= SystemPersistenceMapper.SQLDataBaseConfig.MaxParamsInIdList);
+  if ParamCount = 1 then
+  begin
+    Result := ' = ' + GetParamStr(start, 1, UseParams);
+  end
+  else
+    try
+      if UseParams then
+        i := ParamCount * 12
+      else
+        i := ParamCount * 8;
+      SB := TStringBuilder.Create(i+5);
+      j := i+5;
+      SB.Append('in (');
+      for i := start to stop do
+      begin
+        if i > start then
+          SB.Append(', ');
+        SB.Append(GetParamStr(i, i-start+1, Useparams));
+      end;
+      SB.Append(')');
+      {</*>}
+      Result := SB.ToString;
+    finally
+      i := sb.Length;
+      FreeAndNil(SB);
+    end;
+{$ELSE}
 var
   TempList: TStringList;
   i: integer;
@@ -1744,25 +2527,27 @@ begin
     TempList := TStringList.Create;
     for i := start to stop do
       TempList.Add(GetParamStr(i, i-start+1, Useparams));
-    result := BoldSeparateStringList(TempLIst, ', ', 'in (', ')'); // do not localize
+    result := BoldSeparateStringList(TempLIst, ', ', 'in (', ')');
   end;
+{$ENDIF}
 end;
 
 function TBoldObjectDefaultMapper.IdListSegmentToWhereFragment(
-  IdList: TBoldObjectIdList; Start, Stop: integer;
-  Query: IBoldExecQuery): String;
+  IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean;
+  const Query: IBoldExecQuery): String;
 begin
-  result := InternalIdListSegmentToWhereFragment(IdList, Start, Stop, Query as IBoldParameterized);
+  result := InternalIdListSegmentToWhereFragment(IdList, Start, Stop, AllowParms, Query as IBoldParameterized);
 end;
 
 function TBoldObjectDefaultMapper.IdListSegmentToWhereFragment(
-  IdList: TBoldObjectIdList; Start, Stop: integer;
-  Query: IBoldQuery): String;
+  IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean;
+  const Query: IBoldQuery): String;
 begin
-  result := InternalIdListSegmentToWhereFragment(IdList, Start, Stop, Query as IBoldParameterized);
+  result := InternalIdListSegmentToWhereFragment(IdList, Start, Stop, AllowParms, Query as IBoldParameterized);
 end;
 
 { TBoldMemberDefaultMapper }
+
 function TBoldMemberDefaultMapper.GetAllowNullAsSQL: string;
 begin
   if AllowNull then
@@ -1772,6 +2557,68 @@ begin
 end;
 
 procedure TBoldMemberDefaultMapper.GenerateMappingInfo(MoldClass: TMoldClass; MoldMember: TMoldMember);
+{$IFDEF RIL}
+  procedure GenerateLocal(const ClassExpressionName, MemberExpressionName: String; var ColumnNames: String; const LocalMoldClass: TMoldClass);
+  var
+    i: integer;
+    SubClass: TMoldClass;
+  begin
+    if LocalMoldClass.TableMapping in [tmOwn, tmParent] then
+    begin
+      TBoldSystemDefaultMapper(SystemPersistenceMapper).MappingInfo.AddMemberMapping(
+          ClassExpressionName, MemberExpressionName,
+          FindDefiningTable(LocalMoldClass, MoldMember),
+          ColumnNames, ClassName, FColumnIndex);
+    end;
+    if LocalMoldClass.TableMapping = tmChildren then
+    begin
+      for i := 0 to LocalMoldClass.SubClasses.Count-1 do
+      begin
+        SubClass := LocalMoldClass.SubClasses[i];
+        if SubClass.EffectivePersistent then
+          GenerateLocal(ClassExpressionName, MemberExpressionName, ColumnNames, SubClass);
+      end;
+    end;
+  end;
+
+  procedure GenerateForClassName(const ClassExpressionName: String; var ColumnNames: String);
+  var
+    i: integer;
+    s: TStringList;
+    BoldGuard: IBoldGuard;
+  begin
+    GenerateLocal(ClassExpressionName, ExpressionName, ColumnNames, moldclass);
+    if assigned(MoldMember) then
+    begin
+      BoldGuard := TBoldGuard.Create(s);
+      s := TStringlist.Create;
+      s.CommaText := MoldMember.FormerNames;
+      for i := 0 to s.count - 1 do
+        GenerateLocal(ClassExpressionName, s[i], ColumnNames, moldclass);
+    end;
+  end;
+
+var
+  i: integer;
+  ColumnNames: String;
+  SB: TStringBuilder;
+begin
+  if requiresMemberMapping then
+  begin
+    SB := TStringBuilder.Create;
+    ColumnNames := '';
+    for i := 0 to ColumnCount - 1 do
+    begin
+      if SB.Length > 0 then
+        SB.Append(', ');
+      SB.Append(BoldExpandName(InitialColumnName[i], '', xtSQL, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, SystemPersistenceMapper.NationalCharConversion));
+    end;
+    ColumnNames := SB.ToString;
+    for i := 0 to MoldClass.AllPossibleNames.count - 1 do
+      GenerateForClassName(MoldClass.AllPossibleNames[i], ColumnNames);
+    FreeAndNil(SB);
+  end;
+{$ELSE}
 var
   ColumnNames: String;
 
@@ -1785,7 +2632,8 @@ var
         MemberExpressionName,
         FindDefiningTable(LocalMoldClass, MoldMember),
         ColumnNames,
-        ClassName);
+        ClassName,
+        FColumnIndex);
     if LocalMoldClass.TableMapping = tmChildren then
       for i := 0 to LocalMoldClass.SubClasses.Count - 1 do
         if LocalMoldClass.SubClasses[i].EffectivePersistent then
@@ -1819,14 +2667,12 @@ begin
     begin
       if ColumnNames <> '' then
         ColumnNames := ColumnNames + ', ';
-      // expansion below is to truncate the names to the right length again...
       ColumnNames := ColumnNames + BoldExpandName(InitialColumnName[i], '', xtSQL, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, SystemPersistenceMapper.NationalCharConversion);
     end;
-
-    // this will loop over the name, all former names, and the names of the association
     for i := 0 to MoldClass.AllPossibleNames.count - 1 do
       GenerateForClassName(MoldClass.AllPossibleNames[i]);
   end;
+{$ENDIF}
 end;
 
 constructor TBoldMemberDefaultMapper.CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary);
@@ -1842,66 +2688,121 @@ var
   aExecQuery: IBoldExecQuery;
   LastClockTimestamp: TBoldTimestampType;
   LastClock: TDateTime;
-  TheNowValue: TDateTime;
 begin
-  aQuery := GetQuery;
-  aExecQuery := GetExecQuery;
-  try
-    aExecQuery.AssignSQLText(
-      Format('UPDATE %s SET %s = %s + 1', [ // do not localize
-        PSSystemDescription.TimeStampTable.SQLName,
-        TimeStampTableTimeStampColumn.SQLname,
-        TimeStampTableTimeStampColumn.SQLname]));
-    aExecQuery.ExecSQL;
-
-    aQuery.AssignSQLText(
-      Format('SELECT %s FROM %s', [ // do not localize
-        TimeStampTableTimeStampColumn.SQLname,
-        PSSystemDescription.TimeStampTable.SQLName]));
-    aQuery.Open;
-    FCurrentTimeStamp := aQuery.Fields[0].AsInteger;
-    aQuery.Close;
-
-    if UseClockLog then
+  if Assigned(NewTimeStampEvent) then
+  begin
+    NewTimeStampEvent(FCurrentTimeStamp, LastClockTimestamp, LastClock, fTimeOfTimeStamp, ClockLogGranularity);
+    if CompatibilityMode or UseClockLog then
     begin
-      aQuery.AssignSQLText(
-        Format('SELECT %s, %s FROM %s', [ // do not localize
-          LastClockTableLastTimeStampColumn.SqlName,
-          LastClockTableLastClockColumn.SQLName,
-          PSSystemDescription.LastClockTable.SQLName]));
-      aQuery.Open;
-      LastClockTimestamp := aQuery.Fields[0].AsInteger;
-      LastClock := aQuery.Fields[1].AsDateTime;
-      aQuery.Close;
+      aExecQuery := GetExecQuery;
+      try
+        if CompatibilityMode then
+        begin
+          aExecQuery.AssignSQLText(
+            Format('UPDATE %s SET %s = %d', [// do not localize
+            PSSystemDescription.TimeStampTable.SQLName,
+              TimeStampTableTimeStampColumn.SQLName,
+              FCurrentTimeStamp]));
+          aExecQuery.ExecSQL;
+        end;
+        if UseClockLog then
+        begin
+          if LastClockTimeStamp <> -1 then
+          begin
+            aExecQuery.ParamCheck := true;
+            if CompatibilityMode then
+            begin
+              aExecQuery.AssignSQLText(
+                Format('UPDATE %s SET %s = :newTimestamp, %s = :newClock', [// do not localize
+                PSSystemDescription.LastClockTable.SQLName,
+                  LastClockTableLastTimeStampColumn.SQLName,
+                  LastClockTableLastClockColumn.SQLName]));
+              aExecQuery.ParamByName('newTimestamp').AsInteger := FCurrentTimeStamp; // do not localize
+              aExecQuery.ParamByName('newClock').AsDateTime := fTimeOfTimeStamp; // do not localize
+              aExecQuery.ExecSQL;
+            end;
 
-      TheNowValue := GetCorrectTime;
-      if (TheNowValue - LastClock) > ClockLogGranularity then
-      begin
-        aExecQuery.AssignSQLText(
-          Format('UPDATE %s SET %s = :newTimestamp, %s = :newClock', [ // do not localize
-            PSSystemDescription.LastClockTable.SQLName,
-            LastClockTableLastTimeStampColumn.SQLName,
-            LastClockTableLastClockColumn.SQLName]));
-        aExecQuery.ParamByName('newTimestamp').AsInteger := FCurrentTimeStamp; // do not localize
-        aExecQuery.ParamByName('newClock').AsDateTime := TheNowValue; // do not localize
-        aExecQuery.ExecSQL;
-
-        aExecQuery.AssignSQLText(Format('INSERT INTO %s (%s, %s, %s, %s) VALUES (:lastTimeStamp, :thisTimeStamp, :lastClock, :thisClock)', // do not localize
-                       [PSSystemDescription.ClockLogTable.SQLName,
-                       ClockLogTableLastTimeStampColumn.SQLName,
-                       ClockLogTableThisTimeStampColumn.SQLName,
-                       ClockLogTableLastClockColumn.SQLName,
-                       ClockLogTableThisClockColumn.SQLName]));
-        aExecQuery.ParamByName('lastTimeStamp').AsInteger := LastClockTimestamp; // do not localize
-        aExecQuery.ParamByName('thisTimeStamp').AsInteger := FCurrentTimeStamp; // do not localize
-        aExecQuery.ParamByName('lastClock').AsDateTime := LastClock; // do not localize
-        aExecQuery.ParamByName('thisClock').AsDateTime := TheNowValue; // do not localize
-        aExecQuery.ExecSQL;
+            aExecQuery.AssignSQLText(Format('INSERT INTO %s (%s, %s, %s, %s) VALUES (:lastTimeStamp, :thisTimeStamp, :lastClock, :thisClock)', // do not localize
+              [PSSystemDescription.ClockLogTable.SQLName,
+              ClockLogTableLastTimeStampColumn.SQLName,
+                ClockLogTableThisTimeStampColumn.SQLName,
+                ClockLogTableLastClockColumn.SQLName,
+                ClockLogTableThisClockColumn.SQLName]));
+            aExecQuery.ParamByName('lastTimeStamp').AsInteger := LastClockTimestamp; // do not localize
+            aExecQuery.ParamByName('thisTimeStamp').AsInteger := FCurrentTimeStamp; // do not localize
+            aExecQuery.ParamByName('lastClock').AsDateTime := LastClock; // do not localize
+            aExecQuery.ParamByName('thisClock').AsDateTime := fTimeOfTimeStamp; // do not localize
+            aExecQuery.ExecSQL;
+          end;
+        end;
+      finally
+        ReleaseExecQuery(aExecQuery);
       end;
     end;
-  finally
-    ReleaseQuery(aQuery);
-    ReleaseExecQuery(aExecQuery);
+  end
+  else
+  begin
+    aQuery := GetQuery;
+    aExecQuery := GetExecQuery;
+    aExecQuery.ParamCheck := false;
+    try
+      aExecQuery.AssignSQLText(
+        Format('UPDATE %s SET %s = %s + 1', [
+          PSSystemDescription.TimeStampTable.SQLName,
+          TimeStampTableTimeStampColumn.SQLname,
+          TimeStampTableTimeStampColumn.SQLname]));
+      aExecQuery.ExecSQL;
+
+      aQuery.AssignSQLText(
+        Format('SELECT %s FROM %s', [
+          TimeStampTableTimeStampColumn.SQLname,
+          PSSystemDescription.TimeStampTable.SQLName]));
+      aQuery.Open;
+      FCurrentTimeStamp := aQuery.Fields[0].AsInteger;
+      aQuery.Close;
+
+      if UseClockLog then
+      begin
+        aQuery.AssignSQLText(
+          Format('SELECT %s, %s FROM %s', [
+            LastClockTableLastTimeStampColumn.SqlName,
+            LastClockTableLastClockColumn.SQLName,
+            PSSystemDescription.LastClockTable.SQLName]));
+        aQuery.Open;
+        LastClockTimestamp := aQuery.Fields[0].AsInteger;
+        LastClock := aQuery.Fields[1].AsDateTime;
+        aQuery.Close;
+
+//        fTimeOfTimeStamp := GetCorrectTime; // TimeOfTimeStamp is already set in NewTimeStampEvent
+        if (fTimeOfTimeStamp - LastClock) > ClockLogGranularity then
+        begin
+          aExecQuery.ParamCheck := true;
+          aExecQuery.AssignSQLText(
+            Format('UPDATE %s SET %s = %d, %s = :newClock', [
+              PSSystemDescription.LastClockTable.SQLName,
+              LastClockTableLastTimeStampColumn.SQLName,
+              Integer(FCurrentTimeStamp),
+              LastClockTableLastClockColumn.SQLName]));
+          aExecQuery.ParamByName('newClock').AsDateTime := fTimeOfTimeStamp; // do not localize
+          aExecQuery.ExecSQL;
+
+          aExecQuery.AssignSQLText(Format('INSERT INTO %s (%s, %s, %s, %s) VALUES (%d, %d, :lastClock, :thisClock)',
+                         [PSSystemDescription.ClockLogTable.SQLName,
+                         ClockLogTableLastTimeStampColumn.SQLName,
+                         ClockLogTableThisTimeStampColumn.SQLName,
+                         ClockLogTableLastClockColumn.SQLName,
+                         ClockLogTableThisClockColumn.SQLName,
+                         Integer(LastClockTimestamp),
+                         Integer(FCurrentTimeStamp)]));
+          aExecQuery.ParamByName('lastClock').AsDateTime := LastClock; // do not localize
+          aExecQuery.ParamByName('thisClock').AsDateTime := fTimeOfTimeStamp; // do not localize
+          aExecQuery.ExecSQL;
+        end;
+      end;
+    finally
+      ReleaseQuery(aQuery);
+      ReleaseExecQuery(aExecQuery);
+    end;
   end;
 end;
 
@@ -1915,7 +2816,7 @@ begin
   if atable.Versioned then
   begin
     Inc(limit);
-    if atable.ContainsStopTimeStamp then
+    if aTable.ContainsStopTimeStamp then
       Inc(limit);
   end;
   result := (aTable.ColumnsList.Count > limit);
@@ -1948,13 +2849,13 @@ begin
 end;
 
 procedure TBoldObjectDefaultMapper.DistributableInfoFromQuery(
-  ObjectID: TBoldObjectId; ValueSpace: IBoldValueSpace;
-  TranslationList: TBoldIdTranslationList; DataSet: IBoldDataSet);
+  ObjectID: TBoldObjectId; const ValueSpace: IBoldValueSpace;
+  TranslationList: TBoldIdTranslationList; const DataSet: IBoldDataSet);
 begin
   if SystemPersistenceMapper.UseTimestamp then
-    ValueSpace.EnsuredObjectContentsByObjectId[ObjectID].TimeStamp := DataSet.FieldByName(SystemPersistenceMapper.XFilesTimeStampColumn.SQLname).AsInteger;
+    ValueSpace.EnsuredObjectContentsByObjectId[ObjectID].TimeStamp := DataSet.FieldByUpperCaseName(SystemPersistenceMapper.XFilesTimeStampColumn.SQLNameUpper).AsInteger;
   if SystemPersistenceMapper.UseGlobalId then
-    ValueSpace.EnsuredObjectContentsByObjectId[ObjectID].GlobalId := DataSet.FieldByName(SystemPersistenceMapper.XFilesGlobalIdColumn.SQLName).AsString;
+    ValueSpace.EnsuredObjectContentsByObjectId[ObjectID].GlobalId := DataSet.FieldByUpperCaseName(SystemPersistenceMapper.XFilesGlobalIdColumn.SQLNameUpper).AsString;
 end;
 
 procedure TBoldSystemDefaultMapper.PMTranslateToGlobalIds(
@@ -1984,7 +2885,7 @@ begin
         IdList.Add(ObjectIdList[I].AsString);
 
       aQuery.AssignSQLText(
-        Format('SELECT %s, %s, %s FROM %s WHERE %0:s IN (%4:s)', [ // do not localize
+        Format('SELECT %s, %s, %s FROM %s WHERE %0:s IN (%4:s)', [
           IDCOLUMN_NAME,
           TYPECOLUMN_NAME,
           XFilesGlobalIdColumn.SQLName,
@@ -1993,16 +2894,13 @@ begin
 
       aQuery.Open;
 
+      TranslationList.Capacity := TranslationList.Count + aQuery.RecordCount;      
       while not aQuery.EOF do
       begin
-        anObjectId := NewIdFromQuery(aQuery, 1, 0, BOLDMAXTIMESTAMP);
+        anObjectId := NewIdFromQuery(aQuery, NO_CLASS, 1, 0, BOLDMAXTIMESTAMP);
         aGlobalId := NewGlobalIdFromQuery(aQuery, 1);
 
-        TranslationList.AddTranslation(anObjectId, aGlobalId);
-
-        anObjectId.Free;
-
-        aGlobalId.Free;
+        TranslationList.AddTranslationAdoptBoth(anObjectId, aGlobalId);
 
         aQuery.Next;
       end;
@@ -2042,7 +2940,7 @@ begin
         IdList.Add(GlobalIdList[I].AsString);
 
       aQuery.AssignSQLText(
-        Format('SELECT %s, %s, %s FROM %s WHERE %0:s IN (%4:s)', [ // do not localize
+        Format('SELECT %s, %s, %s FROM %s WHERE %0:s IN (%4:s)', [
           XFilesGlobalIdColumn.SQLName,
           IDCOLUMN_NAME,
           TYPECOLUMN_NAME,
@@ -2051,15 +2949,13 @@ begin
 
       aQuery.Open;
 
+      TranslationList.Capacity := TranslationList.Count + aQuery.RecordCount;
       while not aQuery.EOF do
       begin
         aGlobalId := NewGlobalIdFromQuery(aQuery, 2);
-        anObjectId := NewIdFromQuery(aQuery, 2, 1, BoldMaxTimeStamp);
+        anObjectId := NewIdFromQuery(aQuery,NO_CLASS,  2, 1, BoldMaxTimeStamp);
 
-        TranslationList.AddTranslation(aGlobalId, anObjectId);
-
-        freeandnil(anObjectId);
-        freeAndNil(aGlobalId);
+        TranslationList.AddTranslationAdoptBoth(aGlobalId, anObjectId);
 
         aQuery.Next;
       end;
@@ -2074,7 +2970,7 @@ begin
 end;
 
 procedure TBoldSystemDefaultMapper.FetchDeletedObjects(
-  ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace);
+  ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace);
 var
   aQuery: IBoldQuery;
   IdList: TStringList;
@@ -2100,7 +2996,7 @@ begin
         IdList.Add(ObjectIdList[I].AsString);
 
       aQuery.AssignSQLText(
-        Format('SELECT %s, %s, %s FROM %s WHERE %0:s IN (%4:s)', [ // do not localize
+        Format('SELECT %s, %s, %s FROM %s WHERE %0:s IN (%4:s)', [
           IDCOLUMN_NAME,
           TYPECOLUMN_NAME,
           XFilesTimeStampColumn.SQLname,
@@ -2148,7 +3044,7 @@ begin
     begin
       BoldDbType := MappingInfo.GetDbTypeMapping(ObjectPersistenceMapper.ExpressionName);
       if BoldDbType = NO_CLASS then
-        MissingIds.Add(format(sUnableToFindDBIDForX, [ObjectPersistenceMapper.ExpressionName]))
+        MissingIds.Add(format('Unable to find databaseId for %s', [ObjectPersistenceMapper.ExpressionName]))
       else
         ObjectPersistenceMapper.BoldDbType := BoldDbType;
 
@@ -2160,8 +3056,8 @@ begin
       end;
     end;
   end;
-  if MissingIds.COunt > 0 then
-    raise EBold.Create(MissingIds.Text);
+  if MissingIds.Count > 0 then
+    raise EBoldMissingID.Create(MissingIds.Text);
 end;
 
 procedure TBoldSystemDefaultMapper.PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList);
@@ -2195,7 +3091,7 @@ procedure TBoldSystemDefaultMapper.PMSetReadonlyness(ReadOnlyList, WriteableList
           IdList.Add(ObjectIDList[I].AsString);
 
         aQuery.AssignSQLText(
-          Format('UPDATE %s SET %s = %d WHERE %s IN (%s)', [ // do not localize
+          Format('UPDATE %s SET %s = %d WHERE %s IN (%s)', [
             RootClassObjectPersistenceMapper.MainTable.SQLName,
             READONLYCOLUMN_NAME,
             ReadOnlyValue,
@@ -2221,14 +3117,14 @@ var
 begin
   TopSortedIndex := topSortedIndexForBoldDbType(aQuery.Fields[BoldDbTypeColumn].AsInteger);
   Result := TBoldGlobalId.CreateWithInfo(
-    aQuery.FieldByName(XFilesGlobalIdColumn.SQLName).AsString,
+    aQuery.FieldByUpperCaseName(XFilesGlobalIdColumn.SQLNameUpper).AsString,
     TopSortedIndex,
     true,
     ObjectPersistenceMappers[TopSortedIndex].ExpressionName);
 end;
 
 procedure TBoldMemberDefaultMapper.PMFetch(ObjectIdList: TBoldObjectIdList;
-  ValueSpace: IBoldValueSpace; FetchMode: Integer;
+  const ValueSpace: IBoldValueSpace; FetchMode: Integer;
   TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
 var
   Block,
@@ -2241,10 +3137,8 @@ var
   MemberPMList: TBoldMemberPersistenceMapperList;
   Table: TBoldSQLTableDescription;
 begin
-  // Note, when the list gets here it contains only object of one class, from one
-  // Bold, that are not previously present in the Bold (or possibly a forced fetch)
 
-  // all objectids are the same timestamp, this has been taken care of by PMFetchExactId
+
   if (ObjectIdList.Count > 1) and RequiresLiveQuery then
     BlockSize := 1
   else
@@ -2268,30 +3162,30 @@ begin
       Table := (ColumnDescriptions[0] as TBoldSQLColumnDescription).TableDescription;
       TempLIst.Clear;
       TBoldObjectDefaultMapper(ObjectPersistenceMapper).SQLForMembers(Table, TempList, MemberPMList, ssColumns, true, true, False);
-      SQL.Text := format('SELECT %s FROM %s WHERE %s ', [BoldSeparateStringList(TempLIst, ', ', '', ''), Table.SQLName, IDCOLUMN_NAME]); // do not localize
+      SQL.Text := format('SELECT %s FROM %s WHERE %s ', [BoldSeparateStringList(TempLIst, ', ', '', ''), Table.SQLName, IDCOLUMN_NAME]);
 
       Start := Block * BlockSize;
       Stop := MinIntValue([Pred(Succ(Block) * BlockSize), ObjectCount]);
       if Start <= stop then
       begin
-        BoldAppendToStrings(SQL, ObjectPersistenceMapper.IdListSegmentToWhereFragment(ObjectIdList, start, stop, aQuery), False);
+        BoldAppendToStrings(SQL, ObjectPersistenceMapper.IdListSegmentToWhereFragment(ObjectIdList, start, stop, true, aQuery), False);
 
         aQuery.AssignSQL(sql);
         aQuery.Open;
         while not aQuery.EOF do
         begin
-          tempId := SystemPersistenceMapper.NewIdFromQuery(aQuery, 1, 0, ObjectIDList[0].TimeStamp);
+          tempId := SystemPersistenceMapper.NewIdFromQuery(aQuery, NO_CLASS, 1, 0, ObjectIDList[0].TimeStamp);
           NewId := ObjectIDList.IDByID[TempId];
           TempId.Free;
 
           if not assigned(NewId) then
-            raise EBoldInternal.CreateFmt('%s.PMFetch: Database returned object we didn''t ask for (ID: %d)', [ClassName, aQuery.Fields[0].AsInteger]); // do not localize
+            raise EBoldInternal.CreateFmt('%s.PMFetch: Database returned object we didn''t ask for (ID: %d)', [ClassName, aQuery.Fields[0].AsInteger]);
 
           if not NewId.TopSortedIndexExact then
             NewId := TranslationList.TranslateToNewID[NewId];
 
           if not NewId.TopSortedIndexExact then
-            raise EBoldInternal.CreateFmt('%s.PMFetch: Got an Id with no or only approx class!', [Classname]); // do not localize
+            raise EBoldInternal.CreateFmt('%s.PMFetch: Got an Id with no or only approx class!', [Classname]);
 
           ObjectPersistenceMapper.ValuesFromFieldsByMemberList(NewId, ValueSpace, TranslationList, aQuery, MemberPMList);
 
@@ -2309,23 +3203,8 @@ begin
   end;
 end;
 
-function TBoldSystemDefaultMapper.GetPSSystemDescription: TBoldDefaultSystemDescription;
-begin
-  result := (inherited PSSystemDescription) as TBoldDefaultSystemDescription;
-end;
-
-function TBoldObjectDefaultMapper.GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
-begin
-  result := (inherited SystemPersistenceMapper) as TBoldSystemDefaultMapper;
-end;
-
-function TBoldSystemDefaultMapper.GetRootClassObjectPersistenceMapper: TBoldObjectDefaultMapper;
-begin
-  result := (inherited RootClassObjectPersistenceMapper) as TBoldObjectDefaultMapper;
-end;
-
 procedure TBoldSystemDefaultMapper.PMFetchClassWithCondition(
-  ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
+  ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;
   BoldCondition: TBoldCondition; FetchMode: Integer;
   TranslationList: TBoldIdTranslationList);
 var
@@ -2338,19 +3217,33 @@ var
   SQlGenerator: TBoldSQLQueryGenerator;
   aCPCond: TBoldChangePointCondition;
   GlobalNameSpace: TBoldSqlNameSpace;
+  aVariableIDLists: TBoldObjectArray;
+  vBoldParameterized: IBoldParameterized;  
 
   procedure FixQueriesForEnv(VarBinding: TBoldSQLVariableBinding; Context: TBoldObjectIdList; NameSpace: TBoldSqlNameSpace);
   var
     MainTableRef: TBoldSqlTableReference;
+    BoldID: TBoldDefaultID;
   begin
-    if VarBinding.VariableName = 'SELF' then // do not localize
+    if CompareText(VarBinding.VariableName, 'SELF') = 0 then // do not localize
     begin
       VarBinding.NewQuery(NameSpace);
 
       MainTableRef := VarBinding.TableReferenceForTable(VarBinding.ObjectMapper.MainTable, VarBinding.Query, true);
       VarBinding.Context := OclCondition.Context;
       VarBinding.Query.AddWCF(TBoldSQLWCFBinaryInfix.CreateWCFForIdList(MainTableRef.GetColumnReference(IDCOLUMN_NAME), OclCondition.Context));
-   end;
+    end else if VarBinding.IsExternal and (VarBinding.TopSortedIndex > -1) then
+    begin
+      VarBinding.NewQuery(NameSpace);
+
+      MainTableRef := VarBinding.TableReferenceForTable(VarBinding.ObjectMapper.MainTable, VarBinding.Query, true);
+      VarBinding.Context := TBoldObjectIdList.Create;
+      aVariableIDLists.Add(VarBinding.Context);
+      BoldID := TBoldDefaultID.CreateWithClassID(VarBinding.ObjectMapper.TopSortedIndex, True);
+      BoldID.AsInteger := VarBinding.ExternalVarvalue;
+      VarBinding.Context.AddAndAdopt(BoldID);
+      VarBinding.Query.AddWCF(TBoldSQLWCFBinaryInfix.CreateWCFForIdList(MainTableRef.GetColumnReference(IDCOLUMN_NAME), VarBinding.Context));
+    end;
   end;
 
 begin
@@ -2361,8 +3254,14 @@ begin
     GlobalNameSpace := nil;
     SQLNodeMaker := nil;
     q2 := GetQuery;
+    if q2.QueryInterface(IBoldParameterized, vBoldParameterized) = S_OK then
+    begin
+      vBoldParameterized.ParamCheck := false;
+      vBoldParameterized := nil;
+    end;
     sql := TStringList.Create;
     OclCondition := BoldCondition as TBoldOclCondition;
+    aVariableIDLists := TBoldObjectArray.Create(0, [bcoDataOwner]);
     try
       SQLNodeMaker := TBoldSQlNodeMaker.Create(OclCondition);
       SQLNodeMaker.Execute;
@@ -2385,7 +3284,10 @@ begin
       Q2.AssignSQL(sql);
       Q2.AssignParams(SQLNodeMaker.RootNode.Query.Params);
 
-      BoldCondition.AvailableAnswers := GetListUsingQuery(ObjectIdList, ValueSpace, Q2, FetchMode, TranslationList, BOLDMAXTIMESTAMP, BoldCondition.MaxAnswers, BoldCondition.Offset);
+      if Assigned(OnPsEvaluate) then
+        OnPsEvaluate(Q2);
+
+      BoldCondition.AvailableAnswers := GetListUsingQuery(ObjectIdList, ValueSpace, Q2, NO_CLASS, 1, 0, FetchMode, TranslationList, BOLDMAXTIMESTAMP, BoldCondition.MaxAnswers, BoldCondition.Offset);
     finally
       ReleaseQuery(q2);
       sql.Free;
@@ -2393,6 +3295,7 @@ begin
       SQlNodeResolver.free;
       GlobalNameSpace.Free;
       SQLNodeMaker.Free;
+      aVariableIDLists.Free;
     end;
   end
   else if BoldCondition is TBoldChangePointCondition then
@@ -2409,7 +3312,7 @@ begin
       q2 := GetQuery;
       try
         GetChangePointsQuery(q2, aCPCond.IdList, aCPCond.StartTime, aCPCond.EndTime, GlobalNameSpace);
-        BoldCondition.AvailableAnswers := GetListUsingQuery(ObjectIdList, ValueSpace, Q2, FetchMode, TranslationList, BOLDINVALIDTIMESTAMP, BoldCondition.MaxAnswers, BoldCondition.Offset);
+        BoldCondition.AvailableAnswers := GetListUsingQuery(ObjectIdList, ValueSpace, Q2, NO_CLASS, 1, 0, FetchMode, TranslationList, BOLDINVALIDTIMESTAMP, BoldCondition.MaxAnswers, BoldCondition.Offset);
         (CommonSuperClassObjectMapper(aCPCond.IdList) as TBoldObjectDefaultMapper).GetChangePoints(ObjectIdList, aCPCond, GlobalNameSpace);
       finally
         ReleaseQuery(q2);
@@ -2466,7 +3369,7 @@ begin
       (MemberPersistenceMappers[MemberMapperIndexByMemberIndex[Condition.MemberIdList[i].MemberIndex]] as TBoldMemberDefaultMapper).GetChangePoints(ObjectIdList, Condition, NameSpace);
 end;
 
-function TBoldMemberDefaultMapper.CompareFields(ObjectContent: IBoldObjectContents; DataSet: IBoldDataSet; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
+function TBoldMemberDefaultMapper.CompareFields(const ObjectContent: IBoldObjectContents; const DataSet: IBoldDataSet; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
 var
   aField    : IBoldField;
   ColumnIndex: Integer;
@@ -2476,22 +3379,25 @@ begin
   begin
     for ColumnIndex := 0 to ColumnCount - 1 do
     begin
-      aField := DataSet.FieldByName(ColumnDescriptions[ColumnIndex].SQLName);
+      aField := DataSet.FieldByUpperCaseName(ColumnDescriptions[ColumnIndex].SQLNameUpper);
       if Assigned(aField) then
       begin
         if not CompareField(ObjectContent, aField, ColumnIndex, ValueSpace, TranslationList) then
         begin
-          BoldLog.LogFmt(sOptimisticLockingFailed,
+          BoldLog.LogFmt('Optimistic Locking Failed for %s.%s (ID: %s) Column %d [%s] ValueInDb:%s InMemTimestamp: %d',
             [ObjectPersistenceMapper.ExpressionName,
             ExpressionName,
             ObjectContent.ObjectId.AsString,
             ColumnIndex,
-            ColumnDescriptions[ColumnIndex].SQLName]);
+            ColumnDescriptions[ColumnIndex].SQLName,
+            aField.AsString,
+            ObjectContent.Timestamp]
+            );
           result := false;
         end;
       end
       else
-        raise EBoldInternal.CreateFmt(sSomeColumnsNotInTable, [classname, 'CompareFields', ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]); // do not localize
+        raise EBoldInternal.CreateFmt('%s.CompareFields: Some columns not found in table (%d:%s)', [classname, ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]);
     end;
   end;
 end;
@@ -2499,7 +3405,7 @@ end;
 procedure TBoldMemberDefaultMapper.GetChangePoints(
   ObjectIDList: TBoldObjectIdList; Condition: TBoldChangePointCondition; NameSpace: TBoldSqlnameSpace);
 begin
-  raise EBold.CreateFmt(sNotSupportedOnMember, [classname]);
+  raise EBold.CreateFmt('%s.GetChangePoints: not supported on this member', [classname]);
 end;
 
 procedure TBoldSystemDefaultMapper.PMTimeForTimestamp(
@@ -2510,13 +3416,13 @@ begin
   aQuery := GetQuery;
   try
     aQuery.AssignSQLText(
-      format('SELECT %s FROM %s WHERE :time1 >= %s and :time2 < %s', [ // do not localize
+      format('SELECT %s FROM %s WHERE :time1 >= %s and :time2 < %s', [
         ClockLogTableLastClockColumn.SQLname,
         PSSystemDescription.ClockLogTable.SQLName,
         ClockLogTableLastTimeStampColumn.SQLName,
         ClockLogTableThisTimeStampColumn.SQLName]));
-    aQuery.ParamByName('time1').AsInteger := Timestamp; // do not localize
-    aQuery.ParamByName('time2').AsInteger := Timestamp; // do not localize
+    aQuery.ParamByName('time1').AsInteger := Timestamp;
+    aQuery.ParamByName('time2').AsInteger := Timestamp;
     aQuery.Open;
     if not aQuery.EOF then
       ClockTime := aQuery.Fields[0].AsDateTime
@@ -2536,13 +3442,13 @@ begin
   aQuery := GetQuery;
   try
     aQuery.AssignSQLText(
-      Format('SELECT %s FROM %s WHERE :time1 > %s and :time2 <= %s', [ // do not localize
+      Format('SELECT %s FROM %s WHERE :time1 > %s and :time2 <= %s', [
         ClockLogTableThisTimeStampColumn.SQLName,
         PSSystemDescription.ClockLogTable.SQLName,
         ClockLogTableLastClockColumn.SQLname,
         ClockLogTableThisClockColumn.SQLname]));
-    aQuery.ParamByName('time1').AsDateTime := ClockTime; // do not localize
-    aQuery.ParamByName('time2').AsDateTime := ClockTime; // do not localize
+    aQuery.ParamByName('time1').AsDateTime := ClockTime;
+    aQuery.ParamByName('time2').AsDateTime := ClockTime;
     aQuery.Open;
     if not aQuery.EOF then
       Timestamp := aQuery.Fields[0].AsInteger
@@ -2559,11 +3465,6 @@ begin
   result := false;
 end;
 
-function TBoldMemberDefaultMapper.GetObjectPersistenceMapper: TBoldObjectDefaultMapper;
-begin
-  result := (inherited ObjectPersistenceMapper) as TBoldObjectDefaultMapper;
-end;
-
 { EBoldOptimisticLockingFailed }
 
 constructor EBoldOptimisticLockingFailed.Create(msg: string; args: array of const; FailedObjects: TBoldObjectIdList);
@@ -2571,8 +3472,28 @@ begin
   inherited Create(Msg, Args, FailedObjects);
 end;
 
+destructor TBoldObjectDefaultMapper.Destroy;
+var
+  i: integer;
+begin
+  for I := 0 to Length(fQueryCache) - 1 do
+  begin
+    fQueryCache[i].SqlStrings.Free;
+    fQueryCache[i].MemberList.Free;
+    fQueryCache[i].MemberPMList.Free;
+    fQueryCache[i].CustomMembers.Free;
+  end;
+  for I := 0 to Length(fPMCreateCache) - 1 do
+  begin
+    fPMCreateCache[i].SqlStrings.Free;
+    fPMCreateCache[i].MemberPMList.Free;
+  end;
+  fSingleLinkList.free;
+  inherited;
+end;
+
 procedure TBoldObjectDefaultMapper.DetectLinkClassDuplicates(
-  ObjectIdList: TBoldObjectidList; ValueSpace: IBoldvalueSpace;
+  ObjectIdList: TBoldObjectidList; const ValueSpace: IBoldvalueSpace;
   TranslationList: TBoldIdTranslationList;
   DuplicateList: TBoldObjectIdList);
 var
@@ -2598,10 +3519,8 @@ begin
   LinkMapper1 := (LinkClassRole1 as TBoldEmbeddedSingleLinkDefaultMapper);
   LinkMapper2 := (LinkClassRole2 as TBoldEmbeddedSingleLinkDefaultMapper);
 
-  // if we find a linkobject that links the same two objects as one of the new,
-  // translate the new object to the old object.
 
-  QueryText := format('SELECT %s, %s FROM %s WHERE (%s = %%s) AND (%s = %%s)', [ // do not localize
+  QueryText := format('SELECT %s, %s FROM %s WHERE (%s = %%s) AND (%s = %%s)', [
     IDCOLUMN_NAME, TYPECOLUMN_NAME,
     MainTable.SQLName,
     LinkMapper1.MainColumnName, LinkMapper2.MainColumnName]);
@@ -2612,8 +3531,6 @@ begin
       LinkObject := ValueSpace.EnsuredObjectContentsByObjectId[ObjectIdList[i]];
       Id1 := (LinkMapper1.GetValue(LinkObject) as IBoldObjectIdRef).Id;
       Id2 := (LinkMapper2.GetValue(LinkObject) as IBoldObjectIdRef).Id;
-
-      // if either object is new, then this can not be a dupe
       if not (ObjectisNew(Id1) or ObjectIsNew(Id2)) then
       begin
         if assigned(Id1) then
@@ -2621,8 +3538,6 @@ begin
         if assigned(Id2) then
           Id2 := TranslationList.TranslateToNewId[Id2];
 
-        // if the linkobject is broken (doesn't have 2 IDs) or is pointing to objects that are deleted,
-        // then we will get an inconsistent database later, but lets not get an AV here...
 
         if assigned(Id1) and assigned(Id2) then
         begin
@@ -2630,15 +3545,9 @@ begin
           Query.open;
           if not query.Eof then
           begin
-            OldLinkObjectId := SystemPersistenceMapper.NewIdFromQuery(Query, 1, 0, BOLDMAXTIMESTAMP);
-            try
-              // the new linkobject has already received a translation to its persistent ID
-              // we need to add a translation from that ID to the existing link objectid
-              TranslationList.addTranslation(TranslationList.TranslateToNewId[ObjectIdList[i]], OldLinkObjectId);
-              DuplicateList.Add(ObjectIdList[i]);
-            finally
-              OldLinkObjectId.Free;
-            end;
+            OldLinkObjectId := SystemPersistenceMapper.NewIdFromQuery(Query, NO_CLASS, 1, 0, BOLDMAXTIMESTAMP);
+            TranslationList.addTranslationAdoptNew(TranslationList.TranslateToNewId[ObjectIdList[i]], OldLinkObjectId);
+            DuplicateList.Add(ObjectIdList[i]);
           end;
           Query.Close;
         end;
@@ -2650,8 +3559,8 @@ begin
   end;
 end;
 
-function TBoldMemberDefaultMapper.CheckEitherNull(field: IBoldField;
-  Value: IBoldValue; var Equal: Boolean): Boolean;
+function TBoldMemberDefaultMapper.CheckEitherNull(const field: IBoldField;
+  const Value: IBoldValue; var Equal: Boolean): Boolean;
 begin
   Equal := false;
   result := false;
@@ -2686,7 +3595,8 @@ begin
     Columns := TStringList.Create;
     Columns.CommaText := MemberMappings[0].Columns;
     if Columns.Count <> ColumnCount then
-      raise EBold.CreateFmt(sUnsupportedMappingChange, [ObjectPersistenceMapper.ExpressionName, ExpressionName]);
+      raise EBold.CreateFmt('Database Mapping has changed in an unsupported way for %s.%s. Number of columns has changed', [ObjectPersistenceMapper.ExpressionName, ExpressionName]);
+    ColumnDescriptions.Capacity := ObjectPersistenceMapper.MemberPersistenceMappers.Count;
     for i := 0 to Columns.Count - 1 do
       ColumnDescriptions.Add(
         SystemPersistenceMapper.EnsureColumn(MemberMappings[0].TableName,
@@ -2696,17 +3606,23 @@ begin
           ColumnBDEFieldType[i],
           ColumnSize[i],
           AllowNull,
-          ObjectPersistenceMapper.Versioned,  // ??? is this really right? is it not supposed to be the mapper of the class that defines the attribute? - Yes, in theory. In practice it makes no difference.
+          ObjectPersistenceMapper.Versioned,
           DefaultDbValue));
+{$IFDEF IndexColumn}
+    if MemberMappings[0].ColumnIndex then begin
+      for i := 0 to Columns.Count - 1 do
+        SystemPersistenceMapper.EnsureIndex(MemberMappings[0].TableName,
+            Columns[i], False, False, True, False);
+    end;
+{$ENDIF}
   end
   else if (length(memberMappings) = 0) and RequiresMemberMapping then
-    raise EBold.CreateFmt(sUnableToFindMappingForX, [ObjectPersistenceMapper.ExpressionName, ExpressionName]);
+    raise EBoldMissingID.CreateFmt('Unable to find database mapping for %s.%s', [ObjectPersistenceMapper.ExpressionName, ExpressionName]);
 end;
 
 procedure TBoldObjectDefaultMapper.InitializePSDescriptions;
 begin
-  // it is important that the x-files table come before the other tables
-  // (and in general that the tables for a superclass comes before the tables of a subclass)
+
   if SystemPersistenceMapper.UseXFiles then
     AllTables.Add(SystemPersistenceMapper.PSSystemDescription.XFilestable);
 
@@ -2715,13 +3631,10 @@ begin
   if not assigned(SuperClass) then
     SystemPersistenceMapper.PSSystemDescription.RootTable := MainTable;
 
-  // the starttimestamp column is added in EnsureTable
-  // root class needs to have a stopcolumn as well...
   if Versioned and (self = SystemPersistenceMapper.RootClassObjectPersistenceMapper) then
   begin
     SystemPersistenceMapper.EnsureColumn(MainTable.SQLName, TIMESTAMPSTOPCOLUMNNAME, SystemPersistenceMapper.SQLDataBaseConfig.ColumnTypeForInteger, SystemPersistenceMapper.SQLDataBaseConfig.EffectiveSQLforNotNull, BOLDTIMESTAMPFIELDTYPE, 0, true, true, SystemPersistenceMapper.SQLDataBaseConfig.CorrectlyQuotedDefaultValue(intTostr(BOLDMAXTIMESTAMP)));
-    // the following index improves performance alot in Interbase, and seems to have no negative impact in SQLServer.
-    MainTable.EnsureIndex(TIMESTAMPSTOPCOLUMNNAME, false, false);
+    MainTable.EnsureIndex(TIMESTAMPSTOPCOLUMNNAME, false, false, false);
     MainTable.ContainsStopTimeStamp := true;
   end;
 end;
@@ -2733,26 +3646,21 @@ var
   DefaultStringLength: integer;
 begin
   DefaultStringLength := SQLDataBaseConfig.DefaultStringLength;
-  // inherited is called at the end to ensure that systemtables are available to other parts of initialization
-
-  // Create BOLD_ID
+  PSSystemDescription.SQLTablesList.Capacity := ObjectPersistenceMappers.Count + 10;
   PSSystemDescription.IdTable := TBoldSQLTableDescription.Create(PSSystemDescription, false);
   PSSystemDescription.IdTable.SQLName := IDTABLE_NAME;
   PSSystemDescription.IdTable.AddColumn(IDCOLUMN_NAME, SQLDataBaseConfig.ColumnTypeForInteger, SQLDataBaseConfig.EffectiveSQLforNotNull, IDCOLUMN_TYPE, 0, False, '');
-
-  // Create BOLD_TYPES
   PSSystemDescription.TypeTable := TBoldSQLTableDescription.Create(PSSystemDescription, false);
   PSSystemDescription.TypeTable.SQLName := TYPETABLE_NAME;
   PSSystemDescription.TypeTable.AddColumn(TYPECOLUMN_NAME, SQLDataBaseConfig.ColumnTypeForSmallInt, SQLDataBaseConfig.EffectiveSQLforNotNull, TYPECOLUMN_TYPE, 0, False, '');
   PSSystemDescription.TypeTable.AddColumn(CLASSNAMECOLUMN_NAME, format(SQLDataBaseConfig.ColumnTypeForString, [DefaultStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, DefaultStringLength, False, '');
-
   if UseXFiles then
   begin
     PSSystemDescription.XFilesTable := TBoldSQLTableDescription.Create(PSSystemDescription, false);
-    PSSystemDescription.XFilesTable.SQLName := TABLEPREFIXTAG + '_XFILES'; // do not localize
+    PSSystemDescription.XFilesTable.SQLName := TABLEPREFIXTAG + '_XFILES';
     PSSystemDescription.XFilesTable.AddColumn(IDCOLUMN_NAME, SQLDataBaseConfig.ColumnTypeForInteger, SQLDataBaseConfig.EffectiveSQLforNotNull, IDCOLUMN_TYPE, 0, False, '');
     PSSystemDescription.XFilesTable.AddColumn(TYPECOLUMN_NAME, SQLDataBaseConfig.ColumnTypeForSmallInt, SQLDataBaseConfig.EffectiveSQLforNotNull, TYPECOLUMN_TYPE, 0, False, '');
-    PSSystemDescription.XFilesTable.EnsureIndex(IDCOLUMN_NAME, true, true);
+    PSSystemDescription.XFilesTable.EnsureIndex(IDCOLUMN_NAME, true, true, false);
     if UseGlobalId then
       fXFilesGlobalIdColumn := PSSystemDescription.XFilesTable.AddColumn(GLOBALIDCOLUMN_NAME, format(SQLDataBaseConfig.ColumnTypeForString, [DefaultStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, DefaultStringLength, False, '');
     if UseTimestamp then
@@ -2792,7 +3700,9 @@ begin
   PSSystemDescription.MemberMappingTable.AddColumn(MMT_TABLENAME_COLUMN, format(SQLDataBaseConfig.ColumnTypeForString, [MappingStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, MappingStringLength, False, '');
   PSSystemDescription.MemberMappingTable.AddColumn(MMT_COLUMNS_COLUMN, format(SQLDataBaseConfig.ColumnTypeForString, [MappingStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, MappingStringLength, False, '');
   PSSystemDescription.MemberMappingTable.AddColumn(MMT_MAPPERNAME_COLUMN, format(SQLDataBaseConfig.ColumnTypeForString, [MappingStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, MappingStringLength, False, '');
-
+{$IFDEF IndexColumn}
+  PSSystemDescription.MemberMappingTable.AddColumn(MMT_INDEX_COLUMN, SQLDataBaseConfig.ColumnTypeForInteger, SQLDataBaseConfig.EffectiveSQLforNotNull, ftBoolean, 0, False, '');
+{$ENDIF}
   PSSystemDescription.AllInstancesMappingTable := TBoldSQLTableDescription.Create(PSSystemDescription, false);
   PSSystemDescription.AllInstancesMappingTable.SQLName := AllInstancesMappingTable_NAME;
   PSSystemDescription.AllInstancesMappingTable.AddColumn(AID_CLASSNAME_COLUMN, format(SQLDataBaseConfig.ColumnTypeForString, [MappingStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, MappingStringLength, False, '');
@@ -2804,11 +3714,6 @@ begin
   PSSystemDescription.ObjectStorageMappingTable.AddColumn(ST_CLASSNAME_COLUMN, format(SQLDataBaseConfig.ColumnTypeForString, [MappingStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, MappingStringLength, False, '');
   PSSystemDescription.ObjectStorageMappingTable.AddColumn(ST_TABLENAME_COLUMN, format(SQLDataBaseConfig.ColumnTypeForString, [MappingStringLength]), SQLDataBaseConfig.EffectiveSQLforNotNull, ftString, MappingStringLength, False, '');
   inherited;
-end;
-
-function TBoldMemberDefaultMapper.GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
-begin
-  result := inherited SystemPersistenceMapper as TBoldSystemDefaultMapper;
 end;
 
 function TBoldMemberDefaultMapper.RequiresMemberMapping: Boolean;
@@ -2842,17 +3747,16 @@ end;
 class procedure TBoldSingleColumnMember.EnsureFirstColumn(ColumnIndex: Integer);
 begin
   if ColumnIndex <> 0 then
-    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'EnsureFirstColumn', ColumnIndex]); // do not localize
+    raise EBoldBadColumnIndex.CreateFmt('%s: Illegal Column Index (%d)', [ClassName, ColumnIndex]);
 end;
 
 { TBoldModelVersionMember }
 
 function TBoldModelVersionMember.CompareField(
-  ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer;
-  ValueSpace: IBoldValueSpace;
+  const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;
+  const ValueSpace: IBoldValueSpace;
   TranslationList: TBoldIdTranslationList): Boolean;
 begin
-// actually this method is irrelevant
   result := true;
 end;
 
@@ -2892,50 +3796,55 @@ begin
 end;
 
 function TBoldModelVersionMember.IsDirty(
-  ObjectContents: IBoldObjectContents): Boolean;
+  const ObjectContents: IBoldObjectContents): Boolean;
 begin
   result := true;
 end;
 
 function TBoldModelVersionMember.ShouldFetch(
-  ObjectContents: IBoldObjectContents): Boolean;
+  const ObjectContents: IBoldObjectContents): Boolean;
 begin
-  // in an environment that uses ModelVersion,
-  // it must always be fetched so that an automatic update can be performed
+
   result := true;
 end;
 
-procedure TBoldModelVersionMember.ValueFromField(
-  OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents;
-  ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
-  Field: IBoldField; ColumnIndex: Integer);
+function TBoldModelVersionMember.ValueAsVariant(
+  const ObjectContent: IBoldObjectContents; ColumnIndex: Integer;
+  TranslationList: TBoldIdTranslationList): variant;
 begin
-// do nothing
+  result := VersionNumber;
+end;
+
+procedure TBoldModelVersionMember.ValueFromField(
+  OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents;
+  const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
+  const Field: IBoldField; ColumnIndex: Integer);
+begin
 end;
 
 procedure TBoldModelVersionMember.ValueToParam(
-  ObjectContent: IBoldObjectContents; Param: IBoldParameter;
+  const ObjectContent: IBoldObjectContents; const Param: IBoldParameter;
   ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 begin
   Param.AsInteger := VersionNumber;
 end;
 
-function TBoldModelVersionMember.VersionFromQuery(Query: IBoldQuery): Integer;
+function TBoldModelVersionMember.VersionFromQuery(const Query: IBoldQuery): Integer;
 var
   aField: IBoldField;
 begin
-  aField := Query.FieldByName(ColumnDescriptions[0].SQLName);
+  aField := Query.FieldByUpperCaseName(ColumnDescriptions[0].SQLNameUpper);
   if assigned(aField) then
     result := aField.AsInteger
   else
-    raise EBoldInternal.CreateFmt(sColumnNotFoundInTable, [classname, ColumnDescriptions[0].SQLName]);
+    raise EBoldInternal.CreateFmt('%s.VersionFromQuery: Column not found in table (%s)', [classname, ColumnDescriptions[0].SQLName]);
 end;
 
 { TBoldReadOnlynessMember }
 
 function TBoldReadOnlynessMember.CompareField(
-  ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer;
-  ValueSpace: IBoldValueSpace;
+  const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;
+  const ValueSpace: IBoldValueSpace;
   TranslationList: TBoldIdTranslationList): Boolean;
 begin
   result := true;
@@ -2977,35 +3886,40 @@ begin
 end;
 
 function TBoldReadOnlynessMember.IsDirty(
-  ObjectContents: IBoldObjectContents): Boolean;
+  const ObjectContents: IBoldObjectContents): Boolean;
 begin
   result := false;
 end;
 
 function TBoldReadOnlynessMember.ShouldFetch(
-  ObjectContents: IBoldObjectContents): Boolean;
+  const ObjectContents: IBoldObjectContents): Boolean;
 begin
   result := true;
 end;
 
+function TBoldReadOnlynessMember.ValueAsVariant(
+  const ObjectContent: IBoldObjectContents; ColumnIndex: Integer;
+  TranslationList: TBoldIdTranslationList): variant;
+begin
+  result := 0;
+end;
+
 procedure TBoldReadOnlynessMember.ValueFromField(
-  OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents;
-  ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
-  Field: IBoldField; ColumnIndex: Integer);
+  OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents;
+  const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
+  const Field: IBoldField; ColumnIndex: Integer);
 begin
   ObjectContent.SetIsReadOnly(field.AsInteger = 1);
 end;
 
 procedure TBoldReadOnlynessMember.ValueToParam(
-  ObjectContent: IBoldObjectContents; Param: IBoldParameter;
+  const ObjectContent: IBoldObjectContents; const Param: IBoldParameter;
   ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 begin
-  // since IsDirty is false, this will only happen on Create or
-  // when using UpdateWholeObjects (which is a bad thing...)
   Param.AsInteger := 0;
 end;
 
-function TBoldObjectDefaultMapper.IsOldVersion(Query: IBoldQuery): Boolean;
+function TBoldObjectDefaultMapper.IsOldVersion(const Query: IBoldQuery): Boolean;
 var
   CurrentObjectVersion: integer;
 begin
@@ -3014,7 +3928,7 @@ begin
     SystemPersistenceMapper.ObjectUpgrader.NeedsManualUpdate(ExpressionName, CurrentObjectVersion);
 end;
 
-procedure TBoldObjectDefaultMapper.PortObject(ObjectId: TBoldObjectId; Query: IBoldQuery);
+procedure TBoldObjectDefaultMapper.PortObject(ObjectId: TBoldObjectId; const Query: IBoldQuery);
 begin
   if assigned(SystemPersistenceMapper.ObjectUpgrader) then
     SystemPersistenceMapper.ObjectUpgrader.UpgradeObjectById(ObjectId, Query);
@@ -3024,14 +3938,14 @@ end;
 { TBoldTimeStampMember }
 
 function TBoldTimeStampMember.CompareField(
-  ObjectContent: IBoldObjectContents; Field: IBoldField;
-  ColumnIndex: integer; ValueSpace: IBoldValueSpace;
+  const ObjectContent: IBoldObjectContents; const Field: IBoldField;
+  ColumnIndex: integer; const ValueSpace: IBoldValueSpace;
   TranslationList: TBoldIdTranslationList): Boolean;
 begin
   if ColumnIndex = 0 then
     result := Field.AsInteger = ObjectContent.TimeStamp
   else
-    raise EBold.CreateFmt(sIllegalColumnIndex, [classname, 'CompareField', ColumnIndex]); // do not localize
+    raise EBold.CreateFmt('%s.CompareField: invalid columnIndex (%d)', [classname, ColumnIndex]);
 end;
 
 constructor TBoldTimeStampMember.CreateFromMold(moldMember: TMoldMember;
@@ -3050,10 +3964,9 @@ end;
 
 function TBoldTimeStampMember.FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string;
 begin
-  // unfortunately, it is too early to call the
-  // SystemPersistenceMapper.XFilesTable.SQLName since it would create the
-  // PSDescriptions before all the Mappers are in place.
-  result := BoldExpandPrefix(TABLEPREFIXTAG + '_XFILES', '', SystemPersistenceMapper.SQLDatabaseConfig.SystemTablePrefix, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, SystemPersistenceMapper.NationalCharConversion); // do not localize
+
+
+  result := BoldExpandPrefix(TABLEPREFIXTAG + '_XFILES', '', SystemPersistenceMapper.SQLDatabaseConfig.SystemTablePrefix, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, SystemPersistenceMapper.NationalCharConversion);
 end;
 
 function TBoldTimeStampMember.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
@@ -3067,14 +3980,13 @@ begin
 end;
 
 
-function TBoldTimeStampMember.IsDirty(ObjectContents: IBoldObjectContents): Boolean;
+function TBoldTimeStampMember.IsDirty(const ObjectContents: IBoldObjectContents): Boolean;
 begin
   result := true;
 end;
 
-function TBoldTimeStampMember.ShouldFetch(ObjectContents: IBoldObjectContents): Boolean;
+function TBoldTimeStampMember.ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean;
 begin
-  // the timestamp should only be loaded if the object uses timestamp-mode for optimistic locking
   result := ObjectPersistenceMapper.fOptimisticLockingMode = bolmTimeStamp;
 end;
 
@@ -3083,16 +3995,22 @@ begin
   result := true;
 end;
 
+function TBoldTimeStampMember.ValueAsVariant(const ObjectContent: IBoldObjectContents;
+  ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant;
+begin
+  result := SystemPersistenceMapper.CurrentTimeStamp;;
+end;
+
 procedure TBoldTimeStampMember.ValueFromField(
-  OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents;
-  ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
-  Field: IBoldField; ColumnIndex: Integer);
+  OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents;
+  const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
+  const Field: IBoldField; ColumnIndex: Integer);
 begin
   ObjectContent.TimeStamp := Field.AsInteger;
 end;
 
 procedure TBoldTimeStampMember.ValueToParam(
-  ObjectContent: IBoldObjectContents; Param: IBoldParameter;
+  const ObjectContent: IBoldObjectContents; const Param: IBoldParameter;
   ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 begin
   Param.AsInteger := SystemPersistenceMapper.CurrentTimeStamp;
@@ -3101,8 +4019,8 @@ end;
 { TBoldGlobalIdMember }
 
 function TBoldGlobalIdMember.CompareField(
-  ObjectContent: IBoldObjectContents; Field: IBoldField;
-  ColumnIndex: integer; ValueSpace: IBoldValueSpace;
+  const ObjectContent: IBoldObjectContents; const Field: IBoldField;
+  ColumnIndex: integer; const ValueSpace: IBoldValueSpace;
   TranslationList: TBoldIdTranslationList): Boolean;
 begin
   result := true;
@@ -3117,7 +4035,7 @@ begin
   fDefaultDbValue := '';
   fAllowNull := false;
   fDelayedFetch := true;
-  fContentName := 'String'; // do not localize
+  fContentName := 'String';
   fIsStoredInObject := true;
   fInitialColumnRootName := GLOBALIDCOLUMN_NAME;
   inherited;
@@ -3125,10 +4043,9 @@ end;
 
 function TBoldGlobalIdMember.FindDefiningTable(LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string;
 begin
-  // unfortunately, it is too early to call the
-  // SystemPersistenceMapper.XFilesTable.SQLName since it would create the
-  // PSDescriptions before all the Mappers are in place.
-  result := BoldExpandPrefix(TABLEPREFIXTAG + '_XFILES', '', SystemPersistenceMapper.SQLDatabaseConfig.SystemTablePrefix, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, SystemPersistenceMapper.NationalCharConversion); // do not localize
+
+
+  result := BoldExpandPrefix(TABLEPREFIXTAG + '_XFILES', '', SystemPersistenceMapper.SQLDatabaseConfig.SystemTablePrefix, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, SystemPersistenceMapper.NationalCharConversion);
 end;
 
 function TBoldGlobalIdMember.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
@@ -3138,32 +4055,39 @@ end;
 
 function TBoldGlobalIdMember.GetColumnTypeAsSQL(ColumnIndex: Integer): string;
 begin
-  // {F4252AB4-8FFA-460F-BDBD-1BB57D588D14}
   result := format(SystemPersistenceMapper.SQLDataBaseConfig.ColumnTypeForString, [39]);
 end;
 
 
 function TBoldGlobalIdMember.IsDirty(
-  ObjectContents: IBoldObjectContents): Boolean;
+  const ObjectContents: IBoldObjectContents): Boolean;
 begin
   result := false;
 end;
 
-function TBoldGlobalIdMember.ShouldFetch(ObjectContents: IBoldObjectContents): Boolean;
+function TBoldGlobalIdMember.ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean;
 begin
   result := false;
+end;
+
+function TBoldGlobalIdMember.ValueAsVariant(const ObjectContent: IBoldObjectContents;
+  ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant;
+begin
+  result := ObjectContent.GlobalId;
+  if result = '' then
+    result := ExternalIdGenerator;
 end;
 
 procedure TBoldGlobalIdMember.ValueFromField(OwningObjectId: TBoldObjectId;
-  ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace;
-  TranslationList: TBoldIdTranslationList; Field: IBoldField;
+  const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace;
+  TranslationList: TBoldIdTranslationList; const Field: IBoldField;
   ColumnIndex: Integer);
 begin
   ObjectContent.GlobalId := Field.AsString;
 end;
 
 procedure TBoldGlobalIdMember.ValueToParam(
-  ObjectContent: IBoldObjectContents; Param: IBoldParameter;
+  const ObjectContent: IBoldObjectContents; const Param: IBoldParameter;
   ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 var
   GlobalId: String;
@@ -3182,7 +4106,6 @@ var
   i: integer;
 begin
   inherited;
-  // since these members do not require membermappings... they have to build their PSDesc manually
   if ColumnDescriptions.Count = 0 then
   begin
     for i := 0 to ColumnCount - 1 do
@@ -3197,6 +4120,105 @@ end;
 function TBoldXFilesMembers.RequiresMemberMapping: Boolean;
 begin
   result := false;
+end;
+
+{ TBoldNonXFileTimeStampMember }
+
+function TBoldNonXFileTimeStampMember.CompareField(
+  const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer;
+  const ValueSpace: IBoldValueSpace;
+  TranslationList: TBoldIdTranslationList): Boolean;
+begin
+  if ColumnIndex = 0 then
+    result := Field.AsInteger = ObjectContent.TimeStamp
+  else
+    raise EBold.CreateFmt('%s.CompareField: invalid columnIndex (%d)', [classname, ColumnIndex]);
+
+end;
+
+constructor TBoldNonXFileTimeStampMember.CreateFromMold(moldMember: TMoldMember;
+  moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper;
+  const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary);
+begin
+  fExpressionname := '_' + TIMESTAMPCOLUMN_NAME;
+  fDefaultDbValue := '';
+  fAllowNull := false;
+  fDelayedFetch := MoldClass.EffectiveOptimisticLocking <> bolmTimeStamp;
+  fContentName := '';
+  fIsStoredInObject := true;
+  fInitialColumnRootName := TIMESTAMPCOLUMN_NAME;
+  inherited CreateFromMold(MoldMember, MoldClass, Owner, TIMESTAMPMEMBERINDEX, TypeNameDictionary);
+end;
+
+function TBoldNonXFileTimeStampMember.FindDefiningTable(
+  LocalMoldClass: TMoldClass; MoldMember: TMoldMember): string;
+var
+  TopClassWithOwnTable, RootClass, C: TMoldClass;
+begin
+  TopClassWithOwnTable := nil;
+  RootClass := LocalMoldClass.Model.RootClass;
+  C := LocalMoldClass;
+  while C <> RootClass do
+  begin
+    if C.TableMapping = tmOwn then
+      TopClassWithOwnTable := C;
+    Assert(Assigned(C.SuperClass), C.name);
+    C := C.SuperClass;
+  end;
+  if not Assigned(TopClassWithOwnTable) then
+    raise Exception.Create('No table found for timestamp for class: ' + LocalMoldClass.name);
+  result := BoldExpandPrefix(TopClassWithOwnTable.TableName, TopClassWithOwnTable.Name, SystemPersistenceMapper.SQLDatabaseConfig.SystemTablePrefix, SystemPersistenceMapper.SQLDataBaseConfig.MaxDbIdentifierLength, RootClass.Model.NationalCharConversion);
+end;
+
+function TBoldNonXFileTimeStampMember.GetColumnBDEFieldType(
+  ColumnIndex: Integer): TFieldType;
+begin
+  result := BOLDTIMESTAMPFIELDTYPE;
+end;
+
+function TBoldNonXFileTimeStampMember.GetColumnTypeAsSQL(
+  ColumnIndex: Integer): string;
+begin
+  result := SystemPersistenceMapper.SQLDataBaseConfig.ColumnTypeForInteger;
+end;
+
+function TBoldNonXFileTimeStampMember.IsDirty(
+  const ObjectContents: IBoldObjectContents): Boolean;
+begin
+  result := true;
+end;
+
+function TBoldNonXFileTimeStampMember.ShouldFetch(
+  const ObjectContents: IBoldObjectContents): Boolean;
+begin
+  result := ObjectPersistenceMapper.fOptimisticLockingMode = bolmTimeStamp;
+end;
+
+function TBoldNonXFileTimeStampMember.SupportsComparingWithoutValue: Boolean;
+begin
+  result := true;
+end;
+
+function TBoldNonXFileTimeStampMember.ValueAsVariant(
+  const ObjectContent: IBoldObjectContents; ColumnIndex: Integer;
+  TranslationList: TBoldIdTranslationList): variant;
+begin
+  result := SystemPersistenceMapper.CurrentTimeStamp;
+end;
+
+procedure TBoldNonXFileTimeStampMember.ValueFromField(
+  OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents;
+  const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList;
+  const Field: IBoldField; ColumnIndex: Integer);
+begin
+  ObjectContent.TimeStamp := Field.AsInteger;
+end;
+
+procedure TBoldNonXFileTimeStampMember.ValueToParam(
+  const ObjectContent: IBoldObjectContents; const Param: IBoldParameter;
+  ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
+begin
+  Param.AsInteger := SystemPersistenceMapper.CurrentTimeStamp;
 end;
 
 initialization
@@ -3216,5 +4238,4 @@ finalization
     BoldObjectPersistenceMappers.RemoveDescriptorByName(DEFAULTNAME);
 
 end.
-
 

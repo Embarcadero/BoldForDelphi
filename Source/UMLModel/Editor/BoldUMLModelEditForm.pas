@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelEditForm;
 
 interface
@@ -19,6 +22,7 @@ uses
   BoldModel,
   BoldGrid,
   BoldUMLModel,
+  BoldUMLTypes,
   StdCtrls,
   ComCtrls,
   BoldXCVTreeView,
@@ -487,14 +491,9 @@ type
     AddSubclass1: TMenuItem;
     AddSubclass2: TMenuItem;
     apeHintCatcher: TApplicationEvents;
-    function bcrAutoCreatedGetAsCheckBoxState(
-      Element: TBoldElement; Representation: Integer;
-      Expression: String): TCheckBoxState;
-    procedure bcrAutoCreatedSetAsCheckBoxState(
-      Element: TBoldElement; newValue: TCheckBoxState;
-      Representation: Integer; Expression: String);
-    procedure bsrRedOnAutocreatedSetColor(Element: TBoldElement;
-      var AColor: TColor; Representation: Integer; Expression: String);
+    function bcrAutoCreatedGetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
+    procedure bcrAutoCreatedSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
+    procedure bsrRedOnAutocreatedSetColor(aFollower: TBoldFollower; var AColor: TColor);
     procedure Boldifymodel1Click(Sender: TObject);
     procedure FlattenClick(Sender: TObject);
     procedure Loggform1Click(Sender: TObject);
@@ -539,36 +538,21 @@ type
     procedure mnuOverrideInAllSubclassesClick(Sender: TObject);
     procedure btInterfaceUsesClick(Sender: TObject);
     procedure btImplementationUsesClick(Sender: TObject);
-    function bsrNiceCRRendererGetAsString(Element: TBoldElement;
-      Representation: Integer; Expression: String): String;
-    procedure bsrNiceCRRendererSubscribe(Element: TBoldElement;
-      Representation: Integer; Expression: String;
-      Subscriber: TBoldSubscriber);
+    function bsrNiceCRRendererGetAsString(aFollower: TBoldFollower): String;
+    procedure bsrNiceCRRendererSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
     procedure Splitter2CanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
     procedure BoldTreeView1KeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure Contents1Click(Sender: TObject);
     procedure BoldTreeView1Expanded(Sender: TObject; Node: TTreeNode);
-    function bcrGetSetGetAsCheckBoxState(Element: TBoldElement;
-      Representation: Integer; Expression: String): TCheckBoxState;
-    procedure bcrGetSetSubscribe(Element: TBoldElement;
-      Representation: Integer; Expression: String;
-      Subscriber: TBoldSubscriber);
-    function bcrGetSetMayModify(Element: TBoldElement;
-      Representation: Integer; Expression: String;
-      Subscriber: TBoldSubscriber): Boolean;
-    procedure bcrBooleanToCheckBoxSubscribe(Element: TBoldElement;
-      Representation: Integer; Expression: String;
-      Subscriber: TBoldSubscriber);
-    function bcrBooleanToCheckBoxGetAsCheckBoxState(Element: TBoldElement;
-      Representation: Integer; Expression: String): TCheckBoxState;
-    procedure bcrBooleanToCheckBoxSetAsCheckBoxState(Element: TBoldElement;
-      newValue: TCheckBoxState; Representation: Integer;
-      Expression: String);
-    procedure bcrGetSetSetAsCheckBoxState(Element: TBoldElement;
-      newValue: TCheckBoxState; Representation: Integer;
-      Expression: String);
+    function bcrGetSetGetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
+    procedure bcrGetSetSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
+    function bcrGetSetMayModify(aFollower: TBoldFollower): Boolean;
+    procedure bcrBooleanToCheckBoxSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
+    function bcrBooleanToCheckBoxGetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
+    procedure bcrBooleanToCheckBoxSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
+    procedure bcrGetSetSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
     procedure btModelConstraintEditorClick(Sender: TObject);
     procedure btShowDerivationExpressionsEditorClick(Sender: TObject);
     procedure N3Click(Sender: TObject);
@@ -586,9 +570,7 @@ type
     procedure NewDatatype1Click(Sender: TObject);
     procedure NewPackage1Click(Sender: TObject);
     procedure InsertSuperclass1Click(Sender: TObject);
-    function bcrBooleanToCheckBoxMayModify(Element: TBoldElement;
-      Representation: Integer; Expression: String;
-      Subscriber: TBoldSubscriber): Boolean;
+    function bcrBooleanToCheckBoxMayModify(aFollower: TBoldFollower): Boolean;
     procedure BoldTreeView1EndDrag(Sender, Target: TObject; X, Y: Integer);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormActivate(Sender: TObject);
@@ -598,7 +580,6 @@ type
   private
     { Private declarations }
     fModelChangedSubscriber: TBoldPassthroughSubscriber;
-    fModelValidationSubscriber: TBoldPassthroughSubscriber;
     fModelSubscriptionsValid: Boolean;
     fIgnoreModelChanges: Boolean;
     fShowAttribKindFeaturesSubscriber: TBoldPassThroughSubscriber;
@@ -612,7 +593,6 @@ type
     fModelNeedsValidation: Boolean;
     fModelHandle: TBoldModel;
     procedure SetCheckBoxHints;
-    procedure ModelValidatedReceive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure EditOclExpression(Element: TUMLModelElement; TaggedValue: String; Context: TUMLModelElement);
     function GetUMLObjectToCopyOrMove: TUMLModelElement;
     procedure SetUMLObjectToCopyOrMove(const Value: TUMLModelElement);
@@ -630,7 +610,6 @@ type
     procedure CreateModelMethodItems(UMLClass: TUMLClass);
     procedure CreateFrameworkMethodItems(UMLClass: TUMLClass);
     procedure ClearMenuItems(var MenuItem: TMenuItem);
-    function GetMethodName(Method: String): String;
     procedure GetParamNames(Method: String; ResultList: TStringList);
     procedure GetParamTypes(Method: String; ResultList: TStringList);
     function GetReturnType(Method: String): String;
@@ -710,6 +689,8 @@ type
     function CloseThisForm: TCloseAction;
     property ModelNeedsValidation: Boolean read FModelNeedsValidation write SetModelNeedsValidation;
     procedure EnsureFlattenedAndBoldified;
+    class function GetMethodName(Method: String): String; static;
+    class function GetMethodVisibility(Method: String): TVisibilityKind; static;
   end;
 
 //var
@@ -719,29 +700,38 @@ const
 
   // kala 990707  It should not be ',' as separator between param-names.
   {$IFDEF BOLD_DELPHI}
-  FrameworkMethods: array[0..12] of String = (
+  FrameworkMethods: array[0..20] of String = (
   'function GetStringRepresentation(Representation: TBoldRepresentation): string; virtual;',
-  'procedure SetStringRepresentation(Representation: TBoldRepresentation; Value: string); virtual;',
+  'procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); virtual;',
   'procedure SubscribeToStringRepresentation(Representation: TBoldRepresentation; Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent); virtual;',
-  'function ValidateCharacter(C: AnsiChar; Representation: TBoldRepresentation): Boolean; virtual;',
-  'function ValidateString(Value: string; Representation: TBoldRepresentation): Boolean; virtual;',
+  'function ValidateCharacter(C: Char; Representation: TBoldRepresentation): Boolean; virtual;',
+  'function ValidateString(const Value: string; Representation: TBoldRepresentation): Boolean; virtual;',
   'function CompareToAs(CompareType: TBoldCompareType; BoldDirectElement: TBoldElement): Integer; virtual;',
-  'procedure ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent); virtual;',
+  'procedure ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const); virtual;',
   'function ReceiveQueryFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; virtual;',
   'procedure Assign(Source: TBoldElement); virtual;',
   'procedure CompleteCreate; virtual;',
+  'procedure CompleteRecreate; virtual;',
+  'procedure CompleteUpdate; virtual;',
+  'procedure AfterConstruction; virtual;',
+  'procedure BeforeDestruction; virtual;',
   'function MayDelete: Boolean; virtual;',
   'function MayUpdate: Boolean; virtual;',
-  'procedure PrepareDelete; virtual;'
+  'procedure PrepareDelete; virtual;',
+  'procedure PrepareDiscard; virtual;',
+  'procedure PrepareUpdate; virtual;',
+  'procedure InternalPrepareDeleteOrDeleteByDiscard; virtual;',
+  'function InternalCanDeleteObject: Boolean; virtual;'
  );
  {$ENDIF}
  {$IFDEF BOLD_BCB}
+  // TODO: BCB Methods not updated, adjust from the Delphi list above
   FrameworkMethods: array[0..12] of String = (
-  'function GetStringRepresentation(Representation: int): AnsiString; virtual;',
-  'procedure SetStringRepresentation(Representation: int; Value: AnsiString); virtual;',
+  'function GetStringRepresentation(Representation: int): String; virtual;',
+  'procedure SetStringRepresentation(Representation: int; const Value: String); virtual;',
   'procedure SubscribeToStringRepresentation(Representation: int; Subscriber: TBoldSubscriber*; RequestedEvent: int); virtual;',
-  'function ValidateCharacter(C: AnsiChar; Representation: int): Boolean; virtual;',
-  'function ValidateString(Value: AnsiString; Representation: int): Boolean; virtual;',
+  'function ValidateCharacter(C: Char; Representation: int): Boolean; virtual;',
+  'function ValidateString(Value: String; Representation: int): Boolean; virtual;',
   'function CompareToAs(CompareType: TBoldCompareType; BoldDirectElement: TBoldElement*): Integer; virtual;',
   'procedure ReceiveEventFromOwned(Originator: TObject*; OriginalEvent: int); virtual;',
   'function ReceiveQueryFromOwned(Originator: TObject*; OriginalEvent: int; Args: const TVarRec*; Subscriber: TBoldSubscriber*): Boolean; virtual;',
@@ -757,7 +747,6 @@ const
 implementation
 
 uses
-  BoldRev,
   BoldDefaultTaggedValues,
   BoldUMLAttributes,
   BoldUMLModelConverter,
@@ -767,7 +756,6 @@ uses
   BoldCursorGuard,
   BoldSystem,
   BoldAttributes,
-  BoldUMLTypes,
   BoldUMLModelValidator,
   BoldUMLModelLink,
   BoldLogHandler,
@@ -787,7 +775,8 @@ uses
   BoldDerivationExpressionsEditor,
   BoldUMLOCLEditor,
   BoldUMLModelSupport,
-  BoldUMLPluginCallBacks;
+  BoldUMLPluginCallBacks,
+  BoldUMLAbstractModelValidator;
 
 {$R *.dfm}
 
@@ -1068,7 +1057,6 @@ begin
   ValidationForm.ValidationProc := TBoldUMLModelValidatorCallBack.Validate;
   ValidationForm.Show;
   ValidationForm.Validate;
-  ModelNeedsValidation := False;
 end;
 
 function TBoldModelEditFrm.GetCurrentModel: TUMLModel;
@@ -1346,7 +1334,6 @@ begin
   CutOrCopy := cckNone;
 
   fModelChangedSubscriber := TBoldPassthroughSubscriber.Create(ModelChangedRecieve);
-  fModelValidationSubscriber := TBoldPassthroughSubscriber.Create(ModelValidatedReceive);
   FShowAttribKindFeaturesSubscriber := TBoldPassthroughSubscriber.Create(ShowAttribKindFeaturesRecieve);
 
   for Index := 0 to pcModelEdit.PageCount - 1 do
@@ -1546,11 +1533,12 @@ end;
 procedure TBoldModelEditFrm.ModelChangedRecieve(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
+  if GetCurrentModelHandle.IsValidating then
+    exit;
   fModelSubscriptionsValid := false;
   if not fIgnoreModelChanges then
     ModelNeedsValidation := True;
 end;
-
 
 procedure TBoldModelEditFrm.FormShow(Sender: TObject);
 var
@@ -1765,7 +1753,7 @@ begin
   Target.Parameter.Add(Dropped);
 end;
 
-function TBoldModelEditFrm.GetMethodName(Method: String): String;
+class function TBoldModelEditFrm.GetMethodName(Method: String): String;
 var StartPos, EndPos: Integer;
 begin
   StartPos := 0;
@@ -1785,6 +1773,27 @@ begin
     EndPos := Pos('(', Method);
 
   Result := Trim(Copy(Method, StartPos, EndPos - StartPos));
+end;
+
+class function TBoldModelEditFrm.GetMethodVisibility(Method: String):
+    TVisibilityKind;
+var
+  EndPos: Integer;
+  sVisibility: string;
+begin
+  EndPos := Pos('function', Method);
+  if EndPos = 0 then begin
+    EndPos := Pos('procedure', Method);
+  end;
+
+  sVisibility := Copy(Method, 1, EndPos - 2);
+  if BoldAnsiEqual(sVisibility, 'private') then begin
+    Result := vkPrivate;
+  end else if BoldAnsiEqual(sVisibility, 'protected') then begin
+    Result := vkProtected;
+  end else begin
+    Result := vkPublic;
+  end;
 end;
 
 procedure TBoldModelEditFrm.GetParamNames(Method: String; ResultList: TStringList);
@@ -2031,6 +2040,7 @@ begin
     TBoldUMLSupport.EnsureBoldTaggedValues(NewOperation);
     NewOperation.owner := Class_;
     NewOperation.name := OldOperation.Name;
+    NewOperation.visibility := OldOperation.Visibility;
     NewOperation.SetBoldTV(TAG_DELPHIOPERATIONKIND, TV_DELPHIOPERATIONKIND_OVERRIDE);
     for Index := 0 to OldOperation.Parameter.Count - 1 do
     begin
@@ -2109,13 +2119,11 @@ begin
   TfrmUsesEditor.CreateEditorWithParams('Implementation Uses Editor', behModel.Value, tbxModelImplementationUses.BoldProperties.Expression);
 end;
 
-function TBoldModelEditFrm.bsrNiceCRRendererGetAsString(
-  Element: TBoldElement; Representation: Integer;
-  Expression: String): String;
+function TBoldModelEditFrm.bsrNiceCRRendererGetAsString(aFollower: TBoldFollower): String;
 begin
-  if Assigned(Element) then
+  if Assigned(aFollower.Value) then
   begin
-    Result := Element.EvaluateExpressionAsString(Expression, Representation);
+    Result := aFollower.Value.AsString;
     while Pos(BOLDCRLF, Result) > 0 do
       Delete(Result, Pos(BOLDCRLF, Result), 2);
   end
@@ -2123,11 +2131,9 @@ begin
     Result := '';
 end;
 
-procedure TBoldModelEditFrm.bsrNiceCRRendererSubscribe(
-  Element: TBoldElement; Representation: Integer; Expression: String;
-  Subscriber: TBoldSubscriber);
+procedure TBoldModelEditFrm.bsrNiceCRRendererSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 begin
-  Element.SubscribeToExpression(Expression, Subscriber, False);
+  aFollower.Element.SubscribeToExpression(aFollower.Controller.Expression, Subscriber, False);
 end;
 
 procedure TBoldModelEditFrm.Splitter2CanResize(Sender: TObject;
@@ -2162,47 +2168,37 @@ begin
     BoldTreeView1.Items[0].Selected := True;
 end;
 
-function TBoldModelEditFrm.bcrGetSetGetAsCheckBoxState(
-  Element: TBoldElement; Representation: Integer;
-  Expression: String): TCheckBoxState;
+function TBoldModelEditFrm.bcrGetSetGetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
 begin
   Result := cbGrayed;
-  if Assigned(Element) then
-    Result := bcrBooleanToCheckBoxGetAsCheckBoxState(Element, Representation, Expression);
+  if Assigned(aFollower.Element) then
+    Result := bcrBooleanToCheckBoxGetAsCheckBoxState(aFollower);
 end;
 
-procedure TBoldModelEditFrm.bcrGetSetSubscribe(Element: TBoldElement;
-  Representation: Integer; Expression: String;
-  Subscriber: TBoldSubscriber);
+procedure TBoldModelEditFrm.bcrGetSetSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 begin
-  (Element as TUMLAttribute).M_StereotypeName.DefaultSubscribe(Subscriber, breReEvaluate);
-  Element.SubscribeToExpression(Expression, Subscriber, False);
+  (aFollower.Element as TUMLAttribute).M_StereotypeName.DefaultSubscribe(Subscriber, breReEvaluate);
+  aFollower.Element.SubscribeToExpression(aFollower.Controller.Expression, Subscriber, False);
 end;
 
-function TBoldModelEditFrm.bcrGetSetMayModify(Element: TBoldElement;
-  Representation: Integer; Expression: String;
-  Subscriber: TBoldSubscriber): Boolean;
+function TBoldModelEditFrm.bcrGetSetMayModify(aFollower: TBoldFollower): Boolean;
 begin
-  Result := (Element as TUMLAttribute).GetBoldTV(TAG_ATTRIBUTEKIND) = TV_ATTRIBUTEKIND_DELPHI;
+  Result := (aFollower.Element as TUMLAttribute).GetBoldTV(TAG_ATTRIBUTEKIND) = TV_ATTRIBUTEKIND_DELPHI;
 end;
 
-procedure TBoldModelEditFrm.bcrBooleanToCheckBoxSubscribe(
-  Element: TBoldElement; Representation: Integer; Expression: String;
-  Subscriber: TBoldSubscriber);
+procedure TBoldModelEditFrm.bcrBooleanToCheckBoxSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 begin
-  Element.SubscribeToExpression(Expression, Subscriber, False);
+  aFollower.Element.SubscribeToExpression(aFollower.Controller.Expression, Subscriber, False);
 end;
 
-function TBoldModelEditFrm.bcrBooleanToCheckBoxGetAsCheckBoxState(
-  Element: TBoldElement; Representation: Integer;
-  Expression: String): TCheckBoxState;
+function TBoldModelEditFrm.bcrBooleanToCheckBoxGetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
 var
   anElement: TBoldElement;
 begin
   Result := cbGrayed;
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
-    anElement := Element.EvaluateExpressionAsDirectElement(Expression);
+    anElement := aFollower.Value;
     if Assigned(anElement) then
     begin
       if TVIsTrue(anElement.AsString)then
@@ -2213,18 +2209,14 @@ begin
   end;
 end;
 
-procedure TBoldModelEditFrm.bcrBooleanToCheckBoxSetAsCheckBoxState(
-  Element: TBoldElement; newValue: TCheckBoxState; Representation: Integer;
-  Expression: String);
+procedure TBoldModelEditFrm.bcrBooleanToCheckBoxSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
 begin
-  Element.EvaluateExpressionAsDirectElement(Expression).AsString := BooleanToString(NewValue = cbChecked);
+  aFollower.Value.AsString := BooleanToString(NewValue = cbChecked);
 end;
 
-procedure TBoldModelEditFrm.bcrGetSetSetAsCheckBoxState(
-  Element: TBoldElement; newValue: TCheckBoxState; Representation: Integer;
-  Expression: String);
+procedure TBoldModelEditFrm.bcrGetSetSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
 begin
-  bcrBooleanToCheckBoxSetAsCheckBoxState(Element, newValue, Representation, Expression);
+  bcrBooleanToCheckBoxSetAsCheckBoxState(aFollower, newValue);
 end;
 
 procedure TBoldModelEditFrm.ShowAttribKindFeaturesRecieve(Originator: TObject; OriginalEvent: TBoldEvent;
@@ -2277,7 +2269,6 @@ begin
   FreeItemsInMenu(mnuOverrideModelMethods);
   EnsureFreeConstraintEditor;
   FreeAndNil(fModelChangedSubscriber);
-  FreeAndNil(fModelValidationSubscriber);
   FreeAndNil(FShowAttribKindFeaturesSubscriber);
 end;
 
@@ -2362,13 +2353,20 @@ end;
 procedure TBoldModelEditFrm.EditOclExpression(Element: TUMLModelElement; TaggedValue: String; Context: TUMLModelElement);
 var
   res: String;
+  lPrevIgnoreModelChanges: Boolean;
 begin
   EnsureFlattenedAndBoldified;
-  res := BoldUMLOclEditor_.EditOcl(
-    ModelHandle,
-    Context,
-    Element.GetBoldTV(TaggedValue));
-  Element.SetBoldTV(TaggedValue, res);
+  lPrevIgnoreModelChanges := IgnoreModelChanges;
+  IgnoreModelChanges := true;
+  try
+    res := BoldUMLOclEditor_.EditOcl(
+      ModelHandle,
+      Context,
+      Element.GetBoldTV(TaggedValue));
+  finally
+    IgnoreModelChanges := lPrevIgnoreModelChanges;
+    Element.SetBoldTV(TaggedValue, res);
+  end;
 end;
 
 procedure TBoldModelEditFrm.btClassDefaultStringRepClick(Sender: TObject);
@@ -2472,29 +2470,23 @@ begin
   Result := (behBoldified.Value as TBABoolean).AsBoolean = true;
 end;
 
-function TBoldModelEditFrm.bcrAutoCreatedGetAsCheckBoxState(
-  Element: TBoldElement; Representation: Integer;
-  Expression: String): TCheckBoxState;
+function TBoldModelEditFrm.bcrAutoCreatedGetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
 begin
-  if Assigned(Element) and TBoldUMLBoldify.IsAutocreated(Element as TUMLModelElement) then
+  if Assigned(aFollower.Element) and TBoldUMLBoldify.IsAutocreated(aFollower.Element as TUMLModelElement) then
     Result := cbChecked
   else
     Result := cbUnchecked
 end;
 
-procedure TBoldModelEditFrm.bcrAutoCreatedSetAsCheckBoxState(
-  Element: TBoldElement; newValue: TCheckBoxState; Representation: Integer;
-  Expression: String);
+procedure TBoldModelEditFrm.bcrAutoCreatedSetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
 begin
-  if assigned(Element) and (newValue= cbUnchecked) then
-    TBoldUMLBoldify.RemoveBoldifyTaggedValue(Element as TUMLModelElement, TAG_AUTOCREATED);
+  if assigned(aFollower.Element) and (newValue= cbUnchecked) then
+    TBoldUMLBoldify.RemoveBoldifyTaggedValue(aFollower.Element as TUMLModelElement, TAG_AUTOCREATED);
 end;
 
-procedure TBoldModelEditFrm.bsrRedOnAutocreatedSetColor(
-  Element: TBoldElement; var AColor: TColor; Representation: Integer;
-  Expression: String);
+procedure TBoldModelEditFrm.bsrRedOnAutocreatedSetColor(aFollower: TBoldFollower; var AColor: TColor);
 begin
-  if Assigned(Element) and TBoldUMLBoldify.IsAutocreated(Element as TUMLModelElement) then
+  if Assigned(aFollower.Element) and TBoldUMLBoldify.IsAutocreated(aFollower.Element as TUMLModelElement) then
     aColor := clRed;
 end;
 
@@ -2717,15 +2709,13 @@ begin
   TBoldQueueable.ApplyAll;
 end;
 
-function TBoldModelEditFrm.bcrBooleanToCheckBoxMayModify(
-  Element: TBoldElement; Representation: Integer; Expression: String;
-  Subscriber: TBoldSubscriber): Boolean;
+function TBoldModelEditFrm.bcrBooleanToCheckBoxMayModify(aFollower: TBoldFollower): Boolean;
 var
   ValueElement: TBoldElement;
 begin
-  ValueElement := Element.EvaluateExpressionAsDirectElement(Expression);
+  ValueElement := aFollower.Value;
   if Assigned(ValueElement) then
-    Result := ValueElement.ObserverMayModify(subscriber)
+    Result := ValueElement.ObserverMayModify(aFollower.subscriber)
   else
     Result := false;
 end;
@@ -2750,11 +2740,6 @@ procedure TBoldModelEditFrm.FormClose(Sender: TObject; var Action: TCloseAction)
 begin
   ApplyGUI;
   Action := caFree;
-end;
-
-procedure TBoldModelEditFrm.ModelValidatedReceive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-begin
-  ModelNeedsValidation := false;
 end;
 
 procedure TBoldModelEditFrm.FormActivate(Sender: TObject);
@@ -2819,20 +2804,23 @@ end;
 
 procedure TBoldModelEditFrm.SetModelHandle(const Value: TBoldModel);
 begin
-  Value.FreeNotification(Self);
-  fModelHandle := Value;
-  brhTreeRoot.Value := ModelHandle.EnsuredUMLModel;
-  if assigned(CurrentModel) then
+  if FModelHandle <> Value then
   begin
-    EnsureTypesFromTypeNameHandle(nil);
-    TBoldUMLSupport.EnsureBoldTaggedVAlues(CurrentModel);
-  end
-  else
-    raise EBoldInternal.CreateFmt('%s.SetRoot: Root must be part of Model', [ClassName]);
-  ModelNeedsValidation := True;
-  CurrentModel.AddSubscription(fModelValidationSubscriber, beModelValidated, beModelValidated);
-
-  EnsureValidationForm(GetCurrentModelHandle, self, JumpToElement);
+    BoldInstalledQueue.DeActivateDisplayQueue;
+    Value.FreeNotification(Self);
+    fModelHandle := Value;
+    brhTreeRoot.Value := ModelHandle.EnsuredUMLModel;
+    if assigned(CurrentModel) then
+    begin
+      EnsureTypesFromTypeNameHandle(nil);
+      TBoldUMLSupport.EnsureBoldTaggedVAlues(CurrentModel);
+    end
+    else
+      raise EBoldInternal.CreateFmt('%s.SetRoot: Root must be part of Model', [ClassName]);
+    ModelNeedsValidation := True;
+    EnsureValidationForm(GetCurrentModelHandle, self, JumpToElement);
+    BoldInstalledQueue.ActivateDisplayQueue;
+  end;
 end;
 
 procedure TBoldModelEditFrm.Notification(AComponent: TComponent;
@@ -2866,5 +2854,3 @@ end;
 initialization
 
 end.
-
-

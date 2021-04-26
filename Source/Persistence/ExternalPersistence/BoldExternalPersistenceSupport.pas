@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceSupport;
 
 interface
@@ -36,7 +39,8 @@ type
 implementation
 
 uses
-  Classes;
+  Classes,
+  Boldrev;
 
 var
   G_RegisteredPersistenceAdapters: TStringList;
@@ -82,4 +86,5 @@ begin
   G_RegisteredPersistenceAdapters.AddObject(ExpressionName, TObject(Adapter));
 end;
 
+initialization
 end.

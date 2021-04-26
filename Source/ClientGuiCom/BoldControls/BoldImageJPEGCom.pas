@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldImageJPEGCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -30,7 +33,7 @@ type
     function HasChanged: Boolean; override;
     class function CanReadContent(const ContentType: string): Boolean; override;
     function ContentType: string; override;
-    class function Description: string; override; // How to handle Localizastion?
+    class function Description: string; override;
     {Clipboard}
     procedure CopyToClipboard; override;
     class function CanPasteFromClipboard(const AcceptedContentType: string): Boolean; override;
@@ -40,7 +43,7 @@ type
     procedure SaveToStream(Stream: TStream); override;
     {Files}
     class function DefaultExtension: string; override;
-    class function FileFilter: string; override; // How to handle Localizastion?
+    class function FileFilter: string; override;
     class function CanLoadFromFile(const Filename: string): Boolean; override;
     procedure LoadFromFile(const Filename: string); override;
     procedure SaveToFile(const Filename: string); override;
@@ -135,7 +138,7 @@ end;
 
 type
   THack = class(TJPEGImage)
-  end; //FIX to access NewBitmap so LoadFromClipboardFormat does not return an exception.
+  end;
 
 procedure TBoldViewJPEGAdapterCom.PasteFromClipboard;
 var

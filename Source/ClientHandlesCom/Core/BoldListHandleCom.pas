@@ -1,10 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListHandleCom;
 
 interface
 
 uses
-  BoldComObjectSpace,
-  BoldComObjectSpace_TLB,
   BoldCursorHandleCom;
 
 type
@@ -36,11 +37,11 @@ implementation
 
 uses
   SysUtils,
-  ComHandlesConst,
-  BoldComHandlesConst,
-  BoldUtils,
+  BoldComObjectSpace,
+  BoldComObjectSpace_TLB,
+  BoldComUtils,
   BoldDefs,
-  BoldComUtils;
+  BoldRev;
 
 {-- TBoldListHandleCom --------------------------------------------------------}
 
@@ -52,16 +53,13 @@ end;
 
 procedure TBoldListHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldRootedHandleCom
+
   FStaticRootType := nil;
-  // from TBoldAbstractListHandleCom
   FCount := 0;
   FCurrentBoldObject := nil;
   FCurrentIndex := -1;
@@ -92,7 +90,7 @@ begin
   if Value <> FExpression then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['Expression']); // do not localize
+      raise EBold.Create('Expression is read-only');
     FExpression := Value;
     LocalValueChanged;
   end;
@@ -125,17 +123,17 @@ begin
     FList,
     FListElementType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
-  FCount := BoldGetNamedValue(NamedValues, nv_Count);
+  FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
+  FCount := BoldGetNamedValue(NamedValues,'Count');
   if not OwnsHandleOnServer then
   begin
-    FEnabled := BoldGetNamedValue(NamedValues, nv_Enabled);
-    FRootTypeName := BoldGetNamedValue(NamedValues, nv_RootTypeName);
-    FSubscribe := BoldGetNamedValue(NamedValues, nv_Subscribe);
-    FCurrentIndex := BoldGetNamedValue(NamedValues, nv_CurrentIndex);
-    FAutoFirst := BoldGetNamedValue(NamedValues, nv_AutoFirst);
-    FExpression := BoldGetNamedValue(NamedValues, nv_Expression);
-    fEvaluateInPS := BoldGetNamedValue(NamedValues, nv_EvaluateInPS);
+    FEnabled := BoldGetNamedValue(NamedValues,'Enabled');
+    FRootTypeName := BoldGetNamedValue(NamedValues,'RootTypeName');
+    FSubscribe := BoldGetNamedValue(NamedValues,'Subscribe');
+    FCurrentIndex := BoldGetNamedValue(NamedValues,'CurrentIndex');
+    FAutoFirst := BoldGetNamedValue(NamedValues,'AutoFirst');
+    FExpression := BoldGetNamedValue(NamedValues,'Expression');
+    fEvaluateInPS := BoldGetNamedValue(NamedValues, 'EvaluateInPS');
   end
   else
     AdjustCurrentIndex;
@@ -159,30 +157,30 @@ begin
   else
     RootHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-     nv_Enabled,
-     nv_RootHandle,
-     nv_RootTypeName,
-     nv_Subscribe,
-     nv_CurrentIndex,
-     nv_AutoFirst,
-     nv_Expression,
-     nv_EvaluateInPS],
+    ['StaticSystemHandle',
+    'Enabled',
+    'RootHandle',
+    'RootTypeName',
+    'Subscribe',
+    'CurrentIndex',
+    'AutoFirst',
+    'Expression',
+    'EvaluateInPS'],
     [StaticSystemHandleId,
-     FEnabled,
-     RootHandleId,
-     FRootTypeName,
-     FSubscribe,
-     FCurrentIndex,
-     FAutoFirst,
-     FExpression,
-     fEvaluateInPS]);
+    FEnabled,
+    RootHandleId,
+    FRootTypeName,
+    FSubscribe,
+    FCurrentIndex,
+    FAutoFirst,
+    FExpression,
+    fEvaluateInPS]);
   ServerElementHandle.SetData(DataFlags,nil,NamedValues);
 end;
 
 function TBoldListHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_ListHandle;
+  result := 'TBoldListHandle';
 end;
 
 function TBoldListHandleCom.GetEvaluateInPS: boolean;
@@ -197,10 +195,11 @@ begin
   if Value <> fEvaluateInPS then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['EvaluateInPS']); // do not localize
+      raise EBold.Create('EvaluateInPS is read-only');
     fEvaluateInPS := Value;
     LocalValueChanged;
   end;
 end;
 
+initialization
 end.

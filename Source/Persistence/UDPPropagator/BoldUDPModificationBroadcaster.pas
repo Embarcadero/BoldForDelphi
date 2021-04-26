@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUDPModificationBroadcaster;
 
 interface
@@ -41,7 +44,6 @@ type
   published
     property Port: Integer read GetPort write SetPort;
     property OnActivationError: TActivationErrorEvent read FOnActivationError write FOnActivationError;
-    // inherited properties
     {$IFNDEF T2H}
     property NextPersistenceHandle;
     property Active;
@@ -68,9 +70,9 @@ begin
   fUDPClient := TIdUDPClient.Create(Self);
   fUDPServer := TIdUDPServer.Create(Self);
   fUDPClient.BroadcastEnabled := True;
-  fUDPServer.OnUDPRead := InternalUDPRead;
+  fUDPServer.OnUDPRead := InternalUDPRead; //Fix
 
-  fUDPClient.Host := '255.255.255.255'; // do not localize
+  fUDPClient.Host := '255.255.255.255';
   fUDPClient.Port := 4098;
 
   fUDPServer.DefaultPort := 4098;
@@ -142,7 +144,7 @@ begin
   BoldEffectiveEnvironment.ProcessMessages;
 
   while not SendQueue.Empty do
-    fUDPClient.Send('255.255.255.255', // do not localize
+    fUDPClient.Send('255.255.255.255',
                    fUDPClient.Port,
                    SIdentification + SendQueue.Dequeue);
 end;

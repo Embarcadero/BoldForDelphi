@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectUpgraderHandle;
 
 interface
@@ -32,8 +35,8 @@ type
     function CreateObjectUpgrader: TBoldAbstractObjectUpgrader; override;
     function ConfigClass: TBoldObjectUpgraderConfigClass; override;
   public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
     property ObjectUpgrader: TBoldObjectUpgrader read GetObjectUpgrader;
   published
     property PersistenceHandle: TBoldAbstractPersistenceHandleDB read FPersistenceHandle write SetPersistenceHandle;
@@ -44,7 +47,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 const
   breSystemTypeInfoHandleDestroying = 100;
@@ -73,7 +77,7 @@ end;
 destructor TBoldObjectUpgraderHandle.destroy;
 begin
   FreeAndNil(fComponentSubscriber);
-  inherited;
+  inherited;                       
 end;
 
 function TBoldObjectUpgraderHandle.GetObjectUpgrader: TBoldObjectUpgrader;
@@ -148,4 +152,6 @@ begin
     ObjectUpgrader.ReleaseBoldSystem;
 end;
 
+
+initialization
 end.

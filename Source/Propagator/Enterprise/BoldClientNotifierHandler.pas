@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientNotifierHandler;
 
 interface
@@ -105,8 +108,7 @@ uses
   BoldGuard,
   BoldPriorityListEnlister,
   BoldPropagatorServer,
-  comobj,
-  PropagatorConsts;
+  comobj;
 
 { TBoldClientNotifierHandler }
 
@@ -116,26 +118,26 @@ var
 begin
   try
     EnsureMessageQueue;
-    BoldLogThread('ID=ClientNotifierHandler'); // do not localize
+    BoldLogThread('ID=ClientNotifierHandler');
     SignalReady;
     while not Terminated do
     begin
       if PeekMessage(rMsg, 0, 0, 0, PM_REMOVE) then
       begin
-        if rMsg.Message = WM_QUIT then // terminated
+        if rMsg.Message = WM_QUIT then
           Terminate
-        else if rMsg.message = BM_PRIORITY_CHANGED then // signal from PriorityList
+        else if rMsg.message = BM_PRIORITY_CHANGED then
           ProcessPriorityListHead
         else
           DispatchMessage(rMsg);
       end
-      else if fScheduledClients.Count > 0 then  //if no messages to process then empty scheduled clients' queue
+      else if fScheduledClients.Count > 0 then
         ProcessScheduledClientsHead
-      else // if nothing to do then wait for a message
+      else
         WaitMessage;
-    end; //while
+    end;
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'Execute', E.Message]); // do not localize
+    BoldLogError('%s.Execute (Error: %s)', [ClassName, E.Message]);
   end;
   FreeAndNil(fTimer);
 end;
@@ -153,7 +155,7 @@ end;
 function TBoldClientNotifierHandler.getTimer: TTimer;
 begin
   Assert(GetCurrentThreadId = self.ThreadID,
-        Format('%s.getTimer: Timer should be accessed from %s''s thread', [ClassName])); // do not localize
+        Format('%s.getTimer: Timer should be accessed from %s''s thread', [ClassName]));
   if not Assigned(fTimer) then
   begin
     fTimer := TTimer.Create(nil);
@@ -168,7 +170,7 @@ var
   PriorityQueue: TBoldPriorityQueue;
 begin
   Assert(Sender is TBoldPriorityQueue,
-      Format('%s.OnPriorityChanged: Sender is not a TBoldPriorityQueue', [ClassName])); // do not localize
+      Format('%s.OnPriorityChanged: Sender is not a TBoldPriorityQueue', [ClassName]));
   PriorityQueue := Sender as TBoldPriorityQueue;
   if Assigned(PriorityQueue.Head) then
     Notify(BM_PRIORITY_CHANGED);
@@ -198,15 +200,15 @@ begin
         try
           aData := TBoldClientNotifierData.CreateInitialized(ClientQueueInfo.ClientID,
                     RegistrationTime, ClientQueueInfo.QueueAsVarArray);
-          fScheduledClients.Push(Pointer(aData)); // add to scheduled clients' list
-          while ProcessScheduledClientsHead do;  // empty scheduled clients' list
+          fScheduledClients.Push(Pointer(aData));
+          while ProcessScheduledClientsHead do;
         except
-          raise EBold.CreateFmt(sFailedToSendToClient, [ClassName]);
+          raise EBold.CreateFmt('%s.SendToClient: could not send events to client', [ClassName]);
         end;
     finally
       FreeAndNil(ClientQueueInfo);
     end;
-  end;
+  end;  
 end;
 
 procedure TBoldClientNotifierHandler.ProcessPriorityListHead;
@@ -223,8 +225,8 @@ begin
     begin
       CurrentTime := DateTimeToTimeStamp(Now);
       if(ClientQueueInfo.TimeOut.Date <= CurrentTime.Date) and
-      ((ClientQueueInfo.TimeOut.Time - CurrentTime.Time) <= 1) then  //FIXME!!
-        SendToClient    //send immediately
+      ((ClientQueueInfo.TimeOut.Time - CurrentTime.Time) <= 1) then
+        SendToClient
       else
         SetTimer(ClientQueueInfo.TimeOut);
     end;
@@ -293,6 +295,7 @@ begin
   end;
 end;
 
+
 { TBoldClientNotifier }
 
 constructor TBoldClientNotifier.Create(AOwner: TBoldClientNotifierhandler);
@@ -306,9 +309,9 @@ procedure TBoldClientNotifier.Execute;
   function BoolToStr(value: Boolean): string;
   begin
     if Value then
-      Result := 'True' // do not localize
+      Result := 'True'
     else
-      Result := 'False'; // do not localize
+      Result := 'False';
   end;
 var
   res: integer;
@@ -326,18 +329,17 @@ var
 begin
   EnsureMessageQueue;
   SignalReady;
-  BoldLogThread('ID=ClientNotifier'); // do not localize
+  BoldLogThread('ID=ClientNotifier');
   fAvailableEvent.SetEvent;
   while not (Terminated) do
   begin
     res := Integer(getMessage(rMsg, 0, 0, 0));
-    if res = -1 then //error
+    if res = -1 then
       Terminate
-    else if res = 0 then // terminated
+    else if res = 0 then
       Terminate
     else if rMsg.message = BM_THRD_DOWORK then
     begin
-      // Do work here
       CoInitializeEx(nil, CoInitFlags);
       try
         if Owner.ClientHandler.GetListener(fClientData.FclientId,
@@ -351,18 +353,16 @@ begin
             end;
           except on E: Exception do
             begin
-              // retrieve client information
               Owner.ClientHandler.HasInfoForClient(fClientData.FClientID, clientIdentifier, registrationTime, initialized, Status);
               Owner.ClientHandler.HasInfoForClient(fClientData.FClientID, clientIdentifier, LeaseDuration, pollingInterval, LeaseTimeout, Initialized);
               RegistrationTimeDT := TimeStampToDateTime(RegistrationTime);
               LeaseTimeoutDT := TimeStampToDateTime(LeaseTimeout);
               Owner.ClientHandler.MarkFailedToReceiveEvents(fClientData.FClientID, VarArrayHighBound(fClientData.fEvents, 1)+1);
-              // Log the error
               if Owner.fDisconnectClientsOnSendFailure then
-                DisconnectMsg := sDisconnectMsg
+                DisconnectMsg := ' [Disconnected]'
               else
                 DisconnectMsg := '';
-              BoldLogError(sClientFailure, [
+              BoldLogError('%s.Execute: Client %s (ID=%d)%s failed to receive messages (%d msgs): %s. RegistrationTime: %s (%s ago), LeaseTimeout: %s (%s left)', [
                 ClassName,
                 ClientIdentifier,
                 fClientData.FClientId,
@@ -373,7 +373,6 @@ begin
                 TimeToStr(LeaseTimeoutDT),
                 TimeToStr(now-LeaseTimeOutDT)]);
               if Owner.fDisconnectClientsOnSendFailure then
-                // disconnect the client
                 Owner.DisconnectClient(fClientData.FClientID, fClientData.fRegistrationTime);
              end;
           end;
@@ -388,7 +387,7 @@ begin
     else begin
       DispatchMessage(rMsg);
     end;
-  end; //while
+  end;
   if Assigned(fClientData) then
     FreeAndNil(fClientData);
 end;
@@ -470,13 +469,13 @@ begin
     ClientNotifier := TBoldClientNotifier(fThreadList[CurrentThread]);
     if ClientNotifier.IsAvailable then
     begin
-      ClientNotifier.SetClientData(mData); // should be freed by the clientnotifier
+      ClientNotifier.SetClientData(mData);
       ClientNotifier.DoWork;
       Result := true;
     end;
     CurrentThread := (CurrentThread + 1) mod fPoolSize;
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'ScheduleClientNotifier', E.Message]); // do not localize
+    BoldLogError('%s.ScheduleClientNotifier: %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -490,7 +489,6 @@ begin
   fRegistrationTime := RegistrationTime;
 end;
 
+initialization
+
 end.
-
-
-

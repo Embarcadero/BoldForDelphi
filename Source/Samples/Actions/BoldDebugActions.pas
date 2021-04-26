@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDebugActions;
 
 interface
@@ -38,7 +41,7 @@ type
   protected
     function GetLogHandler: TBoldLogHandler; virtual; abstract;
     function GetLogType: string; virtual; abstract;
-    procedure SetLogHandler(Value: TBoldLogHandler); virtual; abstract;
+    procedure SetLogHandler(Value: TBoldLogHandler); virtual; abstract; 
     property LogType: string read GetLogType;
     property LogHandler: TBoldLogHandler read GetLogHandler write SetLogHandler;
   public
@@ -73,9 +76,8 @@ type
   end;
 
   { TBoldLogFormAction }
-  // Note that as long as it's possible to determine the visible state
-  // from BoldLog it's impossible to be sure if next ExecuteTarget will show
-  // or hide the form...
+
+
   TBoldLogFormAction = class(TAction)
   private
     fShowing: boolean;
@@ -91,7 +93,8 @@ uses
   SysUtils,
   BoldOCL,
   BoldDBInterfaces,
-  BoldPMappers;
+  BoldPMappers,
+  BoldRev;
 
 { TBoldSystemDebuggerAction }
 
@@ -133,20 +136,15 @@ end;
 
 procedure TBoldSystemDebuggerAction.CloseDebugForm;
 begin
-  if assigned(fDebugForm) then
-    fDebugForm.Close;
+  fDebugForm.Close;
 end;
-
 
 procedure TBoldSystemDebuggerAction.Notification(AComponent: TComponent;
   Operation: TOperation);
 begin
   inherited;
   if (AComponent = fDebugForm) and (Operation = opRemove) then
-  begin
     fDebugForm := nil;
-    Checked:=False;
-  end;
 end;
 
 { TBoldLogOCLAction }
@@ -258,5 +256,7 @@ function TBoldLogFormAction.HandlesTarget(Target: TObject): Boolean;
 begin
   Result := True;
 end;
+
+initialization
 
 end.

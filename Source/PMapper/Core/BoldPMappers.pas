@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMappers;
 
 interface
@@ -21,7 +24,7 @@ uses
   BoldValueSpaceInterfaces;
 
 type
-  {forward declarations}
+  {forward declarations}    
   TBoldSystemPersistenceMapper = class;
   TBoldObjectPersistenceMapper = class;
   TBoldMemberPersistenceMapper = class;
@@ -33,6 +36,7 @@ type
   TBoldMemberPersistenceMapperList = class;
 
   TBoldPreparePSParams = procedure(PSParams: TBoldPSParams) of object;
+
 
   { TBoldSystemPersistenceMapper }
   TBoldSystemPersistenceMapper = class(TBoldPersistenceMapper)
@@ -54,58 +58,64 @@ type
     fObjectUpgrader: TBoldAbstractObjectUpgrader;
     function GetPSSystemDescription: TBoldPSSystemDescription;
     procedure fPMCreate(ObjectIDList: TBoldObjectIdList;
-                       ValueSpace: IBoldValueSpace;
+                       const ValueSpace: IBoldValueSpace;
                        TranslationList: TBoldIdTranslationList);
     procedure fPMDelete(ObjectIDList: TBoldObjectIdList;
-                       ValueSpace: IBoldValueSpace;
-                       Old_Values: IBoldValueSpace;
+                       const ValueSpace: IBoldValueSpace;
+                       const Old_Values: IBoldValueSpace;
                        TranslationList: TBoldIdTranslationList);
     procedure fPMUpdate(ObjectIDList: TBoldObjectIdList;
-                        ValueSpace: IBoldValueSpace;
-                        Old_Values: IBoldValueSpace;
+                        const ValueSpace: IBoldValueSpace;
+                        const Old_Values: IBoldValueSpace;
                         TranslationLIst: TBoldIdTranslationList);
     function GetSupportsObjectUpgrading: Boolean;
   protected
     FCurrentTimeStamp: TBoldTimeStampType;
+    fTimeOfTimeStamp: TDateTime;
     procedure InitializePSDescriptions; virtual;
     procedure FillPSParams(PSParams: TBoldPSParams); virtual; abstract;
     function CreatePSParams: TBoldPSParams; virtual; abstract;
     function CreatePSSystemDescription: TBoldPSSystemDescription; virtual; abstract;
     procedure ReserveID; virtual; abstract;
-    function NextExternalObjectId(ValueSpace: IBoldValueSpace;
+    function NextExternalObjectId(const ValueSpace: IBoldValueSpace;
                                   ObjectID: TBoldObjectId): TBoldObjectId;
-    procedure StartTransaction(ValueSpace: IBoldValueSpace); virtual; abstract;
-    procedure Commit(ValueSpace: IBoldValueSpace); virtual; abstract;
-    procedure RollBack(ValueSpace: IBoldValueSpace); virtual; abstract;
+    procedure StartTransaction(const ValueSpace: IBoldValueSpace); virtual; abstract;
+    procedure Commit(const ValueSpace: IBoldValueSpace); virtual; abstract;
+    procedure RollBack(const ValueSpace: IBoldValueSpace); virtual; abstract;
+
+    procedure StartSQLBatch; virtual; abstract;
+    procedure EndSQLBatch; virtual; abstract;
+    procedure FailSQLBatch; virtual; abstract;
 
     procedure GetNewTimeStamp; virtual; abstract;
     function EnsurePrecondition(Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList): Boolean; virtual; abstract;
-    procedure FetchDeletedObjects(ObjectIdList: TBoldObjectIdList; ValieSpace: IBoldValueSpace); virtual; abstract;
+    procedure FetchDeletedObjects(ObjectIdList: TBoldObjectIdList; const ValieSpace: IBoldValueSpace); virtual; abstract;
     procedure EnsurePSDescription;
   public
-    constructor CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary);
+    constructor CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; DefaultObjectMapperName: string);
     destructor Destroy; override;
     procedure PMFetch(ObjectIDList: TBoldObjectIdList;
-                      ValueSpace: IBoldValueSpace;
+                      const ValueSpace: IBoldValueSpace;
                       MemberIdList: TBoldMemberIdList;
                       FetchMode: Integer;
                       TranslationList: TBoldIdTranslationList); virtual;
     procedure PMFetchClassWithCondition(ObjectIDList: TBoldObjectIdList;
-                                        ValueSpace: IBoldValueSpace;
+                                        const ValueSpace: IBoldValueSpace;
                                         BoldCondition: TBoldCondition;
                                         FetchMode: Integer;
                                         TranslationList: TBoldIdTranslationList); virtual;
     procedure PMUpdate(ObjectIDList: TBoldObjectIdList;
-                                       ValueSpace: IBoldValueSpace;
-                                       Old_Values: IBoldValueSpace;
+                                       const ValueSpace: IBoldValueSpace;
+                                       const Old_Values: IBoldValueSpace;
                                        Precondition: TBoldUpdatePrecondition;
                                        TranslationList: TBoldIdTranslationList;
-                                       var TimeStamp: TBoldTimeStampType);
+                                       var TimeStamp: TBoldTimeStampType;
+                                       var TimeOfLatestUpdate: TDateTime);
     function CommonSuperClassObjectMapper(ObjectIdList: TBoldObjectIdList): TBoldObjectPersistenceMapper;
     procedure CreatePersistentStorage; override;
     function GetCorrectTime: TDateTime;
     procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber);
-    procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
+    procedure ReserveNewIds(const ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                             TranslationList: TBoldIdTranslationList);
 
     property ObjectPersistenceMappers: TBoldObjectPersistenceMapperList
@@ -115,6 +125,7 @@ type
                                                     read fRootClassObjectPMapper;
     property OnPreparePSParams: TBoldPreparePSParams read fPreparePSParams write fPreparePSParams;
     property CurrentTimeStamp: TBoldTimeStampType read FCurrentTimeStamp;
+    property TimeOfTimeStamp: TDateTime read fTimeOfTimeStamp;
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); virtual; abstract;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); virtual; abstract;
     procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); virtual; abstract;
@@ -151,47 +162,47 @@ type
     fMemberMapperIndexByMemberIndex: array of integer;
     function GetLinkClassRole1: TBoldMemberPersistenceMapper;
     function GetLinkClassRole2: TBoldMemberPersistenceMapper;
-    procedure FillInMembers(MyMoldClass, CurrentMoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary);
     function LeastCommonSuperClassMapper(ObjectMapper: TBoldObjectPersistenceMapper): TBoldObjectPersistenceMapper;
     function GetMemberMapperIndexByMemberIndex(const MemberIndex: Integer): integer;
   protected
     fObjectIdClass: String;
+    procedure FillInMembers(MyMoldClass, CurrentMoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary); virtual;
     procedure PMFetchWithCondition(ObjectIDList: TBoldObjectIdList;
-                                   ValueSpace: IBoldValueSpace;
+                                   const ValueSpace: IBoldValueSpace;
                                    BoldCondition: TBoldCondition;
                                    FetchMode: Integer;
                                    TranslationList: TBoldIdTranslationList); virtual; abstract;
-    function NextExternalObjectId(ValueSpace: IBoldValueSpace;
+    function NextExternalObjectId(const ValueSpace: IBoldValueSpace;
                                   ObjectID: TBoldObjectId): TBoldObjectId; virtual; abstract;
     procedure InitializePSDescriptions; virtual;
   public
     constructor CreateFromMold(MoldClass: TMoldClass; Owner: TBoldSystemPersistenceMapper; TypeNameDictionary: TBoldTypeNameDictionary); virtual;
     destructor Destroy; override;
     procedure MakeIDsExact(ObjectIDList: TBoldObjectIdList;
-                           TranslationList: TBoldIdTranslationList); virtual; abstract;
+                           TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); virtual; abstract;
     procedure EnsureIDsExact(ObjectIDList: TBoldObjectIdList;
-                             TranslationList: TBoldIdTranslationList); virtual;
+                             TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); virtual;
     procedure PMFetchExactIDList(ObjectIDList: TBoldObjectIdList;
-                                 ValueSpace: IBoldValueSpace;
+                                 const ValueSpace: IBoldValueSpace;
                                  MemberIdList: TBoldMemberIdList;
                                  FetchMode: Integer;
                                  TranslationList:TBoldIdTranslationList;
                                  MissingList: TBoldObjectIdList); virtual; abstract;
     procedure PMFetchApproximateIDList(ObjectIDList: TBoldObjectIdList;
-                                       ValueSpace: IBoldValueSpace;
+                                       const ValueSpace: IBoldValueSpace;
                                        MemberIdList: TBoldMemberIdList;
                                        FetchMode: Integer;
                                        TranslationList: TBoldIdTranslationList); virtual;
     procedure PMCreate(ObjectIDList: TBoldObjectIdList;
-                       ValueSpace: IBoldValueSpace;
+                       const ValueSpace: IBoldValueSpace;
                        TranslationList:TBoldIdTranslationList); virtual; abstract;
     procedure PMDelete(ObjectIDList: TBoldObjectIdList;
-                       ValueSpace: IBoldValueSpace;
-                       Old_Values: IBoldValueSpace;
+                       const ValueSpace: IBoldValueSpace;
+                       const Old_Values: IBoldValueSpace;
                        TranslationList: TBoldIdTranslationList); virtual; abstract;
     procedure PMUpdate(ObjectIDList: TBoldObjectIdList;
-                       ValueSpace: IBoldValueSpace;
-                       Old_Values: IBoldValueSpace;
+                       const ValueSpace: IBoldValueSpace;
+                       const Old_Values: IBoldValueSpace;
                        TranslationLIst: TBoldIdTranslationList); virtual; abstract;
     function BoldIsA(ObjectPMapper: TBoldObjectPersistenceMapper): Boolean;
     function LeastCommonSuperMapper(ObjectPMapper: TBoldObjectPersistenceMapper): TBoldObjectPersistenceMapper;
@@ -240,18 +251,18 @@ type
     property MemberIndex: Integer read fMemberIndex;
     property ContentName: string read fContentName;
     property ExpressionName: string read fExpressionName;
-    function GetValue(ObjectContents: IBoldObjectContents): IBoldValue;
-    function GetEnsuredValue(ObjectContents: IBoldObjectContents): IBoldValue;
-    function IsDirty(ObjectContents: IBoldObjectContents): Boolean; virtual;
-    function ShouldFetch(ObjectContents: IBoldObjectContents): Boolean; virtual;
-    procedure PMCreate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
+    function GetValue(const ObjectContents: IBoldObjectContents): IBoldValue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEnsuredValue(const ObjectContents: IBoldObjectContents): IBoldValue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; virtual;
+    function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; virtual;
+    procedure PMCreate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;
                         TranslationList: TBoldIdTranslationList); virtual;
-    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
+    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;
                         TranslationList: TBoldIdTranslationList); virtual;
-    procedure PMDelete(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
+    procedure PMDelete(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;
                         TranslationList: TBoldIdTranslationList); virtual;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList;
-                       ValueSpace: IBoldValueSpace;
+                       const ValueSpace: IBoldValueSpace;
                        FetchMode: Integer;
                        TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList); virtual;
     property SupportsPolymorphicFetch: Boolean read GetSupportsPolymorphicFetch;
@@ -260,7 +271,7 @@ type
   { TBoldObjectPersistenceMapperList }
   TBoldObjectPersistenceMapperList = class(TBoldIndexableList)
   private
-    function GetItem(index: Integer): TBoldObjectPersistenceMapper;
+    function GetItem(index: Integer): TBoldObjectPersistenceMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     property Items[index: Integer]: TBoldObjectPersistenceMapper read GetItem; default;
   end;
@@ -268,8 +279,9 @@ type
   { TBoldMemberPersistenceMapperList }
   TBoldMemberPersistenceMapperList = class(TBoldIndexableList)
   private
-    function GetItem(index: Integer): TBoldmemberPersistenceMapper;
-    function GetMemberMapperByExpressionName(ExpressionName: string): TBoldMemberPersistenceMapper;
+    class var IX_MemberMapper: integer;
+    function GetItem(index: Integer): TBoldmemberPersistenceMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMemberMapperByExpressionName(ExpressionName: string): TBoldMemberPersistenceMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     property Items[index: Integer]: TBoldMemberPersistenceMapper read GetItem; default;
@@ -279,7 +291,7 @@ type
   { TBoldMemberMapperIndex }
   TBoldMemberMapperIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   end;
 
 procedure BoldPMLog(const s: string);
@@ -298,26 +310,30 @@ uses
   BoldDefaultStreamNames,
   BoldPMapperLists;
 
-var
-  IX_MemberMapper: integer = -1;
-
 procedure BoldPMLog(const s: string);
 begin
   if assigned(BoldPMLogHandler) then
-    BoldPMLogHandler.Log(formatDateTime('c: ', now) + trim(s)); // do not localize
+    BoldPMLogHandler.Log(formatDateTime('c: ', now)+trim(s));
 end;
 
 procedure BoldPMLogFmt(const s: string; const Args: array of const);
 begin
   if assigned(BoldPMLogHandler) then
-    BoldPMLogHandler.LogFmt(formatDateTime('c: ', now) + trim(s), Args); // do not localize
+    BoldPMLogHandler.LogFmt(formatDateTime('c: ', now) +trim(s), Args);
+end;
+
+{ TBoldObjectPersistenceMapperList }
+function TBoldObjectPersistenceMapperList.GetItem(index: Integer): TBoldObjectPersistenceMapper;
+begin
+  Result := TBoldObjectPersistenceMapper(inherited Items[index]);
 end;
 
 { TBoldSystemPersistenceMapper }
-constructor TBoldSystemPersistenceMapper.CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary);
+constructor TBoldSystemPersistenceMapper.CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; DefaultObjectMapperName: string);
 var
   i: integer;
   ObjectPmapper: TBoldObjectPersistenceMapper;
+  ObjectMapperName: string;
   ObjectMapperDescriptor: TBoldObjectPersistenceMapperDescriptor;
   MoldClass: TMoldClass;
 begin
@@ -333,14 +349,18 @@ begin
   fUseClockLog := MoldModel.UseClockLog;
   fUpdateWholeObjects := MoldModel.UpdateWholeObjects;
   fObjectPersistenceMappers := TBoldObjectPersistenceMapperList.Create;
+  ObjectPersistenceMappers.Capacity := MoldModel.Classes.Count;
   for i := 0 to MoldModel.Classes.Count - 1 do
   begin
     if MoldModel.Classes[i].EffectivePersistent and (MoldModel.Classes[i].Storage in [bsInternal, bsPartiallyExternal]) then
     begin
       MoldClass := MoldModel.Classes[i];
-      ObjectMapperDescriptor := BoldObjectPersistenceMappers.DescriptorByName[MoldClass.PMapperName];
+      ObjectMapperName := MoldClass.PMapperName;
+      if BoldNamesEqual(ObjectMapperName, DEFAULTNAMELITERAL) and (DefaultObjectMapperName <> '') then
+        ObjectMapperName := DefaultObjectMapperName;      
+      ObjectMapperDescriptor := BoldObjectPersistenceMappers.DescriptorByName[ObjectMapperName];
       if not assigned(ObjectMapperDEscriptor) then
-        raise EBold.CreateFmt(sUnableToFindPMapperForClass, [MoldClass.PMapperName, MoldClass.Name]);
+        raise EBold.CreateFmt('Unable to find PersistenceMapper (%s) for class %s', [ObjectMapperName, MoldClass.Name]);
       ObjectPMapper := ObjectMapperDescriptor.ObjectPersistenceMapper.CreatefromMold(MoldClass, Self, TypeNameDictionary);
     end
     else
@@ -358,7 +378,7 @@ begin
 end;
 
 procedure TBoldSystemPersistenceMapper.PMFetch(ObjectIDList: TBoldObjectIdList;
-                                               ValueSpace: IBoldValueSpace;
+                                               const ValueSpace: IBoldValueSpace;
                                                MemberIdList: TBoldMemberIdList;
                                                FetchMode: Integer;
                                                TranslationList: TBoldIdTranslationList);
@@ -367,7 +387,7 @@ begin
 end;
 
 procedure TBoldSystemPersistenceMapper.PMFetchClassWithCondition(ObjectIDList: TBoldObjectIdList;
-                                                                 ValueSpace: IBoldValueSpace;
+                                                                 const ValueSpace: IBoldValueSpace;
                                                                  BoldCondition: TBoldCondition;
                                                                  FetchMode: Integer;
                                                                  TranslationList: TBoldIdTranslationList);
@@ -376,16 +396,16 @@ begin
     with ObjectPersistenceMappers[(BoldCondition as TBoldConditionWithClass).TopSortedIndex] do
       PMFetchWithCondition(ObjectIdList, ValueSpace, BoldCondition, FetchMode, TranslationList)
   else
-    raise EBold.CreateFmt(sConditionMustBeConditionWithClass , [ClassName, BoldCondition.Classname]);
+    raise EBold.CreateFmt('%s.PMFetchClassWithCondition: Condition must be a ConditionWithClass, not a %s', [ClassName, BoldCondition.Classname]);
 end;
 
-function tBoldSystemPersistenceMapper.NextExternalObjectId(ValueSpace: IBoldValueSpace; ObjectID: TBoldObjectId): TBoldObjectId;
+function tBoldSystemPersistenceMapper.NextExternalObjectId(const ValueSpace: IBoldValueSpace; ObjectID: TBoldObjectId): TBoldObjectId;
 begin
   result := ObjectPersistenceMappers[ObjectId.TopSortedIndex].NextExternalObjectID(ValueSpace, ObjectId);
 end;
 
 procedure TBoldSystemPersistenceMapper.fPMCreate(ObjectIDList: TBoldObjectIdList;
-                                                 ValueSpace: IBoldValueSpace;
+                                                 const ValueSpace: IBoldValueSpace;
                                                  TranslationList:TBoldIdTranslationList);
 var
   TempList,
@@ -394,32 +414,27 @@ var
   i: integer;
   g: IBoldGuard;
 begin
-  g := TBoldGuard.Create(TempList);
+  g := TBoldGuard.Create(TempList, ActionList);
   tempList := Objectidlist.Clone;
+  ActionList := TBoldObjectIdList.Create;
   while TempList.Count > 0 do
   begin
-    ActionList := TBoldObjectIdList.Create;
-    try
-      CurrentPMapper := ObjectPersistenceMappers[TempList[0].TopSortedIndex];
-      i := 0;
-      while i < TempList.Count do
-        if ObjectPersistenceMappers[TempList[i].TopSortedIndex] = CurrentPMapper then
-        begin
-          ActionList.Add(TempList[i]);
-          TempList.RemoveByIndex(i);
-        end
-        else
-          Inc(i);
-      CurrentPMapper.PMCreate(ActionList, ValueSpace, translationlist);
-    finally
-      ActionList.Free;
-    end;
+    i := TempList.Count -1;
+    CurrentPMapper := ObjectPersistenceMappers[TempList[i].TopSortedIndex];
+    ActionList.Clear;
+    for i := i downto 0 do
+      if ObjectPersistenceMappers[TempList[i].TopSortedIndex] = CurrentPMapper then
+      begin
+        ActionList.Add(TempList[i]);
+        TempList.RemoveByIndex(i);
+      end;
+    CurrentPMapper.PMCreate(ActionList, ValueSpace, translationlist);
   end;
 end;
 
 procedure TBoldSystemPersistenceMapper.fPMDelete(ObjectIDList: TBoldObjectIdList;
-                                                 ValueSpace: IBoldValueSpace;
-                                                 Old_Values: IBoldValueSpace;
+                                                 const ValueSpace: IBoldValueSpace;
+                                                 const Old_Values: IBoldValueSpace;
                                                  TranslationList: TBoldIdTranslationList);
 var
   TempList,
@@ -428,32 +443,27 @@ var
   i: integer;
   g: IBoldGuard;
 begin
-  g := TBoldGuard.Create(TempList);
+  g := TBoldGuard.Create(TempList, ActionList);
   tempList := ObjectidList.Clone;
+  ActionList := TBoldObjectIdList.Create;
   while TempList.Count > 0 do
   begin
-    ActionList := TBoldObjectIdList.Create;
-    try
-      CurrentPMapper := ObjectPersistenceMappers[TempList[0].topSortedIndex];
-      i := 0;
-      while i < TempList.Count do
-        if ObjectPersistenceMappers[TempList[i].topSortedIndex] = CurrentPMapper then
-        begin
-          ActionList.Add(TempList[i]);
-          TempList.RemoveByIndex(i);
-        end
-        else
-          Inc(i);
-      CurrentPMapper.PMDelete(ActionList, ValueSpace, Old_Values, TranslationList);
-    finally
-      ActionList.Free;
-    end;
+    i := TempList.Count -1;
+    CurrentPMapper := ObjectPersistenceMappers[TempList[i].topSortedIndex];
+    ActionList.clear;
+    for i := i downto 0 do
+      if ObjectPersistenceMappers[TempList[i].topSortedIndex] = CurrentPMapper then
+      begin
+        ActionList.Add(TempList[i]);
+        TempList.RemoveByIndex(i);
+      end;
+    CurrentPMapper.PMDelete(ActionList, ValueSpace, Old_Values, TranslationList);
   end;
 end;
 
 procedure TBoldSystemPersistenceMapper.fPMUpdate(ObjectIDList: TBoldObjectIdList;
-                                                 ValueSpace: IBoldValueSpace;
-                                                 Old_Values: IBoldValueSpace;
+                                                 const ValueSpace: IBoldValueSpace;
+                                                 const Old_Values: IBoldValueSpace;
                                                  TranslationLIst: TBoldIdTranslationList);
 var
   TempList,
@@ -462,26 +472,21 @@ var
   i: integer;
   g: IBoldGuard;
 begin
-  g := TBoldGuard.Create(TempList);
+  g := TBoldGuard.Create(TempList, ActionList);
   tempList := ObjectidList.Clone;
+  ActionList := TBoldObjectIdList.Create;
   while TempList.Count > 0 do
   begin
-    ActionList := TBoldObjectIdList.Create;
-    try
-      CurrentPMapper := ObjectPersistenceMappers[TempList[0].topSortedIndex];
-      i := 0;
-      while i < TempList.Count do
-        if ObjectPersistenceMappers[TempList[i].topSortedIndex] = CurrentPMapper then
-        begin
-          ActionList.Add(TempList[i]);
-          TempList.RemoveByIndex(i);
-        end
-        else
-          Inc(i);
-      CurrentPMapper.PMUpdate(ActionList, ValueSpace, Old_Values, TranslationList);
-    finally
-      ActionList.Free;
-    end;
+    i := TempList.Count -1;
+    CurrentPMapper := ObjectPersistenceMappers[TempList[i].topSortedIndex];
+    ActionList.Clear;
+    for i := i downto 0 do
+      if ObjectPersistenceMappers[TempList[i].topSortedIndex] = CurrentPMapper then
+      begin
+        ActionList.Add(TempList[i]);
+        TempList.RemoveByIndex(i);
+      end;
+    CurrentPMapper.PMUpdate(ActionList, ValueSpace, Old_Values, TranslationList);
   end;
 end;
 
@@ -506,101 +511,94 @@ begin
 end;
 
 procedure TBoldSystemPersistenceMapper.PMUpdate(ObjectIDList: TBoldObjectIdList;
-                                                ValueSpace: IBoldValueSpace;
-                                                Old_Values: IBoldValueSpace;
+                                                const ValueSpace: IBoldValueSpace;
+                                                const Old_Values: IBoldValueSpace;
                                                 Precondition: TBoldUpdatePrecondition;
                                                 TranslationList: TBoldIdTranslationList;
-                                                var TimeStamp: TBoldTimeStampType);
+                                                var TimeStamp: TBoldTimeStampType;
+                                                var TimeOfLatestUpdate: TDateTime);
 var
   i: Integer;
   ModifiedObjectIDList,
   NewObjectIDList,
   DeletedObjectIDList: TBoldObjectIdList;
   ObjectContents: IBoldObjectContents;
+  Guard: IBoldGuard;
 begin
   if ObjectIDList.Count = 0 then
     Exit;
+  Guard := TBoldGuard.Create(ModifiedObjectIDList, NewObjectIDList, DeletedObjectIDList);
+  DeletedObjectIDList := TBoldObjectIdList.Create;
+  NewObjectIDList := TBoldObjectIdList.Create;
+  ModifiedObjectIDList := TBoldObjectIdList.Create;
+
+  // downto order is important here - Daniel
+  for i := ObjectIDList.Count - 1 downto 0 do
+  begin
+    ObjectContents := ValueSpace.ObjectContentsByObjectId[ObjectIdList[i]];
+    if ObjectContents.BoldPersistenceState = bvpsModified then
+    begin
+      if ObjectContents.BoldExistenceState = besDeleted then
+        DeletedObjectIDList.Add(ObjectIDList[i])
+      else
+        NewObjectIDList.Add(ObjectIDList[i]);
+    end else
+      ModifiedObjectIDList.Add(ObjectIDList[i]);
+  end;
 
   ReserveNewIds(ValueSpace, ObjectIdList, TranslationList);
+  if UseTimestamp then
+    GetNewTimeStamp;
 
   StartTransaction(ValueSpace);
   try
+    if assigned(Precondition) then
+    begin
+      if not EnsurePrecondition(Precondition, translationList) then
+      begin
+        Commit(valueSpace);
+        exit;
+      end;
+    end;
+
+    StartSQLBatch;
+    if DeletedObjectIDList.Count > 0 then
+      fPMDelete(DeletedObjectIDList, ValueSpace, Old_Values, TranslationList);
+
+    if NewObjectIDList.Count > 0 then
+      fPMCreate(NewObjectIDList, ValueSpace, translationList);
+
+    if ModifiedObjectIDList.Count > 0 then
+      fPMUpdate(ModifiedObjectIDList, ValueSpace, Old_Values, TranslationList);
+
     if UseTimestamp then
-      GetNewTimeStamp;
+    begin
+      TimeStamp := CurrentTimeStamp;
+      TimeOfLatestUpdate := fTimeOfTimeStamp;
+    end;
+    EndSQLBatch;
+    Commit(valueSpace);
   except
     RollBack(ValueSpace);
-    raise;
-  end;
-  Commit(valueSpace);
-
-  StartTransaction(ValueSpace);
-
-  try
-    if assigned(Precondition) and not EnsurePrecondition(Precondition, translationList) then
-    begin
-    	RollBack(ValueSpace);
-    end
-    else
-    begin
-	    DeletedObjectIDList := TBoldObjectIdList.Create;
-	    NewObjectIDList := TBoldObjectIdList.Create;
-	    ModifiedObjectIDList := TBoldObjectIdList.Create;
-	    try
-	      for i := ObjectIDList.Count - 1 downto 0 do
-	      begin
-	        ObjectContents := ValueSpace.ObjectContentsByObjectId[ObjectIdList[i]];
-	        if ObjectContents.BoldPersistenceState = bvpsModified then
-	        begin
-	          if ObjectContents.BoldExistenceState = besDeleted then
-	            DeletedObjectIDList.Add(ObjectIDList[i])
-	          else
-	            NewObjectIDList.Add(ObjectIDList[i]);
-	        end else
-	          ModifiedObjectIDList.Add(ObjectIDList[i]);
-	      end;
-
-	      // the order below is important, delete must come before create
-	      // due to a solution made for linkobjects in PMCreate to avoid duplicates
-
-	      if DeletedObjectIDList.Count > 0 then
-	        fPMDelete(DeletedObjectIDList, ValueSpace, Old_Values, TranslationList);
-
-	      if NewObjectIDList.Count > 0 then
-	        fPMCreate(NewObjectIDList, ValueSpace, translationList);
-
-	      if ModifiedObjectIDList.Count > 0 then
-	        fPMUpdate(ModifiedObjectIDList, ValueSpace, Old_Values, TranslationList);
-	    finally
-	      ModifiedObjectIDList.Free;
-	      NewObjectIDList.Free;
-	      DeletedObjectIDList.Free;
-	    end;
-	    if UseTimestamp then
-	      TimeStamp := CurrentTimeStamp;
-	    Commit(valueSpace);
-	  end;
-  except
-    RollBack(ValueSpace);
+    FailSQLBatch;
     raise;
   end;
 end;
 
-procedure TBoldSystemPersistenceMapper.ReserveNewIds(ValueSpace: IBoldValueSpace;
+procedure TBoldSystemPersistenceMapper.ReserveNewIds(const ValueSpace: IBoldValueSpace;
                                                      ObjectIdList: TBoldObjectIdList;
                                                      TranslationList: TBoldIdTranslationList);
 var
   i: integer;
   newId: TBoldObjectID;
 begin
-  if ObjectIdList.Count = 0 then  //FIXME: Rather unnecessary optimization I'd think? --jeho
+  if ObjectIdList.Count = 0 then
     Exit;
   with ObjectIdList do
   begin
-    //  Reserve IDs for new objects
     for i := 0 to Count - 1 do
       if not ObjectIdList[i].IsStorable then
         ReserveId;
-    //  Generate IDs for objects
     for i := 0 to Count - 1 do
       if not ObjectIDList[i].IsStorable then
       begin
@@ -626,20 +624,18 @@ begin
   fLinkRoleMapperIndex1 := -1;
   fLinkRoleMapperIndex2 := -1;
   if MoldClass.Versioned then
-  begin
     fVersioned := true;
-  end;
 
   if MoldClass.Versioned and
      assigned(MoldClass.SuperClass) and
      not MoldClass.SuperClass.Versioned then
-    raise EBold.CreateFmt(sSuperClassNotVersioned, [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
+    raise EBold.CreateFmt('Class %s is versioned, but not it''s superclass %s', [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
 
   if Assigned(MoldClass.SuperClass) then
   begin
     fSuperClass := SystemPersistenceMapper.ObjectPersistencemappers[MoldClass.SuperClass.TopSortedIndex];
     if not Assigned(fSuperClass) then
-      raise EBold.CreateFmt(sSuperClassNotPersistent, [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
+      raise EBold.CreateFmt('Class %s has a nonpersistent superclass %s', [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
     SuperClass.fHasSubClasses := true;
   end;
 
@@ -655,18 +651,18 @@ begin
       MemberPersistenceMappers[i].CreatePersistentStorage;
 end;
 
-procedure TBoldObjectPersistenceMapper.PMFetchApproximateIDList(ObjectIDList: TBoldObjectIdList;  ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectPersistenceMapper.PMFetchApproximateIDList(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList);
 var
   ActionList,
-  TempList,
   MissingList: TBoldObjectIdList;
+  TempList, NewTempList: array of TBoldObjectId;
+  NewTempCount: integer;
   MemberMapper: TBoldMemberPersistenceMapper;
   MemberMapperIndex: integer;
   TempMapper, CurrentPMapper: TBoldObjectPersistenceMapper;
   i: integer;
 
-  function ObjectMapperForNewID(OldID: TBoldObjectId): TBoldObjectPersistenceMapper;
-  // Only objects with inexact ClassIds can have changed their ClassID
+  function ObjectMapperForNewID(const OldID: TBoldObjectId; const TranslationList: TBoldIdTranslationList): TBoldObjectPersistenceMapper;
   var
     NewId: TBoldObjectId;
   begin
@@ -674,84 +670,103 @@ var
       NewId := OldID
     else
       NewId := TranslationList.TranslateToNewId[OldID];
-    result := SystemPersistenceMapper.ObjectPersistenceMappers[NewID.topSortedIndex];
+    Result := SystemPersistenceMapper.ObjectPersistenceMappers[NewID.topSortedIndex];
+  end;
+
+  procedure EnsureActionList;
+  begin
+   if not Assigned(ActionList) then
+     ActionList := TBoldObjectIdList.Create;
   end;
 
 begin
-  EnsureIDsExact(ObjectIDList, translationList);
-  tempList := ObjectidLIst.Clone;
+  EnsureIDsExact(ObjectIDList, translationList, false);
+  SetLength(TempList, ObjectIdList.Count);
+  SetLength(NewTempList, ObjectIdList.Count);
+  for i := 0 to ObjectidList.Count - 1 do
+    TempList[i] := ObjectIdList[i];
   MissingList := TBoldObjectIdList.Create;
+  NewTempCount := 0;
+  ActionList := nil;
   try
-    while TempList.Count > 0 do
+    while Length(TempList) > 0 do
     begin
-      ActionList := TBoldObjectIdList.Create;
+      EnsureActionList;
       try
-        CurrentPMapper := ObjectMapperForNewID(TempList[0]);
-        if (TempList.Count > 1) and Assigned(MemberIdList) and (MemberIdList.Count = 1) then
+        CurrentPMapper := ObjectMapperForNewID(TempList[0], TranslationList);
+        if (Length(TempList) > 1) and Assigned(MemberIdList) and (MemberIdList.Count = 1) then
         begin
-          // Find the most Common ObjectMapper
-          for i := 1 to TempList.Count - 1 do
+          for i := 1 to Length(TempList) - 1 do
           begin
-            TempMapper := ObjectMapperForNewID(TempList[i]);
+            TempMapper := ObjectMapperForNewID(TempList[i], TranslationList);
             CurrentPMapper := CurrentPMapper.LeastCommonSuperMapper(TempMapper);
           end;
-          // mnake sure it has the member requested
           MemberMapperIndex := CurrentPMapper.MemberMapperIndexByMemberIndex[MemberIdList[0].MemberIndex];
           if MemberMapperIndex <> -1 then
           begin
             MemberMapper := CurrentPMapper.MemberPersistenceMappers[MemberMapperIndex];
             if MemberMapper.SupportsPolymorphicFetch then
             begin
-              ActionList.AddList(TempList);
-              TempList.Clear;
+              for i := 0 to Length(TempList) - 1 do
+                ActionList.Add(TempList[i]);
+              SetLength(TempList, 0);
             end;
           end;
-          // check if it was OK to fetch polymorphic, otherwise restore old PMapper.
           if ActionList.Count = 0 then
-            CurrentPMapper := ObjectMapperForNewID(TempList[0]);
+            CurrentPMapper := ObjectMapperForNewID(TempList[0], TranslationList);
         end;
 
-        i := 0;
-        while i < TempList.Count do
-          if ObjectMapperForNewID(TempList[i]) = CurrentPMapper then
+        for i := 0 to Length(TempList) - 1 do
+          if ObjectMapperForNewID(TempList[i], TranslationList) = CurrentPMapper then
           begin
             ActionList.Add(TempList[i]);
-            TempList.RemoveByIndex(i);
           end
           else
-            Inc(i);
+          begin
+            NewTempList[NewTempCount] := TempList[i];
+            INC(NewTempCount);
+          end;
         CurrentPMapper.PMFetchExactIDList(ActionList, ValueSpace, MemberIdList, FetchMode, TranslationList, MissingList);
       finally
-        ActionList.Free;
+        ActionList.Clear;
       end;
+      SetLength(NewTempList, NewTempCount);
+      TempList:= NewTempList;
+      NewTempList := nil;
+      SetLength(NewTempList, NewTempCount);
+      NewTempCount := 0;
     end;
     if FetchMode = fmDistributable then
       if MissingList.Count > 0 then
         SystemPersistenceMapper.FetchDeletedObjects(MissingList, ValueSpace);
   finally
-    TempList.Free;
+    ActionList.free;
     MissingList.Free;
   end;
 end;
 
-procedure TBoldObjectPersistenceMapper.EnsureIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+procedure TBoldObjectPersistenceMapper.EnsureIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean);
 var
   InexactIDList: TBoldObjectIdList;
-  ObjectID: TBoldObjectId;
   i: integer;
   g: IBoldGuard;
 begin
   g := TBoldGuard.Create(InexactIDList);
-  InexactIDList := TBoldObjectIdList.Create;
-
+  InexactIDList := nil;
   for i := 0 to ObjectIDList.Count - 1 do
   begin
-    ObjectID := ObjectIDList[i];
-    if not ObjectId.TopSortedIndexExact then
-      InexactIDList.Add(ObjectID);
+    if not ObjectIDList[i].TopSortedIndexExact then
+    begin
+      if not Assigned(InexactIDList) then
+      begin
+        InexactIDList := TBoldObjectIdList.Create;
+        InexactIDList.Capacity := ObjectIDList.Count-i;
+      end;
+      InexactIDList.Add(ObjectIDList[i]);
+    end;
   end;
-  if InExactIDList.Count > 0 then
-    MakeIDsExact(InexactIDList, TranslationList);
+  if Assigned(InexactIDList) and (InExactIDList.Count > 0) then
+    MakeIDsExact(InexactIDList, TranslationList, HandleNonExisting);
 end;
 
 procedure TBoldObjectPersistenceMapper.FillInMembers(MyMoldClass, CurrentMoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary);
@@ -791,10 +806,10 @@ begin
               MapperName := Mapping.ExpandedMapperName;
           end;
 
-          raise EBold.CreateFmt(  sUnableToFindPMapperForX+ BOLDCRLF +
-            sUnableReason1 + BOLDCRLF +
-            sUnableReason2 + BOLDCRLF +
-            sUnableReason3, [
+          raise EBold.CreateFmt('Unable to find persistence mapper for %s.%s (type: %s, mapper: %s). possible reasons: '+BOLDCRLF +
+            '* Typo'+BOLDCRLF+
+            '* The mapper is not correctly installed in the initialization clause'+BOLDCRLF+
+            '* The unit with the mapper is not included in the project', [
             MoldAttribute.MoldClass.ExpandedExpressionName,
             MoldAttribute.ExpandedExpressionName,
             MoldAttribute.BoldType,
@@ -816,34 +831,34 @@ begin
               IsIndirect := assigned(MoldRole.Association.LinkClass);
               if MoldRole.Multi then
                 if IsIndirect then
-                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldIndirectMultiLinkDefaultMapper'] // do not localize
+                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldIndirectMultiLinkDefaultMapper']
                 else
-                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectMultiLinkDefaultMapper'] // do not localize
+                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectMultiLinkDefaultMapper']
               else if MoldRole.EffectiveEmbedded then
-                MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldEmbeddedSingleLinkDefaultMapper'] // do not localize
+                MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldEmbeddedSingleLinkDefaultMapper']
               else
                 if IsIndirect then
-                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldIndirectSingleLinkDefaultMapper'] // do not localize
+                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldIndirectSingleLinkDefaultMapper']
                 else
-                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectSingleLinkDefaultMapper']; // do not localize
+                  MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectSingleLinkDefaultMapper'];
             end
             else
             begin
               MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName[MoldRole.PMapperName];
               if not assigned(MemberDescriptor) then
-                raise EBold.CreateFmt(sUnableToFindPMapperForXY, [MoldRole.MoldClass.ExpandedExpressionName, MoldRole.ExpandedExpressionName, MoldRole.PMappername]);
+                raise EBold.CreateFmt('Unable to find PersistenceMapper for %s.%s (mapper: %s)', [MoldRole.MoldClass.ExpandedExpressionName, MoldRole.ExpandedExpressionName, MoldRole.PMappername]);
             end;
           end;
           rtLinkRole: if MoldRole.MainRole.EffectivePersistent then
           begin
             if MoldRole.MainRole.Multi then
-              MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectMultiLinkDefaultMapper'] // do not localize
+              MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectMultiLinkDefaultMapper']
             else
-              MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectSingleLinkDefaultMapper'] // do not localize
+              MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldDirectSingleLinkDefaultMapper']
           end;
           rtInnerLinkRole: begin
             if MoldRole.EffectivePersistent and CurrentMoldClass.EffectivePersistent then
-              MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldEmbeddedSingleLinkDefaultMapper']; // do not localize
+              MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName['TBoldEmbeddedSingleLinkDefaultMapper'];
             if fLinkRoleMapperIndex1 = -1 then
               fLinkRoleMapperIndex1 := MemberPersistenceMappers.Count
             else
@@ -877,6 +892,11 @@ begin
     result := fSuperClass.BoldIsA(ObjectPMapper);
 end;
 
+function TBoldMemberPersistenceMapperList.GetMemberMapperByExpressionName(ExpressionName: string): TBoldMemberPersistenceMapper;
+begin
+  result := (Indexes[IX_MemberMapper] as TBoldMemberMapperIndex).FindByString(ExpressionName) as TBoldMemberPersistenceMapper;
+end;
+
 { TBoldMemberPersistenceMapper }
 class function TBoldMemberPersistenceMapper.CanStore(const ContentName: string): Boolean;
 begin
@@ -895,7 +915,7 @@ begin
 
   fExpressionName := MoldMember.ExpandedExpressionName;
   if assigned(Owner.MemberPersistenceMappers.MemberMapperByExpressionName[fExpressionName]) then
-    raise EBold.CreateFmt(sDuplicatePMappersForXInY, [fExpressionName, Owner.ExpressionName]);
+    raise EBold.CreateFmt('Duplicate memberMappers called "%s" in class %s', [fExpressionName, Owner.ExpressionName]);
 
   if MoldMember is TMoldAttribute then
   begin
@@ -927,33 +947,28 @@ begin
   end;
 end;
 
-procedure TBoldMemberPersistenceMapper.PMCreate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
+procedure TBoldMemberPersistenceMapper.PMCreate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMCreate', classname, 'PMCreate']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMCreate', classname, 'PMCreate']);
 end;
 
-procedure TBoldMemberPersistenceMapper.PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;TranslationList: TBoldIdTranslationList);
+procedure TBoldMemberPersistenceMapper.PMUpdate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMUpDate', classname, 'PMUpDate']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMUpDate', classname, 'PMUpDate']);
 end;
 
-procedure TBoldMemberPersistenceMapper.PMDelete(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
+procedure TBoldMemberPersistenceMapper.PMDelete(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMDelete', classname, 'PMDelete']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMDelete', classname, 'PMDelete']);
 end;
 
-procedure TBoldMemberPersistenceMapper.PMFetch(ObjectIdList: TBoldObjectIdList;  ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
+procedure TBoldMemberPersistenceMapper.PMFetch(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMFetch', classname, 'PMFetch']); // do not localize
-end;
-
-{ TBoldObjectPersistenceMapperList }
-function TBoldObjectPersistenceMapperList.GetItem(index: Integer): TBoldObjectPersistenceMapper;
-begin
-  Result := TBoldObjectPersistenceMapper(inherited Items[index]);
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMFetch', classname, 'PMFetch']);
 end;
 
 { TBoldMemberPersistenceMapperList }
+
 constructor TBoldMemberPersistenceMapperList.Create;
 begin
   inherited;
@@ -994,16 +1009,25 @@ procedure TBoldObjectPersistenceMapper.BuildMemberFetchLists(
   end;
 
 var
-  i: integer;
+  i, MapperIndex: integer;
 begin
   assert(not assigned(DefaultFetchMemberList) or not DefaultFetchMemberList.OwnsEntries, 'Cannot put member mappers in a member mapper list that owns its entries.');
   assert(not assigned(CustomFetchMemberList) or not CustomFetchMemberList.OwnsEntries, 'Cannot put member mappers in a member mapper list that owns its entries.');
   if assigned(MemberIdList) then
     for i := 0 to MemberIdList.Count - 1 do
-      TestAdd(MemberPersistenceMappers[MemberMapperIndexByMemberIndex[MemberIdList[i].MemberIndex]])
+    begin
+      MapperIndex := MemberMapperIndexByMemberIndex[MemberIdList[i].MemberIndex];
+      if MapperIndex = -1 then
+        raise EBold.CreateFmt('%s.BuildMemberFetchLists: MemberMapperIndexByMemberIndex not found. Possibly TimeStamp tag not selected in the model', [classname]);
+      TestAdd(MemberPersistenceMappers[MapperIndex]);
+    end
   else
+  begin
+    if Assigned(DefaultFetchMemberList) then    
+      DefaultFetchMemberList.Capacity := MemberPersistenceMappers.Count;
     for i := 0 to MemberPersistenceMappers.Count - 1 do
       TestAdd(MemberPersistenceMappers[i]);
+  end;
 end;
 
 function TBoldObjectPersistenceMapper.GetLinkClassRole1: TBoldMemberPersistenceMapper;
@@ -1033,11 +1057,6 @@ begin
   AddSubscription(Subscriber, bpeFetchId, bpeFetchId);
 end;
 
-function TBoldMemberPersistenceMapperList.GetMemberMapperByExpressionName(ExpressionName: string): TBoldMemberPersistenceMapper;
-begin
-  result := (Indexes[IX_MemberMapper] as TBoldMemberMapperIndex).FindByString(ExpressionName) as TBoldMemberPersistenceMapper;
-end;
-
 { TBoldMemberMapperIndex }
 
 function TBoldMemberMapperIndex.ItemASKeyString(Item: TObject): string;
@@ -1051,7 +1070,7 @@ var
   i: Integer;
 begin
   if ObjectIdList.Count = 0 then
-    raise EBold.CreateFmt(sObjectIDListIsEmpty, [classname]);
+    raise EBold.CreateFmt('%s.CommonSuperClassObjectMapper: ObjectIdList is empty', [classname]);
 
   result := ObjectPersistenceMappers[ObjectIdList[0].TopSortedIndex];
   for i := 1 to ObjectIdList.Count - 1 do
@@ -1117,7 +1136,7 @@ begin
 end;
 
 function TBoldMemberPersistenceMapper.IsDirty(
-  ObjectContents: IBoldObjectContents): Boolean;
+  const ObjectContents: IBoldObjectContents): Boolean;
 var
   aValue: IBoldValue;
 begin
@@ -1133,7 +1152,7 @@ begin
   end;
 end;
 
-function TBoldMemberPersistenceMapper.GetValue(ObjectContents: IBoldObjectContents): IBoldValue;
+function TBoldMemberPersistenceMapper.GetValue(const ObjectContents: IBoldObjectContents): IBoldValue;
 begin
   if MemberIndex <> -1 then
     result := ObjectContents.ValueByIndex[MemberIndex]
@@ -1141,21 +1160,15 @@ begin
     result := nil;
 end;
 
-function TBoldMemberPersistenceMapper.GetEnsuredValue(ObjectContents: IBoldObjectContents): IBoldValue;
-var
-  MemberId: TBoldMemberId;
-  g: IBoldGuard;
+function TBoldMemberPersistenceMapper.GetEnsuredValue(const ObjectContents: IBoldObjectContents): IBoldValue;
 begin
-  g := TBoldGuard.Create(MemberId);
   if MemberIndex <> -1 then
-  begin
-    MemberId := TBoldMemberId.Create(MemberINdex);
-    ObjectContents.EnsureMember(MemberId, ContentName);
-  end;
-  result := GetValue(ObjectContents);
+    Result := ObjectContents.EnsureMemberAndGetValueByIndex(MemberIndex, ContentName)
+  else
+    Result := nil;
 end;
 
-function TBoldMemberPersistenceMapper.ShouldFetch(ObjectContents: IBoldObjectContents): Boolean;
+function TBoldMemberPersistenceMapper.ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean;
 var
   aValue: IBoldValue;
 begin
@@ -1175,11 +1188,6 @@ begin
   else if MemberIndex < 0 then
   begin
     result := -1;
-    // the Timestamp-member has memberindex below 0 since it is a technical member...
-    // unfortunately it is also among the last members so this will be a bit slow.
-    // think of a better solution
-    // currently it is only called once per update-operation, and only on the rootclass
-    // mapper which does normally not have that many members, so the problem is more theoretical.
     for i := 0 to MemberPersistenceMappers.count - 1 do
       if MemberPersistenceMappers[i].MemberIndex = MemberIndex then
       begin
@@ -1212,4 +1220,8 @@ begin
   result := false;
 end;
 
+initialization
+  TBoldMemberPersistenceMapperList.IX_MemberMapper := -1;
+
 end.
+

@@ -11,8 +11,6 @@ uses
   BoldAFPPluggable,
   BoldIDEConsts;
 
-{$R *.res}
-
 procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_MISC, [TBoldPlaceableAFP]);

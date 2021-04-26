@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComServerHandles;
 
 interface
@@ -131,7 +134,7 @@ type
   end;
 
   TBoldComGetComObjectEvent = procedure(Sender: TObject; out Obj: IUnknown) of object;
-
+  
   {-- TBoldComServerObjectHandle --}
   TBoldComServerObjectHandle = class(TBoldComExportHandle)
   private
@@ -147,7 +150,6 @@ implementation
 
 uses
   SysUtils,
-  BoldComConst,
   ActiveX,
   ComObj,
   BoldHandle,
@@ -212,14 +214,14 @@ begin
   begin
     if not IsLoading and not IsDesignTime then
       if Active then
-        raise EBoldCom.CreateFmt(sCannotChangeCLSIDAtRT,[ClassName]);
+        raise EBoldCom.CreateFmt('%s: Cannot change CLSID at run-time',[ClassName]);
     try
       GUID := StringToGUID(Value);
       FCLSID := Value;
       Changed(False);
     except
       on Exception do
-        raise EBoldCom.CreateFmt(sInvalidCLSID,[ClassName]);
+        raise EBoldCom.CreateFmt('%s: Invalid CLSID',[ClassName]);
     end;
   end;
 end;
@@ -229,7 +231,7 @@ begin
   if FDescription <> Value then
   begin
     if not IsLoading and not IsDesignTime then
-      raise EBoldCom.CreateFmt(sCannotChangeDescAtRT,[ClassName]);
+      raise EBoldCom.CreateFmt('%s: Cannot change Description at run-time',[ClassName]);
     FDescription := Value;
     Changed(False);
   end;
@@ -246,14 +248,14 @@ begin
   if FName <> Value then
   begin
     if not IsLoading and not IsDesignTime then
-      raise EBoldCom.CreateFmt(sCannotChangeNameAtRT,[ClassName]);
+      raise EBoldCom.CreateFmt('%s: Cannot change Name at run-time',[ClassName]);
     if IsValidIdent(Value) then
     begin
       FName := Value;
       Changed(False);
     end
     else
-      raise EBoldCom.CreateFmt(sInvalidName,[ClassName]);
+      raise EBoldCom.CreateFmt('%s: Invalid Name',[ClassName]);
   end;
 end;
 
@@ -323,7 +325,7 @@ begin
   I := 0;
   repeat
     Inc(I);
-    Result := Format('Class%d',[I]); // do not localize
+    Result := Format('Class%d',[I]);
   until not ClassExists(Result);
 end;
 
@@ -335,9 +337,7 @@ end;
 procedure TBoldComClasses.Update(Item: TCollectionItem);
 begin
   if Item <> nil then
-    // updating item
   else
-    // update all
 end;
 
 {-- TBoldComObjectProvider ----------------------------------------------------}
@@ -581,5 +581,7 @@ function TBoldComServerObjectHandle.GetHandledObject: TObject;
 begin
   Result := nil;
 end;
+
+initialization
 
 end.

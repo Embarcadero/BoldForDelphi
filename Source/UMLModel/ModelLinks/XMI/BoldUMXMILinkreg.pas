@@ -1,6 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMXMILinkreg;
 
-interface
+interface                                                       
 
 procedure Register;
 
@@ -20,8 +23,6 @@ uses
   BoldAbstractModel,
   BoldUMLXMILink;
 
-{$R *.res}
-
 type
 
 {---TBoldRose98FileNameProperty---}
@@ -34,7 +35,7 @@ type
 {---TBoldRose98FileNameProperty---}
 function TBoldUMLXMIFileNameProperty.FileFilter: string;
 begin
-  Result := Format('%s (*%s)|*%1:s', [XMI_LINKDESC, XMI_LINKEXTENSION]); // do not localize
+  Result := Format('%s (*%s)|*%1:s', [XMI_LINKDESC, XMI_LINKEXTENSION]);
 end;
 
 function TBoldUMLXMIFileNameProperty.IsValid: boolean;
@@ -59,8 +60,8 @@ end;
 
 procedure RegisterEditors;
 begin
-  RegisterPropertyEditor(TypeInfo(String), TBoldUMLXMILink, 'Filename', TBoldUMLXMIFileNameProperty); // do not localize
-  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldUMLXMILink, 'BoldModel', TBoldComponentPropertyIndicateMissing); // do not localize
+  RegisterPropertyEditor(TypeInfo(String), TBoldUMLXMILink, 'Filename', TBoldUMLXMIFileNameProperty);
+  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldUMLXMILink, 'BoldModel', TBoldComponentPropertyIndicateMissing);
 end;
 
 procedure Register;

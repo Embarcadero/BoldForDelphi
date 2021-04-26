@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceHandleSQL;
 
 interface
@@ -30,6 +33,7 @@ type
     destructor Destroy; override;
     property PersistenceController: TBoldExternalPersistenceControllerSQL read GetPersistenceController;
   published
+    property UpdateBoldDatabaseFirst;  
     property ClassesToHandle: TStrings read GetClassesToHandle write SetClassesToHandle;
     property DatabaseAdapter: TBoldAbstractDatabaseAdapter read FDatabaseAdapter write FDatabaseAdapter;
     {$IFNDEF T2H}
@@ -44,6 +48,9 @@ type
   end;
 
 implementation
+
+uses
+  BoldRev;
 
 { TBoldExternalPersistenceHandleSQL }
 
@@ -65,7 +72,7 @@ var
 begin
   Controller := TBoldExternalPersistenceControllerSQL.Create(
     BoldModel.MoldModel, FDatabaseAdapter, BoldModel.TypeNameDictionary,
-    OnStartUpdates, OnEndUpdates, OnFailUpdates, ClassesToHandle);
+    OnStartUpdates, OnEndUpdates, OnFailUpdates, ClassesToHandle, UpdateBoldDatabaseFirst);
   ChainPersistenceController(Controller);
   Result := Controller;
 end;
@@ -85,5 +92,7 @@ function TBoldExternalPersistenceHandleSQL.GetPersistenceController: TBoldExtern
 begin
   result := inherited PersistenceController as TBoldExternalPersistenceControllerSQL;
 end;
+
+initialization
 
 end.

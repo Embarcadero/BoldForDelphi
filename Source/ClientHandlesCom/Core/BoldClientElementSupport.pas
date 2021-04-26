@@ -1,12 +1,16 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientElementSupport;
 
 interface
-
 uses
   BoldSubscription,
   BoldComObjectSpace_TLB;
 
 type
+
+
   TBoldElementCompareCom = function (Item1, Item2: IBoldElement): Integer of object;
   TBoldElementSubscribeCom = procedure (Element: IBoldElement; Subscriber: TBoldSubscriber) of object;
   TBoldElementFilterCom = function (Element: IBoldElement): Boolean of object;
@@ -24,8 +28,13 @@ type
     property ContextType: IBoldElementTypeInfo read GetContextType;
     property Expression: String read GetExpression write SetExpression;
   end;
-
+ 
 
 implementation
+
+uses
+  BoldRev;
+
+initialization
 
 end.

@@ -1,4 +1,8 @@
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFormSaver;
+
+{.$DEFINE DEBUG_BOLDFORMSAVER}
 
 interface
 
@@ -6,6 +10,7 @@ uses
   Classes,
   Forms,
   SysUtils,
+  Windows,
   BoldDefs,
   Boldsubscription,
   BoldElements,
@@ -53,6 +58,8 @@ type
     destructor Destroy; override;
   end;
 
+  TCallBackFunction = reference to function(Code: Integer; WParam: WPARAM;
+      var Msg: TMsg): LRESULT;
 
   TBoldFormSaver = class(TBoldElementHandle)
   private
@@ -66,9 +73,16 @@ type
     FTargetFormSaver: TBoldFormSaver;
     fTargetFormSaverSubscriber: TBoldPassThroughSubscriber;
     fOnUpdateException: TBoldFormSaverExceptionEvent;
+    FOrgActivate: TNotifyEvent;
+    FOrgDeactivate: TNotifyEvent;
+  class var
+    FFormSaverList: TList;
+    FWndProcHookHandle: HHOOK;
+    class procedure FinalizationFormSavers; static;
     procedure SetSaveToDBOnOk(const Value: Boolean);
     procedure SetSystemHandle(const Value: TBoldSystemHandle);
     function GetDirtyObjects: TBoldDirtyObjectListWithHandle;
+    class procedure RegisterFormSaver(FormSaver: TBoldFormSaver); static;
     procedure SetOnlyFirstDirty(const Value: Boolean);
     procedure _Activate(Sender: TObject);
     procedure _DeActivate(Sender: TObject);
@@ -81,7 +95,10 @@ type
     procedure SetTargetFormSaver(const Value: TBoldFormSaver);
     procedure SaveObjects(Objects: TBoldObjectList);
     procedure SetAutoRemoveCleanObjects(const Value: Boolean);
+    class procedure UnregisterFormSaver(FormSaver: TBoldFormSaver); static;
   protected
+    procedure DoActive; virtual;
+    procedure DoDeActivate; virtual;
     function GetValue: TBoldElement; override;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
@@ -89,7 +106,9 @@ type
     procedure EnsureActive;
   public
     constructor Create(Owner: TComponent); override;
+    class constructor Create;
     destructor Destroy; override;
+    class destructor Destroy;
     procedure OK;
     procedure Cancel;
     procedure Apply;
@@ -107,7 +126,85 @@ type
 implementation
 
 uses
+  Controls,
+  Messages,
+  Types,
+  BoldBase,
+  BoldIndex,
+  BoldIndexableList,
+  BoldMetaElementList,
   BoldUtils;
+
+function WndProcHook(Code: Integer; wParam: WParam; lParam: LParam): LRESULT; stdcall;
+
+  function GetFormSaverByOwner(Owner: TComponent): TBoldFormSaver;
+  var
+    i: Integer;
+  begin
+    Result := nil;
+    if (Owner <> nil) and (TBoldFormSaver.FFormSaverList <> nil) then begin
+      for i := 0 to TBoldFormSaver.FFormSaverList.Count - 1 do begin
+        if TBoldFormSaver(TBoldFormSaver.FFormSaverList[i]).Owner = Owner then begin
+          Result := TBoldFormSaver.FFormSaverList[i];
+          Break;
+        end;
+      end;
+    end;
+  end;
+
+  function GetFormSaverByHandle(Handle: HWND): TBoldFormSaver;
+  var
+    aComp: TComponent;
+    i: Integer;
+  begin
+    aComp := FindControl(Handle);
+    if aComp is TBoldFormSaver then begin
+      Result := TBoldFormSaver(aComp);
+    end else begin
+      Result := GetFormSaverByOwner(aComp);
+
+      // on modal dialogs also itertate over the calling forms
+      if (Result = nil) and (aComp is TForm) and
+         (fsModal in TForm(aComp).FormState) then
+      begin
+        for i := 0 to Screen.SaveFocusedList.Count - 1 do begin
+          Result := GetFormSaverByOwner(TForm(Screen.SaveFocusedList[i]));
+          if Assigned(Result) then begin
+            Break;
+          end;
+        end;
+      end;
+    end;
+  end;
+
+var
+  aMsg: PCWPStruct;
+  aFormSaver: TBoldFormSaver;
+begin
+  aMsg := PCWPStruct(lParam);
+
+  // Ensure, that there is always an active FormSaver,
+  // because OnActivate event is not always called.
+  if (aMsg.message = WM_ACTIVATE) and (LOWORD(aMsg.wParam) <> WA_INACTIVE) then begin
+    aFormSaver := GetFormSaverByHandle(aMsg.hwnd);
+    if Assigned(aFormSaver) then begin
+      aFormSaver.DoActive;
+    end;
+  end;
+
+  Result := CallNextHookEx(TBoldFormSaver.FWndProcHookHandle, Code, wParam, lParam);
+
+{ Everytime a formsaverless form opens, the current FormSaver gets detached.
+  This is especially problematic on modal dialogues, because then they no longer
+  transfer their changes to the FormSaver of the owning host form.
+  if (aMsg.message = WM_ACTIVATE) and (LOWORD(aMsg.wParam) = WA_INACTIVE) then begin
+    aFormSaver := GetFormSaverByHandle(aMsg.hwnd);
+    if Assigned(aFormSaver) then begin
+      aFormSaver.DoDeActivate;
+    end;
+  end;
+}
+end;
 
 const
   breSystemHandleDestroying = 100;
@@ -127,14 +224,27 @@ end;
 
 procedure TBoldFormSaver.Cancel;
 var
-  obj: TBoldObject;
+  aObj: TBoldObject;
+  aObjList: TBoldObjectList;
+  i: Integer;
 begin
   EnsureActive;
-  while DirtyObjects.count > 0 do
-  begin
-    Obj := DirtyObjects[DirtyObjects.count-1];
-    DirtyObjects.removeByIndex(DirtyObjects.count-1);
-    obj.Discard;
+  aObjList := TBoldObjectList.Create;
+  try
+    while DirtyObjects.count > 0 do begin
+      aObj := DirtyObjects[DirtyObjects.count-1];
+      DirtyObjects.removeByIndex(DirtyObjects.count-1);
+
+      if not aObj.BoldObjectIsNew then begin
+        aObjList.Add(aObj);
+      end;
+      aObj.Discard;
+    end;
+    for i := aObjList.Count - 1 downto 0 do begin
+      aObjList[i].ReRead;
+    end;
+  finally
+    aObjList.Free;
   end;
   PostAction;
 end;
@@ -156,16 +266,16 @@ end;
 constructor TBoldFormSaver.Create(Owner: TComponent);
 begin
   inherited;
+  RegisterFormSaver(Self);
   fSystemHandleSubscriber := TBoldPassthroughSubscriber.Create(_SystemHandleReceive);
   fTargetFormSaverSubscriber := TBoldPassthroughSubscriber.Create(_TargetFormSaverReveice);
-  if Owner is TForm then
-  begin
-    with Owner as TForm do
-    begin
-      onActivate := _Activate;
-      onDeActivate := _DeActivate;
-      if Active then
-        _Activate(self);
+  if Owner is TForm then begin
+    FOrgActivate := TForm(Owner).OnActivate;
+    FOrgDeactivate := TForm(Owner).OnDeactivate;
+    TForm(Owner).OnActivate := _Activate;
+    TForm(Owner).OnDeactivate := _DeActivate;
+    if TForm(Owner).Active then begin
+      DoActive;
     end;
   end;
   SaveToDBOnOk := true;
@@ -173,19 +283,61 @@ begin
   fAutoRemoveCleanObjects := true;
 end;
 
-destructor TBoldFormSaver.destroy;
+class constructor TBoldFormSaver.Create;
+begin
+  inherited;
+  FFormSaverList := TList.Create;
+end;
+
+destructor TBoldFormSaver.Destroy;
 begin
   RemoveMyDirtyListFromSystem;
   FreeAndNil(fDirtyObjects);
   FreeAndNil(fSystemHandleSubscriber);
   FreeAndNil(fTargetFormSaverSubscriber);
+  if Owner is TForm then begin
+    TForm(Owner).OnActivate := FOrgActivate;
+    TForm(Owner).OnDeactivate := FOrgDeactivate;
+  end;
+  UnregisterFormSaver(Self);
   inherited;
+end;
+
+class destructor TBoldFormSaver.Destroy;
+begin
+  FinalizationFormSavers;
+  FreeAndNil(FFormSaverList);
+  inherited;
+end;
+
+procedure TBoldFormSaver.DoActive;
+begin
+  {$IFDEF DEBUG_BOLDFORMSAVER}
+  OutputDebugString(PChar(Format(
+      'Activating BoldFormSaver %s (%s)', [Name, TForm(Owner).Caption])));
+  {$ENDIF}
+  SetDirtyListInSystem(DirtyObjects);
+end;
+
+procedure TBoldFormSaver.DoDeActivate;
+begin
+  {$IFDEF DEBUG_BOLDFORMSAVER}
+  OutputDebugString(PChar(Format(
+      'Deactivating BoldFormSaver %s (%s)', [Name, TForm(Owner).Caption])));
+  {$ENDIF}
+  SetDirtyListInSystem(nil);
 end;
 
 procedure TBoldFormSaver.EnsureActive;
 begin
   if not assigned(SystemHandle) or not SystemHandle.Active then
     raise EBold.Create('TBoldFormSaver: No system available');
+end;
+
+class procedure TBoldFormSaver.FinalizationFormSavers;
+begin
+  UnhookWindowsHookEx(FWndProcHookHandle);
+  FWndProcHookHandle := 0;
 end;
 
 function TBoldFormSaver.GetDirtyObjects: TBoldDirtyObjectListWithHandle;
@@ -233,6 +385,17 @@ begin
     (Owner as TForm).Close;
 end;
 
+class procedure TBoldFormSaver.RegisterFormSaver(FormSaver: TBoldFormSaver);
+begin
+  if FFormSaverList.IndexOf(FormSaver) < 0 then begin
+    if FFormSaverList.Count = 0 then begin
+      FWndProcHookHandle := SetWindowsHookEx(
+          WH_CALLWNDPROC, WndProcHook, 0, GetCurrentThreadId);
+    end;
+    FFormSaverList.Add(FormSaver);
+  end;
+end;
+
 
 procedure TBoldFormSaver.RemoveMyDirtyListFromSystem;
 begin
@@ -273,7 +436,11 @@ begin
     finally
       TempList.Free;
     end;
-    Objects.Clear;
+    if (not (csDestroying in ComponentState)) and
+       (DirtyObjects.Count = 0) then // ensure that every objects is saved
+    begin
+      Objects.Clear;
+    end;
   end;
 end;
 
@@ -343,14 +510,30 @@ begin
   end;
 end;
 
+class procedure TBoldFormSaver.UnregisterFormSaver(FormSaver: TBoldFormSaver);
+begin
+  if FFormSaverList <> nil then
+  begin
+    FFormSaverList.Extract(FormSaver);
+    if FFormSaverList.Count = 0 then
+      FinalizationFormSavers;
+  end;
+end;
+
 procedure TBoldFormSaver._Activate(Sender: TObject);
 begin
-  SetDirtyListInSystem(DirtyObjects);
+  DoActive;
+  if Assigned(FOrgActivate) then begin
+    FOrgActivate(Sender);
+  end;
 end;
 
 procedure TBoldFormSaver._DeActivate(Sender: TObject);
 begin
-  SetDirtyListInSystem(nil);
+  DoDeActivate;
+  if Assigned(FOrgActivate) then begin
+    FOrgActivate(Sender);
+  end;
 end;
 
 procedure TBoldFormSaver._SystemHandleReceive(Originator: TObject;
@@ -362,7 +545,7 @@ begin
   if (RequestedEvent = breSystemHandleActivationChange) and (Originator = SystemHandle) and
     (Owner as TForm).Active then
   begin
-    _Activate(self);
+    DoDeActivate;
   end;
 end;
 

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGuiResourceStringsCom;
 
 interface
@@ -19,8 +22,6 @@ resourcestring
   SCannotChangeStateWithModifiedValue = 'Can''t Change State with Modified Value';
 
   SValueReadOnly = 'Can''t change value. Value is read only';
-
-// Navigator hints
   SNavHintFirst = 'First';
   SNavHintPrior = 'Prior';
   SNavHintNext = 'Next';

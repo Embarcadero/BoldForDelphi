@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGridPropertyEditors;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -28,7 +31,6 @@ type
 implementation
 
 uses
-  BoldGuiResourceStrings,
   SysUtils,
   BoldGrid,
   TypInfo;
@@ -39,7 +41,7 @@ type
 {---TBoldColumnsEditor---}
 procedure TBoldColumnsEditor.EditPropertyColumns(const PropertyEditor: IProperty);
 begin
-  if AnsiSameText(PropertyEditor.GetName, 'Columns') then  // do not localize
+  if SameText(PropertyEditor.GetName, 'Columns') then
     PropertyEditor.Edit;
 end;
 
@@ -74,7 +76,6 @@ begin
   begin
     DeleteAllColumns;
     AddColumn;
-    // This is done because the grid screws up the column widths
     AddColumn;
     Columns[1].Free;
   end;
@@ -92,9 +93,9 @@ end;
 function TBoldColumnsEditor.GetVerb(Index: Integer): string;
 begin
   case index of
-    0: Result := sEditColumns;
-    1: Result := sCreateDefaultColumns;
-    2: Result := sClearAllColumns;
+    0: Result := '&Edit Columns';
+    1: Result := 'Create Default Columns';
+    2: Result := 'Clear all Columns';
   end;
 end;
 
@@ -103,4 +104,6 @@ begin
   Result := 3;
 end;
 
+
+initialization
 end.

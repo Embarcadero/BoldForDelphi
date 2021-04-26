@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHTTPServerPersistenceHandlePassthroughReg;
 
 interface
@@ -6,10 +9,9 @@ procedure Register;
 
 implementation
 
-{$R *.res}
-
 uses
   BoldIDEConsts,
+  BoldGuard,
   BoldHTTPServerPersistenceHandlePassthrough,
   Classes;
 

@@ -1,19 +1,18 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLTypes;
 
 interface
 
 uses
-  Classes,
   BoldBase,
-  BoldSharedStrings,
   BoldContainers;
 
 type
   { forward declarations }
   TBoldUMLRange = class;
-  TBoldUMLMultiplicity = class;
-
-  { TODO : Normalize names to form TBoldUMLXX }
+  TBoldUMLMultiplicity = class; 
   TBoldParameterDirectionKind = (pdIn, pdOut, pdInout, pdReturn);
   TAggregationKind = (akNone, akAggregate, akComposite);
   TVisibilityKind = (vkPrivate, vkProtected, vkPublic);
@@ -61,7 +60,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldRev;
 
 { TBoldUMLRange }
 
@@ -157,7 +156,7 @@ begin
     if length(Result) > 0 then
       Result := Result + ',';
     Result := result + Range[i].FormatAsString(UnlimitedString);
-  end;
+  end;  
 end;
 
 function TBoldUMLMultiplicity.GetAsString: string;
@@ -202,4 +201,5 @@ begin
   end;
 end;
 
+initialization
 end.

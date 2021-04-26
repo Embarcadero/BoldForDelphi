@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnqueuerExportHandle;
 
 interface
@@ -43,7 +46,6 @@ end;
 function TBoldEnqueuerExportHandle.GetComObject: IUnknown;
 begin
   Result := CreateComObject(TBoldPropagatorServer.Instance.EnqueuerCLSID);
-//  Result := TBoldEnqueuerCOM.CreateFromFactory(EnqueuerCOMFactory, nil) as IUnknown;
 end;
 
 function TBoldEnqueuerExportHandle.GetHandledObject: TObject;
@@ -51,4 +53,5 @@ begin
   Result := nil;
 end;
 
+initialization
 end.

@@ -32,14 +32,12 @@ package BoldVCLGUI;
 requires
   vcl,
   DesignIDE,
-  VclJpg,
   Bold;
 
 contains
   BoldCaptionController in 'Source\BoldAwareGUI\BoldControls\BoldCaptionController.pas',
   BoldCheckBox in 'Source\BoldAwareGUI\BoldControls\BoldCheckBox.pas',
   BoldComboBox in 'Source\BoldAwareGUI\BoldControls\BoldComboBox.pas',
-  BoldDataSet in 'Source\BoldAwareGUI\BoldControls\BoldDataSet.pas',
   BoldDragDropTarget in 'Source\BoldAwareGUI\BoldControls\BoldDragDropTarget.pas',
   BoldEdit in 'Source\BoldAwareGUI\BoldControls\BoldEdit.pas',
   BoldGrid in 'Source\BoldAwareGUI\BoldControls\BoldGrid.pas',
@@ -63,6 +61,7 @@ contains
   BoldCheckboxStateControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldCheckboxStateControlPack.pas',
   BoldControllerListControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldControllerListControlPack.pas',
   BoldControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldControlPack.pas',
+  BoldVariantControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldVariantControlPack.pas',
   BoldDateTimeControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldDateTimeControlPack.pas',
   BoldElementHandleFollower in 'Source\BoldAwareGUI\ControlPacks\BoldElementHandleFollower.pas',
   BoldFloatControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldFloatControlPack.pas',
@@ -86,7 +85,6 @@ contains
   BoldAwareGuiReg in 'Source\BoldAwareGUI\IDE\BoldAwareGuiReg.pas',
   BoldComboBoxPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldComboBoxPropertyEditors.pas',
   BoldControlPackPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldControlPackPropertyEditors.pas',
-  BoldDataSetPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldDataSetPropertyEditors.pas',
   BoldGridPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldGridPropertyEditors.pas',
   BoldNodeDescriptionEditor in 'Source\BoldAwareGUI\IDE\BoldNodeDescriptionEditor.pas',
   BoldPropertiesControllerPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldPropertiesControllerPropertyEditors.pas';

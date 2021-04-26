@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDerivedHandleCom;
 
 interface
@@ -25,7 +28,6 @@ implementation
 uses
   BoldComObjectSpace,
   BoldComObjectSpace_TLB,
-  ComHandlesConst,
   BoldComUtils;
 
 {-- TBoldDerivedHandleCom --------------------------------------------------------}
@@ -38,16 +40,13 @@ end;
 
 procedure TBoldDerivedHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldRootedHandleCom
+
   FStaticRootType := nil;
-  // from TBoldDerivedHandleCom
 end;
 
 
@@ -70,12 +69,12 @@ begin
     DummyList,
     DummyListType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
+  FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
   if not OwnsHandleOnServer then
   begin
-    FEnabled := BoldGetNamedValue(NamedValues, nv_Enabled);
-    FRootTypeName := BoldGetNamedValue(NamedValues, nv_RootTypeName);
-    FSubscribe := BoldGetNamedValue(NamedValues, nv_Subscribe);
+    FEnabled := BoldGetNamedValue(NamedValues,'Enabled');
+    FRootTypeName := BoldGetNamedValue(NamedValues,'RootTypeName');
+    FSubscribe := BoldGetNamedValue(NamedValues,'Subscribe');
   end;
 end;
 
@@ -96,11 +95,11 @@ begin
   else
     RootHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-    nv_Enabled,
-    nv_RootHandle,
-    nv_RootTypeName,
-    nv_Subscribe],
+    ['StaticSystemHandle',
+    'Enabled',
+    'RootHandle',
+    'RootTypeName',
+    'Subscribe'],
     [StaticSystemHandleId,
     FEnabled,
     RootHandleId,
@@ -111,7 +110,9 @@ end;
 
 function TBoldDerivedHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_DerivedHandle;
+  result := 'TBoldDerivedHandle';
 end;
+
+initialization
 
 end.

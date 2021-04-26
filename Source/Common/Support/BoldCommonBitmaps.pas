@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCommonBitmaps;
 
 interface
@@ -81,4 +84,5 @@ finalization
   FreeAllBitmaps;
 
 end.
+
 

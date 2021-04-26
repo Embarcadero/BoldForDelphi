@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIBInterfaces;
 
 interface
@@ -5,12 +8,11 @@ uses
   classes,
   Dialogs,
   Db,
-  IB,
-  IBQuery,
-  IBTable,
-  IBXConst,
+  IBX.IB,
+  IBX.IBQuery,
+  IBX.IBTable,
+  IBX.IBDataBase,
   BoldSQLDataBaseConfig,
-  IBDataBase,
   BoldBase,
   BoldDefs,
   BoldDBInterfaces,
@@ -22,33 +24,38 @@ type
   TBoldIBQuery = class;
   TBoldIBTable = class;
 
-  TBoldIBTransactionMode = (tmUnknown, tmStarted, tmNotStarted);
+  TBoldIBTransactionMode = (tmUnknown, tmStarted, tmNotStarted); 
 
   { TBoldIBQuery }
-  TBoldIBQuery = class(TBoldDataSetWrapper, IBoldQuery, IBoldExecQuery, IBoldParameterized)
+  TBoldIBQuery = class(TBoldBatchDataSetWrapper, IBoldQuery, IBoldExecQuery, IBoldParameterized)
   private
     fQuery: TIBQuery;
     fOpeningTransactionMode: TBoldIBTransactionMode;
     function GetQuery: TIBQuery;
     procedure EnsureTransaction;
-    // methods that implement IBoldQuery
     procedure AssignParams(Sourceparams: TParams);
     function GetParamCount: integer;
-    function GetParams(i: integer): IBoldParameter;
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);
+    function GetParam(i: integer): IBoldParameter;
+    function GetParams: TParams;    
     function GetRequestLiveQuery: Boolean;
-    function ParamByName(const Value: string): IBoldParameter;
+    function ParamByName(const Value: string): IBoldParameter; override;
+    function FindParam(const Value: string): IBoldParameter; override;
     procedure SetRequestLiveQuery(NewValue: Boolean);
     function GetSQLText: String;
+    function GetSQLStrings: TStrings;    
     procedure AssignSQL(SQL: TStrings);
-    procedure AssignSQLText(SQL: String);
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
+    procedure AssignSQLText(const SQL: String);
+    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
     function GetRowsAffected: integer;
     function GetRecordCount: integer;
+    function GetUseReadTransactions: boolean;
+    procedure SetUseReadTransactions(value: boolean);
+    procedure BeginExecuteQuery;
+    procedure EndExecuteQuery;
   protected
     function GetDataSet: TDataSet; override;
-    procedure StartSQLBatch; virtual;
-    procedure EndSQLBatch; virtual;
-    procedure FailSQLBatch; virtual;
     procedure ClearParams;
     procedure Open; override;
     procedure Close; override;
@@ -70,7 +77,7 @@ type
     procedure CreateTable;
     procedure DeleteTable;
     function GetIndexDefs: TIndexDefs;
-    procedure SetTableName(NewName: String);
+    procedure SetTableName(const NewName: String);
     function GetTableName: String;
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
@@ -88,6 +95,7 @@ type
     fDataBase: TIBDataBase;
     fCachedTable: TIBTable;
     fCachedQuery: TIBQuery;
+    fExecuteQueryCount: integer;    
     function GetDataBase: TIBDataBase;
     property DataBase: TIBDataBase read GetDataBase;
     function GetConnected: Boolean;
@@ -102,17 +110,22 @@ type
     procedure RollBack;
     procedure Open;
     procedure Close;
-    function GetTable: IBoldTable;
-    procedure ReleaseTable(var Table: IBoldTable);
+    procedure Reconnect;
     function SupportsTableCreation: Boolean;
     procedure ReleaseCachedObjects;
+    function GetIsExecutingQuery: Boolean;
+    procedure BeginExecuteQuery;
+    procedure EndExecuteQuery;
   protected
     procedure AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetQuery: IBoldQuery; override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
+    function GetTable: IBoldTable; override;
+    procedure ReleaseTable(var Table: IBoldTable); override;
   public
-    constructor Create(DataBase: TIBDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor Destroy; override;
+    constructor create(DataBase: TIBDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor destroy; override;
+    procedure CreateDatabase;
   end;
 
 implementation
@@ -121,8 +134,7 @@ uses
   SysUtils,
   BoldUtils;
 
-resourcestring
-  SLoginPromptFailure = 'Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file or set IBDatabase.LoginPrompt to false.';
+
 { TBoldIBQuery }
 
 procedure TBoldIBQuery.AssignParams(Sourceparams: tparams);
@@ -140,7 +152,7 @@ begin
   Query.SQL.EndUpdate;
 end;
 
-procedure TBoldIBQuery.AssignSQLText(SQL: String);
+procedure TBoldIBQuery.AssignSQLText(const SQL: String);
 begin
   Query.SQL.BeginUpdate;
   Query.SQL.Clear;
@@ -149,15 +161,21 @@ begin
 end;
 
 
+procedure TBoldIBQuery.BeginExecuteQuery;
+begin
+  (DatabaseWrapper as TBoldIBDataBase).EndExecuteQuery;
+end;
+
+procedure TBoldIBQuery.EndExecuteQuery;
+begin
+  (DatabaseWrapper as TBoldIBDataBase).EndExecuteQuery;
+end;
+
 constructor TBoldIBQuery.Create(Query: TIBQuery; DatabaseWrapper: TBoldDatabaseWrapper);
 begin
   inherited Create(DatabaseWrapper);
   fQuery := Query;
-end;
-
-procedure TBoldIBQuery.EndSQLBatch;
-begin
-  // intentionally left blank
+  SetParamCheck(true);
 end;
 
 procedure TBoldIBQuery.EnsureTransaction;
@@ -181,6 +199,8 @@ end;
 
 procedure TBoldIBQuery.ExecSQL;
 begin
+  BeginExecuteQuery;
+  try
   BoldLogSQL(Query.SQL);
   try
     if Query.Transaction.InTransaction then
@@ -191,15 +211,23 @@ begin
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: '+Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: '+Query.SQL.text;
       raise;
     end;
-  end
+  end;
+  finally
+    EndExecuteQuery;
+  end;
 end;
 
-procedure TBoldIBQuery.FailSQLBatch;
+function TBoldIBQuery.FindParam(const Value: string): IBoldParameter;
+var
+  Param: TParam;
 begin
-  // intentionally left blank
+  result := nil;
+  Param := Query.Params.FindParam(Value);
+  if Assigned(Param) then
+    result := TBoldDbParameter.Create(Param, self)
 end;
 
 function TBoldIBQuery.GetDataSet: TDataSet;
@@ -207,14 +235,26 @@ begin
   result := Query;
 end;
 
+function TBoldIBQuery.GetParam(i: integer): IBoldParameter;
+begin
+  result := TBoldDBParameter.Create(Query.Params[i], self);
+end;
+
+function TBoldIBQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
+end;
+
 function TBoldIBQuery.GetParamCount: integer;
 begin
   result := Query.Params.count;
 end;
 
-function TBoldIBQuery.GetParams(i: integer): IBoldParameter;
+type TTIBQueryAccess = class(TIBQuery);
+
+function TBoldIBQuery.GetParams: TParams;
 begin
-  result := TBoldDBParameter.Create(Query.Params[i], self);
+  result := TTIBQueryAccess(Query).PSGetParams
 end;
 
 function TBoldIBQuery.GetQuery: TIBQuery;
@@ -237,13 +277,25 @@ begin
   result := Query.RowsAffected;
 end;
 
+function TBoldIBQuery.GetSQLStrings: TStrings;
+begin
+  result := Query.SQL;
+end;
+
 function TBoldIBQuery.GetSQLText: String;
 begin
   result := Query.SQL.Text;
 end;
 
+function TBoldIBQuery.GetUseReadTransactions: boolean;
+begin
+  result := false;
+end;
+
 procedure TBoldIBQuery.Open;
 begin
+  BeginExecuteQuery;
+  try
   EnsureTransaction;
   BoldLogSQL(Query.SQL);
   try
@@ -255,10 +307,13 @@ begin
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: '+Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: '+Query.SQL.text;
       raise;
     end;
   end
+  finally
+    EndExecuteQuery;
+  end;
 end;
 
 procedure TBoldIBQuery.Close;
@@ -275,10 +330,7 @@ var
   Param: TParam;
 begin
   Param := Query.ParamByName(Value);
-  if assigned(Param) then
     result := TBoldDbParameter.Create(Param, self)
-  else
-    result := nil;
 end;
 
 
@@ -288,15 +340,19 @@ begin
 end;
 }
 
+procedure TBoldIBQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
+
 procedure TBoldIBQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
-  // ignore
 end;
 
 
-procedure TBoldIBQuery.StartSQLBatch;
+procedure TBoldIBQuery.SetUseReadTransactions(value: boolean);
 begin
-  // intentionally left blank
+
 end;
 
 function TBoldIBQuery.Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
@@ -414,11 +470,10 @@ end;
 
 procedure TBoldIBTable.SetExclusive(NewValue: Boolean);
 begin
-//  showmessage('cant set exclusive on IBTables');
 end;
 
 
-procedure TBoldIBTable.SetTableName(NewName: String);
+procedure TBoldIBTable.SetTableName(const NewName: String);
 begin
   Table.TableName := NewName;
 end;
@@ -430,6 +485,11 @@ begin
   if (Pattern <> '') and (Pattern <> '*') then
     raise Exception.CreateFmt('%s.AlltableNames: This call does not allow patterns ("%s")', [ClassName, Pattern]);
   DataBase.GetTableNames(TableNameList, ShowSystemTables);
+end;
+
+procedure TBoldIBDataBase.BeginExecuteQuery;
+begin
+  inc(fExecuteQueryCount);
 end;
 
 procedure TBoldIBDataBase.Close;
@@ -462,6 +522,42 @@ begin
   inherited;
 end;
 
+procedure TBoldIBDataBase.EndExecuteQuery;
+begin
+  dec(fExecuteQueryCount);
+end;
+
+procedure TBoldIBDataBase.CreateDatabase;
+var
+  db: TIBDatabase;
+  username: String;
+  pwd: String;
+const
+  cPageSize = 4096;
+begin
+  if not assigned(Database) then
+    raise EBold.CreateFmt('%s.CreateInterbaseDatbase: Unable to complete operation without an IBDatabase', [classname]);
+
+  username := Database.Params.Values['user_name'];
+  pwd := Database.Params.Values['password'];
+
+  if (username = '') or (pwd = '') then
+    raise EBold.CreateFmt('%s.CreateInterbaseDatabase: username or password missing', [classname]);
+  if FileExists(Database.DatabaseName) then
+    if not DeleteFile(Database.DatabaseName) then
+      raise EBold.CreateFmt('%s.CreateInterbaseDatbase: Unable to remove old database file (%s)', [classname, DataBase.DatabaseName]);
+  db := TIBDatabase.Create(nil);
+  try
+    db.DatabaseName := Database.DatabaseName;
+    db.Params.add(format('USER "%s" PASSWORD "%s" PAGE_SIZE %d', [
+       username, pwd, cPageSize]));
+    db.SQLDialect := Database.SQLDialect;
+    db.CreateDatabase;
+  finally
+    db.free;
+  end;
+end;
+
 function TBoldIBDataBase.GetConnected: Boolean;
 begin
   result := DataBase.Connected;
@@ -480,6 +576,11 @@ begin
   result := assigned(Transaction) and Transaction.InTransaction;
 end;
 
+function TBoldIBDataBase.GetIsExecutingQuery: Boolean;
+begin
+  Result := fExecuteQueryCount > 0;
+end;
+
 function TBoldIBDataBase.GetIsSQLBased: Boolean;
 begin
   result := true;
@@ -488,7 +589,6 @@ end;
 function TBoldIBDataBase.GetKeepConnection: Boolean;
 begin
   result := true
-  // CHEKCME
 end;
 
 function TBoldIBDataBase.GetLogInPrompt: Boolean;
@@ -508,6 +608,7 @@ begin
   else
   begin
     Query := TIBQuery.Create(nil);
+    Query.UniDirectional := True;
     Query.DataBase := DataBase;
   end;
   if not assigned(Query.Transaction) then
@@ -536,15 +637,20 @@ procedure TBoldIBDataBase.Open;
 var
   NewTransaction: TIBTransaction;
 begin
-  if Database.LogInPrompt and
-    not (assigned(Database.OnLogin) or assigned(LoginDialogExProc)) then
-    raise EIBError.Create(SLoginPromptFailure);
   if not assigned(DataBAse.DefaultTransaction) then
   begin
     NewTransaction := TIBTransaction.Create(DataBase);
     Database.DefaultTransaction := NewTransaction;
   end;
   DataBase.Open;
+end;
+
+procedure TBoldIBDataBase.Reconnect;
+begin
+  if Assigned(fDataBase) then begin
+    fDataBase.Connected := False;
+    fDataBase.Connected := True;
+  end;
 end;
 
 procedure TBoldIBDataBase.ReleaseCachedObjects;
@@ -567,6 +673,7 @@ begin
       if fCachedQuery.Active then
         fCachedQuery.Close;
       fCachedQuery.SQL.Clear;
+      fCachedQuery.Params.Clear;
     end
     else
       IBQuery.fQuery.free;
@@ -605,7 +712,6 @@ end;
 
 procedure TBoldIBDataBase.SetKeepConnection(NewValue: Boolean);
 begin
-  //CHECKME
 end;
 
 procedure TBoldIBDataBase.SetlogInPrompt(NewValue: Boolean);
@@ -629,7 +735,5 @@ begin
   result := true;
 end;
 
+initialization
 end.
-
-
-

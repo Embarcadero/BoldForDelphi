@@ -1,10 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeNameDictionary;
 
 interface
 
 uses
-  Classes,
-  BoldDefs;
+  Classes;
 
 type
   TBoldTypeNameDictionary = class;
@@ -19,7 +21,7 @@ type
     FNativeType: String;
     FMapperName: String;
     fContentsName: String;
-    fUnitName: String;
+    fBoldUnitName: String;
     fComType: String;
     fIDLType: String;
     fValueInterface: String;
@@ -53,13 +55,13 @@ type
     property MapperName: String read FMapperName write fMapperName;
     property Accessor: String read FAccessor write fAccessor;
     property NativeType: String read FNativeType write fNativeType;
-    property UnitNameText: String read fUnitName write fUnitName;
+    property BoldUnitName: String read fBoldUnitName write fBoldUnitName;
+    property UnitName: String read fBoldUnitName write fBoldUnitName stored false;
     property ComType: String read fComType write fComType;
     property IDLType: String read fIDLType write fIDLType;
     property ValueInterface: String read fValueInterface write fValueInterface;
     property ValueInterfaceAccessor: String read fValueInterfaceAccessor write fValueInterfaceAccessor;
     property ValueInterfaceNativeType: String read fValueInterfaceNativeType write fValueInterfaceNativeType;
-
   end;
 
   TBoldTypeNameDictionary = class(TCollection)
@@ -90,16 +92,18 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
+  BoldDefs,
   BoldNameExpander,
   BoldTaggedValueSupport;
 
 const
-  DefaultMappings: array[0..29, 0..12] of String = (
-// ModelName           ExpressionName DelphiName   Contentname  PMapper           Accessor      NativeType   Unit                ComType       IDL         ValueInterface
-  (DEFAULTNAMELITERAL,'String',    'TBA<Name>',   '<Name>',   'TBoldPM<Name>',   'As<Name>',   '<Name>',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldStringContent', 'AsString', 'String'),
+  DefaultMappings: array[0..32, 0..12] of String = (
+  (DEFAULTNAMELITERAL,'String',     'TBA<Name>',   '<Name>',   'TBoldPM<Name>',   'As<Name>',   '<Name>',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldStringContent', 'AsString', 'String'),
   ('String',        'String',       'TBA<Name>',   '<Name>',   'TBoldPM<Name>',   'As<Name>',   '<Name>',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldStringContent', 'AsString', 'String'),
   ('AnsiString',    'String',       'TBA<Name>',   '<Name>',   'TBoldPM<Name>',   'As<Name>',   '<Name>',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldStringContent', 'AsString', 'String'),
+  ('UnicodeString', 'UnicodeString','TBA<Name>',   'String',   'TBoldPM<Name>',   'AsString',   'String',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldUnicodeStringContent', 'AsUnicodeString', 'String'),
+  ('Text',          'Text',         'TBA<Name>',   'String',   'TBoldPM<Name>',   'AsString',   'String',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldAnsiStringContent',    'AsAnsiString',    'AnsiString'),
+  ('UnicodeText',   'UnicodeText',  'TBA<Name>',   'String',   'TBoldPM<Name>',   'AsString',   'String',    'BoldAttributes',   'WideString', 'BSTR',     'IBoldUnicodeStringContent', 'AsUnicodeString', 'String'),
   ('<Numeric>',     'Numeric',      'TBA<Name>',   '',         '',                '',           '',          'BoldAttributes',   '',           '',         '',                   '', ''),
   ('Integer',       'Integer',      'TBA<Name>',   '<Name>',   'TBoldPM<Name>',   'As<Name>',   '<Name>',    'BoldAttributes',   'Integer',    'LONG',     'IBoldIntegerContent', 'AsInteger', 'integer'),
   ('Int',           'Integer',      'TBA<Name>',   '<Name>',   'TBoldPM<Name>',   'As<Name>',   '<Name>',    'BoldAttributes',   'Integer',    'LONG',     'IBoldIntegerContent', 'AsInteger', 'integer'),
@@ -145,7 +149,7 @@ begin
       MapperName      := DefaultMappings[i, 4];
       Accessor        := DefaultMappings[i, 5];
       NativeType      := DefaultMappings[i, 6];
-      UnitNameText        := DefaultMappings[i, 7];
+      BoldUnitName    := DefaultMappings[i, 7];
       ComType         := DefaultMappings[i, 8];
       IDLType         := DefaultMappings[i, 9];
       ValueInterface  := DefaultMappings[i, 10];
@@ -243,7 +247,7 @@ end;
 
 function TBoldTypeNameMapping.GetAsString: string;
 begin
-  Result := Format('ModelName=%s,ExpressionName=%s,DelphiName=%s,ContentsName=%s,MapperName=%s,AccessorName=%s,NativeType=%s,UnitName=%s,ComType=%s,IDLType=%s,ValueInterface=%s,ValueInterfaceAccessor=%s,ValueInterfaceNativeType=%s', // do not localize
+  Result := Format('ModelName=%s,ExpressionName=%s,DelphiName=%s,ContentsName=%s,MapperName=%s,AccessorName=%s,NativeType=%s,UnitName=%s,ComType=%s,IDLType=%s,ValueInterface=%s,ValueInterfaceAccessor=%s,ValueInterfaceNativeType=%s',
                     [ModelName,
                      ExpressionName,
                      DelphiName,
@@ -251,7 +255,7 @@ begin
                      MapperName,
                      Accessor,
                      NativeType,
-                     UnitNameText,
+                     BoldUnitName,
                      ComType,
                      IDLType,
                      ValueInterface,
@@ -285,26 +289,30 @@ begin
 end;
 
 procedure TBoldTypeNameMapping.SetAsString(const Value: string);
+var
+  vTmpList: TStringList;
 begin
-  with TStringList.Create do
+  vTmpList := TStringList.Create;
   try
-    CommaText       := value;
-    ModelName       := Values['ModelName']; // do not localize
-    ExpressionName  := Values['ExpressionName']; // do not localize
-    DelphiName      := Values['DelphiName']; // do not localize
-    if Values['StreamName'] <> '' then // do not localize
-      ContentsName    := Values['StreamName'] // do not localize
+    vTmpList.CommaText  := value;
+    ModelName           := vTmpList.Values['ModelName'];
+    ExpressionName      := vTmpList.Values['ExpressionName'];
+    DelphiName          := vTmpList.Values['DelphiName'];
+
+    if vTmpList.Values['StreamName'] <> '' then
+      ContentsName      := vTmpList.Values['StreamName']
     else
-      ContentsName    := Values['ContentsName']; // do not localize
-    MapperName      := Values['MapperName']; // do not localize
-    Accessor        := Values['AccessorName']; // do not localize
-    NativeType      := Values['NativeType']; // do not localize
-    UnitNameText        := Values['UnitName']; // do not localize
-    ComType         := Values['ComType']; // do not localize
-    IDLType         := Values['IDLType']; // do not localize
-    ValueInterface  := Values['ValueInterface']; // do not localize
-    ValueInterfaceAccessor  := Values['ValueInterfaceAccessor']; // do not localize
-    ValueInterfaceNativeType  := Values['ValueInterfaceNativeType']; // do not localize
+      ContentsName      := vTmpList.Values['ContentsName'];
+
+    MapperName      := vTmpList.Values['MapperName'];
+    Accessor        := vTmpList.Values['AccessorName'];
+    NativeType      := vTmpList.Values['NativeType'];
+    BoldUnitName    := vTmpList.Values['UnitName'];
+    ComType         := vTmpList.Values['ComType'];
+    IDLType         := vTmpList.Values['IDLType'];
+    ValueInterface  := vTmpList.Values['ValueInterface'];
+    ValueInterfaceAccessor  := vTmpList.Values['ValueInterfaceAccessor'];
+    ValueInterfaceNativeType  := vTmpList.Values['ValueInterfaceNativeType'];
   finally
     Free;
   end;
@@ -313,7 +321,7 @@ end;
 procedure TBoldTypeNameMapping.DefineProperties(Filer: TFiler);
 begin
   inherited;
-  Filer.DefineProperty('StreamName', ReadStreamName, nil, False); // do not localize
+  Filer.DefineProperty('StreamName', ReadStreamName, nil, False);
 end;
 
 procedure TBoldTypeNameMapping.ReadStreamName(Reader: TReader);
@@ -324,8 +332,7 @@ end;
 procedure TBoldTypeNameMapping.AssignTo(Dest: TPersistent);
 begin
   if dest is TBoldTypeNameMapping then
-    with dest as TBoldTypeNameMapping do
-    begin
+    with dest as TBoldTypeNameMapping do begin
       ModelName := self.ModelName;
       ExpressionName := self.ExpressionName;
       DelphiName := self.DelphiName;
@@ -333,7 +340,7 @@ begin
       MapperName := self.MapperName;
       Accessor := self.Accessor;
       NativeType := self.NativeType;
-      UnitNameText := self.UnitNameText;
+      BoldUnitName := self.BoldUnitName;
       ComType := self.ComType;
       IDLType := self.IDLType;
       ValueInterface := self.ValueInterface;
@@ -344,9 +351,12 @@ begin
    inherited;
 end;
 
+
 function TBoldTypeNameMapping.GetExpandedComType: String;
 begin
   result := BoldExpandName(ComType, ExpressionName, xtExpression, -1, nccDefault);
 end;
 
+
+initialization
 end.

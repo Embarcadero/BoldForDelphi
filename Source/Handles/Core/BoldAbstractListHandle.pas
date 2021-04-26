@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractListHandle;
 
 interface
@@ -24,6 +27,8 @@ type
     function GetStaticListType: TBoldListTypeInfo;
     function GetObjectList: TBoldObjectList;
     function GetMutableObjectList: TBoldObjectList;
+    procedure SetCurrentBoldObject(const Value: TBoldObject);
+    procedure SetCurrentElement(const Value: TBoldElement);
   protected
     function GetCurrentElement: TBoldElement; virtual; abstract;
     function GetCurrentIndex: Integer; virtual; abstract;
@@ -37,8 +42,8 @@ type
     procedure Prior;
     procedure RemoveCurrentElement;
     property Count: Integer read GetCount;
-    property CurrentBoldObject: TBoldObject read GetCurrentBoldObject;
-    property CurrentElement: TBoldElement read GetCurrentElement;
+    property CurrentBoldObject: TBoldObject read GetCurrentBoldObject write SetCurrentBoldObject;
+    property CurrentElement: TBoldElement read GetCurrentElement write SetCurrentElement;
     property CurrentIndex: Integer read GetCurrentIndex write SetCurrentIndex;
     property List: TBoldList read GetList;
     property ObjectList: TBoldObjectList read GetObjectList;
@@ -55,15 +60,17 @@ implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldDefs;
 
 { TBoldAbstractListHandle }
 
 function TBoldAbstractListHandle.GetCount: Integer;
+var
+  BoldList: TBoldList;
 begin
- if Assigned(List) then
-    Result := List.Count
+  BoldList := List;
+  if Assigned(BoldList) then
+    Result := BoldList.Count
   else
     Result := 0;
 end;
@@ -73,7 +80,7 @@ begin
   if GetHasPrior then
     CurrentIndex := CurrentIndex - 1
  else
-    raise EBold.CreateFmt(sNoPreviousElement, [ClassName]);
+    raise EBold.CreateFmt('%s: No previous element', [ClassName]);
 end;
 
 procedure TBoldAbstractListHandle.Next;
@@ -81,7 +88,7 @@ begin
   if GetHasNext then
     CurrentIndex := CurrentIndex + 1
   else
-    raise EBold.CreateFmt(sNoNextElement, [ClassName]);
+    raise EBold.CreateFmt('%s: No next element', [ClassName]);
 end;
 
 procedure TBoldAbstractListHandle.First;
@@ -96,34 +103,57 @@ begin
 end;
 
 procedure TBoldAbstractListHandle.RemoveCurrentElement;
+var
+  BoldList: TBoldList;
 begin
- if CurrentIndex = -1 then
-    raise EBold.CreateFmt(sNoCurrentElement, [ClassName])
- else
- begin
-   if list.mutable then
-     List.RemoveByIndex(CurrentIndex)
-   else if assigned(MutableLIst) then
-     mutableList.remove(CurrentElement)
-   else
-     raise EBold.CreateFmt(sCannotRemoveCurrentFromImmutable, [classname, name]);
- end;
+  if CurrentIndex = -1 then begin
+    raise EBold.CreateFmt('%s.RemoveCurrentElement: No current element', [ClassName])
+  end else begin
+    BoldList := List;
+    if Assigned(BoldList) and BoldList.Mutable then begin
+      BoldList.RemoveByIndex(CurrentIndex);
+    end else begin
+      BoldList := MutableList;
+      if Assigned(BoldList) then begin
+        BoldList.Remove(CurrentElement);
+      end else begin
+        raise EBold.CreateFmt('%s: Can not remove current Element from an immutable list (in %s)', [classname, name]);
+      end;
+    end;;
+  end;
+end;
+
+procedure TBoldAbstractListHandle.SetCurrentBoldObject(
+  const Value: TBoldObject);
+begin
+  SetCurrentElement(Value);
+end;
+
+procedure TBoldAbstractListHandle.SetCurrentElement(const Value: TBoldElement);
+begin
+  CurrentIndex := List.IndexOf(Value);
 end;
 
 function TBoldAbstractListHandle.GetCurrentBoldObject: TBoldObject;
+var
+  aCurrentElement: TBoldElement;
 begin
-  if CurrentElement is TBoldObject then
-    Result := TBoldObject(CurrentElement)
-  else if not Assigned(CurrentElement) then
+  aCurrentElement := CurrentElement;
+  if aCurrentElement is TBoldObject then
+    Result := TBoldObject(aCurrentElement)
+  else if aCurrentElement = nil then
     Result := nil
   else
-    raise EBold.CreateFmt(sCurrentElementNotBoldObject, [ClassName]);
+    raise EBold.CreateFmt('%s.CurrentBoldObject: Current element is not a TBoldObject', [ClassName]);
 end;
 
 function TBoldAbstractListHandle.GetListElementType: TBoldElementTypeInfo;
+var
+  BoldList: TBoldList;
 begin
-  if Assigned(List) then
-    Result := TBoldListTypeInfo(List.BoldType).ListElementTypeInfo
+  BoldList := List;
+  if Assigned(BoldList) then
+    Result := TBoldListTypeInfo(BoldList.BoldType).ListElementTypeInfo
   else
     Result := StaticBoldType;
 end;
@@ -139,9 +169,12 @@ begin
 end;
 
 function TBoldAbstractListHandle.GetListType: TBoldListTypeInfo;
+var
+  BoldList: TBoldList;
 begin
-  if Assigned(List) then
-    Result := TBoldListTypeInfo(List.BoldType)
+  BoldList := List;
+  if Assigned(BoldList) then
+    Result := TBoldListTypeInfo(BoldList.BoldType)
   else
     result := StaticListType;
 end;
@@ -166,19 +199,27 @@ begin
 end;
 
 function TBoldAbstractListHandle.GetObjectList: TBoldObjectList;
+var
+  BoldList: TBoldList;
 begin
-  if list is TBoldObjectList then
-    result := list as TBoldObjectList
+  BoldList := List;
+  if BoldList is TBoldObjectList then
+    result := TBoldObjectList(BoldList)
   else
     result := nil;
 end;
 
 function TBoldAbstractListHandle.GetMutableObjectList: TBoldObjectList;
+var
+  BoldList: TBoldList;
 begin
-  if MutableList is TBoldObjectList then
-    result := MutableList as TBoldObjectList
+  BoldList := MutableList;
+  if BoldList is TBoldObjectList then
+    result := TBoldObjectList(BoldList)
   else
     result := nil;
 end;
 
+initialization
+  
 end.

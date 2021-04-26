@@ -1,57 +1,53 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit MSXML_TLB;
 
-// ************************************************************************ //
-// WARNING                                                                    
-// -------                                                                    
-// The types declared in this file were generated from data read from a       
-// Type Library. If this type library is explicitly or indirectly (via        
-// another type library referring to this type library) re-imported, or the   
-// 'Refresh' command of the Type Library Editor activated while editing the   
-// Type Library, the contents of this file will be regenerated and all        
-// manual modifications will be lost.                                         
-// ************************************************************************ //
 
-// PASTLWTR: 1.1
-// File generated on 2000-04-28 11:35:52 from Type Library described below.
 
-// *************************************************************************//
-// NOTE:                                                                      
-// Items guarded by $IFDEF_LIVE_SERVER_AT_DESIGN_TIME are used by properties  
-// which return objects that may need to be explicitly created via a function 
-// call prior to any access via the property. These items have been disabled  
-// in order to prevent accidental use from within the object inspector. You   
-// may enable them by defining LIVE_SERVER_AT_DESIGN_TIME or by selectively   
-// removing them from the $IFDEF blocks. However, such items must still be    
-// programmatically created via a method of the appropriate CoClass before    
-// they can be used.                                                          
-// ************************************************************************ //
-// Type Lib: C:\WINNT\system32\msxml.dll (1)
-// IID\LCID: {D63E0CE2-A0A2-11D0-9C02-00C04FC99C8E}\0
-// Helpfile:
-// DepndLst: 
-//   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
-//   (2) v4.0 StdVCL, (C:\WINNT\System32\STDVCL40.DLL)
-// Errors:
-//   Hint: Parameter 'type' of IXMLDOMNode.nodeType changed to 'type_'
-//   Hint: Member 'implementation' of 'IXMLDOMDocument' changed to 'implementation_'
-//   Hint: Parameter 'type' of IXMLDOMDocument.createNode changed to 'type_'
-//   Hint: Member 'type' of 'IXMLElement' changed to 'type_'
-//   Hint: Member 'type' of 'IXMLElement2' changed to 'type_'
-// ************************************************************************ //
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{$TYPEDADDRESS OFF}
 interface
 
 uses Windows, ActiveX, Classes, Graphics, OleServer, OleCtrls, StdVCL;
 
-// *********************************************************************//
-// GUIDS declared in the TypeLibrary. Following prefixes are used:        
-//   Type Libraries    : LIBID_xxxx                                      
-//   CoClasses         : CLASS_xxxx                                      
-//   DISPInterfaces    : DIID_xxxx                                       
-//   Non-DISP interfaces: IID_xxxx                                        
-// *********************************************************************//
+
+
+
+
+
 const
-  // TypeLibrary Major and minor versions
   MSXMLMajorVersion = 2;
   MSXMLMinorVersion = 0;
 
@@ -92,10 +88,8 @@ const
   IID_IXMLError: TGUID = '{948C5AD3-C58D-11D0-9C0B-00C04FC99C8E}';
   CLASS_XMLDocument: TGUID = '{CFC399AF-D876-11D0-9C10-00C04FC99C8E}';
 
-// *********************************************************************//
-// Declaration of Enumerations defined in Type Library                    
-// *********************************************************************//
-// Constants for enum tagDOMNodeType
+
+
 type
   tagDOMNodeType = TOleEnum;
 const
@@ -112,8 +106,6 @@ const
   NODE_DOCUMENT_TYPE = $0000000A;
   NODE_DOCUMENT_FRAGMENT = $0000000B;
   NODE_NOTATION = $0000000C;
-
-// Constants for enum tagXMLEMEM_TYPE
 type
   tagXMLEMEM_TYPE = TOleEnum;
 const
@@ -127,9 +119,7 @@ const
 
 type
 
-// *********************************************************************//
-// Forward declaration of types defined in TypeLibrary                    
-// *********************************************************************//
+
   IXMLDOMImplementation = interface;
   IXMLDOMImplementationDisp = dispinterface;
   IXMLDOMNode = interface;
@@ -186,10 +176,8 @@ type
   IXMLAttributeDisp = dispinterface;
   IXMLError = interface;
 
-// *********************************************************************//
-// Declaration of CoClasses defined in Type Library                       
-// (NOTE: Here we map each CoClass to its Default Interface)              
-// *********************************************************************//
+
+
   DOMDocument = IXMLDOMDocument;
   DOMFreeThreadedDocument = IXMLDOMDocument;
   XMLHTTPRequest = IXMLHttpRequest;
@@ -197,9 +185,6 @@ type
   XMLDocument = IXMLDocument2;
 
 
-// *********************************************************************//
-// Declaration of structures, unions and aliases.                         
-// *********************************************************************//
   PUserType1 = ^_xml_error; {*}
 
   DOMNodeType = tagDOMNodeType; 
@@ -215,33 +200,27 @@ type
     _reserved2: LongWord;
   end;
 
-  XMLELEM_TYPE = tagXMLEMEM_TYPE; 
+  XMLELEM_TYPE = tagXMLEMEM_TYPE;
 
-// *********************************************************************//
-// Interface: IXMLDOMImplementation
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8F-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMImplementation = interface(IDispatch)
     ['{2933BF8F-7B36-11D2-B20E-00C04F983E60}']
     function  hasFeature(const feature: WideString; const version: WideString): WordBool; safecall;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMImplementationDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8F-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMImplementationDisp = dispinterface
     ['{2933BF8F-7B36-11D2-B20E-00C04F983E60}']
     function  hasFeature(const feature: WideString; const version: WideString): WordBool; dispid 145;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMNode
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF80-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNode = interface(IDispatch)
     ['{2933BF80-7B36-11D2-B20E-00C04F983E60}']
     function  Get_nodeName: WideString; safecall;
@@ -303,11 +282,9 @@ type
     property baseName: WideString read Get_baseName;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMNodeDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF80-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNodeDisp = dispinterface
     ['{2933BF80-7B36-11D2-B20E-00C04F983E60}']
     property nodeName: WideString readonly dispid 2;
@@ -344,11 +321,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMNodeList
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF82-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNodeList = interface(IDispatch)
     ['{2933BF82-7B36-11D2-B20E-00C04F983E60}']
     function  Get_item(index: Integer): IXMLDOMNode; safecall;
@@ -361,11 +336,9 @@ type
     property _newEnum: IUnknown read Get__newEnum;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMNodeListDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF82-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNodeListDisp = dispinterface
     ['{2933BF82-7B36-11D2-B20E-00C04F983E60}']
     property item[index: Integer]: IXMLDOMNode readonly dispid 0; default;
@@ -375,11 +348,9 @@ type
     property _newEnum: IUnknown readonly dispid -4;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMNamedNodeMap
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF83-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNamedNodeMap = interface(IDispatch)
     ['{2933BF83-7B36-11D2-B20E-00C04F983E60}']
     function  getNamedItem(const name: WideString): IXMLDOMNode; safecall;
@@ -397,11 +368,9 @@ type
     property _newEnum: IUnknown read Get__newEnum;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMNamedNodeMapDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF83-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNamedNodeMapDisp = dispinterface
     ['{2933BF83-7B36-11D2-B20E-00C04F983E60}']
     function  getNamedItem(const name: WideString): IXMLDOMNode; dispid 83;
@@ -416,11 +385,9 @@ type
     property _newEnum: IUnknown readonly dispid -4;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMDocument
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF81-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMDocument = interface(IXMLDOMNode)
     ['{2933BF81-7B36-11D2-B20E-00C04F983E60}']
     function  Get_doctype: IXMLDOMDocumentType; safecall;
@@ -471,11 +438,9 @@ type
     property ontransformnode: OleVariant write Set_ontransformnode;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMDocumentDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF81-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMDocumentDisp = dispinterface
     ['{2933BF81-7B36-11D2-B20E-00C04F983E60}']
     property doctype: IXMLDOMDocumentType readonly dispid 38;
@@ -540,11 +505,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMDocumentType
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8B-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMDocumentType = interface(IXMLDOMNode)
     ['{2933BF8B-7B36-11D2-B20E-00C04F983E60}']
     function  Get_name: WideString; safecall;
@@ -555,11 +518,9 @@ type
     property notations: IXMLDOMNamedNodeMap read Get_notations;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMDocumentTypeDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8B-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMDocumentTypeDisp = dispinterface
     ['{2933BF8B-7B36-11D2-B20E-00C04F983E60}']
     property name: WideString readonly dispid 131;
@@ -599,11 +560,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMElement
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF86-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMElement = interface(IXMLDOMNode)
     ['{2933BF86-7B36-11D2-B20E-00C04F983E60}']
     function  Get_tagName: WideString; safecall;
@@ -618,11 +577,9 @@ type
     property tagName: WideString read Get_tagName;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMElementDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF86-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMElementDisp = dispinterface
     ['{2933BF86-7B36-11D2-B20E-00C04F983E60}']
     property tagName: WideString readonly dispid 97;
@@ -668,11 +625,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMAttribute
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF85-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMAttribute = interface(IXMLDOMNode)
     ['{2933BF85-7B36-11D2-B20E-00C04F983E60}']
     function  Get_name: WideString; safecall;
@@ -682,11 +637,9 @@ type
     property value: OleVariant read Get_value write Set_value;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMAttributeDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF85-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMAttributeDisp = dispinterface
     ['{2933BF85-7B36-11D2-B20E-00C04F983E60}']
     property name: WideString readonly dispid 118;
@@ -725,20 +678,16 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMDocumentFragment
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {3EFAA413-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   IXMLDOMDocumentFragment = interface(IXMLDOMNode)
     ['{3EFAA413-272F-11D2-836F-0000F87A7782}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMDocumentFragmentDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {3EFAA413-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   IXMLDOMDocumentFragmentDisp = dispinterface
     ['{3EFAA413-272F-11D2-836F-0000F87A7782}']
     property nodeName: WideString readonly dispid 2;
@@ -775,11 +724,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMCharacterData
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF84-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMCharacterData = interface(IXMLDOMNode)
     ['{2933BF84-7B36-11D2-B20E-00C04F983E60}']
     function  Get_data: WideString; safecall;
@@ -794,11 +741,9 @@ type
     property length: Integer read Get_length;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMCharacterDataDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF84-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMCharacterDataDisp = dispinterface
     ['{2933BF84-7B36-11D2-B20E-00C04F983E60}']
     property data: WideString dispid 109;
@@ -842,21 +787,17 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMText
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF87-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMText = interface(IXMLDOMCharacterData)
     ['{2933BF87-7B36-11D2-B20E-00C04F983E60}']
     function  splitText(offset: Integer): IXMLDOMText; safecall;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMTextDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF87-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMTextDisp = dispinterface
     ['{2933BF87-7B36-11D2-B20E-00C04F983E60}']
     function  splitText(offset: Integer): IXMLDOMText; dispid 123;
@@ -901,20 +842,16 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMComment
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF88-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMComment = interface(IXMLDOMCharacterData)
     ['{2933BF88-7B36-11D2-B20E-00C04F983E60}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMCommentDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF88-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMCommentDisp = dispinterface
     ['{2933BF88-7B36-11D2-B20E-00C04F983E60}']
     property data: WideString dispid 109;
@@ -958,20 +895,16 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMCDATASection
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8A-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMCDATASection = interface(IXMLDOMText)
     ['{2933BF8A-7B36-11D2-B20E-00C04F983E60}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMCDATASectionDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8A-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMCDATASectionDisp = dispinterface
     ['{2933BF8A-7B36-11D2-B20E-00C04F983E60}']
     function  splitText(offset: Integer): IXMLDOMText; dispid 123;
@@ -1016,11 +949,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMProcessingInstruction
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF89-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMProcessingInstruction = interface(IXMLDOMNode)
     ['{2933BF89-7B36-11D2-B20E-00C04F983E60}']
     function  Get_target: WideString; safecall;
@@ -1030,11 +961,9 @@ type
     property data: WideString read Get_data write Set_data;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMProcessingInstructionDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF89-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMProcessingInstructionDisp = dispinterface
     ['{2933BF89-7B36-11D2-B20E-00C04F983E60}']
     property target: WideString readonly dispid 127;
@@ -1073,20 +1002,16 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMEntityReference
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8E-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMEntityReference = interface(IXMLDOMNode)
     ['{2933BF8E-7B36-11D2-B20E-00C04F983E60}']
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMEntityReferenceDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8E-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMEntityReferenceDisp = dispinterface
     ['{2933BF8E-7B36-11D2-B20E-00C04F983E60}']
     property nodeName: WideString readonly dispid 2;
@@ -1123,11 +1048,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMParseError
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {3EFAA426-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   IXMLDOMParseError = interface(IDispatch)
     ['{3EFAA426-272F-11D2-836F-0000F87A7782}']
     function  Get_errorCode: Integer; safecall;
@@ -1146,11 +1069,9 @@ type
     property filepos: Integer read Get_filepos;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMParseErrorDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {3EFAA426-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   IXMLDOMParseErrorDisp = dispinterface
     ['{3EFAA426-272F-11D2-836F-0000F87A7782}']
     property errorCode: Integer readonly dispid 0;
@@ -1162,11 +1083,9 @@ type
     property filepos: Integer readonly dispid 184;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMNotation
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8C-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNotation = interface(IXMLDOMNode)
     ['{2933BF8C-7B36-11D2-B20E-00C04F983E60}']
     function  Get_publicId: OleVariant; safecall;
@@ -1175,11 +1094,9 @@ type
     property systemId: OleVariant read Get_systemId;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMNotationDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8C-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMNotationDisp = dispinterface
     ['{2933BF8C-7B36-11D2-B20E-00C04F983E60}']
     property publicId: OleVariant readonly dispid 136;
@@ -1218,11 +1135,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDOMEntity
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8D-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMEntity = interface(IXMLDOMNode)
     ['{2933BF8D-7B36-11D2-B20E-00C04F983E60}']
     function  Get_publicId: OleVariant; safecall;
@@ -1233,11 +1148,9 @@ type
     property notationName: WideString read Get_notationName;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDOMEntityDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {2933BF8D-7B36-11D2-B20E-00C04F983E60}
-// *********************************************************************//
+
+
+
   IXMLDOMEntityDisp = dispinterface
     ['{2933BF8D-7B36-11D2-B20E-00C04F983E60}']
     property publicId: OleVariant readonly dispid 140;
@@ -1277,11 +1190,9 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// Interface: IXTLRuntime
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {3EFAA425-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   IXTLRuntime = interface(IXMLDOMNode)
     ['{3EFAA425-272F-11D2-836F-0000F87A7782}']
     function  uniqueID(const pNode: IXMLDOMNode): Integer; safecall;
@@ -1297,11 +1208,9 @@ type
                          varDestLocale: OleVariant): WideString; safecall;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXTLRuntimeDisp
-// Flags:     (4544) Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {3EFAA425-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   IXTLRuntimeDisp = dispinterface
     ['{3EFAA425-272F-11D2-836F-0000F87A7782}']
     function  uniqueID(const pNode: IXMLDOMNode): Integer; dispid 187;
@@ -1349,22 +1258,18 @@ type
     procedure transformNodeToObject(const stylesheet: IXMLDOMNode; outputObject: OleVariant); dispid 35;
   end;
 
-// *********************************************************************//
-// DispIntf:  XMLDOMDocumentEvents
-// Flags:     (4112) Hidden Dispatchable
-// GUID:      {3EFAA427-272F-11D2-836F-0000F87A7782}
-// *********************************************************************//
+
+
+
   XMLDOMDocumentEvents = dispinterface
     ['{3EFAA427-272F-11D2-836F-0000F87A7782}']
     procedure ondataavailable; dispid 198;
     procedure onreadystatechange; dispid -609;
   end;
 
-// *********************************************************************//
-// Interface: IXMLHttpRequest
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {ED8C108D-4349-11D2-91A4-00C04F7969E8}
-// *********************************************************************//
+
+
+
   IXMLHttpRequest = interface(IDispatch)
     ['{ED8C108D-4349-11D2-91A4-00C04F7969E8}']
     procedure open(const bstrMethod: WideString; const bstrUrl: WideString; varAsync: OleVariant; 
@@ -1392,11 +1297,9 @@ type
     property onreadystatechange: IDispatch write Set_onreadystatechange;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLHttpRequestDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {ED8C108D-4349-11D2-91A4-00C04F7969E8}
-// *********************************************************************//
+
+
+
   IXMLHttpRequestDisp = dispinterface
     ['{ED8C108D-4349-11D2-91A4-00C04F7969E8}']
     procedure open(const bstrMethod: WideString; const bstrUrl: WideString; varAsync: OleVariant; 
@@ -1416,11 +1319,9 @@ type
     property onreadystatechange: IDispatch writeonly dispid 14;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDSOControl
-// Flags:     (4560) Hidden Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {310AFA62-0575-11D2-9CA9-0060B0EC3D39}
-// *********************************************************************//
+
+
+
   IXMLDSOControl = interface(IDispatch)
     ['{310AFA62-0575-11D2-9CA9-0060B0EC3D39}']
     function  Get_XMLDocument: IXMLDOMDocument; safecall;
@@ -1433,11 +1334,9 @@ type
     property readyState: Integer read Get_readyState;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDSOControlDisp
-// Flags:     (4560) Hidden Dual NonExtensible OleAutomation Dispatchable
-// GUID:      {310AFA62-0575-11D2-9CA9-0060B0EC3D39}
-// *********************************************************************//
+
+
+
   IXMLDSOControlDisp = dispinterface
     ['{310AFA62-0575-11D2-9CA9-0060B0EC3D39}']
     property XMLDocument: IXMLDOMDocument dispid 65537;
@@ -1445,11 +1344,9 @@ type
     property readyState: Integer readonly dispid -525;
   end;
 
-// *********************************************************************//
-// Interface: IXMLElementCollection
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {65725580-9B5D-11D0-9BFE-00C04FC99C8E}
-// *********************************************************************//
+
+
+
   IXMLElementCollection = interface(IDispatch)
     ['{65725580-9B5D-11D0-9BFE-00C04FC99C8E}']
     procedure Set_length(p: Integer); safecall;
@@ -1460,11 +1357,9 @@ type
     property _newEnum: IUnknown read Get__newEnum;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLElementCollectionDisp
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {65725580-9B5D-11D0-9BFE-00C04FC99C8E}
-// *********************************************************************//
+
+
+
   IXMLElementCollectionDisp = dispinterface
     ['{65725580-9B5D-11D0-9BFE-00C04FC99C8E}']
     property length: Integer dispid 65537;
@@ -1472,11 +1367,9 @@ type
     function  item(var1: OleVariant; var2: OleVariant): IDispatch; dispid 65539;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDocument
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {F52E2B61-18A1-11D1-B105-00805F49916B}
-// *********************************************************************//
+
+
+
   IXMLDocument = interface(IDispatch)
     ['{F52E2B61-18A1-11D1-B105-00805F49916B}']
     function  Get_root: IXMLElement; safecall;
@@ -1506,11 +1399,9 @@ type
     property dtdURL: WideString read Get_dtdURL;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLDocumentDisp
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {F52E2B61-18A1-11D1-B105-00805F49916B}
-// *********************************************************************//
+
+
+
   IXMLDocumentDisp = dispinterface
     ['{F52E2B61-18A1-11D1-B105-00805F49916B}']
     property root: IXMLElement readonly dispid 65637;
@@ -1527,11 +1418,9 @@ type
     function  createElement(vType: OleVariant; var1: OleVariant): IXMLElement; dispid 65644;
   end;
 
-// *********************************************************************//
-// Interface: IXMLElement
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {3F7F31AC-E15F-11D0-9C25-00C04FC99C8E}
-// *********************************************************************//
+
+
+
   IXMLElement = interface(IDispatch)
     ['{3F7F31AC-E15F-11D0-9C25-00C04FC99C8E}']
     function  Get_tagName: WideString; safecall;
@@ -1553,11 +1442,9 @@ type
     property text: WideString read Get_text write Set_text;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLElementDisp
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {3F7F31AC-E15F-11D0-9C25-00C04FC99C8E}
-// *********************************************************************//
+
+
+
   IXMLElementDisp = dispinterface
     ['{3F7F31AC-E15F-11D0-9C25-00C04FC99C8E}']
     property tagName: WideString dispid 65737;
@@ -1572,11 +1459,9 @@ type
     procedure removeChild(const pChildElem: IXMLElement); dispid 65746;
   end;
 
-// *********************************************************************//
-// Interface: IXMLDocument2
-// Flags:     (4112) Hidden Dispatchable
-// GUID:      {2B8DE2FE-8D2D-11D1-B2FC-00C04FD915A9}
-// *********************************************************************//
+
+
+
   IXMLDocument2 = interface(IDispatch)
     ['{2B8DE2FE-8D2D-11D1-B2FC-00C04FD915A9}']
     function  Get_root(out p: IXMLElement2): HResult; stdcall;
@@ -1597,11 +1482,9 @@ type
     function  Set_async(pf: WordBool): HResult; stdcall;
   end;
 
-// *********************************************************************//
-// Interface: IXMLElement2
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {2B8DE2FF-8D2D-11D1-B2FC-00C04FD915A9}
-// *********************************************************************//
+
+
+
   IXMLElement2 = interface(IDispatch)
     ['{2B8DE2FF-8D2D-11D1-B2FC-00C04FD915A9}']
     function  Get_tagName: WideString; safecall;
@@ -1625,11 +1508,9 @@ type
     property attributes: IXMLElementCollection read Get_attributes;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLElement2Disp
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {2B8DE2FF-8D2D-11D1-B2FC-00C04FD915A9}
-// *********************************************************************//
+
+
+
   IXMLElement2Disp = dispinterface
     ['{2B8DE2FF-8D2D-11D1-B2FC-00C04FD915A9}']
     property tagName: WideString dispid 65737;
@@ -1645,11 +1526,9 @@ type
     property attributes: IXMLElementCollection readonly dispid 65747;
   end;
 
-// *********************************************************************//
-// Interface: IXMLAttribute
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {D4D4A0FC-3B73-11D1-B2B4-00C04FB92596}
-// *********************************************************************//
+
+
+
   IXMLAttribute = interface(IDispatch)
     ['{D4D4A0FC-3B73-11D1-B2B4-00C04FB92596}']
     function  Get_name: WideString; safecall;
@@ -1658,49 +1537,40 @@ type
     property value: WideString read Get_value;
   end;
 
-// *********************************************************************//
-// DispIntf:  IXMLAttributeDisp
-// Flags:     (4432) Hidden Dual OleAutomation Dispatchable
-// GUID:      {D4D4A0FC-3B73-11D1-B2B4-00C04FB92596}
-// *********************************************************************//
+
+
+
   IXMLAttributeDisp = dispinterface
     ['{D4D4A0FC-3B73-11D1-B2B4-00C04FB92596}']
     property name: WideString readonly dispid 65937;
     property value: WideString readonly dispid 65938;
   end;
 
-// *********************************************************************//
-// Interface: IXMLError
-// Flags:     (16) Hidden
-// GUID:      {948C5AD3-C58D-11D0-9C0B-00C04FC99C8E}
-// *********************************************************************//
+
+
+
   IXMLError = interface(IUnknown)
     ['{948C5AD3-C58D-11D0-9C0B-00C04FC99C8E}']
     function  GetErrorInfo(var pErrorReturn: _xml_error): HResult; stdcall;
   end;
 
-// *********************************************************************//
-// The Class CoDOMDocument provides a Create and CreateRemote method to          
-// create instances of the default interface IXMLDOMDocument exposed by              
-// the CoClass DOMDocument. The functions are intended to be used by             
-// clients wishing to automate the CoClass objects exposed by the         
-// server of this typelibrary.                                            
-// *********************************************************************//
+
+
+
+
+
   CoDOMDocument = class
     class function Create: IXMLDOMDocument;
     class function CreateRemote(const MachineName: string): IXMLDOMDocument;
   end;
 
 
-// *********************************************************************//
-// OLE Server Proxy class declaration
-// Server Object   : TDOMDocument
-// Help String     : W3C-DOM XML Document
-// Default Interface: IXMLDOMDocument
-// Def. Intf. DISP?: No
-// Event   Interface: XMLDOMDocumentEvents
-// TypeFlags       : (2) CanCreate
-// *********************************************************************//
+
+
+
+
+
+
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
   TDOMDocumentProperties= class;
 {$ENDIF}
@@ -1779,12 +1649,11 @@ type
   end;
 
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-// *********************************************************************//
-// OLE Server Properties Proxy Class
-// Server Object   : TDOMDocument
-// (This object is used by the IDE's Property Inspector to allow editing
-//  of the properties of this server)
-// *********************************************************************//
+
+
+
+
+
  TDOMDocumentProperties = class(TPersistent)
   private
     FServer:    TDOMDocument;
@@ -1820,28 +1689,22 @@ type
 {$ENDIF}
 
 
-// *********************************************************************//
-// The Class CoDOMFreeThreadedDocument provides a Create and CreateRemote method to          
-// create instances of the default interface IXMLDOMDocument exposed by              
-// the CoClass DOMFreeThreadedDocument. The functions are intended to be used by             
-// clients wishing to automate the CoClass objects exposed by the         
-// server of this typelibrary.                                            
-// *********************************************************************//
+
+
+
+
   CoDOMFreeThreadedDocument = class
     class function Create: IXMLDOMDocument;
     class function CreateRemote(const MachineName: string): IXMLDOMDocument;
   end;
 
 
-// *********************************************************************//
-// OLE Server Proxy class declaration
-// Server Object   : TDOMFreeThreadedDocument
-// Help String     : W3C-DOM XML Document (Apartment)
-// Default Interface: IXMLDOMDocument
-// Def. Intf. DISP?: No
-// Event   Interface: XMLDOMDocumentEvents
-// TypeFlags       : (2) CanCreate
-// *********************************************************************//
+
+
+
+
+
+
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
   TDOMFreeThreadedDocumentProperties= class;
 {$ENDIF}
@@ -1920,12 +1783,11 @@ type
   end;
 
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-// *********************************************************************//
-// OLE Server Properties Proxy Class
-// Server Object   : TDOMFreeThreadedDocument
-// (This object is used by the IDE's Property Inspector to allow editing
-//  of the properties of this server)
-// *********************************************************************//
+
+
+
+
+
  TDOMFreeThreadedDocumentProperties = class(TPersistent)
   private
     FServer:    TDOMFreeThreadedDocument;
@@ -1961,28 +1823,22 @@ type
 {$ENDIF}
 
 
-// *********************************************************************//
-// The Class CoXMLHTTPRequest provides a Create and CreateRemote method to          
-// create instances of the default interface IXMLHttpRequest exposed by              
-// the CoClass XMLHTTPRequest. The functions are intended to be used by             
-// clients wishing to automate the CoClass objects exposed by the         
-// server of this typelibrary.                                            
-// *********************************************************************//
+
+
+
+
   CoXMLHTTPRequest = class
     class function Create: IXMLHttpRequest;
     class function CreateRemote(const MachineName: string): IXMLHttpRequest;
   end;
 
 
-// *********************************************************************//
-// OLE Server Proxy class declaration
-// Server Object   : TXMLHTTPRequest
-// Help String     : XML HTTP Request class.
-// Default Interface: IXMLHttpRequest
-// Def. Intf. DISP?: No
-// Event   Interface: 
-// TypeFlags       : (2) CanCreate
-// *********************************************************************//
+
+
+
+
+
+
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
   TXMLHTTPRequestProperties= class;
 {$ENDIF}
@@ -2038,12 +1894,11 @@ type
   end;
 
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-// *********************************************************************//
-// OLE Server Properties Proxy Class
-// Server Object   : TXMLHTTPRequest
-// (This object is used by the IDE's Property Inspector to allow editing
-//  of the properties of this server)
-// *********************************************************************//
+
+
+
+
+
  TXMLHTTPRequestProperties = class(TPersistent)
   private
     FServer:    TXMLHTTPRequest;
@@ -2065,28 +1920,22 @@ type
 {$ENDIF}
 
 
-// *********************************************************************//
-// The Class CoXMLDSOControl provides a Create and CreateRemote method to          
-// create instances of the default interface IXMLDSOControl exposed by              
-// the CoClass XMLDSOControl. The functions are intended to be used by             
-// clients wishing to automate the CoClass objects exposed by the         
-// server of this typelibrary.                                            
-// *********************************************************************//
+
+
+
+
   CoXMLDSOControl = class
     class function Create: IXMLDSOControl;
     class function CreateRemote(const MachineName: string): IXMLDSOControl;
   end;
 
 
-// *********************************************************************//
-// OLE Server Proxy class declaration
-// Server Object   : TXMLDSOControl
-// Help String     : XML Data Source Object
-// Default Interface: IXMLDSOControl
-// Def. Intf. DISP?: No
-// Event   Interface: 
-// TypeFlags       : (2) CanCreate
-// *********************************************************************//
+
+
+
+
+
+
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
   TXMLDSOControlProperties= class;
 {$ENDIF}
@@ -2122,12 +1971,11 @@ type
   end;
 
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-// *********************************************************************//
-// OLE Server Properties Proxy Class
-// Server Object   : TXMLDSOControl
-// (This object is used by the IDE's Property Inspector to allow editing
-//  of the properties of this server)
-// *********************************************************************//
+
+
+
+
+
  TXMLDSOControlProperties = class(TPersistent)
   private
     FServer:    TXMLDSOControl;
@@ -2148,28 +1996,22 @@ type
 {$ENDIF}
 
 
-// *********************************************************************//
-// The Class CoXMLDocument provides a Create and CreateRemote method to          
-// create instances of the default interface IXMLDocument2 exposed by              
-// the CoClass XMLDocument. The functions are intended to be used by             
-// clients wishing to automate the CoClass objects exposed by the         
-// server of this typelibrary.                                            
-// *********************************************************************//
+
+
+
+
   CoXMLDocument = class
     class function Create: IXMLDocument2;
     class function CreateRemote(const MachineName: string): IXMLDocument2;
   end;
 
 
-// *********************************************************************//
-// OLE Server Proxy class declaration
-// Server Object   : TXMLDocument
-// Help String     : XMLDocument extends IXML Document.  It is obsolete.  You should use DOMDocument.  This object should not be confused with the XMLDocument property on the XML data island.
-// Default Interface: IXMLDocument2
-// Def. Intf. DISP?: No
-// Event   Interface: 
-// TypeFlags       : (2) CanCreate
-// *********************************************************************//
+
+
+
+
+
+
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
   TXMLDocumentProperties= class;
 {$ENDIF}
@@ -2208,12 +2050,11 @@ type
   end;
 
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-// *********************************************************************//
-// OLE Server Properties Proxy Class
-// Server Object   : TXMLDocument
-// (This object is used by the IDE's Property Inspector to allow editing
-//  of the properties of this server)
-// *********************************************************************//
+
+
+
+
+
  TXMLDocumentProperties = class(TPersistent)
   private
     FServer:    TXMLDocument;
@@ -2236,9 +2077,6 @@ type
   end;
 {$ENDIF}
 
-
-// XML-components should not be regisgtered in Delphi by this unit.
-// procedure Register;
 
 implementation
 
@@ -2328,7 +2166,7 @@ end;
 procedure TDOMDocument.InvokeEvent(DispID: TDispID; var Params: TVariantArray);
 begin
   case DispID of
-    -1: Exit;  // DISPID_UNKNOWN
+    -1: Exit;
    198: if Assigned(FOnondataavailable) then
             FOnondataavailable(Self);
    -609: if Assigned(FOnonreadystatechange) then
@@ -2690,7 +2528,7 @@ end;
 procedure TDOMFreeThreadedDocument.InvokeEvent(DispID: TDispID; var Params: TVariantArray);
 begin
   case DispID of
-    -1: Exit;  // DISPID_UNKNOWN
+    -1: Exit;
    198: if Assigned(FOnondataavailable) then
             FOnondataavailable(Self);
    -609: if Assigned(FOnonreadystatechange) then

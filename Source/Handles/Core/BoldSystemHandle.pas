@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSystemHandle;
 
 interface
@@ -9,7 +12,8 @@ uses
   BoldPersistenceHandle,
   BoldSubscription,
   BoldHandles,
-  BoldLockRegions;
+  BoldLockRegions,
+  BoldAbstractPersistenceHandleDB;
 
 type
   { Forward declaration of classes }
@@ -38,6 +42,7 @@ type
     procedure ReadTrackBold(Reader: TReader);
     procedure SetOnOptimisticLockingFailed(const Value: TBoldOptimisticLockingFailedEvent);
     procedure SetOnPreUpdate(Value: TNotifyEvent);
+    function GetPersistenceHandleDB: TBoldAbstractPersistenceHandleDB;
   protected
     function GetValue: TBoldElement; override;
     procedure Loaded; override;
@@ -54,6 +59,7 @@ type
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; override;
     property Persistent: Boolean read GetPersistent;
     property RegionFactory: TBoldRegionFactory read fRegionFactory;
+    property PersistenceHandleDB: TBoldAbstractPersistenceHandleDB read GetPersistenceHandleDB;
   published
     property AutoActivate: Boolean read GetAutoActivate write SetAutoActivate default False;
     {$IFNDEF T2H}
@@ -73,7 +79,7 @@ uses
   BoldRegionDefinitions,
   BoldEnvironment,
   BoldPersistenceController,
-  HandlesConst;
+  BoldPersistenceHandlePassthrough;
 
 const
   brePersistenceHandleDestroying = 100;
@@ -111,7 +117,7 @@ begin
   if Assigned(System) then
     System.UpdateDatabase
   else
-    raise EBold.CreateFmt(sCannotUpdateDatebaseWithoutSystem, [ClassName, Name]);
+    raise EBold.CreateFmt('%s.UpdateDatabase (%s) cannot be invoked without a system', [ClassName, Name]);
 end;
 
 function TBoldSystemHandle.GetSystem: TBoldSystem;
@@ -124,7 +130,6 @@ begin
   if Value <> fAutoActivate then
   begin
     fAutoActivate := Value;
-    //  During read AutoActivate means Activate!
     if (csReading in ComponentState) and
       not (csDesigning in ComponentState) then
       Active := AutoActivate;
@@ -139,8 +144,8 @@ end;
 procedure TBoldSystemHandle.SetActive(Value: Boolean);
 var
   PController: TBoldPersistenceController;
+  vBoldSystem: TBoldSystem;
 begin
-  //  During read Activation is deferred to Loaded
   if csReading in ComponentState then
     FStreamedActive := Value
   else
@@ -148,15 +153,17 @@ begin
     begin
       if Value then
       begin
+        if (csDesigning in ComponentState) then
+          exit;
         if not assigned(SystemTypeInfoHandle) then
-          raise EBold.CreateFmt(sUnableToActivateSystemWithoutTypeInfoHandle, [name]);
+          raise EBold.CreateFmt('Unable to activate a system without a SystemTypeInfoHandle (%s)', [name]);
 
         if not assigned(StaticSystemTypeInfo) then
-          raise EBold.Create(sUnableToFindTypeInfoHandle);
+          raise EBold.Create('Unable to find a SystemTypeInfo. Possible misstakes: Forgot to connect the SystemTypeInfoHandle to a Model, CreationOrder of the forms/dataModules');
 
         if not StaticSystemTypeInfo.SystemIsRunnable then
-          raise EBold.CreateFmt(sUnableToActivateSystem, [BOLDCRLF,
-                             StaticSystemTypeInfo.InitializationLog.Text]);
+          raise EBold.Create('Unable to activate system. Initialization errors in StaticSystemTypeInfo:' + BOLDCRLF +
+                             StaticSystemTypeInfo.InitializationLog.Text);
 
         if Persistent then
         begin
@@ -169,22 +176,21 @@ begin
         if assigned(SystemTypeInfoHandle.RegionDefinitions) and not assigned(fRegionFactory) then
         begin
           SystemTypeInfoHandle.RegionDefinitions.AddSmallSubscription(fRegionDefinitionSubscriber, [beDestroying], breRegionDefinitionsDestroying);
-          SystemTypeInfoHandle.RegionDefinitions.AddSmallSubscription(fRegionDefinitionSubscriber, [beRegionDefinitionClearing], breRegionDefinitionClearing);
+          SystemTypeInfoHandle.RegionDefinitions.AddSubscription(fRegionDefinitionSubscriber, beRegionDefinitionClearing, breRegionDefinitionClearing);
           fRegionFactory := TBoldRegionFactory.Create(SystemTypeInfoHandle.RegionDefinitions);
         end;
 
-        try // will fail if no license
+        try
           fBoldSystem := TBoldSystem.CreatewithTypeInfo(nil, StaticSystemTypeInfo, PController, fRegionFactory);
-        except  // If license control failed
-          fBoldSystem := nil; // Make sure we're not active
+        except
+          fBoldSystem := nil;
           FreeAndNil(fRegionFactory);
           if Persistent then
             PersistenceHandle.Active := False;
           raise;
-          //FIXME: Other cleanup required?
         end;
 
-        if Active then // I.e. there was a license
+        if Active then
         begin
           fBoldSystem.Evaluator.SetLookupOclDefinition(fOnLookupOclDefinition);
           fBoldSystem.IsDefault := IsDefault;
@@ -194,10 +200,12 @@ begin
       end
       else
       begin
+        fBoldSystem.EnsureCanDestroy;
+        vBoldSystem := fBoldSystem;
+        fBoldSystem := nil;
         if Persistent then
           PersistenceHandle.Active := false;
-        fBoldSystem.EnsureCanDestroy; //Will raise exception of destructor is constrained
-        FreeAndNil(fBoldSystem);
+        FreeAndNil(vBoldSystem);
         FreeAndNil(fRegionFactory);
       end;
       SendEvent(Self, beValueIdentityChanged);
@@ -215,11 +223,28 @@ begin
   begin
     fPersistenceHandleSubscriber.CancelAllSubscriptions;
     if Active then
-      PanicShutDownSystem(sPersistenceHandleChangedOnRunningSystem);
+      PanicShutDownSystem('PersistenceHandle was changed on a running system.');
     fPersistenceHandle := NewHandle;
     if assigned(fPersistenceHandle) then
       fPersistenceHandle.AddSmallSubscription(fPersistenceHandleSubscriber, [beDestroying], brePersistenceHandleDestroying);
   end;
+end;
+
+function TBoldSystemHandle.GetPersistenceHandleDB: TBoldAbstractPersistenceHandleDB;
+var
+  Handle: TBoldPersistenceHandle;
+begin
+  result := nil;
+  Handle := PersistenceHandle;
+  repeat
+    if Handle is TBoldAbstractPersistenceHandleDB then
+      result := TBoldAbstractPersistenceHandleDB(Handle)
+    else
+    if Handle is TBoldPersistenceHandlePassthrough then
+      Handle := TBoldPersistenceHandlePassthrough(Handle).NextPersistenceHandle
+    else
+      exit;
+  until Assigned(result) or not Assigned(Handle);
 end;
 
 function TBoldSystemHandle.GetPersistent: Boolean;
@@ -231,14 +256,15 @@ procedure TBoldSystemHandle.ModelChanged;
 var
   WasActive: Boolean;
 begin
-  if Active then
-    PanicShutDownSystem(sModelChangedOnRunningSystem);
   WasActive := Active;
+  if Active then
+    PanicShutDownSystem('The model changed in a running system');
   Active := False;
-  if WasActive then
+{  if WasActive then
     Active := True
   else
-    SendEvent(self, beValueIdentityChanged);  // type change regarded as idenitychange
+}
+    SendEvent(self, beValueIdentityChanged);
 end;
 
 function TBoldSystemHandle.GetValue: TBoldElement;
@@ -249,12 +275,12 @@ end;
 procedure TBoldSystemHandle.DefineProperties(Filer: TFiler);
 begin
   inherited;
-  Filer.DefineProperty('TrackBold', ReadTrackBold, nil, False); // do not localize
+  Filer.DefineProperty('TrackBold', ReadTrackBold, nil, False);
 end;
 
 procedure TBoldSystemHandle.ReadTrackBold(Reader: TReader);
 begin
-  Reader.ReadBoolean; // Just throw it away
+  Reader.ReadBoolean;
 end;
 
 procedure TBoldSystemHandle._ReceivePersistenceHandle(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
@@ -271,13 +297,13 @@ begin
     beRegionDefinitionClearing:
     begin
       if Active then
-        PanicShutDownSystem(sRegionDefinitionsRemovedFromRunningSystem);
+        PanicShutDownSystem('RegionDefinitions were removed from a running system.');
       FreeAndNil(fRegionFactory);
     end;
   end;
 end;
 
-constructor TBoldSystemHandle.create(owner: TComponent);
+constructor TBoldSystemHandle.Create(owner: TComponent);
 begin
   inherited;
   fPersistenceHandleSubscriber := TBoldPassthroughSubscriber.Create(_ReceivePersistenceHandle);
@@ -288,7 +314,6 @@ procedure TBoldSystemHandle.PanicShutDownSystem(Message: String);
 var
   DirtyCount: integer;
 begin
-  // if we are destroying, then we can just ignore this problem,
   if csDestroying in ComponentState then
     exit;
   try
@@ -296,13 +321,13 @@ begin
     System.Discard;
     Active := False;
     if DirtyCount >0 then
-      raise EBold.CreateFmt(sPanicShutDown, [Message, BOLDCRLF, system.DirtyObjects.Count]);
+      raise EBold.CreateFmt(Message + BOLDCRLF + 'System Panic shut down. %d objects discarded', [system.DirtyObjects.Count]);
   except
     on e: Exception do
      if BoldEffectiveEnvironment.RunningInIDE then
        BoldEffectiveEnvironment.HandleDesigntimeException(Self)
      else
-       raise;
+       raise;  
   end;
 end;
 
@@ -311,7 +336,7 @@ begin
   fOnLookupOclDefinition := Value;
   if assigned(SystemTypeInfoHandle) then
     SystemTypeInfoHandle.InstallOclDefinitionLookUp(Value);
-
+     
   if Active then
     System.Evaluator.SetLookupOclDefinition(value);
 end;
@@ -338,8 +363,6 @@ begin
     fBoldSystem.OnPreUpdate := Value;
 end;
 
+initialization
+
 end.
-
-
-
-

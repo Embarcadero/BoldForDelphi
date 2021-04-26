@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockingReg;
 
 interface
@@ -14,7 +17,6 @@ uses
   BoldIDEConsts,
   BoldLockingHandles;
 
-{.$R *.res}
 
 procedure RegisterComponentsOnPalette;
 begin
@@ -27,3 +29,4 @@ begin
 end;
 
 end.
+

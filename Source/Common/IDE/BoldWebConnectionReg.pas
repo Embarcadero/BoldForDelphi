@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWebConnectionReg;
 
 interface
@@ -23,3 +26,4 @@ begin
 end;
 
 end.
+

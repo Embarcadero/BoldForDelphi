@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldConcurrencyControlReg;
 
 interface
@@ -7,14 +10,10 @@ procedure Register;
 implementation
 
 uses
-  SysUtils,
   BoldLockManagerAdminHandleCom,
   BoldLockManagerHandleCom,
   BoldIDEConsts,
   Classes;
-
-{$R *.res}
-
 
 procedure RegisterComponentsOnPalette;
 begin
@@ -23,7 +22,6 @@ begin
     TBoldLockManagerHandleCom
   ]);
 end;
-
 
 procedure Register;
 begin

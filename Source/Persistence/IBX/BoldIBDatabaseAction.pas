@@ -1,10 +1,13 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIBDatabaseAction;
 
 interface
 
 uses
   Classes,
-  IBDatabase,
+  IBX.IBDatabase,
   BoldActions,
   BoldSQLDatabaseConfig,
   BoldPersistenceHandle,
@@ -53,10 +56,11 @@ type
 implementation
 uses
   BoldDefs,
-  Controls, // crHourGlass
-  Forms, // screen
+  Controls,
+  Forms,
   BoldActionDefs,
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 
 { TBoldIBDatabaseAction }
@@ -108,7 +112,7 @@ end;
 
 function TBoldIBDatabaseAction.GetEffectiveDatabaseName: String;
 begin
-  result := ChangeFileExt(ParamStr(0), '.gdb'); // do not localize
+  result := ChangeFileExt(ParamStr(0), '.gdb');
 end;
 
 function TBoldIBDatabaseAction.GetIBDatabase: TIBDatabase;
@@ -154,11 +158,11 @@ begin
       if IBDatabase.SQLDialect = 3 then
         DatabaseAdapterIB.DatabaseEngine := dbeInterbaseSQLDialect3;
     end;
-    if IBDatabase.Params.Values['user_name'] = '' then // do not localize
-      IBDatabase.Params.Values['user_name'] := Username; // do not localize
-    if IBDatabase.Params.Values['password'] = '' then // do not localize
-      IBDatabase.Params.Values['password'] := Password; // do not localize
-    if IBDatabase.Params.Values['password'] <> '' then // do not localize
+    if IBDatabase.Params.Values['user_name'] = '' then
+      IBDatabase.Params.Values['user_name'] := Username;
+    if IBDatabase.Params.Values['password'] = '' then
+      IBDatabase.Params.Values['password'] := Password;
+    if IBDatabase.Params.Values['password'] <> '' then
       IBDatabase.LoginPrompt := false;
 
     if IBDatabase.DatabaseName = '' then
@@ -206,4 +210,5 @@ begin
   fUserName := trim(Value);
 end;
 
+initialization
 end.

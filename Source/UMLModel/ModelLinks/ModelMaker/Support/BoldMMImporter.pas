@@ -1,7 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMMImporter;
 
-interface
- { TODO : Optimize datatype access in same way as roselink }
+interface 
 
 uses
   BoldUMLModel,
@@ -14,7 +16,7 @@ const
   aeTarget = 2;
 
 type
- TPass = (PASS1, PASS2);  // Pass1 = classes only, pass2 = attributes, inheritance and associations
+ TPass = (PASS1, PASS2);
 
   TMMModelImporter = class
   private
@@ -45,11 +47,9 @@ uses
   BoldDefaultTaggedValues,
   BoldTaggedValueSupport,
   BoldUMLTypes,
-  BoldUMLDelphiSupport,  // Needs new version
+  BoldUMLDelphiSupport,
   BoldUMLModelLinkSupport
   ;
-
-// Utility functions
 
 function Prefix(name: string): string;
 begin
@@ -238,13 +238,10 @@ begin
     TBoldUMLSupport.AddToolId(UMLAssociation, IntToStr(MMProperty.ID));
     Name := MMProperty.Name;
     UMLAssociation.name := Name;
-    UMLAssociation.stereotypeName := MMProperty.Category;
-    {TODO : Persistance for Association. Add a tagged value, as in Rose}
+    UMLAssociation.stereotypeName := MMProperty.Category; 
     UMLAssociation.visibility := UMLVisibility(MMProperty.Visibility);
-    // Create the two AssociationEnds, and pull information from the "visualisation"
-    // Treat ends separately
+
     MMMemberVisualization := MMProperty as IMMMemberVisualization;
-    // Note! Order of source and target is important. Used when distributing TVs.
     SourceUMLAssociationEnd := UMLAssociation.connection.AddNew;
     TargetUMLAssociationEnd := UMLAssociation.connection.AddNew;
     GetTaggedValuesAndConstraints(MMProperty as IMMModelPart, UMLAssociation);
@@ -325,8 +322,7 @@ begin
     Name := MMProperty.Name;
     UMLAttribute.name := Name;
     UMLAttribute.stereotypeName := MMProperty.Category;
-    GetTaggedValuesAndConstraints(MMProperty as IMMModelPart, UMLAttribute);
-    {TODO : Persistance for attributes. Add a tagged value, as in Rose}
+    GetTaggedValuesAndConstraints(MMProperty as IMMModelPart, UMLAttribute); 
     UMLAttribute.typeName := MMProperty.DataName;
     if MMProperty.DefaultSpec =  dsDefault then
       UMLAttribute.initialValue := MMProperty.DefaultSpecStr;
@@ -341,7 +337,6 @@ procedure TMMModelImporter.ImportClass(MMClass: IMMClass;
 var
   i: integer;
   UMLClass: TUMLClass;
-//  MMV9ClassBase: IMMV9ClassBase;
   MMMember: IMMMember;
   name: string;
 begin
@@ -359,11 +354,10 @@ begin
     end;
     UMLClass.stereotypeName := MMClass.Category;
     UMLClass.isAbstract := MMClass.Options[classAbstract];
-//    if MMClass.QueryInterface(IMMV9ClassBase, MMV9ClassBase) = S_OK then
-//      UMLClass.Persistent := MMV9ClassBase.IsPersistent;
+
     GetTaggedValuesAndConstraints(MMClass as IMMModelPart, UMLClass);
     end
-    else // pass2
+    else
     begin
       name := MMclass.Name;
       if name = 'TObject' then
@@ -371,24 +365,24 @@ begin
         name := 'BusinessClassesRoot';
       end;
 
-      UMLClass := UMLPackage.EvaluateExpressionAsDirectElement(Format('classes->select(name=''%s'')->first', [Name])) as TUMLClass;  { TODO : Locate by MM-id }
+      UMLClass := UMLPackage.EvaluateExpressionAsDirectElement(Format('classes->select(name=''%s'')->first', [Name])) as TUMLClass; 
       Assert(Assigned(UMLClass));
       if MMClass.Ancestor <> nil then
-        UMLClass.SetFirstParent(UMLPackage.EvaluateExpressionAsDirectElement(Format('classes->select(name=''%s'')->first', [MMClass.Ancestor.Name])) as TUMLClass);    { TODO : Locate by MM-id }
+        UMLClass.SetFirstParent(UMLPackage.EvaluateExpressionAsDirectElement(Format('classes->select(name=''%s'')->first', [MMClass.Ancestor.Name])) as TUMLClass); 
       for I := 0 to MMClass.MemberCount-1 do
       begin
         MMMember := MMClass.Members[i];
         case MMMember.MemberType of
           cpResClause:
-            ; // Just ignore silently
+            ;
           cpField:
-            ; // Just ignore silently
+            ;
           cpMethod:
             ImportMethod(MMMember as IMMMethod, UMLClass);
           cpProperty:
             ImportProperty(MMMember as IMMProperty, UMLClass);
           cpEvent:
-            ; // Just ignore silently
+            ;
           else
             raise EBold.Create('Unknown Membertype');
         end;
@@ -404,7 +398,7 @@ var
 begin
   if (MMethod.MethodKind in [mkConstructor, mkDestructor]) or
   (MMethod.BindingKind = bkMessage) then
-    Exit; // Silently ignore constructors/destructors
+    Exit;
   UMLOperation := TUMLOperation.Create(UMLClass.BoldSystem);
   UMLOperation.owner := UMLClass;
   TBoldUMLSupport.EnsureBoldTaggedValues(UMLOperation);
@@ -452,7 +446,7 @@ var
 begin
   if Pass = PASS2 then
   begin
-    TypeAsUMLClass :=  UMLClass.namespace_.EvaluateExpressionAsDirectElement(Format('classes->select(name=''%s'')->first', [MMProperty.DataName])) as TUMLClass;  { TODO : Locate by MM-id };
+    TypeAsUMLClass :=  UMLClass.namespace_.EvaluateExpressionAsDirectElement(Format('classes->select(name=''%s'')->first', [MMProperty.DataName])) as TUMLClass; ;
     if Assigned(TypeAsUMLClass) then
       ImportAssociationProperty(MMProperty, UMLClass, TypeAsUMLClass)
     else
@@ -469,7 +463,6 @@ begin
   begin
     ClassBase := MMModel.Classes[i];
     if ClassBase.IsInterface then
-      // Nothing yet
     else
        ImportClass(ClassBase as IMMClass, fUMLModel)
   end;

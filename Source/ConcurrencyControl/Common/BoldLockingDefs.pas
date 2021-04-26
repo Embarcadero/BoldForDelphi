@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockingDefs;
 
 interface
@@ -9,6 +12,9 @@ const
   BOLD_DBLOCK_NAME = 'DBLock';
 
 implementation
+uses
+  BoldRev;
+
+initialization
 
 end.
-

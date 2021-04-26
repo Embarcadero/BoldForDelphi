@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComUtils;
 
 interface
@@ -215,25 +218,21 @@ function BoldVariantIsNamedValues(V: OleVariant): Boolean;
 var
   Va: OleVariant;
 begin
-  // Variant must be array
   Result := VarIsArray(V);
   if Result then
   begin
-    // Array must contain two elements, index 0 and 1
     Result := VarArrayDimCount(V) = 1;
     Result := Result and (VarArrayLowBound(V,1) = 0);
     Result := Result and (VarArrayHighBound(V,1) = 1);
   end;
   if Result then
   begin
-    // First element must be string array
     Va := V[0];
     Result := VarIsArray(Va) and
       ((VarType(Va) and varTypeMask) = varOleStr) and (VarArrayDimCount(Va) = 1);
   end;
   if Result then
   begin
-    // Second element must be variant array
     Va := V[1];
     Result := VarIsArray(Va) and
       ((VarType(Va) and varTypeMask) = varVariant) and (VarArrayDimCount(Va) = 1);
@@ -343,12 +342,11 @@ end;
 
 procedure BoldSetSecurityForInterface(AuthenticationLevel, ImpersonationLevel: longint; Unk: IUnknown);
 begin
-  //TODO: this doens't seem to work
   CoSetProxyBlanket(Unk, RPC_C_AUTHN_LEVEL_NONE, RPC_C_AUTHNZ_NONE, nil, AuthenticationLevel, ImpersonationLevel,
                       nil, EOAC_NONE);
 end;
 
-initialization // empty
+initialization
 
 finalization
   if NeedToUninitialize then CoUninitialize;

@@ -1,9 +1,16 @@
+
+{ Global compiler directives }
+{$include bold.inc}
+
 unit BoldOclVariables;
 
 interface
 
 uses
   Classes,
+{$IFNDEF BOLD_DELPHI16_OR_LATER}
+  Controls, //   TDate = type TDateTime;
+{$ENDIF}
   BoldSubscription,
   BoldHandles,
   BoldElements;
@@ -20,11 +27,13 @@ type
   private
     fHandle: TBoldElementHandle;
     fUseListElement: Boolean;
-    fhandleSubscriber: TBoldPassThroughSubscriber;
+    fHandleSubscriber: TBoldPassThroughSubscriber;
     procedure _ReceiveHandleEvent(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    procedure SetHandle(const Value: TBoldElementHandle);
   protected
     function GetValue: TBoldElement; override;
     function GetValueType: TBoldElementTypeInfo; override;
+    property Handle: TBoldElementHandle read fHandle write SetHandle;
   public
     constructor Create(Name: String; Handle: TBoldElementHandle; UseListElement: Boolean);
     destructor Destroy; override;
@@ -35,17 +44,40 @@ type
   private
     fVariableTupleList: TBoldVariableTupleList;
     fVariableList: TBoldExternalVariableList;
+    fGlobalSystemHandle: TBoldAbstractSystemhandle;
+    fSubscriber: TBoldPassthroughSubscriber;
     procedure SetVariableTupleList(const Value: TBoldVariableTupleList);
     procedure VariablesChanged;
     function GetVariableList: TBoldExternalVariableList;
+    procedure SetGlobalSystemHandle(aSystemHandle: TBoldAbstractSystemhandle);
+    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    procedure PlaceSubscriptions;
+    procedure SubscribeToHandle(AHandle: TBoldElementHandle);
+    function GetGlobalSystemHandle: TBoldAbstractSystemhandle;
+    function GetVariableFromHandle(AHandle: TBoldElementHandle): TBoldExternalVariable;
+  protected
+    procedure Loaded; override;
+    procedure RegisterVariables;
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
-    procedure SubscribeToHandles(Subscriber: TBoldSubscriber);
+    procedure SubscribeToHandles(Subscriber: TBoldSubscriber); overload;
+    procedure SubscribeToHandles(Subscriber: TBoldSubscriber; Expression: string); overload;
+    function AddVariable(aVariableName: string; aBoldHandle: TBoldElementHandle; aUseListElement: boolean = false): TBoldVariableTuple;
+    procedure AddVariables(aBoldOclVariables: TBoldOclVariables);
+    function FindVariableByName(const aVariableName: string): TBoldExternalVariable;
+    function GetVariableValue(const aVariableName: string): TBoldElement;
     function LinksToHandle(Handle: TBoldElementHandle): Boolean;
     property VariableList: TBoldExternalVariableList read GetVariableList;
   published
+    property GlobalSystemHandle: TBoldAbstractSystemhandle read GetGlobalSystemHandle write SetGlobalSystemHandle;
     property Variables: TBoldVariableTupleList read fVariableTupleList write SetVariableTupleList;
+  end;
+
+  TBoldVariableTupleListEnumerator = class(TCollectionEnumerator)
+  public
+    function GetCurrent: TBoldVariableTuple;
+    property Current: TBoldVariableTuple read GetCurrent;
   end;
 
   { TBoldVariableTupleList }
@@ -53,15 +85,18 @@ type
   private
     fOwningDefinition: TBoldOclVariables;
     function GetItems(Index: integer): TBoldVariableTuple;
+    function GetVariableByName(const aName: string): TBoldVariableTuple;
   protected
     function GetOwner: TPersistent; override;
     property OwningDefinition: TBoldOclVariables read fOwningDefinition;
   public
     constructor Create(aOwningDefinition: TBoldOclVariables);
+    function GetEnumerator: TBoldVariableTupleListEnumerator;
     function NameIsUnique(Name: String): Boolean;
     function NameIsValid(Name: String): Boolean;
     function GetUniqueName: String;
     property Items[Index: integer]: TBoldVariableTuple read GetItems; default;
+    property VariableByName[const aName: string]: TBoldVariableTuple read GetVariableByName;
   end;
 
   { TBoldVariableTuple }
@@ -82,7 +117,7 @@ type
     function GetDisplayName: string; override;
   public
     constructor Create(Collection: TCollection); override;
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure Assign(Source: TPersistent); override;
     function LinksToHandle(Handle: TBoldElementHandle): Boolean;
     property TupleList: TBoldVariableTupleList read GetTupleList;
@@ -90,7 +125,27 @@ type
   published
     property BoldHandle: TBoldElementHandle read FBoldHandle write SetBoldHandle;
     property VariableName: String read FVariableName write SetVariableName;
-    property UseListElement: Boolean read fUseListElement write SetUseListElement;
+    property UseListElement: Boolean read fUseListElement write SetUseListElement default false;
+  end;
+
+
+  TBoldOclVariable = class(TBoldExternalVariable)
+  private
+    fBoldIndirectElement: TBoldIndirectElement;
+    fBoldElementTypeInfo: TBoldElementTypeInfo;
+    function GetBoldIndirectElement: TBoldIndirectElement;
+  protected
+    function GetValue: TBoldElement; override;
+    function GetValueType: TBoldElementTypeInfo; override;
+  public
+    constructor Create(const aName: string; aValue: TBoldElement{; aOwnsValue: boolean = false}); overload;
+    constructor CreateWithTypeInfo(const aName: string; AValue: TBoldElement; aBoldElementTypeInfo: TBoldElementTypeInfo);
+    constructor CreateFromIndirectElement(const aName: string; aBoldIndirectElement: TBoldIndirectElement);
+    constructor CreateStringVariable(const aName: string; const aValue: string);
+    constructor CreateDateVariable(const aName: string; const aValue: TDate);
+    constructor CreateDateTimeVariable(const aName: string; const aValue: TDateTime);
+    destructor Destroy; override;
+    property BoldIndirectElement: TBoldIndirectElement read GetBoldIndirectElement;
   end;
 
 implementation
@@ -98,25 +153,97 @@ implementation
 uses
   SysUtils,
   BoldDefs,
+  BoldSystem,
   BoldRootedHandles,
-  HandlesConst,
-  BoldAbstractListHandle;
+  BoldAbstractListHandle,
+  BoldAttributes,
+  BoldUtils;
 
 { TBoldOclVariables }
+
+function TBoldOclVariables.AddVariable(aVariableName: string;
+  aBoldHandle: TBoldElementHandle; aUseListElement: boolean): TBoldVariableTuple;
+begin
+  result := Variables.VariableByName[aVariableName];
+  if not Assigned(result) then
+  begin
+    result := Variables.Add as TBoldVariableTuple;
+    result.VariableName := aVariableName;    
+  end;
+  result.BoldHandle := aBoldHandle;
+  result.UseListElement := aUseListElement;
+end;
+
+procedure TBoldOclVariables.AddVariables(aBoldOclVariables: TBoldOclVariables);
+var
+  i: integer;
+  lBoldVariableTuple: TBoldVariableTuple;
+begin
+  for I := 0 to aBoldOclVariables.Variables.Count - 1 do
+  begin
+    lBoldVariableTuple := Variables.VariableByName[aBoldOclVariables.Variables[i].VariableName];
+    if Assigned(lBoldVariableTuple) then
+      lBoldVariableTuple.Assign(aBoldOclVariables.Variables[i])
+    else
+      Variables.Add.Assign(aBoldOclVariables.Variables[i]);
+  end;
+end;
 
 constructor TBoldOclVariables.create(Owner: TComponent);
 begin
   inherited;
   fVariableList := nil;
   fVariableTupleList := TBoldVariableTupleList.Create(self);
+  fSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
+  PlaceSubscriptions;
 end;
 
-destructor TBoldOclVariables.Destroy;
+destructor TBoldOclVariables.destroy;
 begin
   FreePublisher;
   FreeAndNil(fVariableList);
   FreeAndNil(fVariableTupleList);
+  FreeAndNil(fSubscriber);
   inherited;
+end;
+
+function TBoldOclVariables.FindVariableByName(
+  const aVariableName: string): TBoldExternalVariable;
+var
+  i: integer;
+begin
+  for I := 0 to VariableList.Count - 1 do
+  begin
+    if CompareText(VariableList.Variables[i].Name, aVariableName) = 0 then
+    begin
+      result := VariableList.Variables[i];
+      exit;
+    end;
+  end;
+  result := nil;
+end;
+
+function TBoldOclVariables.GetGlobalSystemHandle: TBoldAbstractSystemhandle;
+begin
+  result := fGlobalSystemHandle
+end;
+
+function TBoldOclVariables.GetVariableFromHandle(
+  AHandle: TBoldElementHandle): TBoldExternalVariable;
+var
+  i: integer;
+  vTuple: TBoldVariableTuple;
+begin
+  for i := 0 to Variables.count - 1 do
+  begin
+    vTuple := Variables[i];
+    if vTuple.BoldHandle = AHandle then
+    begin
+      result := VariableList[i];
+      exit;
+    end;
+  end;
+  result := nil;
 end;
 
 function TBoldOclVariables.GetVariableList: TBoldExternalVariableList;
@@ -145,6 +272,18 @@ begin
   result := fVariableList;
 end;
 
+function TBoldOclVariables.GetVariableValue(
+  const aVariableName: string): TBoldElement;
+var
+  lVariable: TBoldExternalVariable;
+begin
+  lVariable := FindVariableByName(aVariableName);
+  if Assigned(lVariable) then
+    result := lVariable.Value
+  else
+    result := nil;
+end;
+
 function TBoldOclVariables.LinksToHandle(Handle: TBoldElementHandle): Boolean;
 var
   i: integer;
@@ -152,6 +291,73 @@ begin
   result := false;
   for i := 0 to Variables.Count-1 do
     result := result or Variables[i].linksToHandle(Handle);
+end;
+
+procedure TBoldOclVariables.Loaded;
+begin
+  inherited Loaded;
+  PlaceSubscriptions;
+end;
+
+procedure TBoldOclVariables.PlaceSubscriptions;
+begin
+  fSubscriber.CancelAllSubscriptions;
+  RegisterVariables;
+  SubscribeToHandles(fSubscriber);
+end;
+
+procedure TBoldOclVariables.RegisterVariables;
+var
+  vEvaluator: TBoldEvaluator;
+  vVariable: TBoldExternalVariable;
+  vTuple: TBoldVariableTuple;
+  vTypeInfo: TBoldElementTypeInfo;  
+begin
+  if (VariableList.Count > 0) and Assigned(GlobalSystemHandle) and Assigned(GlobalSystemHandle.SystemTypeInfoHandle) and GlobalSystemHandle.SystemTypeInfoHandle.IsSystemTypeInfoAvailable then
+  begin
+    if not (csDesigning in ComponentState) then
+    begin
+      if GlobalSystemHandle.Active then
+      begin
+        vEvaluator := GlobalSystemHandle.System.Evaluator;
+        if Assigned(vEvaluator) then
+        for vVariable in VariableList do
+        begin
+          Assert(not Assigned(vVariable.Evaluator) or (vVariable.Evaluator = vEvaluator));
+          vEvaluator.DefineVariable(vVariable.Name, vVariable);
+        end;
+      end
+      else
+      begin
+        for vVariable in VariableList do
+        begin
+          if Assigned(vVariable.Evaluator) then
+            vVariable.Evaluator := nil;
+        end;
+      end;
+    end;
+    // register into type/meta evaluator
+    vEvaluator := GlobalSystemHandle.BoldType.Evaluator;
+    for vTuple in Variables do
+    if Assigned(vTuple.BoldHandle) then
+    begin
+      if vTuple.EffectiveUseListElement then
+        vTypeInfo := TBoldAbstractListHandle(vTuple.BoldHandle).StaticListType
+      else
+        vTypeInfo := vTuple.BoldHandle.StaticBoldType;
+      vEvaluator.DefineVariable(vTuple.VariableName, nil, vTypeInfo, false, false);
+    end;
+  end;
+end;
+
+procedure TBoldOclVariables.SetGlobalSystemHandle(
+  aSystemHandle: TBoldAbstractSystemhandle);
+begin
+  if aSystemHandle <> fGlobalSystemHandle then
+  begin
+    fGlobalSystemHandle := aSystemHandle;
+    PlaceSubscriptions;
+  end;
 end;
 
 procedure TBoldOclVariables.SetVariableTupleList(
@@ -163,12 +369,57 @@ end;
 procedure TBoldOclVariables.SubscribeToHandles(
   Subscriber: TBoldSubscriber);
 var
-  i: integer;
+  vTuple: TBoldVariableTuple;
 begin
-  if assigned(Subscriber) then
-    for i := 0 to Variables.Count-1 do
-      if assigned(Variables[i].boldHandle) then
-        Variables[i].BoldHandle.AddSubscription(Subscriber, beValueIdentityChanged, breResubscribe);
+  if self.fSubscriber <> Subscriber then
+    self.AddSubscription(Subscriber, beDestroying, breReSubscribe);
+  if Assigned(GlobalSystemHandle) then
+  begin
+    GlobalSystemHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged, beDestroying], beValueIdentityChanged);
+    if GlobalSystemHandle.Active then
+      GlobalSystemHandle.System.AddSmallSubscription(Subscriber, [beDestroying], beDestroying);
+  end;
+  for vTuple in Variables do
+    if assigned(vTuple.boldHandle) then
+      vTuple.BoldHandle.AddSubscription(Subscriber, beValueIdentityChanged, breResubscribe);
+end;
+
+procedure TBoldOclVariables.SubscribeToHandle(AHandle: TBoldElementHandle);
+var
+  vVariable: TBoldExternalVariable;
+begin
+  if (not (csDestroying in ComponentState) and ((Owner = nil) or not (csDestroying in TComponent(Owner).ComponentState)))
+     and (VariableList.Count > 0) and Assigned(GlobalSystemHandle) and GlobalSystemHandle.Active then // Assigned(GlobalSystemHandle.SystemTypeInfoHandle) and GlobalSystemHandle.SystemTypeInfoHandle.IsSystemTypeInfoAvailable then
+  begin
+    GlobalSystemHandle.System.AddSmallSubscription(fSubscriber, [beDestroying], beDestroying);
+    vVariable := GetVariableFromHandle(AHandle);
+    if Assigned(vVariable) then
+    begin
+      AHandle.AddSubscription(fSubscriber, beDestroying, breReSubscribe);
+      AHandle.AddSubscription(fSubscriber, beValueIdentityChanged, breResubscribe);
+      GlobalSystemHandle.System.Evaluator.DefineVariable(vVariable.Name, vVariable);
+    end;
+  end;
+end;
+
+procedure TBoldOclVariables.SubscribeToHandles(Subscriber: TBoldSubscriber;
+    Expression: string);
+var
+  vVariable: TBoldVariableTuple;
+begin
+  if self.fSubscriber <> Subscriber then
+    self.AddSubscription(Subscriber, beDestroying, breReSubscribe);
+  if Assigned(GlobalSystemHandle) then
+  begin
+    GlobalSystemHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged, beDestroying], beValueIdentityChanged);
+    if GlobalSystemHandle.Active then
+      GlobalSystemHandle.System.AddSmallSubscription(Subscriber, [beDestroying], beDestroying);
+  end;
+  if Assigned(Subscriber) then
+    for vVariable in Variables do
+      if Assigned(vVariable.BoldHandle) then
+        if BoldCaseIndependentPos(vVariable.VariableName, Expression) > 0 then
+          vVariable.BoldHandle.AddSubscription(Subscriber, beValueIdentityChanged, breResubscribe);
 end;
 
 procedure TBoldOclVariables.VariablesChanged;
@@ -177,12 +428,55 @@ begin
   SendEvent(Self, beValueChanged);
 end;
 
+procedure TBoldOclVariables._Receive(Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+var
+  vVariable: TBoldExternalVariable;
+  i: integer;
+begin
+  if (Originator = fGlobalSystemHandle) then
+  begin
+    case OriginalEvent of
+      beDestroying:
+        begin
+          GlobalSystemHandle := nil;
+          fSubscriber.CancelAllSubscriptions;
+        end;
+      beValueIdentityChanged:
+        begin
+          RegisterVariables;
+        end;
+    end;
+  end
+  else
+  if (Originator is TBoldSystem)then
+  begin
+    if OriginalEvent = beDestroying  then
+    begin
+      FreeAndNil(fVariableList);
+      SendEvent(Self, beValueChanged);
+    end
+    else
+      RegisterVariables;
+  end
+  else
+  if Originator is TBoldElementHandle then
+  begin
+    SubscribeToHandle(TBoldElementHandle(Originator));
+  end;
+end;
+
 { TBoldVariableTupleList }
 
 constructor TBoldVariableTupleList.create(aOwningDefinition: TBoldOclVariables);
 begin
   inherited Create(TBoldVariableTuple);
   fOwningDefinition := aOwningDefinition;
+end;
+
+function TBoldVariableTupleList.GetEnumerator: TBoldVariableTupleListEnumerator;
+begin
+  result := TBoldVariableTupleListEnumerator.Create(self);
 end;
 
 function TBoldVariableTupleList.GetItems(
@@ -202,9 +496,23 @@ var
 begin
   i := 1;
   repeat
-    result := 'Variable' + IntToStr(i); // do not localize
+    result := 'Variable'+IntToStr(i);
     Inc(i);
   until NameIsUnique(result);
+end;
+
+function TBoldVariableTupleList.GetVariableByName(
+  const aName: string): TBoldVariableTuple;
+var
+  i: integer;
+begin
+  for I := 0 to Count - 1 do
+  if Items[i].VariableName = aName then
+  begin
+    result := Items[i];
+    exit;
+  end;
+  result := nil;
 end;
 
 function TBoldVariableTupleList.NameIsUnique(Name: String): Boolean;
@@ -213,7 +521,7 @@ var
 begin
   result := true;
   for i := 0 to Count-1 do
-    if AnsiCompareStr(Name, Items[i].VariableName) = 0 then
+    if CompareText(Name, Items[i].VariableName) = 0 then
     begin
       result := false;
       exit;
@@ -226,7 +534,7 @@ var
 begin
   result := true;
   for i := 1 to length(name) do
-    if not (name[i] in ['A'..'Z', 'a'..'z', '_', '0'..'9']) then
+    if not CharInSet(name[i], ['A'..'Z', 'a'..'z', '_', '0'..'9']) then
     begin
       result := false;
       exit;
@@ -263,7 +571,7 @@ begin
   fBoldHandleSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveHandleEvent);
 end;
 
-destructor TBoldVariableTuple.Destroy;
+destructor TBoldVariableTuple.destroy;
 begin
   FreeAndNil(fBoldHandleSubscriber);
   inherited;
@@ -275,9 +583,9 @@ begin
   if assigned(BoldHandle) then
     Result := result + ': ' + BoldHandle.Name
   else
-    result := result + ': Not Connected';  // do not localize
+    result := result + ': Not Connected';
   if EffectiveUseListElement then
-    result := result + ' (list)'; // do not localize
+    result := result + ' (list)';
 end;
 
 function TBoldVariableTuple.GetEffectiveUseListElement: Boolean;
@@ -302,7 +610,7 @@ begin
   if value <> fBoldHandle then
   begin
     if assigned(value) and Value.RefersToComponent(TupleList.OwningDefinition) then
-      raise EBold.CreateFmt(sCircularReference, [classname, TupleList.OwningDefinition.name, value.name]);
+      raise EBold.CreateFmt('%s.SetBoldHandle: %s can not be linked to %s. Circular reference', [classname, TupleList.OwningDefinition.name, value.name]);
     FBoldHandle := Value;
     fBoldHandleSubscriber.CancelAllSubscriptions;
     if assigned(value) then
@@ -321,14 +629,17 @@ begin
 end;
 
 procedure TBoldVariableTuple.SetVariableName(const Value: String);
+var
+  vNewName: string;
 begin
-  if FVariableName <> Value then
+  if CompareText(FVariableName, Value) <> 0 then
   begin
-    if not (Collection as TBoldVariableTupleList).NameIsUnique(Value) then
-      raise EBold.CreateFmt(sNameNotUnique, [Value]);
-    if not (Collection as TBoldVariableTupleList).NameIsValid(Value) then
-      raise EBold.Create(sIllegalCharsInName);
-    FVariableName := Value;
+    vNewName := LowerCase(Copy(Value,1,1)) + Copy(Value,2,MaxInt);
+    if not (Collection as TBoldVariableTupleList).NameIsUnique(vNewName) then
+      raise EBold.CreateFmt('Can''t rename variable to "%s", name already exists', [vNewName]);
+    if not (Collection as TBoldVariableTupleList).NameIsValid(vNewName) then
+      raise EBold.Create('Invalid variable name, only alphanum characters and underscore valid');
+    FVariableName := vNewName;
     Changed;
   end;
 end;
@@ -364,7 +675,7 @@ end;
 destructor TBoldHandleBasedExternalVariable.Destroy;
 begin
   FreeAndNil(fHandleSubscriber);
-  inherited;
+  inherited;                    
 end;
 
 function TBoldHandleBasedExternalVariable.GetValue: TBoldElement;
@@ -392,5 +703,113 @@ begin
   else
     result := nil;
 end;
+
+procedure TBoldHandleBasedExternalVariable.SetHandle(
+  const Value: TBoldElementHandle);
+begin
+  if fHandle = Value then
+    exit;
+  fHandleSubscriber.CancelAllSubscriptions;
+  fHandle := Value;
+  if assigned(fHandle) then
+    fHandle.AddSmallSubscription(fHandleSubscriber, [beDestroying], beDestroying);
+end;
+
+{ TBoldOclVariable }
+
+constructor TBoldOclVariable.Create(const aName: string;
+  aValue: TBoldElement{; aOwnsValue: boolean = false});
+begin
+  inherited Create(aName);
+{  if aOwnsValue then
+    BoldIndirectElement.SetOwnedValue(aValue)
+  else
+}
+    BoldIndirectElement.SetReferenceValue(aValue);
+end;
+
+constructor TBoldOclVariable.CreateFromIndirectElement(const aName: string;
+  aBoldIndirectElement: TBoldIndirectElement);
+begin
+  inherited Create(aName);
+  aBoldIndirectElement.TransferValue(BoldIndirectElement);
+end;
+
+constructor TBoldOclVariable.CreateWithTypeInfo(const aName: string; AValue: TBoldElement;
+  aBoldElementTypeInfo: TBoldElementTypeInfo);
+begin
+  inherited Create(aName);
+  BoldIndirectElement.SetOwnedValue(AValue);
+  fBoldElementTypeInfo := aBoldElementTypeInfo;
+end;
+
+constructor TBoldOclVariable.CreateStringVariable(const aName, aValue: string);
+var
+  vString: TBAString;
+begin
+  inherited Create(aName);
+  vString := TBAString.Create;
+  vString.AsString := aValue;
+  BoldIndirectElement.SetOwnedValue(vString);
+end;
+
+constructor TBoldOclVariable.CreateDateTimeVariable(const aName: string;
+  const aValue: TDateTime);
+var
+  vDateTime: TBADateTime;
+begin
+  inherited Create(aName);
+  vDateTime := TBADateTime.Create;
+  vDateTime.AsDateTime := aValue;
+  BoldIndirectElement.SetOwnedValue(vDateTime);
+end;
+
+constructor TBoldOclVariable.CreateDateVariable(const aName: string;
+  const aValue: TDate);
+var
+  vDate: TBADate;
+begin
+  inherited Create(aName);
+  vDate := TBADate.Create;
+  vDate.AsDate := aValue;
+  BoldIndirectElement.SetOwnedValue(vDate);
+end;
+
+destructor TBoldOclVariable.Destroy;
+begin
+  FreeAndNil(fBoldIndirectElement);
+  inherited;
+end;
+
+function TBoldOclVariable.GetBoldIndirectElement: TBoldIndirectElement;
+begin
+  if not Assigned(fBoldIndirectElement) then
+  begin
+    fBoldIndirectElement := TBoldIndirectElement.Create;
+  end;
+  result := fBoldIndirectElement;
+end;
+
+function TBoldOclVariable.GetValue: TBoldElement;
+begin
+  result:= BoldIndirectElement.Value;
+end;
+
+function TBoldOclVariable.GetValueType: TBoldElementTypeInfo;
+begin
+  if GetValue <> nil then
+    result:= GetValue.BoldType
+  else
+    result := fBoldElementTypeInfo;
+end;
+
+{ TBoldVariableTupleListEnumerator }
+
+function TBoldVariableTupleListEnumerator.GetCurrent: TBoldVariableTuple;
+begin
+  result := inherited GetCurrent as TBoldVariableTuple; 
+end;
+
+initialization
 
 end.

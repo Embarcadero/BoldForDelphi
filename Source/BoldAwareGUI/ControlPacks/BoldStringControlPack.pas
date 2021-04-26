@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStringControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -21,12 +24,12 @@ type
   TBoldStringRendererData = class;
 
   { TBoldAsStringRenderer prototypes }
-  TBoldGetAsString = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): string of object;
-  TBoldSetAsString = procedure (Element: TBoldElement; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldValidateString = function (Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
-  TBoldSetFont = procedure (Element: TBoldElement; AFont: TFont; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldSetColor = procedure (Element: TBoldElement; var AColor: TColor; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldStringIsChanged = function (RendererData: TBoldStringRendererData; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
+  TBoldGetAsString = function (aFollower: TBoldFollower): string of object;
+  TBoldSetAsString = procedure (aFollower: TBoldFollower; const NewValue: string) of object;
+  TBoldValidateString = function (aFollower: TBoldFollower; const Value: string): Boolean of object;
+  TBoldSetFont = procedure (aFollower: TBoldFollower; AFont: TFont) of object;
+  TBoldSetColor = procedure (aFollower: TBoldFollower; var AColor: TColor) of object;
+  TBoldStringIsChanged = function (aFollower: TBoldFollower; const NewValue: string): Boolean of object;
 
   { TBoldStringRendererData }
   TBoldStringRendererData = class(TBoldRendererData)
@@ -51,29 +54,29 @@ type
     fOnSetFont: TBoldSetFont;
     fOnSetColor: TBoldSetColor;
     fOnIsChanged: TBoldStringIsChanged;
-    function DefaultDisplayString: string;
+    function DefaultDisplayString: string;    
   protected
     function GetSupportsMulti: Boolean; override;
     function GetRendererDataClass: TBoldRendererDataClass; override;
-    function GetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string; virtual;
-    procedure SetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
+    function GetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string; virtual;
+    procedure SetAsString(aFollower: TBoldFollower; const Value: string); virtual;
     procedure DrawOnCanvas(Follower: TBoldFollower; Canvas: TCanvas; Rect: TRect; Alignment: TAlignment; Margins: TPoint); override;
   public
     class function DefaultRenderer: TBoldAsStringRenderer;
     class procedure DrawStringOnCanvas(Canvas: TCanvas; Rect: TRect; Alignment: TAlignment; Margins: TPoint; S: string);
-    function DefaultGetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string; virtual;
-    procedure DefaultSetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
-    function DefaultValidateCharacter(Element: TBoldElement; C: AnsiChar; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean; virtual;
-    function DefaultValidateString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean; virtual;
-    function DefaultIsChanged(RendererData: TBoldStringRendererData; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
-    function ValidateCharacter(Element: TBoldElement; C: AnsiChar; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean; virtual;
-    function ValidateString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean; virtual;
-    function IsChanged(RendererData: TBoldStringRendererData; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
-    procedure SetFont(Element: TBoldElement; EffectiveFont, Font: TFont; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
-    procedure SetColor(Element: TBoldElement; var EffectiveColor: TColor; Color: TColor; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
+    function DefaultGetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string; virtual;
+    procedure DefaultSetAsString(aFollower: TBoldFollower; const Value: string); virtual;
+    function DefaultValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean; override;
+    function DefaultValidateString(aFollower: TBoldFollower; const Value: string): Boolean; virtual;
+    function DefaultIsChanged(aFollower: TBoldFollower; const NewValue: string): Boolean;
+    function ValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean; override;
+    function ValidateString(aFollower: TBoldFollower; const Value: string): Boolean; virtual;
+    function IsChanged(aFollower: TBoldFollower; const NewValue: string): Boolean;
+    procedure SetFont(aFollower: TBoldFollower; EffectiveFont, Font: TFont);
+    procedure SetColor(aFollower: TBoldFollower; var EffectiveColor: TColor; Color: TColor);
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); override;
     procedure MultiMakeUpToDateAndSubscribe(Elements: TBoldClientableList; Subscribers: TBoldObjectArray; RendererData: TBoldObjectArray; FollowerController: TBoldFollowerController);
-    procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber); virtual;
+    procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); virtual;
   published
     property OnGetAsString: TBoldGetAsString read FOnGetAsString write FOnGetAsString;
     property OnSetAsString: TBoldSetAsString read FOnSetAsString write FOnSetAsString;
@@ -88,26 +91,26 @@ type
   TBoldStringFollowerController = class(TBoldSingleFollowerController)
   private
     FNilStringRepresentation: string;
-    function GetRenderer: TBoldAsStringRenderer;
-    procedure SetRenderer(Value: TBoldAsStringRenderer);
-    function GetEffectiveAsStringRenderer: TBoldAsStringRenderer;
+    function GetRenderer: TBoldAsStringRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetRenderer(Value: TBoldAsStringRenderer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEffectiveAsStringRenderer: TBoldAsStringRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetNilStringRepresentation(const Value: string);
   protected
     function GetSupportsMultiEnsure: Boolean; override;
     function GetEffectiveRenderer: TBoldRenderer; override;
     property EffectiveAsStringRenderer: TBoldAsStringRenderer read GetEffectiveAsStringRenderer;
-    procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldObjectArray); override;
+    procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray); override;
   public
     procedure MakeClean(Follower: TBoldFollower); override;
-    function GetCurrentAsString(Follower: TBoldFollower): string;
-    procedure SetAsString(Value: string; Follower: TBoldFollower);
-    function ValidateCharacter(C: AnsiChar; Follower: TBoldFollower): Boolean;
-    function ValidateString(Value: string; Follower: TBoldFollower): Boolean;
-    procedure SetFont(EffectiveFont, Font: tFont; Follower: TBoldFollower);
-    procedure SetColor(var EffectiveColor: tColor; COLOR: tColor; Follower: TBoldFollower);
-    procedure MayHaveChanged(NewValue: string; Follower: TBoldFollower);
+    function GetCurrentAsString(Follower: TBoldFollower): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetAsString(Value: string; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function ValidateCharacter(C: Char; Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function ValidateString(Value: string; Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetFont(EffectiveFont, Font: tFont; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetColor(var EffectiveColor: tColor; COLOR: tColor; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function MayHaveChanged(const NewValue: string; Follower: TBoldFollower): boolean;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
-    function GetAsString(Element: TBoldElement): string;
+    function GetAsString(aFollower: TBoldFollower): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   published
     property Renderer: TBoldAsStringRenderer read GetRenderer write SetRenderer;
     property NilStringRepresentation: string read FNilStringRepresentation write SetNilStringRepresentation;
@@ -119,12 +122,13 @@ uses
   SysUtils,
   BoldControlPackDefs,
   {$IFNDEF BOLDCOMCLIENT}
-  BoldSystem, // IFNDEF BOLDCOMCLIENT
+  BoldSystem,
   BoldDomainElement,
   {$ELSE}
-  Variants, // IFDEF BOLDCOMCLIENT
+  Variants,
   {$ENDIF}
-  BoldGuiResourceStrings;
+  BoldGuard,
+  BoldRev;
 
 var
   DefaultAsStringRenderer: TBoldAsStringRenderer;
@@ -161,36 +165,45 @@ end;
 
 procedure TBoldStringFollowerController.SetAsString(Value: string; Follower: TBoldFollower);
 begin
-  EffectiveAsStringRenderer.SetAsString(Follower.Element, Value, Representation, Expression, VariableList);
+  EffectiveAsStringRenderer.SetAsString(Follower, Value);
 end;
 
-function TBoldStringFollowerController.ValidateCharacter(C: AnsiChar; Follower: TBoldFollower): Boolean;
+function TBoldStringFollowerController.ValidateCharacter(C: Char; Follower: TBoldFollower): Boolean;
 begin
-  Result := EffectiveAsStringRenderer.ValidateCharacter(Follower.Element, C, Representation, Expression, VariableList);
+  Result := EffectiveAsStringRenderer.ValidateCharacter(Follower, C);
 end;
 
 function TBoldStringFollowerController.ValidateString(Value: string; Follower: TBoldFollower): Boolean;
 begin
-  Result := EffectiveAsStringRenderer.ValidateString(Follower.Element, Value, Representation, Expression, VariableList);
+  Result := EffectiveAsStringRenderer.ValidateString(Follower, Value);
 end;
 
 procedure TBoldStringFollowerController.SetFont(EffectiveFont, Font: tFont; Follower: TBoldFollower);
 begin
-  EffectiveAsStringRenderer.SetFont(Follower.Element, EffectiveFont, Font, Representation, Expression, VariableList);
+  EffectiveAsStringRenderer.SetFont(Follower, EffectiveFont, Font);
 end;
 
 procedure TBoldStringFollowerController.SetColor(var EffectiveColor: tColor; COLOR: tColor; Follower: TBoldFollower);
 begin
-  EffectiveAsStringRenderer.SetColor(Follower.Element, EffectiveColor, COLOR, Representation, Expression, VariableList);
+  EffectiveAsStringRenderer.SetColor(Follower, EffectiveColor, Color);
 end;
 
-procedure TBoldStringFollowerController.MayHaveChanged(NewValue: string; Follower: TBoldFollower);
+function TBoldStringFollowerController.MayHaveChanged(const NewValue: string; Follower: TBoldFollower): boolean;
+var
+  lBoldStringRendererData: TBoldStringRendererData;
 begin
   if Follower.State in bfsDisplayable then
   begin
-    (Follower.RendererData as TBoldStringRendererData).CurrentStringValue := NewValue;
-    Follower.ControlledValueChanged(EffectiveAsStringRenderer.IsChanged(Follower.RendererData as TBoldStringRendererData, NewValue, Representation, Expression, VariableList));
-  end;
+    lBoldStringRendererData := Follower.RendererData as TBoldStringRendererData;
+    lBoldStringRendererData.CurrentStringValue := NewValue;
+    result := EffectiveAsStringRenderer.IsChanged(Follower, NewValue);
+    if result then
+    begin
+      Follower.ControlledValueChanged;
+    end;
+  end
+  else
+    result := false;
 end;
 
 procedure TBoldStringFollowerController.MakeClean(Follower: TBoldFollower);
@@ -202,7 +215,7 @@ var
 begin
   if ValidateString(GetCurrentAsString(Follower), Follower) then
   begin
-    ReleaseChangedValue(Follower); // note, must do first, since set can change element
+    ReleaseChangedValue(Follower);
     SetAsString(GetCurrentAsString(Follower), Follower);
   end
   else
@@ -214,10 +227,10 @@ begin
       el := nil;
     FailureReason := GetBoldLastFailureReason;
     if assigned(FailureReason) then
-      GetBoldLastFailureReason.MessageFormatStr := sStringValidationFailedExtended;
-    BoldRaiseLastFailure(el, '', sUnknownReason);
+      GetBoldLastFailureReason.MessageFormatStr := 'String validation failed for %s: %2:s';
+    BoldRaiseLastFailure(el, '', 'Unknown reason');
     {$ELSE}
-    raise EBold.Create(sStringValidationFailed);
+    raise EBold.Create('String validation failed');
     {$ENDIF}
   end;
 end;
@@ -232,11 +245,12 @@ begin
   else
     Subscriber := nil;
   Renderer := EffectiveRenderer as TBoldAsStringRenderer;
-  if Assigned(Renderer.OnGetAsString) or Assigned(Renderer.OnSubscribe) or Assigned(Renderer.OnMayModify) then   begin
-    Renderer.MakeUptodateAndSubscribe(Follower.Element, Follower.RendererData, Self, Subscriber);
-    Follower.RendererData.MayModify := Renderer.MayModify(Follower.Element, Representation, Expression, GetVariableListAndSubscribe(follower.Subscriber), Follower.Subscriber);
-  end else
-    renderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Follower.Element, Follower.RendererData, Self, Subscriber);
+  if Assigned(Renderer.OnGetAsString) or Assigned(Renderer.OnSubscribe) or Assigned(Renderer.OnMayModify) then
+  begin
+    Renderer.MakeUptodateAndSubscribe(Follower, Subscriber);
+  end
+  else
+    renderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Follower, Subscriber);
 end;
 
 procedure TBoldStringFollowerController.SetNilStringRepresentation(const Value: string);
@@ -253,7 +267,6 @@ end;
 var
   Left: Integer;
 begin
-  // Adjust for alignment
   case Alignment of
     taLeftJustify: Left := Margins.X + Rect.Left;
     taRightJustify: Left := (Rect.Right - Rect.Left) - Canvas.TextWidth(S) + Rect.Left - 1 - Margins.X;
@@ -268,24 +281,18 @@ begin
   DrawStringOnCanvas(Canvas, Rect, Alignment, Margins, TBoldStringRendererData(Follower.RendererData).CurrentStringValue);
 end;
 
-procedure TBoldAsStringRenderer.MakeUpToDateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsStringRenderer.MakeUpToDateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
   S: string;
+  lRendererData: TBoldStringRendererData;
 begin
-  S := GetAsStringAndSubscribe(Element, FollowerController as TBoldStringFollowerController, Subscriber);
-  (RendererData as TBoldStringRendererData).OldStringValue := S;
-  (RendererData as TBoldStringRendererData).CurrentStringValue := S;
+  S := GetAsStringAndSubscribe(aFollower, Subscriber);
+  lRendererData := (aFollower.RendererData as TBoldStringRendererData);
+  lRendererData.OldStringValue := S;
+  lRendererData.CurrentStringValue := S;
 end;
 
-function TBoldAsStringRenderer.DefaultDisplayString: string;
-begin
-  if Name <> '' then
-    Result := '(' + Name + ')'
-  else
-    Result := '(' + ClassName + ')';
-end;
-
-procedure TBoldAsStringRenderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsStringRenderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
   {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
   e: IBoldElement;
@@ -293,16 +300,24 @@ var
   E: TBoldIndirectElement;
   {$ENDIF}
   S: String;
+  lFollowerController: TBoldStringFollowerController;
+  lRendererData: TBoldStringRendererData;
+  lRepresentation: integer;
+  lResultElement: TBoldElement;
+  lGuard: IBoldGuard;
 begin
   S := '';
+  lRendererData:= aFollower.RendererData as TBoldStringRendererData;
   if (csDesigning in ComponentState) and (Self <> DefaultRenderer) then
   begin
     s := DefaultDisplayString;
-    RendererData.MayModify := False;
+//    lRendererData.MayModify := False;
   end
   else
   begin
-    if Assigned(Element) then
+    lFollowerController := aFollower.AssertedController as TBoldStringFollowerController;
+    lRepresentation := lFollowerController.Representation;
+    if Assigned(aFollower.Element) then
     begin
       {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
       if assigned(Subscriber) then
@@ -315,45 +330,50 @@ begin
         S := E.StringRepresentation[FollowerController.Representation];
         if Assigned(Subscriber) then
           E.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber.ClientId, Subscriber.SubscriberId, breReEvaluate, false);
-        RendererData.MayModify := true;
+        lRendererData.MayModify := true;
       end
       else
         S := FollowerController.NilStringRepresentation
       {$ELSE}
-      E := TBoldIndirectElement.Create;
-      try
-        Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber, E, False, False, FollowerController.GetVariableListAndSubscribe(Subscriber));
-        if (e.Value is TBoldObjectReference) and not assigned((e.Value as TBoldObjectReference).BoldObject) then
-        begin
-          s := FollowerController.NilStringRepresentation;
-          if Assigned(Subscriber) then
-            E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
-          RendererData.MayModify := E.Value.ObserverMayModifyAsString(FollowerController.Representation, Subscriber);
-          (RendererData as TBoldStringRendererData).MaxStringLength := -1;
-        end
-        else if Assigned(E.Value) then
-        begin
-          S := E.Value.StringRepresentation[FollowerController.Representation];
-          if Assigned(Subscriber) then
-            E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
-          RendererData.MayModify := E.Value.ObserverMayModifyAsString(FollowerController.Representation, Subscriber);
-          if (E.Value is TBoldAttribute) and assigned((E.Value as TBoldAttribute).BoldAttributeRTInfo) then
-            (RendererData as TBoldStringRendererData).MaxStringLength := (E.Value as TBoldAttribute).BoldAttributeRTInfo.Length
-          else
-            (RendererData as TBoldStringRendererData).MaxStringLength := -1;
-        end
+      lResultElement := aFollower.Value;
+      if (lResultElement is TBoldObjectReference) and not assigned(TBoldObjectReference(lResultElement).BoldObject) then
+      begin
+        s := lFollowerController.NilStringRepresentation;
+        if Assigned(Subscriber) then
+          lResultElement.SubscribeToStringRepresentation(lRepresentation, Subscriber, breReEvaluate);
+//        lRendererData.MayModify := lResultElement.ObserverMayModify(Subscriber);
+//        lRendererData.MayModify := lResultElement.ObserverMayModifyAsString(lRepresentation, Subscriber);
+        lRendererData.MaxStringLength := -1;
+      end
+      else if Assigned(lResultElement) then
+      begin
+        S := lResultElement.StringRepresentation[lRepresentation];
+        if Assigned(Subscriber) then
+          lResultElement.SubscribeToStringRepresentation(lRepresentation, Subscriber, breReEvaluate);
+//        lRendererData.MayModify := lResultElement.ObserverMayModify(Subscriber);
+//        lRendererData.MayModify := lResultElement.ObserverMayModifyAsString(lRepresentation, Subscriber);
+        if (lResultElement is TBoldAttribute) and assigned(TBoldAttribute(lResultElement).BoldAttributeRTInfo) then
+          lRendererData.MaxStringLength := TBoldAttribute(lResultElement).BoldAttributeRTInfo.Length
         else
-          S := FollowerController.NilStringRepresentation
-      finally
-        E.Free;
-      end;
+          lRendererData.MaxStringLength := -1;
+{        if (lResultElement is TBoldDomainElement) and not TBoldDomainElement(lResultElement).BoldDirty then
+        begin
+          lRendererData.OldStringValue := S;
+        end;
+}
+      end
+      else
+        S := lFollowerController.NilStringRepresentation;
       {$ENDIF}
     end
     else
-      S := FollowerController.NilStringRepresentation
+    begin
+      S := lFollowerController.NilStringRepresentation;
+//      lRendererData.MayModify := false;
+    end;
   end;
-  (RendererData as TBoldStringRendererData).OldStringValue := S;
-  (RendererData as TBoldStringRendererData).CurrentStringValue := S;
+  lRendererData.OldStringValue := S;
+  lRendererData.CurrentStringValue := S;
 end;
 
 function TBoldAsStringRenderer.GetRendererDataClass: TBoldRendererDataClass;
@@ -361,13 +381,24 @@ begin
   Result := TBoldStringRendererData;
 end;
 
-function TBoldAsStringRenderer.DefaultGetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string;
+function TBoldAsStringRenderer.DefaultDisplayString: string;
+begin
+  if Name <> '' then
+    Result := '(' + Name + ')'
+  else
+    Result := '(' + ClassName + ')';
+end;
+
+function TBoldAsStringRenderer.DefaultGetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string;
 var
   {$IFDEF BOLDCOMCLIENT} // DefaultGet
   e: IBoldElement;
   {$ELSE}
   E: TBoldIndirectElement;
   {$ENDIF}
+  lFollowerController: TBoldStringFollowerController;
+  lResultElement: TBoldElement;
+  lGuard: IBoldGuard;
 begin
   Result := '';
   if (csDesigning in ComponentState) and (Self <> DefaultRenderer) then
@@ -376,7 +407,8 @@ begin
   end
   else
   begin
-    if Assigned(Element) then
+    lFollowerController := aFollower.AssertedController as TBoldStringFollowerController;
+    if Assigned(aFollower.Element) then
     begin
       {$IFDEF BOLDCOMCLIENT} // defaultGet
       if assigned(Subscriber) then
@@ -392,134 +424,136 @@ begin
       else
         Result := FollowerController.NILStringRepresentation;
       {$ELSE}
-      E := TBoldIndirectElement.Create;
-      try
-        Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber, E, False, False, FollowerController.GetVariableListAndSubscribe(Subscriber));
-        if (e.Value is TBoldObjectReference) and not assigned((e.Value as TBoldObjectReference).BoldObject) then
-        begin
-          result := FollowerController.NilStringRepresentation;
-          if Assigned(Subscriber) then
-            E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
-        end
-        else if Assigned(E.Value) then
-        begin
-          Result := E.Value.StringRepresentation[FollowerController.Representation];
-          if Assigned(Subscriber) then
-            E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
-        end
-        else
-          Result := FollowerController.NILStringRepresentation;
-      finally
-        E.Free;
+      lResultElement := aFollower.Value;
+      if not Assigned(lResultElement) then
+      begin
+        lGuard:= TBoldGuard.Create(E);
+        E := TBoldIndirectElement.Create;
+        aFollower.Element.EvaluateAndSubscribeToExpression(lFollowerController.Expression, Subscriber, E, False, False, lFollowerController.GetVariableListAndSubscribe(Subscriber));
+        lResultElement := e.Value;
       end;
+      if (lResultElement is TBoldObjectReference) and not assigned(TBoldObjectReference(lResultElement).BoldObject) then
+      begin
+        result := lFollowerController.NilStringRepresentation;
+        if Assigned(Subscriber) then
+          lResultElement.SubscribeToStringRepresentation(lFollowerController.Representation, Subscriber, breReEvaluate);
+      end
+      else if Assigned(lResultElement) then
+      begin
+        Result := lResultElement.StringRepresentation[lFollowerController.Representation];
+        if Assigned(Subscriber) then
+          lResultElement.SubscribeToStringRepresentation(lFollowerController.Representation, Subscriber, breReEvaluate);
+      end
+      else
+        Result := lFollowerController.NILStringRepresentation;
       {$ENDIF}
     end
     else
-      Result := FollowerController.NILStringRepresentation;
+      Result := lFollowerController.NILStringRepresentation;
   end;
 end;
 
-procedure TBoldAsStringRenderer.DefaultSetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsStringRenderer.DefaultSetAsString(aFollower: TBoldFollower; const Value: string);
 var
   ValueElement: TBoldElement;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   if Assigned(ValueElement) then
-    ValueElement.StringRepresentation[Representation] := Value
+    ValueElement.StringRepresentation[aFollower.AssertedController.Representation] := Value
   else
-    raise EBold.CreateFmt(sCannotSetStringValue, [ClassName]);
+    raise EBold.Create('TBoldAsStringRenderer.DefaultSetAsString: Can''t set string value');
 end;
 
-function TBoldAsStringRenderer.DefaultValidateCharacter(Element: TBoldElement; C: AnsiChar; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsStringRenderer.DefaultValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean;
 var
   ValueElement: TBoldElement;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   if Assigned(ValueElement) then
-    Result := ValueElement.ValidateCharacter(C, Representation)
+    Result := ValueElement.ValidateCharacter(C, aFollower.AssertedController.Representation )
+  else
+    Result := HasSetValueEventOverrides;
+end;
+
+function TBoldAsStringRenderer.DefaultValidateString(aFollower: TBoldFollower; const Value: string): Boolean;
+var
+  ValueElement: TBoldElement;
+begin
+  ValueElement := aFollower.Value;
+  if Assigned(ValueElement) then
+    Result := ValueElement.ValidateString(Value, aFollower.AssertedController.Representation)
   else
     Result := False;
 end;
 
-function TBoldAsStringRenderer.DefaultValidateString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
-var
-  ValueElement: TBoldElement;
-begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  if Assigned(ValueElement) then
-    Result := ValueElement.ValidateString(Value, Representation)
-  else
-    Result := False;
-end;
-
-function TBoldAsStringRenderer.GetAsStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldStringFollowerController; Subscriber: TBoldSubscriber): string;
+function TBoldAsStringRenderer.GetAsStringAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): string;
 begin
   if Assigned(OnSubscribe) and Assigned(Subscriber) then
   begin
-    if Assigned(Element) then
-      OnSubscribe(Element, FollowerController.Representation, FollowerController.Expression, Subscriber);
+    if Assigned(aFollower.Element) then
+      OnSubscribe(aFollower, Subscriber);
     Subscriber := nil;
   end;
   if Assigned(OnGetAsString) then
-    Result := OnGetAsString(Element, FollowerController.Representation, FollowerController.Expression)
+    Result := OnGetAsString(aFollower)
   else
-    Result := DefaultGetAsStringAndSubscribe(Element, FollowerController, Subscriber);
+    Result := DefaultGetAsStringAndSubscribe(aFollower, Subscriber);
 end;
 
-procedure TBoldAsStringRenderer.SetAsString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsStringRenderer.SetAsString(aFollower: TBoldFollower; const Value: string);
 begin
   if Assigned(FOnSetAsString) then
-    OnSetAsString(Element, Value, Representation, Expression)
+    OnSetAsString(aFollower, Value)
   else
-    DefaultSetAsString(Element, Value, Representation, Expression, VariableList)
+    DefaultSetAsString(aFollower, Value)
 end;
 
-function TBoldAsStringRenderer.ValidateCharacter(Element: TBoldElement; C: AnsiChar; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsStringRenderer.ValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean;
 begin
   if Assigned(FOnValidateCharacter) then
-    Result := OnValidateCharacter(Element, C, Representation, Expression)
+    Result := OnValidateCharacter(aFollower, c)
   else
-    Result := DefaultValidateCharacter(Element, C, Representation, Expression, VariableList);
+    Result := DefaultValidateCharacter(aFollower, c);
 end;
 
-function TBoldAsStringRenderer.ValidateString(Element: TBoldElement; Value: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsStringRenderer.ValidateString(aFollower: TBoldFollower; const Value: string): Boolean;
 begin
   if Assigned(FOnValidateString) then
-    Result := OnValidateString(Element, Value, Representation, Expression)
+    Result := OnValidateString(aFollower, Value)
   else
-    Result := DefaultValidateString(Element, Value, Representation, Expression, VariableList);
+    Result := DefaultValidateString(aFollower, Value);
 end;
 
-procedure TBoldAsStringRenderer.SetFont(Element: TBoldElement; EffectiveFont, Font: tFont; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsStringRenderer.SetFont(aFollower: TBoldFollower; EffectiveFont, Font: TFont);
 begin
   EffectiveFont.Assign(Font);
   if Assigned(fOnSetFont) then
-    fOnSetFont(Element, EffectiveFont, Representation, Expression);
+    fOnSetFont(aFollower, EffectiveFont);
 end;
 
-procedure TBoldAsStringRenderer.SetColor(Element: TBoldElement; var EffectiveColor: tColor; COLOR: tColor; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsStringRenderer.SetColor(aFollower: TBoldFollower; var EffectiveColor: TColor; Color: TColor);
 begin
-  EffectiveColor := COLOR;
+  EffectiveColor := Color;
   if Assigned(fOnSetColor) then
-    fOnSetColor(Element, EffectiveColor, Representation, Expression);
+    fOnSetColor(aFollower, EffectiveColor);
 end;
 
-  class function TBoldAsStringRenderer.DefaultRenderer: TBoldAsStringRenderer;
+class function TBoldAsStringRenderer.DefaultRenderer: TBoldAsStringRenderer;
 begin
   Result := DefaultAsStringRenderer;
 end;
 
-function TBoldAsStringRenderer.DefaultIsChanged(RendererData: TBoldStringRendererData; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsStringRenderer.DefaultIsChanged(aFollower: TBoldFollower; const NewValue: string): Boolean;
 begin
-  Result := NewValue <> RendererData.OldStringValue;
+  Result := NewValue <> TBoldStringRendererData(aFollower.RendererData).OldStringValue;
 end;
 
-function TBoldAsStringRenderer.IsChanged(RendererData: TBoldStringRendererData; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsStringRenderer.IsChanged(aFollower: TBoldFollower; const NewValue: string): Boolean;
 begin
   if Assigned(fOnIsChanged) then
-    Result := fOnIsChanged(RendererData, NewValue, Representation, Expression)
+    Result := fOnIsChanged(aFollower, NewValue)
   else
-    Result := DefaultIsChanged(RendererData, NewValue, Representation, Expression, Variablelist);
+    Result := DefaultIsChanged(aFollower, NewValue);
 end;
 
 { TBoldStringRendererData }
@@ -550,32 +584,28 @@ begin
 end;
 
 procedure TBoldStringFollowerController.DoMultiMakeUptodateAndSubscribe(
-  Followers: TBoldObjectArray);
+  Followers: TBoldFollowerArray);
 var
   Renderer: TBoldAsStringRenderer;
   Elements: TBoldClientableList;
-  TempFollower: TBoldFollower;
+  F: TBoldFollower;
   Subscribers: TBoldObjectArray;
   RendererData: TBoldObjectArray;
-  I: integer;
-  MaxIndex: integer;
 begin
   Assert(SupportsMulti);
-  MaxIndex := Followers.Count - 1;
   Renderer := EffectiveRenderer as TBoldAsStringRenderer;
-  Elements := TBoldClientableList.Create(MaxIndex,[]);
-  Subscribers := TBoldObjectArray.Create(MaxIndex,[]);
-  RendererData := TBoldObjectArray.Create(MaxIndex,[]);
+  Elements := TBoldClientableList.Create(Length(Followers),[]);
+  Subscribers := TBoldObjectArray.Create(Length(Followers),[]);
+  RendererData := TBoldObjectArray.Create(Length(Followers),[]);
   try
-    for I := 0 to MaxIndex do
+    for F in Followers do
     begin
-      TempFollower := TBoldFollower(Followers[I]);
-      Elements.Add(Tempfollower.Element);
-      if TempFollower.State in bfdNeedResubscribe then
-        Subscribers.Add(TempFollower.Subscriber)
+      Elements.Add(F.Element);
+      if F.State in bfdNeedResubscribe then
+        Subscribers.Add(F.Subscriber)
       else
         Subscribers.Add(nil);
-      RendererData.Add(TempFollower.RendererData);
+      RendererData.Add(F.RendererData);
     end;
     Renderer.MultiMakeUpToDateAndSubscribe(Elements, Subscribers, RendererData, Self);
   finally
@@ -629,9 +659,9 @@ begin
   {$ENDIF}
 end;
 
-function TBoldStringFollowerController.GetAsString(Element: TBoldElement): string;
+function TBoldStringFollowerController.GetAsString(aFollower: TBoldFollower): string;
 begin
-  result := EffectiveAsStringRenderer.GetAsStringAndSubscribe(element, self, nil);
+  result := EffectiveAsStringRenderer.GetAsStringAndSubscribe(aFollower, nil);
 end;
 
 initialization
@@ -641,4 +671,3 @@ finalization
   FreeAndNil(DefaultAsStringRenderer);
 
 end.
-

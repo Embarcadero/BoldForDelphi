@@ -1,10 +1,15 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLDispatcherEditor;
 
 interface
 
 uses
   DesignEditors,
-  DesignIntf;
+  DesignIntf,
+  BoldRev;
+
 
 type
   { forward declarations }
@@ -22,15 +27,12 @@ type
 
 implementation
 
-uses
-  BoldComConst;
-
 { TBoldXMLDispatcherEditor }
 
 procedure TBoldXMLDispatcherEditor.EditProperty(
   const PropertyEditor: IProperty; var Continue: Boolean);
 begin
-  if PropertyEditor.GetName = 'Actions' then // do not localize
+  if PropertyEditor.GetName = 'Actions' then
   begin
     PropertyEditor.Edit;
     Continue := False;
@@ -48,7 +50,7 @@ end;
 function TBoldXMLDispatcherEditor.GetVerb(Index: Integer): string;
 begin
   case Index of
-    0: Result := sEditActions;
+    0: Result := 'Edit actions...';
   end;
 end;
 
@@ -56,5 +58,7 @@ function TBoldXMLDispatcherEditor.GetVerbCount: Integer;
 begin
   Result := 1;
 end;
+
+initialization
 
 end.

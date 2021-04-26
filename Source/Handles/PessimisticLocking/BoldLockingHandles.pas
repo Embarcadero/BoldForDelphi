@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockingHandles;
 
 interface
@@ -6,20 +9,24 @@ uses
   Classes,
   BoldDefs,
   BoldSubscription,
+ {$IFNDEF BOLD_NO_QUERIES}
   BoldLockHandler,
+ {$ENDIF}
   BoldLockHolder,
   BoldListenerHandle,
   BoldAbstractLockManagerHandle,
   BoldHandles;
 
 type
-  { TBoldLockingHandle }
+
   TBoldLockingHandle = class(TBoldSubscribableComponent)
   private
     fActive: Boolean;
     fSubscriber: TBoldPassthroughSubscriber;
     FSystemHandle: TBoldAbstractSystemHandle;
+ {$IFNDEF BOLD_NO_QUERIES}
     fLockHandler: TBoldPessimisticLockHandler;
+ {$ENDIF}
     fLockHolder: TBoldLockHolder;
     FListener: TBoldListenerHandle;
     FLockManager: TBoldAbstractLockManagerHandle;
@@ -37,7 +44,9 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+ {$IFNDEF BOLD_NO_QUERIES}
     property LockHandler: TBoldPessimisticLockHandler read fLockHandler;
+ {$ENDIF}
     property LockHolder: TBoldLockHolder read GetLockHolder;
     property Active: Boolean read fActive;
   published
@@ -52,7 +61,6 @@ type
 implementation
 
 uses
-  HandlesConst,
   BoldUtils,
   SysUtils;
 
@@ -65,16 +73,18 @@ begin
   if not assigned(SystemHandle.System) then
     raise EBoldInternal.CreateFmt('%s.Activate: Cannot activate Locking. The system is not active.', [classname]);
   if not assigned(Listener) then
-    raise EBold.CreateFmt(sCannotActivateWithoutListener, [classname]);
+    raise EBold.CreateFmt('%s.Activate: Cannot activate Locking without a listener. Set the Listener property of the %0:s', [classname]);
   if not assigned(LockManager) then
-    raise EBold.CreateFmt(sCannotActivateWithoutLockManager, [classname]);
+    raise EBold.CreateFmt('%s.Activate: Cannot activate Locking without a LockManager. Set the LockManager property of the %0:s', [classname]);
 
   if not Active then
   begin
+ {$IFNDEF BOLD_NO_QUERIES}
     fLockHandler := TBoldPessimisticLockHandler.CreateWithLockHolder(FSystemHandle.System, LockHolder);
     fLockHandler.OnActivityStart := OnActivityStart;
     fLockHandler.OnActivityEnd := OnActivityEnd;
     fLockHandler.OnProgress := OnProgress;
+ {$ENDIF}
     fActive := True;
   end;
 end;
@@ -102,7 +112,9 @@ begin
   if Active then
   begin
     FreeAndNil(fLockHolder);
+ {$IFNDEF BOLD_NO_QUERIES}
     FreeAndNil(fLockHandler);
+ {$ENDIF}
     fActive := false;
   end;
 end;
@@ -190,5 +202,7 @@ begin
       Listener := nil;
   end;
 end;
+
+initialization
 
 end.

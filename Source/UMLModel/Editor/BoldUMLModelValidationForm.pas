@@ -1,8 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelValidationForm;
 
 interface
 
 uses
+  {$IFDEF MSWINDOWS}
   Windows,
   Messages,
   Graphics,
@@ -12,6 +16,7 @@ uses
   StdCtrls,
   Grids,
   ComCtrls,
+  {$ENDIF}
   ClipBrd,
   ToolWin,
   Classes,
@@ -29,9 +34,11 @@ uses
   BoldStringcontrolPack,
   BoldSystem,
   BoldModel,
+  BoldElements,
+  BoldPlaceableSubscriber,
   Menus,
   ExtCtrls,
-  ImgList, BoldElements, BoldPlaceableSubscriber;
+  ImgList;
 
 type
   TBoldUMLElementClickedEvent = procedure (sender: TComponent; element: TUMLModelElement) of object;
@@ -63,13 +70,12 @@ type
     procedure Cut1Click(Sender: TObject);
     procedure Copy1Click(Sender: TObject);
     procedure Paste1Click(Sender: TObject);
-    procedure BoldPlaceableSubscriber1Receive(
-      sender: TBoldPlaceableSubscriber; Originator: TObject; OriginalEvent,
-      RequestedEvent: Integer);
+    procedure BoldPlaceableSubscriber1Receive(sender: TBoldPlaceableSubscriber;
+      Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: Integer);
   private
     FOnElementClick: TBoldUMLElementClickedEvent;
     fValidationProc: TBoldValidationCallBack;
-    fModelComponent: TBoldModel;
+    fBoldModel: TBoldModel;
     function GetUMLModel: TUMLModel;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -77,13 +83,13 @@ type
     constructor CreateWithModel(ModelComponent: TBoldModel; Owner: TComponent);
     destructor Destroy; override;
     procedure Validate;
-    property UMLModel: TUMLModel read GetUMLModel;
-    property ModelComponent: TBoldModel read fModelComponent;
+    property BoldModel: TBoldModel read fBoldModel;
+    property UmlModel: TUMLModel read GetUMLModel;
     property OnElementClick: TBoldUMLElementClickedEvent read FOnElementClick;
     property ValidationProc: TBoldValidationCallBack read fValidationProc write fValidationProc;
   end;
 
-  function EnsureValidationForm(ModelComponent: TBoldModel; Owner: TComponent; OnElementClick: TBoldUMLElementClickedEvent): TfrmValidation;
+  function EnsureValidationForm(ABoldModel: TBoldModel; Owner: TComponent; OnElementClick: TBoldUMLElementClickedEvent): TfrmValidation;
 
 var
   G_ValidationFormDefaultOwner: TComponent;
@@ -92,7 +98,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldQueue,
   BoldEnvironment,
   BoldUtils,
@@ -103,15 +108,15 @@ var
 
 {$R *.dfm}
 
-function EnsureValidationForm(ModelComponent: TBoldModel; Owner: TComponent; OnElementClick: TBoldUMLElementClickedEvent): TfrmValidation;
+function EnsureValidationForm(ABoldModel: TBoldModel; Owner: TComponent; OnElementClick: TBoldUMLElementClickedEvent): TfrmValidation;
 begin
-  if assigned(G_ValidationForm) and (G_ValidationForm.ModelComponent <> ModelComponent) then
+  if assigned(G_ValidationForm) and (G_ValidationForm.BoldModel  <> ABoldModel) then
   begin
     G_ValidationForm.Release;
     G_ValidationForm := nil;
   end;
   if not Assigned(G_ValidationForm) then
-    G_ValidationForm := TfrmValidation.CreateWithModel(ModelComponent, Owner);
+    G_ValidationForm := TfrmValidation.CreateWithModel(ABoldModel, Owner);
   Result := G_ValidationForm;
   if assigned(OnElementClick) then
     result.fOnElementClick := OnElementclick;
@@ -143,6 +148,14 @@ begin
     FormStyle := fsNormal;
 end;
 
+procedure TfrmValidation.BoldPlaceableSubscriber1Receive(
+  sender: TBoldPlaceableSubscriber; Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: Integer);
+begin
+  if blhViolations.Count > 0 then
+    show;
+end;
+
 procedure TfrmValidation.btReCheckClick(Sender: TObject);
 begin
   Validate;
@@ -151,7 +164,7 @@ end;
 procedure TfrmValidation.Validate;
 begin
   if Assigned(ValidationProc) then
-    ValidationProc(ModelComponent)
+    ValidationProc(BoldModel)
   else
     raise EBold.Create('No validator registered');
 
@@ -162,11 +175,9 @@ end;
 constructor TfrmValidation.CreateWithModel(ModelComponent: TBoldModel; Owner: Tcomponent);
 begin
   inherited create(Owner);
-  // Workaround - Setting the handle in designtime causes an AV in inherited Create
   BoldGrid1.BoldHandle := blhViolations;
-  // EndWorkaround
-  fModelComponent := ModelComponent;
-  fModelComponent.FreeNotification(Self);
+  fBoldModel := ModelComponent;
+  fBoldModel.FreeNotification(Self);
   behModel.Value := ModelComponent.EnsuredUMLModel;
 end;
 
@@ -177,7 +188,10 @@ end;
 
 function TfrmValidation.GetUMLModel: TUMLModel;
 begin
-  result := ModelComponent.EnsuredUMLModel;
+  if Assigned(BoldModel) then  
+    result := BoldModel.EnsuredUMLModel
+  else
+    result := nil;
 end;
 
 procedure TfrmValidation.Cut1Click(Sender: TObject);
@@ -198,26 +212,18 @@ begin
     SendMessage(ActiveControl.handle, WM_PASTE, 0, 0);
 end;
 
-destructor TfrmValidation.destroy;
+destructor TfrmValidation.Destroy;
 begin
   if G_ValidationForm = self then
     G_ValidationForm := nil;
   inherited;
 end;
 
-procedure TfrmValidation.BoldPlaceableSubscriber1Receive(
-  sender: TBoldPlaceableSubscriber; Originator: TObject; OriginalEvent,
-  RequestedEvent: Integer);
-begin
-  if blhViolations.Count > 0 then
-    show;
-end;
-
 procedure TfrmValidation.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited;
-  if (aComponent = fModelComponent) and (operation = opRemove) then
-    fModelComponent := nil;
+  if (aComponent = BoldModel) and (operation = opRemove) then
+    fBoldModel := nil;
 end;
 
 initialization

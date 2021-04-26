@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldElementHandleFollowerCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -44,11 +47,9 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev,
-  BoldUtils,
   BoldControlPackDefs,
-  BoldDefs;
+  BoldDefs,
+  SysUtils;
 
 { TBoldElementHandleFollowerCom }
 
@@ -83,7 +84,6 @@ begin
   if (value <> BoldHandle) then
   begin
     fBoldHandle := Value;
-    // will force subscription on Handle
     FollowerValueCurrent := false;
   end;
 end;
@@ -130,7 +130,7 @@ begin
   begin
     if Value then
     begin
-      RemoveFromDisplayList;
+      RemoveFromDisplayList(false);
       PropagateValue;
       Subscribe;
     end
@@ -148,4 +148,3 @@ end;
 
 initialization
 end.
-

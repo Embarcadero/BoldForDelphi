@@ -1,9 +1,14 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSqlNodes;
 
 interface
+
 uses
   DB,
   Classes,
+  BoldBase,
   BoldPSDescriptionsSQL,
   BoldPMappersSQL,
   BoldSqlQuery,
@@ -51,27 +56,27 @@ type
 
   TBoldSqlNodeList = class(TList)
   private
-    function GetItem(index: Integer): TBoldSqlNode;
-    procedure PutItem(index: Integer; Value: TBoldSqlNode);
+    function GetItem(index: Integer): TBoldSqlNode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure PutItem(index: Integer; Value: TBoldSqlNode); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     destructor Destroy; override;
-    function Add(Item: TBoldSqlNode): Integer;
+    function Add(Item: TBoldSqlNode): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure TraverseList(V: TBoldSqlNodeVisitor); virtual;
     property Items[index: Integer]: TBoldSqlNode read GetItem write PutItem; default;
   end;
 
 
-  TBoldSqlNode = class(TObject)
+  TBoldSqlNode = class(TBoldMemoryManagedObject)
   private
     fPosition: integer;
     fObjectMapper: TBoldObjectSQLMapper;
     fTableReferences: TBoldSqlTableReferenceList;
     fWCF: TBoldSqlWCF;
     fQuery: TBoldSqlQuery;
-    function GetHasObjectMapper: Boolean;
-    function GetHasQuery: boolean;
+    function GetHasObjectMapper: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetTableReferences: TBoldSqlTableReferenceList; virtual;
   protected
+    function GetHasQuery: boolean; virtual;
     function GetQuery: TBoldSqlQuery; virtual;
     function GetObjectMapper: TBoldObjectSQLMapper; virtual;
     procedure SetObjectMapper(const Value: TBoldObjectSQLMapper); virtual;
@@ -152,7 +157,7 @@ type
     fMemberMapper: TBoldMemberSQLMapper;
     fIsBoolean: Boolean;
   public
-    constructor Create(Position: integer; memberName: String; MemberIndex: Integer; MemberOf: TBoldSqlNode; IsBoolean: Boolean);
+    constructor Create(Position: integer; const memberName: String; MemberIndex: Integer; MemberOf: TBoldSqlNode; IsBoolean: Boolean);
     destructor Destroy; override;
     function TableReferenceForTable(Table: TBoldSqlTableDescription; Query: TBoldSqlQuery; ForceOwnTable: Boolean): TBoldSqlTableReference; override;
     procedure AcceptVisitor(V: TBoldSqlNodeVisitor); override;
@@ -191,6 +196,7 @@ type
     fVariableBinding: TBoldSqlVariableBinding;
     function GetTableReferences: TBoldSqlTableReferenceList; override;
   protected
+    function GetHasQuery: boolean; override;
     function GetQuery: TBoldSqlQuery; override;
     function GetObjectMapper: TBoldObjectSQLMapper; override;
     procedure SetObjectMapper(const Value: TBoldObjectSQLMapper); override;
@@ -277,13 +283,13 @@ type
   protected
     function GetAsString: String; override;
   public
-    constructor Create(Position: integer; Name: String);
+    constructor Create(Position, IntValue: integer; Name: String);
     property Name: string read fName;
     property Intvalue: integer read fIntValue write fIntvalue;
     procedure AcceptVisitor(V: TBoldSqlNodeVisitor); override;
   end;
 
-  TBoldSqlSymbol = class
+  TBoldSqlSymbol = class(TBoldMemoryManagedObject)
   protected
     function GetName: String; virtual; abstract;
     function GetSQLName: String; virtual;
@@ -294,7 +300,7 @@ type
     property SQLName: String read GetSQLName;
   end;
 
-  TBoldSQLWCFVariable = class(TBoldSqlWCF)          //<- New WCFclass to handle variables (HK)
+  TBoldSQLWCFVariable = class(TBoldSqlWCF)
   private
     fParam:TParam;
     fVariableBinding:TBoldSqlVariableBinding;
@@ -302,7 +308,7 @@ type
     constructor Create(VariableBinding: TBoldSqlVariableBinding);
     function GetAsString(Query: TBoldSQlQuery): String; override;
     destructor Destroy;override;
-  end;                                              //<- End (HK)
+  end;
 
 
 implementation
@@ -310,7 +316,6 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  BoldPMConsts,
   BoldSQLMappingInfo,
   BoldPMappersDefault;
 
@@ -340,9 +345,8 @@ end;
 destructor TBoldSqlOperation.Destroy;
 begin
   FreeAndNil(fArgs);
-  inherited;
+  inherited;          
 end;
-
 
 { TBoldSqlNode }
 
@@ -360,10 +364,10 @@ end;
 
 destructor TBoldSqlNode.destroy;
 begin
-  inherited;
   FreeAndNil(fTableReferences);
   FreeAndNil(fWCF);
   FreeAndNil(fQuery);
+  inherited;
 end;
 
 function TBoldSqlNode.GetHasObjectMapper: Boolean;
@@ -418,17 +422,19 @@ begin
     fTableReferences.Add(Node.GetTableReferences[i]);
 end;
 
+
 procedure TBoldSqlNode.SetObjectMapper(const Value: TBoldObjectSQLMapper);
 begin
   fObjectmapper := Value;
   if HasObjectMapper and (length(ObjectMapper.SystemPersistenceMapper.MappingInfo.GetAllInstancesMapping(ObjectMapper.ExpressionName)) > 1) then
-    raise EBold.CreateFmt(sChildMappedClassesNotSupported, [ObjectMapper.ExpressionName]);
+    raise EBold.Create('ChildMapped classes not supported: '+ObjectMapper.ExpressionName);
 end;
 
 procedure TBoldSqlNode.SetQuery(const Value: TBoldSqlQuery);
 begin
   fQuery := Value;
 end;
+
 
 function TBoldSqlNode.TableReferenceForTable(Table: TBoldSQLTableDescription; Query: TBoldSqlQuery; ForceOwntable: Boolean): TBoldSqlTableReference;
 var
@@ -447,8 +453,6 @@ begin
 
   if assigned(ObjectMapper) and (ObjectMapper.AllTables.IndexOf(Table) = -1) then
     raise EBoldInternal.createFmt('Table %s does not belong to class %s', [Table.SQLName, ObjectMapper.ExpressionName]);
-
-  // if the table reference has been used before, by the same query, then reuse it.
 
   for i := 0 to fTableReferences.Count-1 do
     if (fTablereferences[i].TableDescription = Table) and
@@ -475,8 +479,8 @@ begin
       TypeIDWCF := TBoldSQLWCFGenericExpression.Create('('+(ObjectMapper as TBoldObjectDefaultMapper).SubClassesID+')');
       TypeColRef := Result.GetColumnReference(TYPECOLUMN_NAME);
       TypeColRefWCF := TBoldSQLWCFColumnRef.Create(TypeColRef);
-      TypeWCF := TBoldSQLWCFBinaryInfix.Create(TypeColRefWCF, TypeIDWCF, 'IN'); // do not localize
-      Query.AddWCF(TypeWCF); // ensures the maintable as first table;
+      TypeWCF := TBoldSQLWCFBinaryInfix.Create(TypeColRefWCF, TypeIDWCF, 'IN');
+      Query.AddWCF(TypeWCF);
     end;
   end;
 end;
@@ -550,8 +554,8 @@ end;
 
 destructor TBoldSqlIteration.Destroy;
 begin
-  inherited;
   FreeandNil(fLoopVar);
+  inherited;
 end;
 
 function TBoldSqlIteration.TableReferenceForTable(
@@ -570,7 +574,7 @@ begin
   v.VisitTBoldSqlMember(self);
 end;
 
-constructor TBoldSqlMember.Create(Position: integer; memberName: String; MemberIndex: Integer; MemberOf: TBoldSqlNode; IsBoolean: Boolean);
+constructor TBoldSqlMember.Create(Position: integer; const memberName: String; MemberIndex: Integer; MemberOf: TBoldSqlNode; IsBoolean: Boolean);
 begin
   inherited Create(Position);
   fMemberName := memberName;
@@ -588,7 +592,6 @@ begin
 end;
 
 function TBoldSqlMember.QueryOfMemberOfIsEnclosing: Boolean;
-// Checks if the query of the memberOf-node will enclose this node, or if we can steal it.
 begin
   result := (MemberOf is TBoldSQLVariableReference) and
     (MemberOf as TBoldSQLVariableReference).VariableBinding.IsLoopVar;
@@ -646,12 +649,14 @@ begin
   v.VisitTBoldSqlVariableBinding(self);
 end;
 
+
 procedure TBoldSqlVariableBinding.AddRef;
 begin
   inc(fRefCount);
   if (fRefCount > 1) and not fIsLoopVar then
-    raise EBold.Create(sExternalVarsCanOnlyBereferencedOnce);
+    raise EBold.Create('external variables (and self) can currently only be referenced once');
 end;
+
 
 constructor TBoldSqlVariableBinding.Create(Position: integer; VariableName: String; TopSortedIndex: integer);
 begin
@@ -660,12 +665,14 @@ begin
   fTopSortedIndex := TopSortedIndex;
 end;
 
+
 { TBoldSqlStrLiteral }
 
 procedure TBoldSqlStrLiteral.AcceptVisitor(V: TBoldSqlNodeVisitor);
 begin
   v.VisitTBoldSqlStrLiteral(self);
 end;
+
 
 constructor TBoldSqlStrLiteral.Create(Position: integer; StrValue: String);
 begin
@@ -771,6 +778,15 @@ begin
   fVariableBinding := VariableBinding;
 end;
 
+function TBoldSqlVariableReference.GetHasQuery: boolean;
+begin
+  if VariableBinding.IsLoopVar then begin
+    Result := inherited GetHasQuery;
+  end else begin
+    Result := VariableBinding.HasQuery;
+  end;
+end;
+
 function TBoldSqlVariableReference.GetObjectMapper: TBoldObjectSQLMapper;
 begin
   result := VariableBinding.ObjectMapper;
@@ -783,7 +799,7 @@ end;
 
 function TBoldSqlVariableReference.RelinquishWCF: TBoldSqlWCF;
 begin
-  result := TBoldSQLWCFVariable.Create(VariableBinding);   //<- Use new WCF class for variables (HK)
+  result := TBoldSQLWCFVariable.Create(VariableBinding);
 end;
 
 function TBoldSqlVariableReference.RelinquishQuery: TBoldSqlQuery;
@@ -841,9 +857,11 @@ begin
   inherited;
 end;
 
-constructor TBoldSqlEnumLiteral.Create(Position: integer; Name: String);
+constructor TBoldSqlEnumLiteral.Create(Position, IntValue: integer; Name:
+    String);
 begin
   inherited Create(Position);
+  fIntValue := IntValue;
   fName := Name;
 end;
 
@@ -917,9 +935,6 @@ begin
 end;
 
 { TBoldSQLWCFVariable }
-
-
-//<- Implement new WCFclass for variables (HK)
 constructor TBoldSQLWCFVariable.Create(
   VariableBinding: TBoldSqlVariableBinding);
 begin
@@ -940,7 +955,6 @@ begin
   fParam.Value:=fVariableBinding.ExternalVarValue;
   result := ':'+fParam.Name;
 end;
-//<- END (HK)
 
 
 { TBoldSqlDateLiteral }
@@ -983,4 +997,5 @@ begin
   result := TimeToStr(TimeValue);
 end;
 
+initialization
 end.

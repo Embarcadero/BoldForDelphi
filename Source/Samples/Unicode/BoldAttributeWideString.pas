@@ -1,22 +1,22 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAttributeWideString;
 
-// useful links:
-// Delphi-Unicode.net: http://www.delphi-unicode.net
-// Unicode components: http://mikroklubben.adsl.dk/~nikse/delphi-unicode.zip
-// unicode fonts: http://www.hclrss.demon.co.uk/unicode/fonts.html
-// Arial MS Unicode.ttf: http://office.microsoft.com/downloads/2000/aruniupd.aspx
 
-// To install this attribute type in your application, add the following to your
-// TypeNameHandle:
-//
-// ModelName:      UniCode
-// ExpressionName: WideString
-// DelphiName:     TBAWideString
-// ContentName:    WideString
-// PMapper:        TBoldPMWideString
-// Accessor:       AsWideString
-// NativeType:     WideString
-// UnitName:       BoldAttributeWideString
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 interface
 
@@ -42,18 +42,18 @@ type
     function GetWideStringRepresentation(Representation: TBoldRepresentation): WideString;
     procedure SetWideStringRepresentation(Representation: TBoldRepresentation; const Value: WideString);
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     procedure FreeContent; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
-    procedure SetStringRepresentation(Representation: TBoldRepresentation; Value: string); override;
+    procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function MaySetValue(NewValue: WideString; Subscriber: TBoldSubscriber): Boolean;
-    function ProxyClass: TBoldMember_ProxyClass; override;
+    //function ProxyClass: TBoldMember_ProxyClass; override;
   public
     procedure Assign(Source: TBoldElement); override;
-    procedure AssignValue(Source: IBoldValue); override;
+    procedure AssignValue(const Source: IBoldValue); override;
     function CompareToAs(CompType: TBoldCompareType; BoldElement: TBoldElement): Integer; override;
-    function ValidateWideString(Value: WideString; Representation: TBoldRepresentation): Boolean;
-    function ValidateString(Value: String; Representation: TBoldRepresentation): Boolean; override;
+    function ValidateWideString(Value: WideString; Representation: TBoldRepresentation): Boolean; 
+    function ValidateString(const Value: String; Representation: TBoldRepresentation): Boolean; override;
     function CanSetValue(NewValue: WideString; Subscriber: TBoldSubscriber): Boolean;
     function ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean; override;
     procedure SetEmptyValue; override;
@@ -63,7 +63,7 @@ type
   { The following class implements a proxy for a WideString attribute to support
     IBoldWideStringContent, a part of the ValueSpace-interface mechanism used for
     objectspace transactions, persistence and other things }
-
+    
   { TBAWideString_Proxy }
   TBAWideString_Proxy = class(TBoldAttribute_Proxy, IBoldWideStringContent)
   private
@@ -79,7 +79,8 @@ uses
   Windows,
   SysUtils,
   { Bold }
-  BoldMemberTypeDictionary;
+  BoldMemberTypeDictionary,
+  BoldRev;
 
 {******************************************************************************}
 {* TBAWideString                                                              *}
@@ -87,12 +88,14 @@ uses
 
 {* Proxy routines *************************************************************}
 
+(*
 { The following method returns a class reference to a WideString proxy class }
 { thus allowing Bold to instantiate it }
 function TBAWideString.ProxyClass: TBoldMember_ProxyClass;
 begin
   result := TBAWideString_Proxy;
 end;
+*)
 
 function TBAWideString.ProxyInterface(const IId: TGUID;
   Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -130,7 +133,7 @@ end;
 
 {* Public get/set methods *****************************************************}
 
-procedure TBAWideString.SetStringRepresentation(Representation: TBoldRepresentation; Value: string);
+procedure TBAWideString.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   SetWideStringRepresentation(Representation, Value);
 end;
@@ -142,15 +145,15 @@ end;
 
 {* Validation routines ********************************************************}
 
-function TBAWideString.ValidateString(Value: string; Representation: TBoldRepresentation): Boolean;
+function TBAWideString.ValidateString(const Value: string; Representation: TBoldRepresentation): Boolean;
 begin
   Result := ValidateWideString(Value, Representation);
 end;
 
 function TBAWideString.CanSetValue(NewValue: Widestring; Subscriber: TBoldSubscriber): Boolean;
 begin
-  Result := MaySetValue(NewValue, Subscriber) and
-            SendQuery(bqMaySetValue, [NewValue], Subscriber);
+  Result := MaySetValue(NewValue, Subscriber) {$IFNDEF BOLD_NO_QUERIES}and
+            SendQuery(bqMaySetValue, [NewValue], Subscriber){$ENDIF};
 end;
 
 {* Assignment routines ********************************************************}
@@ -168,7 +171,7 @@ begin
     inherited;
 end;
 
-procedure TBAWideString.AssignContentValue(Source: IBoldValue);
+procedure TBAWideString.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldWideStringContent;
 begin
@@ -191,7 +194,7 @@ begin
   end;
 end;
 
-procedure TBAWideString.AssignValue(Source: IBoldValue);
+procedure TBAWideString.AssignValue(const Source: IBoldValue);
 var
   sw: IBoldWideStringContent;
 begin
@@ -219,16 +222,10 @@ begin
       Result := NullSmallest(BoldElement)
     else
       case CompType of
-        ctDefault:
+        ctDefault, ctCaseInsensitive:
           Result := WideCompareText(AsWideString, CompareString.AsWideString);
-        ctAsString:
+        ctAsString, ctCaseSensitive:
           Result := WideCompareStr(AsWideString, CompareString.AsWideString);
-        ctAsText:
-          Result := WideCompareText(AsWideString, CompareString.AsWideString);
-        ctAsAnsiString:
-          Result := WideCompareStr(AsWideString, CompareString.AsWideString);
-        ctAsAnsiText:
-          Result := WideCompareText(AsWideString, CompareString.AsWideString);
       else
         Result := inherited CompareToAs(CompType, BoldElement);
       end
@@ -243,7 +240,8 @@ end;
 
 function TBAWideString_Proxy.GetProxedWideString: TBAWideString;
 begin
-  Result := ProxedElement as TBAWideString;
+  Result := ProxedMember as TBAWideString;
+  //Result := ProxedElement as TBAWideString;
 end;
 
 function TBAWideString.MaySetValue(NewValue: WideString; Subscriber: TBoldSubscriber): Boolean;
@@ -257,7 +255,7 @@ begin
   if not CanRead(nil) then
     BoldRaiseLastFailure(self, 'GetWideStringRepresentation', '');
   case Representation of
-    brDefault:
+    brDefault: 
     begin
       if IsNull then {IsNull ensures current}
         Result := ''
@@ -319,7 +317,7 @@ end;
 
 initialization
   BoldmemberTypes.AddMemberTypeDescriptor(TBAWideString, alConcrete);
-
+  
 finalization
   if BoldMemberTypesAssigned then
     BoldMemberTypes.RemoveDescriptorByClass(TBAWideString);

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractPersistenceHandleDB;
 
 interface
@@ -13,7 +16,7 @@ uses
   BoldSQLDatabaseConfig,
   BoldPersistenceControllerDefault,
   BoldDbInterfaces,
-  BoldPSParams;
+  BoldPSParams, BoldIndexCollection;
 
 type
   { forward declarations }
@@ -42,16 +45,19 @@ type
     function CreatePersistenceController: TBoldPersistenceController; override;
     procedure SetActive(Value: Boolean); override;
     function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig; virtual; abstract;
+    function GetCustomIndexes: TBoldIndexCollection; virtual; abstract;
     function GetDataBaseInterface: IBoldDatabase; virtual; abstract;
     procedure AssertSQLDatabaseconfig(Context: String); virtual;
   public
-    constructor Create(Owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(Owner: TComponent); override;
+    destructor destroy; override;
     property PersistenceControllerDefault: TBoldPersistenceControllerDefault read GetPersistenceControllerDefault;
     procedure CreateDataBaseSchema(IgnoreUnknownTables: Boolean = false);
+    procedure CreateDataBase;
     procedure AddModelEvolutionInfoToDatabase;
     property DatabaseInterface: IBoldDatabase read GetDatabaseInterface;
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read GetSQLDatabaseConfig;
+    property CustomIndexes: TBoldIndexCOllection read GetCustomIndexes;
   published
     property BoldModel: TBoldAbstractModel read FBoldModel write SetBoldModel;
     property OnGetCurrentTime: TBoldGetTimeEvent read fOnGetCurrentTime write fOnGetCurrentTime;
@@ -68,7 +74,7 @@ uses
   BoldLogHandler,
   BoldPSDescriptionsSQL,
   BoldPMappersDefault,
-  PersistenceConsts;
+  BoldPersistenceControllerPassthrough;
 
 const
   breModelChanged = 100;
@@ -150,6 +156,11 @@ begin
   fComponentSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveComponentEvents);
 end;
 
+procedure TBoldAbstractPersistenceHandleDB.CreateDataBase;
+begin
+  DatabaseInterface.CreateDatabase;
+end;
+
 procedure TBoldAbstractPersistenceHandleDB.CreateDataBaseSchema(
   IgnoreUnknownTables: Boolean);
 var
@@ -157,16 +168,17 @@ var
 begin
   fIgnoreUnknownTables := IgnoreUnknownTables;
   if Active then
-    raise EBold.Create(sCannotGenerateWhenHandleIsActive);
+    raise EBold.Create('Can not generate database schema when the PersistenceHandle is Active');
 
   if not assigned(BoldModel) then
-    raise EBold.CreateFmt(sModelComponentMissing, [ClassName, Name]);
-  AssertSQLDatabaseconfig(sCreateSchema);
+    raise EBold.CreateFmt('%s.CreateDataBaseSchema: Can not create database schema for %s without a Model-component', [ClassName, Name]);
+  AssertSQLDatabaseconfig('Create DatabaseSchema');
 
-  PMapper := TBoldSystemDefaultMapper.CreateFromMold(BoldModel.RawMoldModel, BoldModel.TypeNameDictionary, SQLDataBaseConfig, GetDataBaseInterface);
+  PMapper := TBoldSystemDefaultMapper.CreateFromMold(BoldModel.RawMoldModel, BoldModel.TypeNameDictionary,
+    CustomIndexes, SQLDataBaseConfig, GetDataBaseInterface);
   try
     try
-      BoldLog.StartLog(sGenerateSchema);
+      BoldLog.StartLog('Generate Database Schema');
       PMapper.OpenDatabase(false, false);
       PMapper.OnPreparePSParams := PreparePSParams;
       PMapper.CreatePersistentStorage;
@@ -174,7 +186,7 @@ begin
     except
       on e: Exception do
       begin
-        BoldLog.LogFmt(sSchemaGenerationAborted,[e.message], ltError);
+        BoldLog.LogFmt('Generation of Database Schema Aborted (%s)',[e.message], ltError);
         raise;
       end;
     end;
@@ -189,8 +201,11 @@ var
   PController: TBoldPersistenceControllerDefault;
 begin
   if not assigned(BoldModel) then
-    raise EBold.createFmt(sCannotGetPControllerWithoutModel, [ClassName]);
-  PController := TBoldPersistenceControllerDefault.CreateFromMold(BoldModel.MoldModel, BoldModel.TypeNameDictionary, SQLDataBaseConfig, GetDataBaseInterface);
+    raise EBold.createFmt('%s.CreatePersistenceController: Can not get a PersistenceController without a Model', [ClassName]);
+  if not assigned(SQLDataBaseConfig) then
+    raise EBold.createFmt('%s.CreatePersistenceController: Can not get a PersistenceController without SQLDataBaseConfig', [ClassName]);
+  PController := TBoldPersistenceControllerDefault.CreateFromMold(BoldModel.MoldModel, BoldModel.TypeNameDictionary,
+    CustomIndexes, SQLDataBaseConfig, GetDataBaseInterface);
 
   PController.PersistenceMapper.OnGetCurrentTime := fOnGetCurrentTime;
   PController.PersistenceMapper.ClockLogGranularity := fClockLogGranularity;
@@ -210,12 +225,17 @@ var
   hrs, mins, secs, msecs: Word;
 begin
   DecodeTime(fClockLogGranularity, hrs, mins, secs, msecs);
-  result := Format('%d:%d:%d.%d', [hrs, mins, secs, msecs]); // do not localize
+  result := Format('%d:%d:%d.%d', [hrs, mins, secs, msecs]);
 end;
 
 function TBoldAbstractPersistenceHandleDB.GetPersistenceControllerDefault: TBoldPersistenceControllerDefault;
+var
+  vPersistenceController: TBoldPersistenceController;
 begin
-  result := PersistenceController as TBoldPersistenceControllerDefault;
+  vPersistenceController := PersistenceController;
+  while not (vPersistenceController is TBoldPersistenceControllerDefault) and (vPersistenceController is TBoldPersistenceControllerPassthrough) do
+    vPersistenceController := (vPersistenceController as TBoldPersistenceControllerPassthrough).NextPersistenceController;
+  result := vPersistenceController as TBoldPersistenceControllerDefault;
 end;
 
 procedure TBoldAbstractPersistenceHandleDB.PlaceComponentSubscriptions;
@@ -239,10 +259,11 @@ procedure TBoldAbstractPersistenceHandleDB.SetActive(Value: Boolean);
 begin
   if value <> Active then
   begin
+    Assert(Assigned(PersistenceControllerDefault));  
     if value then
     begin
       if assigned(UpgraderHandle) and not BoldModel.MoldModel.UseModelVersion then
-        raise EBold.CreateFmt(sCannotActivate_UpgraderMismatch, [classname]);
+        raise EBold.CreateFmt('%s.SetActive: Cannot activate, there is an UpgraderHandle but the Model does not have UseModelVersion true', [classname]);
       PersistenceControllerDefault.OpenDatabase(EvolutionSupport);
     end
     else
@@ -267,11 +288,11 @@ var
   input: string;
 
   function GetNext(Delimiter: string): Integer;
+  const
+    ErrorMessage = '%s.SetClockLogGranularity: string is not properly formatted. Should be <hrs>:<mins>:<secs>.<msecs>';
   var
-    ErrorMessage: string;
     p: Integer;
   begin
-    ErrorMessage := sClockStringFormatError;
     if Delimiter <> '' then
     begin
       p := pos(Delimiter, input);
@@ -304,7 +325,7 @@ begin
   if Value <> FEvolutionSupport then
   begin
     if Active then
-      raise EBold.CreateFmt(sCannotSetWhenHandleIsActive, [classname, 'SetEvolutionSupport', name]); // do not localize
+      raise EBold.CreateFmt('%s.SetEvolutionSupport: Cannot set this property when the handle (%s) is active', [classname, name]);
     FEvolutionSupport := Value;
   end;
 end;
@@ -330,7 +351,9 @@ procedure TBoldAbstractPersistenceHandleDB.AssertSQLDatabaseconfig(
   Context: String);
 begin
   if not assigned(SQLDatabaseConfig) then
-    raise EBold.CreateFmt(sSQLDatabaseConfigMissing, [classname, Context]);
+    raise EBold.CreateFmt('%s: Unable to %s. There is no SQLDatabaseConfig available', [classname, Context]); 
 end;
+
+initialization
 
 end.

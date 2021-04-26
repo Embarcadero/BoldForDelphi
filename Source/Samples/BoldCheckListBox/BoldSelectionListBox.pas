@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSelectionListBox;
 
 interface
@@ -5,6 +8,7 @@ interface
 uses
   BoldCustomCheckListBox,
   BoldCheckBoxStateControlPack,
+  BoldControlPack,
   BoldListHandle,
   BoldElements,
   BoldDefs,
@@ -24,9 +28,9 @@ type
     fCheckBoxRenderer: TBoldAsCheckBoxStateRenderer;
     fPublisher: TBoldPublisher;
     fSelectionHandle: TBoldListHandle;
-    function GetAsCheckBoxState(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): TCheckBoxState;
-    procedure SetAsCheckBoxState(Element: TBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression);
-    procedure OnSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber);
+    function GetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
+    procedure SetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
+    procedure OnSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
     procedure SetSelectionHandle(const Value: TBoldListHandle);
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -45,7 +49,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldSelectionListBox }
 
@@ -67,13 +72,11 @@ begin
   inherited;
 end;
 
-function TBoldSelectionListBox.GetAsCheckBoxState(Element: TBoldElement;
-  Representation: TBoldRepresentation;
-  Expression: TBoldExpression): TCheckBoxState;
+function TBoldSelectionListBox.GetAsCheckBoxState(aFollower: TBoldFollower): TCheckBoxState;
 begin
   if Assigned(SelectionHandle) then
   begin
-    if (SelectionHandle.List.IndexOf(Element) <> -1 ) then
+    if (SelectionHandle.List.IndexOf(aFollower.Element) <> -1 ) then
       Result := cbChecked
     else
       Result := cbUnChecked;
@@ -89,24 +92,20 @@ begin
     SelectionHandle := nil;
 end;
 
-procedure TBoldSelectionListBox.OnSubscribe(Element: TBoldElement;
-  Representation: TBoldRepresentation; Expression: TBoldExpression;
-  Subscriber: TBoldSubscriber);
+procedure TBoldSelectionListBox.OnSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 begin
   SelectionHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged, beDestroying], breReSubscribe);
   SelectionHandle.List.DefaultSubscribe(Subscriber);
   fPublisher.AddSubscription(Subscriber, beSelectionHandleChanged, breReSubscribe);
 end;
 
-procedure TBoldSelectionListBox.SetAsCheckBoxState(Element: TBoldElement;
-  newValue: TCheckBoxState; Representation: TBoldRepresentation;
-  Expression: TBoldExpression);
+procedure TBoldSelectionListBox.SetAsCheckBoxState(aFollower: TBoldFollower; newValue: TCheckBoxState);
 begin
   if Assigned(SelectionHandle) then
   begin
     case newValue of
-      cbChecked: SelectionHandle.MutableList.Add(Element);
-      cbUnChecked: if (SelectionHandle.List.IndexOf(Element) <> -1) then SelectionHandle.MutableList.Remove(Element);
+      cbChecked: SelectionHandle.MutableList.Add(aFollower.Element);
+      cbUnChecked: if (SelectionHandle.List.IndexOf(aFollower.Element) <> -1) then SelectionHandle.MutableList.Remove(aFollower.Element);
       cbGrayed: ;
     end;
   end;
@@ -121,5 +120,7 @@ begin
     fPublisher.SendExtendedEvent(self, beSelectionHandleChanged, []);
   end;
 end;
+
+initialization
 
 end.

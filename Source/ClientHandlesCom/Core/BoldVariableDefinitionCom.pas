@@ -1,23 +1,21 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldVariableDefinitionCom;
 
 interface
 
 uses
   Classes,
-  BoldDefs,
   BoldSubscription,
-  BoldHandlesCom,
-  BoldComObjectSpace,
-  BoldComObjectSpace_TLB;
+  BoldHandlesCom;
 
 type
-{ TODO: Create proxy, stuff values, etc. }
 
   TBoldVariableDefinitionCom = class;
   TBoldVariableTupleListCom = class;
   TBoldVariableTupleCom = class;
 
-  { TBoldVariableDefinitionCom }
   TBoldVariableDefinitionCom = class(TBoldSubscribableComponent)
   private
     fVariableTupleList: TBoldVariableTupleListCom;
@@ -30,7 +28,6 @@ type
     property Variables: TBoldVariableTupleListCom read fVariableTupleList write SetVariableTupleList;
   end;
 
-  { TBoldVariableTupleListCom }
   TBoldVariableTupleListCom = class(TCollection)
   private
     fOwner: TBoldVariableDefinitionCom;
@@ -46,7 +43,6 @@ type
     property Items[Index: integer]: TBoldVariableTupleCom read GetItems; default;
   end;
 
-  { TBoldVariableTupleCom }
   TBoldVariableTupleCom = class(TCollectionItem)
   private
     FVariableName: String;
@@ -62,19 +58,19 @@ type
     function GetDisplayName: string; override;
   public
     constructor Create(Collection: TCollection); override;
-    destructor Destroy; override;
+    destructor destroy; override;
   published
     property BoldHandle: TBoldElementHandleCom read FBoldHandle write SetBoldHandle;
     property VariableName: String read FVariableName write SetVariableName;
     property UseListElement: Boolean read FUseListElement write SetUseListElement;
   end;
 
+
 implementation
 
 uses
   SysUtils,
-  BoldComHandlesConst,
-  BoldUtils;
+  BoldDefs;
 
 { TBoldVariableDefinitionCom }
 constructor TBoldVariableDefinitionCom.create(Owner: TComponent);
@@ -121,7 +117,7 @@ var
 begin
   i := 1;
   repeat
-    result := 'Variable' + IntToStr(i); // do not translate
+    result := 'Variable'+IntToStr(i);
     Inc(i);
   until NameIsUnique(result);
 end;
@@ -167,7 +163,7 @@ begin
   fBoldHandleSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveHandleEvent);
 end;
 
-destructor TBoldVariableTupleCom.Destroy;
+destructor TBoldVariableTupleCom.destroy;
 begin
   FreeAndNil(fBoldHandleSubscriber);
   inherited;
@@ -179,9 +175,9 @@ begin
   if assigned(BoldHandle) then
     Result := result + ': ' + BoldHandle.Name
   else
-    result := result + ': Not Connected'; // do not localize
+    result := result + ': Not Connected';
   if UseListElement then
-    result := result + ' (list)'; // do not localize
+    result := result + ' (list)';
 end;
 
 procedure TBoldVariableTupleCom.SetBoldHandle(const Value: TBoldElementHandleCom);
@@ -189,17 +185,14 @@ begin
   FBoldHandle := Value;
   fBoldHandleSubscriber.CancelAllSubscriptions;
   if assigned(value) then
-    Value.AddSmallSubscription(fBoldHandleSubscriber, [beDestroying], beDestroying);
-    { TODO: Reeanable when AbstractListHandleCom fixed }
-//  if not (BoldHandle is TBoldAbstractListHandleCom) then
-//    UseListElement := false;
+    Value.AddSmallSubscription(fBoldHandleSubscriber, [beDestroying], beDestroying); 
+
   Changed;
+
 end;
 
 procedure TBoldVariableTupleCom.SetUseListElement(const Value: Boolean);
-begin
-    { TODO: Reeanable when AbstractListHandleCom fixed }
-//  FUseListElement := Value and (BoldHandle is TBoldAbstractListHandleCom);
+begin 
   Changed;
 end;
 
@@ -207,13 +200,14 @@ procedure TBoldVariableTupleCom.SetVariableName(const Value: String);
 begin
   if FVariableName <> Value then begin
     if not (Collection as TBoldVariableTupleListCom).NameIsUnique(Value) then
-      raise EBold.CreateFmt(sNameNotUnique, [Value]);
+      raise EBold.CreateFmt('Can''t rename variable to "%s", name already exists', [Value]);
     if not (Collection as TBoldVariableTupleListCom).NameIsValid(Value) then
-      raise EBold.Create(sInvalidCharsInName);
+      raise EBold.Create('Invalid variable name, only alphanum characters and underscore valid');
     FVariableName := Value;
     Changed;
   end;
 end;
+
 
 procedure TBoldVariableTupleCom._ReceiveHandleEvent(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
@@ -223,8 +217,8 @@ begin
 end;
 
 procedure TBoldVariableDefinitionCom.VariablesChanged;
-begin
-  { TODO: Stuff Values }
+begin 
 end;
 
+initialization
 end.

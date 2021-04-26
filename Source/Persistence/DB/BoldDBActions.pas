@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDBActions;
 
 interface
@@ -33,8 +36,7 @@ uses
   BoldDefs,
   SysUtils,
   BoldActionDefs,
-  BoldUtils,
-  PersistenceConsts;
+  BoldUtils;
 
 
 { TBoldGenerateSchemaAction }
@@ -42,7 +44,7 @@ uses
 constructor TBoldGenerateSchemaAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sGenerateSchema;
+  Caption := 'Generate Schema';
 end;
 
 procedure TBoldGenerateSchemaAction.ExecuteTarget(Target: TObject);
@@ -73,5 +75,7 @@ begin
   if Assigned(fBoldPersistenceHandleDB) then
     fBoldPersistenceHandleDB.FreeNotification(Self);
 end;
+
+initialization
 
 end.

@@ -1,6 +1,10 @@
+/////////////////////////////////////////////////////////
+
+
 unit BoldListBox;
 
 {$UNDEF BOLDCOMCLIENT}
+{$INCLUDE bold.inc}
 
 interface
 
@@ -22,7 +26,8 @@ uses
   BoldControlPack,
   BoldListHandleFollower,
   BoldListListControlPack,
-  BoldStringControlPack;
+  BoldStringControlPack,
+  BoldDefs;
 
 // CHECKME is a destroywind needed that saves the extra list.
 //         when is DestroyWnd actually called.
@@ -42,8 +47,8 @@ type
     fBoldRowProperties: TBoldStringFollowerController;
 
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
 
     function GetBoldHandle: TBoldAbstractListHandle;
@@ -54,10 +59,10 @@ type
     function GetCurrentBoldElement: TBoldElement;
     function GetCurrentBoldObject: TBoldObject;
     function GetBoldList: TBoldList;
-    function GetItemIndex: Integer;
+    function GetItemIndex: Integer; reintroduce;
     function GetBoldHandleIndexLock: Boolean;
     procedure SetBoldHandleIndexLock(Value: Boolean);
-    procedure SetItemIndex(Value: Integer);
+    procedure SetItemIndex(Value: Integer); reintroduce;
     procedure SetSelected(index: Integer; V: Boolean);
     procedure InternalSetSelected(index: integer; v: Boolean);
     procedure SetSelection(aRow: Integer; Shift: TShiftState);
@@ -65,7 +70,7 @@ type
     procedure SetAlignment(Value: TAlignment);
     procedure _BeforeMakeUptoDate(Follower: TBoldFollower);
     procedure _AfterMakeUptoDate(Follower: TBoldFollower);
-    procedure _InsertItem(Follower: TBoldFollower);
+    procedure _InsertItem(index: Integer; Follower: TBoldFollower);
     procedure _DeleteItem(index: Integer; OwningFollower: TBoldFollower);
     procedure _RowAfterMakeUptoDate(Follower: TBoldFollower);
     procedure CNDrawItem(var Message: TWMDrawItem); message CN_DRAWITEM;
@@ -177,6 +182,7 @@ uses
   BoldGui, // IFNDEF BOLDCOMCLIENT
   {$ENDIF}
   BoldControlPackDefs,
+  BoldGuiResourceStrings,
   BoldListControlPack;
 
 {---TBoldCustomListBox---}
@@ -187,13 +193,10 @@ begin
   fBoldRowProperties.AfterMakeUptoDate := _RowAfterMakeUptoDate;
   fBoldRowProperties.OnGetContextType := GetContextType;
   fBoldProperties := TBoldListAsFollowerListController.Create(Self, fBoldRowProperties);
-  with fBoldProperties do
-  begin
-    OnAfterInsertItem := _InsertItem;
-    OnAfterDeleteItem := _DeleteItem;
-    BeforeMakeUptoDate := _BeforeMakeUptoDate;
-    AfterMakeUptoDate := _AfterMakeUptoDate;
-  end;
+  fBoldProperties.OnAfterInsertItem := _InsertItem;
+  fBoldProperties.OnAfterDeleteItem := _DeleteItem;
+  fBoldProperties.BeforeMakeUptoDate := _BeforeMakeUptoDate;
+  fBoldProperties.AfterMakeUptoDate := _AfterMakeUptoDate;
   fHandleFollower := TBoldListHandleFollower.Create(Owner, fBoldProperties);
   DragMode := dmAutomatic;
   Style := lbOwnerDrawVariable;
@@ -361,11 +364,13 @@ function TBoldCustomListBox.GetCurrentBoldElement: TBoldElement;
 var
   Subfollower: TBoldFollower;
 begin
-  SubFollower := Follower.SubFollowers[ItemIndex];
-  if assigned(SubFollower) then
-    Result := Subfollower.Element
-  else
-    Result := nil;
+  Result := nil;
+  if ItemIndex <> -1 then
+  begin
+    SubFollower := Follower.SubFollowers[ItemIndex];
+    if assigned(SubFollower) then
+      Result := Subfollower.Element
+  end;
 end;
 
 function TBoldCustomListBox.GetBoldList: TBoldList;
@@ -401,9 +406,11 @@ begin
     Items[index] := TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower);
 end;
 
-procedure TBoldCustomListBox._InsertItem(Follower: TBoldFollower);
+procedure TBoldCustomListBox._InsertItem(index: Integer; Follower: TBoldFollower);
 begin
-  Items.Insert(Follower.Index, '');
+  Assert(Assigned(Follower));
+  Follower.EnsureDisplayable;
+  Items.Insert(Follower.Index, TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower));
 end;
 
 procedure TBoldCustomListBox._DeleteItem(index: Integer; OwningFollower: TBoldFollower);
@@ -453,6 +460,8 @@ var
   State: TOwnerDrawState;
   SignedItemId: integer; // this variable is used to suppress warning from D4 when comparing signed and unsigned values
 begin
+  {$WARN UNSAFE_CAST OFF}
+  {$WARN UNSAFE_CODE OFF}
   with Message.DrawItemStruct^ do
   begin
     State := TOwnerDrawState(LongRec(itemState).Lo);
@@ -467,6 +476,8 @@ begin
       //FIXME Apperens of selected and current...
       Canvas.DrawFocusRect(rcItem);
   end;
+  {$WARN UNSAFE_CAST ON}
+  {$WARN UNSAFE_CODE ON}
 end;
 
 procedure TBoldCustomListBox.DefaultSetFontAndColor(index: Integer);
@@ -479,12 +490,10 @@ begin
   Canvas.Brush.Color := ec;
   //  Selected state yields default highlight colors
   SubFollower := Follower.SubFollowers[index];
-  if assigned(Subfollower) and Subfollower.Selected then
-    with Canvas do
-    begin
-      Brush.Color := clHighlight;
-      Font.Color := clHighlightText;
-    end;
+  if assigned(Subfollower) and Subfollower.Selected then begin
+    Canvas.Brush.Color := clHighlight;
+    Canvas.Font.Color := clHighlightText;
+  end;
 end;
 
 procedure TBoldCustomListBox.DefaultDrawItem(Index: integer; Rect: TRect);
@@ -553,9 +562,9 @@ begin
   result := BoldRowProperties.Expression;
 end;
 
-procedure TBoldCustomListBox.SetExpression(Expression: String);
+procedure TBoldCustomListBox.SetExpression(const Value: TBoldExpression);
 begin
-  BoldRowProperties.Expression := Expression;
+  BoldRowProperties.Expression := Value;
 end;
 
 function TBoldCustomListBox.GetBoldHandleIndexLock: Boolean;
@@ -593,4 +602,5 @@ begin
 end;
 
 end.
+
 

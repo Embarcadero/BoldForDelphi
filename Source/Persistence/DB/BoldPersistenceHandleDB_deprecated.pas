@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDB_deprecated;
 
 interface
@@ -8,7 +11,7 @@ uses
   Controls,
   BoldPersistenceHandleDb,
   BoldSQLDatabaseConfig,
-  BoldAbstractPersistenceHandleDB;
+  BoldAbstractPersistenceHandleDB, BoldIndexCollection;
 
 
 type
@@ -21,6 +24,7 @@ type
     fUserName: String;
     fPassword: String;
     fSQLDataBaseConfig: TBoldSQLDataBaseConfig;
+    fCustomIndexes: TBoldIndexCollection;
     fDatabaseEngine: TBoldDataBaseEngine;
     procedure SQLDatabaseConfigChanged(Sender: TObject);
     procedure SetSQLDataBaseConfig(const Value: TBoldSQLDataBaseConfig);
@@ -32,18 +36,19 @@ type
     procedure SetDataBaseEngine(const Value: TBoldDataBaseEngine); virtual;
     procedure SetPassword(const Value: string); virtual;
     procedure SetUserName(const Value: string); virtual;
-    function GetSQLDatabaseConfig: TBoldSQLDataBaseConfig; override;
-    {$IFDEF T2H} // properties is removed, but should still be in doc
-    property EmptyStringMarker; // String
-    property SystemTablesPrefix; // String
+    function GetSQLDataBaseConfig: TBoldSQLDataBaseConfig; override;
+    function GetCustomIndexes: TBoldIndexCollection; override;
+    {$IFDEF T2H}
+    property EmptyStringMarker;
+    property SystemTablesPrefix;
     {$ELSE}
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); virtual;
     function GetNewComponentName(Comp: Tcomponent; BaseName: string): String;
     {$ENDIF}
     procedure DefineProperties(Filer: TFiler); override;
   public
-    constructor Create(Owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(Owner: TComponent); override;
+    destructor destroy; override;
   published
     property Username: string read fusername write SetUserName;
     property Password: string read fPassword write SetPassword;
@@ -118,7 +123,6 @@ end;
 procedure TBoldDBPersistenceHandle.DefineProperties(Filer: TFiler);
 begin
   inherited DefineProperties(Filer);
-  // EmptyStringMarker and SystemtablePrefix moved to SQLDatabaseConfig in v 4.0
   Filer.DefineProperty('EmptyStringMarker', ReadEmptyStringMarker, nil, True);
   Filer.DefineProperty('SystemTablesPrefix', ReadSystemTablePrefix, nil, True);
 end;
@@ -158,7 +162,15 @@ end;
 
 procedure TBoldDBPersistenceHandle.InternalTransferproperties(const target: TBoldPersistenceHandleDB);
 begin
-  // do nothing
+end;
+
+function TBoldDBPersistenceHandle.GetCustomIndexes: TBoldIndexCollection;
+begin
+  if not assigned(fCustomIndexes) then
+  begin
+    fCustomIndexes := TBoldIndexCollection.Create(self);
+  end;
+  result := fCustomIndexes;
 end;
 
 function TBoldDBPersistenceHandle.GetNewComponentName(Comp: Tcomponent;
@@ -172,4 +184,6 @@ begin
   result := BaseName + inttostr(i);
 end;
 
+initialization
+  
 end.

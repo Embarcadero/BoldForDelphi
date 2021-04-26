@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSystemDebuggerForm;
 
 interface
@@ -11,7 +14,6 @@ uses
   BoldRootedHandles,
   BoldAFP,
   BoldAfpDefault,
-  BoldMemoryManager,
   BoldSystem,
   BoldOcl,
   BoldLogHandler,
@@ -86,13 +88,11 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 
 procedure TBoldSystemDebuggerFrm.btnUpdateMemoryInfoClick(Sender: TObject);
 begin
-  mmoMemoryInfo.Lines.Text := BoldMemoryManager_.MemoryInfo;
   mmoSharedStrings.Lines.text := BoldSharedStringManager.InfoString;
 end;
 
@@ -155,7 +155,6 @@ procedure TBoldSystemDebuggerFrm.btnUpdateDirtyObjectsClick(Sender: TObject);
 var
   i: integer;
 begin
-  // Only activated if system is assigned
   fDirtyList.Clear;
   for i := 0 to System.DirtyObjects.Count-1 do
     fDirtyList.add(TBoldObject(System.DirtyObjects[i]));
@@ -163,7 +162,6 @@ end;
 
 procedure TBoldSystemDebuggerFrm.btnUpdateDatabaseClick(Sender: TObject);
 begin
-  // Only activated if system is assigned
   System.UpdateDatabase
 end;
 

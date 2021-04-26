@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAFPDefault;
 
 interface
@@ -36,6 +39,8 @@ type
   TBoldDefaultSystemAutoFormProvider = class;
   TBoldDefaultAttributeListAutoFormProvider = class;
   TBoldDefaultObjectListAutoFormProvider = class;
+
+  TFormAFPDefault = class(TForm);
 
   {---TBoldDefaultFormProvider---}
   TBoldDefaultFormProvider = class(TBoldUserFormProvider)
@@ -201,11 +206,10 @@ var
 
 implementation
 
-{$R BoldAFPDefault.res}
-
 uses
   SysUtils,
   Dialogs,
+  {$IFDEF BOLD_DELPHI16_OR_LATER}UITypes,{$ENDIF}
   BoldGuiResourceStrings,
   BoldUtils,
   BoldBase,
@@ -222,7 +226,11 @@ uses
   BoldEdit,
   BoldStringControlPack,
   BoldCondition,
-  BoldId;
+  BoldId,
+  BoldIndex,
+  BoldIndexableList,
+  BoldMetaElementList,
+  BoldDomainElement;
 
 const
   BOXMARGIN           = 8;
@@ -366,11 +374,18 @@ end;
 
 {--TBoldAFEdit---}
 procedure TBoldAFEdit.DblClick;
+var
+  AForm : TForm;
 begin
   if Assigned(BoldHandle) and
      (BoldHandle.Value is TBoldObjectReference) and
      assigned((BoldHandle.Value as TBoldObjectReference).BoldObject) then
-    AutoFormProviderRegistry.FormForElement(TBoldObjectReference(BoldHandle.Value).BoldObject).Show;
+  begin
+    AForm := AutoFormProviderRegistry.FormForElement(TBoldObjectReference(BoldHandle.Value).BoldObject);
+    if Assigned(AForm) then begin
+      AForm.Show;
+    end;
+  end;
 end;
 
 {---TAFPPageControl---}
@@ -423,17 +438,22 @@ end;
 class procedure TBoldDefaultFormProvider.DefaultFormOnClose(Sender: TObject; var Action: TCloseAction);
 var
   Form: TForm;
+  AFormIndex : Integer;
   StoredCloseEvent: TCloseEvent;
 begin
   Action := caFree;
-  if Sender is TForm then
-  begin
+  if Sender is TForm then begin
     Form := Sender as TForm;
     Form.ActiveControl.Perform(CM_EXIT, 0, 0);
-    StoredCloseEvent := G_BoldActiveAutoForms.Entries[G_BoldActiveAutoForms.IndexOfForm(Form)].OnClose;
-    if Assigned(StoredCloseEvent) then
-      StoredCloseEvent(Sender, Action);
-    G_BoldActiveAutoForms.RemoveByForm(Form);
+
+    AFormIndex := G_BoldActiveAutoForms.IndexOfForm(Form);
+    if (AFormIndex > -1) and (AFormIndex < G_BoldActiveAutoForms.Count) then begin
+      StoredCloseEvent := G_BoldActiveAutoForms.Entries[AFormIndex].OnClose;
+      if Assigned(StoredCloseEvent) then begin
+        StoredCloseEvent(Sender, Action);
+      end;
+      G_BoldActiveAutoForms.RemoveByForm(Form);
+    end;
   end;
 end;
 
@@ -458,7 +478,7 @@ end;
 
 function TBoldDefaultFormProvider.GetFormClass: TFormClass;
 begin
-  Result := TForm;
+  Result := TFormAFPDefault;
 end;
 
 procedure TBoldDefaultFormProvider.PreGenerateAutoForm;
@@ -489,11 +509,19 @@ procedure TBoldDefaultFormProvider.PostEnsureForm;
 begin
   Form.Position := poDefaultPosOnly;
   Form.BoundsRect := Rect(0, 0, 440, 360);
+  Form.Constraints.MinHeight := MINFORMHEIGHT;
 end;
 
 procedure TBoldDefaultFormProvider.EnsureForm;
 begin
-  inherited;
+//  inherited;
+  // No inherited, because form needs to be created with CreateNew.
+  // In this way, no resources are needed (because its not inherited from TForm anymore)
+  if Assigned(FormClass) then
+    Form := FormClass.CreateNew(Application)
+  else
+    Form := nil;
+
   if Assigned(Form) then
   begin
     G_BoldActiveAutoForms.AddPair(Form, Element);
@@ -922,6 +950,9 @@ begin
   end;
 end;
 
+type
+  TWinControlAccess = class(TWinControl);
+
 procedure TBoldDefaultObjectAutoFormProvider.EnsureSingleMemberControls;
 var
   TabSheet: TTabSheet;
@@ -945,6 +976,8 @@ begin
 
   TabSheet := CreateTabSheet(ClassTypeInfo.ModelName, MakeComponentName('Tab', ClassTypeInfo, nil)); // do not localize
   ScrollBox := CreateScrollBox(TabSheet);
+  ScrollBox.Align := alNone;
+  ScrollBox.SetBounds(0, 0, ScrollBox.Parent.Width, 10000{ScrollBox.Parent.Height});
 
   MaxLabelWidth := GetLargestWidth;
   Box1NextLeft := CONTROLMARGIN;
@@ -966,12 +999,12 @@ begin
            (Orientation = orHorizontal) then
         begin
           Inc(Box1NextTop, 24);
-          Box1NextLeft := 10;
+          Box1NextLeft := CONTROLMARGIN;
         end;
         Left   := Box1NextLeft;
         Top    := Box1NextTop + 4;
         Parent := ScrollBox;
-        Inc(Box1NextLeft, Width + 10);
+        Inc(Box1NextLeft, Width + CONTROLMARGIN);
       end;
 
       if Member.BoldType.ConformsTo((Member.BoldType.SystemTypeInfo as TBoldSystemTypeInfo).AttributeTypeInfoByExpressionName['ValueSet']) then // do not localize
@@ -1016,7 +1049,7 @@ begin
           ExpressionHandle.RootHandle := Self.BoldHandle;
           ExpressionHandle.Expression := Member.ExpressionName;
           ExpressionHandle.Name       := MakeComponentName('Handle', ClassTypeInfo, Member);  // do not localize
-          BoldEdit.Color      := clInactiveCaptionText;
+          BoldEdit.Color      := clBtnShadow;
           BoldEdit.ReadOnly := true;
           BoldEdit.BoldHandle := ExpressionHandle;
           BoldEdit.BoldProperties.DragMode := bdgSelection;
@@ -1056,6 +1089,11 @@ begin
     Form.Height := MINFORMHEIGHT
   else
     Form.Height := Box1NextTop + 100 + PANELHEIGHT;
+
+  Form.Constraints.MinWidth := MaxLabelWidth + CONTROLMARGIN * 2 + 100;
+
+  TWinControlAccess(Form).AdjustSize;
+  ScrollBox.Align := alClient;
 
   // Move all handles and stuff to the bottom of the window.
   Box1NextLeft := CONTROLMARGIN;
@@ -1129,7 +1167,7 @@ begin
       Element.EvaluateExpression(Expression, Result);
       if (Result.Value is TBoldMember) and
           not (Result.Value as TBoldMember).CanModify then
-          AColor := clInactiveCaptionText;
+          AColor := clBtnShadow;
     finally
       Result.Free;
     end;
@@ -1201,12 +1239,17 @@ end;
 procedure TRoleButton.NavigateToSingleRole(Sender: TObject);
 var
   anObject: TBoldObject;
+  AForm : TForm;
 begin
   if Assigned(BoldHandle) and (BoldHandle.Value is TBoldObjectReference) then
   begin
     anObject := (BoldHandle.Value as TBoldObjectReference).BoldObject;
-    if Assigned(anObject) then
-      AutoFormProviderRegistry.FormForElement(anObject).Show;
+    if Assigned(anObject) then begin
+      AForm := AutoFormProviderRegistry.FormForElement(anObject);
+      if Assigned(AForm) then begin
+        AForm.Show;
+      end;
+    end;
   end
 end;
 
@@ -1299,7 +1342,11 @@ end;
 function TAutoFormList.GetEntries(
   const index: integer): TAutoFormListEntry;
 begin
-  Result := TAutoFormListEntry(Items[index]);
+  if index < Count then begin
+    Result := TAutoFormListEntry(Items[index]);
+  end else begin
+    Result := nil;
+  end;
 end;
 
 function TAutoFormList.GetForms(const index: integer): TForm;
@@ -1324,8 +1371,14 @@ begin
 end;
 
 procedure TAutoFormList.RemoveByForm(Form: TForm);
+var
+  i: Integer;
 begin
-  Delete(IndexOfForm(Form));
+  i := IndexOfForm(Form);
+  if i > -1 then begin
+    Entries[i].Free;
+    Delete(i);
+  end;
 end;
 
 constructor TBoldDefaultFormProvider.Create(BoldElement: TBoldElement);
@@ -1709,7 +1762,7 @@ end;
 initialization
   G_BoldActiveAutoForms := TAutoFormList.Create;
   fReadOnlyStringRenderer := TBoldAsStringRenderer.Create(nil);
-  fReadOnlyStringRenderer.OnSetColor := TBoldDefaultObjectAutoFormProvider.BoldAsStringRenderer1SetColor;
+//  fReadOnlyStringRenderer.OnSetColor := TBoldDefaultObjectAutoFormProvider.BoldAsStringRenderer1SetColor; //FIX
 
   AutoFormProviderRegistry.RegisterProvider(bvtClass, TBoldObject, TBoldDefaultObjectAutoFormProvider);
   AutoFormProviderRegistry.RegisterProvider(bvtSystem, TBoldSystem, TBoldDefaultSystemAutoFormProvider);

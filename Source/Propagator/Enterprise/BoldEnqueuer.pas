@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnqueuer;
 
 interface
@@ -12,7 +15,8 @@ uses
   BoldLoggableCriticalSection,
   BoldThreadSafeLog,
   windows,
-  classes;
+  classes
+;
 
 type
   TBoldExternalEventType = (bemEvent, bemSubscription, bemCancelSubscription, bemRemoveClientQueue,
@@ -88,11 +92,11 @@ constructor TBoldEnqueuer.Create(ClientHandler: TBoldClientHandler);
 begin
   inherited Create;
   FClientHandler := ClientHandler;
-  fLock := TBoldLoggableCriticalSection.Create('EQ'); // do not localize
+  fLock := TBoldLoggableCriticalSection.Create('EQ');
   fLock.Acquire;
   try
     fEnabled := false;
-    fInQueue := TBoldExternalEventThreadSafeObjectQueue.Create('InQ'); // do not localize
+    fInQueue := TBoldExternalEventThreadSafeObjectQueue.Create('InQ');
     fEnabled := true;
   finally
     fLock.Release;
@@ -111,7 +115,7 @@ begin
     except on E: Exception do
       begin
         Result := E_FAIL;
-        BoldLogError('%s.SendEvents ClientId=%d: %s', [ClassName, BoldClientId, E.Message]); // do not localize
+        BoldLogError('%s.SendEvents ClientId=%d: %s', [ClassName, BoldClientId, E.Message]);
       end;
     end;
   finally
@@ -131,7 +135,7 @@ begin
     except on E: Exception do
       begin
         Result := E_FAIL;
-        BoldLogError('%s.AddSubscriptions ClientId=%d: %s', [ClassName, BoldClientId, E.Message]); // do not localize
+        BoldLogError('%s.AddSubscriptions ClientId=%d: %s', [ClassName, BoldClientId, E.Message]);
       end;
     end;
   finally
@@ -150,7 +154,7 @@ begin
     except on E: Exception do
       begin
         Result := E_FAIL;
-        BoldLogError('%s.CancelSubscriptions ClientId=%d: %s', [ClassName, BoldClientId, E.Message]); // do not localize
+        BoldLogError('%s.CancelSubscriptions ClientId=%d: %s', [ClassName, BoldClientId, E.Message]);
       end;
     end;
   finally
@@ -188,7 +192,7 @@ begin
           FInQueue.Enqueue(TBoldExternalEvent.Create(BoldClientID, bemLockLost, Event));
         Result := True;
       except on E: Exception do
-        BoldLogError('%s.SendLockEvent ClientId=%d: %s', [ClassName, BoldClientId, E.Message]); // do not localize
+        BoldLogError('%s.SendLockEvent ClientId=%d: %s', [ClassName, BoldClientId, E.Message]);
       end;
     end;
   finally
@@ -241,7 +245,6 @@ begin
       result := W_CLIENT_NOT_RECEIVING
     else
       result := S_OK;
-    // Currently, do not inform the client about the warning...
     result := S_OK;
 
   end;
@@ -263,4 +266,5 @@ begin
   end;
 end;
 
+initialization
 end.
