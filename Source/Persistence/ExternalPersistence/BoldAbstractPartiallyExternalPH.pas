@@ -38,7 +38,7 @@ uses
   BoldStringId,
   BoldDefaultId,
   BoldDefs,
-  BoldGuard,
+  BoldGuard;
 
 { TBoldAbstractpartiallyExternalPH }
 
