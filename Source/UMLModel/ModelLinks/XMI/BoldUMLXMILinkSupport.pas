@@ -7,7 +7,7 @@ interface
 
 uses
   Variants,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldContainers,
   BoldIndexableList,
   BoldUMLModel;

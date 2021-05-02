@@ -25,11 +25,11 @@ package BoldUMLModelEditorDebugger;
 {$IMPLICITBUILD OFF}
 
 requires
-  vcl,
-  Vcldb,
-  Bold90,
-  BoldUml90,
-  BoldUtility;
+  vcl270,
+  Vcldb270,
+  Bold30D5,
+  Bold30D5Uml,
+  Bold30D5Utils;
 
 contains
   BoldUMLModelEditorDebuggerPlugin in 'BoldUMLModelEditorDebuggerPlugin.pas';

@@ -8,7 +8,7 @@ uses
   Dialogs,
   BoldSystem,
   BoldGuidUtils,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldUMLModel,
   BoldUMLTypes,
   BoldUMLPlugins,

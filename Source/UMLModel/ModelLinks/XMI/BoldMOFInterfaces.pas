@@ -6,7 +6,7 @@ unit BoldMOFInterfaces;
 interface
 
 uses
-  MSXML_TLB;
+  Bold_MSXML_TLB;
 
 type
   IBoldMOFObject = interface;

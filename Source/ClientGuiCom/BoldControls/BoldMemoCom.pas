@@ -324,7 +324,7 @@ procedure TBoldCustomMemoCom.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if (Key in [#32..#255]) and
-    not BoldProperties.ValidateCharacter(Key, Follower) then
+    not BoldProperties.ValidateCharacter(AnsiChar(Key), Follower) then
   begin
     MessageBeep(0);
     Key := BOLDNULL;

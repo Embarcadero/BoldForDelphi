@@ -20,7 +20,7 @@ type
 implementation
 
 uses
-  {$IFDEF OXML}OXmlPDOM, OTextReadWrite{$ELSE}MSXML_TLB{$ENDIF},
+  {$IFDEF OXML}OXmlPDOM, OTextReadWrite{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldXMLStreaming,
   BoldDefaultXMLStreaming,
   BoldDomainElement,

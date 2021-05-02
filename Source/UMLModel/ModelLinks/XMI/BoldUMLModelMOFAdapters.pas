@@ -13,7 +13,7 @@ uses
   BoldSystem,
   BoldAttributes,
   BoldUMLXMILink,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldUMLModel;
 
 type
