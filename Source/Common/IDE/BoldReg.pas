@@ -16,7 +16,7 @@ uses
   BoldTemplateExpander,
   BoldIDEConsts;
 
-{.$R *.res}
+{$R *.res}
 
 procedure Register;
 begin

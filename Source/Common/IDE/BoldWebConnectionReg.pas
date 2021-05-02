@@ -9,7 +9,7 @@ procedure Register;
 
 implementation
 
-{.$R *.res}
+{$R *.res}
 uses
   BoldWebConnection,
   BoldIDEConsts,
