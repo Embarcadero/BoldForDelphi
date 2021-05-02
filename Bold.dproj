@@ -217,7 +217,7 @@
         <DCCReference Include="Source\Common\Logging\BoldLogReceiverInterface.pas"/>
         <DCCReference Include="Source\Common\Logging\BoldSmallLogFrame.pas"/>
         <DCCReference Include="Source\Common\Logging\BoldThreadSafeLog.pas"/>
-        <DCCReference Include="Source\Common\MsXml\MSXML_TLB.pas"/>
+        <DCCReference Include="Source\Common\MsXml\Bold_MSXML_TLB.pas"/>
         <DCCReference Include="Source\Common\Queue\BoldAbstractDequeuer.pas"/>
         <DCCReference Include="Source\Common\Queue\BoldEventQueue.pas"/>
         <DCCReference Include="Source\Common\Queue\BoldQueue.pas"/>

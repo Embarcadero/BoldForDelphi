@@ -145,7 +145,7 @@ contains
   BoldLogReceiverInterface in 'Source\Common\Logging\BoldLogReceiverInterface.pas',
   BoldSmallLogFrame in 'Source\Common\Logging\BoldSmallLogFrame.pas',
   BoldThreadSafeLog in 'Source\Common\Logging\BoldThreadSafeLog.pas',
-  Bold_MSXML_TLB in 'Source\Common\MsXml\Bold_MSXML_TLB.pas',
+  MSXML_TLB in 'Source\Common\MsXml\MSXML_TLB.pas',
   BoldAbstractDequeuer in 'Source\Common\Queue\BoldAbstractDequeuer.pas',
   BoldEventQueue in 'Source\Common\Queue\BoldEventQueue.pas',
   BoldQueue in 'Source\Common\Queue\BoldQueue.pas',
