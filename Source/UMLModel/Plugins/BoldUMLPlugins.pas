@@ -89,6 +89,8 @@ type
 
 implementation
 
+{$R BoldUMLPlugins.res}
+
 uses
   SysUtils,
   BoldUtils,
