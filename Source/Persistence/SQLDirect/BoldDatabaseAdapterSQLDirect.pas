@@ -50,7 +50,7 @@ uses
 
 procedure TBoldDatabaseAdapterSQLDirect.CreateDatabase;
 begin
-  Assert(False, 'Not implemented.');
+  DatabaseInterface.CreateDatabase;
 end;
 
 destructor TBoldDatabaseAdapterSQLDirect.Destroy;
