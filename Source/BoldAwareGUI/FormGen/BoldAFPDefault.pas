@@ -206,6 +206,8 @@ var
 
 implementation
 
+{$R BoldAFPDefault.res}
+
 uses
   SysUtils,
   Dialogs,

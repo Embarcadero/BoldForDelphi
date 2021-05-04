@@ -51,6 +51,7 @@ uses
   BoldUtils;
 
 {$R *.dfm}
+{$R BoldTypeNameSelector.res}
 
 { TfrmBoldTypeNameSelector }
 
