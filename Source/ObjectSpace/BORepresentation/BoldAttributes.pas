@@ -2529,7 +2529,7 @@ begin
     (not assigned(fBlobAttr.BoldAttributeRTInfo) or fBlobAttr.BoldAttributeRTInfo.AllowNull) then
     begin
       SetLength(fData, 0);
-      if not fBlobAttr.SupressEvents then
+      if not fBlobAttr.SupressEvents and not fBlobAttr.BoldPersistenceStateIsInvalid then
         fBlobAttr.SetToNull;
     end
   else
