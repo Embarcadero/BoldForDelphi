@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldPersistenceHandleIB.res}
+
 uses
   SysUtils,
   BoldDefs,

@@ -4,6 +4,7 @@
 unit BoldXMLProducers;
 
 interface
+
 uses
   Bold_MSXML_TLB,
   BoldStringList,
@@ -64,6 +65,8 @@ type
   end;
 
 implementation
+
+{$R BoldXMLProducers.res}
 
 uses
   SysUtils,

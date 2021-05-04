@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldExternalPersistenceHandles.res}
+
 uses
   DesignIntf,
   DesignEditors,

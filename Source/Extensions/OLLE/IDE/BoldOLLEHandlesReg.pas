@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldOLLEHandles.res}
+
 uses
   SysUtils,
   BoldUtils,

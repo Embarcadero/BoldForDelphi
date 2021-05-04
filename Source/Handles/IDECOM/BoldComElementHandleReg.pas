@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldComElementHandleReg.Res}
+
 uses
   Classes,
   BoldComServerElementHandles;

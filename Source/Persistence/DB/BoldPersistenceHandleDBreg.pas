@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldPersistenceHandleDB.res}
+
 uses
   Classes,
   Dialogs,

@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldPersistenceHandleSystem.res}
+
 uses
   Classes,
   BoldIdeConsts,

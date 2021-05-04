@@ -48,7 +48,7 @@ uses
   BoldUnloaderHandle
   ;
 
-{.$R BoldHandleReg.res}
+{$R BoldHandleReg.res}
 
 
 procedure RegisterActionsInDelphi;

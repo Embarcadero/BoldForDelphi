@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldObjectUpgraderHandleReg.res}
+
 uses
   classes,
   BoldObjectUpgraderHandle,

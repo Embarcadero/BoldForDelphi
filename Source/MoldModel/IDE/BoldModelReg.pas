@@ -13,6 +13,8 @@ procedure Register;
 
 implementation
 
+{$R BoldModelReg.res}
+
 uses
   SysUtils,
   BoldUtils,

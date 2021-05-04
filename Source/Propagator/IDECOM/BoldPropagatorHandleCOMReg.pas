@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldPropagatorHandleCOMReg.res}
+
 uses
   Classes,
   BoldGuard,

@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldUMXMILinkreg.res}
+
 uses
   SysUtils,
   BoldUtils,

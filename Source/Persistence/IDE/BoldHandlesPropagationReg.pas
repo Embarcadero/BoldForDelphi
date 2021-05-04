@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldHandlesPropagationReg.res}
+
 uses
   SysUtils,
   BoldUtils,

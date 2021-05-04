@@ -6,6 +6,8 @@ procedure Register;
 
 implementation
 
+{$R BoldAFPPluggableReg.res}
+
 uses
   Classes,
   BoldAFPPluggable,

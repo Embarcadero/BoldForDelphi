@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldComPersistenceHandleReg.Res}
+
 uses
   Classes,
   DesignIntf,

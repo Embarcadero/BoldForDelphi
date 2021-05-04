@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldHTTPClientPersistenceHandleReg.res}
+
 uses
   BoldIDEConsts,
   BoldGuard,

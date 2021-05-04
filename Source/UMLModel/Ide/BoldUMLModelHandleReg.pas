@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldUMLModelHandleReg.res}
+
 uses
   SysUtils,
   Classes,
