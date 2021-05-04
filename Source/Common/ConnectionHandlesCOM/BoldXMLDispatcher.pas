@@ -10,7 +10,7 @@ uses
   BoldUtils,
   BoldSOAP_TLB,
   BoldStringList,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldComServerHandles,
   BoldDefs,
   BoldXMLRequests,

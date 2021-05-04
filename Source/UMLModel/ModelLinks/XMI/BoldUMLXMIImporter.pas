@@ -14,7 +14,7 @@ uses
   BoldUMLXMILink,
   BoldSystemRT,
   BoldUMLXMILinkSupport,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   Sysutils,
   Classes;
 

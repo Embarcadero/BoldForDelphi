@@ -12,7 +12,7 @@ uses
 
   BoldUMLXMILink,
   BoldMOFInterfaces,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   Sysutils,
   BoldStringList,
   BoldUMLDTDData,

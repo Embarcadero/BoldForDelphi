@@ -283,7 +283,7 @@ implementation
 
 uses
   SysUtils,
-  {$IFDEF OXML}OXmlPDOM{$ELSE}MSXML_TLB{$ENDIF},
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldXMLStreaming,
   BoldDefaultStreamNames,
   BoldDefs;

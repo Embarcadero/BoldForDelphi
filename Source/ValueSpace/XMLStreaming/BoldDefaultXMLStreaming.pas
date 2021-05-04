@@ -265,7 +265,7 @@ implementation
 
 uses
   BoldHashIndexes,
-  {$IFDEF OXML}OXmlPDOM{$ELSE}MSXML_TLB{$ENDIF},
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   SysUtils,
   BoldDefaultStreamNames;
 

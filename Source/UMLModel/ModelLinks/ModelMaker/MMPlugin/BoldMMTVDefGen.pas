@@ -8,7 +8,7 @@ interface
 uses
   BoldDefaultTaggedValues,
   BoldUMLTaggedValues,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldTaggedValueList;
 
 type

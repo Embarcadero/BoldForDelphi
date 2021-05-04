@@ -27,7 +27,7 @@ var
 
 implementation
 
-{.$R *.res}
+{$R *.res}
 
 uses
   SysUtils;

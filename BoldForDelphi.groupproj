@@ -1,0 +1,264 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{DFD5A34D-3F28-461E-9001-16DFEADD40A9}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Bold.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldVCLGUI.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldCom.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldComGUI.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldUml.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldMMLink.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldUtility.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldBDE.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldExPe.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldIB.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldXMILink.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldAdo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldAdvantage.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldDBExpress.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldDBIsam.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldDOA.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldOLLE.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldSQLDirect.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldUDPProp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Source\Unassigned\BoldUMLModelEditorDebugger.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Bold">
+        <MSBuild Projects="Bold.dproj"/>
+    </Target>
+    <Target Name="Bold:Clean">
+        <MSBuild Projects="Bold.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Bold:Make">
+        <MSBuild Projects="Bold.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldVCLGUI">
+        <MSBuild Projects="BoldVCLGUI.dproj"/>
+    </Target>
+    <Target Name="BoldVCLGUI:Clean">
+        <MSBuild Projects="BoldVCLGUI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldVCLGUI:Make">
+        <MSBuild Projects="BoldVCLGUI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldCom">
+        <MSBuild Projects="BoldCom.dproj"/>
+    </Target>
+    <Target Name="BoldCom:Clean">
+        <MSBuild Projects="BoldCom.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldCom:Make">
+        <MSBuild Projects="BoldCom.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldComGUI">
+        <MSBuild Projects="BoldComGUI.dproj"/>
+    </Target>
+    <Target Name="BoldComGUI:Clean">
+        <MSBuild Projects="BoldComGUI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldComGUI:Make">
+        <MSBuild Projects="BoldComGUI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldUml">
+        <MSBuild Projects="BoldUml.dproj"/>
+    </Target>
+    <Target Name="BoldUml:Clean">
+        <MSBuild Projects="BoldUml.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldUml:Make">
+        <MSBuild Projects="BoldUml.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldMMLink">
+        <MSBuild Projects="BoldMMLink.dproj"/>
+    </Target>
+    <Target Name="BoldMMLink:Clean">
+        <MSBuild Projects="BoldMMLink.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldMMLink:Make">
+        <MSBuild Projects="BoldMMLink.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldUtility">
+        <MSBuild Projects="BoldUtility.dproj"/>
+    </Target>
+    <Target Name="BoldUtility:Clean">
+        <MSBuild Projects="BoldUtility.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldUtility:Make">
+        <MSBuild Projects="BoldUtility.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldBDE">
+        <MSBuild Projects="BoldBDE.dproj"/>
+    </Target>
+    <Target Name="BoldBDE:Clean">
+        <MSBuild Projects="BoldBDE.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldBDE:Make">
+        <MSBuild Projects="BoldBDE.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldExPe">
+        <MSBuild Projects="BoldExPe.dproj"/>
+    </Target>
+    <Target Name="BoldExPe:Clean">
+        <MSBuild Projects="BoldExPe.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldExPe:Make">
+        <MSBuild Projects="BoldExPe.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldIB">
+        <MSBuild Projects="BoldIB.dproj"/>
+    </Target>
+    <Target Name="BoldIB:Clean">
+        <MSBuild Projects="BoldIB.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldIB:Make">
+        <MSBuild Projects="BoldIB.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldXMILink">
+        <MSBuild Projects="BoldXMILink.dproj"/>
+    </Target>
+    <Target Name="BoldXMILink:Clean">
+        <MSBuild Projects="BoldXMILink.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldXMILink:Make">
+        <MSBuild Projects="BoldXMILink.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldAdo">
+        <MSBuild Projects="BoldAdo.dproj"/>
+    </Target>
+    <Target Name="BoldAdo:Clean">
+        <MSBuild Projects="BoldAdo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldAdo:Make">
+        <MSBuild Projects="BoldAdo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldAdvantage">
+        <MSBuild Projects="BoldAdvantage.dproj"/>
+    </Target>
+    <Target Name="BoldAdvantage:Clean">
+        <MSBuild Projects="BoldAdvantage.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldAdvantage:Make">
+        <MSBuild Projects="BoldAdvantage.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldDBExpress">
+        <MSBuild Projects="BoldDBExpress.dproj"/>
+    </Target>
+    <Target Name="BoldDBExpress:Clean">
+        <MSBuild Projects="BoldDBExpress.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldDBExpress:Make">
+        <MSBuild Projects="BoldDBExpress.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldDBIsam">
+        <MSBuild Projects="BoldDBIsam.dproj"/>
+    </Target>
+    <Target Name="BoldDBIsam:Clean">
+        <MSBuild Projects="BoldDBIsam.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldDBIsam:Make">
+        <MSBuild Projects="BoldDBIsam.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldDOA">
+        <MSBuild Projects="BoldDOA.dproj"/>
+    </Target>
+    <Target Name="BoldDOA:Clean">
+        <MSBuild Projects="BoldDOA.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldDOA:Make">
+        <MSBuild Projects="BoldDOA.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldOLLE">
+        <MSBuild Projects="BoldOLLE.dproj"/>
+    </Target>
+    <Target Name="BoldOLLE:Clean">
+        <MSBuild Projects="BoldOLLE.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldOLLE:Make">
+        <MSBuild Projects="BoldOLLE.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldSQLDirect">
+        <MSBuild Projects="BoldSQLDirect.dproj"/>
+    </Target>
+    <Target Name="BoldSQLDirect:Clean">
+        <MSBuild Projects="BoldSQLDirect.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldSQLDirect:Make">
+        <MSBuild Projects="BoldSQLDirect.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldUDPProp">
+        <MSBuild Projects="BoldUDPProp.dproj"/>
+    </Target>
+    <Target Name="BoldUDPProp:Clean">
+        <MSBuild Projects="BoldUDPProp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldUDPProp:Make">
+        <MSBuild Projects="BoldUDPProp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BoldUMLModelEditorDebugger">
+        <MSBuild Projects="Source\Unassigned\BoldUMLModelEditorDebugger.dproj"/>
+    </Target>
+    <Target Name="BoldUMLModelEditorDebugger:Clean">
+        <MSBuild Projects="Source\Unassigned\BoldUMLModelEditorDebugger.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BoldUMLModelEditorDebugger:Make">
+        <MSBuild Projects="Source\Unassigned\BoldUMLModelEditorDebugger.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Bold;BoldVCLGUI;BoldCom;BoldComGUI;BoldUml;BoldMMLink;BoldUtility;BoldBDE;BoldExPe;BoldIB;BoldXMILink;BoldAdo;BoldAdvantage;BoldDBExpress;BoldDBIsam;BoldDOA;BoldOLLE;BoldSQLDirect;BoldUDPProp;BoldUMLModelEditorDebugger"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Bold:Clean;BoldVCLGUI:Clean;BoldCom:Clean;BoldComGUI:Clean;BoldUml:Clean;BoldMMLink:Clean;BoldUtility:Clean;BoldBDE:Clean;BoldExPe:Clean;BoldIB:Clean;BoldXMILink:Clean;BoldAdo:Clean;BoldAdvantage:Clean;BoldDBExpress:Clean;BoldDBIsam:Clean;BoldDOA:Clean;BoldOLLE:Clean;BoldSQLDirect:Clean;BoldUDPProp:Clean;BoldUMLModelEditorDebugger:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Bold:Make;BoldVCLGUI:Make;BoldCom:Make;BoldComGUI:Make;BoldUml:Make;BoldMMLink:Make;BoldUtility:Make;BoldBDE:Make;BoldExPe:Make;BoldIB:Make;BoldXMILink:Make;BoldAdo:Make;BoldAdvantage:Make;BoldDBExpress:Make;BoldDBIsam:Make;BoldDOA:Make;BoldOLLE:Make;BoldSQLDirect:Make;BoldUDPProp:Make;BoldUMLModelEditorDebugger:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

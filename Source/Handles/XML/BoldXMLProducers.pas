@@ -5,7 +5,7 @@ unit BoldXMLProducers;
 
 interface
 uses
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldStringList,
   BoldManipulators,
   BoldDefs,

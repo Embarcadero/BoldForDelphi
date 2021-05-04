@@ -742,7 +742,7 @@ procedure TBoldCustomTreeViewCom.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if Assigned(FEditFollower) and (Key > #32) and
-     not (FEditFollower.Controller as TBoldStringFollowerControllerCom).ValidateCharacter(Key, FEditFollower) then
+     not (FEditFollower.Controller as TBoldStringFollowerControllerCom).ValidateCharacter(AnsiChar(Key), FEditFollower) then
   begin
     MessageBeep(0);
     Key := #0;

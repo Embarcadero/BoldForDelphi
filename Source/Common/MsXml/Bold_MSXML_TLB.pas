@@ -1,7 +1,7 @@
 
 { Global compiler directives }
 {$include bold.inc}
-unit MSXML_TLB;
+unit Bold_MSXML_TLB;
 
 
 

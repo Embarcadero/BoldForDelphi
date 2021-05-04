@@ -1,27 +1,27 @@
 package Bold;
 
-{.$R *.res}
+{$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
-{ ALIGN 8}
-{ ASSERTIONS ON}
-{ BOOLEVAL OFF}
-{ DEBUGINFO ON}
-{ EXTENDEDSYNTAX ON}
-{ IMPORTEDDATA ON}
-{ IOCHECKS ON}
-{ LOCALSYMBOLS ON}
-{ LONGSTRINGS ON}
-{ OPENSTRINGS ON}
-{ OPTIMIZATION OFF}
-{ OVERFLOWCHECKS ON}
-{ RANGECHECKS ON}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
-{ SAFEDIVIDE OFF}
-{ STACKFRAMES ON}
-{ TYPEDADDRESS OFF}
-{ VARSTRINGCHECKS ON}
-{ WRITEABLECONST ON}
-{ MINENUMSIZE 1}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DEFINE BOLD_DELPHI}
 {$DEFINE DEBUG}
@@ -145,7 +145,7 @@ contains
   BoldLogReceiverInterface in 'Source\Common\Logging\BoldLogReceiverInterface.pas',
   BoldSmallLogFrame in 'Source\Common\Logging\BoldSmallLogFrame.pas',
   BoldThreadSafeLog in 'Source\Common\Logging\BoldThreadSafeLog.pas',
-  MSXML_TLB in 'Source\Common\MsXml\MSXML_TLB.pas',
+  Bold_MSXML_TLB in 'Source\Common\MsXml\Bold_MSXML_TLB.pas',
   BoldAbstractDequeuer in 'Source\Common\Queue\BoldAbstractDequeuer.pas',
   BoldEventQueue in 'Source\Common\Queue\BoldEventQueue.pas',
   BoldQueue in 'Source\Common\Queue\BoldQueue.pas',

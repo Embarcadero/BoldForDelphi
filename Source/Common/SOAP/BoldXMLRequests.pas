@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldXMLRequests;
@@ -6,7 +5,7 @@ unit BoldXMLRequests;
 interface
 
 uses
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   Classes,
   BoldStringList,
   BoldDefs;
