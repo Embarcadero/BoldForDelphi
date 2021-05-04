@@ -13,6 +13,7 @@ uses
   SysUtils,
   BoldUtils,
   ActnList,
+  Actions,
   Classes,
   DesignIntf,
   BoldElements,
@@ -52,24 +53,23 @@ uses
 
 procedure RegisterActionsInDelphi;
 begin
-                          // marco
-//  RegisterActions(BOLDACTIONGROUPNAME,
-//                  [
-//                   TBoldUpdateDBAction,
-//                   TBoldActivateSystemAction,
-//                   TBoldFailureDetectionAction,
-//                   TBoldListHandleAddNewAction,
-//                   TBoldListHandleDeleteAction,
-//                   TBoldListHandleFirstAction,
-//                   TBoldListHandleLastAction,
-//                   TBoldListHandleNextAction,
-//                   TBoldListHandlePrevAction,
-//                   TBoldListHandleMoveUpAction,
-//                   TBoldListHandleMoveDownAction,
-//                   TBoldSetCheckPointAction,
-//                   TBoldUndoAction,
-//                   TBoldRedoAction
-//                  ], nil);
+  RegisterActions(BOLDACTIONGROUPNAME,
+                  [
+                   TBoldUpdateDBAction,
+                   TBoldActivateSystemAction,
+                   TBoldFailureDetectionAction,
+                   TBoldListHandleAddNewAction,
+                   TBoldListHandleDeleteAction,
+                   TBoldListHandleFirstAction,
+                   TBoldListHandleLastAction,
+                   TBoldListHandleNextAction,
+                   TBoldListHandlePrevAction,
+                   TBoldListHandleMoveUpAction,
+                   TBoldListHandleMoveDownAction,
+                   TBoldSetCheckPointAction,
+                   TBoldUndoAction,
+                   TBoldRedoAction
+                  ], nil);
 end;
 
 procedure RegisterComponentsOnPalette;

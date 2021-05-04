@@ -57,6 +57,8 @@ uses
   BoldPageControl,
   BoldIDEConsts;
 
+{$R BoldAwareGUIReg.res}
+
 procedure RegisterEditors;
 begin
   RegisterPropertyEditor(TypeInfo(TBoldSubscribe), nil, '', TBoldElementSubscribeMethodProperty);
