@@ -30,6 +30,7 @@ uses
   BoldSubscription,
   BoldValueSpaceInterfaces,
   System.RegularExpressions,
+  System.RegularExpressionsCore,
   BoldIsoDateTime;
 
 var
@@ -3043,8 +3044,7 @@ end;
 
 function EscapeRegEx(const ASource: string): string;
 begin
-  result := StringReplace(ASource, '[', '\[', [rfReplaceAll]);
-  result := StringReplace(result, '%', '', [rfReplaceAll]);
+  result := TPerlRegEx.EscapeRegExChars(ASource);
 end;
 
 procedure TBOS_SQLLike.Evaluate(const Params: TBoldOclSymbolParameters);
