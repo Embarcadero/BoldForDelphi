@@ -572,7 +572,7 @@ procedure TBoldClassListController.MakeDbCurrent;
 var
   SourceList: TBoldObjectList;
 begin
-  if ClassTypeinfo.Persistent and BoldSystem.BoldPersistent then
+  if ClassTypeinfo.Persistent and Assigned(BoldSystem.PersistenceController) then
   begin
     SourceList := ClosestLoadedClassList;
 
