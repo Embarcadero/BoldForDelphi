@@ -1,0 +1,91 @@
+package BoldDesignPackage;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$DEFINE Bold_Delphi}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Bold 4.0 for Delphi'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl,
+  vcldb,
+  DesignIDE,
+  FireDac,
+  FireDACCommonDriver,
+  FireDACCommon,
+  IndySystem,
+  IndyCore;
+
+contains
+  BoldExternalPersistenceHandlesReg in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandlesReg.pas',
+  BoldAction in 'Source\BoldAwareGUI\Actions\BoldAction.pas',
+  BoldAwareGuiReg in 'Source\BoldAwareGUI\IDE\BoldAwareGuiReg.pas',
+  BoldHandleReg in 'Source\Handles\IDE\BoldHandleReg.pas',
+  BoldUMLModelEditReg in 'Source\UMLModel\Ide\BoldUMLModelEditReg.pas',
+  BoldUMLModelLinkSupport in 'Source\UMLModel\ModelLinks\Core\BoldUMLModelLinkSupport.pas',
+  BoldTypeNameHandleReg in 'Source\MoldModel\IDE\BoldTypeNameHandleReg.pas',
+  BoldPersistenceHandleDBreg in 'Source\Persistence\DB\BoldPersistenceHandleDBreg.pas',
+  BoldSamplesReg in 'Source\Samples\IDE\BoldSamplesReg.pas',
+  BoldUMLRose98Linkreg in 'Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Linkreg.pas',
+  BoldHandleComReg in 'Source\ClientHandlesCom\IDE\BoldHandleComReg.pas',
+  BoldUMXMILinkreg in 'Source\UMLModel\ModelLinks\XMI\BoldUMXMILinkreg.pas',
+  BoldPersistenceHandleFileReg in 'Source\Persistence\IDE\BoldPersistenceHandleFileReg.pas',
+  BoldHandlesPropagationReg in 'Source\Persistence\IDE\BoldHandlesPropagationReg.pas',
+  BoldComReg in 'Source\Common\IDECOM\BoldComReg.pas',
+  BoldExternalObjectSpaceEventHandlerReg in 'Source\ObjectSpace\IDE\BoldExternalObjectSpaceEventHandlerReg.pas',
+  BoldPersistenceNotifierReg in 'Source\Persistence\IDE\BoldPersistenceNotifierReg.pas',
+  BoldOLLEHandlesReg in 'Source\Extensions\OLLE\IDE\BoldOLLEHandlesReg.pas',
+  BoldComPersistenceHandleReg in 'Source\Persistence\IDECOM\BoldComPersistenceHandleReg.pas',
+  BoldPersistenceHandleReg in 'Source\Persistence\IDE\BoldPersistenceHandleReg.pas',
+  BoldHTTPServerPersistenceHandlePassthroughReg in 'Source\Persistence\IDECOM\BoldHTTPServerPersistenceHandlePassthroughReg.pas',
+  BoldPropagatorHandleCOMReg in 'Source\Propagator\IDECOM\BoldPropagatorHandleCOMReg.pas',
+  BoldHTTPClientPersistenceHandleReg in 'Source\Persistence\IDECOM\BoldHTTPClientPersistenceHandleReg.pas',
+  BoldConcurrencyControlReg in 'Source\ConcurrencyControl\IDECOM\BoldConcurrencyControlReg.pas',
+  BoldUMLModelHandleReg in 'Source\UMLModel\Ide\BoldUMLModelHandleReg.pas',
+  BoldLockingReg in 'Source\Handles\IDE\BoldLockingReg.pas',
+  BoldManipulatorReg in 'Source\Handles\IDE\BoldManipulatorReg.pas',
+  BoldWebConnectionReg in 'Source\Common\IDE\BoldWebConnectionReg.pas',
+  BoldReg in 'Source\Common\IDE\BoldReg.pas',
+  BoldXMLDispatcherReg in 'Source\Common\IDECOM\BoldXMLDispatcherReg.pas',
+  BoldModelReg in 'Source\MoldModel\IDE\BoldModelReg.pas',
+  BoldPersistenceHandleSystemReg in 'Source\Persistence\IDE\BoldPersistenceHandleSystemReg.pas',
+  BoldObjectUpgraderHandleReg in 'Source\Persistence\IDE\BoldObjectUpgraderHandleReg.pas',
+  BoldComElementHandleReg in 'Source\Handles\IDECOM\BoldComElementHandleReg.pas',
+  BoldUDPBroadcasterReg in 'Source\Persistence\IDEUDP\BoldUDPBroadcasterReg.pas',
+  BoldSelectionListBoxReg in 'Source\Samples\BoldCheckListBox\BoldSelectionListBoxReg.pas',
+  BoldCheckListBoxReg in 'Source\Samples\BoldCheckListBox\BoldCheckListBoxReg.pas',
+  BoldXMLDispatcherVBReg in 'Source\Common\IDECOM\BoldXMLDispatcherVBReg.pas',
+  BoldXMLReg in 'Source\Handles\IDE\BoldXMLReg.pas',
+  BoldAFPPluggableReg in 'Source\BoldAwareGUI\FormGen\BoldAFPPluggableReg.pas',
+  BoldAwareGuiComReg in 'Source\ClientGuiCom\IDE\BoldAwareGuiComReg.pas',
+  BoldPersistenceHandleFireDACReg in 'Source\Persistence\FireDAC\BoldPersistenceHandleFireDACReg.pas',
+  BoldPersistenceHandleFireDAC in 'Source\Persistence\FireDAC\BoldPersistenceHandleFireDAC.pas',
+  BoldDatabaseAdapterFireDAC in 'Source\Persistence\FireDAC\BoldDatabaseAdapterFireDAC.pas',
+  BoldFireDACInterfaces in 'Source\Persistence\FireDAC\BoldFireDACInterfaces.pas',
+  BoldFireDACConsts in 'Source\Persistence\FireDAC\BoldFireDACConsts.pas';
+
+end.
