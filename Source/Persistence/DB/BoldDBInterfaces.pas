@@ -450,11 +450,7 @@ type
     FInBatch: Boolean;
     fAccumulatedSQLLength: integer;
     fParamsInBeginUpdate: Boolean;
-    {$IFDEF UseSynCommons}
-    SB: SynCommons.TTextWriter;
-    {$ELSE}
     SB: TStringBuilder;
-    {$ENDIF}
     function GetAccumulatedSQL: TStrings;
     function GetHasCachedStatements: boolean;
     procedure ReplaceParamMarkers(sql: TStrings; const Source, Dest: IBoldExecQuery);
@@ -1673,11 +1669,7 @@ var
 
   procedure AddLine(const s: string);
   begin
-  {$IFDEF UseSynCommons}
-    SB.AddString(SynCommons.StringReplaceAll(RawUTF8(s), BOLDCRLF, ' '));
-  {$ELSE}
     sb.Append(StringReplace(s, BOLDCRLF, ' ', [rfReplaceAll]));
-  {$ENDIF}
   end;
 
 begin
@@ -1741,11 +1733,7 @@ begin
             NewParam.Name := NewParamName;
             AddLine(Copy(Line, PrevPos, StartPos-PrevPos+1));
             PrevPos := CurPos;
-            {$IFDEF UseSynCommons}
-            SB.AddString(RawUTF8(NewParamName));
-            {$ELSE}
             SB.Append(NewParamName);
-            {$ENDIF}
             inc(ParamIndex);
           end
           else
@@ -1758,17 +1746,10 @@ begin
       end;
     end;
   end;
-  {$IFDEF UseSynCommons}
-  SB.AddString(RawUTF8(DatabaseWrapper.SQLDatabaseConfig.BatchQuerySeparator));
-  Inc(fAccumulatedSQLLength, Integer(sb.TextLength) + Length(Dest.SQLStrings.LineBreak));
-  Dest.SQLStrings.Add(String(sb.text));
-  sb.CancelAll;
-  {$ELSE}
   SB.Append(DatabaseWrapper.SQLDatabaseConfig.BatchQuerySeparator);
   Dest.SQLStrings.Add(sb.ToString);
   Inc(fAccumulatedSQLLength, SB.Length + Length(Dest.SQLStrings.LineBreak));
   SB.Clear;
-  {$ENDIF}
 end;
 
 function TBoldBatchDataSetWrapper.GetHasCachedStatements: boolean;
@@ -1853,11 +1834,7 @@ constructor TBoldBatchDataSetWrapper.Create(
   DatabaseWrapper: TBoldDatabaseWrapper);
 begin
   inherited Create(DatabaseWrapper);
-  {$IFDEF UseSynCommons}
-  SB := SynCommons.TTextWriter.CreateOwnedStream(cInitialBatchBufferSize);
-  {$ELSE}
   SB := TStringBuilder.Create(cInitialBatchBufferSize);
-  {$ENDIF}
 end;
 
 destructor TBoldBatchDataSetWrapper.Destroy;
