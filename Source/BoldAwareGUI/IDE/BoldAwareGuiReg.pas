@@ -12,6 +12,8 @@ procedure Register;
 implementation
 
 uses
+  ActnList,
+  Actions,
   Classes,
   DesignIntf,
   BoldDefs,
@@ -55,6 +57,7 @@ uses
   BoldImage,
   BoldComboBox,
   BoldPageControl,
+  BoldAction,
   BoldIDEConsts;
 
 {$R BoldAwareGUIReg.res}
@@ -167,10 +170,20 @@ begin
   ]);
 end;
 
+procedure RegisterActionsInDelphi;
+begin
+  RegisterActions(BOLDACTIONGROUPNAME,
+                  [
+                   TBoldAction
+                  ], nil);
+end;
+
+
 procedure Register;
 begin
   RegisterComponentsOnPalette;
   RegisterEditors;
+  RegisterActionsInDelphi;
 end;
 
 end.

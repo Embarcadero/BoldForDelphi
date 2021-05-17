@@ -101,6 +101,7 @@ type
     fUseMultiRowInserts: boolean;
     fSQLforNull: string;
     fEvolveDropsUnknownIndexes: boolean;
+    fCreateDatabaseTemplate: string;
     procedure SetIfTemplate(const Value: string);
     procedure SetColumnExistsTemplate(const Value: string);
     procedure SetTableExistsTemplate(const Value: string);
@@ -171,6 +172,7 @@ type
     procedure SetUseParamsForEmptyString(const Value: boolean);
     procedure SetSQLforNull(const Value: string);
     procedure SetEvolveDropsUnknownIndexes(const Value: boolean);
+    procedure SetCreateDatabaseTemplate(const Value: string);
   protected
     procedure DefineProperties(Filer: TFiler); override;
   public
@@ -227,6 +229,7 @@ type
     property UseSQL92Joins: boolean read fUseSQL92Joins write SetUseSQL92Joins default false;
     property SingleIndexOrderedLinks: boolean read fSingleIndexOrderedLinks write SetSingleIndexOrderedLinks default false;
     property IgnoreMissingObjects: boolean read fIgnoreMissingObjects write SetIgnoreMissingObjects default false;
+    property CreateDatabaseTemplate: string read fCreateDatabaseTemplate write SetCreateDatabaseTemplate;
     property DropColumnTemplate: string read fDropColumnTemplate write SetDropColumnTemplate;
     property DropTableTemplate: string read fDropTableTemplate write SetDropTableTemplate;
     property IndexInfoTemplate: string read fIndexInfoTemplate write SetIndexInfoTemplate;
@@ -334,6 +337,7 @@ begin
   fAllowMetadataChangesInTransaction := Source.AllowMetadataChangesInTransaction;
   fDbGenerationMode := Source.DBGenerationMode;
   fDefaultStringLength := Source.DefaultStringLength;
+  fCreateDatabaseTemplate := Source.CreateDatabaseTemplate;
   fDropColumnTemplate := Source.DropColumnTemplate;
   fDropTableTemplate := Source.DropTableTemplate;
   fDropIndexTemplate := Source.DropIndexTemplate;
@@ -494,6 +498,15 @@ begin
   if FColumnTypeForUnicodeText <> Value then
   begin
     FColumnTypeForUnicodeText := Value;
+    Change;
+  end;
+end;
+
+procedure TBoldSQLDataBaseConfig.SetCreateDatabaseTemplate(const Value: string);
+begin
+  if fCreateDatabaseTemplate <> Value then
+  begin
+    fCreateDatabaseTemplate := Value;
     Change;
   end;
 end;
@@ -730,6 +743,7 @@ begin
   fIgnoreMissingObjects := false;
   fAllowMetadataChangesInTransaction := true;
   fDBGenerationMode := dbgQuery;
+  fCreateDatabaseTemplate := 'CREATE DATABASE %s';
   fDropColumnTemplate := 'ALTER TABLE <TableName> DROP <ColumnName>';
   fDropTableTemplate := 'DROP TABLE <TableName>';
   fDropIndexTemplate := 'DROP INDEX <IndexName>';

@@ -100,11 +100,16 @@ procedure TBoldDefaultSystemDescription.AddFirstClock(PSParams: TBoldPSDefaultPa
   end;
 
   procedure AddFirstClockUsingQuery;
+  var
+    vParam: IBoldParameter;
   begin
     Query.AssignSQLText(format(
       'INSERT INTO %s (%s, %s) VALUES (0, :FirstClock)',
         [LastClockTable.SQLName, LASTTIMESTAMPCOLUMN_NAME, LASTCLOCKCOLUMN_NAME] ));
-    Query.CreateParam(ftDateTime, 'FirstClock').AsDateTime := 0;
+    vParam := Query.FindParam('FirstClock');
+    if not Assigned(vParam) then
+      vParam := Query.CreateParam(ftDateTime, 'FirstClock');
+    vParam.AsDateTime := 0;
     Query.ParamCheck := true;
     Query.ExecSQL;
     Query.ParamCheck := false;

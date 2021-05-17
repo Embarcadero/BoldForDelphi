@@ -202,7 +202,7 @@ type
 
 var
   BoldShowConstraintsInAutoFormGrids: boolean = true;
-  BoldShowHistoryTabInAutoForms: boolean = true;
+  BoldShowHistoryTabInAutoForms: boolean = false;
 
 implementation
 

@@ -38,12 +38,12 @@ type
     procedure ExecuteTarget(Target: TObject); override;
   end;
 
-
 implementation
 
 uses
   BoldSystem,
   ActnList,
+  Menus, // for TextToShortCut
   BoldUndoInterfaces;
 
 
@@ -85,6 +85,7 @@ constructor TBoldUndoAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := 'Undo';
+  ShortCut := TextToShortCut('Ctrl+Z');
 end;
 
 procedure TBoldUndoAction.ExecuteTarget(Target: TObject);
@@ -107,6 +108,7 @@ constructor TBoldRedoAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := 'Redo';
+  ShortCut := TextToShortCut('Shift+Ctrl+Z');
 end;
 
 procedure TBoldRedoAction.ExecuteTarget(Target: TObject);
@@ -114,7 +116,5 @@ begin
   inherited;
   BoldSystemHandle.System.UndoHandlerInterface.RedoLatest;
 end;
-
-initialization
 
 end.

@@ -58,6 +58,7 @@ begin
                    TBoldUpdateDBAction,
                    TBoldActivateSystemAction,
                    TBoldFailureDetectionAction,
+                   TBoldCreateDatabaseAction,
                    TBoldListHandleAddNewAction,
                    TBoldListHandleDeleteAction,
                    TBoldListHandleFirstAction,

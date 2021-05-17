@@ -59,11 +59,9 @@ type
   {---TBoldCaptionController---}
   TBoldCaptionController = class(TBoldCustomCaptionController)
   published
-    {$IFNDEF T2H}
     property BoldHandle;
     property BoldProperties;
     property TrackControl;
-    {$ENDIF}
   end;
 
 implementation
@@ -76,7 +74,6 @@ type
   {---TWinControlWithCaption---}
   {Dummy class to access protected caption property of TWinControl}
   TWinControlWithCaption = class(TwinControl);
-
 
 {---TBoldCustomCaptionController---}
 constructor TBoldCustomCaptionController.Create(AOwner: TComponent);
@@ -128,7 +125,6 @@ begin
   end;
 end;
 
-
 procedure TBoldCustomCaptionController.SetBoldHandle(value: TBoldElementHandle);
 begin
   fHandleFollower.BoldHandle := value;
@@ -162,7 +158,6 @@ function TBoldCustomCaptionController.GetBoldHandle: TBoldElementHandle;
 begin
   Result := fHandleFollower.BoldHandle;
 end;
-
 
 function TBoldCustomCaptionController.GetContextType: TBoldElementTypeInfo;
 begin

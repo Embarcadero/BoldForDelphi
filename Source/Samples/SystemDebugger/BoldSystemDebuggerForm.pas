@@ -26,7 +26,9 @@ uses
   BoldCursorHandle,
   BoldDBInterfaces,
   BoldGui,
-  BoldListHandle, BoldReferenceHandle, ExtCtrls;
+  BoldListHandle,
+  BoldReferenceHandle,
+  ExtCtrls;
 
 type
   TBoldSystemDebuggerFrm = class(TForm)

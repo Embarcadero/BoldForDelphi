@@ -80,14 +80,30 @@ type
     property SaveOnClose: TBoldSaveAction read FSaveOnClose write fSaveOnClose;
   end;
 
+  TBoldCreateDatabaseAction = class(TBoldSystemHandleAction)
+  private
+    fOnSchemaGenerated: TNotifyEvent;
+    procedure SchemaGenerated;
+  protected
+    procedure GenerateSchema;
+    procedure CheckAllowEnable(var EnableAction: boolean); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure ExecuteTarget(Target: TObject); override;
+  published
+    property OnSchemaGenerated: TNotifyEvent read fOnSchemaGenerated write fOnSchemaGenerated;
+  end;
+
 implementation
 
 uses
   SysUtils,
   BoldDefs,
+  Forms,
   Controls,
   Dialogs,
   ComCtrls,
+  Menus, // for TextToShortCut
   BoldSystem;
 
 const
@@ -107,6 +123,7 @@ constructor TBoldUpdateDBAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := 'Update DB';
+  ShortCut := TextToShortCut('Ctrl+S');
 end;
 
 procedure TBoldUpdateDBAction.ExecuteTarget(Target: TObject);
@@ -247,6 +264,8 @@ begin
             ((Target as TControl).Action = self);
 end;
 
+type TControlAccess = class(TControl);
+
 procedure TBoldFailureDetectionAction.UpdateTarget(Target: TObject);
 var
   failure: TBoldFailureReason;
@@ -257,10 +276,11 @@ begin
     Caption := failure.Reason
   else
     Caption := '';
-
-
   if Target is TStatusBar then
-    (Target as TStatusBar).SimpleText := Caption;
+    (Target as TStatusBar).SimpleText := Caption
+  else
+  if Target is TControl then
+    (Target as TControlAccess).Caption := Caption
 end;
 
 { TBoldSystemHandleAction }
@@ -274,6 +294,45 @@ procedure TBoldSystemHandleAction.SetBoldSystemHandle(
   const Value: TBoldSystemHandle);
 begin
   BoldElementHandle := Value;
+end;
+
+{ TBoldCreateDatabaseAction }
+
+procedure TBoldCreateDatabaseAction.CheckAllowEnable(var EnableAction: boolean);
+begin
+  EnableAction := Assigned(BoldSystemHandle) and Assigned(BoldSystemHandle.PersistenceHandleDB) and not BoldSystemHandle.Active;
+end;
+
+constructor TBoldCreateDatabaseAction.Create(AOwner: TComponent);
+begin
+  inherited;
+  Caption := 'Create DB';
+end;
+
+procedure TBoldCreateDatabaseAction.ExecuteTarget(Target: TObject);
+begin
+  GenerateSchema;
+end;
+
+procedure TBoldCreateDatabaseAction.GenerateSchema;
+begin
+  if Assigned(BoldSystemHandle) and Assigned(BoldSystemHandle.PersistenceHandleDB) then
+  begin
+    Screen.Cursor := crHourGlass;
+    try
+      BoldSystemHandle.PersistenceHandleDB.CreateDataBase;
+      BoldSystemHandle.PersistenceHandleDB.CreateDataBaseSchema;
+    finally
+      Screen.Cursor := crDefault;
+    end;
+    SchemaGenerated;
+  end;
+end;
+
+procedure TBoldCreateDatabaseAction.SchemaGenerated;
+begin
+  if Assigned(fOnSchemaGenerated) then
+    fOnSchemaGenerated(Self);
 end;
 
 initialization

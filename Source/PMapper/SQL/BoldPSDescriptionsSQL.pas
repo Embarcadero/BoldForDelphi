@@ -40,7 +40,7 @@ type
   {---TBoldSQLSystemDescription---}
   TBoldSQLSystemDescription = class(TBoldPSSystemDescription)
   private
-    Query: IBoldExecQuery;
+    fExecQuery: IBoldExecQuery;
     fTables: TBoldSQLTableDescriptionList;
     fSQLDatabaseConfig: TBoldSQLDatabaseConfig;
     fNationalCharConversion: TBoldNationalCharConversion;
@@ -274,9 +274,9 @@ var
   var
     i: integer;
   begin
-    Query := PSParamsSQL.Database.GetExecQuery;
-    Query.ParamCheck := false;
-    Query.StartSQLBatch;
+    fExecQuery := PSParamsSQL.Database.GetExecQuery;
+    fExecQuery.ParamCheck := false;
+    fExecQuery.StartSQLBatch;
     try
       if BoldLog.ProcessInterruption then
         exit;
@@ -290,11 +290,11 @@ var
         if BoldLog.ProcessInterruption then
           exit;
       end;
-      Query.EndSQLBatch;
+      fExecQuery.EndSQLBatch;
       CommitMetaDataTransaction(PSParamsSQL);
     except
       RollBackMetaDataTransaction(PSParamsSQL);
-      Query.FailSQLBatch;
+      fExecQuery.FailSQLBatch;
       raise;
     end;
   end;
@@ -308,7 +308,7 @@ begin
   try
     CreateTables;
   finally
-    PSParamsSQL.Database.ReleaseExecQuery(Query);
+    PSParamsSQL.Database.ReleaseExecQuery(fExecQuery);
   end;
 end;
 
@@ -352,10 +352,19 @@ begin
 end;
 
 function DeleteTableSQL: boolean;
+var
+  PsParamsSQL: TBoldPSSQLParams;
+  Query: IBoldExecQuery;
 begin
   result := true;
-  self.Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
-  self.Query.ExecSQL;
+  PSParamsSQL := PSParams as TBoldPSSQLParams;
+  Query := PSParamsSQL.Database.GetExecQuery;
+  try
+    Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
+    Query.ExecSQL;
+  finally
+    PSParamsSQL.Database.ReleaseExecQuery(Query);
+  end;
 end;
 
 function DeleteTable: Boolean;
@@ -555,7 +564,7 @@ var
   i: integer;
   Query: IBoldExecQuery;
 begin
-  Query := SystemDescription.Query;
+  Query := SystemDescription.fExecQuery;
   Query.AssignSQLText(SQLForCreateTable(PSParams.Database));
   Query.ExecSQL;
   for i := 0 to IndexList.count-1 do
@@ -959,5 +968,4 @@ begin
     PsParams.Database.StartTransaction;
 end;
 
-initialization
 end.
