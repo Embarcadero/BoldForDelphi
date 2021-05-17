@@ -14,6 +14,7 @@ uses
   ExtCtrls,
   ComCtrls,
   Grids,
+  Actions,
   ActnList,
   BoldSubscription,
   BoldElements,
@@ -37,7 +38,12 @@ uses
   BoldActions,
   BoldDBActions,
   BoldAFP,
-  BoldReferenceHandle, BoldIBDatabaseAction;
+  BoldReferenceHandle,
+  BoldNavigatorDefs,
+  BoldDebugActions,
+  BoldUndoActions,
+  BoldCaptionController,
+  BoldAction;
 
 type
   Tallform = class(TForm)
@@ -54,7 +60,6 @@ type
     Label3: TLabel;
     Label1: TLabel;
     FirstName: TLabel;
-    btnUpdateDB: TButton;
     bedFirstName: TBoldEdit;
     PersonCount: TBoldEdit;
     bedPersonHome: TBoldEdit;
@@ -111,9 +116,46 @@ type
     BoldUpdateDBAction1: TBoldUpdateDBAction;
     HighRentRenderer: TBoldAsStringRenderer;
     btnCheckpoint: TButton;
+    BoldCreateDatabaseAction1: TBoldCreateDatabaseAction;
+    GroupBox2: TGroupBox;
     btnUnDo: TButton;
     btnRedo: TButton;
-    BoldIBDatabaseAction1: TBoldIBDatabaseAction;
+    GroupBox3: TGroupBox;
+    btnUpdateDB: TButton;
+    BoldFailureDetectionAction1: TBoldFailureDetectionAction;
+    BoldUndoAction1: TBoldUndoAction;
+    BoldRedoAction1: TBoldRedoAction;
+    BoldSystemDebuggerAction1: TBoldSystemDebuggerAction;
+    BoldNavigator1: TBoldNavigator;
+    BoldNavigator2: TBoldNavigator;
+    BoldNavigator3: TBoldNavigator;
+    StatusBar1: TStatusBar;
+    MainMenu1: TMainMenu;
+    Opensystem1: TMenuItem;
+    CreateDB1: TMenuItem;
+    Opensystem2: TMenuItem;
+    UpdateDB1: TMenuItem;
+    BoldFailureDetectionAction11: TMenuItem;
+    ogglelog1: TMenuItem;
+    Systemdebugger1: TMenuItem;
+    Edit1: TMenuItem;
+    Undo1: TMenuItem;
+    Redo1: TMenuItem;
+    BoldModelEditorAction: TAction;
+    BoldModelEditorAction1: TMenuItem;
+    Log1: TMenuItem;
+    BoldLogOCLAction1: TBoldLogOCLAction;
+    BoldLogSQLAction1: TBoldLogSQLAction;
+    BoldLogPMAction1: TBoldLogPMAction;
+    oggleOCLlogs1: TMenuItem;
+    ogglePMCallslogs1: TMenuItem;
+    oggleSQLlogs1: TMenuItem;
+    BoldSetCheckPointAction1: TBoldSetCheckPointAction;
+    BoldCaptionController1: TBoldCaptionController;
+    actChargeRent: TBoldAction;
+    BoldLogFormAction1: TBoldLogFormAction;
+    ListBox1: TListBox;
+    Label8: TLabel;
     procedure newBuildingClick(Sender: TObject);
     procedure DeleteCurrentObject(Sender: TObject);
     procedure NewPersonClick(Sender: TObject);
@@ -121,29 +163,35 @@ type
     procedure SingleItemRemove(Sender: TObject);
     procedure PopupPopup(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure ShowInOwnWindow(Sender: TObject);
-    function bsrRentPerResidentGetAsString(Element: TBoldElement; representation: Integer; Expression: String): string;
-    function bsrRentPerResidentMayModify(element: TBoldElement; representation: Integer; Expression: String; Subscriber: TBoldSubscriber): Boolean;
-    function bsrRentPerResidentValidateCharacter(element: TBoldElement; value: String; representation: Integer; Expression: String): Boolean;
-    function bsrRentPerResidentValidateString(element: TBoldElement; value: String; representation: Integer; Expression: String): Boolean;
-    procedure bsrRentPerResidentHoldsChangedValue(Element: TBoldElement; representation: Integer; Expression: String; Subscriber: TBoldSubscriber);
-    procedure bsrRentPerResidentReleaseChangedValue(Element: TBoldElement; representation: Integer; Expression: String; Subscriber: TBoldSubscriber);
-    procedure bsrRentPerResidentSubscribe(Element: TBoldElement; representation: Integer; Expression: String; Subscriber: TBoldSubscriber);
-    procedure bsrRentPerResidentSetAsString(Element: TBoldElement; value: string; representation: Integer; Expression: String); procedure rgNameRepresentationClick(Sender: TObject);
-    procedure btnChargeRentClick(Sender: TObject); procedure CheckBox1Click(Sender: TObject);
+    procedure ShowInOwnWindow(Sender: TObject); procedure CheckBox1Click(Sender: TObject);
     procedure CheckBox2Click(Sender: TObject);
-
-    function bsrResidentsTotalAssetsGetAsString(element: TBoldElement; representation: Integer; Expression: String): String;
-    procedure bsrResidentsTotalAssetsSubscribe(element: TBoldElement; representation: Integer; Expression: String; Subscriber: TBoldSubscriber);
-    procedure bsrAddressSetColor(element: TBoldElement; var aColor: TColor; representation: Integer; Expression: String);
-    procedure bsrAddressSetFont(element: TBoldElement; aFont: TFont; representation: Integer; Expression: String);
     procedure NewBuilding1Click(Sender: TObject);
-    procedure BoldActivateSystemAction1SystemOpened(Sender: TObject);
-    procedure HighRentRendererSetColor(Element: TBoldElement; var AColor: TColor; Representation: Integer; Expression: String);
-    procedure HighRentRendererSetFont(Element: TBoldElement; AFont: TFont; Representation: Integer; Expression: String);
-    procedure btnCheckpointClick(Sender: TObject);
-    procedure btnUnDoClick(Sender: TObject);
-    procedure btnRedoClick(Sender: TObject);
+    function bsrRentPerResidentGetAsString(aFollower: TBoldFollower): string;
+    procedure bsrRentPerResidentHoldsChangedValue(aFollower: TBoldFollower);
+    function bsrRentPerResidentMayModify(aFollower: TBoldFollower): Boolean;
+    procedure bsrRentPerResidentReleaseChangedValue(aFollower: TBoldFollower);
+    procedure bsrRentPerResidentSetAsString(aFollower: TBoldFollower;
+      const NewValue: string);
+    procedure rgNameRepresentationClick(Sender: TObject);
+    procedure bsrRentPerResidentSubscribe(aFollower: TBoldFollower;
+      Subscriber: TBoldSubscriber);
+    function bsrRentPerResidentValidateCharacter(aFollower: TBoldFollower;
+      const Value: string): Boolean;
+    function bsrRentPerResidentValidateString(aFollower: TBoldFollower;
+      const Value: string): Boolean;
+    function bsrResidentsTotalAssetsGetAsString(
+      aFollower: TBoldFollower): string;
+    procedure bsrResidentsTotalAssetsSubscribe(aFollower: TBoldFollower;
+      Subscriber: TBoldSubscriber);
+    procedure bsrAddressSetColor(aFollower: TBoldFollower; var AColor: TColor);
+    procedure bsrAddressSetFont(aFollower: TBoldFollower; AFont: TFont);
+    procedure HighRentRendererSetColor(aFollower: TBoldFollower;
+      var AColor: TColor);
+    procedure HighRentRendererSetFont(aFollower: TBoldFollower; AFont: TFont);
+    procedure CheckBox3Click(Sender: TObject);
+    procedure BoldModelEditorActionExecute(Sender: TObject);
+    procedure actChargeRentExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     function CurrentBuildingHandle: TBoldListHandle;
@@ -160,7 +208,8 @@ uses
   BuildingClasses,
   BoldGUI,
   PersonAutoFormUnit,
-  datamod;
+  datamod,
+  BoldUMLModelEdit;
 
 {$R *.DFM}
 
@@ -230,6 +279,13 @@ begin
       Canclose := False;
 end;
 
+procedure Tallform.FormCreate(Sender: TObject);
+begin
+  Randomize;
+  datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.Enabled := true;
+  BoldCaptionController1.TrackControl := self;
+end;
+
 procedure Tallform.ShowInOwnWindow(Sender: TObject);
 var
   BoldObject: TBoldObject;
@@ -248,12 +304,11 @@ begin
 end;
 
 function Tallform.bsrRentPerResidentGetAsString(
-  Element: TBoldElement; representation: Integer;
-  Expression: String): string;
+  aFollower: TBoldFollower): string;
 begin
   result := '';
-  if element is TResidential_Building then
-    with TResidential_Building(Element) do
+  if AFollower.element is TResidential_Building then
+    with TResidential_Building(AFollower.Element) do
       if M_TotalRent.IsNull then
         Result := '***'
       else if Residents.Count = 0 then
@@ -263,43 +318,47 @@ begin
 end;
 
 procedure Tallform.bsrRentPerResidentHoldsChangedValue(
-  Element: TBoldElement; representation: Integer; Expression: String;
-  subscriber: TBoldsubscriber);
+  aFollower: TBoldFollower);
 begin
-  if element is TResidential_Building then
-    TResidential_Building(Element).M_TotalRent.RegisterModifiedValueHolder(subscriber);
+  if AFollower.element is TResidential_Building then
+    TResidential_Building(AFollower.Element).M_TotalRent.RegisterModifiedValueHolder(AFollower.subscriber);
+end;
+
+function Tallform.bsrRentPerResidentMayModify(
+  aFollower: TBoldFollower): Boolean;
+begin
+  Result := False;
+  if AFollower.element is TResidential_Building then
+    Result := TResidential_Building(AFollower.element).Residents.Count > 0;
 end;
 
 procedure Tallform.bsrRentPerResidentReleaseChangedValue(
-  Element: TBoldElement; representation: Integer; Expression: String;
-  subscriber: TBoldSubscriber);
+  aFollower: TBoldFollower);
 begin
-  if element is TResidential_Building then
-    TResidential_Building(Element).M_TotalRent.UnRegisterModifiedValueHolder(Subscriber);
+  if AFollower.element is TResidential_Building then
+    TResidential_Building(AFollower.Element).M_TotalRent.UnRegisterModifiedValueHolder(AFollower.Subscriber);
 end;
 
-procedure Tallform.bsrRentPerResidentSubscribe(
-  Element: TBoldElement; representation: Integer; Expression: String;
+procedure Tallform.bsrRentPerResidentSetAsString(aFollower: TBoldFollower;
+  const NewValue: string);
+var
+  v: string;
+begin
+  v := NewValue; {avoid name clash}
+  if aFollower.element is TResidential_Building then
+    with TResidential_Building(aFollower.Element) do
+      TotalRent := StrToCurr(v) * Residents.Count;
+end;
+
+procedure Tallform.bsrRentPerResidentSubscribe(aFollower: TBoldFollower;
   Subscriber: TBoldSubscriber);
 begin
-  if element is TResidential_Building then
-    with Element do
+  if AFollower.element is TResidential_Building then
+    with AFollower.Element do
     begin
       SubscribeToExpression('totalRent', Subscriber, False);
       SubscribeToExpression('residents', Subscriber, False);
     end;
-end;
-
-procedure Tallform.bsrRentPerResidentSetAsString(
-  Element: TBoldElement; value: string; representation: Integer;
-  Expression: String);
-var
-  v: string;
-begin
-  v := value; {avoid name clash}
-  if element is TResidential_Building then
-    with TResidential_Building(Element) do
-      TotalRent := StrToCurr(v) * Residents.Count;
 end;
 
 procedure Tallform.rgNameRepresentationClick(Sender: TObject);
@@ -310,12 +369,6 @@ begin
       1: Expression  := 'lastName';
       2: Expression  := 'firstName + '' '' + lastName';
     end;
-end;
-
-procedure Tallform.btnChargeRentClick(Sender: TObject);
-begin
-  if blhAllResidentialBuilding.CurrentBoldObject is TResidential_Building then
-    TResidential_Building(blhAllResidentialBuilding.CurrentBoldObject).ChargeRent;
 end;
 
 procedure Tallform.CheckBox1Click(Sender: TObject);
@@ -334,25 +387,19 @@ begin
     blhAllPerson.BoldComparer := nil;
 end;
 
-function Tallform.bsrRentPerResidentMayModify(
-  element: TBoldElement; representation: Integer;
-  Expression: String; Subscriber: TBoldSubscriber): Boolean;
+procedure Tallform.CheckBox3Click(Sender: TObject);
 begin
-  Result := False;
-  if element is TResidential_Building then
-    Result := TResidential_Building(element).Residents.Count > 0;
+  datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.Enabled := (Sender as TCheckBox).Checked;
 end;
 
-function Tallform.bsrRentPerResidentValidateCharacter(
-  element: TBoldElement; value: String; representation: Integer;
-  Expression: String): Boolean;
+function Tallform.bsrRentPerResidentValidateCharacter(aFollower: TBoldFollower;
+  const Value: string): Boolean;
 begin
-  Result := value[1] in ['0'..'9', '-', '+', 'e', 'E', DecimalSeparator];
+  Result := value[1] in ['0'..'9', '-', '+', 'e', 'E', FormatSettings.DecimalSeparator];
 end;
 
-function Tallform.bsrRentPerResidentValidateString(
-  element: TBoldElement; value: String; representation: Integer;
-  Expression: String): Boolean;
+function Tallform.bsrRentPerResidentValidateString(aFollower: TBoldFollower;
+  const Value: string): Boolean;
 begin
   try
     StrToCurr(value);
@@ -363,28 +410,26 @@ begin
 end;
 
 function Tallform.bsrResidentsTotalAssetsGetAsString(
-  element: TBoldElement; representation: Integer;
-  Expression: String): String;
+  aFollower: TBoldFollower): string;
 var
   i: integer;
   sum: Currency;
 begin
   Sum := 0;
-  if element is TResidential_Building then
-    with TResidential_Building(Element)  do
+  if AFollower.element is TResidential_Building then
+    with TResidential_Building(AFollower.Element)  do
       for i := 0 to Residents.Count - 1 do
         Sum := Sum + Residents[i].Assets;
   Result := CurrToStr(Sum);
 end;
 
-procedure Tallform.bsrResidentsTotalAssetsSubscribe(element: TBoldElement;
-  representation: Integer; Expression: String;
+procedure Tallform.bsrResidentsTotalAssetsSubscribe(aFollower: TBoldFollower;
   Subscriber: TBoldSubscriber);
 var
   i: integer;
 begin
-  if element is TResidential_Building then
-    with TResidential_Building(Element) do
+  if AFollower.element is TResidential_Building then
+    with TResidential_Building(AFollower.Element) do
     begin
       SubscribeToExpression('residents', subscriber, true);
       for i := 0 to Residents.Count - 1 do
@@ -392,23 +437,26 @@ begin
     end;
 end;
 
-procedure Tallform.bsrAddressSetColor(
-  element: TBoldElement; var aColor: TColor; representation: Integer;
-  Expression: String);
+procedure Tallform.BoldModelEditorActionExecute(Sender: TObject);
 begin
-  if Assigned(element) then
-    with TBuilding(element) do
+  BoldUMLModelEdit.UMLModelEditor.ShowEditFormForBoldModel(DataModule1.BoldModel1);
+end;
+
+procedure Tallform.bsrAddressSetColor(aFollower: TBoldFollower;
+  var AColor: TColor);
+begin
+  if Assigned(AFollower.element) then
+    with TBuilding(AFollower.element) do
     begin
       if Pos('Bold', Address) > 0 then
         aColor := clAqua;
     end;
 end;
 
-procedure Tallform.bsrAddressSetFont(element: TBoldElement;
-  aFont: TFont; representation: Integer; Expression: String);
+procedure Tallform.bsrAddressSetFont(aFollower: TBoldFollower; AFont: TFont);
 begin
-  if Assigned(element) then
-    with TBuilding(element).M_Address do
+  if Assigned(AFollower.element) then
+    with TBuilding(AFollower.element).M_Address do
     begin
       if Pos( 'Bold', AsString ) > 0 then
         aFont.Style := aFont.Style + [fsBold];
@@ -432,48 +480,34 @@ begin
     result := blhAllResidentialBuilding;
 end;
 
-procedure Tallform.BoldActivateSystemAction1SystemOpened(Sender: TObject);
+procedure Tallform.actChargeRentExecute(Sender: TObject);
 begin
-  Randomize;
+  if blhAllResidentialBuilding.CurrentBoldObject is TResidential_Building then
+    TResidential_Building(blhAllResidentialBuilding.CurrentBoldObject).ChargeRent;
 end;
 
-procedure Tallform.HighRentRendererSetColor(Element: TBoldElement;
-  var AColor: TColor; Representation: Integer; Expression: String);
+procedure Tallform.HighRentRendererSetColor(aFollower: TBoldFollower;
+  var AColor: TColor);
 begin
-  if element is TResidential_Building then
+  if AFollower.element is TResidential_Building then
   begin
-    if (TResidential_Building(element).totalRent) >= 1500 then
+    if (TResidential_Building(AFollower.element).totalRent) >= 1500 then
       aColor := clSilver
     else
       aColor := clWhite;
   end;
 end;
 
-procedure Tallform.HighRentRendererSetFont(Element: TBoldElement;
-  AFont: TFont; Representation: Integer; Expression: String);
+procedure Tallform.HighRentRendererSetFont(aFollower: TBoldFollower;
+  AFont: TFont);
 begin
-  if element is TResidential_Building then
+  if aFollower.element is TResidential_Building then
   begin
-    if (TResidential_Building(element).totalRent) >= 1500 then
+    if (TResidential_Building(aFollower.element).totalRent) >= 1500 then
       AFont.Color := clRed
     else
       AFont.Color := clWindowText;
   end;
-end;
-
-procedure Tallform.btnCheckpointClick(Sender: TObject);
-begin
-  datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.SetCheckPoint;
-end;
-
-procedure Tallform.btnUnDoClick(Sender: TObject);
-begin
- datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.UnDoLatest;
-end;
-
-procedure Tallform.btnRedoClick(Sender: TObject);
-begin
-  datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.Redolatest;
 end;
 
 end.

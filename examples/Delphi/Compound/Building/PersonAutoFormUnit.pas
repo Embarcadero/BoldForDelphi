@@ -18,7 +18,7 @@ uses
   BoldGrid,
   StdCtrls,
   BoldCheckBox,
-  BoldEdit;
+  BoldEdit, BoldCaptionController;
 
 type
   TPersonAutoForm = class(TForm)
@@ -34,7 +34,9 @@ type
     brhPerson: TBoldReferenceHandle;
     blhOwnedBuildings: TBoldListHandle;
     Label5: TLabel;
+    BoldCaptionController1: TBoldCaptionController;
     procedure brhPersonObjectDeleted(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -49,6 +51,12 @@ procedure TPersonAutoForm.brhPersonObjectDeleted(Sender: TObject);
 begin
   // When the object is deleted or destroyed, we release the form
   TForm(TComponent(Sender).Owner).Release;
+end;
+
+procedure TPersonAutoForm.FormCreate(Sender: TObject);
+begin
+  // Links the form caption to person name
+  BoldCaptionController1.TrackControl := self;
 end;
 
 end.

@@ -33,8 +33,17 @@ uses
   BoldreferenceHandle,
   ActnList,
   BoldHandleAction, BoldAFPPluggable, BoldAbstractPersistenceHandleDB,
-  DB, IBDatabase,
-  BoldAbstractDatabaseAdapter, BoldDatabaseAdapterIB;
+  DB,
+  BoldAbstractDatabaseAdapter,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf,
+  FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.Phys.FB, FireDAC.Phys.FBDef, FireDAC.VCLUI.Wait, FireDAC.Comp.Client,
+  BoldDatabaseAdapterFireDAC, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
+  FireDAC.DApt, BoldAbstractPropagatorHandle,
+  BoldPropagatorHandleCOM, BoldPersistenceHandlePassthrough,
+  BoldPersistenceHandlePTWithModel, BoldSnooperHandle, BoldAbstractDequeuer,
+  BoldExternalObjectSpaceEventHandler;
 
 type
   TDataModule1 = class(TDataModule)
@@ -48,19 +57,22 @@ type
     BoldSystemTypeInfoHandle1: TBoldSystemTypeInfoHandle;
     BoldPlaceableAFP1: TBoldPlaceableAFP;
     BoldPersistenceHandleDB1: TBoldPersistenceHandleDB;
-    IBDatabase1: TIBDatabase;
-    BoldDatabaseAdapterIB1: TBoldDatabaseAdapterIB;
-    procedure IsRichRendererSubscribe(Element: TBoldElement; Representation: Integer; Expression: String; Subscriber: TBoldSubscriber);
-    function IsRichRendererGetAsCheckBoxState(element: TBoldElement; representation: Integer; Expression: String): TCheckBoxState;
+    BoldDatabaseAdapterFireDAC1: TBoldDatabaseAdapterFireDAC;
+    FDConnection1: TFDConnection;
     function NameComparerCompare(item1, item2: TBoldElement): Integer;
     procedure NameComparerSubscribe(boldElement: TBoldElement; subscriber: TBoldSubscriber);
-    procedure NegativeRedRendererHoldsChangedValue(element: TBoldElement; representation: Integer; Expression: String; Subscriber: TBoldSubscriber);
-    procedure NegativeRedRendererSetFont(element: TBoldElement; aFont: TFont; representation: Integer; Expression: String);
     function IsRichFilterFilter(element: TBoldElement): Boolean;
     procedure IsRichFilterSubscribe(element: TBoldElement; subscriber: TBoldSubscriber);
     procedure BoldPlaceableAFP1GetFormClass(Element: TBoldElement; var Result: TFormClass);
     procedure BoldPlaceableAFP1RetrieveHandle(Form: TForm;
       var Result: TBoldReferenceHandle);
+    function IsRichRendererGetAsCheckBoxState(
+      aFollower: TBoldFollower): TCheckBoxState;
+    procedure IsRichRendererSubscribe(aFollower: TBoldFollower;
+      Subscriber: TBoldSubscriber);
+    procedure NegativeRedRendererSetFont(aFollower: TBoldFollower;
+      AFont: TFont);
+    function IsRichRendererMayModify(aFollower: TBoldFollower): Boolean;
   private
     { Private declarations }
   public
@@ -77,19 +89,6 @@ uses
 
 {$R *.DFM}
 
-function TDataModule1.IsRichRendererGetAsCheckBoxState(
-  element: TBoldElement; representation: Integer;
-  Expression: String): TCheckBoxState;
-begin
-  result := cbGrayed;
-  if element is TPerson then
-  begin
-    if TPerson(element).Assets > 10000 then
-       Result := cbChecked
-    else
-       Result := cbUnChecked
-  end;
-end;
 
 function TDataModule1.NameComparerCompare(item1, item2: TBoldElement): Integer;
 begin
@@ -111,22 +110,12 @@ begin
     Result := TPerson(element).Assets > 10000;
 end;
 
-procedure TDataModule1.NegativeRedRendererHoldsChangedValue(
-  element: TBoldElement; representation: Integer;
-  Expression: String; Subscriber: TBoldSubscriber);
+procedure TDataModule1.NegativeRedRendererSetFont(aFollower: TBoldFollower;
+  AFont: TFont);
 begin
-  if assigned(element) then
-    with NegativeRedRenderer do
-      DefaultHoldsChangedValue(element, representation, Expression, nil, subscriber);
-end;
-
-procedure TDataModule1.NegativeRedRendererSetFont(
-  element: TBoldElement; aFont: TFont; representation: Integer;
-  Expression: String);
-begin
-  if Element is TPerson then
+  if aFollower.Element is TPerson then
   begin
-    if TPerson(Element).Assets < 0 then
+    if TPerson(aFollower.Element).Assets < 0 then
       aFont.Color :=  clRed
     else
       aFont.Color := clBlue;
@@ -138,11 +127,29 @@ begin
   Element.SubscribeToExpression('assets', Subscriber, False);
 end;
 
-procedure TDataModule1.IsRichRendererSubscribe(Element: TBoldElement;
-  Representation: Integer; Expression: String;
+function TDataModule1.IsRichRendererGetAsCheckBoxState(
+  aFollower: TBoldFollower): TCheckBoxState;
+begin
+  result := cbGrayed;
+  if aFollower.element is TPerson then
+  begin
+    if TPerson(aFollower.element).Assets > 10000 then
+       Result := cbChecked
+    else
+       Result := cbUnChecked
+  end;
+end;
+
+function TDataModule1.IsRichRendererMayModify(
+  aFollower: TBoldFollower): Boolean;
+begin
+  result := false;
+end;
+
+procedure TDataModule1.IsRichRendererSubscribe(aFollower: TBoldFollower;
   Subscriber: TBoldSubscriber);
 begin
-  Element.SubscribeToExpression('assets', Subscriber, False);
+  aFollower.Element.SubscribeToExpression('assets', Subscriber, False);
 end;
 
 procedure TDataModule1.BoldPlaceableAFP1GetFormClass(Element: TBoldElement; var Result: TFormClass);

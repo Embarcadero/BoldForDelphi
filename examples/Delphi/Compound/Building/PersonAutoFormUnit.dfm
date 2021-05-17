@@ -1,9 +1,9 @@
 object PersonAutoForm: TPersonAutoForm
   Left = 31
   Top = 96
-  Width = 323
-  Height = 419
   Caption = 'Person Detail'
+  ClientHeight = 380
+  ClientWidth = 307
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,6 +12,7 @@ object PersonAutoForm: TPersonAutoForm
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -126,15 +127,16 @@ object PersonAutoForm: TPersonAutoForm
     BoldAutoColumns = True
     BoldShowConstraints = False
     BoldHandle = blhOwnedBuildings
-    BoldProperties.NilElementMode = neNone
     Columns = <
       item
+        BoldProperties.Expression = ''
         Color = clBtnFace
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
         Font.Style = []
+        LookUpProperties.Expression = ''
       end
       item
         BoldProperties.Expression = 'zipCode'
@@ -144,6 +146,7 @@ object PersonAutoForm: TPersonAutoForm
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         Title.Caption = 'ZipCode'
+        LookUpProperties.Expression = ''
       end
       item
         BoldProperties.Expression = 'address'
@@ -153,6 +156,7 @@ object PersonAutoForm: TPersonAutoForm
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         Title.Caption = 'Address'
+        LookUpProperties.Expression = ''
       end
       item
         BoldProperties.Expression = 'owners->size'
@@ -162,9 +166,16 @@ object PersonAutoForm: TPersonAutoForm
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         Title.Caption = '# owners'
+        LookUpProperties.Expression = ''
       end>
     DefaultRowHeight = 17
     EnableColAdjust = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 4
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -190,5 +201,11 @@ object PersonAutoForm: TPersonAutoForm
     Expression = 'ownedBuildings'
     Left = 24
     Top = 168
+  end
+  object BoldCaptionController1: TBoldCaptionController
+    BoldHandle = brhPerson
+    BoldProperties.Expression = 'name'
+    Left = 160
+    Top = 184
   end
 end
