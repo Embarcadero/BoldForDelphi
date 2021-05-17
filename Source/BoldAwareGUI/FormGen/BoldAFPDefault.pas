@@ -520,7 +520,12 @@ begin
   // No inherited, because form needs to be created with CreateNew.
   // In this way, no resources are needed (because its not inherited from TForm anymore)
   if Assigned(FormClass) then
-    Form := FormClass.CreateNew(Application)
+  begin
+    if FormClass.InheritsFrom(TFormAFPDefault) then
+      Form := FormClass.CreateNew(Application) // TFormAFPDefault descendants have no .dfm
+    else
+      Form := FormClass.Create(Application);
+  end
   else
     Form := nil;
 

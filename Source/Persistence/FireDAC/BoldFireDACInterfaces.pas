@@ -260,6 +260,7 @@ uses
 
   FireDAC.Stan.Option,
   FireDAC.Comp.Script,
+  FireDAC.Comp.ScriptCommands,
 
   BoldUtils,
   BoldGuard,

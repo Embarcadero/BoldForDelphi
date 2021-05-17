@@ -86,6 +86,8 @@ contains
   BoldPersistenceHandleFireDAC in 'Source\Persistence\FireDAC\BoldPersistenceHandleFireDAC.pas',
   BoldDatabaseAdapterFireDAC in 'Source\Persistence\FireDAC\BoldDatabaseAdapterFireDAC.pas',
   BoldFireDACInterfaces in 'Source\Persistence\FireDAC\BoldFireDACInterfaces.pas',
-  BoldFireDACConsts in 'Source\Persistence\FireDAC\BoldFireDACConsts.pas';
+  BoldFireDACConsts in 'Source\Persistence\FireDAC\BoldFireDACConsts.pas',
+  BoldConstraintValidator in 'Source\Samples\ConstraintValidator\BoldConstraintValidator.pas',
+  BoldConstraintValidatorReg in 'Source\Samples\ConstraintValidator\BoldConstraintValidatorReg.pas';
 
 end.
