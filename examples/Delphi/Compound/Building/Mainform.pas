@@ -135,7 +135,6 @@ type
     CreateDB1: TMenuItem;
     Opensystem2: TMenuItem;
     UpdateDB1: TMenuItem;
-    BoldFailureDetectionAction11: TMenuItem;
     ogglelog1: TMenuItem;
     Systemdebugger1: TMenuItem;
     Edit1: TMenuItem;

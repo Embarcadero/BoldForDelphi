@@ -209,6 +209,16 @@ object DataModule1: TDataModule1
       #9#9#9#9#9'""'
       #9#9#9#9#9'"_BoldInternal.toolId=39885C1B002E,persistence=persistent"'
       #9#9#9#9')'
+      #9#9#9#9'(Attribute'
+      #9#9#9#9#9'"Capacity"'
+      #9#9#9#9#9'"Integer"'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'"derived=False,persistence=persistent"'
+      #9#9#9#9')'
       #9#9#9')'
       #9#9#9'(Methods'
       #9#9#9#9'(Method'
@@ -359,6 +369,7 @@ object DataModule1: TDataModule1
     AutoActivate = True
     SystemTypeInfoHandle = BoldSystemTypeInfoHandle1
     Active = False
+    PersistenceHandle = BoldPersistenceHandleDB1
     Left = 128
     Top = 8
   end
@@ -524,8 +535,39 @@ object DataModule1: TDataModule1
       'MARS=yes'
       'Database=Buildings'
       'DriverID=MSSQL')
+    TxOptions.Isolation = xiRepeatableRead
     LoginPrompt = False
     Left = 384
     Top = 256
+  end
+  object BoldConstraintValidatorOnModify: TBoldConstraintValidator
+    StaticSystemHandle = BoldSystemHandle1
+    Constraints = <
+      item
+        Context = 'Residential_Building'
+        Expression = 'residents->size <= capacity'
+        ErrorMessage = #39'Building capacity limit is '#39' + capacity.asString'
+      end>
+    ValidationMode = vmOnModify
+    Enabled = True
+    Left = 424
+    Top = 56
+  end
+  object BoldConstraintValidatorOnUpdate: TBoldConstraintValidator
+    StaticSystemHandle = BoldSystemHandle1
+    Constraints = <
+      item
+        Context = 'Person'
+        Expression = 
+          '(ownedBuildings->filterOnType(Residential_Building)->notEmpty'#13#10')' +
+          ' implies (home <> nil)'#13#10
+        ErrorMessage = 
+          'name + '#39' can not be homeless while owning at least one non full ' +
+          'residential building'#39
+      end>
+    ValidationMode = vmPreUpdate
+    Enabled = True
+    Left = 424
+    Top = 128
   end
 end

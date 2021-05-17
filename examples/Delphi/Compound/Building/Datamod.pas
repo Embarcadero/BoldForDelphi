@@ -43,7 +43,7 @@ uses
   FireDAC.DApt, BoldAbstractPropagatorHandle,
   BoldPropagatorHandleCOM, BoldPersistenceHandlePassthrough,
   BoldPersistenceHandlePTWithModel, BoldSnooperHandle, BoldAbstractDequeuer,
-  BoldExternalObjectSpaceEventHandler;
+  BoldExternalObjectSpaceEventHandler, BoldConstraintValidator;
 
 type
   TDataModule1 = class(TDataModule)
@@ -59,6 +59,8 @@ type
     BoldPersistenceHandleDB1: TBoldPersistenceHandleDB;
     BoldDatabaseAdapterFireDAC1: TBoldDatabaseAdapterFireDAC;
     FDConnection1: TFDConnection;
+    BoldConstraintValidatorOnModify: TBoldConstraintValidator;
+    BoldConstraintValidatorOnUpdate: TBoldConstraintValidator;
     function NameComparerCompare(item1, item2: TBoldElement): Integer;
     procedure NameComparerSubscribe(boldElement: TBoldElement; subscriber: TBoldSubscriber);
     function IsRichFilterFilter(element: TBoldElement): Boolean;

@@ -36,6 +36,16 @@ object PersonAutoForm: TPersonAutoForm
     Height = 13
     Caption = 'Assets'
   end
+  object Label5: TLabel
+    Left = 8
+    Top = 346
+    Width = 214
+    Height = 26
+    Caption = 
+      'This form is installed by the PlaceableAFP-component on the data' +
+      'module'
+    WordWrap = True
+  end
   object Label3: TLabel
     Left = 9
     Top = 116
@@ -43,15 +53,12 @@ object PersonAutoForm: TPersonAutoForm
     Height = 13
     Caption = 'Owned Buildings:'
   end
-  object Label5: TLabel
+  object Label6: TLabel
     Left = 8
-    Top = 272
-    Width = 214
-    Height = 26
-    Caption = 
-      'This form is installed by the PlaceableAFP-component on the data' +
-      'module'
-    WordWrap = True
+    Top = 269
+    Width = 31
+    Height = 13
+    Caption = 'Home:'
   end
   object BoldEdit1: TBoldEdit
     Left = 8
@@ -188,6 +195,20 @@ object PersonAutoForm: TPersonAutoForm
       64
       64)
   end
+  object BoldComboBox1: TBoldComboBox
+    Left = 8
+    Top = 288
+    Width = 249
+    Height = 21
+    Alignment = taLeftJustify
+    BoldHandle = brhPerson
+    BoldListHandle = blhOwnedResidentialBuildings
+    BoldProperties.Expression = 'home'
+    BoldRowProperties.Expression = ''
+    BoldSetValueExpression = 'home'
+    BoldSelectChangeAction = bdcsSetValue
+    TabOrder = 5
+  end
   object brhPerson: TBoldReferenceHandle
     StaticSystemHandle = DataModule1.BoldSystemHandle1
     StaticValueTypeName = 'Person'
@@ -207,5 +228,11 @@ object PersonAutoForm: TPersonAutoForm
     BoldProperties.Expression = 'name'
     Left = 160
     Top = 184
+  end
+  object blhOwnedResidentialBuildings: TBoldListHandle
+    RootHandle = brhPerson
+    Expression = 'ownedBuildings->filterOnType(Residential_Building)'
+    Left = 24
+    Top = 240
   end
 end

@@ -18,14 +18,13 @@ uses
   BoldGrid,
   StdCtrls,
   BoldCheckBox,
-  BoldEdit, BoldCaptionController;
+  BoldEdit, BoldCaptionController, BoldComboBox;
 
 type
   TPersonAutoForm = class(TForm)
     Label1: TLabel;
     Label2: TLabel;
     Label4: TLabel;
-    Label3: TLabel;
     BoldEdit1: TBoldEdit;
     beFirstName: TBoldEdit;
     BoldEdit7: TBoldEdit;
@@ -35,6 +34,10 @@ type
     blhOwnedBuildings: TBoldListHandle;
     Label5: TLabel;
     BoldCaptionController1: TBoldCaptionController;
+    BoldComboBox1: TBoldComboBox;
+    Label3: TLabel;
+    Label6: TLabel;
+    blhOwnedResidentialBuildings: TBoldListHandle;
     procedure brhPersonObjectDeleted(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private

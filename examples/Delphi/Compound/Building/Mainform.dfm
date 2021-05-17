@@ -26,9 +26,9 @@ object allform: Tallform
   object Label8: TLabel
     Left = 32
     Top = 464
-    Width = 32
+    Width = 30
     Height = 13
-    Caption = 'Label8'
+    Caption = 'Status'
   end
   object PersonGroup: TGroupBox
     Left = 208
@@ -964,9 +964,6 @@ object allform: Tallform
       end
       object UpdateDB1: TMenuItem
         Action = BoldUpdateDBAction1
-      end
-      object BoldFailureDetectionAction11: TMenuItem
-        Action = BoldFailureDetectionAction1
       end
       object Systemdebugger1: TMenuItem
         Action = BoldSystemDebuggerAction1
