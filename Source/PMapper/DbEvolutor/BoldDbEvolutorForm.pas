@@ -34,9 +34,11 @@ type
     tsWarnings: TTabSheet;
     mmoWarnings: TMemo;
     ImageList1: TImageList;
+    SaveDialog1: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnSaveScriptClick(Sender: TObject);
   private
     { Private declarations }
     fSQLScript: TStringList;
@@ -78,11 +80,31 @@ uses
   SysUtils,
   BoldUtils,
   BoldDbEvolutor,
+  BoldIsoDateTime,
   BoldGuard;
 
 {$R *.DFM}
 
 { TfrmBoldDbEvolutor }
+
+procedure TfrmBoldDbEvolutor.btnSaveScriptClick(Sender: TObject);
+var
+  sl: TStringList;
+begin
+  if SaveDialog1.Execute then
+  begin
+    sl := TStringList.Create;
+    try
+      sl.Add('-- Mapping Info Script');
+      sl.AddStrings(MappingInfoScript);
+      sl.Add('-- SQL Script');
+      sl.AddStrings(SQLScript);
+      SQLScript.SaveToFile(SaveDialog1.FileName);
+    finally
+      sl.free;
+    end;
+  end;
+end;
 
 procedure TfrmBoldDbEvolutor.Clear;
 begin
@@ -90,7 +112,7 @@ end;
 
 procedure TfrmBoldDbEvolutor.EndLog;
 begin
-  Log(format('%s: Done %s', [formatDateTime('c', now), fSessionName]));
+  Log(format('%s: Done %s', [AsIsoDateTime(now), fSessionName]));
 end;
 
 procedure TfrmBoldDbEvolutor.Hide;
@@ -143,7 +165,7 @@ end;
 
 procedure TfrmBoldDbEvolutor.StartLog(const SessionName: String);
 begin
-  Log(format('%s: Starting %s', [formatDateTime('c', now), sessionName]));
+  Log(format('%s: Starting %s', [AsIsoDateTime(now), sessionName]));
   fSessionName := SessionName;
   Show;
 end;
@@ -300,5 +322,4 @@ begin
   end;
 end;
 
-initialization
 end.

@@ -52,7 +52,9 @@ uses
   BoldTreeView,
   Commctrl,
   BoldSmallLogFrame,
-  BoldDragObject, BoldDerivedHandle, BoldPropertiesController,
+  BoldDragObject,
+  BoldDerivedHandle,
+  BoldPropertiesController,
   AppEvnts;
 
 type

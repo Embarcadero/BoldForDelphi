@@ -1,8 +1,6 @@
 object frmBoldDbEvolutor: TfrmBoldDbEvolutor
   Left = 510
   Top = 257
-  Width = 640
-  Height = 480
   Caption = 'Db Evolution'
   Color = clBtnFace
   Constraints.MinHeight = 200
@@ -43,16 +41,16 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
-    632
-    446)
+    624
+    445)
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
     Top = 0
     Width = 632
-    Height = 388
-    ActivePage = tsMappingInfo
+    Height = 392
+    ActivePage = tsActions
     Anchors = [akLeft, akTop, akRight, akBottom]
     Images = ImageList1
     TabOrder = 0
@@ -62,7 +60,7 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
         Left = 0
         Top = 0
         Width = 624
-        Height = 359
+        Height = 363
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -76,7 +74,7 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
         Left = 0
         Top = 0
         Width = 624
-        Height = 359
+        Height = 363
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -90,7 +88,7 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
         Left = 0
         Top = 0
         Width = 624
-        Height = 359
+        Height = 363
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -104,7 +102,7 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
         Left = 0
         Top = 0
         Width = 624
-        Height = 359
+        Height = 363
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -122,8 +120,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
     TabOrder = 1
   end
   object btnCancel: TButton
-    Left = 545
-    Top = 421
+    Left = 539
+    Top = 418
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
@@ -132,8 +130,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
     TabOrder = 2
   end
   object btnExecute: TButton
-    Left = 457
-    Top = 421
+    Left = 451
+    Top = 418
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
@@ -142,14 +140,16 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
     ModalResult = 1
     TabOrder = 3
   end
-  object Button1: TButton
-    Left = 373
-    Top = 421
+  object btnSaveScript: TButton
+    Left = 367
+    Top = 418
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Save scripts'
     TabOrder = 4
-    OnClick = Button1Click
+    OnClick = btnSaveScriptClick
+    ExplicitTop = 414
   end
   object ImageList1: TImageList
     Left = 52

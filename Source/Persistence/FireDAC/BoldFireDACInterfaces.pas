@@ -261,6 +261,7 @@ uses
   FireDAC.Stan.Option,
   FireDAC.Comp.Script,
   FireDAC.Comp.ScriptCommands,
+  FireDAC.Phys.Intf,
 
   BoldUtils,
   BoldGuard,
@@ -456,7 +457,7 @@ begin
           fReadTransactionStarted := fUseReadTransactions;
         end;
         Query.Execute;
-        if fReadTransactionStarted and  (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
+        if fReadTransactionStarted and (DatabaseWrapper as TBoldFireDACConnection).GetInTransaction then
         begin
          (DatabaseWrapper as TBoldFireDACConnection).Commit;
          fReadTransactionStarted := false;
@@ -791,11 +792,10 @@ var
 begin
   lGuard := TBoldGuard.Create(lTempList);
   lTempList := TStringList.Create;
-
-  // Retrieve the list of table names
-  // Note: This does not include views or procedures, there is a specific
-  //       method in TFDConnection for that
-  FDConnection.GetTableNames('','','',lTempList{, ShowSystemTables});
+  if ShowSystemTables then
+    FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy, osSystem, osOther], [tkTable])
+  else
+    FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy, osOther], [tkTable]);
 
   // convert from fully qualified names in format: database.catalogue.table to just table name
   for i := 0 to lTempList.Count - 1 do
