@@ -71,7 +71,7 @@ type
     procedure MakeGlobalTranslationListFor(ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList; GlobalTranslationList: TBoldIdTranslationList);
     procedure MakeLocalizingTranslationList(ValueSpace: IBoldValueSpace; GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
     procedure SearchByOcl(OclExpr: string; IdList: TBoldObjectIdList);
-    procedure Update(ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; var TimeStamp: Integer);
+    procedure Update(ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType);
     procedure LockAndFreeObjects(IdList, FreeList: TBoldObjectIdList);
     procedure VerifyAssociations(ValueSpace: IBoldValueSpace; IdList, HoldList: TBoldObjectIdList);
     procedure StartTransaction;
@@ -848,10 +848,11 @@ end;
 
 procedure TBoldDistributableObjectHandler.Update(ValueSpace: IBoldValueSpace;
   IdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList;
-  var TimeStamp: Integer);
+  var TimeStamp: TBoldTimeStampType);
 var
   anObject: IBoldObjectContents;
-  i, j: Integer;
+  ClientId, i, j: Integer;
+  TimeOfLatestUpdate: TDateTime;
 begin
   for i := IdList.Count-1 downto 0 do
   begin
@@ -872,7 +873,9 @@ begin
       anObject.BoldPersistenceState := bvpsModified;
     end;
   end;
-  PController.PMUpdate(IdList, ValueSpace, nil, nil, TranslationList, TimeStamp, 0);
+  ClientId := 0;
+  TimeOfLatestUpdate:= now;
+  PController.PMUpdate(IdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfLatestUpdate, ClientId);
 end;
 
 procedure TBoldDistributableObjectHandler.LockAndFreeObjects(IdList,
