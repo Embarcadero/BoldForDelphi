@@ -72,7 +72,8 @@ uses
   SysUtils,
   BoldUtils,
   Windows,
-  BoldDefs;
+  BoldDefs,
+  BoldIsoDateTime;
 
 var
   LogThreadActivities: Boolean;
@@ -227,6 +228,7 @@ end;
 procedure TFileLogging.Trace(const Entry: string);
 var
   line: string;
+  Bytes: TBytes;
 begin
   fLocker.Acquire;
   try
@@ -235,9 +237,9 @@ begin
       if (fMaxSize > 0) and (fFileStream.Size > fMaxSize) then
         FlushStream;
       if IncludeDate then
-        Line := DateTimeToStr(now)
+        Line := AsISODateTimeMS(now)
       else
-        Line := TimeToStr(now);
+        Line := AsISOTimeMS(now);
 
       Line := Line + ' ' + Entry;
 
@@ -250,7 +252,8 @@ begin
       end;
 
       Line := Line + BOLDCRLF;
-      fFileStream.Write(Pointer(line)^, Length(line));
+      Bytes := TEncoding.UTF8.GetBytes(line);
+      fFileStream.write(Bytes, Length(Bytes));
     end;
   finally
     fLocker.Release;
@@ -289,7 +292,5 @@ procedure TFileLogging.Trace(const Msg: string;
 begin
   self.Trace(Format(Msg, Args));
 end;
-
-initialization
 
 end.
