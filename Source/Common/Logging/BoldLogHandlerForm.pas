@@ -47,7 +47,7 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldRev;
+  BoldIsoDateTime;
 
 var
   LogHandlerForm: TBoldLogHandlerReceiver;
@@ -67,7 +67,7 @@ end;
 
 procedure TBoldLogHandlerReceiver.EndLog;
 begin
-  Log(format('%s: Done %s', [formatDateTime('c', now), fSessionName]));
+  Log(format('%s: Done %s', [AsIsoDateTimeMs(now), fSessionName]));
   Hideprogressbar;
 end;
 
@@ -125,7 +125,7 @@ procedure TBoldLogHandlerReceiver.StartLog(const SessionName: String);
 begin
   LogForm.Caption := 'Logging Activity: ' + SessionName;
   fSessionName := SessionName;
-  Log(format('%s: Starting %s', [formatDateTime('c', now), SessionName]));
+  Log(format('%s: Starting %s', [AsIsoDateTimeMs(now), SessionName]));
 end;
 
 procedure TBoldLogHandlerReceiver.ProcessInterruption;
