@@ -56,6 +56,7 @@ begin
   RegisterActions(BOLDACTIONGROUPNAME,
                   [
                    TBoldUpdateDBAction,
+                   TBoldDiscardChangesAction,
                    TBoldActivateSystemAction,
                    TBoldFailureDetectionAction,
                    TBoldCreateDatabaseAction,
