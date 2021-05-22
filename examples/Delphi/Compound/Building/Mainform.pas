@@ -167,6 +167,8 @@ type
     GroupBox6: TGroupBox;
     lbUndo: TListBox;
     UndoSubscriber: TBoldPlaceableSubscriber;
+    BoldLogOSSAction1: TBoldLogOSSAction;
+    oggleOSStrafficlogs1: TMenuItem;
     procedure newBuildingClick(Sender: TObject);
     procedure DeleteCurrentObject(Sender: TObject);
     procedure NewPersonClick(Sender: TObject);

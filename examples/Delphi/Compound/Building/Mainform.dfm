@@ -684,7 +684,6 @@ object allform: Tallform
     Action = BoldFailureDetectionAction1
     Panels = <>
     SimplePanel = True
-    ExplicitWidth = 761
   end
   object GroupBox4: TGroupBox
     Left = 392
@@ -937,7 +936,8 @@ object allform: Tallform
       Category = 'Bold Actions'
       Caption = 'Create DB'
       BoldSystemHandle = DataModule1.BoldSystemHandle1
-      IgnoreUnknownTables = False
+      IgnoreUnknownTables = True
+      DropExisting = True
     end
     object BoldFailureDetectionAction1: TBoldFailureDetectionAction
       Category = 'Bold Actions'
@@ -973,6 +973,10 @@ object allform: Tallform
     object BoldLogSQLAction1: TBoldLogSQLAction
       Category = 'Bold Actions'
       Caption = 'Toggle SQL logs'
+    end
+    object BoldLogOSSAction1: TBoldLogOSSAction
+      Category = 'Bold Actions'
+      Caption = 'Toggle OSS traffic logs'
     end
     object BoldLogPMAction1: TBoldLogPMAction
       Category = 'Bold Actions'
@@ -1056,6 +1060,9 @@ object allform: Tallform
       end
       object oggleSQLlogs1: TMenuItem
         Action = BoldLogSQLAction1
+      end
+      object oggleOSStrafficlogs1: TMenuItem
+        Action = BoldLogOSSAction1
       end
     end
   end

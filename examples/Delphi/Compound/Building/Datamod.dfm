@@ -414,6 +414,10 @@ object DataModule1: TDataModule1
     SQLDatabaseConfig.ColumnTypeForInt64 = 'BIGINT'
     SQLDatabaseConfig.ColumnTypeForGUID = 'UUID'
     SQLDatabaseConfig.CreateDatabaseTemplate = 'CREATE DATABASE %s'
+    SQLDatabaseConfig.DropDatabaseTemplate = 'DROP DATABASE %s'
+    SQLDatabaseConfig.DatabaseExistsTemplate = 
+      'select exists(SELECT datname FROM pg_catalog.pg_database WHERE l' +
+      'ower(datname) = lower('#39'%s'#39'));'
     SQLDatabaseConfig.DropColumnTemplate = 'ALTER TABLE <TableName> DROP <ColumnName>'
     SQLDatabaseConfig.DropTableTemplate = 'DROP TABLE <TableName>'
     SQLDatabaseConfig.IndexInfoTemplate = 
@@ -577,6 +581,10 @@ object DataModule1: TDataModule1
     SQLDatabaseConfig.ColumnTypeForInt64 = 'BIGINT'
     SQLDatabaseConfig.ColumnTypeForGUID = 'UNIQUEIDENTIFIER'
     SQLDatabaseConfig.CreateDatabaseTemplate = 'CREATE DATABASE %s'
+    SQLDatabaseConfig.DropDatabaseTemplate = 'DROP DATABASE %s'
+    SQLDatabaseConfig.DatabaseExistsTemplate = 
+      'IF EXISTS (SELECT name FROM master.sys.databases WHERE name = N'#39 +
+      '%s'#39')'
     SQLDatabaseConfig.DropColumnTemplate = 
       'DECLARE @CONSTRAINTNAME NVARCHAR(200) SELECT @CONSTRAINTNAME=OD.' +
       'NAME   FROM   SYSOBJECTS OT, SYSCOLUMNS C, SYSOBJECTS OD   WHERE' +
@@ -665,7 +673,7 @@ object DataModule1: TDataModule1
     SQLDatabaseConfig.SqlScriptCommitTransaction = 'COMMIT'
     SQLDatabaseConfig.SqlScriptRollBackTransaction = 'ROLLBACK'
     CustomIndexes = <>
-    Connection = FDConnectionPostgres
+    Connection = FDConnectionSQLServer
     DatabaseEngine = dbeSQLServer
     Left = 224
     Top = 80
