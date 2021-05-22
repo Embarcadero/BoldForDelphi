@@ -751,8 +751,11 @@ var
 begin
   EnsureFirstColumn(ColumnIndex);
   aBlob := GetEnsuredValue(ObjectContent) as IBoldBlobContent;
-  aBlobStreamContent := aBlob as IBoldBlobStreamContent;
-  aBlobStreamContent.BeginSupressEvents;
+  if Supports(aBlob, IBoldBlobStreamContent) then
+  begin
+    aBlobStreamContent := aBlob as IBoldBlobStreamContent;
+    aBlobStreamContent.BeginSupressEvents;
+  end;
   try
     if Field.IsNull then
       aBlob.SetContentToNull
@@ -764,7 +767,8 @@ begin
         aBlob.AsBlob :=  Field.AsBlob;
     end;
   finally
-    aBlobStreamContent.EndSupressEvents;
+    if Assigned(aBlobStreamContent) then
+      aBlobStreamContent.EndSupressEvents;
   end;
 end;
 
