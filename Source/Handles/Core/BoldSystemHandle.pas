@@ -57,6 +57,7 @@ type
     procedure UpdateDatabase;
     procedure InstallOclDefinitionLookUp(const Value: TBoldLookUpOclDefinition);
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; override;
+    procedure Discard;
     property Persistent: Boolean read GetPersistent;
     property RegionFactory: TBoldRegionFactory read fRegionFactory;
     property PersistenceHandleDB: TBoldAbstractPersistenceHandleDB read GetPersistenceHandleDB;
@@ -96,6 +97,12 @@ begin
   FreeAndNil(fRegiondefinitionSubscriber);
   FreeAndNil(fRegionFactory);
   inherited Destroy;
+end;
+
+procedure TBoldSystemHandle.Discard;
+begin
+  if Assigned(System) then
+    System.Discard;
 end;
 
 procedure TBoldSystemHandle.Loaded;
