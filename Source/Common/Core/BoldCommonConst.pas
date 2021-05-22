@@ -94,10 +94,6 @@ resourcestring
   sNotRunningInIDE = '%s: Not running in IDE';
   sUnknownDisplayMode = '%s.ApplicationEventsOnIdle: Unknown displaymode';
 
-//BoldGettingStartedExpert
-  sGettingStarted = 'Getting Started';
-  sCouldNotFindGettingStarted = 'Could not find Bold for Delphi''s GettingStarted document: %s';
-
 //BoldIDEMenus
   sCompanyHomePage = '&BoldSoft Home Page';
   sProductHomePage = 'Bold for &Delphi Home Page';

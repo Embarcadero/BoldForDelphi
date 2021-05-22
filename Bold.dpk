@@ -126,8 +126,6 @@ contains
   BoldDefsDT in 'Source\Common\IDE\BoldDefsDT.pas',
   BoldExpert in 'Source\Common\IDE\BoldExpert.pas',
   BoldExpertMenus in 'Source\Common\IDE\BoldExpertMenus.pas',
-  BoldGettingStartedExpert in 'Source\Common\IDE\BoldGettingStartedExpert.pas',
-  BoldGettingStartedForm in 'Source\Common\IDE\BoldGettingStartedForm.pas',
   BoldIDEConsts in 'Source\Common\IDE\BoldIDEConsts.pas',
   BoldIDEMenus in 'Source\Common\IDE\BoldIDEMenus.pas',
   BoldIDESupport in 'Source\Common\IDE\BoldIDESupport.pas',
