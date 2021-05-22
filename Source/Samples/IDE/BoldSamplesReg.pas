@@ -19,16 +19,15 @@ uses
 {$IFDEF BOLD_DELPHI16_OR_LATER}
   Actions,
 {$ENDIF}
-{$IFNDEF LightMemberDeriver}
   BoldFormSaver,
-{$ENDIF}
   BoldGuard,
   BoldPropertyEditors,
   BoldNewObjectInterceptor,
   BoldIDEConsts,
   BoldEditOCLAction,
   BoldEditOCLActionPropEditor,
-  BoldDebugActions;
+  BoldDebugActions,
+  BoldFormSaverActions;
 
 type
   TTextFileProperty = class(TBoldFileNameProperty)
@@ -41,10 +40,8 @@ procedure RegisterComponentsOnPalette;
 begin
   RegisterComponents(BOLDPAGENAME_MISC,
                      [
-                      TBoldNewObjectInterceptor
-{$IFNDEF LightMemberDeriver}
-                      ,TBoldFormSaver
-{$ENDIF}
+                      TBoldNewObjectInterceptor,
+                      TBoldFormSaver
                      ]);
 end;
 
@@ -57,7 +54,11 @@ begin
                    TBoldLogOCLAction,
                    TBoldLogSQLAction,
                    TBoldLogPMAction,
-                   TBoldLogFormAction
+                   TBoldLogOSSAction,
+                   TBoldLogFormAction,
+                   TBoldFormSaverApplyAction,
+                   TBoldFormSaverCancelAction,
+                   TBoldFormSaverOkAction
                   ],
                   nil);
 end;
