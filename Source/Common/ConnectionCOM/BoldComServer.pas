@@ -462,7 +462,7 @@ begin
   FConnected := False;
   FActive := False;
   TBoldComServer.Instance.RemoveConnection(Self);
-  BoldEventSenderThreadList.DisconnectClient(Cardinal(FClientInterface));
+  BoldEventSenderThreadList.DisconnectClient(Cardinal(FClientInterface)); // does not compile in x64 !!!
 //  if Assigned(FSenderThread) then
 //  begin
 //    FSenderThread.Terminate;
