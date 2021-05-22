@@ -112,7 +112,7 @@ type
   TBoldCreateApproximateObjectError = procedure(Obj: TBoldObject) of object;
 
   { TBoldSystemExtension }
-  TBoldSystemExtension = class(TBoldNonRefcountedObject)
+  TBoldSystemExtension = class(TBoldSubscribableNonRefCountedObject)
   private
     fSystem: TBoldSystem;
   public
@@ -958,7 +958,7 @@ type
     procedure InsertNew(index: Integer); virtual; abstract;
     procedure Move(CurIndex, NewIndex: Integer); virtual; abstract;
     procedure MakeContentsImmutable;
-    procedure Remove(Item: TBoldElement); virtual;
+    procedure Remove(Item: TBoldElement; ARaiseIfNotFound: boolean = true); virtual;
     procedure RemoveByIndex(index: Integer); virtual; abstract;
     procedure Sort(CompareFunc: TBoldElementCompare; FirstIndex, LastIndex:
         Integer; SortMode: TBoldSortMode = BoldDefaultSortMode); overload;
@@ -1091,8 +1091,8 @@ type
     function GetEnumerator: TBoldObjectListEnumerator;
     function GetLocatorEnumerator: TBoldObjectListLocatorEnumerator;
     constructor InternalCreateClassList(System: TBoldSystem; ListTypeInfo: TBoldListTypeInfo);    
-    constructor CreateTypedList(ObjectClass: TBoldObjectClass);
-    constructor CreateRootClassList;
+    constructor CreateTypedList(ObjectClass: TBoldObjectClass; ABoldSystem: TBoldSystem = nil);
+    constructor CreateRootClassList(ABoldSystem: TBoldSystem = nil);
     procedure Add(BoldObject: TBoldObject); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     procedure AddList(List: TBoldList); override;
     procedure AddLocator(NewLocator: TBoldObjectLocator);
@@ -1297,9 +1297,7 @@ type
   public
     function FindLocatorByLocator(BoldObjectLocator: TBoldObjectLocator): TBoldObjectLocator;
   end;
-
   {$ENDIF}
-
 
   TBoldMemberDeriver = class({$IFDEF LightMemberDeriver}TBoldAbstractDeriver{$ELSE}TBoldEventPluggedDeriver{$ENDIF})
   strict private
@@ -2417,6 +2415,8 @@ begin
   DiscardTransient;
   if assigned(PessimisticLockHandler) then
     PessimisticLockHandler.ReleaseUnneededRegions;
+  if UndoHandlerInterface.Enabled then
+    UndoHandlerInterface.ClearAllUndoBlocks;
 end;
 
 procedure TBoldSystem.DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate);
@@ -2627,7 +2627,7 @@ begin
   else
 {$IFDEF BoldSystemBroadcastMemberEvents}
     if (originalEvent in beBroadcastMemberEvents) and ((Originator is TBoldObject) or (Originator is TBoldMember) and (TBoldMember(Originator).OwnedByObject)) then
-    Publisher.SendExtendedEvent(Originator, originalEvent, Args);
+      Publisher.SendExtendedEvent(Originator, originalEvent, Args);
 {$ENDIF}
 end;
 
@@ -3359,7 +3359,6 @@ begin
     fDeriverArray[index] := Result;
     Member.HasDeriver := True;
   end;
-  
 end;
 
 function TBoldObject.SafeGetBoldMemberAssigned(Index: integer): Boolean;
@@ -5889,7 +5888,7 @@ begin
     ctAsString, ctCaseSensitive:
       Result := UnicodeCompareText(true, s1, s2);
   else
-    raise EBold.CreateFmt('Unsupported CompareType in StringCompare.', [ClassName]);
+    raise EBold.CreateFmt('%s.StringCompare Unsupported CompareType %s in StringCompare.', [ClassName, GetEnumName(TypeInfo(TBoldCompareType), Ord(CompareType))]);
   end;
 end;
 
@@ -6060,6 +6059,7 @@ procedure TBoldAttribute.SetContentToNull;
 begin
   if not ContentIsNull then
   begin
+   PreChange;
 {$IFDEF NoNilAttributeExceptions}
     FreeContent;
 {$ENDIF}
@@ -6814,15 +6814,18 @@ begin
   end;
 end;
 
-procedure TBoldList.Remove(Item: TBoldElement);
+procedure TBoldList.Remove(Item: TBoldElement; ARaiseIfNotFound: boolean);
 var
   I: Integer;
 begin
+  if not mutable then
+    MutableError('Remove');
   EnsureContentsCurrent;
   I := IndexOf(Item);
   if I <> -1 then
     RemoveByIndex(I)
   else
+  if ARaiseIfNotFound then
     raise EBold.CreateFmt('%s.Remove: Item not in list', [ClassName]);
 end;
 
@@ -7838,13 +7841,16 @@ end;
 
 { TBoldObjectList }
 
-constructor TBoldObjectList.CreateTypedList(ObjectClass: TBoldObjectClass);
+constructor TBoldObjectList.CreateTypedList(ObjectClass: TBoldObjectClass; ABoldSystem: TBoldSystem);
 var
   aSystem: TBoldSystem;
   ClassTypeInfo: TBoldClassTypeInfo;
 begin
-  inherited CreateWithOwner(nil);
-  aSystem := TBoldSystem.DefaultSystem;
+  inherited CreateWithOwner(ABoldSystem);
+  if Assigned(ABoldSystem) then
+    aSystem := ABoldSystem
+  else
+    aSystem := TBoldSystem.DefaultSystem;
   if not assigned(aSystem) then
     raise EBold.CreateFmt('%s.CreateTypedList: Can not find system', [classname]);
   ClassTypeInfo := aSystem.BoldSystemTypeInfo.TopSortedClasses.ItemsByObjectClass[ObjectClass];
@@ -7853,12 +7859,15 @@ begin
   InitializeNonObjectOwned(ClassTypeInfo.ListTypeInfo);
 end;
 
-constructor TBoldObjectList.CreateRootClassList;
+constructor TBoldObjectList.CreateRootClassList(ABoldSystem: TBoldSystem);
 var
   aSystem: TBoldSystem;
   ClassTypeInfo: TBoldClassTypeInfo;
 begin
-  aSystem := TBoldSystem.DefaultSystem;
+  if Assigned(ABoldSystem) then
+    aSystem := ABoldSystem
+  else
+    aSystem := TBoldSystem.DefaultSystem;
   if not assigned(aSystem) then
     raise EBold.CreateFmt('%s.CreateRootClassList: Can not find system', [classname]);
   ClassTypeInfo := aSystem.BoldSystemTypeInfo.TopSortedClasses[0];
