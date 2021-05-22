@@ -37,6 +37,7 @@ requires
   FireDac,
   FireDACCommonDriver,
   FireDACCommon,
+  FireDACPgDriver,
   IndySystem,
   IndyCore;
 
@@ -88,6 +89,7 @@ contains
   BoldFireDACInterfaces in 'Source\Persistence\FireDAC\BoldFireDACInterfaces.pas',
   BoldFireDACConsts in 'Source\Persistence\FireDAC\BoldFireDACConsts.pas',
   BoldConstraintValidator in 'Source\Samples\ConstraintValidator\BoldConstraintValidator.pas',
-  BoldConstraintValidatorReg in 'Source\Samples\ConstraintValidator\BoldConstraintValidatorReg.pas';
+  BoldConstraintValidatorReg in 'Source\Samples\ConstraintValidator\BoldConstraintValidatorReg.pas',
+  BoldFormSaverActions in 'Source\Samples\FormSaver\BoldFormSaverActions.pas';
 
 end.
