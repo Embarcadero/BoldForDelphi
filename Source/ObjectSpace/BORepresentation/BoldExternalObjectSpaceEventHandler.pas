@@ -71,7 +71,7 @@ type
   protected
     procedure HandleMessage(const aMsg: String); override;
 {$IFDEF UseBoldOSSMessage}
-    procedure HandleObjectMessage(const AOSSMessage: TOSSMessage);
+    procedure HandleObjectMessage(const AOSSMessage: TBoldOssMessage);
 {$ENDIF}
     procedure ClassChanged(const ClassName: String); virtual;
     procedure MemberChanged(const ClassName, MemberName: String; ObjectID: TBoldDefaultID); virtual;
@@ -230,7 +230,7 @@ end;
 
 {$IFDEF UseBoldOSSMessage}
 procedure TBoldExternalObjectSpaceEventHandler.HandleObjectMessage(
-  const AOSSMessage: TOSSMessage);
+  const AOSSMessage: TBoldOssMessage);
 var
   vEvents: TStringList;
   vEvent: string;

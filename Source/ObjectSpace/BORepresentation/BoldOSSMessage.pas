@@ -1,10 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOSSMessage;
 
 interface
 
 uses
   Classes; // for TPersistent
-//  SynCommons; // for TDateTimeMS
 //  BoldDefs; // for TBoldTimeStampType
 
 const
@@ -14,12 +16,12 @@ const
 type
   TSessionId = Int64;
   TBoldTimeStampType = integer; // copy from BoldDefs
-  TOSSMessageType = (mtSync, mtFail);
+  TBoldOSSMessageType = (mtSync, mtFail);
   TDateTimeMS = TDateTime;
 
-  TOSSMessage = class(TInterfacedPersistent)
+  TBoldOSSMessage = class(TInterfacedPersistent)
   private
-    fMessageType: TOSSMessageType;
+    fMessageType: TBoldOSSMessageType;
     fEvents: string;
     fBoldTimeStamp: TBoldTimeStampType;
     fTimeOfTimeStamp: TDateTimeMS;
@@ -34,7 +36,7 @@ type
   public
     constructor Create; overload;
     constructor Create(
-      AMessageType: TOSSMessageType;
+      AMessageType: TBoldOSSMessageType;
       AEvents: string;
       ABoldTimeStamp: TBoldTimeStampType;
       ATimeOfTimeStamp: TDateTimeMS;
@@ -43,10 +45,10 @@ type
       AComputer: string = '';
       AApplication: string = ''); overload;
     destructor Destroy; override;
-    function Clone: TOSSMessage;
+    function Clone: TBoldOSSMessage;
     property AsString: string read GetAsString write SetAsString;
   published
-    property MessageType: TOSSMessageType read fMessageType;
+    property MessageType: TBoldOSSMessageType read fMessageType;
     property Events: string read fEvents;
     property BoldTimeStamp: TBoldTimeStampType read fBoldTimeStamp;
     property TimeOfTimeStamp: TDateTimeMS read fTimeOfTimeStamp;
@@ -62,69 +64,71 @@ implementation
 uses
   System.SysUtils,
   BoldIsoDateTime,
+  System.JSON,
+  System.JSON.Writers,
+  System.JSON.Readers,
   TypInfo;
 
-{ TOSSMessage }
+{ TBoldOSSMessage }
 
-constructor TOSSMessage.Create;
+constructor TBoldOSSMessage.Create;
 begin
   inherited;
 end;
 
-destructor TOSSMessage.Destroy;
+destructor TBoldOSSMessage.Destroy;
 begin
   inherited;
 end;
 
-function TOSSMessage.GetAsString: string;
+function TBoldOSSMessage.GetAsString: string;
 var
-  sb: TStringBuilder;
+  JSONObject,t1: TJSONObject;
 begin
-  sb := TStringBuilder.Create;
+  JSONObject := TJSONObject.Create;
   try
-    sb.EnsureCapacity(Length(Events)+100);
-    sb.AppendLine(String((GetEnumName(TypeInfo(TOSSMessageType), Ord(MessageType)))));
-    sb.AppendLine(IntToStr(BoldTimeStamp));
-    sb.AppendLine(AsISODateTimeMS(TimeOfTimeStamp));
-    sb.AppendLine(AsISODateTimeMS(ClientSendTime));
-    sb.AppendLine(User);
-    sb.AppendLine(Computer);
-    sb.AppendLine(Application);
-    sb.AppendLine(Events);
-    result := sb.ToString;
+    JSONObject.AddPair('MessageType', String((GetEnumName(TypeInfo(TBoldOSSMessageType), Ord(MessageType)))));
+    JSONObject.AddPair('BoldTimeStamp', IntToStr(BoldTimeStamp));
+    JSONObject.AddPair('BoldTimeOfTimeStamp', AsISODateTimeMS(TimeOfTimeStamp));
+    JSONObject.AddPair('SendTime', AsISODateTimeMS(ClientSendTime));
+    JSONObject.AddPair('User', User);
+    JSONObject.AddPair('Computer', Computer);
+    JSONObject.AddPair('Application', Application);
+    JSONObject.AddPair('Events', Events);
+    result := JSONObject.ToString;
   finally
-    sb.free;
+    JSONObject.free;
   end;
 end;
 
-procedure TOSSMessage.SetAsString(const Value: string);
+procedure TBoldOSSMessage.SetAsString(const Value: string);
 var
-  sl: TStringList;
+  JSONObject: TJSONObject;
+  s: string;
 begin
-  sl := TStringList.Create;
+  JSONObject:= TJSONObject.ParseJSONValue(Value) as TJSONObject;
   try
-    sl.Text := Value;
-    Assert(sl.Count = 8, 'Wrong count of lines in OSSMessage:' + IntToStr(sl.count));
-    if sl[0] = 'mtSync' then
+    s := JSONObject.GetValue('MessageType').Value;
+    if s = 'mtSync' then
       fMessageType := mtSync
     else
-    if sl[0] = 'mtFail' then
+    if s = 'mtFail' then
       fMessageType := mtFail
     else
       raise Exception.Create('Unknown MessageType');
-    fBoldTimeStamp := StrToint(sl[1]);
-    fTimeOfTimeStamp :=ParseISODateTime(sl[2]);
-    fClientSendTime := ParseISODateTime(sl[3]);
-    fUser := sl[4];
-    fComputer := sl[5];
-    fApplication := sl[6];
-    fEvents := sl[7];
+    fBoldTimeStamp := StrToInt(JSONObject.GetValue('BoldTimeStamp').Value);
+    fTimeOfTimeStamp := ParseISODateTime(JSONObject.GetValue('BoldTimeOfTimeStamp').Value);
+    fClientSendTime := ParseISODateTime(JSONObject.GetValue('SendTime').Value);
+    fUser := JSONObject.GetValue('User').Value;
+    fComputer := JSONObject.GetValue('Computer').Value;
+    fApplication := JSONObject.GetValue('Application').Value;
+    fEvents := JSONObject.GetValue('Events').Value;
   finally
-    sl.Free;
+    JSONObject.Free;
   end;
 end;
 
-constructor TOSSMessage.Create(AMessageType: TOSSMessageType; AEvents: string;
+constructor TBoldOSSMessage.Create(AMessageType: TBoldOSSMessageType; AEvents: string;
   ABoldTimeStamp: TBoldTimeStampType; ATimeOfTimeStamp,
   AClientSendTime: TDateTimeMS;
   AUser: string; AComputer: string; AApplication: string);
@@ -139,10 +143,10 @@ begin
   fApplication := AApplication;
 end;
 
-procedure TOSSMessage.AssignTo(Dest: TPersistent);
+procedure TBoldOSSMessage.AssignTo(Dest: TPersistent);
 begin
-  if Dest is TOSSMessage then
-  with Dest as TOSSMessage do
+  if Dest is TBoldOSSMessage then
+  with Dest as TBoldOSSMessage do
   begin
     fMessageType := self.fMessageType;
     fEvents := self.fEvents;
@@ -157,10 +161,11 @@ begin
   inherited;
 end;
 
-function TOSSMessage.Clone: TOSSMessage;
+function TBoldOSSMessage.Clone: TBoldOSSMessage;
 begin
-  result := TOSSMessage.Create;
+  result := TBoldOSSMessage.Create;
   self.AssignTo(result);
 end;
 
 end.
+
