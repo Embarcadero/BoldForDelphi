@@ -54,7 +54,8 @@ procedure TBoldSetCheckPointAction.CheckAllowEnable(
 begin
   inherited;
   if EnableAction then
-    EnableAction := BoldSystemHandle.Active;
+    EnableAction := BoldSystemHandle.Active and BoldSystemHandle.System.UndoHandlerInterface.Enabled
+      and not ((BoldSystemHandle.System.UndoHandlerInterface.UndoList.Count > 0) and not BoldSystemHandle.System.UndoHandlerInterface.CurrentUndoBlockHasChanges);
 end;
 
 constructor TBoldSetCheckPointAction.Create(AOwner: TComponent);
