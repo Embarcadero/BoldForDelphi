@@ -7,7 +7,7 @@ object DataModule1: TDataModule1
     Boldify.EnforceDefaultUMLCase = False
     Boldify.DefaultNavigableMultiplicity = '0..1'
     Boldify.DefaultNonNavigableMultiplicity = '0..*'
-    Left = 32
+    Left = 56
     Top = 8
     Model = (
       'VERSION 19'
@@ -344,60 +344,206 @@ object DataModule1: TDataModule1
     OnMayModify = IsRichRendererMayModify
     OnSubscribe = IsRichRendererSubscribe
     OnGetAsCheckBoxState = IsRichRendererGetAsCheckBoxState
-    Left = 32
-    Top = 96
+    Left = 536
+    Top = 16
   end
   object IsRichFilter: TBoldFilter
     OnSubscribe = IsRichFilterSubscribe
     OnFilter = IsRichFilterFilter
-    Left = 32
-    Top = 168
+    Left = 464
+    Top = 80
   end
   object NameComparer: TBoldComparer
     OnSubscribe = NameComparerSubscribe
     OnCompare = NameComparerCompare
-    Left = 128
-    Top = 168
+    Left = 464
+    Top = 16
   end
   object NegativeRedRenderer: TBoldAsStringRenderer
     OnSetFont = NegativeRedRendererSetFont
-    Left = 248
-    Top = 96
+    Left = 536
+    Top = 80
   end
   object BoldSystemHandle1: TBoldSystemHandle
     IsDefault = True
-    AutoActivate = True
     SystemTypeInfoHandle = BoldSystemTypeInfoHandle1
     Active = False
     PersistenceHandle = BoldPersistenceHandleDB1
-    Left = 128
-    Top = 8
+    Left = 56
+    Top = 64
   end
   object BoldUMLRoseLink1: TBoldUMLRoseLink
     FileName = 'D:\bold\BfD\examples\Delphi\Compound\Building\Building.mdl'
     BoldModel = BoldModel1
-    Left = 260
-    Top = 164
+    Left = 52
+    Top = 188
   end
   object BoldSystemTypeInfoHandle1: TBoldSystemTypeInfoHandle
     BoldModel = BoldModel1
-    Left = 72
-    Top = 248
+    Left = 56
+    Top = 128
   end
   object BoldPlaceableAFP1: TBoldPlaceableAFP
     OnGetFormClass = BoldPlaceableAFP1GetFormClass
     OnRetrieveHandle = BoldPlaceableAFP1RetrieveHandle
-    Left = 248
-    Top = 240
+    Left = 520
+    Top = 160
   end
   object BoldPersistenceHandleDB1: TBoldPersistenceHandleDB
     BoldModel = BoldModel1
     ClockLogGranularity = '0:0:0.0'
-    DatabaseAdapter = BoldDatabaseAdapterFireDAC1
-    Left = 256
-    Top = 24
+    DatabaseAdapter = BoldDatabaseAdapterPostgres
+    Left = 224
+    Top = 8
   end
-  object BoldDatabaseAdapterFireDAC1: TBoldDatabaseAdapterFireDAC
+  object BoldDatabaseAdapterPostgres: TBoldDatabaseAdapterFireDAC
+    SQLDatabaseConfig.DefaultSystemMapper = '<Default>'
+    SQLDatabaseConfig.DefaultObjectMapper = '<Default>'
+    SQLDatabaseConfig.ColumnTypeForDate = 'DATE'
+    SQLDatabaseConfig.ColumnTypeForTime = 'TIME'
+    SQLDatabaseConfig.ColumnTypeForDateTime = 'TIMESTAMP'
+    SQLDatabaseConfig.ColumnTypeForBlob = 'BYTEA'
+    SQLDatabaseConfig.ColumnTypeForFloat = 'NUMERIC'
+    SQLDatabaseConfig.ColumnTypeForCurrency = 'NUMERIC'
+    SQLDatabaseConfig.ColumnTypeForString = 'VARCHAR(%d)'
+    SQLDatabaseConfig.ColumnTypeForUnicodeString = 'NVARCHAR(%d)'
+    SQLDatabaseConfig.ColumnTypeForText = 'VARCHAR(MAX)'
+    SQLDatabaseConfig.ColumnTypeForUnicodeText = 'NVARCHAR(MAX)'
+    SQLDatabaseConfig.ColumnTypeForInteger = 'INTEGER'
+    SQLDatabaseConfig.ColumnTypeForSmallInt = 'SMALLINT'
+    SQLDatabaseConfig.ColumnTypeForInt64 = 'BIGINT'
+    SQLDatabaseConfig.ColumnTypeForGUID = 'UUID'
+    SQLDatabaseConfig.CreateDatabaseTemplate = 'CREATE DATABASE %s'
+    SQLDatabaseConfig.DropColumnTemplate = 'ALTER TABLE <TableName> DROP <ColumnName>'
+    SQLDatabaseConfig.DropTableTemplate = 'DROP TABLE <TableName>'
+    SQLDatabaseConfig.IndexInfoTemplate = 
+      'SELECT IND.NAME INDEXNAME, IND.IS_PRIMARY_KEY ISPRIMARY, IND.IS_' +
+      'UNIQUE ISUNIQUE, COL.NAME COLUMNNAME FROM SYS.INDEXES IND INNER ' +
+      'JOIN SYS.INDEX_COLUMNS IC ON IND.OBJECT_ID = IC.OBJECT_ID AND IN' +
+      'D.INDEX_ID = IC.INDEX_ID INNER JOIN SYS.COLUMNS COL ON IC.OBJECT' +
+      '_ID = COL.OBJECT_ID AND IC.COLUMN_ID = COL.COLUMN_ID WHERE UPPER' +
+      '(OBJECT_NAME(IND.OBJECT_ID))=UPPER('#39'<TableName>'#39') ORDER BY INDEX' +
+      'NAME, INDEX_COLUMN_ID'
+    SQLDatabaseConfig.DropIndexTemplate = 'DROP INDEX <IndexName>'
+    SQLDatabaseConfig.EvolveDropsUnknownIndexes = True
+    SQLDatabaseConfig.MaxDbIdentifierLength = 63
+    SQLDatabaseConfig.MaxIndexNameLength = 63
+    SQLDatabaseConfig.BatchQuerySeparator = ';'
+    SQLDatabaseConfig.MultiRowInsertLimit = 1000
+    SQLDatabaseConfig.SQLforNull = 'NULL'
+    SQLDatabaseConfig.SQLforNotNull = 'NOT NULL'
+    SQLDatabaseConfig.QuoteNonStringDefaultValues = False
+    SQLDatabaseConfig.SupportsConstraintsInCreateTable = True
+    SQLDatabaseConfig.SupportsStringDefaultValues = True
+    SQLDatabaseConfig.DBGenerationMode = dbgQuery
+    SQLDatabaseConfig.ReservedWords.Strings = (
+      
+        'ALL, ANALYSE, AND, ANY, ARRAY, AS, ASC, ASYMMETRIC, AUTHORIZATIO' +
+        'N,'
+      
+        'BETWEEN, BINARY, BOOLEAN, BOTH, CASE, CAST, CHAR, CHARACTER, CHE' +
+        'CK,'
+      
+        'CMIN, COALESCE, COLLATE, COLUMN, CONSTRAINT, CONVERT, CREATE, CR' +
+        'OSS,'
+      'CURRENT_DATE, CURRENT_ROLE, CURRENT_TIME, CURRENT_TIMESTAMP,'
+      'CURRENT_USER, DEC, DECIMAL, DEFAULT, DEFERRABLE, SEC, ELSE, END,'
+      
+        'EXCEPT, EXISTS, EXTRACT, FALSE, FLOAT, FOR, FOREIGN, FREEZE, FRO' +
+        'M,'
+      
+        'FULL, GRANT, GREATEST, GROUP, HAVING, ILIKE, IN, INITIALLY, INNE' +
+        'R,'
+      
+        'INOUT, INT, INTEGER, INTERSECT, INTERVAL, INTO, IS, ISNULL, JOIN' +
+        ','
+      'LEADING, LEAST, LEFT, LIKE, LIMIT, LOCALTIME, LOCALTIMESTAMP,'
+      'NATIONAL, NATURAL, NCHAR, NEW, NONE, NOT, NOTNULL, NULL, NULLIF,'
+      
+        'NUMERIC, OFF, OFFSET, OLD, ON, ONLY, OR, ORDER, OUT, OUTER, OVER' +
+        'LAPS,'
+      'OVERLAY, PLI, POSITION, PRECISION, PRIMARY, REAL, REFERENCES,'
+      'RETURNING, RIGHT, ROW, SELECT, SESSION_USER, SETOF, SIMILAR,'
+      
+        'SMALLINT, SOME, SUBSTRING, SYMMETRIC, TABLE, THEN, TIME, TIMESTA' +
+        'MP,'
+      
+        'TOP_LEVEL_COUNT, TRAILING, TREAT, TRIM, TRUE, UNION, UNIQUE, USE' +
+        'R,'
+      'USING, VALUES, VARCHAR, VERBOSE, WHEN, WHERE')
+    SQLDatabaseConfig.StoreEmptyStringsAsNULL = False
+    SQLDatabaseConfig.SystemTablePrefix = 'BOLD'
+    SQLDatabaseConfig.QuoteLeftBracketInLike = False
+    SQLDatabaseConfig.SqlScriptTerminator = ';'
+    SQLDatabaseConfig.SqlScriptCommentStart = '/* '
+    SQLDatabaseConfig.SqlScriptCommentStop = ' */'
+    SQLDatabaseConfig.SqlScriptStartTransaction = 'START TRANSACTION'
+    SQLDatabaseConfig.SqlScriptCommitTransaction = 'COMMIT'
+    SQLDatabaseConfig.SqlScriptRollBackTransaction = 'ROLLBACK'
+    CustomIndexes = <>
+    Connection = FDConnectionPostgres
+    DatabaseEngine = dbePostgres
+    Left = 216
+    Top = 208
+  end
+  object FDConnectionSQLServer: TFDConnection
+    Params.Strings = (
+      'User_Name=sa'
+      'Password=masterkey'
+      'Server=DESKTOP-JJPVFK3'
+      'OSAuthent=Yes'
+      'ApplicationName=Enterprise/Architect/Ultimate'
+      'Workstation=DESKTOP-JJPVFK3'
+      'MARS=yes'
+      'Database=Buildings'
+      'DriverID=MSSQL')
+    TxOptions.Isolation = xiRepeatableRead
+    LoginPrompt = False
+    Left = 224
+    Top = 128
+  end
+  object BoldConstraintValidatorOnModify: TBoldConstraintValidator
+    StaticSystemHandle = BoldSystemHandle1
+    Constraints = <
+      item
+        Context = 'Residential_Building'
+        Expression = 'residents->size <= capacity'
+        ErrorMessage = #39'Building capacity limit is '#39' + capacity.asString'
+      end>
+    ValidationMode = vmOnModify
+    Enabled = True
+    Left = 488
+    Top = 320
+  end
+  object BoldConstraintValidatorOnUpdate: TBoldConstraintValidator
+    StaticSystemHandle = BoldSystemHandle1
+    Constraints = <
+      item
+        Context = 'Person'
+        Expression = 
+          '(ownedBuildings->filterOnType(Residential_Building)->notEmpty'#13#10')' +
+          ' implies (home <> nil)'#13#10
+        ErrorMessage = 
+          'name + '#39' can not be homeless while owning at least one non full ' +
+          'residential building'#39
+      end>
+    ValidationMode = vmPreUpdate
+    Enabled = True
+    Left = 488
+    Top = 256
+  end
+  object FDConnectionPostgres: TFDConnection
+    Params.Strings = (
+      'Password=masterkey'
+      'Database=Buildings'
+      'User_Name=postgres'
+      'DriverID=PG')
+    TxOptions.Isolation = xiRepeatableRead
+    LoginPrompt = False
+    Left = 216
+    Top = 256
+  end
+  object BoldDatabaseAdapterSQLServer: TBoldDatabaseAdapterFireDAC
     SQLDatabaseConfig.DefaultSystemMapper = '<Default>'
     SQLDatabaseConfig.DefaultObjectMapper = '<Default>'
     SQLDatabaseConfig.IfTemplate = 'IF <Condition> BEGIN <SQLStatement> END'
@@ -519,55 +665,9 @@ object DataModule1: TDataModule1
     SQLDatabaseConfig.SqlScriptCommitTransaction = 'COMMIT'
     SQLDatabaseConfig.SqlScriptRollBackTransaction = 'ROLLBACK'
     CustomIndexes = <>
-    Connection = FDConnection1
+    Connection = FDConnectionPostgres
     DatabaseEngine = dbeSQLServer
-    Left = 384
-    Top = 200
-  end
-  object FDConnection1: TFDConnection
-    Params.Strings = (
-      'User_Name=sa'
-      'Password=masterkey'
-      'Server=DESKTOP-JJPVFK3'
-      'OSAuthent=Yes'
-      'ApplicationName=Enterprise/Architect/Ultimate'
-      'Workstation=DESKTOP-JJPVFK3'
-      'MARS=yes'
-      'Database=Buildings'
-      'DriverID=MSSQL')
-    TxOptions.Isolation = xiRepeatableRead
-    LoginPrompt = False
-    Left = 384
-    Top = 256
-  end
-  object BoldConstraintValidatorOnModify: TBoldConstraintValidator
-    StaticSystemHandle = BoldSystemHandle1
-    Constraints = <
-      item
-        Context = 'Residential_Building'
-        Expression = 'residents->size <= capacity'
-        ErrorMessage = #39'Building capacity limit is '#39' + capacity.asString'
-      end>
-    ValidationMode = vmOnModify
-    Enabled = True
-    Left = 424
-    Top = 56
-  end
-  object BoldConstraintValidatorOnUpdate: TBoldConstraintValidator
-    StaticSystemHandle = BoldSystemHandle1
-    Constraints = <
-      item
-        Context = 'Person'
-        Expression = 
-          '(ownedBuildings->filterOnType(Residential_Building)->notEmpty'#13#10')' +
-          ' implies (home <> nil)'#13#10
-        ErrorMessage = 
-          'name + '#39' can not be homeless while owning at least one non full ' +
-          'residential building'#39
-      end>
-    ValidationMode = vmPreUpdate
-    Enabled = True
-    Left = 424
-    Top = 128
+    Left = 224
+    Top = 80
   end
 end

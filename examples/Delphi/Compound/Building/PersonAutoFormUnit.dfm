@@ -2,8 +2,8 @@ object PersonAutoForm: TPersonAutoForm
   Left = 31
   Top = 96
   Caption = 'Person Detail'
-  ClientHeight = 380
-  ClientWidth = 307
+  ClientHeight = 559
+  ClientWidth = 267
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -209,8 +209,78 @@ object PersonAutoForm: TPersonAutoForm
     BoldSelectChangeAction = bdcsSetValue
     TabOrder = 5
   end
+  object BoldGrid1: TBoldGrid
+    Left = 8
+    Top = 400
+    Width = 249
+    Height = 120
+    AddNewAtEnd = False
+    BoldAutoColumns = False
+    BoldShowConstraints = False
+    BoldHandle = BoldCursorHandle1
+    Columns = <
+      item
+        BoldProperties.Expression = ''
+        Color = clBtnFace
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        LookUpProperties.Expression = ''
+      end
+      item
+        BoldProperties.Expression = ''
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        LookUpProperties.Expression = ''
+      end>
+    DefaultRowHeight = 17
+    EnableColAdjust = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 6
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+    ColWidths = (
+      17
+      64)
+  end
+  object Button1: TButton
+    Left = 8
+    Top = 526
+    Width = 75
+    Height = 25
+    Action = BoldFormSaverApplyAction1
+    TabOrder = 7
+  end
+  object Button2: TButton
+    Left = 94
+    Top = 526
+    Width = 75
+    Height = 25
+    Action = BoldFormSaverOkAction1
+    TabOrder = 8
+  end
+  object Button3: TButton
+    Left = 182
+    Top = 526
+    Width = 75
+    Height = 25
+    Action = BoldFormSaverCancelAction1
+    TabOrder = 9
+  end
   object brhPerson: TBoldReferenceHandle
-    StaticSystemHandle = DataModule1.BoldSystemHandle1
     StaticValueTypeName = 'Person'
     OnObjectDeleted = brhPersonObjectDeleted
     OnValueDestroyed = brhPersonObjectDeleted
@@ -234,5 +304,36 @@ object PersonAutoForm: TPersonAutoForm
     Expression = 'ownedBuildings->filterOnType(Residential_Building)'
     Left = 24
     Top = 240
+  end
+  object BoldFormSaver1: TBoldFormSaver
+    OnlyFirstDirty = False
+    Left = 208
+    Top = 96
+  end
+  object BoldCursorHandle1: TBoldCursorHandle
+    RootHandle = BoldFormSaver1
+    Left = 120
+    Top = 456
+  end
+  object ActionList1: TActionList
+    Left = 208
+    Top = 432
+    object BoldFormSaverApplyAction1: TBoldFormSaverApplyAction
+      Category = 'Bold Actions'
+      Caption = '&Apply'
+      ShortCut = 16474
+      BoldFormSaver = BoldFormSaver1
+    end
+    object BoldFormSaverCancelAction1: TBoldFormSaverCancelAction
+      Category = 'Bold Actions'
+      Caption = '&Cancel'
+      BoldFormSaver = BoldFormSaver1
+    end
+    object BoldFormSaverOkAction1: TBoldFormSaverOkAction
+      Category = 'Bold Actions'
+      Caption = '&Ok'
+      ShortCut = 16474
+      BoldFormSaver = BoldFormSaver1
+    end
   end
 end

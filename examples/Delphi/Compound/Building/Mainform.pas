@@ -16,6 +16,8 @@ uses
   Grids,
   Actions,
   ActnList,
+  Types,
+
   BoldSubscription,
   BoldElements,
   BoldSystem,
@@ -38,12 +40,14 @@ uses
   BoldActions,
   BoldDBActions,
   BoldAFP,
+  BoldFormSaver,
+  BoldPlaceableSubscriber,
   BoldReferenceHandle,
   BoldNavigatorDefs,
   BoldDebugActions,
   BoldUndoActions,
   BoldCaptionController,
-  BoldAction;
+  BoldAction, BoldFormSaverActions;
 
 type
   Tallform = class(TForm)
@@ -85,7 +89,6 @@ type
     bsrResidentsTotalAssets: TBoldAsStringRenderer;
     bsrAddress: TBoldAsStringRenderer;
     bgrPerson: TBoldGrid;
-    pbdbNotification: TProgressBar;
     PageControl1: TPageControl;
     tabBuilding: TTabSheet;
     tabResidentialBuilding: TTabSheet;
@@ -121,7 +124,6 @@ type
     btnUnDo: TButton;
     btnRedo: TButton;
     GroupBox3: TGroupBox;
-    btnUpdateDB: TButton;
     BoldFailureDetectionAction1: TBoldFailureDetectionAction;
     BoldUndoAction1: TBoldUndoAction;
     BoldRedoAction1: TBoldRedoAction;
@@ -153,8 +155,18 @@ type
     BoldCaptionController1: TBoldCaptionController;
     actChargeRent: TBoldAction;
     BoldLogFormAction1: TBoldLogFormAction;
-    ListBox1: TListBox;
+    BoldDiscardChangesAction1: TBoldDiscardChangesAction;
+    GroupBox4: TGroupBox;
+    Button3: TButton;
+    Button5: TButton;
+    Discardchanges1: TMenuItem;
+    pbdbNotification: TProgressBar;
     Label8: TLabel;
+    GroupBox5: TGroupBox;
+    lbRedo: TListBox;
+    GroupBox6: TGroupBox;
+    lbUndo: TListBox;
+    UndoSubscriber: TBoldPlaceableSubscriber;
     procedure newBuildingClick(Sender: TObject);
     procedure DeleteCurrentObject(Sender: TObject);
     procedure NewPersonClick(Sender: TObject);
@@ -191,9 +203,18 @@ type
     procedure BoldModelEditorActionExecute(Sender: TObject);
     procedure actChargeRentExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure BoldActivateSystemAction1SystemOpened(Sender: TObject);
+    procedure lbUndoDblClick(Sender: TObject);
+    procedure lbUndoDrawItem(Control: TWinControl; Index: Integer; Rect: TRect;
+      State: TOwnerDrawState);
+    procedure UndoSubscriberSubscribeToElement(element: TBoldElement;
+      Subscriber: TBoldSubscriber);
+    procedure UndoSubscriberReceive(sender: TBoldPlaceableSubscriber;
+      Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: Integer);
   private
     { Private declarations }
     function CurrentBuildingHandle: TBoldListHandle;
+    procedure UpdateUndo;
   public
     { Public declarations }
   end;
@@ -208,6 +229,7 @@ uses
   BoldGUI,
   PersonAutoFormUnit,
   datamod,
+  BoldUndoInterfaces,
   BoldUMLModelEdit;
 
 {$R *.DFM}
@@ -256,6 +278,21 @@ begin
      TBoldObjectReference(BoldHandle.Value).BoldObject := nil;
 end;
 
+procedure Tallform.UndoSubscriberReceive(sender: TBoldPlaceableSubscriber;
+  Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: Integer);
+begin
+  UpdateUndo;
+end;
+
+procedure Tallform.UndoSubscriberSubscribeToElement(element: TBoldElement;
+  Subscriber: TBoldSubscriber);
+begin
+  TBoldSystem(Element).UndoHandler.AddSubscription(Subscriber, beUndoChanged, beUndoChanged);
+  TBoldSystem(Element).UndoHandler.AddSubscription(Subscriber, beUndoBlock, beUndoChanged);
+  TBoldSystem(Element).UndoHandler.AddSubscription(Subscriber, beRedoBlock, beUndoChanged);
+  TBoldSystem(Element).UndoHandler.AddSubscription(Subscriber, beUndoSetCheckpoint, beUndoChanged);
+end;
+
 procedure Tallform.PopupPopup(Sender: TObject);
 begin
    if (sender is TMenuItem) then
@@ -281,7 +318,6 @@ end;
 procedure Tallform.FormCreate(Sender: TObject);
 begin
   Randomize;
-  datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.Enabled := true;
   BoldCaptionController1.TrackControl := self;
 end;
 
@@ -436,6 +472,36 @@ begin
     end;
 end;
 
+procedure Tallform.UpdateUndo;
+var
+  i: integer;
+begin
+  if not datamodule1.BoldSystemHandle1.Active then
+    exit;
+  if not datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.Enabled then
+    exit;
+  lbUndo.Items.BeginUpdate;
+  lbUndo.Items.Clear;
+  lbRedo.Items.BeginUpdate;
+  lbRedo.Items.Clear;
+  with datamodule1.BoldSystemHandle1.System.UndoHandlerInterface do
+  try
+    for I := 0 to UndoList.Count-1 do
+      lbUndo.Items.Add(TimeToStr(UndoList[i].Created) + ':'+ UndoList[i].Name + ' ' + UndoList[i].Content);
+    lbUndo.ItemIndex := i;
+    for I := 0 to RedoList.Count-1 do
+      lbRedo.Items.Add(TimeToStr(RedoList[i].Created) + ':'+ RedoList[i].Name + ' ' + RedoList[i].Content);
+  finally
+    lbUndo.Items.EndUpdate;
+    lbRedo.Items.EndUpdate;
+  end;
+end;
+
+procedure Tallform.BoldActivateSystemAction1SystemOpened(Sender: TObject);
+begin
+  datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.Enabled := true;
+end;
+
 procedure Tallform.BoldModelEditorActionExecute(Sender: TObject);
 begin
   BoldUMLModelEdit.UMLModelEditor.ShowEditFormForBoldModel(DataModule1.BoldModel1);
@@ -506,6 +572,34 @@ begin
       AFont.Color := clRed
     else
       AFont.Color := clWindowText;
+  end;
+end;
+
+procedure Tallform.lbUndoDblClick(Sender: TObject);
+var
+  blockName: string;
+  i: integer;
+begin
+  blockName := lbUndo.Items[lbUndo.ItemIndex];
+  i := datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.UndoList.IndexOf(blockName);
+  if i <> -1 then
+      datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.UndoBlock(blockname)
+  else
+  begin
+    i := datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.RedoList.IndexOf(blockName);
+    if i <> -1 then
+      datamodule1.BoldSystemHandle1.System.UndoHandlerInterface.RedoBlock(blockname);
+  end;
+end;
+
+procedure Tallform.lbUndoDrawItem(Control: TWinControl; Index: Integer;
+  Rect: TRect; State: TOwnerDrawState);
+begin
+  with (Control as TListBox) do
+  begin
+    if index = ItemIndex then
+      Canvas.Font.Color := clRed;
+    Canvas.TextOut(Rect.Left, Rect.Top, (Control as TListBox).Items[Index]);
   end;
 end;
 

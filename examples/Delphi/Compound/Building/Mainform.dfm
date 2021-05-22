@@ -1,8 +1,8 @@
 object allform: Tallform
   Left = 65
   Top = 67
-  ClientHeight = 575
-  ClientWidth = 604
+  ClientHeight = 576
+  ClientWidth = 601
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,13 +22,6 @@ object allform: Tallform
     Width = 65
     Height = 13
     Caption = 'All Persons #:'
-  end
-  object Label8: TLabel
-    Left = 32
-    Top = 464
-    Width = 30
-    Height = 13
-    Caption = 'Status'
   end
   object PersonGroup: TGroupBox
     Left = 208
@@ -271,21 +264,13 @@ object allform: Tallform
       87
       53)
   end
-  object pbdbNotification: TProgressBar
-    Left = 8
-    Top = 483
-    Width = 105
-    Height = 16
-    Step = 1
-    TabOrder = 5
-  end
   object PageControl1: TPageControl
     Left = 3
     Top = 224
     Width = 593
     Height = 225
     ActivePage = tabResidentialBuilding
-    TabOrder = 6
+    TabOrder = 5
     object tabBuilding: TTabSheet
       Caption = 'Buildings'
       object bgrBuilding: TBoldGrid
@@ -619,14 +604,14 @@ object allform: Tallform
     end
   end
   object GroupBox2: TGroupBox
-    Left = 393
-    Top = 457
+    Left = 134
+    Top = 456
     Width = 96
-    Height = 105
-    TabOrder = 7
+    Height = 94
+    TabOrder = 6
     object btnUnDo: TButton
-      Left = 4
-      Top = 35
+      Left = 3
+      Top = 34
       Width = 88
       Height = 25
       Action = BoldUndoAction1
@@ -641,7 +626,7 @@ object allform: Tallform
       TabOrder = 1
     end
     object btnCheckpoint: TButton
-      Left = 4
+      Left = 3
       Top = 3
       Width = 88
       Height = 29
@@ -650,15 +635,15 @@ object allform: Tallform
     end
   end
   object GroupBox3: TGroupBox
-    Left = 512
-    Top = 457
-    Width = 82
-    Height = 105
-    TabOrder = 8
+    Left = 504
+    Top = 456
+    Width = 90
+    Height = 95
+    TabOrder = 7
     object Button1: TButton
       Left = 3
       Top = 34
-      Width = 75
+      Width = 84
       Height = 25
       Action = BoldActivateSystemAction1
       TabOrder = 0
@@ -666,18 +651,10 @@ object allform: Tallform
     object Button2: TButton
       Left = 3
       Top = 3
-      Width = 75
+      Width = 84
       Height = 25
       Action = BoldCreateDatabaseAction1
       TabOrder = 1
-    end
-    object btnUpdateDB: TButton
-      Left = 3
-      Top = 65
-      Width = 75
-      Height = 25
-      Action = BoldUpdateDBAction1
-      TabOrder = 2
     end
   end
   object BoldNavigator1: TBoldNavigator
@@ -686,7 +663,7 @@ object allform: Tallform
     Width = 192
     Height = 25
     BoldHandle = blhAllPerson
-    TabOrder = 9
+    TabOrder = 8
     ImageIndices.nbFirst = -1
     ImageIndices.nbPrior = -1
     ImageIndices.nbNext = -1
@@ -701,20 +678,97 @@ object allform: Tallform
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 556
-    Width = 604
+    Top = 557
+    Width = 601
     Height = 19
     Action = BoldFailureDetectionAction1
     Panels = <>
     SimplePanel = True
+    ExplicitWidth = 761
   end
-  object ListBox1: TListBox
-    Left = 274
-    Top = 456
-    Width = 113
-    Height = 89
-    ItemHeight = 13
+  object GroupBox4: TGroupBox
+    Left = 392
+    Top = 455
+    Width = 106
+    Height = 96
+    TabOrder = 10
+    object Label8: TLabel
+      Left = 49
+      Top = 61
+      Width = 3
+      Height = 13
+    end
+    object pbdbNotification: TProgressBar
+      Left = 4
+      Top = 75
+      Width = 96
+      Height = 16
+      Step = 1
+      TabOrder = 2
+    end
+    object Button3: TButton
+      Left = 4
+      Top = 34
+      Width = 99
+      Height = 25
+      Action = BoldDiscardChangesAction1
+      TabOrder = 0
+    end
+    object Button5: TButton
+      Left = 4
+      Top = 3
+      Width = 98
+      Height = 25
+      Action = BoldUpdateDBAction1
+      TabOrder = 1
+    end
+  end
+  object GroupBox5: TGroupBox
+    Left = 236
+    Top = 455
+    Width = 133
+    Height = 96
+    Caption = 'Redo'
     TabOrder = 11
+    object lbRedo: TListBox
+      Left = 2
+      Top = 15
+      Width = 129
+      Height = 79
+      Style = lbOwnerDrawFixed
+      Align = alClient
+      ItemHeight = 13
+      TabOrder = 0
+      OnDblClick = lbUndoDblClick
+      OnDrawItem = lbUndoDrawItem
+    end
+  end
+  object GroupBox6: TGroupBox
+    Left = 8
+    Top = 455
+    Width = 120
+    Height = 96
+    Caption = 'Undo'
+    TabOrder = 12
+    object lbUndo: TListBox
+      Left = 2
+      Top = 15
+      Width = 116
+      Height = 79
+      Style = lbOwnerDrawFixed
+      Align = alClient
+      ItemHeight = 13
+      TabOrder = 0
+      OnDblClick = lbUndoDblClick
+      OnDrawItem = lbUndoDrawItem
+    end
+  end
+  object UndoSubscriber: TBoldPlaceableSubscriber
+    BoldHandle = DataModule1.BoldSystemHandle1
+    OnReceive = UndoSubscriberReceive
+    OnSubscribeToElement = UndoSubscriberSubscribeToElement
+    Left = 304
+    Top = 176
   end
   object BuildingPopup: TPopupMenu
     OnPopup = PopupPopup
@@ -852,15 +906,13 @@ object allform: Tallform
   end
   object BoldPersistenceProgressNotifier1: TBoldPersistenceProgressNotifier
     WinControl = StatusBar1
-    MsgLabel = Label8
-    ProgressBar = pbdbNotification
     AnimationInterval = 100
     PersistenceHandle = DataModule1.BoldPersistenceHandleDB1
     MsgFetchObjects = 'Fetching objects'
     MsgRetrieveIds = 'Retrieving object ids'
     MsgUpdateDatabase = 'Updating database'
-    Left = 120
-    Top = 456
+    Left = 112
+    Top = 464
   end
   object ActionList1: TActionList
     Left = 16
@@ -869,6 +921,7 @@ object allform: Tallform
       Category = 'Bold Actions'
       Caption = 'Open system'
       BoldSystemHandle = DataModule1.BoldSystemHandle1
+      OnSystemOpened = BoldActivateSystemAction1SystemOpened
       OpenCaption = 'Open system'
       CloseCaption = 'Close system'
       SaveQuestion = 'There are dirty objects. Save them before exit?'
@@ -884,6 +937,7 @@ object allform: Tallform
       Category = 'Bold Actions'
       Caption = 'Create DB'
       BoldSystemHandle = DataModule1.BoldSystemHandle1
+      IgnoreUnknownTables = False
     end
     object BoldFailureDetectionAction1: TBoldFailureDetectionAction
       Category = 'Bold Actions'
@@ -944,6 +998,11 @@ object allform: Tallform
       Category = 'Bold Actions'
       Caption = 'Log view'
     end
+    object BoldDiscardChangesAction1: TBoldDiscardChangesAction
+      Category = 'Bold Actions'
+      Caption = 'Discard changes'
+      BoldSystemHandle = DataModule1.BoldSystemHandle1
+    end
   end
   object HighRentRenderer: TBoldAsStringRenderer
     OnSetFont = HighRentRendererSetFont
@@ -964,6 +1023,9 @@ object allform: Tallform
       end
       object UpdateDB1: TMenuItem
         Action = BoldUpdateDBAction1
+      end
+      object Discardchanges1: TMenuItem
+        Action = BoldDiscardChangesAction1
       end
       object Systemdebugger1: TMenuItem
         Action = BoldSystemDebuggerAction1

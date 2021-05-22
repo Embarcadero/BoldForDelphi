@@ -43,7 +43,8 @@ uses
   FireDAC.DApt, BoldAbstractPropagatorHandle,
   BoldPropagatorHandleCOM, BoldPersistenceHandlePassthrough,
   BoldPersistenceHandlePTWithModel, BoldSnooperHandle, BoldAbstractDequeuer,
-  BoldExternalObjectSpaceEventHandler, BoldConstraintValidator;
+  BoldExternalObjectSpaceEventHandler, BoldConstraintValidator, FireDAC.Phys.PG,
+  FireDAC.Phys.PGDef;
 
 type
   TDataModule1 = class(TDataModule)
@@ -57,10 +58,12 @@ type
     BoldSystemTypeInfoHandle1: TBoldSystemTypeInfoHandle;
     BoldPlaceableAFP1: TBoldPlaceableAFP;
     BoldPersistenceHandleDB1: TBoldPersistenceHandleDB;
-    BoldDatabaseAdapterFireDAC1: TBoldDatabaseAdapterFireDAC;
-    FDConnection1: TFDConnection;
+    BoldDatabaseAdapterPostgres: TBoldDatabaseAdapterFireDAC;
+    FDConnectionSQLServer: TFDConnection;
     BoldConstraintValidatorOnModify: TBoldConstraintValidator;
     BoldConstraintValidatorOnUpdate: TBoldConstraintValidator;
+    FDConnectionPostgres: TFDConnection;
+    BoldDatabaseAdapterSQLServer: TBoldDatabaseAdapterFireDAC;
     function NameComparerCompare(item1, item2: TBoldElement): Integer;
     procedure NameComparerSubscribe(boldElement: TBoldElement; subscriber: TBoldSubscriber);
     function IsRichFilterFilter(element: TBoldElement): Boolean;
@@ -165,7 +168,10 @@ end;
 procedure TDataModule1.BoldPlaceableAFP1RetrieveHandle(Form: TForm; var Result: TBoldReferenceHandle);
 begin
   if form is TPersonAutoForm then
-    result := TPersonAutoForm(form).brhPerson
+  begin
+    result := TPersonAutoForm(form).brhPerson;
+    TPersonAutoForm(form).BoldFormSaver1.SystemHandle := BoldSystemHandle1;
+  end
   else
     result := nil;
 end;
