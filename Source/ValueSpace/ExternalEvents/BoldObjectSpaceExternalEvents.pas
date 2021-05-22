@@ -7,7 +7,8 @@ interface
 
 uses
   BoldID,
-  BoldDefaultID;
+  BoldDefaultID,
+  BoldLogHandler;
 
 type
   TBoldEventType = Char;
@@ -30,19 +31,25 @@ type
     class function GetParameter(const Event: TBoldExternalEvent): String;
     class function GetEventType(const Event: TBoldExternalEvent): TBoldObjectSpaceSubscriptionType;
   public
-    class function EncodeExternalEvent(SubscriptionType: TBoldObjectSpaceSubscriptionType; const ClassName,MemberName, LockName: string;
+    class function EncodeExternalEvent(SubscriptionType: TBoldObjectSpaceSubscriptionType; const AClassName, AMemberName, ALockName: string;
                        ObjectID: TBoldObjectID): String;
     class function DecodeExternalEvent(const Event: TBoldExternalEvent;
-                                  var Classname, MemberName, LockName: String;
+                                  var AClassname, MemberName, LockName: String;
                                   ObjectID: TBoldDefaultID): TBoldObjectSpaceSubscriptionType;
   end;
+
+procedure BoldOSSLog(const s: string);
+procedure BoldOSSLogFmt(const s: string; const Args: array of const);
+
+var
+  BoldOSSLogHandler: TBoldLogHandler;
 
 implementation
 
 uses
   SysUtils,
   BoldDefs,
-  BoldRev;
+  BoldIsoDateTime;
 
 const
   SUBSCRIPTION_DELIMITER_CHAR = ':';
@@ -55,6 +62,18 @@ const
   EXTERNAL_EVENT_EMBEDDEDSTATE_OBJECTDELETED = 'D';
   EXTERNAL_EVENT_LOCKLOST = 'L';
   EXTERNAL_EVENT_GOTLOCK = 'GotLocks';
+
+procedure BoldOSSLog(const s: string);
+begin
+  if assigned(BoldOSSLogHandler) then
+    BoldOSSLogHandler.Log(AsISODateTimeMS(now)+':'+trim(s));
+end;
+
+procedure BoldOSSLogFmt(const s: string; const Args: array of const);
+begin
+  if assigned(BoldOSSLogHandler) then
+    BoldOSSLogHandler.LogFmt(AsIsoDateTimeMs(now)+':'+ trim(s), Args);
+end;
 
 class function TBoldObjectSpaceExternalEvent.GetEventType(const Event: TBoldExternalEvent): TBoldObjectSpaceSubscriptionType;
 var
@@ -112,44 +131,44 @@ begin
 end;
 
 class function TBoldObjectSpaceExternalEvent.EncodeExternalEvent(SubscriptionType: TBoldObjectSpaceSubscriptionType;
-                  const ClassName,MemberName, LockName: string; ObjectID: TBoldObjectID): String;
+                  const AClassName, AMemberName, ALockName: string; ObjectID: TBoldObjectID): String;
 begin
   case SubscriptionType of
     bsClassChanged: Result := EXTERNAL_EVENT_CLASSCHANGED +
                               SUBSCRIPTION_DELIMITER_CHAR +
-                              ClassName;
+                              AClassName;
     bsMemberChanged: Result := EXTERNAL_EVENT_MEMBERCHANGED +
                                SUBSCRIPTION_DELIMITER_CHAR +
-                               ClassName +
+                               AClassName +
                                CLASS_MEMBER_SEPARATOR +
-                               MemberName +
+                               AMemberName +
                                SUBSCRIPTION_DELIMITER_CHAR +
                                ObjectID.AsString;
     bsEmbeddedStateOfObjectChanged: Result := EXTERNAL_EVENT_EMBEDDEDSTATEOFOBJECTCHANGED +
                                               SUBSCRIPTION_DELIMITER_CHAR +
-                                              ClassName +
+                                              AClassName +
                                               SUBSCRIPTION_DELIMITER_CHAR +
                                               ObjectID.AsString;
     bsNonEmbeddedStateOfObjectChanged: Result := EXTERNAL_EVENT_NONEMBEDDEDSTATEOFOBJECTCHANGED +
                                                   SUBSCRIPTION_DELIMITER_CHAR +
-                                                  ClassName +
+                                                  AClassName +
                                                   CLASS_MEMBER_SEPARATOR +
-                                                  MemberName +
+                                                  AMemberName +
                                                   SUBSCRIPTION_DELIMITER_CHAR +
                                                   ObjectID.AsString;
     bsLockLost: Result := EXTERNAL_EVENT_LOCKLOST +
                           SUBSCRIPTION_DELIMITER_CHAR +
-                          LockName;
+                          ALockName;
     bsGotLocks: Result := EXTERNAL_EVENT_GOTLOCK;
     bsObjectCreated: Result := EXTERNAL_EVENT_OBJECTCREATED +
                                               SUBSCRIPTION_DELIMITER_CHAR +
-                                              ClassName +
+                                              AClassName +
                                               SUBSCRIPTION_DELIMITER_CHAR +
                                               ObjectID.AsString;
 
     bsObjectDeleted: Result := EXTERNAL_EVENT_EMBEDDEDSTATEOFOBJECTCHANGED +
                                               SUBSCRIPTION_DELIMITER_CHAR +
-                                              ClassName +
+                                              AClassName +
                                               SUBSCRIPTION_DELIMITER_CHAR +
                                               ObjectID.AsString +
                                               PROPAGATOR_PARAMETER_DELIMITER_CHAR +
@@ -160,7 +179,7 @@ begin
 end;
 
 class function TBoldObjectSpaceExternalEvent.DecodeExternalEvent(const Event: TBoldExternalEvent;
-                                                            var Classname, MemberName, LockName: String;
+                                                            var AClassname, MemberName, LockName: String;
                                                             ObjectID: TBoldDefaultID): TBoldObjectSpaceSubscriptionType;
 var
   s: string;
@@ -168,38 +187,54 @@ var
 begin
   Result := GetEventType(Event);
   case Result of
-    bsClassChanged: ClassName := Copy(Event, Length(EXTERNAL_EVENT_CLASSCHANGED + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
+    bsClassChanged: AClassName := Copy(Event, Length(EXTERNAL_EVENT_CLASSCHANGED + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
     bsObjectCreated:
       begin
-        ClassName := Copy(Event, Length(EXTERNAL_EVENT_OBJECTCREATED + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
-        ClassName := Copy(ClassName, 1, Pos(SUBSCRIPTION_DELIMITER_CHAR,ClassName) - 1);
-        GetID(Event, ObjectID, ClassName);
+        AClassName := Copy(Event, Length(EXTERNAL_EVENT_OBJECTCREATED + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
+        AClassName := Copy(AClassName, 1, Pos(SUBSCRIPTION_DELIMITER_CHAR,AClassName) - 1);
+        GetID(Event, ObjectID, AClassName);
+        BoldOSSLogFmt('Object %s.%s created', [AClassName, ObjectID.AsString]);
       end;
     bsMemberChanged:
       begin
         s := Copy(Event, pos(SUBSCRIPTION_DELIMITER_CHAR, Event) + 1, maxint);
         i := Pos(CLASS_MEMBER_SEPARATOR, s);
-        ClassName := Copy(s, 1, i-1);
+        AClassName := Copy(s, 1, i-1);
         MemberName := Copy(s, i+1, Pos(SUBSCRIPTION_DELIMITER_CHAR, s)-i-1);
         s := Copy(s, Pos(SUBSCRIPTION_DELIMITER_CHAR, s) + 1, MaxInt);
         ObjectID.AsInteger := StrToInt(s);
+        BoldOSSLogFmt('Member modified %s.%s.%s', [AClassName, MemberName, ObjectID.AsString]);
       end;
       bsObjectDeleted, bsEmbeddedStateOfObjectChanged:
       begin
         i := pos(SUBSCRIPTION_DELIMITER_CHAR, Event) + 1;
-        ClassName := Copy(Event, i, Pos(SUBSCRIPTION_DELIMITER_CHAR, Copy(Event, i, maxint)) - 1);
-        GetID(Event, ObjectID, ClassName);
+        AClassName := Copy(Event, i, Pos(SUBSCRIPTION_DELIMITER_CHAR, Copy(Event, i, maxint)) - 1);
+        GetID(Event, ObjectID, AClassName);
+        case bsObjectDeleted of
+          bsObjectDeleted: BoldOSSLogFmt('Object Deleted %s.%s', [AClassName, ObjectID.AsString]);
+          bsEmbeddedStateOfObjectChanged: BoldOSSLogFmt('EmbeddedStateOfObjectChanged %s.%s', [AClassName, ObjectID.AsString]);
+        end;
+        BoldOSSLogFmt('Object Deleted %s.%s', [AClassName, ObjectID.AsString]);
       end;
     bsNonEmbeddedStateOfObjectChanged:
       begin
         i := pos(SUBSCRIPTION_DELIMITER_CHAR, Event) + 1;
         s := Copy(Event, i, Pos(SUBSCRIPTION_DELIMITER_CHAR, Copy(Event, i, maxint)) - 1);
-        ClassName := Copy(s, 1, Pos(CLASS_MEMBER_SEPARATOR, s) - 1);
+        AClassName := Copy(s, 1, Pos(CLASS_MEMBER_SEPARATOR, s) - 1);
         MemberName := Copy(s, Pos(CLASS_MEMBER_SEPARATOR, s) +1, maxint);
-        GetID(Event, ObjectID, ClassName);
+        GetID(Event, ObjectID, AClassName);
+        BoldOSSLogFmt('Non Embedded state of object changed: Deleted %s.%s.%s', [AClassName, ObjectID.AsString, MemberName]);
       end;
-    bsLockLost: LockName := Copy(Event, Length(EXTERNAL_EVENT_LOCKLOST + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
-    bsGotLocks{, bsDBLock}: ;
+    bsLockLost:
+      begin
+        LockName := Copy(Event, Length(EXTERNAL_EVENT_LOCKLOST + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
+        BoldOSSLogFmt('Lock Lost %s', [LockName]);
+      end;
+    bsGotLocks:
+      begin
+        LockName := Copy(Event, Length(EXTERNAL_EVENT_LOCKLOST + SUBSCRIPTION_DELIMITER_CHAR) + 1, MaxInt);
+        BoldOSSLogFmt('Locks placed %s', [LockName]);
+      end;
   end;
 end;
 
@@ -214,8 +249,6 @@ begin
   else
     result := '';
 end;
-
-initialization
 
 end.
 
