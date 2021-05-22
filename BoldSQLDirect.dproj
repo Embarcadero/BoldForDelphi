@@ -88,7 +88,7 @@
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="Bold.dcp"/>
-        <DCCReference Include="SqlDir80.dcp"/>
+        <DCCReference Include="SqlDir260.dcp"/>
         <DCCReference Include="Source\Persistence\SQLDirect\BoldDatabaseAdapterSQLDirect.pas"/>
         <DCCReference Include="Source\Persistence\SQLDirect\BoldPersistenceHandleSQLDirect.pas"/>
         <DCCReference Include="Source\Persistence\SQLDirect\BoldPersistenceHandleSQLDirectReg.pas"/>
