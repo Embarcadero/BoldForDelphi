@@ -233,6 +233,8 @@ type
     constructor Create(aUniConnection: TUniConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
     destructor Destroy; override;
     procedure CreateDatabase; override;
+    procedure DropDatabase; override;
+    function DatabaseExists: boolean; override;
     function GetDatabaseError(const E: Exception; const sSQL: string = ''):
         EBoldDatabaseError;
     property ExecuteQueryCount: integer read fExecuteQueryCount;            
@@ -862,10 +864,78 @@ begin
   UniConnection.StartTransaction;
 end;
 
+function TBoldUniDACConnection.DatabaseExists: boolean;
+var
+  vQuery: IBoldQuery;
+  vDatabaseName: string;
+begin
+  vDatabaseName := LowerCase(UniConnection.Database);
+  UniConnection.Database := ''; // need to clear this to connect succesfully
+  vQuery := GetQuery;
+  try
+    (vQuery.Implementor as TUniQuery).Connection := UniConnection;
+    vQuery.SQLText := Format(SQLDataBaseConfig.DatabaseExistsTemplate, [vDatabaseName]);
+    vQuery.Open;
+    result := vQuery.Fields[0].AsBoolean;
+  finally
+    ReleaseQuery(vQuery);
+    UniConnection.Database := vDatabaseName;
+  end;
+end;
+
 destructor TBoldUniDACConnection.Destroy;
 begin
   ReleaseCachedObjects;
   inherited;
+end;
+
+procedure TBoldUniDACConnection.DropDatabase;
+var
+  vQuery: IBoldExecQuery;
+  vDatabaseName: string;
+  vUniScript: TUniScript;
+  vIsInterbase: boolean;
+  vIsMSSQL: boolean;
+const
+  cInterbase = 'InterBase';
+  cMSSQL = 'SQL Server';
+  cDropDatabaseSQL = 'Drop Database %s';
+  cGenerateDatabaseSQL = 'Create Database %s';
+  cGenerateDatabaseInterbaseSQL = 'Create Database ''%s'' user ''%s'' password ''%s''';
+  cGenerateDatabaseSQLServer = 'USE master;' + BOLDCRLF + 'GO' + BOLDCRLF + ' Create Database %s';
+begin
+  vDatabaseName := LowerCase(UniConnection.Database);
+//  UniConnection.Database := ''; // need to clear this to connect succesfully
+  vUniScript := TUniScript.Create(nil);
+  try
+    vUniScript.Connection := UniConnection;
+    vIsInterbase := UniConnection.ProviderName = cInterBase;
+    vIsMSSQL := UniConnection.ProviderName = cMSSQL;
+    vUniScript.SQL.Text := Format(cDropDatabaseSQL, [vDatabaseName]);
+    if vIsMSSQL then
+      UniConnection.Database := 'master';
+    try
+      vUniScript.Execute;
+    except
+      // ignore
+    end;
+    vUniScript.NoPreconnect := vIsInterbase;
+    if vIsInterbase then
+      vUniScript.SQL.Text := Format(cGenerateDatabaseInterbaseSQL, [vDatabaseName, UniConnection.Username, UniConnection.Password])
+    else
+    if vIsMSSQL then
+    begin
+      vUniScript.SQL.Text := Format(cGenerateDatabaseSQLServer, [vDatabaseName]);
+    end
+    else
+      vUniScript.SQL.Text := Format(cGenerateDatabaseSQL, [vDatabaseName]);
+    vUniScript.Execute;
+    UniConnection.Close;
+  finally
+    vUniScript.free;
+    if vIsMSSQL then
+      UniConnection.Database := vDatabaseName;
+  end;
 end;
 
 procedure TBoldUniDACConnection.EndExecuteQuery;
@@ -911,7 +981,7 @@ begin
     vUniScript.Connection := UniConnection;
     vIsInterbase := UniConnection.ProviderName = cInterBase;
     vIsMSSQL := UniConnection.ProviderName = cMSSQL;
-    vUniScript.SQL.Text := Format(cDropDatabaseSQL, [vDatabaseName]);
+    vUniScript.SQL.Text := Format(SQLDatabaseConfig.DropDatabaseTemplate, [vDatabaseName]);
     if vIsMSSQL then
       UniConnection.Database := 'master';
     try
@@ -919,17 +989,6 @@ begin
     except
       // ignore
     end;
-    vUniScript.NoPreconnect := vIsInterbase;
-    if vIsInterbase then
-      vUniScript.SQL.Text := Format(cGenerateDatabaseInterbaseSQL, [vDatabaseName, UniConnection.Username, UniConnection.Password])
-    else
-    if vIsMSSQL then
-    begin
-      vUniScript.SQL.Text := Format(cGenerateDatabaseSQLServer, [vDatabaseName]);
-    end
-    else
-      vUniScript.SQL.Text := Format(cGenerateDatabaseSQL, [vDatabaseName]);
-    vUniScript.Execute;
     UniConnection.Close;
   finally
     vUniScript.free;

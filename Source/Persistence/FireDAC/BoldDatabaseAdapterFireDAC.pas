@@ -26,7 +26,9 @@ type
     function GetDataBaseInterface: IBoldDatabase; override;
   public
     destructor Destroy; override;
-    procedure CreateDatabase; override;
+    procedure CreateDatabase(DropExisting: boolean = true); override;
+    procedure DropDatabase; override;
+    function DatabaseExists: boolean; override;
   published
     property Connection: TFDConnection read GetConnection write SetConnection;
     {$IFNDEF T2H}
@@ -44,6 +46,11 @@ uses
 
 { TBoldDatabaseAdapterFireDAC }
 
+function TBoldDatabaseAdapterFireDAC.DatabaseExists: boolean;
+begin
+  result := DatabaseInterface.DatabaseExists;
+end;
+
 destructor TBoldDatabaseAdapterFireDAC.Destroy;
 begin
   Changed;
@@ -52,9 +59,14 @@ begin
   inherited;
 end;
 
-procedure TBoldDatabaseAdapterFireDAC.CreateDatabase;
+procedure TBoldDatabaseAdapterFireDAC.DropDatabase;
 begin
-  DatabaseInterface.CreateDatabase;
+  DatabaseInterface.DropDatabase;
+end;
+
+procedure TBoldDatabaseAdapterFireDAC.CreateDatabase(DropExisting: boolean = true);
+begin
+  DatabaseInterface.CreateDatabase(DropExisting);
 end;
 
 function TBoldDatabaseAdapterFireDAC.GetConnection: TFDConnection;

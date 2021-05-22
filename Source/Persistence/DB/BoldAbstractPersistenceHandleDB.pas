@@ -53,7 +53,8 @@ type
     destructor destroy; override;
     property PersistenceControllerDefault: TBoldPersistenceControllerDefault read GetPersistenceControllerDefault;
     procedure CreateDataBaseSchema(IgnoreUnknownTables: Boolean = false);
-    procedure CreateDataBase;
+    procedure CreateDataBase(DropExisting: boolean = true);
+    procedure DropDataBase;
     procedure AddModelEvolutionInfoToDatabase;
     property DatabaseInterface: IBoldDatabase read GetDatabaseInterface;
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read GetSQLDatabaseConfig;
@@ -156,9 +157,9 @@ begin
   fComponentSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveComponentEvents);
 end;
 
-procedure TBoldAbstractPersistenceHandleDB.CreateDataBase;
+procedure TBoldAbstractPersistenceHandleDB.CreateDataBase(DropExisting: boolean);
 begin
-  DatabaseInterface.CreateDatabase;
+  DatabaseInterface.CreateDatabase(DropExisting);
 end;
 
 procedure TBoldAbstractPersistenceHandleDB.CreateDataBaseSchema(
@@ -218,6 +219,11 @@ destructor TBoldAbstractPersistenceHandleDB.destroy;
 begin
   FreeAndNil(fComponentSubscriber);
   inherited;
+end;
+
+procedure TBoldAbstractPersistenceHandleDB.DropDataBase;
+begin
+  DatabaseInterface.DropDatabase;
 end;
 
 function TBoldAbstractPersistenceHandleDB.GetClockLogGranularity: string;

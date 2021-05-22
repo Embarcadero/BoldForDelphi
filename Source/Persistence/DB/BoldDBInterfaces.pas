@@ -326,7 +326,9 @@ type
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read GetSQLDatabaseConfig;
     function GetIsExecutingQuery: Boolean;
     property IsExecutingQuery: Boolean read GetIsExecutingQuery;
-    procedure CreateDatabase;
+    procedure CreateDatabase(DropExisting: boolean = true);
+    procedure DropDatabase;
+    function DatabaseExists: boolean;
   end;
 
   TBoldParameterWrapper = class(TBoldRefCountedObject)
@@ -506,7 +508,9 @@ type
   public
     constructor Create(SQLDataBaseConfig: TBoldSQLDatabaseConfig);
     destructor Destroy; override;
-    procedure CreateDatabase; virtual; abstract;    
+    procedure CreateDatabase(DropExisting: boolean = true); virtual; abstract;
+    procedure DropDatabase; virtual; abstract;
+    function DatabaseExists: boolean; virtual; abstract;
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read GetSQLDatabaseConfig;
   end;
 
@@ -573,7 +577,8 @@ uses
   Variants,
   Windows,
   BoldSharedStrings,
-  BoldUtils;
+  BoldUtils,
+  BoldIsoDateTime;
 
 procedure BoldLogSQL(const sql: TStrings);
 var
@@ -585,7 +590,7 @@ begin
     if BoldSQLMessage <> '' then
         BoldSQLLogHandler.Log(BoldSQLMessage);
     BoldSQLLogHandler.Log(
-      formatDateTime('c: ', now) +
+      AsIsoDateTimeMs(now) +':'+
       format('SQL %3d- %s', [BoldSQLLogCount, trim(SQL[0])]));
     for i := 1 to SQL.Count - 1 do
     begin
@@ -606,7 +611,7 @@ begin
     if BoldSQLMessage <> '' then
       BoldSQLLogHandler.Log(BoldSQLMessage);
     BoldSQLLogHandler.Log(
-      formatDateTime('c: ', now) +
+      AsIsoDateTimeMs(now) +':'+
       format('SQL %3d- %s', [BoldSQLLogCount, trim(SQL[0])]));
     for i := 1 to SQL.Count - 1 do
     begin
@@ -652,7 +657,7 @@ begin
     if BoldSQLMessage <> '' then
       BoldSQLLogHandler.Log(BoldSQLMessage);
     BoldSQLLogHandler.Log(
-      formatDateTime('c: ', now) +
+      AsIsoDateTimeMs(now) +':'+
       format('SQL %3d- %s', [BoldSQLLogCount, trim(SQL[0])]));
     for i := 1 to SQL.Count - 1 do
     begin
@@ -1635,6 +1640,8 @@ begin
     end;
 end;
 
+type TCollectionAccess = class(TCollection);
+
 procedure TBoldBatchDataSetWrapper.ReplaceParamMarkers(sql: TStrings;
   const Source, Dest: IBoldExecQuery);
 const
@@ -1673,7 +1680,6 @@ var
   end;
 
 begin
-  SourceParams := Source.Params;
   DestParams := Dest.Params;
   if Source.ParamCount = 0 then
   begin
@@ -1685,9 +1691,12 @@ begin
   end
   else
   begin
+    SourceParams := Source.Params;
     if Dest.ParamCount = 0 then
     begin
-      Dest.Params.Assign(Source.Params);
+      DestParams.Assign(SourceParams);
+      while TCollectionAccess(DestParams).UpdateCount > 0 do
+        DestParams.EndUpdate;
       for i := 0 to Sql.Count - 1 do
       begin
         Line := sql[i];
@@ -1747,6 +1756,7 @@ begin
     end;
   end;
   SB.Append(DatabaseWrapper.SQLDatabaseConfig.BatchQuerySeparator);
+  Dest.AssignParams(DestParams);
   Dest.SQLStrings.Add(sb.ToString);
   Inc(fAccumulatedSQLLength, SB.Length + Length(Dest.SQLStrings.LineBreak));
   SB.Clear;
@@ -1891,7 +1901,5 @@ begin
     end;
   end;
 end;
-
-initialization
 
 end.

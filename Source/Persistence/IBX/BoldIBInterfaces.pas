@@ -125,7 +125,7 @@ type
   public
     constructor create(DataBase: TIBDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
     destructor destroy; override;
-    procedure CreateDatabase;
+    procedure CreateDatabase(DropExisting: boolean = true); override;
   end;
 
 implementation
@@ -527,7 +527,7 @@ begin
   dec(fExecuteQueryCount);
 end;
 
-procedure TBoldIBDataBase.CreateDatabase;
+procedure TBoldIBDataBase.CreateDatabase(DropExisting: boolean = true);
 var
   db: TIBDatabase;
   username: String;

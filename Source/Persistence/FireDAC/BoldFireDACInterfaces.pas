@@ -242,7 +242,9 @@ type
   public
     constructor Create(aFDConnection: TFDConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
     destructor Destroy; override;
-    procedure CreateDatabase; override;
+    procedure CreateDatabase(DropExisting: boolean = true); override;
+    procedure DropDatabase; override;
+    function DatabaseExists: boolean; override;
     function GetDatabaseError(const E: Exception; const sSQL: string = ''):
         EBoldDatabaseError;
     property ExecuteQueryCount: integer read fExecuteQueryCount;
@@ -262,6 +264,8 @@ uses
   FireDAC.Comp.Script,
   FireDAC.Comp.ScriptCommands,
   FireDAC.Phys.Intf,
+  FireDAC.Phys.PGWrapper,
+  FireDAC.Stan.Intf,
 
   BoldUtils,
   BoldGuard,
@@ -581,12 +585,12 @@ end;
 
 procedure TBoldFireDACTable.CreateTable;
 begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'CreateTable']); // do not localize
+  FDTable.CreateTable(true);
 end;
 
 procedure TBoldFireDACTable.DeleteTable;
 begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'DeleteTable']); // do not localize
+  FDTable.ExecSQL('Drop Table ' + FDTable.TableName);
 end;
 
 function TBoldFireDACTable.FindParam(const Value: string): IBoldParameter;
@@ -601,8 +605,21 @@ end;
 
 procedure TBoldFireDACTable.AddIndex(const Name, Fields: string;
   Options: TIndexOptions; const DescFields: string);
+var
+  SortOption: TFDSortOptions;
 begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'AddIndex']); // do not localize
+// ixPrimary, ixUnique, ixDescending, ixCaseInsensitive, ixExpression, ixNonMaintained);
+// soNoCase, soNullFirst, soDescNullLast, soDescending, soUnique, soPrimary, soNoSymbols);
+  SortOption := [];
+  if ixCaseInsensitive in Options  then
+    Include(SortOption, soNoCase);
+  if ixUnique in Options  then
+    Include(SortOption, soUnique);
+  if ixPrimary in Options  then
+    Include(SortOption, soPrimary);
+  if ixDescending in Options  then
+    Include(SortOption, soDescending);
+  FDTable.AddIndex(Name, Fields, '', SortOption, DescFields);
 end;
 (*
 function TBoldFireDACTable.GetCommaListOfIndexesForColumn(
@@ -748,8 +765,7 @@ end;
 
 function TBoldFireDACTable.GetIndexDefs: TIndexDefs;
 begin
-  raise EBold.CreateFmt('%s MethodNotImplemented %s', [ClassName, 'GetIndexDefs']); // do not localize
-//  Result := FDTable.IndexFieldNames
+  Result := FDTable.IndexDefs;
 end;
 
 function TBoldFireDACTable.GetFDTable: TFDTable;
@@ -757,12 +773,14 @@ begin
   Result := fFDTable;
 end;
 
+type TFDTableAccess = class(TFDTable);
+
 function TBoldFireDACTable.ParamByName(const Value: string): IBoldParameter;
 var
   lFDParam: TFireDacParam;
 begin
-  lFDParam := FDTable.Params.ParamByName(Value);
-  Result := TBoldFireDACParameter.Create(lFDParam, Self)
+  lFDParam := TFDTableAccess(FDTable).Params.ParamByName(Value);
+  Result := TBoldFireDACParameter.Create(lFDParam, Self);
 end;
 
 function TBoldFireDACTable.GetTableName: string;
@@ -795,7 +813,7 @@ begin
   if ShowSystemTables then
     FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy, osSystem, osOther], [tkTable])
   else
-    FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy, osOther], [tkTable]);
+    FDConnection.GetTableNames(FDConnection.Params.Database,'','',lTempList, [osMy], [tkTable]);
 
   // convert from fully qualified names in format: database.catalogue.table to just table name
   for i := 0 to lTempList.Count - 1 do
@@ -886,10 +904,50 @@ begin
   FDConnection.StartTransaction;
 end;
 
+function TBoldFireDACConnection.DatabaseExists: boolean;
+var
+  vQuery: IBoldQuery;
+  vDatabaseName: string;
+begin
+  vDatabaseName := LowerCase(FDConnection.Params.Database);
+  FDConnection.Params.Database := ''; // need to clear this to connect succesfully
+  vQuery := GetQuery;
+  try
+    vQuery.SQLText := Format(SQLDataBaseConfig.DatabaseExistsTemplate , [vDatabaseName]);
+    vQuery.Open;
+    result := vQuery.Fields[0].AsBoolean;
+  finally
+    ReleaseQuery(vQuery);
+    FDConnection.Params.Database := vDatabaseName;
+  end;
+end;
+
 destructor TBoldFireDACConnection.Destroy;
 begin
   ReleaseCachedObjects;
   inherited;
+end;
+
+procedure TBoldFireDACConnection.DropDatabase;
+var
+  vDatabaseName: string;
+  vScript: TFDScript;
+  sl: TStringList;
+begin
+  vDatabaseName := LowerCase(FDConnection.Params.Database);
+  FDConnection.Params.Database := ''; // need to clear this to connect succesfully
+  vScript := TFDScript.Create(nil);
+  sl := TStringList.Create;
+  try
+    sl.Text := Format(SQLDataBaseConfig.DropDatabaseTemplate , [vDatabaseName]);
+    vScript.Connection := FDConnection;
+    vScript.ExecuteScript(sl);
+    FDConnection.Close;
+  finally
+    FDConnection.Params.Database := vDatabaseName;
+    vScript.free;
+    sl.free;
+  end;
 end;
 
 procedure TBoldFireDACConnection.EndExecuteQuery;
@@ -913,21 +971,15 @@ begin
   FDConnection.Close;
 end;
 
-procedure TBoldFireDACConnection.CreateDatabase;
+procedure TBoldFireDACConnection.CreateDatabase(DropExisting: boolean = true);
 var
-  vQuery: IBoldExecQuery;
   vDatabaseName: string;
   vScript: TFDScript;
   sl: TStringList;
-const
-  cInterbase = 'InterBase';
-  cMSSQL = 'SQL Server';
-  cDropDatabaseSQL = 'Drop Database %s';
-  cGenerateDatabaseSQL = 'Create Database %s';
-  cGenerateDatabaseInterbaseSQL = 'Create Database ''%s'' user ''%s'' password ''%s''';
-  cGenerateDatabaseSQLServer = 'USE master;' + BOLDCRLF + 'GO' + BOLDCRLF + ' Create Database %s';
 begin
   vDatabaseName := LowerCase(FDConnection.Params.Database);
+  if DropExisting and DatabaseExists then
+    DropDatabase;
   FDConnection.Params.Database := ''; // need to clear this to connect succesfully
   vScript := TFDScript.Create(nil);
   sl := TStringList.Create;
@@ -970,8 +1022,11 @@ const
   cInterBaseProvider = 'InterBase';
   cMSSQLDeadLock = 1205;
 begin
+  sMsg := E.Message;
   aErrorType := bdetError;
   vConnectionString := FDConnection.ConnectionString;
+  Result := InternalGetDatabaseError(aErrorType, E, vConnectionString, '', '', '', false);
+
 {
   bUseWindowsAuth := Pos('Authentication=Windows', FDConnection.ConnectString) > 0;
   if (E is EFDError) then
@@ -1071,6 +1126,7 @@ end;
 procedure TBoldFireDACConnection.Open;
 begin
   try
+    FDConnection.Params.Database := LowerCase(FDConnection.Params.Database);
     FDConnection.Open;
   except
     on E: Exception do begin

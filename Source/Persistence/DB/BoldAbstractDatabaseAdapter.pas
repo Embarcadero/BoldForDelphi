@@ -40,7 +40,9 @@ type
   public
     constructor create(aOwner: TComponent); override;
     destructor destroy; override;
-    procedure CreateDatabase; virtual; abstract;
+    procedure CreateDatabase(DropExisting: boolean = true); virtual; abstract;
+    procedure DropDatabase; virtual; abstract;
+    function DatabaseExists: boolean; virtual; abstract;
     property DatabaseInterface: IBoldDatabase read GetDatabaseInterface;
   published
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read FSQLDatabaseConfig write SetSQLDatabaseConfig;

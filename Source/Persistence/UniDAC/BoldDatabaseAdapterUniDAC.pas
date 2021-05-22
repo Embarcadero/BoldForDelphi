@@ -26,7 +26,8 @@ type
     function GetDataBaseInterface: IBoldDatabase; override;
   public
     destructor Destroy; override;
-    procedure CreateDatabase; override;    
+    procedure CreateDatabase; override;
+    procedure DropDatabase; override;
   published
     property Connection: TUniConnection read GetConnection write SetConnection;
     {$IFNDEF T2H}
@@ -50,6 +51,11 @@ begin
   FreePublisher;
   FreeAndNil(fBoldUniDACConnection);
   inherited;
+end;
+
+procedure TBoldDatabaseAdapterUniDAC.DropDatabase;
+begin
+  DatabaseInterface.DropDatabase;
 end;
 
 procedure TBoldDatabaseAdapterUniDAC.CreateDatabase;
