@@ -18,7 +18,9 @@ type
   TBoldActivateSystemAction = class;
   TBoldUpdateDBAction = class;
   TBoldFailureDetectionAction = class;
-
+  TBoldCreateDatabaseAction = class;
+  TBoldDiscardChangesAction = class;
+  
   TBoldSaveAction = (saAsk, saYes, saNo, saFail);
 
   { TBoldSystemHandleAction }
@@ -40,6 +42,15 @@ type
 
   { TBoldUpdateDBAction }
   TBoldUpdateDBAction = class(TBoldSystemHandleAction)
+  protected
+    procedure CheckAllowEnable(var EnableAction: boolean); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure ExecuteTarget(Target: TObject); override;
+  end;
+
+  { TBoldDiscardChangesAction }
+  TBoldDiscardChangesAction = class(TBoldSystemHandleAction)
   protected
     procedure CheckAllowEnable(var EnableAction: boolean); override;
   public
@@ -83,6 +94,7 @@ type
   TBoldCreateDatabaseAction = class(TBoldSystemHandleAction)
   private
     fOnSchemaGenerated: TNotifyEvent;
+    fIgnoreUnknownTables: boolean;
     procedure SchemaGenerated;
   protected
     procedure GenerateSchema;
@@ -92,6 +104,7 @@ type
     procedure ExecuteTarget(Target: TObject); override;
   published
     property OnSchemaGenerated: TNotifyEvent read fOnSchemaGenerated write fOnSchemaGenerated;
+    property IgnoreUnknownTables: boolean read fIgnoreUnknownTables write fIgnoreUnknownTables;
   end;
 
 implementation
@@ -321,7 +334,7 @@ begin
     Screen.Cursor := crHourGlass;
     try
       BoldSystemHandle.PersistenceHandleDB.CreateDataBase;
-      BoldSystemHandle.PersistenceHandleDB.CreateDataBaseSchema;
+      BoldSystemHandle.PersistenceHandleDB.CreateDataBaseSchema(IgnoreUnknownTables);
     finally
       Screen.Cursor := crDefault;
     end;
@@ -335,6 +348,27 @@ begin
     fOnSchemaGenerated(Self);
 end;
 
-initialization
+{ TBoldDiscardChangesAction }
+
+procedure TBoldDiscardChangesAction.CheckAllowEnable(var EnableAction: boolean);
+begin
+  inherited;
+  if EnableAction then
+    EnableAction := BoldSystemHandle.Active and
+                    (BoldSystemHandle.System.DirtyObjects.Count > 0);
+end;
+
+constructor TBoldDiscardChangesAction.Create(AOwner: TComponent);
+begin
+  inherited;
+  Caption := 'Discard changes';
+end;
+
+procedure TBoldDiscardChangesAction.ExecuteTarget(Target: TObject);
+begin
+  inherited;
+  if Assigned(BoldSystemHandle) then
+    BoldSystemHandle.Discard;
+end;
 
 end.
