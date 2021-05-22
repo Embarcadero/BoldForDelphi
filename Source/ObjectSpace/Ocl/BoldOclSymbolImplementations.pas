@@ -3044,7 +3044,8 @@ end;
 
 function EscapeRegEx(const ASource: string): string;
 begin
-  result := TPerlRegEx.EscapeRegExChars(ASource);
+  result := StringReplace(ASource, '%', '', [rfReplaceAll]);
+  result := TPerlRegEx.EscapeRegExChars(result);
 end;
 
 procedure TBOS_SQLLike.Evaluate(const Params: TBoldOclSymbolParameters);
@@ -3053,7 +3054,10 @@ var
 begin
   s := XString(Params.values[1]);
   s := EscapeRegEx(s);
-  Help.MakeNewBoolean(Params.Result, TRegEx.IsMatch(XString(Params.values[0]), s));
+  if s = '' then
+    Help.MakeNewBoolean(Params.Result, false)
+  else
+    Help.MakeNewBoolean(Params.Result, TRegEx.IsMatch(XString(Params.values[0]), s));
 end;
 
 procedure TBOS_SQLLikeCaseInSensitive.Evaluate(const Params: TBoldOclSymbolParameters);
@@ -3062,7 +3066,10 @@ var
 begin
   s := XString(Params.values[1]);
   s := EscapeRegEx(s);
-  Help.MakeNewBoolean(Params.Result, TRegEx.IsMatch(XString(Params.values[0]), s, [roIgnoreCase]));
+  if s = '' then
+    Help.MakeNewBoolean(Params.Result, false)
+  else
+    Help.MakeNewBoolean(Params.Result, TRegEx.IsMatch(XString(Params.values[0]), s, [roIgnoreCase]));
 end;
 
 procedure TBOS_RegExpMatch.Evaluate(const Params: TBoldOclSymbolParameters);
@@ -3166,7 +3173,10 @@ var
   NewTime: Integer;
 begin
   OldObject := Params.values[0] as TBoldObject;
-  NewTime := (Params.values[1] as TBAInteger).AsInteger;
+  if (Params.values[1] as TBAInteger).IsNull then
+    NewTime := maxInt
+  else
+    NewTime := (Params.values[1] as TBAInteger).AsInteger;
   Params.Result.SetReferenceValue(OldObject.AtTime(NewTime));
 end;
 
