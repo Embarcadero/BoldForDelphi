@@ -102,6 +102,8 @@ type
     fSQLforNull: string;
     fEvolveDropsUnknownIndexes: boolean;
     fCreateDatabaseTemplate: string;
+    fDropDatabaseTemplate: string;
+    fDatabaseExistsTemplate: string;
     procedure SetIfTemplate(const Value: string);
     procedure SetColumnExistsTemplate(const Value: string);
     procedure SetTableExistsTemplate(const Value: string);
@@ -173,6 +175,8 @@ type
     procedure SetSQLforNull(const Value: string);
     procedure SetEvolveDropsUnknownIndexes(const Value: boolean);
     procedure SetCreateDatabaseTemplate(const Value: string);
+    procedure SetDropDatabaseTemplate(const Value: string);
+    procedure SetDatabaseExistsTemplate(const Value: string);
   protected
     procedure DefineProperties(Filer: TFiler); override;
   public
@@ -230,6 +234,8 @@ type
     property SingleIndexOrderedLinks: boolean read fSingleIndexOrderedLinks write SetSingleIndexOrderedLinks default false;
     property IgnoreMissingObjects: boolean read fIgnoreMissingObjects write SetIgnoreMissingObjects default false;
     property CreateDatabaseTemplate: string read fCreateDatabaseTemplate write SetCreateDatabaseTemplate;
+    property DropDatabaseTemplate: string read fDropDatabaseTemplate write SetDropDatabaseTemplate;
+    property DatabaseExistsTemplate: string read fDatabaseExistsTemplate write SetDatabaseExistsTemplate;
     property DropColumnTemplate: string read fDropColumnTemplate write SetDropColumnTemplate;
     property DropTableTemplate: string read fDropTableTemplate write SetDropTableTemplate;
     property IndexInfoTemplate: string read fIndexInfoTemplate write SetIndexInfoTemplate;
@@ -338,6 +344,8 @@ begin
   fDbGenerationMode := Source.DBGenerationMode;
   fDefaultStringLength := Source.DefaultStringLength;
   fCreateDatabaseTemplate := Source.CreateDatabaseTemplate;
+  fDropDatabaseTemplate := Source.DropDatabaseTemplate;
+  fDatabaseExistsTemplate := Source.DatabaseExistsTemplate;
   fDropColumnTemplate := Source.DropColumnTemplate;
   fDropTableTemplate := Source.DropTableTemplate;
   fDropIndexTemplate := Source.DropIndexTemplate;
@@ -566,6 +574,15 @@ begin
   end;
 end;
 
+procedure TBoldSQLDataBaseConfig.SetDropDatabaseTemplate(const Value: string);
+begin
+  if fDropDatabaseTemplate <> Value then
+  begin
+    fDropDatabaseTemplate := Value;
+    Change;
+  end;
+end;
+
 procedure TBoldSQLDataBaseConfig.SetDropIndexTemplate(const Value: string);
 begin
   if fDropIndexTemplate <> Value then
@@ -744,6 +761,8 @@ begin
   fAllowMetadataChangesInTransaction := true;
   fDBGenerationMode := dbgQuery;
   fCreateDatabaseTemplate := 'CREATE DATABASE %s';
+  fDropDatabaseTemplate := 'DROP DATABASE %s';
+  fDatabaseExistsTemplate := '';
   fDropColumnTemplate := 'ALTER TABLE <TableName> DROP <ColumnName>';
   fDropTableTemplate := 'DROP TABLE <TableName>';
   fDropIndexTemplate := 'DROP INDEX <IndexName>';
@@ -871,6 +890,7 @@ begin
       fMaxIndexNameLength := 63;
       fMaxDbIdentifierLength := 63;
       fMultiRowInsertLimit := 1000;
+      fDatabaseExistsTemplate := 'select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(''%s''));';
 //      IndexInfoTemplate := 'select indexname from pg_indexes where tablename = ''<TableName>'''; // this is not complete IndexName, IsPrimary, IsUnique, ColumnName
       fReservedWords.Text := 'ALL, ANALYSE, AND, ANY, ARRAY, AS, ASC, ASYMMETRIC, AUTHORIZATION,'#10 + // do not localize
                              'BETWEEN, BINARY, BOOLEAN, BOTH, CASE, CAST, CHAR, CHARACTER, CHECK,'#10 + // do not localize
@@ -907,6 +927,7 @@ begin
       fColumnTypeForDate := 'DATETIME';  // do not localize
       fColumnTypeForTime := 'DATETIME';  // do not localize
       fColumnTypeForDateTime := 'DATETIME';  // do not localize
+      fDatabaseExistsTemplate := 'IF EXISTS (SELECT name FROM master.sys.databases WHERE name = N''%s'')';
       fColumnTypeForFloat := 'DECIMAL (28,10)';  // do not localize
       fColumnTypeForCurrency := 'DECIMAL (28,10)';  // do not localize
       fColumnTypeForText := 'VARCHAR(MAX)'; // do not localize
@@ -1385,6 +1406,15 @@ procedure TBoldSQLDataBaseConfig.SetDatabaseCaseSensitiveTemplate(const Value:
 begin
   if FDatabaseCaseSensitiveTemplate <> Value then begin
     FDatabaseCaseSensitiveTemplate := Value;
+    Change;
+  end;
+end;
+
+procedure TBoldSQLDataBaseConfig.SetDatabaseExistsTemplate(const Value: string);
+begin
+  if fDatabaseExistsTemplate <> Value then
+  begin
+    fDatabaseExistsTemplate := Value;
     Change;
   end;
 end;
