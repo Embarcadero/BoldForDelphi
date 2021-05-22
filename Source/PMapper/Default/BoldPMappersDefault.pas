@@ -152,7 +152,7 @@ type
     procedure MakeIDsExactUsingTable(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; Table: TBoldSQLTableDescription; EnsureAll: Boolean; HandleNonExisting: Boolean);
     function InternalIdListSegmentToWhereFragment(IdList: TBoldObjectIdList; Start, Stop: Integer; AllowParms: Boolean; const Parameterized: IBoldParameterized): String;
     procedure InternalMakeIDsExact(ObjectIDList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; EnsureAll: Boolean; HandleNonExisting: Boolean);
-    procedure FetchRawSqlCondition(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; RawCondition: TBoldRawSqlCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList);    
+    procedure FetchRawSqlCondition(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; RawCondition: TBoldRawSqlCondition; FetchMode: Integer; TranslationList: TBoldIdTranslationList);
   protected
     procedure JoinSQLTableByKey(SQL: TStringList; MainTable, JoinTable: TBoldSQLTableDescription); override;
     procedure SQLForID(Table: TBoldSQLTableDescription; SQL: TStrings; UseAlias: Boolean); override;
@@ -457,20 +457,25 @@ begin
   // On empty OCL a PS evaluation is unnecessary (objects are loaded already).
   // System parameter must be type of TBoldSystem (see TBoldPersistenceController).
   // Also OCL evaluator must be type of TBoldOCL, otherwise validation is not possible.
-  if (sOCL = '') or not ((aSystem is TBoldSystem) and
-     (TBoldSystem(aSystem).Evaluator is TBoldOCL)) then
+  if (sOCL = '') {or not ((aSystem is TBoldSystem) and
+     (TBoldSystem(aSystem).Evaluator is TBoldOCL))} then
   begin
     Exit;
   end;
 
   // Validation does not work with collection as context, though evaluation
   // would be possible. Therefore always use ListElementTypeInfo.
+  aBoldSystem := TBoldSystem(aSystem);
+  if Assigned(aBoldSystem) then
+    aBoldOCL := TBoldOcl(aBoldSystem.Evaluator)
+  else
+  if Assigned(aContext) then
+    aBoldOCL := TBoldOcl(aContext.Evaluator)
+  else
+    raise Exception.Create('No system nor context provided.');
   if Assigned(aContext) and (aContext is TBoldListTypeInfo) then begin
     aContext := TBoldListTypeInfo(aContext).ListElementTypeInfo;
   end;
-
-  aBoldSystem := TBoldSystem(aSystem);
-  aBoldOCL := TBoldOcl(aBoldSystem.Evaluator);
   aVariableIDLists := TBoldObjectArray.Create(0, [bcoDataOwner]);
   Result := True;
   try
@@ -478,7 +483,7 @@ begin
       aEnv := TBoldOclEnvironment.Create(aBoldOCL.GlobalEnv);
       // OCL semantic check
       aResultEntry := aBoldOCL.SemanticCheck(sOCL, aContext, aVariableList, true, aEnv);
-      aOLWNodeMaker := TBoldOLWNodeMaker.Create(aResultEntry.Ocl, aBoldSystem.BoldSystemTypeInfo, aBoldSystem, aEnv);
+      aOLWNodeMaker := TBoldOLWNodeMaker.Create(aResultEntry.Ocl, aContext.SystemTypeInfo as TBoldSystemTypeInfo, aBoldSystem, aEnv);
       aResultEntry.Ocl.AcceptVisitor(aOLWNodeMaker);
       // Can OCL be evaluated in PS in general?
       if not aOLWNodeMaker.Failed then begin
@@ -517,9 +522,14 @@ begin
         aSQLNodeMaker.RootNode.AcceptVisitor(aSQlGenerator);
       end else begin
         Result := False;
+        SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('%s at position: %d', [aOLWNodeMaker.FailureReason, aOLWNodeMaker.FailurePosition], nil));
       end;
     except
+      on E:Exception do
+      begin
+        SetBoldLastFailureReason(TBoldFailureReason.Create(E.Message, nil));
       Result := False;
+    end;
     end;
   finally
     if Assigned(aResultEntry) then begin
@@ -1478,7 +1488,7 @@ begin
     SystemPersistenceMapper.ReleaseQuery(OldDataQuery);
     SQL.Free;
   end;
-end;  
+end;
 
 procedure TBoldObjectDefaultMapper.PMUpdate(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; const Old_Values: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 var
@@ -1569,7 +1579,7 @@ begin
     aQuery.SQLStrings.EndUpdate;
     SystemPersistenceMapper.ReleaseExecQuery(aQuery);
   end;
-  
+
   for A := 0 to MemberPersistenceMappers.Count - 1 do
   begin
     with MemberPersistenceMappers[A] do
@@ -2466,7 +2476,7 @@ function TBoldObjectDefaultMapper.InternalIdListSegmentToWhereFragment(
     if UseParams then
     begin
       result := ':ID'+IntToStr(ParamIndex);
-      Assert(IdList[IdIndex] is TBoldDefaultId, IdList[IdIndex].ClassName); 
+      Assert(IdList[IdIndex] is TBoldDefaultId, IdList[IdIndex].ClassName);
       Parameterized.CreateParam(ftInteger, 'ID'+IntToStr(ParamIndex)).AsInteger := (IdList[IdIndex] as TBoldDefaultId).AsInteger;
     end
     else
@@ -2894,7 +2904,7 @@ begin
 
       aQuery.Open;
 
-      TranslationList.Capacity := TranslationList.Count + aQuery.RecordCount;      
+      TranslationList.Capacity := TranslationList.Count + aQuery.RecordCount;
       while not aQuery.EOF do
       begin
         anObjectId := NewIdFromQuery(aQuery, NO_CLASS, 1, 0, BOLDMAXTIMESTAMP);
@@ -3218,7 +3228,7 @@ var
   aCPCond: TBoldChangePointCondition;
   GlobalNameSpace: TBoldSqlNameSpace;
   aVariableIDLists: TBoldObjectArray;
-  vBoldParameterized: IBoldParameterized;  
+  vBoldParameterized: IBoldParameterized;
 
   procedure FixQueriesForEnv(VarBinding: TBoldSQLVariableBinding; Context: TBoldObjectIdList; NameSpace: TBoldSqlNameSpace);
   var
@@ -4238,4 +4248,3 @@ finalization
     BoldObjectPersistenceMappers.RemoveDescriptorByName(DEFAULTNAME);
 
 end.
-
