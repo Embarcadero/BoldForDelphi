@@ -152,7 +152,7 @@ var
   BoldList: TBoldList;
 begin
   BoldList := List;
-  if Assigned(BoldList) then
+  if Assigned(BoldList) and Assigned(BoldList.BoldType) then
     Result := TBoldListTypeInfo(BoldList.BoldType).ListElementTypeInfo
   else
     Result := StaticBoldType;
