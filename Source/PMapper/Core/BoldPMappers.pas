@@ -308,18 +308,19 @@ uses
   BoldPMConsts,
   BoldGuard,
   BoldDefaultStreamNames,
-  BoldPMapperLists;
+  BoldPMapperLists,
+  BoldIsoDateTime;
 
 procedure BoldPMLog(const s: string);
 begin
   if assigned(BoldPMLogHandler) then
-    BoldPMLogHandler.Log(formatDateTime('c: ', now)+trim(s));
+    BoldPMLogHandler.Log(AsISODateTimeMS(now)+':'+trim(s));
 end;
 
 procedure BoldPMLogFmt(const s: string; const Args: array of const);
 begin
   if assigned(BoldPMLogHandler) then
-    BoldPMLogHandler.LogFmt(formatDateTime('c: ', now) +trim(s), Args);
+    BoldPMLogHandler.LogFmt(AsISODateTimeMS(now)+':'+trim(s), Args);
 end;
 
 { TBoldObjectPersistenceMapperList }
