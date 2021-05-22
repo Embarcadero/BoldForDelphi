@@ -103,6 +103,7 @@ type
     fVariables: TBoldExternalVariableList;
     fCompleteSelectList: TStrings;
     fMRUExpressionList: TStringList;
+    FOnExpressionChanged: TNotifyEvent;
     procedure SetOclExpr(Expr: String);
     function GetOclExpr: String;
     procedure SetContext(Context: TBoldElementTypeInfo);
@@ -133,6 +134,7 @@ type
     property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
     property OclExpr: String read GetOclExpr write SetOclExpr;
     property Variables: TBoldExternalVariableList read fVariables write SetVariables;
+    property OnExpressionChanged: TNotifyEvent read FOnExpressionChanged write FOnExpressionChanged;
   end;
 
 implementation
@@ -140,7 +142,7 @@ implementation
 uses
   SysUtils,
   StrUtils,
-  BoldUtils,  
+  BoldUtils,
   BoldDefs,
   BoldRegistry,
   BoldOclError,
@@ -150,8 +152,7 @@ uses
 {$R *.dfm}
 
 const
-  OCLInfoURL = 'http://www.boldsoft.com/go/oclinfo';
-  OCLInfoLocal = 'doc\oclinfo.html';
+  OCLInfoURL = 'https://www.omg.org/spec/OCL/';
   cMRUExpressionRegKey = '\MRU';
   cMRUExpressionRegKeyName = 'OCL Expression';
   cHiddenOCLVariables: array[0..3] of string = ('Nil', 'True', 'False', 'TimeStampNow');
@@ -368,7 +369,7 @@ function TBoldOclPropEditForm.CheckOcl(Ocl: String): TBoldElementTypeInfo;
       insert('-------', errorPointer, length(ErrorPointer));
     end else
       ErrorPointer := ErrorPointer + '-------';
-                                             
+
     ParserMessages.lines.Insert(i+1, ErrorPointer);
   end;
 
@@ -456,7 +457,7 @@ begin
       if (not Assigned(Symbol.FormalArguments[0]) or
         ExpressionType.ConformsTo(Symbol.formalArguments[0]) or
         ((ExpressionType is TBoldListTypeInfo) and
-         assigned(TBoldListTypeInfo(ExpressionType).ListElementTypeInfo) and 
+         assigned(TBoldListTypeInfo(ExpressionType).ListElementTypeInfo) and
          TBoldListTypeInfo(ExpressionType).ListElementTypeInfo.ConformsTo(Symbol.FormalArguments[0]))) and symbol.IsPostFix then
       begin
         Addition := '5 | ' + prefix[Symbol.IsDotNotation] + Symbol.SymbolName;
@@ -612,7 +613,7 @@ begin
 
   if filterCombo.ItemIndex = -1 then
     filterCombo.Clear;
-    
+
   EditMemoChange(Sender);
 end;
 
@@ -655,6 +656,8 @@ begin
     SelectBox.Items.EndUpdate;
     fCompleteSelectList.EndUpdate;
   end;
+  if Assigned(fOnExpressionChanged) then
+    OnExpressionChanged(self);
 
 {  if Ocl = '' then
   begin
@@ -834,7 +837,7 @@ begin
   if (FilterCombo.ItemIndex = -1) and (FilterCombo.Text = '') then
   begin
     FilterCombo.ItemIndex := 0;
-    EditMemoChange(Sender);    
+    EditMemoChange(Sender);
   end;
 end;
 
@@ -859,7 +862,7 @@ end;
 procedure TBoldOclPropEditForm.OKClick(Sender: TObject);
 begin
   Modalresult := mrOK;
-  AddExpressionToMRUList;  
+  AddExpressionToMRUList;
 end;
 
 procedure TBoldOclPropEditForm.CancelClick(Sender: TObject);
@@ -1044,14 +1047,8 @@ procedure TBoldOclPropEditForm.InfoBrowserClick(Sender: TObject);
 var
   URL: String;
 begin
-  if (GetBoldBasePath <> '') and fileexists(GetBoldBasePath+'\'+OCLInfoLocal) then
-    URL := GetBoldBasePath+'\'+OCLInfoLocal
-  else
-    URL := OCLInfoURL;
-
+  URL := OCLInfoURL;
   ShellExecute(0, 'open', PChar(URL), '', '', SW_SHOWMAXIMIZED);
 end;
-
-initialization
 
 end.
