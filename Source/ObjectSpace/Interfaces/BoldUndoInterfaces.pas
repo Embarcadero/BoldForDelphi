@@ -8,22 +8,33 @@ interface
 uses
   BoldValueSpaceInterfaces;
 
+const
+// from BoldSubscription
+  beUndoBlock = 60;
+  beRedoBlock = 61;
+  beUndoSetCheckpoint = 62;
+  beUndoChanged = 63;
+
 type
   { forward declarations }
   IBoldUndoBlock = interface;
   IBoldUndoList = interface;
   IBoldUndoHandler = interface;
 
-  TBoldUndoState = (busNormal, busUndoing, busRedoing);  
+  TBoldUndoState = (busNormal, busUndoing, busRedoing);
 
   IBoldUndoBlock = interface
   ['{F56612C3-7D33-4D60-9737-71ECE8E54D56}']
     function GetName: string;
     function GetValueSpace: IBoldValueSpace;
     function GetContainsChanges: Boolean;
+    function GetContent: String;
+    function GetCreated: TDateTime;
     property Name: string read GetName;
     property ValueSpace: IBoldValueSpace read GetValueSpace;
     property ContainsChanges: Boolean read GetContainsChanges;
+    property Content: String read GetContent;
+    property Created: TDateTime read GetCreated;
   end;
 
   IBoldUndoList = interface
@@ -63,16 +74,13 @@ type
     procedure SetNamedCheckPoint(const CheckPointName: string);
     procedure SetCheckPoint;
     procedure ClearAllUndoBlocks;
+    function GetCurrentUndoBlockHasChanges: boolean;
     property UndoList: IBoldUndoList read GetUndoList;
     property RedoList: IBoldUndoList read GetRedoList;
     property Enabled: Boolean read GetEnabled write SetEnabled;
+    property CurrentUndoBlockHasChanges: boolean read GetCurrentUndoBlockHasChanges;
   end;
-
 
 implementation
 
-uses
-  BoldRev;
-
-initialization
 end.

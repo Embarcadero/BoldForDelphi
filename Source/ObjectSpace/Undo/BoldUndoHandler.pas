@@ -28,6 +28,7 @@ type
     FName: string;
     FValueSpace: TBoldFreeStandingValueSpace;
     FContainsChanges: Boolean;
+    FCreated: TDateTime;
     procedure GetLinksToObject(const System: TBoldSystem; const ObjectId: TBoldObjectId; const OwnIndexInLinkClass: integer;
       const SingleLinkClassTypeInfo: TBoldClassTypeInfo; SingleLinkIds: TBoldObjectIdList);
     procedure AllIdsInClass(const System: TBoldSystem; const ClassTypeInfo: TBoldClassTypeInfo; IdList: TBoldObjectIdList);
@@ -36,6 +37,8 @@ type
     function GetName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetValueSpace: IBoldValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetContainsChanges: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetContent: String;
+    function GetCreated: TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function HasObjectContentsForAnyObjectInList(const ObjectList: TBoldObjectList): Boolean;
     procedure HandleMember(const ObjectContents: IBoldObjectContents; MemberIndex: integer; const MemberValue: IBoldValue);
@@ -53,6 +56,8 @@ type
     property FSValueSpace: TBoldFreeStandingValueSpace read GetFSValueSpace write setFSVAlueSpace;
     property ValueSpace: IBoldValueSpace read GetValueSpace;
     property ContainsChanges: Boolean read GetContainsChanges;
+    property Created: TDateTime read GetCreated;
+    property Content: String read GetContent;
   end;
 
   TBoldUndoBlockList = class(TBoldNonRefCountedObject, IBoldUndoList)
@@ -76,6 +81,7 @@ type
     function AssertedIndexOf(const BlockName: string): integer;
     procedure InternalRemoveBlock(const BlockName: string); overload;
     procedure InternalRemoveBlock(Block: TBoldUndoBlock); overload;
+    function GetIsEmpty: boolean;
   public
     procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList);
     constructor Create;
@@ -97,6 +103,7 @@ type
     property Count: integer read GetCount;
     property CurrentBlock: TBoldUndoBlock read GetCurrentBlock;
     property ContainsChanges: Boolean read GetContainsChanges;
+    property IsEmpty: boolean read GetIsEmpty;
   end;
 
   TBoldUndoHandler = class(TBoldAbstractUndoHandler, IBoldUndoHandler)
@@ -118,7 +125,10 @@ type
     function CanUndoBlock(const BlockName: string): Boolean;
     function CanRedoBlock(const BlockName: string):Boolean;
     function GetEnabled: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetEnabled(value: Boolean);    
+    procedure SetEnabled(value: Boolean);
+    function GetCurrentUndoBlock: TBoldUndoBlock; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIsEmpty: boolean;
+    function GetCurrentUndoBlockHasChanges: boolean;
   public
     constructor Create(System: TBoldSystem); override;
     destructor Destroy; override;
@@ -138,6 +148,7 @@ type
     property RedoBlocks: TBoldUndoBlockList read fRedoBlocks;
     property UndoState: TBoldUndoState read fUndoState write fUndoState;
     property Enabled: Boolean read GetEnabled write SetEnabled;
+    property CurrentUndoBlock: TBoldUndoBlock read GetCurrentUndoBlock;
   end;
 
 implementation
@@ -149,7 +160,7 @@ uses
   BoldDomainElement;
 
 const
-  cUnNamedBlockName = 'UnNamed';
+  cUnNamedBlockName = 'Undo';
 
 { TBoldUndoBlock }
 
@@ -157,8 +168,9 @@ constructor TBoldUndoBlock.CreateNamedBlock(const BlockName: string; const FSVAl
 begin
   inherited Create;
   FContainsChanges := false;
-  FName := BlockName;
   FValueSpace := FSVAlueSpace;
+  FCreated := now;
+  FName := {FormatDateTime('hh:nn:ss', FCreated) + ' - ' + }BlockName;
 end;
 
 function TBoldUndoBlock.GetFSValueSpace: TBoldFreeStandingValueSpace;
@@ -396,6 +408,29 @@ begin
   result := fContainsChanges;
 end;
 
+function TBoldUndoBlock.GetContent: String;
+var
+  i: integer;
+  List: TBoldObjectList;
+begin
+  result := '';
+  if FContainsChanges then
+  begin
+    List := TBoldObjectList.Create;
+    try
+      AddObjectsToList(TBoldSystem.DefaultSystem, List);
+      result := List.AsDebugCommaText();
+    finally
+      List.free;
+    end;
+  end;
+end;
+
+function TBoldUndoBlock.GetCreated: TDateTime;
+begin
+  result := fCreated;
+end;
+
 procedure TBoldUndoBlock.ApplytranslationList(
   IdTranslationList: TBoldIdTranslationList);
 begin
@@ -425,7 +460,7 @@ begin
   if Enabled and (UndoState = busNormal) then
   begin
     RedoBlocks.Clear;
-    UndoBlocks.CurrentBlock.HandleMember(ObjectContents, MemberIndex, MemberValue);
+    CurrentUndoBlock.HandleMember(ObjectContents, MemberIndex, MemberValue);
   end;
 end;
 
@@ -485,21 +520,8 @@ begin
     else
       inc(i);
   end;
-{$IFDEF MergeEmptyBlocks}
-  UndoBlocks.MergeAll;
-{$ENDIF}
-end;
-
-procedure TBoldUndoHandler.SetNamedCheckPoint(const CheckPointName: string);
-begin
-  if Assigned(UndoBlocks.GetBlockByName(CheckPointName)) or Assigned(RedoBlocks.GetBlockByName(CheckPointName)) then
-    raise EBold.CreateFmt('%s.SetCheckPoint: An Undo/Redo block named %s is already defined', [Classname, CheckPointName])
-{$IFDEF MergeEmptyBlocks}
-  else if not (UndoBlocks.CurrentBlock.ContainsChanges) then
-    UndoBlocks.RenameBlock(UndoBlocks.CurrentBlock.BlockName, CheckPointName)
-{$ENDIF}
-  else
-    UndoBlocks.AddBlock(CheckPointName);
+  UndoBlocks.MergeAll; // this was not original behavior
+  SendExtendedEvent(self, beUndoChanged, []);
 end;
 
 procedure TBoldUndoHandler.UndoBlock(const BlockName: string);
@@ -509,6 +531,7 @@ begin
   UndoState := busUndoing;
   try
     DoUndoInTransaction(BlockName, UndoBlocks, RedoBlocks);
+    SendExtendedEvent(self, beUndoBlock, [BlockName]);
   finally
     UndoState := busNormal;
   end;
@@ -522,6 +545,7 @@ begin
   UndoState := busRedoing;
   try
     DoUndoInTransaction(BlockName, RedoBlocks, UndoBlocks);
+    SendExtendedEvent(self, beRedoBlock, [BlockName]);
   finally
     UndoState := busNormal;
   end;
@@ -536,7 +560,7 @@ end;
 procedure TBoldUndoHandler.UndoLatest;
 begin
   if (UndoBlocks.Count > 0) then
-    UndoBlock(UndoBlocks.CurrentBlock.BlockName);
+    UndoBlock(CurrentUndoBlock.BlockName);
 end;
 
 procedure TBoldUndoHandler.HandleObject(const Obj: IBoldObjectContents; RegardAsExisting: Boolean);
@@ -544,7 +568,7 @@ begin
   if Enabled and (UndoState = busNormal) then
   begin
     RedoBlocks.Clear;
-    UndoBlocks.CurrentBlock.HandleObject(Obj, RegardAsExisting);
+    CurrentUndoBlock.HandleObject(Obj, RegardAsExisting);
   end;
 end;
 procedure TBoldUndoHandler.DoUndo(UnDoValueSpace: TBoldFreeStandingValueSpace;
@@ -853,9 +877,28 @@ begin
   Result := UnDoBlocks.CanMoveToTop(UndoBlocks.AssertedIndexOf(BlockName));
 end;
 
+function TBoldUndoHandler.GetCurrentUndoBlock: TBoldUndoBlock;
+begin
+  if UndoBlocks.IsEmpty then
+    SetCheckPoint;
+  result := UndoBlocks.CurrentBlock;
+end;
+
+function TBoldUndoHandler.GetCurrentUndoBlockHasChanges: boolean;
+begin
+  result := false;
+  if not UndoBlocks.IsEmpty then
+   result := GetCurrentUndoBlock.ContainsChanges;
+end;
+
 function TBoldUndoHandler.GetEnabled: Boolean;
 begin
   result := fEnabled;
+end;
+
+function TBoldUndoHandler.GetIsEmpty: boolean;
+begin
+  result := UndoBlocks.Count = 0;
 end;
 
 function TBoldUndoHandler.GetRedoList: IBoldUndoList;
@@ -881,7 +924,6 @@ begin
    end;
 end;
 
-
 {function TBoldUndoHandler.GetNonUndoableBlock: IBoldUndoBlock;
 begin
   Result := FNonUndoableBlock;
@@ -895,15 +937,28 @@ begin
   RedoBlocks.ApplytranslationList(IdTranslationList);
 end;
 
+procedure TBoldUndoHandler.SetNamedCheckPoint(const CheckPointName: string);
+begin
+  if Assigned(UndoBlocks.GetBlockByName(CheckPointName)) or Assigned(RedoBlocks.GetBlockByName(CheckPointName)) then
+    raise EBold.CreateFmt('%s.SetCheckPoint: An Undo/Redo block named %s is already defined', [Classname, CheckPointName])
+  else if (not UndoBlocks.IsEmpty and not UndoBlocks.CurrentBlock.ContainsChanges) then
+    UndoBlocks.RenameBlock(CurrentUndoBlock.BlockName, CheckPointName) // reuse/rename if current block is empty
+  else
+    UndoBlocks.AddBlock(CheckPointName);
+  SendExtendedEvent(self, beUndoSetCheckpoint, [CheckPointName]);
+end;
+
 procedure TBoldUndoHandler.SetCheckPoint;
 begin
-  SetNamedCheckPoint(GetUniqueBlockName(cUnNamedBlockName));
+  if UndoBlocks.IsEmpty or UndoBlocks.CurrentBlock.ContainsChanges then
+    SetNamedCheckPoint(GetUniqueBlockName(cUnNamedBlockName));
 end;
 
 procedure TBoldUndoHandler.ClearAllUndoBlocks;
 begin
   FUndoBlocks.Clear;
   FRedoBlocks.Clear;
+  SendExtendedEvent(self, beUndoChanged, []);
 end;
 
 procedure TBoldUndoHandler.SetEnabled(value: Boolean);
@@ -911,6 +966,7 @@ begin
   if fEnabled <> value then
   begin
     fEnabled := value;
+    SendExtendedEvent(self, beUndoChanged, [])
   end;
 end;
 
@@ -1021,7 +1077,7 @@ var
   aBlock: TBoldUndoBlock;
 begin
   if Assigned(GetBlockByName(NewName)) then
-    raise EBold.Create('Can''t rename block');
+    raise EBold.CreateFmt('Can''t rename block, %s already exists.', [NewName]);
   aBlock := AssertedBlockByName[OldName];
   FList.Strings[IndexOf(OldName)] := NewName;
   aBlock.FName := NewName;
@@ -1069,10 +1125,11 @@ end;
 function TBoldUndoBlockList.GetCurrentBlock: TBoldUndoBlock;
 begin
   Result := nil;
-  if (Count = 0) then
+{  if (Count = 0) then
     Result := AddBlock(cUnNamedBlockName)
-  else if Count > 0 then
-    Result := FList.Objects[Count - 1] as TBoldUndoBlock;
+  else}
+  if Count > 0 then
+   Result := FList.Objects[Count - 1] as TBoldUndoBlock;
 end;
 
 function TBoldUndoBlockList.GetAssertedBlockByName(
@@ -1099,6 +1156,11 @@ end;
 function TBoldUndoBlockList.GetItemByName(const Name: string): IBoldUndoBlock;
 begin
   result := BlockByName[Name] as IBoldUndoBlock;
+end;
+
+function TBoldUndoBlockList.GetIsEmpty: boolean;
+begin
+  result := Count = 0;
 end;
 
 function TBoldUndoBlockList.GetItem(Index: integer): IBoldUndoBlock;
@@ -1186,8 +1248,6 @@ begin
   if Result then
     InternalRemoveBlock(BlockName);
 end;
-
-initialization
 
 end.
 
