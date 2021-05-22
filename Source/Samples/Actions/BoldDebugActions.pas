@@ -75,9 +75,15 @@ type
     procedure SetLogHandler(Value: TBoldLogHandler); override;
   end;
 
+  { TBoldLogOSSAction }
+  TBoldLogOSSAction = class(TBoldLogAction)
+  protected
+    function GetLogHandler: TBoldLogHandler; override;
+    function GetLogType: string; override;
+    procedure SetLogHandler(Value: TBoldLogHandler); override;
+  end;
+
   { TBoldLogFormAction }
-
-
   TBoldLogFormAction = class(TAction)
   private
     fShowing: boolean;
@@ -91,10 +97,11 @@ implementation
 
 uses
   SysUtils,
+  Menus, // for TextToShortCut
   BoldOCL,
   BoldDBInterfaces,
   BoldPMappers,
-  BoldRev;
+  BoldObjectSpaceExternalEvents;
 
 { TBoldSystemDebuggerAction }
 
@@ -108,6 +115,7 @@ constructor TBoldSystemDebuggerAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := 'System debugger';
+  ShortCut := TextToShortCut('Ctrl+Shift+D');
 end;
 
 procedure TBoldSystemDebuggerAction.ExecuteTarget(Target: TObject);
@@ -239,7 +247,7 @@ end;
 constructor TBoldLogFormAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Toggle log';
+  Caption := 'Log view';
 end;
 
 procedure TBoldLogFormAction.ExecuteTarget(Target: TObject);
@@ -255,6 +263,23 @@ end;
 function TBoldLogFormAction.HandlesTarget(Target: TObject): Boolean;
 begin
   Result := True;
+end;
+
+{ TBoldLogOSSAction }
+
+function TBoldLogOSSAction.GetLogHandler: TBoldLogHandler;
+begin
+  result := BoldOSSLogHandler;
+end;
+
+function TBoldLogOSSAction.GetLogType: string;
+begin
+  Result := 'OSS traffic';
+end;
+
+procedure TBoldLogOSSAction.SetLogHandler(Value: TBoldLogHandler);
+begin
+  BoldOSSLogHandler := Value;
 end;
 
 initialization
