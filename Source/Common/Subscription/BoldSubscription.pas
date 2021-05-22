@@ -91,6 +91,12 @@ const
   boeMemberChanged = 57;
   beOssEvents = [boeClassChanged, boeEmbeddedStateOfObjectChanged, boeObjectCreated, boeObjectDeleted, boeNonEmbeddedStateOfObjectChanged, boeMemberChanged];
 
+  // Undo Events
+  beUndoBlock = 60;
+  beRedoBlock = 61;
+  beUndoSetCheckpoint = 62;
+  beUndoChanged = 63;
+
   bePrepareModify = 38;
   beCompleteModify = 39;
   bePrepareDelete = 41;
@@ -439,6 +445,15 @@ begin
     bePrepareDelete: result := 'bePrepareDelete';
     breReSubscribe: result := 'breReSubscribe';
     beServerSubscriberRemoved: result := 'beServerSubscriberRemoved';
+    // Begin/EndUpdate, not yet in use
+    beBeginUpdate: result := 'beBeginUpdate';
+    beEndUpdate: result := 'beEndUpdate';
+    //DirtyList events
+    beObjectBecomingClean: result := 'beObjectBecomingClean';
+    beObjectBecomingDirty: result := 'beObjectBecomingDirty';
+    beMemberBecomingClean: result := 'beMemberBecomingClean';
+    beMemberBecomingDirty: result := 'beMemberBecomingDirty';
+    //Persistence events
     bpeStartFetch: result := 'bpeStartFetch';
     bpeEndFetch: result := 'bpeEndFetch';
     bpeStartUpdate: result := 'bpeStartUpdate';
@@ -453,6 +468,19 @@ begin
     bpeFetchId: result := 'bpeFetchId';
     bpeProgressStart: result := 'bpeProgressStart';
     bpeProgressEnd: result := 'bpeProgressEnd';
+    // OSS events
+    boeClassChanged: result := 'boeClassChanged';
+    boeEmbeddedStateOfObjectChanged: result := 'boeEmbeddedStateOfObjectChanged';
+    boeObjectCreated: result := 'boeObjectCreated';
+    boeObjectDeleted: result := 'boeObjectDeleted';
+    boeNonEmbeddedStateOfObjectChanged: result := 'boeNonEmbeddedStateOfObjectChanged';
+    boeMemberChanged: result := 'boeMemberChanged';
+    // Undo events
+    beUndoBlock: result := 'beUndoBlock';
+    beRedoBlock: result := 'beRedoBlock';
+    beUndoSetCheckpoint: result := 'beUndoSetCheckpoint';
+    beUndoChanged: result := 'beUndoChanged';
+
  {$IFNDEF BOLD_NO_QUERIES}
     bqMayUpdate: result := 'bqMayUpdate';
     bqMayModify: result := 'bqMayModify';
