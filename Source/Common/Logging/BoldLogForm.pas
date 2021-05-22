@@ -66,11 +66,10 @@ uses
 
 procedure TBoldLogForm.AddLog(const s: string);
 const
-  cMaxLines = 10000;
+  cMaxLines = 20000;
 begin
   while LogLines.Count > cMaxLines do
-    LogLines.Delete(LogLines.Count-1);
-
+    LogLines.Delete(0);
   LogLines.Add(s);
   try
     UpdateView;
@@ -156,7 +155,5 @@ begin
   LogLines.Clear;
   UpdateView;
 end;
-
-initialization
 
 end.
