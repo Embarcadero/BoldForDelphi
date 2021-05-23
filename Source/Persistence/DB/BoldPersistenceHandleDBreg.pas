@@ -43,7 +43,9 @@ procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldPersistenceHandleDB]);
   RegisterActions(BOLDACTIONGROUPNAME,
-                [TBoldGenerateSchemaAction], nil);
+                [TBoldGenerateSchemaAction,
+                TBoldValidateDBStructureAction,
+                TBoldValidateDBDataAction], nil);
   RegisterComponentEditor(TBoldPersistenceHandleDB, TBoldPersistenceHandleDBEditor);
 end;
 
