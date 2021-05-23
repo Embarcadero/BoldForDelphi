@@ -195,6 +195,7 @@ constructor TBoldLogAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := Format('Toggle %s logs', [LogType]);
+  ShortCut := TextToShortCut('Ctrl+L');
 end;
 
 procedure TBoldLogAction.ExecuteTarget(Target: TObject);
@@ -281,7 +282,5 @@ procedure TBoldLogOSSAction.SetLogHandler(Value: TBoldLogHandler);
 begin
   BoldOSSLogHandler := Value;
 end;
-
-initialization
 
 end.

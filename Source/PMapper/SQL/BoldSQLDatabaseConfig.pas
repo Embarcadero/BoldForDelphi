@@ -933,6 +933,8 @@ begin
       fMaxIndexNameLength := 63;
       fMaxDbIdentifierLength := 63;
       fMultiRowInsertLimit := 1000;
+      ffIndexColumnExistsTemplate := 'select indexname from pg_indexes where upper(tablename) = upper(''<TableName>'')';
+      FColumnExistsTemplate := 'SELECT column_name FROM information_schema.columns WHERE upper(table_name)=upper(''<TableName>'') and upper(column_name)=upper(''<ColumnName>'')'; // do not localize
       fDatabaseExistsTemplate := 'select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(''<DatabaseName>''));';
 //      IndexInfoTemplate := 'select indexname from pg_indexes where tablename = ''<TableName>'''; // this is not complete IndexName, IsPrimary, IsUnique, ColumnName
       fReservedWords.Text := 'ALL, ANALYSE, AND, ANY, ARRAY, AS, ASC, ASYMMETRIC, AUTHORIZATION,'#10 + // do not localize
