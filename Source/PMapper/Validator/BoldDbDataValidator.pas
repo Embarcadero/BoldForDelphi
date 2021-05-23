@@ -152,7 +152,7 @@ end;
 
 procedure TBoldDbDataValidator.OpenQuery;
 begin
-  Sleep(1000*PauseBetweenQueries);
+  Sleep(PauseBetweenQueries);
   Query.Open;
 end;
 
