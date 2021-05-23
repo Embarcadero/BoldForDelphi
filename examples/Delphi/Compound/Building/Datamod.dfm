@@ -413,11 +413,11 @@ object DataModule1: TDataModule1
     SQLDatabaseConfig.ColumnTypeForSmallInt = 'SMALLINT'
     SQLDatabaseConfig.ColumnTypeForInt64 = 'BIGINT'
     SQLDatabaseConfig.ColumnTypeForGUID = 'UUID'
-    SQLDatabaseConfig.CreateDatabaseTemplate = 'CREATE DATABASE %s'
-    SQLDatabaseConfig.DropDatabaseTemplate = 'DROP DATABASE %s'
+    SQLDatabaseConfig.CreateDatabaseTemplate = 'CREATE DATABASE <DatabaseName>'
+    SQLDatabaseConfig.DropDatabaseTemplate = 'DROP DATABASE <DatabaseName>'
     SQLDatabaseConfig.DatabaseExistsTemplate = 
       'select exists(SELECT datname FROM pg_catalog.pg_database WHERE l' +
-      'ower(datname) = lower('#39'%s'#39'));'
+      'ower(datname) = lower('#39'<DatabaseName>'#39'));'
     SQLDatabaseConfig.DropColumnTemplate = 'ALTER TABLE <TableName> DROP <ColumnName>'
     SQLDatabaseConfig.DropTableTemplate = 'DROP TABLE <TableName>'
     SQLDatabaseConfig.IndexInfoTemplate = 
@@ -580,11 +580,11 @@ object DataModule1: TDataModule1
     SQLDatabaseConfig.ColumnTypeForSmallInt = 'SMALLINT'
     SQLDatabaseConfig.ColumnTypeForInt64 = 'BIGINT'
     SQLDatabaseConfig.ColumnTypeForGUID = 'UNIQUEIDENTIFIER'
-    SQLDatabaseConfig.CreateDatabaseTemplate = 'CREATE DATABASE %s'
-    SQLDatabaseConfig.DropDatabaseTemplate = 'DROP DATABASE %s'
+    SQLDatabaseConfig.CreateDatabaseTemplate = 'USE MASTER;GO;CREATE DATABASE <DatabaseName>'
+    SQLDatabaseConfig.DropDatabaseTemplate = 'DROP DATABASE <DatabaseName>'
     SQLDatabaseConfig.DatabaseExistsTemplate = 
       'IF EXISTS (SELECT name FROM master.sys.databases WHERE name = N'#39 +
-      '%s'#39')'
+      '<DatabaseName>'#39')'
     SQLDatabaseConfig.DropColumnTemplate = 
       'DECLARE @CONSTRAINTNAME NVARCHAR(200) SELECT @CONSTRAINTNAME=OD.' +
       'NAME   FROM   SYSOBJECTS OT, SYSCOLUMNS C, SYSOBJECTS OD   WHERE' +

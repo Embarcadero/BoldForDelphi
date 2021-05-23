@@ -905,6 +905,7 @@ object allform: Tallform
   end
   object BoldPersistenceProgressNotifier1: TBoldPersistenceProgressNotifier
     WinControl = StatusBar1
+    ProgressBar = pbdbNotification
     AnimationInterval = 100
     PersistenceHandle = DataModule1.BoldPersistenceHandleDB1
     MsgFetchObjects = 'Fetching objects'

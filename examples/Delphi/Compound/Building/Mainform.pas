@@ -47,7 +47,8 @@ uses
   BoldDebugActions,
   BoldUndoActions,
   BoldCaptionController,
-  BoldAction, BoldFormSaverActions;
+  BoldAction,
+  BoldFormSaverActions;
 
 type
   Tallform = class(TForm)

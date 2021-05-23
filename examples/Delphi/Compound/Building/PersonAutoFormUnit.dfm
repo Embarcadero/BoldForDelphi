@@ -270,6 +270,7 @@ object PersonAutoForm: TPersonAutoForm
     Width = 75
     Height = 25
     Action = BoldFormSaverOkAction1
+    Default = True
     TabOrder = 8
   end
   object Button3: TButton
@@ -278,9 +279,11 @@ object PersonAutoForm: TPersonAutoForm
     Width = 75
     Height = 25
     Action = BoldFormSaverCancelAction1
+    Cancel = True
     TabOrder = 9
   end
   object brhPerson: TBoldReferenceHandle
+    StaticSystemHandle = DataModule1.BoldSystemHandle1
     StaticValueTypeName = 'Person'
     OnObjectDeleted = brhPersonObjectDeleted
     OnValueDestroyed = brhPersonObjectDeleted
