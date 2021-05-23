@@ -28,7 +28,7 @@ package dclBoldUniDAC;
 {$DESCRIPTION 'Bold for Delphi (UniDAC Support)'}
 {$LIBVERSION '27'}
 {$DESIGNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   rtl,

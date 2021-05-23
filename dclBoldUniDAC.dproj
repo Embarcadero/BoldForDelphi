@@ -62,6 +62,7 @@
         <DCC_UnitSearchPath>$(BoldDelphi)\Source\Common\Include;C:\Attracs\Attracs-Common\components\UniDAC\Source;C:\Attracs\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;C:\Attracs\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>2077</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
@@ -131,8 +132,6 @@
                     <Source Name="MainSource">dclBoldUniDAC.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\BoldCore.27.bpl">Bold For Delphi - Core</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Attracs\Bin\BPL\AttracsComponentsXE10Sydney.bpl">Attracs Components for Delphi 10.4 Sydney</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>

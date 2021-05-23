@@ -29,7 +29,7 @@ package dclBoldDevEx;
 {$DESCRIPTION 'Bold For Delphi (DevEx controls)'}
 {$LIBVERSION '27'}
 {$DESIGNONLY}
-{$IMPLICITBUILD ON}
+{$IMPLICITBUILD OFF}
 
 requires
   rtl,
