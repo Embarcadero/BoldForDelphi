@@ -1975,7 +1975,7 @@ end;
 
 function TBoldCustomGrid.GetRowFollower(DataRow: Integer): TBoldFollower;
 begin
-  if datarow < Follower.SubFollowerCount then
+  if (DataRow >= 0) and (datarow < Follower.SubFollowerCount) then
   begin
     Result := Follower.SubFollowers[DataRow];
   end
