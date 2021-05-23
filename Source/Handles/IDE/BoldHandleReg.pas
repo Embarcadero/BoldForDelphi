@@ -41,7 +41,7 @@ uses
   BoldFilteredHandle,
   BoldSortedHandle,
   BoldReferenceHandle,
-  BoldVariableDefinition,
+//  BoldVariableDefinition,
   BoldOclRepository,
   BoldTypeNameSelector,
   BoldModelAwareComponentEditor,
@@ -101,7 +101,7 @@ begin
 
   RegisterComponents(BOLDPAGENAME_DEPRECATED,
     [
-      TBoldVariableDefinition
+//      TBoldVariableDefinition
     ]);
 
 end;
