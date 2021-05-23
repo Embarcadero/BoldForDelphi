@@ -764,7 +764,7 @@ uses
   //BoldSystemDebuggerForm,
   BoldPMapperLists,
   BoldDefs,
-  BoldDefsDT,
+//  BoldDefsDT,
   BoldGUI,
   BoldQueue,
   BoldUMLUsesEditorForm,
@@ -1331,7 +1331,7 @@ begin
   SetCheckBoxHints;
   popTree.AutoHotkeys := maManual;
 
-  HelpFile := MODELEDITORHELPFILE;
+//  HelpFile := MODELEDITORHELPFILE;
 
   CutOrCopy := cckNone;
 
@@ -2852,7 +2852,5 @@ begin
     if Components[i] is TBoldCheckBox then
       TBoldCheckBox(Components[i]).Hint := StripHotkey(TBoldCheckBox(Components[i]).Caption);
 end;
-
-initialization
 
 end.

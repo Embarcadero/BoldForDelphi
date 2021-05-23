@@ -45,7 +45,6 @@ implementation
 
 uses
   SysUtils,
-  BoldIDEConsts,
   BoldOclPropEditor,
   BoldDefs;
 
