@@ -195,7 +195,6 @@ constructor TBoldLogAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := Format('Toggle %s logs', [LogType]);
-  ShortCut := TextToShortCut('Ctrl+L');
 end;
 
 procedure TBoldLogAction.ExecuteTarget(Target: TObject);
@@ -249,6 +248,7 @@ constructor TBoldLogFormAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := 'Log view';
+  ShortCut := TextToShortCut('Ctrl+L');
 end;
 
 procedure TBoldLogFormAction.ExecuteTarget(Target: TObject);
