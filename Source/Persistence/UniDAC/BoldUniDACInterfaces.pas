@@ -232,7 +232,7 @@ type
   public
     constructor Create(aUniConnection: TUniConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
     destructor Destroy; override;
-    procedure CreateDatabase; override;
+    procedure CreateDatabase(DropExisting: boolean = true); override;
     procedure DropDatabase; override;
     function DatabaseExists: boolean; override;
     function GetDatabaseError(const E: Exception; const sSQL: string = ''):
@@ -959,12 +959,14 @@ begin
   UniConnection.Close;
 end;
 
-procedure TBoldUniDACConnection.CreateDatabase;
+procedure TBoldUniDACConnection.CreateDatabase(DropExisting: boolean);
 var
   vDatabaseName: string;
   vUniScript: TUniScript;
 begin
   vDatabaseName := LowerCase(UniConnection.Database);
+  if DropExisting and DatabaseExists then
+    DropDatabase;
 //  UniConnection.Database := ''; // need to clear this to connect succesfully
   vUniScript := TUniScript.Create(nil);
   try

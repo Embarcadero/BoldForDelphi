@@ -26,7 +26,7 @@ type
     function GetDataBaseInterface: IBoldDatabase; override;
   public
     destructor Destroy; override;
-    procedure CreateDatabase; override;
+    procedure CreateDatabase(DropExisting: boolean = true); override;
     procedure DropDatabase; override;
   published
     property Connection: TUniConnection read GetConnection write SetConnection;
@@ -58,9 +58,9 @@ begin
   DatabaseInterface.DropDatabase;
 end;
 
-procedure TBoldDatabaseAdapterUniDAC.CreateDatabase;
+procedure TBoldDatabaseAdapterUniDAC.CreateDatabase(DropExisting: boolean);
 begin
-  DatabaseInterface.CreateDatabase;
+  DatabaseInterface.CreateDatabase(DropExisting);
 end;
 
 function TBoldDatabaseAdapterUniDAC.GetConnection: TUniConnection;
