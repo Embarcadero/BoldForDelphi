@@ -1,12 +1,4 @@
 
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 1996-2002 Boldsoft AB              //
-//              (c) 2002-2005 Borland Software Corp    //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldFireDACInterfaces;
