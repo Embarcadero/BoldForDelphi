@@ -95,6 +95,7 @@ type
   private
     fOnSchemaGenerated: TNotifyEvent;
     fIgnoreUnknownTables: boolean;
+    fDropExisting: boolean;
     procedure SchemaGenerated;
   protected
     procedure GenerateSchema;
@@ -104,7 +105,8 @@ type
     procedure ExecuteTarget(Target: TObject); override;
   published
     property OnSchemaGenerated: TNotifyEvent read fOnSchemaGenerated write fOnSchemaGenerated;
-    property IgnoreUnknownTables: boolean read fIgnoreUnknownTables write fIgnoreUnknownTables;
+    property IgnoreUnknownTables: boolean read fIgnoreUnknownTables write fIgnoreUnknownTables default false;
+    property DropExisting: boolean read fDropExisting write fDropExisting default false;
   end;
 
 implementation
@@ -333,7 +335,7 @@ begin
   begin
     Screen.Cursor := crHourGlass;
     try
-      BoldSystemHandle.PersistenceHandleDB.CreateDataBase;
+      BoldSystemHandle.PersistenceHandleDB.CreateDataBase(DropExisting);
       BoldSystemHandle.PersistenceHandleDB.CreateDataBaseSchema(IgnoreUnknownTables);
     finally
       Screen.Cursor := crDefault;
