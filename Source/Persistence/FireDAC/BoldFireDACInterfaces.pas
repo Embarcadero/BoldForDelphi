@@ -913,7 +913,7 @@ begin
   FDConnection.Params.Database := ''; // need to clear this to connect succesfully
   vQuery := GetQuery;
   try
-    vQuery.SQLText := Format(SQLDataBaseConfig.DatabaseExistsTemplate , [vDatabaseName]);
+    vQuery.SQLText := SQLDataBaseConfig.GetDatabaseExistsQuery(vDatabaseName);
     vQuery.Open;
     result := vQuery.Fields[0].AsBoolean;
   finally
@@ -939,7 +939,7 @@ begin
   vScript := TFDScript.Create(nil);
   sl := TStringList.Create;
   try
-    sl.Text := Format(SQLDataBaseConfig.DropDatabaseTemplate , [vDatabaseName]);
+    sl.Text := SQLDataBaseConfig.GetDropDatabaseQuery(vDatabaseName);
     vScript.Connection := FDConnection;
     vScript.ExecuteScript(sl);
     FDConnection.Close;
@@ -984,7 +984,7 @@ begin
   vScript := TFDScript.Create(nil);
   sl := TStringList.Create;
   try
-    sl.Text := Format(SQLDataBaseConfig.CreateDatabaseTemplate , [vDatabaseName]);
+    sl.Text := SQLDataBaseConfig.GetCreateDatabaseQuery(vDatabaseName);
     vScript.Connection := FDConnection;
     vScript.ExecuteScript(sl);
     FDConnection.Close;
