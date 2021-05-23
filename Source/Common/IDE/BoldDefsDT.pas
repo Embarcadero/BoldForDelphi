@@ -18,9 +18,8 @@ const
   ATTRIBUTEWIZARDHELPFILE = 'boldattributewizard.hlp';
   MODELEDITORHELPFILE = 'boldmodeleditor.hlp';
 
-  URLBoldSoft = 'http://www.boldsoft.com';
-  URLBoldForDelphi = 'http://www.boldsoft.com';
-  URLSupport = 'http://www.boldsoft.com';
+  URLBoldForDelphi = 'http://www.boldfordelphi.com';
+  URLSupport = 'http://www.forum.boldfordelphi.com';
 
   GETTINGSTARTEDPATH = '\doc\frames\';
   GETTINGSTARTEDDOCNAME = 'getting_started_f.html';

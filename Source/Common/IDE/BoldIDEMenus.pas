@@ -30,7 +30,6 @@ type
     {Menu Actions}
     procedure ActionAbout(Sender: TObject);
     procedure ActionHelp(Sender: TObject);
-    procedure ActionURLHome(Sender: TObject);
     procedure ActionURLBfD(Sender: TObject);
     {Properties}
     property BoldMenu: TMenuItem read fBoldMenu;
@@ -88,11 +87,6 @@ begin
   ShellExecute(0, 'open', URLBoldForDelphi, '', '', SW_SHOWMAXIMIZED);
 end;
 
-procedure TBoldMenuExpert.ActionURLHome(Sender: TObject);
-begin
-  ShellExecute(0, 'open', URLBoldSoft, '', '', SW_SHOWMAXIMIZED);
-end;
-
 function TBoldMenuExpert.AddMenuItem(aName, aCaption: string; aClickEvent: TNotifyEvent; first: Boolean = false): TMenuItem;
 begin
   if not IsInIDE then
@@ -133,12 +127,11 @@ begin
     Inc(I);
 
   AddMenuItem('BoldURLDelimiterMenu', '-', nil);
-  AddMenuItem('BoldHomePageMenu', '&BoldSoft Home Page', ActionURLHome);
   AddMenuItem('BoldBfDHomePageMenu', 'Bold for &Delphi Home Page', ActionURLBfD);
   AddMenuItem('BoldHelpDelimiterMenu', '-', nil);
   AddMenuItem('BoldHelpMenu', '&Help', ActionHelp);
   AddMenuItem('BoldAboutDelimiterMenu', '-', nil);
-  AddMenuItem('BoldAboutMenu', '&About', ActionAbout);
+//  AddMenuItem('BoldAboutMenu', '&About', ActionAbout);
   MainMenu.Items.Insert(I, fBoldMenu);
 end;
 
