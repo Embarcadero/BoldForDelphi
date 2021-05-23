@@ -268,7 +268,6 @@ contains
   BoldDBActions in 'Source\Persistence\DB\BoldDBActions.pas',
   BoldDBInterfaces in 'Source\Persistence\DB\BoldDBInterfaces.pas',
   BoldPersistenceControllerDefault in 'Source\Persistence\DB\BoldPersistenceControllerDefault.pas',
-  BoldPersistenceHandleDB_deprecated in 'Source\Persistence\DB\BoldPersistenceHandleDB_deprecated.pas',
   BoldPersistenceHandleDB in 'Source\Persistence\DB\BoldPersistenceHandleDB.pas',
   BoldPersistenceHandleDBreg in 'Source\Persistence\DB\BoldPersistenceHandleDBreg.pas',
   BoldPersistenceHandleFile in 'Source\Persistence\File\BoldPersistenceHandleFile.pas',

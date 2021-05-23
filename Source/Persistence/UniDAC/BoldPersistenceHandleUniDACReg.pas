@@ -14,14 +14,10 @@ uses
   SysUtils,
   Classes,
   BoldDatabaseAdapterUniDAC,
-//  BoldPersistenceHandleUniDAC,
   BoldIDEConsts;
 
 procedure Register;
 begin
-	{$WARNINGS OFF}
-//  RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleUniDAC]);
-  {$WARNINGS ON}
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterUniDAC]);
 end;
 
