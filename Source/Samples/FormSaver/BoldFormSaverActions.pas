@@ -91,13 +91,7 @@ end;
 procedure TBoldFormSaverApplyAction.CheckAllowEnable(var EnableAction: boolean);
 begin
   inherited;
-  if EnableAction then
-  begin
-    if BoldFormSaver.DirtyObjects.Empty then
-      Caption := '&Close'
-    else
-      Caption := '&Apply'
-  end;
+  EnableAction := EnableAction and not BoldFormSaver.DirtyObjects.Empty;
 end;
 
 constructor TBoldFormSaverApplyAction.Create(AOwner: TComponent);
@@ -145,13 +139,7 @@ end;
 procedure TBoldFormSaverOkAction.CheckAllowEnable(var EnableAction: boolean);
 begin
   inherited;
-  if EnableAction then
-  begin
-    if BoldFormSaver.DirtyObjects.Empty then
-      Caption := '&Close'
-    else
-      Caption := '&OK'
-  end;
+  EnableAction := EnableAction and not BoldFormSaver.DirtyObjects.Empty;
 end;
 
 constructor TBoldFormSaverOkAction.Create(AOwner: TComponent);
