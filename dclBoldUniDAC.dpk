@@ -1,4 +1,4 @@
-package BoldFireDAC;
+package dclBoldUniDAC;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,22 +25,22 @@ package BoldFireDAC;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Bold 4.0 for Delphi (FireDAC Support)'}
+{$DESCRIPTION 'Bold for Delphi (UniDAC Support)'}
+{$LIBVERSION '27'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
   vcldb,
-  FireDAC,
+  ibxpress,
   DesignIDE,
-  Bold;
+  dclBold;
 
 contains
-  BoldPersistenceHandleFireDAC in 'Source\Persistence\FireDAC\BoldPersistenceHandleFireDAC.pas',
-  BoldPersistenceHandleFireDACReg in 'Source\Persistence\FireDAC\BoldPersistenceHandleFireDACReg.pas',
-  BoldDatabaseAdapterFireDAC in 'Source\Persistence\FireDAC\BoldDatabaseAdapterFireDAC.pas',
-  BoldFireDACInterfaces in 'Source\Persistence\FireDAC\BoldFireDACInterfaces.pas',
-  BoldFireDACConsts in 'Source\Persistence\FireDAC\BoldFireDACConsts.pas';
+  BoldPersistenceHandleUniDACReg in 'Source\Persistence\UniDAC\BoldPersistenceHandleUniDACReg.pas',
+  BoldUniDACInterfaces in 'Source\Persistence\UniDAC\BoldUniDACInterfaces.pas',
+  UniDACConsts in 'Source\Persistence\UniDAC\UniDACConsts.pas',
+  BoldDatabaseAdapterUniDAC in 'Source\Persistence\UniDAC\BoldDatabaseAdapterUniDAC.pas';
 
 end.

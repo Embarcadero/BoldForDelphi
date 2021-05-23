@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{34E63FCA-EC80-4315-BAF9-24523C7226CD}</ProjectGuid>
-        <MainSource>BoldFireDAC.dpk</MainSource>
+        <ProjectGuid>{58D5CA38-AC66-4CE0-9BB3-80CAB1DE12EE}</ProjectGuid>
+        <MainSource>dclBoldDevEx.dpk</MainSource>
         <ProjectVersion>19.2</ProjectVersion>
-        <FrameworkType>None</FrameworkType>
+        <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -39,6 +39,12 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
@@ -49,25 +55,23 @@
         <DCC_K>false</DCC_K>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
-        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>BoldFireDAC</SanitizedProjectName>
-        <DCC_UnitSearchPath>$(BoldDelphi)\Source\Common\Include;$(BDS)\Source\data\firedac;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <SanitizedProjectName>dclBoldDevEx</SanitizedProjectName>
+        <DCC_UnitSearchPath>Source\Common\Include\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Locale>2077</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_Description>Bold 4.0 for Delphi (FireDAC Support)</DCC_Description>
+        <DCC_Description>Bold DevEx Controls</DCC_Description>
         <DesignOnlyPackage>true</DesignOnlyPackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>rtl;vcldb;FireDAC;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;dxBarRS27;BoldRuntimePackage;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_UsePackage>rtl;vcldb;FireDAC;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;dxBarRS27;BoldRuntimePackage;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -81,6 +85,8 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Description>Bold For Delphi (DevEx controls)</DCC_Description>
+        <DllVersion>27</DllVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -88,20 +94,35 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldRegUnit.dcr"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcldb.dcp"/>
-        <DCCReference Include="FireDAC.dcp"/>
-        <DCCReference Include="DesignIDE.dcp"/>
-        <DCCReference Include="Bold.dcp"/>
-        <DCCReference Include="Source\Persistence\FireDAC\BoldPersistenceHandleFireDAC.pas"/>
-        <DCCReference Include="Source\Persistence\FireDAC\BoldPersistenceHandleFireDACReg.pas"/>
-        <DCCReference Include="Source\Persistence\FireDAC\BoldDatabaseAdapterFireDAC.pas"/>
-        <DCCReference Include="Source\Persistence\FireDAC\BoldFireDACInterfaces.pas"/>
-        <DCCReference Include="Source\Persistence\FireDAC\BoldFireDACConsts.pas"/>
+        <DCCReference Include="dclBold.dcp"/>
+        <DCCReference Include="dclcxGridRS27.dcp"/>
+        <DCCReference Include="dxBarRS27.dcp"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\BoldAFPCxGridProviderUnit.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\BoldToCxConverterForm.pas">
+            <Form>frmBoldToCxConverter</Form>
+        </DCCReference>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\BoldToCxConverterUnit.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\BoldToCxGridConverterUnit.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldEditConsts.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldEditors.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldEditRepositoryItems.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldExtLookupComboBox.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldLookupComboBox.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldLookupEdit.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldRegUnit.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxGridBoldSupportUnit.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxLookupBoldGrid.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldDevex\dxBarBoldNav.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -120,9 +141,10 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">BoldFireDAC.dpk</Source>
+                    <Source Name="MainSource">dclBoldDevEx.dpk</Source>
                 </Source>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\BoldCore.27.bpl">Bold For Delphi - Core</Excluded_Packages>
                     <Excluded_Packages Name="C:\Attracs\Bin\BPL\AttracsComponentsXE10Sydney.bpl">Attracs Components for Delphi 10.4 Sydney</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
@@ -144,9 +166,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\BoldFireDAC.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\dclBoldDevEx.27.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>BoldFireDAC.bpl</RemoteName>
+                        <RemoteName>dclBoldDevEx.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

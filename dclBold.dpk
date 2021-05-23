@@ -1,0 +1,149 @@
+package dclBold;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Bold for Delphi'}
+{$LIBVERSION '27'}
+{$DESIGNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  vcldb,
+  DesignIDE,
+  BoldCore,
+  BoldAdditional,
+  FireDac,
+  FireDACCommonDriver,
+  FireDACCommon,
+  FireDACPgDriver,
+  IndySystem,
+  IndyCore;
+
+contains
+  BoldAbstractPropertyEditors in 'Source\Common\IDE\BoldAbstractPropertyEditors.pas',
+  BoldAFPPluggableReg in 'Source\BoldAwareGUI\FormGen\BoldAFPPluggableReg.pas',
+  BoldAttributeWizard in 'Source\ObjectSpace\IDE\AttributeWizard\BoldAttributeWizard.pas',
+  BoldAwareGuiReg in 'Source\BoldAwareGUI\IDE\BoldAwareGuiReg.pas',
+  BoldCheckListBoxReg in 'Source\Samples\BoldCheckListBox\BoldCheckListBoxReg.pas',
+  BoldCodePlugins in 'Source\UMLModel\Plugins\BoldCodePlugins.pas',
+  BoldComboBoxPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldComboBoxPropertyEditors.pas',
+  BoldComEditors in 'Source\Common\IDECOM\BoldComEditors.pas',
+  BoldComElementHandleReg in 'Source\Handles\IDECOM\BoldComElementHandleReg.pas',
+  BoldComPersistenceHandleReg in 'Source\Persistence\IDECOM\BoldComPersistenceHandleReg.pas',
+  BoldComponentValidatorIDE in 'Source\ObjectSpace\IDE\BoldComponentValidatorIDE.pas',
+  BoldComReg in 'Source\Common\IDECOM\BoldComReg.pas',
+  BoldConcurrencyControlReg in 'Source\ConcurrencyControl\IDECOM\BoldConcurrencyControlReg.pas',
+  BoldConstraintValidatorReg in 'Source\Samples\ConstraintValidator\BoldConstraintValidatorReg.pas',
+  BoldControlPackPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldControlPackPropertyEditors.pas',
+  BoldDefsDT in 'Source\Common\IDE\BoldDefsDT.pas',
+  BoldEditOCLActionPropEditor in 'Source\Samples\IDE\BoldEditOCLActionPropEditor.pas',
+  BoldExpert in 'Source\Common\IDE\BoldExpert.pas',
+  BoldExpertMenus in 'Source\Common\IDE\BoldExpertMenus.pas',
+  BoldExternalObjectSpaceEventHandlerReg in 'Source\ObjectSpace\IDE\BoldExternalObjectSpaceEventHandlerReg.pas',
+  BoldGridPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldGridPropertyEditors.pas',
+  BoldHandlePropEditor in 'Source\Handles\IDE\BoldHandlePropEditor.pas',
+  BoldHandleReg in 'Source\Handles\IDE\BoldHandleReg.pas',
+  BoldHandlesPropagationReg in 'Source\Persistence\IDE\BoldHandlesPropagationReg.pas',
+  BoldHTTPClientPersistenceHandleReg in 'Source\Persistence\IDECOM\BoldHTTPClientPersistenceHandleReg.pas',
+  BoldHTTPServerPersistenceHandlePassthroughReg in 'Source\Persistence\IDECOM\BoldHTTPServerPersistenceHandlePassthroughReg.pas',
+  BoldIDEConsts in 'Source\Common\IDE\BoldIDEConsts.pas',
+  BoldIDEMenus in 'Source\Common\IDE\BoldIDEMenus.pas',
+  BoldIDESupport in 'Source\Common\IDE\BoldIDESupport.pas',
+  BoldLockingReg in 'Source\Handles\IDE\BoldLockingReg.pas',
+  BoldManipulatorReg in 'Source\Handles\IDE\BoldManipulatorReg.pas',
+  BoldModelAwareComponentEditor in 'Source\Common\IDE\BoldModelAwareComponentEditor.pas',
+  BoldModelReg in 'Source\MoldModel\IDE\BoldModelReg.pas',
+  BoldNodeDescriptionEditor in 'Source\BoldAwareGUI\IDE\BoldNodeDescriptionEditor.pas',
+  BoldObjectNamePropertyEditor in 'Source\Common\IDECOM\BoldObjectNamePropertyEditor.pas',
+  BoldObjectUpgraderHandleReg in 'Source\Persistence\IDE\BoldObjectUpgraderHandleReg.pas',
+  BoldOTACodeGen in 'Source\ObjectSpace\IDE\AttributeWizard\BoldOTACodeGen.pas',
+  BoldOTAFileHandler in 'Source\Common\IDE\BoldOTAFileHandler.pas',
+  BoldOTASupport in 'Source\Common\IDE\BoldOTASupport.pas',
+  BoldPersistenceHandleDBreg in 'Source\Persistence\DB\BoldPersistenceHandleDBreg.pas',
+  BoldPersistenceHandleFileReg in 'Source\Persistence\IDE\BoldPersistenceHandleFileReg.pas',
+  BoldPersistenceHandleFireDACReg in 'Source\Persistence\FireDAC\BoldPersistenceHandleFireDACReg.pas',
+  BoldPersistenceHandleReg in 'Source\Persistence\IDE\BoldPersistenceHandleReg.pas',
+  BoldPersistenceHandleSystemReg in 'Source\Persistence\IDE\BoldPersistenceHandleSystemReg.pas',
+  BoldPersistenceNotifierReg in 'Source\Persistence\IDE\BoldPersistenceNotifierReg.pas',
+  BoldPropagatorHandleCOMReg in 'Source\Propagator\IDECOM\BoldPropagatorHandleCOMReg.pas',
+  BoldPropertiesControllerPropertyEditors in 'Source\BoldAwareGUI\IDE\BoldPropertiesControllerPropertyEditors.pas',
+  BoldPropertyEditors in 'Source\Common\IDE\BoldPropertyEditors.pas',
+  BoldReg in 'Source\Common\IDE\BoldReg.pas',
+  BoldSamplesReg in 'Source\Samples\IDE\BoldSamplesReg.pas',
+  BoldSelectionListBoxReg in 'Source\Samples\BoldCheckListBox\BoldSelectionListBoxReg.pas',
+  BoldTextStream in 'Source\Common\IDE\BoldTextStream.pas',
+  BoldTypeNameHandleReg in 'Source\MoldModel\IDE\BoldTypeNameHandleReg.pas',
+  BoldUMLModelEditReg in 'Source\UMLModel\Ide\BoldUMLModelEditReg.pas',
+  BoldUMLModelHandleReg in 'Source\UMLModel\Ide\BoldUMLModelHandleReg.pas',
+  BoldUMLRose98Linkreg in 'Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Linkreg.pas',
+  BoldVclUtils in 'Source\ObjectSpace\IDE\AttributeWizard\BoldVclUtils.pas',
+  BoldWAClassInfo in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAClassInfo.pas',
+  BoldWACustomAttr in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWACustomAttr.pas',
+  BoldWACustomAttrForm1 in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWACustomAttrForm1.pas',
+  BoldWAdatamodule in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAdatamodule.pas',
+  BoldWAdmTemplates in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAdmTemplates.pas',
+  BoldWAInputFormUnit in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAInputFormUnit.pas',
+  BoldWAInterfaces in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAInterfaces.pas',
+  BoldWAMainForm in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAMainForm.pas',
+  BoldWAMethodInfo in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAMethodInfo.pas',
+  BoldWAStringGridManager in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAStringGridManager.pas',
+  BoldWASubClassForm1 in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWASubClassForm1.pas',
+  BoldWAValueSetDlg in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAValueSetDlg.pas',
+  BoldWAValueSetForm1 in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWAValueSetForm1.pas',
+  BoldWCodeInformer in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWCodeInformer.pas',
+  BoldWebConnectionReg in 'Source\Common\IDE\BoldWebConnectionReg.pas',
+  BoldWProjectWizard in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWProjectWizard.pas',
+  BoldWScanner in 'Source\ObjectSpace\IDE\AttributeWizard\BoldWScanner.pas',
+  BoldWSimpleMenuWizard in 'Source\ObjectSpace\IDE\BoldWSimpleMenuWizard.pas',
+  BoldXMLDispatcherEditor in 'Source\Common\IDECOM\BoldXMLDispatcherEditor.pas',
+  BoldXMLDispatcherReg in 'Source\Common\IDECOM\BoldXMLDispatcherReg.pas',
+  BoldXMLDispatcherVBReg in 'Source\Common\IDECOM\BoldXMLDispatcherVBReg.pas',
+  BoldXMLReg in 'Source\Handles\IDE\BoldXMLReg.pas',
+  BoldExternalPersistenceHandlesReg in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandlesReg.pas',
+  BoldDTDParser in 'Source\UMLModel\ModelLinks\XMI\BoldDTDParser.pas',
+  BoldMOFInterfaces in 'Source\UMLModel\ModelLinks\XMI\BoldMOFInterfaces.pas',
+  BoldUMLDTDData in 'Source\UMLModel\ModelLinks\XMI\BoldUMLDTDData.pas',
+  BoldUMLModelMOFAdapters in 'Source\UMLModel\ModelLinks\XMI\BoldUMLModelMOFAdapters.pas',
+  BoldUMLXMICommon in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMICommon.pas',
+  BoldUMLXMIImporter in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMIImporter.pas',
+  BoldUMLXMILink in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMILink.pas',
+  BoldUMLXMILinkSupport in 'Source\UMLModel\ModelLinks\XMI\BoldUMLXMILinkSupport.pas',
+  BoldUMXMILinkreg in 'Source\UMLModel\ModelLinks\XMI\BoldUMXMILinkreg.pas',
+  BoldXMI10Exporter in 'Source\UMLModel\ModelLinks\XMI\BoldXMI10Exporter.pas',
+  BoldOLLEController in 'Source\Extensions\OLLE\Core\BoldOLLEController.pas',
+  BoldOLLEDistributableObjectHandlers in 'Source\Extensions\OLLE\Core\BoldOLLEDistributableObjectHandlers.pas',
+  BoldOLLEdmmain in 'Source\Extensions\OLLE\Core\BoldOLLEdmmain.pas',
+  BoldOLLEHandles in 'Source\Extensions\OLLE\Core\BoldOLLEHandles.pas',
+  DistributableInfo in 'Source\Extensions\OLLE\Core\DistributableInfo.pas',
+  OlleConsts in 'Source\Extensions\OLLE\Core\OlleConsts.pas',
+  BoldOLLEHandlesComponentEditor in 'Source\Extensions\OLLE\IDE\BoldOLLEHandlesComponentEditor.pas',
+  BoldOLLEHandlesReg in 'Source\Extensions\OLLE\IDE\BoldOLLEHandlesReg.pas',
+  BoldAbstractModificationPropagator in 'Source\Persistence\UDPPropagator\BoldAbstractModificationPropagator.pas',
+  BoldUDPModificationBroadcaster in 'Source\Persistence\UDPPropagator\BoldUDPModificationBroadcaster.pas',
+  BoldUDPBroadcasterReg in 'Source\Persistence\IDEUDP\BoldUDPBroadcasterReg.pas';
+
+end.
