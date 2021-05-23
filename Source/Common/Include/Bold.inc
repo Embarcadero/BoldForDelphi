@@ -421,10 +421,10 @@ Illegal symbol combination
 {$DEFINE CompareToOldValues}
 
   // Debug addon to count instances per subclass of TBoldMemoryManagedObject
-{.$DEFINE DebugInstanceCounter}
+{$DEFINE DebugInstanceCounter}
 
   // It saves memory to use LightMemberDeriver, but FormSaver is not compatible with LightMemberDeriver
-{.$DEFINE LightMemberDeriver}
+{$DEFINE LightMemberDeriver}
 
   // Define to use string comparison for all attributes. This may be faster, it uses IBoldStringRepresentable
   // but assumes each value has distinct string representation.
