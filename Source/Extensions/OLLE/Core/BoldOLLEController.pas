@@ -26,7 +26,7 @@ type
     function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig; override;
     function GetCustomIndexes: TBoldIndexCollection; override;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
   end;
 
   TBoldOLLEController = class
@@ -94,7 +94,7 @@ end;
 
 { TBoldPHandleMimic }
 
-destructor TBoldPHandleMimic.destroy;
+destructor TBoldPHandleMimic.Destroy;
 begin
   FreeAndNil(fSQLDatabaseConfig);
   FreeAndNil(fCustomIndexes);
