@@ -2,6 +2,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
   Left = 510
   Top = 257
   Caption = 'Db Evolution'
+  ClientHeight = 387
+  ClientWidth = 460
   Color = clBtnFace
   Constraints.MinHeight = 200
   Constraints.MinWidth = 322
@@ -41,15 +43,15 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
-    624
-    445)
+    460
+    387)
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
-    Left = 0
-    Top = 0
-    Width = 632
-    Height = 392
+    Left = 4
+    Top = 4
+    Width = 450
+    Height = 320
     ActivePage = tsActions
     Anchors = [akLeft, akTop, akRight, akBottom]
     Images = ImageList1
@@ -59,8 +61,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
       object mmoActions: TMemo
         Left = 0
         Top = 0
-        Width = 624
-        Height = 363
+        Width = 442
+        Height = 291
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -73,8 +75,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
       object mmoWarnings: TMemo
         Left = 0
         Top = 0
-        Width = 624
-        Height = 363
+        Width = 442
+        Height = 291
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -87,8 +89,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
       object mmoSQLScript: TMemo
         Left = 0
         Top = 0
-        Width = 624
-        Height = 363
+        Width = 442
+        Height = 291
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -101,8 +103,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
       object mmoMappingInfoScript: TMemo
         Left = 0
         Top = 0
-        Width = 624
-        Height = 363
+        Width = 442
+        Height = 291
         Align = alClient
         ReadOnly = True
         ScrollBars = ssBoth
@@ -112,16 +114,16 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
   end
   object ProgressBar1: TProgressBar
     Left = 8
-    Top = 397
-    Width = 617
+    Top = 330
+    Width = 444
     Height = 16
     Anchors = [akLeft, akRight, akBottom]
     Smooth = True
     TabOrder = 1
   end
   object btnCancel: TButton
-    Left = 539
-    Top = 418
+    Left = 371
+    Top = 354
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
@@ -130,8 +132,8 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
     TabOrder = 2
   end
   object btnExecute: TButton
-    Left = 451
-    Top = 418
+    Left = 284
+    Top = 354
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
@@ -141,15 +143,14 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
     TabOrder = 3
   end
   object btnSaveScript: TButton
-    Left = 367
-    Top = 418
+    Left = 523
+    Top = 604
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Save scripts'
     TabOrder = 4
     OnClick = btnSaveScriptClick
-    ExplicitTop = 414
   end
   object ImageList1: TImageList
     Left = 52
