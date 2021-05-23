@@ -184,6 +184,9 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure AssignConfig(Source: TBoldSQLDataBaseConfig);
+    function GetCreateDatabaseQuery(const DatabaseName: String): String;
+    function GetDropDatabaseQuery(const DatabaseName: String): String;
+    function GetDatabaseExistsQuery(const DatabaseName: String): String;
     function GetDropColumnQuery(const TableName, columnName: String): String;
     function GetDropIndexQuery(const TableName, IndexName: String): String;
     function GetDropTableQuery(const TableName: String): String;
@@ -282,6 +285,7 @@ uses
 
 const
   EmptyMarker = '<Empty>';
+  DatabaseNameMarker = '<DatabaseName>';
   TableNameMarker = '<TableName>';
   ColumnNameMarker = '<ColumnName>';
   IndexNameMarker = '<IndexName>';
@@ -627,6 +631,45 @@ begin
     Result := Format(ColumnTypeForUnicodeText, [Size]);
 end;
 
+function TBoldSQLDataBaseConfig.GetCreateDatabaseQuery(
+  const DatabaseName: String): String;
+begin
+  Result := '';
+  if CreateDatabaseTemplate <> '' then begin
+    Result := CreateDatabaseTemplate;
+    Result := StringReplace(result, DatabaseNameMarker, DatabaseName, [rfIgnoreCase, rfReplaceAll]);
+  end else begin
+    raise EBold.Create('Please set the template in the SQLDatabaseConfig ' +
+        'for CreateDatabaseTemplate.');
+  end;
+end;
+
+function TBoldSQLDataBaseConfig.GetDatabaseExistsQuery(
+  const DatabaseName: String): String;
+begin
+  Result := '';
+  if DatabaseExistsTemplate <> '' then begin
+    Result := DatabaseExistsTemplate;
+    Result := StringReplace(result, DatabaseNameMarker, DatabaseName, [rfIgnoreCase, rfReplaceAll]);
+  end else begin
+    raise EBold.Create('Please set the template in the SQLDatabaseConfig ' +
+        'for DatabaseExistsTemplate.');
+  end;
+end;
+
+function TBoldSQLDataBaseConfig.GetDropDatabaseQuery(
+  const DatabaseName: String): String;
+begin
+  Result := '';
+  if DropDatabaseTemplate <> '' then begin
+    Result := DropDatabaseTemplate;
+    Result := StringReplace(result, DatabaseNameMarker, DatabaseName, [rfIgnoreCase, rfReplaceAll]);
+  end else begin
+    raise EBold.Create('Please set the template in the SQLDatabaseConfig ' +
+        'for DropDatabaseTemplate.');
+  end;
+end;
+
 function TBoldSQLDataBaseConfig.GetDropColumnQuery(const TableName: string; const columnName: String): String;
 begin
   Result := '';
@@ -760,8 +803,8 @@ begin
   fIgnoreMissingObjects := false;
   fAllowMetadataChangesInTransaction := true;
   fDBGenerationMode := dbgQuery;
-  fCreateDatabaseTemplate := 'CREATE DATABASE %s';
-  fDropDatabaseTemplate := 'DROP DATABASE %s';
+  fCreateDatabaseTemplate := 'CREATE DATABASE <DatabaseName>';
+  fDropDatabaseTemplate := 'DROP DATABASE <DatabaseName>';
   fDatabaseExistsTemplate := '';
   fDropColumnTemplate := 'ALTER TABLE <TableName> DROP <ColumnName>';
   fDropTableTemplate := 'DROP TABLE <TableName>';
@@ -890,7 +933,7 @@ begin
       fMaxIndexNameLength := 63;
       fMaxDbIdentifierLength := 63;
       fMultiRowInsertLimit := 1000;
-      fDatabaseExistsTemplate := 'select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(''%s''));';
+      fDatabaseExistsTemplate := 'select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(''<DatabaseName>''));';
 //      IndexInfoTemplate := 'select indexname from pg_indexes where tablename = ''<TableName>'''; // this is not complete IndexName, IsPrimary, IsUnique, ColumnName
       fReservedWords.Text := 'ALL, ANALYSE, AND, ANY, ARRAY, AS, ASC, ASYMMETRIC, AUTHORIZATION,'#10 + // do not localize
                              'BETWEEN, BINARY, BOOLEAN, BOTH, CASE, CAST, CHAR, CHARACTER, CHECK,'#10 + // do not localize
@@ -927,7 +970,8 @@ begin
       fColumnTypeForDate := 'DATETIME';  // do not localize
       fColumnTypeForTime := 'DATETIME';  // do not localize
       fColumnTypeForDateTime := 'DATETIME';  // do not localize
-      fDatabaseExistsTemplate := 'IF EXISTS (SELECT name FROM master.sys.databases WHERE name = N''%s'')';
+      fCreateDatabaseTemplate := 'USE MASTER;GO;CREATE DATABASE <DatabaseName>';
+      fDatabaseExistsTemplate := 'IF EXISTS (SELECT name FROM master.sys.databases WHERE name = N''<DatabaseName>'')';
       fColumnTypeForFloat := 'DECIMAL (28,10)';  // do not localize
       fColumnTypeForCurrency := 'DECIMAL (28,10)';  // do not localize
       fColumnTypeForText := 'VARCHAR(MAX)'; // do not localize
