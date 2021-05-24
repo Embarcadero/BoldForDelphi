@@ -141,6 +141,7 @@ type
     function DerivedFrom(TypeInfo: PTypeInfo; const aClass: TClass): boolean;
   public
     procedure EditProperty(const PropertyEditor: IProperty; var Continue: Boolean); override;
+    destructor Destroy; override;
   end;
 
   {---TBoldFileNameProperty---}
@@ -155,13 +156,13 @@ type
   {---TBoldElementSubscribeMethodProperty---}
   TBoldElementSubscribeMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
   {---TBoldElementFilterMethodProperty---}
   TBoldElementFilterMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -169,7 +170,7 @@ type
   {---TBoldElementCompareMethodProperty---}
   TBoldElementCompareMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -234,6 +235,12 @@ begin
             aClass.InheritsFrom(TypeData^.ClassType);
 end;
 
+destructor TBoldStringListEditor.Destroy;
+begin
+  FreeAndNil(fTimer);
+  inherited;
+end;
+
 procedure TBoldStringListEditor.EditProperty(const PropertyEditor: IProperty; var Continue: Boolean);
 begin
   inherited;
@@ -296,13 +303,13 @@ begin
 end;
 
 {---TBoldElementSubscribeMethodProperty---}
-function TBoldElementSubscribeMethodProperty.TextToInsert: string;
+function TBoldElementSubscribeMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := Format('  Element%sSubscribeToExpression(%s%s, Subscriber, False);', [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]); // do not localize
 end;
 
 {---TBoldElementFilterMethodProperty---}
-function TBoldElementFilterMethodProperty.TextToInsert: string;
+function TBoldElementFilterMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
@@ -324,7 +331,7 @@ begin
 end;
 
 {---TBoldElementCompareMethodProperty---}
-function TBoldElementCompareMethodProperty.TextToInsert: string;
+function TBoldElementCompareMethodProperty.ImplementationTextToInsert: string;
 begin
   Result :=          Format('  %sResult %s 0;', [BOLDSYM_TYPEINTEGER, BOLDSYM_ASSIGNMENT]) + BOLDCRLF; // do not localize
   Result := Result + Format('  if %s(item1) %s %s(item2) %s', [BOLDSYM_ASSIGNED, BOLDSYM_AND, BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF; // do not localize

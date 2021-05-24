@@ -100,7 +100,7 @@ type
   {---TBoldGetAsStringMethodProperty---}
   TBoldGetAsStringMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -108,7 +108,7 @@ type
   {---TBoldGetAsCheckBoxStateMethodProperty---}
   TBoldGetAsCheckBoxStateMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -116,7 +116,7 @@ type
   {---TBoldGetAsIntegerEventMethodProperty---}
   TBoldGetAsIntegerEventMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -124,7 +124,7 @@ type
   {---TBoldGetAsFloatEventMethodProperty---}
   TBoldGetAsFloatEventMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -132,7 +132,7 @@ type
   {---TBoldGetAsViewerMethodProperty---}
   TBoldGetAsViewerMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -140,19 +140,19 @@ type
   { TBoldHoldsChangedValueMethodProperty }
   TBoldHoldsChangedValueMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
   { TBoldReleaseChangedValueMethodProperty }
   TBoldReleaseChangedValueMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
   { TBoldMayModifyMethodProperty }
   TBoldMayModifyMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
   end;
 
@@ -165,7 +165,7 @@ type
   {---TBoldGetAsVariantMethodProperty---}
   TBoldGetAsVariantMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -253,7 +253,7 @@ begin
 end;
 
 {---TBoldGetAsStringMethodProperty---}
-function TBoldGetAsStringMethodProperty.TextToInsert: string;
+function TBoldGetAsStringMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
@@ -275,7 +275,7 @@ begin
 end;
 
 {---TBoldGetAsCheckBoxStateMethodProperty---}
-function TBoldGetAsCheckBoxStateMethodProperty.TextToInsert: string;
+function TBoldGetAsCheckBoxStateMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
@@ -297,7 +297,7 @@ begin
 end;
 
 {---TBoldGetAsIntegerEventMethodProperty---}
-function TBoldGetAsIntegerEventMethodProperty.TextToInsert: string;
+function TBoldGetAsIntegerEventMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
@@ -320,7 +320,7 @@ end;
 
 {--- TBoldHoldsChangedValueMethodProperty ---}
 
-function TBoldHoldsChangedValueMethodProperty.TextToInsert: string;
+function TBoldHoldsChangedValueMethodProperty.ImplementationTextToInsert: string;
 begin
   result := Format('  AFollower.Element%sEvaluateExpressionAsDirectElement(%s%s).RegisterModifiedValueHolder(AFollower.Subscriber);',
                    [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
@@ -328,13 +328,13 @@ end;
 
 {--- TBoldReleaseChangedValueMethodProperty ---}
 
-function TBoldReleaseChangedValueMethodProperty.TextToInsert: string;
+function TBoldReleaseChangedValueMethodProperty.ImplementationTextToInsert: string;
 begin
   result := Format('  AFollower.Element%sEvaluateExpressionAsDirectElement(%s%s).UnRegisterModifiedValueHolder(AFollower.Subscriber);',
                    [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
 end;
 
-function TBoldMayModifyMethodProperty.TextToInsert: string;
+function TBoldMayModifyMethodProperty.ImplementationTextToInsert: string;
 begin
   result := Format('  %sresult %s AFollower.Element%sEvaluateExpressionAsDirectElement(%s%s).ObserverMayModify(AFollower.subscriber);',
                    [BOLDSYM_TYPEINTEGER, BOLDSYM_ASSIGNMENT, BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
@@ -347,7 +347,7 @@ begin
 end;
 
 {---TBoldGetAsViewerMethodProperty---}
-function TBoldGetAsViewerMethodProperty.TextToInsert: string;
+function TBoldGetAsViewerMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
@@ -529,7 +529,7 @@ begin
   Result := -1;
 end;
 
-function TBoldGetAsFloatEventMethodProperty.TextToInsert: string;
+function TBoldGetAsFloatEventMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
@@ -581,7 +581,7 @@ begin
   Result := -1;
 end;
  
-function TBoldGetAsVariantMethodProperty.TextToInsert: string;
+function TBoldGetAsVariantMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
