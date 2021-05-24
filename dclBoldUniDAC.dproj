@@ -104,7 +104,6 @@
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
-        <DCCReference Include="ibxpress.dcp"/>
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="dclBold.dcp"/>
         <DCCReference Include="Source\Persistence\UniDAC\BoldPersistenceHandleUniDACReg.pas"/>

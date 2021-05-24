@@ -33,7 +33,6 @@ package dclBoldUniDAC;
 requires
   rtl,
   vcldb,
-  ibxpress,
   DesignIDE,
   dclBold;
 
