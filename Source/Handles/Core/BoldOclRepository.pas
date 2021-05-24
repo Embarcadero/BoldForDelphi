@@ -20,21 +20,22 @@ type
   TBoldOclDefinition = class;
   TBoldOclRepository = class;
 
-  TBoldOclRepository = class(TBoldNonSystemHandle, IBoldValidateableComponent)
+  TBoldOclRepository = class(TBoldSubscribableComponent, IBoldValidateableComponent)
   private
+    fSystemHandle: TBoldSystemHandle;
     FOclDefinitions: TBoldOclDefinitions;
     procedure SetOclDefinitions(const Value: TBoldOclDefinitions);
-//    procedure SetStaticSystemHandle(Value: TBoldSystemHandle);
+    procedure SetSystemHandle(Value: TBoldSystemHandle);
   protected
-//    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    procedure SetStaticSystemHandle(Value: TBoldAbstractSystemHandle); override;
-    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
   public
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     function LookUpOclDefinition(Name: string): string;
   published
     property OclDefinitions: TBoldOclDefinitions read FOclDefinitions write SetOclDefinitions;
+    property SystemHandle: TBoldSystemHandle read FSystemHandle write SetSystemHandle;
   end;
 
   TBoldOclDefinitions = class(TCollection)
@@ -106,27 +107,34 @@ begin
   result := OclDefinitions.LookUpOclDefinition(Name);
 end;
 
+procedure TBoldOclRepository.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = SystemHandle) then
+    SystemHandle := nil;
+end;
+
 procedure TBoldOclRepository.SetOclDefinitions(
   const Value: TBoldOclDefinitions);
 begin
   FOclDefinitions := Value;
 end;
 
-procedure TBoldOclRepository.SetStaticSystemHandle(Value: TBoldAbstractSystemHandle);
+procedure TBoldOclRepository.SetSystemHandle(Value: TBoldSystemHandle);
 begin
-  if StaticSystemHandle = Value then
+  if fSystemHandle = Value then
    exit;
-  if assigned(StaticSystemHandle) then
+  if assigned(Value) then
   begin
-    (StaticSystemHandle as TBoldSystemHandle).InstallOclDefinitionLookUp(nil);
-    StaticSystemHandle.RemoveFreeNotification(self);
+    fSystemHandle.InstallOclDefinitionLookUp(nil);
+    fSystemHandle.RemoveFreeNotification(self);
   end;
   if assigned(Value) then
   begin
-    (Value as TBoldSystemHandle).InstallOclDefinitionLookUp(LookUpOclDefinition);
+    Value.InstallOclDefinitionLookUp(LookUpOclDefinition);
     Value.FreeNotification(Self);
   end;
-  inherited SetStaticSystemHandle(Value);
 end;
 
 function TBoldOclRepository.ValidateComponent(
@@ -136,15 +144,14 @@ var
   i: integer;
   Context: TBoldElementTypeInfo;
 begin
-  result := inherited ValidateComponent(ComponentValidator, NamePrefix);
-  if not assigned(StaticSystemHandle) then
-    BoldLog.LogFmt('*** OclRepository %s%s has no StaticSystemHandle', [NamePrefix, Name])
-  else if not assigned(StaticSystemHandle.StaticSystemTypeInfo) then
-    BoldLog.LogFmt('*** StaticSystemHandle of OclRepository %s%s has no TypeInfo', [NamePrefix, Name])
+  if not assigned(SystemHandle) then
+    BoldLog.LogFmt('*** OclRepository %s%s has no SystemHandle', [NamePrefix, Name])
+  else if not assigned(SystemHandle.StaticSystemTypeInfo) then
+    BoldLog.LogFmt('*** SystemHandle of OclRepository %s%s has no TypeInfo', [NamePrefix, Name])
   else
   begin
     for i := 0 to OclDefinitions.count-1 do begin
-      Context := StaticSystemHandle.StaticSystemTypeInfo.ElementTypeInfoByExpressionName[OclDefinitions[i].Context];
+      Context := SystemHandle.StaticSystemTypeInfo.ElementTypeInfoByExpressionName[OclDefinitions[i].Context];
       result := ComponentValidator.ValidateExpressionInContext(
         OclDefinitions[i].Expression,
         Context,
@@ -193,8 +200,8 @@ end;
 
 function TBoldOclDefinition.GetSystemTypeInfo: TBoldSystemTypeInfo;
 begin
-  if assigned(Definitions.OwningRepository.StaticSystemHandle) then
-    result := Definitions.OwningRepository.StaticSystemHandle.StaticSystemTypeInfo
+  if assigned(Definitions.OwningRepository.SystemHandle) then
+    result := Definitions.OwningRepository.SystemHandle.StaticSystemTypeInfo
   else
     result := nil;
 end;
@@ -294,5 +301,4 @@ begin
     end;
 end;
 
-initialization
 end.

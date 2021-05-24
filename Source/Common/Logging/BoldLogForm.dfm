@@ -3,7 +3,7 @@ object BoldLogForm: TBoldLogForm
   Top = 234
   Caption = 'Bold'
   ClientHeight = 289
-  ClientWidth = 453
+  ClientWidth = 553
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -43,7 +43,7 @@ object BoldLogForm: TBoldLogForm
   object Log: TRichEdit
     Left = 0
     Top = 0
-    Width = 453
+    Width = 553
     Height = 269
     Align = alClient
     ReadOnly = True
@@ -53,7 +53,7 @@ object BoldLogForm: TBoldLogForm
   object Panel1: TPanel
     Left = 0
     Top = 269
-    Width = 453
+    Width = 553
     Height = 20
     Align = alBottom
     BevelOuter = bvNone
@@ -61,7 +61,7 @@ object BoldLogForm: TBoldLogForm
     object ProgressBar1: TProgressBar
       Left = 0
       Top = 0
-      Width = 453
+      Width = 553
       Height = 20
       Align = alClient
       Step = 1
