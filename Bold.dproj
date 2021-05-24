@@ -1,14 +1,14 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{02C80A51-35CA-4FE1-9B68-25EF64BBE566}</ProjectGuid>
+        <ProjectGuid>{4BC34884-BFF5-402F-81A4-0063B51D2F4F}</ProjectGuid>
         <MainSource>Bold.dpk</MainSource>
+        <ProjectVersion>19.2</ProjectVersion>
+        <FrameworkType>None</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <TargetedPlatforms>1</TargetedPlatforms>
-        <AppType>Package</AppType>
-        <FrameworkType>VCL</FrameworkType>
-        <ProjectVersion>19.2</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
+        <TargetedPlatforms>3</TargetedPlatforms>
+        <AppType>Package</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -23,7 +23,7 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
         <Cfg_1>true</Cfg_1>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
@@ -34,7 +34,13 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
@@ -46,61 +52,64 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_ImageBase>00400000</DCC_ImageBase>
-        <DCC_F>false</DCC_F>
-        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_DebugInformation>1</DCC_DebugInformation>
-        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
-        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
-        <DCC_K>false</DCC_K>
-        <DCC_Description>Bold 4.0 for Delphi</DCC_Description>
-        <DCC_S>false</DCC_S>
-        <DCC_RangeChecking>true</DCC_RangeChecking>
-        <DCC_N>false</DCC_N>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_WriteableConstants>true</DCC_WriteableConstants>
-        <GenPackage>true</GenPackage>
-        <DesignOnlyPackage>true</DesignOnlyPackage>
-        <DCC_Optimize>false</DCC_Optimize>
-        <DllSuffix>90</DllSuffix>
-        <SanitizedProjectName>Bold</SanitizedProjectName>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
-        <GenDll>true</GenDll>
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
-        <DCC_UnitSearchPath>Source\Common\Include\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_N>false</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_F>false</DCC_F>
+        <DCC_K>false</DCC_K>
+        <GenDll>true</GenDll>
+        <GenPackage>true</GenPackage>
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;Winapi;System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
+        <SanitizedProjectName>Bold</SanitizedProjectName>
+        <DCC_UnitSearchPath>$(BoldDelphi)\Source\Common\Include;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_Locale>2077</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_Description>Bold For Delphi - Core</DCC_Description>
+        <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
+        <DllVersion>27</DllVersion>
+        <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <DCC_UsePackage>vcl;vclx;vcldb;$(DCC_UsePackage)</DCC_UsePackage>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_UsePackage>vcl;vclx;vcldb;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_UsePackage>vcl;vcldb;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>vcl;vcldb;$(DCC_UsePackage)</DCC_UsePackage>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>true</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_2)'!=''">
-        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
-        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
-        <DCC_Optimize>false</DCC_Optimize>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <DCC_Define>BOLD_DELPHI;$(DCC_Define)</DCC_Define>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -108,8 +117,47 @@
         </DelphiCompile>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
-        <DCCReference Include="VclX.dcp"/>
-        <DCCReference Include="DesignIDE.dcp"/>
+        <DCCReference Include="vclx.dcp"/>
+        <DCCReference Include="FireDac.dcp"/>
+        <DCCReference Include="FireDACCommonDriver.dcp"/>
+        <DCCReference Include="FireDACCommon.dcp"/>
+        <DCCReference Include="FireDACPgDriver.dcp"/>
+        <DCCReference Include="IndySystem.dcp"/>
+        <DCCReference Include="IndyCore.dcp"/>
+        <DCCReference Include="Source\UMLModel\Handles\BoldModel.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLModelSupport.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLModel.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLModelConverter.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLModelDataModule.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLAttributes.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Bld\BoldUMLBldLink.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLAbstractModelValidator.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLModelValidator.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLModelValidationForm.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldDerivationExpressionsEditor.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldDragObject.pas"/>
+        <DCCReference Include="Source\UMLModel\Plugins\BoldModelOCLValidatorPlugIn.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLAddTV.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLConstraintEditor.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLModelEdit.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLModelEditForm.pas"/>
+        <DCCReference Include="Source\UMLModel\Plugins\BoldUMLModelEditPlugIn.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Core\BoldUMLModelLink.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Core\BoldUMLModelLinkSupport.pas"/>
+        <DCCReference Include="Source\UMLModel\Handles\BoldUMLModelStreamer.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLModelUpdater.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLOCLEditor.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLOCLValidator.pas"/>
+        <DCCReference Include="Source\UMLModel\Plugins\BoldUMLPluginCallBacks.pas"/>
+        <DCCReference Include="Source\UMLModel\Plugins\BoldUMLPlugins.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLTaggedValuesEditor.pas"/>
+        <DCCReference Include="Source\UMLModel\Editor\BoldUMLUsesEditorForm.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Link.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98MappingUtils.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Rose98\BoldUMLRose98Support.pas"/>
+        <DCCReference Include="Source\Common\Rose2000\RationalRose2000_TLB.pas"/>
+        <DCCReference Include="Source\Common\Rose98\RationalRose98_TLB.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\BoldUMLUtils.pas"/>
         <DCCReference Include="Source\ObjectSpace\BORepresentation\BoldSystem.pas"/>
         <DCCReference Include="Source\ObjectSpace\BORepresentation\BoldAttributes.pas"/>
         <DCCReference Include="Source\ObjectSpace\BORepresentation\BoldDerivedValueSet.pas"/>
@@ -127,28 +175,6 @@
         <DCCReference Include="Source\ObjectSpace\Core\BoldCoreConsts.pas"/>
         <DCCReference Include="Source\ObjectSpace\Core\BoldElements.pas"/>
         <DCCReference Include="Source\ObjectSpace\Core\BoldMetaElementList.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\BoldComponentValidatorIDE.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\BoldExternalObjectSpaceEventHandlerReg.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\BoldWSimpleMenuWizard.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldAttributeWizard.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldOTACodeGen.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAClassInfo.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWACustomAttr.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWACustomAttrForm1.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAdatamodule.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAdmTemplates.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAInputFormUnit.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAInterfaces.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAMainForm.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAMethodInfo.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAStringGridManager.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWASubClassForm1.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAValueSetDlg.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWAValueSetForm1.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldVclUtils.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWCodeInformer.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWProjectWizard.pas"/>
-        <DCCReference Include="Source\ObjectSpace\IDE\AttributeWizard\BoldWScanner.pas"/>
         <DCCReference Include="Source\ObjectSpace\Interfaces\BoldUndoInterfaces.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldOcl.pas"/>
         <DCCReference Include="Source\ObjectSpace\Ocl\BoldOclClasses.pas"/>
@@ -189,27 +215,9 @@
         <DCCReference Include="Source\Common\Core\BoldStreams.pas"/>
         <DCCReference Include="Source\Common\Core\BoldThreadSafeQueue.pas"/>
         <DCCReference Include="Source\Common\Environment\BoldEnvironment.pas"/>
-        <DCCReference Include="Source\Common\Environment\BoldEnvironmentIDE.pas"/>
         <DCCReference Include="Source\Common\Environment\BoldEnvironmentVCL.pas"/>
         <DCCReference Include="Source\Common\Handles\BoldHandle.pas"/>
         <DCCReference Include="Source\Common\HTTP\BoldDataBlock.pas"/>
-        <DCCReference Include="Source\Common\HTTP\BoldWebConnection.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldAbstractPropertyEditors.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldDefsDT.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldExpert.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldExpertMenus.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldGettingStartedExpert.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldGettingStartedForm.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldIDEConsts.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldIDEMenus.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldIDESupport.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldModelAwareComponentEditor.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldOTAFileHandler.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldOTASupport.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldPropertyEditors.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldReg.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldTextStream.pas"/>
-        <DCCReference Include="Source\Common\IDE\BoldWebConnectionReg.pas"/>
         <DCCReference Include="Source\Common\Logging\BoldLogForm.pas"/>
         <DCCReference Include="Source\Common\Logging\BoldLogHandler.pas"/>
         <DCCReference Include="Source\Common\Logging\BoldLogHandlerForm.pas"/>
@@ -221,10 +229,6 @@
         <DCCReference Include="Source\Common\Queue\BoldAbstractDequeuer.pas"/>
         <DCCReference Include="Source\Common\Queue\BoldEventQueue.pas"/>
         <DCCReference Include="Source\Common\Queue\BoldQueue.pas"/>
-        <DCCReference Include="Source\Common\Rose2000\BoldRose2000Support.pas"/>
-        <DCCReference Include="Source\Common\Rose2000\RationalRose2000_TLB.pas"/>
-        <DCCReference Include="Source\Common\Rose98\BoldRose98Support.pas"/>
-        <DCCReference Include="Source\Common\Rose98\RationalRose98_TLB.pas"/>
         <DCCReference Include="Source\Common\SOAP\BoldSOAP_TLB.pas"/>
         <DCCReference Include="Source\Common\SOAP\BoldSOAP2_TLB.pas"/>
         <DCCReference Include="Source\Common\SOAP\BoldXMLRequests.pas"/>
@@ -280,8 +284,12 @@
         <DCCReference Include="Source\FreestandingValueSpace\Core\BoldFreeStandingValueFactories.pas"/>
         <DCCReference Include="Source\FreestandingValueSpace\Core\BoldFreeStandingValues.pas"/>
         <DCCReference Include="Source\FreestandingValueSpace\Core\FreeStandingValuesConst.pas"/>
+        <DCCReference Include="Source\UMLModel\Plugins\BoldDbPlugins.pas"/>
         <DCCReference Include="Source\Handles\Actions\BoldActionDefs.pas"/>
         <DCCReference Include="Source\Handles\Actions\BoldActions.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\Actions\BoldAction.pas"/>
+        <DCCReference Include="Source\Samples\Actions\BoldDebugActions.pas"/>
+        <DCCReference Include="Source\Samples\Actions\BoldEditOCLAction.pas"/>
         <DCCReference Include="Source\Handles\Actions\BoldHandleAction.pas"/>
         <DCCReference Include="Source\Handles\Actions\BoldListActions.pas"/>
         <DCCReference Include="Source\Handles\Actions\BoldUndoActions.pas"/>
@@ -305,28 +313,17 @@
         <DCCReference Include="Source\Handles\Core\BoldVariableDefinition.pas"/>
         <DCCReference Include="Source\Handles\Core\BoldVariableHandle.pas"/>
         <DCCReference Include="Source\Handles\Core\HandlesConst.pas"/>
-        <DCCReference Include="Source\Handles\IDE\BoldHandlePropEditor.pas"/>
-        <DCCReference Include="Source\Handles\IDE\BoldHandleReg.pas"/>
-        <DCCReference Include="Source\Handles\IDE\BoldLockingReg.pas"/>
-        <DCCReference Include="Source\Handles\IDE\BoldManipulatorReg.pas"/>
-        <DCCReference Include="Source\Handles\IDE\BoldXMLReg.pas"/>
         <DCCReference Include="Source\Handles\Manipulators\BoldManipulators.pas"/>
         <DCCReference Include="Source\Handles\PessimisticLocking\BoldLockingHandles.pas"/>
         <DCCReference Include="Source\Handles\UnLoader\BoldUnloaderHandle.pas"/>
         <DCCReference Include="Source\Handles\XML\BoldXMLProducers.pas"/>
         <DCCReference Include="Source\MoldModel\Bld\BoldBld.pas"/>
-        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGen.pas"/>
-        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGeneratorTemplates.pas"/>
-        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGeneratorTemplatesCPP.pas"/>
-        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGeneratorTemplatesDelphi.pas"/>
         <DCCReference Include="Source\MoldModel\Core\BoldMeta.pas"/>
         <DCCReference Include="Source\MoldModel\Core\BoldMetaSupport.pas"/>
         <DCCReference Include="Source\MoldModel\Core\BoldMoldConsts.pas"/>
         <DCCReference Include="Source\MoldModel\Core\BoldNameExpander.pas"/>
         <DCCReference Include="Source\MoldModel\Handles\BoldAbstractModel.pas"/>
         <DCCReference Include="Source\MoldModel\Handles\BoldTypeNameHandle.pas"/>
-        <DCCReference Include="Source\MoldModel\IDE\BoldModelReg.pas"/>
-        <DCCReference Include="Source\MoldModel\IDE\BoldTypeNameHandleReg.pas"/>
         <DCCReference Include="Source\MoldModel\TypeNameDictionary\BoldTypeNameDictionary.pas"/>
         <DCCReference Include="Source\MoldModel\UtilsGUI\BoldTypeNameEditor.pas"/>
         <DCCReference Include="Source\Persistence\Core\BoldAbstractSnooper.pas"/>
@@ -342,17 +339,9 @@
         <DCCReference Include="Source\Persistence\DB\BoldDBActions.pas"/>
         <DCCReference Include="Source\Persistence\DB\BoldDBInterfaces.pas"/>
         <DCCReference Include="Source\Persistence\DB\BoldPersistenceControllerDefault.pas"/>
-        <DCCReference Include="Source\Persistence\DB\BoldPersistenceHandleDB_deprecated.pas"/>
         <DCCReference Include="Source\Persistence\DB\BoldPersistenceHandleDB.pas"/>
-        <DCCReference Include="Source\Persistence\DB\BoldPersistenceHandleDBreg.pas"/>
         <DCCReference Include="Source\Persistence\File\BoldPersistenceHandleFile.pas"/>
         <DCCReference Include="Source\Persistence\File\BoldPersistenceHandleFileXML.pas"/>
-        <DCCReference Include="Source\Persistence\IDE\BoldHandlesPropagationReg.pas"/>
-        <DCCReference Include="Source\Persistence\IDE\BoldObjectUpgraderHandleReg.pas"/>
-        <DCCReference Include="Source\Persistence\IDE\BoldPersistenceHandleFileReg.pas"/>
-        <DCCReference Include="Source\Persistence\IDE\BoldPersistenceHandleReg.pas"/>
-        <DCCReference Include="Source\Persistence\IDE\BoldPersistenceHandleSystemReg.pas"/>
-        <DCCReference Include="Source\Persistence\IDE\BoldPersistenceNotifierReg.pas"/>
         <DCCReference Include="Source\Persistence\ObjectUpgrading\BoldAbstractObjectUpgraderHandle.pas"/>
         <DCCReference Include="Source\Persistence\ObjectUpgrading\BoldBatchUpgrader.pas"/>
         <DCCReference Include="Source\Persistence\ObjectUpgrading\BoldObjectUpgrader.pas"/>
@@ -400,10 +389,10 @@
         <DCCReference Include="Source\PMapper\Validator\BoldDbValidator.pas"/>
         <DCCReference Include="Source\Propagator\Common\BoldAbstractPropagatorHandle.pas"/>
         <DCCReference Include="Source\Propagator\Common\BoldLockingSupportInterfaces_TLB.pas"/>
+        <DCCReference Include="Source\Propagator\Common\BoldPropagatorInterfaces_TLB.pas"/>
         <DCCReference Include="Source\Propagator\Common\BoldObjectMarshaler.pas"/>
         <DCCReference Include="Source\Propagator\Common\BoldPropagatorConstants.pas"/>
         <DCCReference Include="Source\Propagator\Common\BoldPropagatorGUIDs.pas"/>
-        <DCCReference Include="Source\Propagator\Common\BoldPropagatorInterfaces_TLB.pas"/>
         <DCCReference Include="Source\Propagator\Common\PropagatorConsts.pas"/>
         <DCCReference Include="Source\ValueSpace\Condition\BoldCondition.pas"/>
         <DCCReference Include="Source\ValueSpace\ExternalEvents\BoldObjectSpaceExternalEvents.pas"/>
@@ -412,21 +401,144 @@
         <DCCReference Include="Source\ValueSpace\Id\BoldId.pas"/>
         <DCCReference Include="Source\ValueSpace\Id\BoldStringId.pas"/>
         <DCCReference Include="Source\ValueSpace\Id\ValueSpaceConst.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldPropertiesController.pas"/>
         <DCCReference Include="Source\ValueSpace\Interfaces\BoldValueInterfaces.pas"/>
         <DCCReference Include="Source\ValueSpace\Interfaces\BoldValueSpaceInterfaces.pas"/>
         <DCCReference Include="Source\ValueSpace\XMLStreaming\BoldDefaultStreamNames.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldElementHandleFollower.pas"/>
         <DCCReference Include="Source\ValueSpace\XMLStreaming\BoldDefaultXMLStreaming.pas"/>
-        <RcCompile Include="Source\Handles\Manipulators\BoldManipulators.rc">
-            <Form>BoldManipulators.res</Form>
-        </RcCompile>
-        <BuildConfiguration Include="Debug">
+        <DCCReference Include="Source\Persistence\COM\BoldAbstractComClientPersistenceHandles.pas"/>
+        <DCCReference Include="Source\Persistence\COM\BoldAbstractComPersistenceControllerProxy.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\FormGen\BoldAFP.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\FormGen\BoldAFPDefault.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\FormGen\BoldAFPPluggable.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\FormGen\BoldAFPUser.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldApartmentThread.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldCaptionController.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldCheckBox.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldCheckboxStateControlPack.pas"/>
+        <DCCReference Include="Source\Samples\BoldCheckListBox\BoldCheckListBox.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComAdapter.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldComboBox.pas"/>
+        <DCCReference Include="Source\Common\ConnectionCOM\BoldComClient.pas"/>
+        <DCCReference Include="Source\Handles\COM\BoldComClientElementHandles.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldComClientHandles.pas"/>
+        <DCCReference Include="Source\Common\ConnectionCOM\BoldComConnection.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComConst.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComEventQueue.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComObj.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComObjectSpace.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComObjectSpace_TLB.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComObjectSpaceAdapters.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComponentValidatorCom.pas"/>
+        <DCCReference Include="Source\Common\ConnectionCOM\BoldComServer.pas"/>
+        <DCCReference Include="Source\Handles\COM\BoldComServerElementHandleFactory.pas"/>
+        <DCCReference Include="Source\Handles\COM\BoldComServerElementHandles.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldComServerHandles.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComThreads.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComUtils.pas"/>
+        <DCCReference Include="Source\Samples\ConstraintValidator\BoldConstraintValidator.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldControllerListControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldControlPack.pas"/>
+        <DCCReference Include="Source\Samples\BoldCheckListBox\BoldCustomCheckListBox.pas"/>
+        <DCCReference Include="Source\Persistence\FireDAC\BoldDatabaseAdapterFireDAC.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldDateTimeControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldDragDropTarget.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldEdit.pas"/>
+        <DCCReference Include="Source\Common\Environment\BoldEnvironmentIDE.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\Core\BoldExceptionHandlers.pas"/>
+        <DCCReference Include="Source\Persistence\FireDAC\BoldFireDACConsts.pas"/>
+        <DCCReference Include="Source\Persistence\FireDAC\BoldFireDACInterfaces.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldFloatControlPack.pas"/>
+        <DCCReference Include="Source\Samples\FormSaver\BoldFormSaver.pas"/>
+        <DCCReference Include="Source\Samples\FormSaver\BoldFormSaverActions.pas"/>
+        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGen.pas"/>
+        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGeneratorTemplates.pas"/>
+        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGeneratorTemplatesCPP.pas"/>
+        <DCCReference Include="Source\MoldModel\CodeGenerator\BoldGeneratorTemplatesDelphi.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldGenericListControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldGrid.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldGridRTColEditor.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\Core\BoldGUI.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\Core\BoldGuiResourceStrings.pas"/>
+        <DCCReference Include="Source\Persistence\HTTP\BoldHTTPClientPersistenceHandle.pas"/>
+        <DCCReference Include="Source\Persistence\HTTP\BoldHTTPPersistenceControllerClient.pas"/>
+        <DCCReference Include="Source\Persistence\HTTP\BoldHTTPServerPersistenceHandlePassthrough.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldImage.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldImageBitmap.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldImageJPEG.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldLabel.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldListBox.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldListControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldListHandleFollower.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldListListControlPack.pas"/>
+        <DCCReference Include="Source\ConcurrencyControl\COM\BoldLockManagerAdminHandleCom.pas"/>
+        <DCCReference Include="Source\ConcurrencyControl\COM\BoldLockManagerHandleCom.pas"/>
+        <DCCReference Include="Source\Samples\Misc\BoldLockUtils.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldMemo.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldMLRenderers.pas"/>
+        <DCCReference Include="Source\Samples\ModelLoader\BoldModelLoader.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldNavigator.pas"/>
+        <DCCReference Include="Source\Samples\NewObjectInterceptor\BoldNewObjectInterceptor.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldNodeControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldNumericControlPack.pas"/>
+        <DCCReference Include="Source\Samples\Misc\BoldObjectRetriever.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldPageControl.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldPersistenceControllerSOAPAdapterCore.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldPersistenceOperationXMLStreaming.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldProgressBar.pas"/>
+        <DCCReference Include="Source\Propagator\COM\BoldPropagatorHandleCOM.pas"/>
+        <DCCReference Include="Source\Persistence\Propagation\BoldPropagatorUtils.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldRichEdit.pas"/>
+        <DCCReference Include="Source\Common\Rose2000\BoldRose2000Support.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Rose98\BoldRose98ptyCreator.pas"/>
+        <DCCReference Include="Source\Common\Rose98\BoldRose98Support.pas"/>
+        <DCCReference Include="Source\UMLModel\ModelLinks\Rose98\BoldRose98TaggedValues.pas"/>
+        <DCCReference Include="Source\Samples\BoldCheckListBox\BoldSelectionListBox.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPClientPersistenceHandles.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPPersistenceControllerProxy.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPPersistenceControllerStub.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPServerPersistenceHandles.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldStringControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldStringsPropertyController.pas"/>
+        <DCCReference Include="Source\Samples\SystemComparer\BoldSystemComparer.pas"/>
+        <DCCReference Include="Source\Samples\SystemDebugger\BoldSystemDebuggerForm.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldThreadedComObjectFactory.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldTrackBar.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldTreeView.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldTreeViewConfig.pas"/>
+        <DCCReference Include="Source\UMLModel\Plugins\BoldUMLModelToEcoIIIGenerator.pas"/>
+        <DCCReference Include="Source\Samples\UMLPlugins\BoldUMLNameTrimmer.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldVariantControlPack.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldViewerControlPack.pas"/>
+        <DCCReference Include="Source\Common\HTTP\BoldWebConnection.pas"/>
+        <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldXCVTreeView.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldXMLDispatcher.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldXMLDispatcherVB.pas"/>
+        <DCCReference Include="Source\UMLModel\Core\UMLConsts.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldAbstractExternalPersistenceController.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldAbstractExternalPersistenceHandle.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldAbstractPartiallyExternalPC.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldAbstractPartiallyExternalPH.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceConfigItemDataSet.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerConfig.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerDataSet.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerEventDriven.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceControllerSQL.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleDataSet.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleEventDriven.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQL.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQLPropEditor.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceSupport.pas"/>
+        <DCCReference Include="Source\Persistence\ExternalPersistence\ExPeConsts.pas"/>
+        <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
-        <BuildConfiguration Include="Release">
+        <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
@@ -440,16 +552,29 @@
                     <Source Name="MainSource">Bold.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="D:\projetos\Softcenter\CodeCommit\DEV\Softbr\SFT_Componentes\Delphi Sydney\QuickReport_6\XE10\QRWDesignDXE10.bpl">QuickReport 6 Components</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\SoftcenterCompleto_Sydney.bpl">Componentes Softcenter Sydney - Completo</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\BoldCore.27.bpl">Bold For Delphi - Core</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Attracs\Bin\BPL\AttracsComponentsXE10Sydney.bpl">Attracs Components for Delphi 10.4 Sydney</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Platforms>
-                <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
-            </Platforms>
             <Deployment Version="3">
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Bold90.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
+                    <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Bold.27.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Bold.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -1148,6 +1273,10 @@
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
             </Deployment>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
+            </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>

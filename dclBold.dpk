@@ -25,7 +25,7 @@ package dclBold;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Bold for Delphi'}
+{$DESCRIPTION 'Bold for Delphi - Design package'}
 {$LIBVERSION '27'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
@@ -34,8 +34,7 @@ requires
   vcl,
   vcldb,
   DesignIDE,
-  BoldCore,
-  BoldAdditional,
+  Bold,
   FireDac,
   FireDACCommonDriver,
   FireDACCommon,
