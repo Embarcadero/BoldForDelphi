@@ -136,15 +136,14 @@ end;
 procedure TBoldPlaceableSubscriber.ActOnHandleValueChanged(Sender: TObject);
 begin
   fValueSubscriber.CancelAllSubscriptions;
-  if not (csDestroying in ComponentState) and assigned(BoldHandle) and not (csDestroying in BoldHandle.ComponentState) and assigned(BoldHandle.Value) then
-    SubscribeToElement(BoldHandle.Value, fValueSubscriber);
+  if Assigned(BoldHandle) and not (csDesigning in BoldHandle.ComponentState) then
+    if not (csDestroying in ComponentState) and assigned(BoldHandle) and not (csDestroying in BoldHandle.ComponentState) and assigned(BoldHandle.Value) then
+      SubscribeToElement(BoldHandle.Value, fValueSubscriber);
 end;
 
 procedure TBoldPlaceableSubscriber.SetDelayEventsUntilPostNotify(const Value: Boolean);
 begin
   FDelayEventsUntilPostNotify := Value;
 end;
-
-initialization
 
 end.
