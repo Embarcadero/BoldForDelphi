@@ -15,11 +15,15 @@ uses
   BoldDbDataValidator,
   ActnList;
 
+const
+  cDefaultPauseBetweenQueries = 1; //ms
+
 type
   TBoldPersistenceHandleAction = class;
   TBoldGenerateSchemaAction = class;
   TBoldValidateDBStructureAction = class;
   TBoldValidateDBDataAction = class;
+  TBoldEvolveDBAction = class;
 
   { TBoldSystemHandleAction }
   TBoldPersistenceHandleAction = class(TAction)
@@ -74,8 +78,19 @@ type
     destructor Destroy; override;
     procedure ExecuteTarget(Target: TObject); override;
   published
-    property PauseBetweenQueries: integer read fPauseBetweenQueries write fPauseBetweenQueries;
+    property PauseBetweenQueries: integer read fPauseBetweenQueries write fPauseBetweenQueries default cDefaultPauseBetweenQueries;
     property BoldPersistenceHandleDB;
+  end;
+
+  TBoldEvolveDBAction = class(TBoldPersistenceHandleAction)
+  private
+    fGenerateGenericScript: boolean;
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure ExecuteTarget(Target: TObject); override;
+  published
+    property BoldPersistenceHandleDB;
+    property GenerateGenericScript: boolean read fGenerateGenericScript write fGenerateGenericScript;
   end;
 
 implementation
@@ -84,6 +99,8 @@ uses
   BoldDefs,
   SysUtils,
   BoldActionDefs,
+  BoldDbEvolutor,
+  BoldDbEvolutorForm,
   BoldUtils;
 
 const
@@ -216,6 +233,20 @@ begin
   fValidator.PersistenceHandle := BoldPersistenceHandleDB;
   fValidator.PauseBetweenQueries := PauseBetweenQueries;
   fValidator.Execute;
+end;
+
+{ TBoldEvolveDBAction }
+
+constructor TBoldEvolveDBAction.Create(AOwner: TComponent);
+begin
+  inherited;
+  Caption := 'Evolve DB';
+end;
+
+procedure TBoldEvolveDBAction.ExecuteTarget(Target: TObject);
+begin
+  inherited;
+  TfrmBoldDbEvolutor.EvolveDB(BoldPersistenceHandleDB, GenerateGenericScript);
 end;
 
 end.

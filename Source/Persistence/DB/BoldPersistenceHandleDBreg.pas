@@ -45,7 +45,8 @@ begin
   RegisterActions(BOLDACTIONGROUPNAME,
                 [TBoldGenerateSchemaAction,
                 TBoldValidateDBStructureAction,
-                TBoldValidateDBDataAction], nil);
+                TBoldValidateDBDataAction,
+                TBoldEvolveDBAction], nil);
   RegisterComponentEditor(TBoldPersistenceHandleDB, TBoldPersistenceHandleDBEditor);
 end;
 
