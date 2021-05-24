@@ -106,6 +106,7 @@
         <DCCReference Include="Source\BoldAwareGUI\BoldDevex\cxBoldRegUnit.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="dclBold.dcp"/>
+        <DCCReference Include="cxGridRS27.dcp"/>
         <DCCReference Include="dclcxGridRS27.dcp"/>
         <DCCReference Include="dxBarRS27.dcp"/>
         <DCCReference Include="Source\BoldAwareGUI\BoldDevex\BoldAFPCxGridProviderUnit.pas"/>
