@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStringList;
 
 interface
@@ -34,7 +37,8 @@ implementation
 
 uses
   BoldSharedStrings,
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldStringList }
 
@@ -87,7 +91,7 @@ begin
   result := GetIndexOfPrefix(name + '=', Index);
 end;
 
-function BoldAnsiLCompareShortest(Const s1, s2: string): integer;  // Don't inline, will invoke UniqueString
+function BoldAnsiLCompareShortest(Const s1, s2: string): integer;
 var
   Len, Len1: integer;
 
@@ -178,4 +182,5 @@ begin
     inherited;
 end;
 
+initialization
 end.

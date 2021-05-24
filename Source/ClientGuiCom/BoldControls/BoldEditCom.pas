@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEditCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,20 +8,23 @@ unit BoldEditCom;
 interface
 
 uses
-  Classes,
-  StdCtrls,
-  Controls,
-  Windows,
-  Messages,
-  Menus,
-  Graphics,
+  // VCL
   Buttons,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldControlsDefs,
-  BoldHandlesCom,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+  Classes,
+  Controls,
+  Graphics,
+  Menus,
+  Messages,
+  StdCtrls,
+  Windows,
+
+  // Bold
+  BoldClientElementSupport,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
+  BoldControlsDefs,
   BoldElementHandleFollowerCom,
+  BoldHandlesCom,
   BoldStringControlPackCom;
 
 type
@@ -48,7 +54,7 @@ type
     procedure SetExpression(Expression: String);
     function GetExpression: String;
     function GetVariableList: IBoldExternalVariableList;
-
+    
     function GetBoldHandle: TBoldElementHandleCom;
     procedure SetBoldHandle(value: TBoldElementHandleCom);
     function GetFollower: TBoldFollowerCom;
@@ -99,7 +105,7 @@ type
 
     property BeepOnInvalidKey: boolean read fBeepOnInvalidKey write fBeepOnInvalidKey default True;
     property Button: TSpeedButton read GetButton;
-    property ButtonControl: TWinControl read fBtnControl; //NOTE Do not publish.
+    property ButtonControl: TWinControl read fBtnControl;
     property EffectiveReadOnly: Boolean read GetEffectiveReadOnly;
     property EffectiveFont: TFont read GetEffectiveFont;
     property EffectiveColor: TColor read GetEffectiveColor write SetEffectiveColor;
@@ -143,20 +149,16 @@ type
     property Anchors;
     property AutoSelect;
     property AutoSize;
-//  property BiDiMode;
     property BorderStyle;
     property CharCase;
-//  property Color;
     property Constraints;
     property Ctl3D;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
-//  property Font;
     property HideSelection;
-//  property ImeMode;
-//  property ImeName;
+
     property MaxLength;
     property ParentColor;
     property ParentCtl3D;
@@ -164,11 +166,9 @@ type
     property ParentShowHint;
     property PasswordChar;
     property PopupMenu;
-//  property ReadOnly;
     property ShowHint;
     property TabOrder;
     property TabStop;
-//  property Text;
     property Visible;
     property OnChange;
     property OnClick;
@@ -196,11 +196,10 @@ implementation
 uses
   BoldControlPackDefs,
   SysUtils,
-  BoldRev,
-  Forms,  // bssingle
-  {$IFNDEF BOLDCOMCLIENT} // uses
-  BoldComObjectSpace_TLB,  // For Specialized Drag/Drop in EditBox
-  BoldGUI,     // For Specialized Drag/Drop in EditBox
+  Forms,
+  {$IFNDEF BOLDCOMCLIENT}
+  BoldComObjectSpace_TLB,
+  BoldGUI,
   BoldReferenceHandleCom,
   BoldRootedHandlesCom,
   {$ENDIF}
@@ -272,7 +271,7 @@ end;
 procedure TBoldCustomEditCom.DragOver(Source: TObject; X, Y: Integer; State: TDragState;
     var Accept: Boolean);
 begin
-  {$IFNDEF BOLDCOMCLIENT} //dragdrop
+  {$IFNDEF BOLDCOMCLIENT}
   if (BoldProperties.DropMode = bdpReplace) and
     (assigned(BoldHandle)) and
     (not assigned(BoldHandle.Value) or (BoldHandle.Value is IBoldObject)) and
@@ -291,7 +290,7 @@ end;
 
 procedure TBoldCustomEditCom.DragDrop(Source: TObject; X, Y: Integer);
 begin
-  {$IFNDEF BOLDCOMCLIENT} //dragdrop
+  {$IFNDEF BOLDCOMCLIENT}
   if (BoldProperties.DropMode = bdpReplace) and
     (assigned(BoldHandle)) and
     (not assigned(BoldHandle.Value) or (BoldHandle.Value is IBoldObject)) and
@@ -378,7 +377,7 @@ begin
     inherited Color := v;
 end;
 
-procedure TBoldCustomEditCom.SetText(value: string); //CHECKME Remove? Text is not published any longer!
+procedure TBoldCustomEditCom.SetText(value: string);
 begin
   if not (csLoading in ComponentState) then
     if not EffectiveReadOnly then
@@ -413,12 +412,12 @@ procedure TBoldCustomEditCom.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if (Key in [#32..#255]) and
-     not BoldProperties.ValidateCharacter(Key, Follower) then
+     not BoldProperties.ValidateCharacter(AnsiChar(Key), Follower) then
   begin
     InvalidKey(Key);
     Key := BOLDNULL;
   end
-  else if Key = #1 then // CTRL-A
+  else if Key = #1 then
   begin
     SelectAll;
   end
@@ -665,7 +664,6 @@ procedure TBoldCustomEditCom.SetEditRect;
 var
   Loc: TRect;
 begin
-//  SendMessage(Handle, EM_GETRECT, 0, LongInt(@Loc));
   Loc.Bottom := ClientHeight+1;
   Loc.Right := ClientWidth-1;
   Loc.Top := 0;
@@ -684,15 +682,13 @@ begin
 end;
 
 procedure TBoldCustomEditCom.WMSize(var message: TWMSize);
-//var
-//  MinHeight: Integer;
+
 begin
   inherited;
-//  if (csDesigning in ComponentState) then
-//    FGrid.SetBounds(0, Height + 1, 10, 10);
-//  MinHeight := GetMinHeight;
-//  if Height < MinHeight then Height := MinHeight
-//  else begin
+
+
+
+
   if Assigned(fBtnControl) and Assigned(fButton) then
     SetEditRect;
 end;
@@ -708,7 +704,6 @@ begin
       begin
         if Assigned(fBtnControl) then
           fBtnControl.Visible := False;
-        //NOTE Skip destruction of button and recreation of control in runtime to eliminate flicker.
         if (csDesigning in ComponentState) then
           RecreateWnd;
       end
@@ -747,7 +742,6 @@ procedure TBoldComboButton.MouseDown(Button: TMouseButton; Shift: TShiftState;
   X, Y: Integer);
 begin
   with TBoldCustomEditCom(Parent.Parent) do
-    //CHECKME We may need to skip the change of focus if the popupcontrol is visible!
     if (Handle <> GetFocus) and CanFocus then
     begin
       SetFocus;
@@ -761,8 +755,7 @@ end;
 procedure TBoldComboButton.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
   inherited MouseMove (Shift, X, Y);
-//  if (ssLeft in Shift) and (GetCapture = Parent.Handle) then
-//    MouseDragToGrid(Self, TDBLookupCombo(Parent.Parent).FGrid, X, Y);
+
 end;
 
 function TBoldCustomEditCom.GetBoldHandle: TBoldElementHandleCom;
@@ -800,5 +793,5 @@ begin
 end;
 
 initialization
-
+  
 end.

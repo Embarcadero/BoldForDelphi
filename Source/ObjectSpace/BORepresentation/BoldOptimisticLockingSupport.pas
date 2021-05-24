@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOptimisticLockingSupport;
 
 interface
@@ -19,7 +22,7 @@ type
     procedure GetRegionsForRemoteMember(OwningId: TBoldObjectId; Regions: TBoldRegionLookup; OwningRoleRTInfo: TBoldRoleRTInfo);
 
     procedure GetRegionsForDirtyOtherEnds(ObjectList: TBoldObjectList; Regions: TBoldRegionLookup);
-    procedure CopyValue(TargetVS: IBoldValueSpace; var TargetObjectContents: IBoldObjectContents; TargetObjectId: TBoldObjectId; MemberIndex: integer; Value: IBoldValue; StreamName: String);
+    procedure CopyValue(const TargetVS: IBoldValueSpace; var TargetObjectContents: IBoldObjectContents; TargetObjectId: TBoldObjectId; MemberIndex: integer; const Value: IBoldValue; const StreamName: String);
     procedure RetrieveOptimisticLockingvalues(ObjectList: TBoldObjectlist; PreCondition: TBoldOptimisticLockingPrecondition);
     procedure GetRegionsForElement(Element: TBoldDomainElement; Regions: TBoldRegionLookup);
     procedure GetRegionsForDirtyMembersInList(ObjectList: TBoldObjectList; Regions: TBoldRegionLookup);
@@ -45,8 +48,7 @@ uses
   BoldIndexableList,
   BoldElements,
   BoldTaggedValueSupport,
-  BoldGuard,
-  BoldCoreConsts;
+  BoldGuard;
 
 { TBoldOptimisticLockHandler }
 
@@ -74,10 +76,10 @@ begin
   GetLockingValuesForRegions(Regions, PreCondition);
 end;
 
-procedure TBoldOptimisticLockHandler.CopyValue(TargetVS: IBoldValueSpace;
+procedure TBoldOptimisticLockHandler.CopyValue(const TargetVS: IBoldValueSpace;
   var TargetObjectContents: IBoldObjectContents;
-  TargetObjectId: TBoldObjectId; MemberIndex: integer; Value: IBoldValue;
-  StreamName: String);
+  TargetObjectId: TBoldObjectId; MemberIndex: integer; const Value: IBoldValue;
+  const StreamName: String);
 var
   MemberId: TBoldMemberId;
   NewValue: IBoldValue;
@@ -97,33 +99,26 @@ end;
 
 procedure TBoldOptimisticLockHandler.GetRegionsForDirtyOtherEnds(ObjectList: TBoldObjectList; Regions: TBoldRegionLookup);
 var
-  ObjIx, MemberIx: integer;
+  ObjIx, i: integer;
   Obj: TBoldObject;
   ObjRef: TBoldObjectReference;
   OldRemoteId: TBoldObjectId;
-  Member: TBoldMember;
 begin
-  // must grab objects with "dirty" multilinks refered to by singlelinks in the original objectlist, if they are managed by atleast one region.
   for ObjIx := 0 to ObjectList.Count-1 do
   begin
     Obj := ObjectList[ObjIx];
-    for MemberIx := 0 to Obj.BoldMemberCount-1 do
+    with Obj.BoldClassTypeInfo.AllRoles do
+    for i := 0 to Count-1 do
+    if Items[i].IsSingleRole then
     begin
-      if Obj.BoldMemberAssigned[MemberIx] then
+      ObjRef := Obj.BoldMemberIfAssigned[Items[i].index] as TBoldObjectReference;
+      if Assigned(ObjRef) and ObjRef.BoldDirty then
       begin
-        Member := Obj.BoldMembers[MemberIx];
-        if member.BoldMemberRTInfo.IsSingleRole then
-        begin
-          if Member.BoldDirty and (Member is TBoldObjectReference) then
-          begin
-            ObjRef := Member as TBoldObjectReference;
-            OldRemoteId := GetRemotedfromIdRefValue(Objref.OldValue);
-            if assigned(OldRemoteId) then
-              GetRegionsForRemoteMember(OldRemoteId, Regions, ObjRef.BoldRoleRTInfo);
-            if assigned(ObjRef.Locator) then
-              GetRegionsForRemoteMember(ObjRef.Locator.BoldobjectId, Regions, ObjRef.BoldRoleRTInfo);
-          end;
-        end;
+        OldRemoteId := GetRemotedfromIdRefValue(Objref.OldValue);
+        if assigned(OldRemoteId) then
+          GetRegionsForRemoteMember(OldRemoteId, Regions, ObjRef.BoldRoleRTInfo);
+        if assigned(ObjRef.Locator) then
+          GetRegionsForRemoteMember(ObjRef.Locator.BoldobjectId, Regions, ObjRef.BoldRoleRTInfo);
       end;
     end;
   end;
@@ -182,10 +177,9 @@ var
   Traverser: TBoldIndexableListTraverser;
 begin
   Traverser := Regions.CreateTraverser;
-  while not Traverser.EndOfList do
+  while Traverser.MoveNext do
   begin
     GetLockingValuesForRegion(Traverser.Item as TBoldRegion, PreCondition);
-    Traverser.Next;
   end;
   Traverser.Free;
 end;
@@ -253,30 +247,23 @@ begin
     BoldObject := ObjectList[ObjIx];
     Mode := BoldObject.BoldClassTypeInfo.OptimisticLocking;
     NewObjectContents := nil;
-    // skip new objects, and objects with no locking at all
     if Mode in [bolmTimeStamp, bolmModifiedMembers, bolmAllMembers] then
     begin
       ObjectId := BoldObject.BoldObjectLocator.BoldObjectID;
       ObjectContents := OldValues.ObjectContentsByObjectId[ObjectId];
-
-      // Copy all members from the optimisticLockingArea,
       for MemberIx := 0 to BoldObject.BoldMemberCount - 1 do
       begin
         MemberRTInfo := BoldObject.BoldClassTypeInfo.AllMembers[MemberIx];
         if MemberRTInfo.CanHaveOldValue then
         begin
           value := nil;
-
-          // timestamp-mode should take only multiroles, othermodes should take all values in OptimisticLockingarea
           if assigned(ObjectContents) then
           begin
             if (Mode in [bolmModifiedMembers, bolmAllMembers]) or MemberRTInfo.EncouragesOptimisticLockingOnDeletedOnly then
               Value := ObjectContents.ValueByIndex[MemberIx]
           end;
 
-          // In Mode=Class and the member was not in optimistic locking area, steal it from the object (if it is loaded)
-          // always steal multiroles that are current
-          // on a deleted object, all multiroles are current
+
 
           if not assigned(Value) and
              BoldObject.BoldMemberAssigned[MemberIx] and
@@ -289,16 +276,12 @@ begin
               Value := BoldObject.BoldMembers[MemberIx].AsIBoldValue[bdepContents];
             end;
           end;
-
-          // We should not optimistically check multilinks except for deleted objects
           if assigned(value) and
              MemberRTinfo.EncouragesOptimisticLockingOnDeletedOnly and
              not BoldObject.BoldObjectIsDeleted then
             value := nil;
 
-          // We should not check the values of innerlinks, they can not change, only the linkobject
-          // can appear/disappear. However, we must check that the object is not deleted, so we
-          // ensure the objectID in the valuespace
+
 
           if assigned(value) and
              (MemberRTinfo.IsSingleRole) and ((MemberRTInfo as TBoldRoleRTInfo).RoleType = rtInnerLinkRole) then
@@ -314,28 +297,23 @@ begin
           begin
             RoleRTInfo := MemberRTInfo as TBoldRoleRTInfo;
             if (RoleRTInfo.RoleType = rtRole) and
-                BoldObject.BoldMemberAssigned[MemberIx] and BoldObject.BoldMembers[MemberIx].BoldDirty then
+               RoleRTInfo.RoleRTInfoOfOtherEnd.IsSingleRole and
+               not RoleRTInfo.RoleRTInfoOfOtherEnd.IsStoredInObject and
+               BoldObject.BoldMembers[MemberIx].BoldDirty then
             begin
-              // ensure existence of related objects unless they are new
               RelatedObject := (BoldObject.BoldMembers[MemberIx] as TBoldObjectReference).BoldObject;
               if assigned(relatedObject) and (not relatedObject.BoldObjectIsNew) then
               begin
-                RelatedObjectcontents := Precondition.ValueSpace.EnsuredObjectContentsByObjectId[RelatedObject.BoldObjectLocator.BoldObjectId];
-                // for embedded singlelinks with nonembedded otherends we must optimistically lock the other end so no one
-                // else has decided to point to it.
-                if RoleRTInfo.RoleRTInfoOfOtherEnd.IsSingleRole and
-                   not RoleRTInfo.RoleRTInfoOfOtherEnd.IsStoredInObject then
+                value := RelatedObject.BoldMembers[RoleRTInfo.IndexOfOtherEnd].OldValue;
+                if assigned(Value) then
                 begin
-                  value := RelatedObject.BoldMembers[RoleRTInfo.IndexOfOtherEnd].OldValue;
-                  if assigned(Value) then
-                  begin
-                    CopyValue(
-                      Precondition.ValueSpace,
-                      RelatedObjectcontents,
-                      RelatedObject.BoldObjectLocator.BoldObjectId,
-                      RoleRTInfo.IndexOfOtherEnd, Value,
-                      RelatedObject.BoldMembers[RoleRTInfo.IndexOfOtherEnd].AsIBoldValue[bdepContents].ContentName);
-                  end;
+                  RelatedObjectcontents := Precondition.ValueSpace.EnsuredObjectContentsByObjectId[RelatedObject.BoldObjectLocator.BoldObjectId];
+                  CopyValue(
+                    Precondition.ValueSpace,
+                    RelatedObjectcontents,
+                    RelatedObject.BoldObjectLocator.BoldObjectId,
+                    RoleRTInfo.IndexOfOtherEnd, Value,
+                    RelatedObject.BoldMembers[RoleRTInfo.IndexOfOtherEnd].AsIBoldValue[bdepContents].ContentName);
                 end;
               end;
             end;
@@ -365,21 +343,20 @@ begin
   if assigned(OwningId) then
   begin
     RemoteObj := System.EnsuredLocatorByID[OwningId].BoldObject;
-    // the remote object should really be there, but if it is not, there is really nothing we can do about it (except throw an exception ;-).
     if assigned(RemoteObj) then
     begin
       OtherEnd := RemoteObj.Boldmembers[OwningRoleRTInfo.IndexOfOtherEnd];
       if OtherEnd.BoldPersistenceState = bvpsInvalid then
       begin
         if OwningRoleRTInfo.ForceOtherEnd then
-          raise EBold.CreateFmt(sRelatedRoleNotLoaded, [classname, OwningRoleRTInfo.AsString]);
+          raise EBold.CreateFmt('%s.GetRegionsForRemoteMember: The related role (of %s) is not loaded. Unable to ensure optimistic locking consistency', [classname, OwningRoleRTInfo.AsString]);
       end
       else
         GetRegionsForElement(OtherEnd, Regions);
     end
     else
       if OwningRoleRTInfo.ForceOtherEnd then
-        raise EBold.CreateFmt(sRelatedObjectNotLoaded, [classname, OwningRoleRTInfo.AsString]);
+        raise EBold.CreateFmt('%s.GetRegionsForRemoteMember: The related object (of %s) is not loaded. Unable to ensure optimistic locking consistency', [classname, OwningRoleRTInfo.AsString]);
   end;
 end;
 
@@ -471,10 +448,9 @@ var
   Traverser: TBoldIndexableListTraverser;
 begin
   Traverser := Regions.CreateTraverser;
-  while not Traverser.EndOfList do
+  while Traverser.MoveNext do
   begin
     AddRegionObjectsToEnclosure(Traverser.Item as TBoldRegion, Enclosure, ValidateOnly, ListIsEnclosure);
-    Traverser.Next;
   end;
   Traverser.Free;
 end;
@@ -484,4 +460,5 @@ begin
   result := System.RegionFactory as TBoldRegionFactory;
 end;
 
+initialization
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropertyEditors;
 
 interface
@@ -181,6 +184,8 @@ uses
   Controls,
   Dialogs,
   BoldHandles,
+  BoldIndex,
+  BoldIndexableList,
   BoldMetaElementList,
   BoldDefs,
   BoldDefsDT,

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGeneratedCodeDictionary;
 
 interface
@@ -18,12 +21,12 @@ type
   { TBoldGeneratedCodeList }
   TBoldGeneratedCodeList = class(TBoldIndexableList)
   private
-    function GetDescriptorByExpressionName(ExpressionName: string): TBoldGeneratedCodeDescriptor;
+    function GetDescriptorByExpressionName(const ExpressionName: string): TBoldGeneratedCodeDescriptor;
     function GetModelDescriptors(index: Integer): TBoldGeneratedCodeDescriptor;
   public
     constructor Create;
-    function AddGeneratedCodeDescriptorWithFunc(ExpressionName: string; InstBusiClasses: TInstallBusinessClasses; InstObjListClasses: TInstallObjectListClasses; CRC: string = ''):TBoldGeneratedCodeDescriptor;
-    property DescriptorByExpressionName[ExpressionName: string]: TBoldGeneratedCodeDescriptor read GetDescriptorByExpressionName;
+    function AddGeneratedCodeDescriptorWithFunc(const ExpressionName: string; InstBusiClasses: TInstallBusinessClasses; InstObjListClasses: TInstallObjectListClasses; CRC: string = ''):TBoldGeneratedCodeDescriptor;
+    property DescriptorByExpressionName[const ExpressionName: string]: TBoldGeneratedCodeDescriptor read GetDescriptorByExpressionName;
     property ModelEntries[index: Integer]: TBoldGeneratedCodeDescriptor read GetModelDescriptors;
   end;
 
@@ -35,7 +38,7 @@ type
     fInstallBusinessClasses: TInstallBusinessClasses;
     fInstallObjectListClasses: TInstallObjectListClasses;
   public
-    constructor Create(ExpressionName: string; InstallBusinessClasses: TInstallBusinessClasses; InstallObjectListClasses: TInstallObjectListClasses; CRC: string);
+    constructor Create(const ExpressionName: string; InstallBusinessClasses: TInstallBusinessClasses; InstallObjectListClasses: TInstallObjectListClasses; CRC: string);
     property InstallBusinessClasses: TInstallBusinessClasses read fInstallBusinessClasses;
     property InstallObjectListClasses: TInstallObjectListClasses read fInstallObjectListClasses;
     property ExpressionName: string read fExpressionName;
@@ -45,12 +48,12 @@ type
   { TBoldGeneratedClassList }
   TBoldGeneratedClassList = class(TBoldIndexableList)
   private
-    function GetDescriptorByExpressionName(ExpressionName: string): TBoldGeneratedClassDescriptor;
+    function GetDescriptorByExpressionName(const ExpressionName: string): TBoldGeneratedClassDescriptor;
   public
     constructor Create;
     procedure AddEntry(BoldObjectClassEntry: TBoldGeneratedClassDescriptor);
-    procedure AddObjectEntry(ExpressionName: string; AClass: TClass);
-    property EntryByExpressionName[ExpressionName: string]: TBoldGeneratedClassDescriptor read GetDescriptorByExpressionName;
+    procedure AddObjectEntry(const ExpressionName: string; AClass: TClass);
+    property EntryByExpressionName[const ExpressionName: string]: TBoldGeneratedClassDescriptor read GetDescriptorByExpressionName;
   end;
 
   { TBoldGeneratedClassDescriptor }
@@ -64,7 +67,7 @@ type
     property TheClass: TClass read fClass;
   end;
 
-function GeneratedCodes: TBoldGeneratedCodeList; //Name space shortage!!
+function GeneratedCodes: TBoldGeneratedCodeList;
 function BoldGeneratedCodesAssigned: Boolean;
 
 implementation
@@ -78,14 +81,14 @@ var
   G_BoldGeneratedCodes: TBoldGeneratedCodeList = nil;
   IX_GeneratedClassExpressionName: integer = -1;
   IX_GeneratedCodeExpressionName: integer = -1;
-
+  
 type
   { TGeneratedCodeExpressionNameIndex }
   TGeneratedCodeExpressionNameIndex = class(TBoldStringHashIndex)
   protected
     function ItemAsKeyString(Item: TObject): string; override;
   end;
-
+  
 function TGeneratedCodeExpressionNameIndex.ItemAsKeyString(Item: TObject): string;
 begin
   Result := TBoldGeneratedCodeDescriptor(Item).ExpressionName;
@@ -112,7 +115,7 @@ begin
   SetIndexVariable(IX_GeneratedCodeExpressionName, AddIndex(TGeneratedCodeExpressionNameIndex.Create));
 end;
 
-function TBoldGeneratedCodeList.GetDescriptorByExpressionName(ExpressionName: string): TBoldGeneratedCodeDescriptor;
+function TBoldGeneratedCodeList.GetDescriptorByExpressionName(const ExpressionName: string): TBoldGeneratedCodeDescriptor;
 begin
   Result := TBoldGeneratedCodeDescriptor(TGeneratedCodeExpressionNameIndex(Indexes[IX_GeneratedCodeExpressionName]).FindByString(ExpressionName))
 end;
@@ -122,14 +125,14 @@ begin
   Result := TBoldGeneratedCodeDescriptor(Items[index]);
 end;
 
-function TBoldGeneratedCodeList.AddGeneratedCodeDescriptorWithFunc(ExpressionName: string; InstBusiClasses: TInstallBusinessClasses; InstObjListClasses: TInstallObjectListClasses; CRC: string = ''): TBoldGeneratedCodeDescriptor;
+function TBoldGeneratedCodeList.AddGeneratedCodeDescriptorWithFunc(const ExpressionName: string; InstBusiClasses: TInstallBusinessClasses; InstObjListClasses: TInstallObjectListClasses; CRC: string = ''): TBoldGeneratedCodeDescriptor;
 begin
   result := TBoldGeneratedCodeDescriptor.Create(ExpressionName, InstBusiClasses, InstObjListClasses, CRC);
   Add(result);
 end;
 
 { TBoldGeneratedCodeDescriptor }
-constructor TBoldGeneratedCodeDescriptor.Create(ExpressionName: string; InstallBusinessClasses: TInstallBusinessClasses; InstallObjectListClasses: TInstallObjectListClasses; CRC: String);
+constructor TBoldGeneratedCodeDescriptor.Create(const ExpressionName: string; InstallBusinessClasses: TInstallBusinessClasses; InstallObjectListClasses: TInstallObjectListClasses; CRC: String);
 begin
   fExpressionName := ExpressionName;
   fInstallBusinessClasses := InstallBusinessClasses;
@@ -157,7 +160,8 @@ begin
   SetIndexCapacity(1);
   SetIndexVariable(IX_GeneratedClassExpressionName, AddIndex(TGeneratedClassExpressionNameIndex.Create));
 end;
-function TBoldGeneratedClassList.GetDescriptorByExpressionName(ExpressionName: string): TBoldGeneratedClassDescriptor;
+
+function TBoldGeneratedClassList.GetDescriptorByExpressionName(const ExpressionName: string): TBoldGeneratedClassDescriptor;
 begin
   Result := TBoldGeneratedClassDescriptor(TGeneratedClassExpressionNameIndex(Indexes[IX_GeneratedClassExpressionName]).FindByString(ExpressionName));
 end;
@@ -167,7 +171,7 @@ begin
   Add(BoldObjectClassEntry);
 end;
 
-procedure TBoldGeneratedClassList.AddObjectEntry(ExpressionName: string; AClass: TClass);
+procedure TBoldGeneratedClassList.AddObjectEntry(const ExpressionName: string; AClass: TClass);
 begin
   AddEntry(TBoldGeneratedClassDescriptor.Create(ExpressionName, AClass));
 end;

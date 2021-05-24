@@ -15,12 +15,13 @@ procedure TResidential_Building.ChargeRent;
 var
   O, R: Integer;
 begin
+
   if Residents.Count = 0 then
     raise Exception.Create('No residents to pay rent');
 
   if Owners.Count = 0 then
     raise Exception.Create('No owners to receive payment');
-    
+
   for R := Residents.Count - 1 downto 0 do
     with Residents[R] do
     begin
@@ -43,6 +44,7 @@ begin
   inherited;
   Address := IntToStr(Random(250)) + ' ' + streets[random(5)];
   TotalRent := random(100) * 100;
+  Capacity := random(20);
 end;
 
 

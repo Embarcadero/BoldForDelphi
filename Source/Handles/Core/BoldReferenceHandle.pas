@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldReferenceHandle;
 
 interface
@@ -20,12 +23,15 @@ type
     fValueSubscriber: TBoldPassthroughSubscriber;
     FOnValueDestroyed: TNotifyEvent;
     FOnObjectDeleted: TNotifyEvent;
-    procedure SetValue(NewValue: TBoldElement);
     procedure SetStaticValueTypeName(Value: string);
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
   protected
     function GetValue: TBoldElement; override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
+    function GetStaticSystemHandle: TBoldAbstractSystemHandle; override;
+    procedure SetValue(NewValue: TBoldElement); override;
+    function GetCanSetValue: boolean; override;
+    procedure DoAssign(Source: TPersistent); override;
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
@@ -40,7 +46,9 @@ implementation
 
 uses
   SysUtils,
-  BoldSystemRT;
+  BoldSystemRT,
+  BoldSystem,
+  BoldRev;
 
 const
   breValueDestroyed = 42;
@@ -61,12 +69,48 @@ begin
   inherited;
 end;
 
+procedure TBoldReferenceHandle.DoAssign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TBoldReferenceHandle then with TBoldReferenceHandle(Source) do
+  begin
+    self.StaticValueTypeName := StaticValueTypeName;
+    // do we want to assign these events ?
+    self.OnObjectDeleted := OnObjectDeleted;
+    self.OnValueDestroyed := OnValueDestroyed;
+  end;
+end;
+
+function TBoldReferenceHandle.GetCanSetValue: boolean;
+begin
+  result := true;
+end;
+
 function TBoldReferenceHandle.GetStaticBoldType: TBoldElementTypeInfo;
 begin
   if Assigned(StaticSystemTypeInfo) then
     Result := StaticSystemTypeInfo.ElementTypeInfoByExpressionName[StaticValueTypeName]
   else
     Result := nil;
+end;
+
+function TBoldReferenceHandle.GetStaticSystemHandle: TBoldAbstractSystemHandle;
+var
+  System: TBoldSystem;
+begin
+  result := inherited GetStaticSystemHandle;
+  if Assigned(result) or not Assigned(fValue) then
+    exit;
+  System := nil;
+  if fValue is TBoldSystem then
+    System := TBoldSystem(fValue)
+  else
+  if fValue is TBoldObject then
+    System := TBoldObject(fValue).BoldSystem
+  else
+  if fValue is TBoldMember then
+    System := TBoldMember(fValue).BoldSystem;
+  result := TBoldAbstractSystemHandle.FindSystemHandleForSystem(System);
 end;
 
 function TBoldReferenceHandle.GetValue: TBoldElement;
@@ -89,10 +133,11 @@ begin
   begin
     fValue := NewValue;
     fValueSubscriber.CancelAllSubscriptions;
-    if Assigned(fValue) then
+    if Assigned(fValue) and (not (fValue is TBoldSystem)) then
     begin
       fValue.AddSmallSubscription(fValueSubscriber, [beDestroying], breValueDestroyed);
-      fValue.AddSmallSubscription(fValueSubscriber, [beObjectDeleted], breObjectDeleted);
+      if (fValue is TBoldObject) then
+        fValue.AddSmallSubscription(fValueSubscriber, [beObjectDeleted], breObjectDeleted)
     end;
     SendEvent(Self, beValueIdentityChanged);
   end;
@@ -116,5 +161,7 @@ begin
       OnValueDestroyed(self);
   end;
 end;
+
+initialization
 
 end.

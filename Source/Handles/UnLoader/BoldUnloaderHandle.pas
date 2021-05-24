@@ -1,3 +1,6 @@
+/////////////////////////////////////////////////////////
+
+
 unit BoldUnloaderHandle;
 
 interface
@@ -11,6 +14,11 @@ uses
   BoldSystemHandle,
   Classes,
   ExtCtrls;
+
+const
+  cTickInterval = 60 * 1000; // 1 minute
+  cScanPerTick = 50; // milliseconds, max time to spend scaning
+  cMinAgeForUnload = 5; // unit is the TickInterval so (cTickInterval * cMinAgeForUnload) = 5 minutes
 
 type
   { Forward declaration of classes }
@@ -32,6 +40,12 @@ type
     procedure SetUnloadDelayedFetch(const Value: boolean);
     procedure SetMinAgeForUnload(const Value: integer);
     procedure SetScanPerTick(const Value: integer);
+    function GetOnMayStart: TBoldMayUnloadStartEvent;
+    procedure SetOnMayStart(const Value: TBoldMayUnloadStartEvent);
+    function GetOnReportUnload: TBoldReportUnloadEvent;
+    procedure SetOnReportUnload(const Value: TBoldReportUnloadEvent);
+    function GetUnloadFromCurrentClassList: boolean;
+    procedure SetUnloadFromCurrentClassList(const Value: boolean);
     property Unloader: TBoldUnloader read fUnloader;
     procedure SetBoldSystemHandle(const Value: TBoldSystemHandle);
     procedure Tick(Sender: Tobject);
@@ -42,18 +56,22 @@ type
     function GetOnMayUnload: TBoldUnloadObjectEvent;
     procedure SetOnMayInvalidate(const Value: TBoldInvalidateMemberEvent);
     procedure SetOnMayUnload(const Value: TBoldUnloadObjectEvent);
+    procedure PlaceSubscriptions;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
-    property TickIntervall: integer read GetTickInterval write SetTickInterval default 1000;
+    property TickInterval: integer read GetTickInterval write SetTickInterval default cTickInterval;
     property BoldSystemHandle: TBoldSystemHandle read fBoldSystemHandle write SetBoldSystemHandle;
-    property ScanPerTick: integer read GetScanPerTick write SetScanPerTick default 1000;
-    property MinAgeForUnload: integer read GetMinAgeForUnload write SetMinAgeForUnload default 300000;
-    property UnloadDelayedFetch: boolean read GetUnloadDelayedFetch write SetUnloadDelayedFetch;
+    property ScanPerTick: integer read GetScanPerTick write SetScanPerTick default cScanPerTick;
+    property MinAgeForUnload: integer read GetMinAgeForUnload write SetMinAgeForUnload default cMinAgeForUnload;
+    property UnloadDelayedFetch: boolean read GetUnloadDelayedFetch write SetUnloadDelayedFetch default false;
+    property UnloadFromCurrentClassList: boolean read GetUnloadFromCurrentClassList write SetUnloadFromCurrentClassList default false;
     property Active: boolean read fActive write SetActive default true;
     property OnMayInvalidate: TBoldInvalidateMemberEvent read GetOnMayInvalidate write SetOnMayInvalidate;
     property OnMayUnload: TBoldUnloadObjectEvent read GetOnMayUnload write SetOnMayUnload;
+    property OnMayStart: TBoldMayUnloadStartEvent read GetOnMayStart write SetOnMayStart;
+    property OnReportUnload: TBoldReportUnloadEvent read GetOnReportUnload write SetOnReportUnload;        
   end;
 
 
@@ -75,15 +93,16 @@ begin
   fSubscriber := TBoldPassthroughSubscriber.Create(ReceiveFromSystemHandle);
   fTimer := TTimer.Create(Self);
   fTimer.Enabled := True;
-  TickIntervall := 1000;
-  ScanPertick := 1000;
-  MinAgeForUnload := 300000;
+  TickInterval := cTickInterval;
+  ScanPertick := cScanPertick;
+  MinAgeForUnload := cMinAgeForUnload;
   fTimer.OnTimer := Tick;
   Active := True;
 end;
 
 destructor TBoldUnloaderHandle.Destroy;
 begin
+  BoldSystemHandle := nil;
   FreeAndNil(fSubscriber);
   FreeAndNil(fUnLoader);
   FreeAndNil(fTimer);
@@ -93,6 +112,11 @@ end;
 function TBoldUnloaderHandle.GetUnloadDelayedFetch: boolean;
 begin
   Result := Unloader.UnloadDelayedFetch;
+end;
+
+function TBoldUnloaderHandle.GetUnloadFromCurrentClassList: boolean;
+begin
+  result := Unloader.UnloadFromCurrentClassList;
 end;
 
 function TBoldUnloaderHandle.GetMinAgeForUnload: integer;
@@ -110,16 +134,28 @@ begin
   Result := fTimer.Interval;
 end;
 
+procedure TBoldUnloaderHandle.PlaceSubscriptions;
+begin
+  fSubscriber.CancelAllSubscriptions;
+  if assigned(fBoldSystemHandle) then
+  begin
+    fBoldSystemHandle.AddSmallSubscription(fSubscriber, [beDestroying], breHandleDestroyed);
+    fBoldSystemHandle.AddSmallSubscription(fSubscriber, [beValueIdentityChanged], breSystemChanged);
+    if assigned(fBoldSystemHandle.System) then
+      fBoldSystemHandle.System.AddSmallSubscription(fSubscriber, [beDestroying], beDestroying);
+  end;
+end;
+
 procedure TBoldUnloaderHandle.PropagateToUnloder;
 begin
+  PlaceSubscriptions;
   if Active then
   begin
     if Assigned(BoldSystemHandle) then
       fUnloader.BoldSystem := BoldSystemHandle.System
     else
      fUnloader.BoldSystem := nil;
-    if Assigned(fUnloader.BoldSystem) then
-      fUnloader.Active := True;
+    fUnloader.Active := Assigned(fUnloader.BoldSystem);
   end
   else
     fUnLoader.Active := False;
@@ -146,15 +182,9 @@ end;
 procedure TBoldUnloaderHandle.SetBoldSystemHandle(
   const Value: TBoldSystemHandle);
 begin
-  if Value <> BoldSystemHandle then
+  if Value <> fBoldSystemHandle then
   begin
-    fSubscriber.CancelAllSubscriptions;
     fBoldSystemHandle := Value;
-    if assigned(Value) then
-    begin
-      fBoldSystemHandle.AddSmallSubscription(fSubscriber, [beDestroying], breHandleDestroyed);
-      fBoldSystemHandle.AddSmallSubscription(fSubscriber, [beValueIdentityChanged], breSystemChanged);
-    end;
     PropagateToUnloder;
   end;
 end;
@@ -163,6 +193,12 @@ procedure TBoldUnloaderHandle.SetUnloadDelayedFetch(
   const Value: boolean);
 begin
   Unloader.UnloadDelayedFetch := Value;
+end;
+
+procedure TBoldUnloaderHandle.SetUnloadFromCurrentClassList(
+  const Value: boolean);
+begin
+  Unloader.UnloadFromCurrentClassList := Value;
 end;
 
 procedure TBoldUnloaderHandle.SetMinAgeForUnload(
@@ -191,9 +227,19 @@ begin
   Result := Unloader.OnMayInvalidate;
 end;
 
+function TBoldUnloaderHandle.GetOnMayStart: TBoldMayUnloadStartEvent;
+begin
+  Result := Unloader.OnMayStart;
+end;
+
 function TBoldUnloaderHandle.GetOnMayUnload: TBoldUnloadObjectEvent;
 begin
   Result := Unloader.OnMayUnload;
+end;
+
+function TBoldUnloaderHandle.GetOnReportUnload: TBoldReportUnloadEvent;
+begin
+  result := Unloader.OnReportUnload;
 end;
 
 procedure TBoldUnloaderHandle.SetOnMayInvalidate(
@@ -202,14 +248,22 @@ begin
   Unloader.OnMayInvalidate := Value;
 end;
 
+procedure TBoldUnloaderHandle.SetOnMayStart(const Value: TBoldMayUnloadStartEvent);
+begin
+  Unloader.OnMayStart := Value;
+end;
+
 procedure TBoldUnloaderHandle.SetOnMayUnload(
   const Value: TBoldUnloadObjectEvent);
 begin
   Unloader.OnMayUnload := Value;
 end;
 
+procedure TBoldUnloaderHandle.SetOnReportUnload(
+  const Value: TBoldReportUnloadEvent);
+begin
+  Unloader.OnReportUnload := Value;
+end;
+
 end.
-
-
-
 

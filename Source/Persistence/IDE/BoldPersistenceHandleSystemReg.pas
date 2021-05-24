@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleSystemReg;
 
 interface
@@ -5,9 +8,10 @@ interface
 procedure Register;
 
 implementation
-{.$R BoldPersistenceHandleSystem.res}
+
+{$R BoldPersistenceHandleSystem.res}
+
 uses
-  SysUtils,
   Classes,
   BoldIdeConsts,
   BoldPersistenceHandleSystem;

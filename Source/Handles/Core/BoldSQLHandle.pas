@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSQLHandle;
 
 interface
@@ -35,6 +38,7 @@ type
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     function GetValue: TBoldElement; override;
     procedure EnsureList(RaiseException: Boolean);
+    procedure DoAssign(Source: TPersistent); override;    
   public
     { Public declarations }
     constructor Create(Owner: TComponent); override;
@@ -59,7 +63,6 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  HandlesConst,
   BoldSubscription,
   BoldSystemRT;
 
@@ -93,14 +96,31 @@ end;
 procedure TBoldSQLHandle.ExecuteSQL;
 begin
   if not assigned(StaticSystemHandle) then
-    raise EBold.CreateFmt(sNoSystemHandle, [classname, 'ExecuteSQL', name]); // do not localize
+    raise EBold.CreateFmt('%s.ExecuteSQL: %s has no SystemHandle', [classname, name]);
   if not StaticSystemHandle.Active then
-    raise EBold.CreateFmt(sSystemHandleNotActive, [classname]);
+    raise EBold.CreateFmt('%s.ExecuteSQL: Systemhandle is not active', [classname]);
 
   if ClearBeforeExecute then
     ClearList;
   EnsureList(true);
   StaticSystemHandle.System.GetAllInClassWithSQL(fObjectList, fBoldObjectClass, SQLWhereClause, SQLOrderByClause, Params, JoinInheritedTables, MaxAnswers, Offset);
+end;
+
+procedure TBoldSQLHandle.DoAssign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TBoldSQLHandle then with TBoldSQLHandle(Source) do
+  begin
+    self.SQLWhereClause := SQLWhereClause;
+    self.SQLOrderByClause := SQLOrderByClause;
+    self.ListMode := ListMode;
+    self.ClassExpressionName := ClassExpressionName;
+    self.ClearBeforeExecute := ClearBeforeExecute;
+    self.MaxAnswers := MaxAnswers;
+    self.Offset := Offset;
+    self.Params.Assign(Params);
+    self.JoinInheritedTables := JoinInheritedTables;
+  end;
 end;
 
 procedure TBoldSQLHandle.ClearList;
@@ -135,7 +155,7 @@ begin
   begin
 
     if not assigned(StaticSystemHandle) and RaiseException then
-      raise EBold.CreateFmt(sNoSystemHandle, [ClassName, 'EnsureList', name]); // do not localize
+      raise EBold.CreateFmt('%s.EnsureList: %s not connected to a SystemHandle', [ClassName, name]);
 
     ElementTypeInfo := StaticBoldType;
 
@@ -149,7 +169,7 @@ begin
     end
     else
       if raiseException then
-        raise EBold.CreateFmt(sCannotCreateListDueToInvalidType, [ClassName, Name]);
+        raise EBold.CreateFmt('%s.EnsureList: Unable to create list (%s), cant find valid type', [ClassName, Name]);
   end;
 end;
 
@@ -168,4 +188,5 @@ begin
   Params.Assign(Value);
 end;
 
+initialization
 end.

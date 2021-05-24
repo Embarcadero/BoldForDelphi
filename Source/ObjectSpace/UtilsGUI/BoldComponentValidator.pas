@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComponentValidator;
 
 interface
@@ -19,15 +22,18 @@ type
 
   { TBoldComponentValidator }
   TBoldComponentValidator = class
+  private
+    fValidateCount: integer;
   protected
-    function ValidateOCLComponent(Component: IBoldOCLComponent; Name: String): Boolean;
     function ValidateValidateableComponent(Component: IBoldValidateableComponent; NamePrefix: String): Boolean;
     procedure InitializeLog;
     procedure CompleteLog;
   public
     function ValidateComponent(Component: TPersistent; NamePrefix: String = ''; TraverseSubComponents: Boolean = false): Boolean;
-    function ValidateExpressionInContext(Expression: string; Context: TBoldElementTypeInfo; Name: String): Boolean;
+    function ValidateExpressionInContext(Expression: string; Context: TBoldElementTypeInfo; Name: String; const VariableList: TBoldExternalVariableList = nil): Boolean;
     procedure ValidateApplication;
+    function ValidateOCLComponent(Component: IBoldOCLComponent; Name: String): Boolean;
+    property ValidateCount: integer read fValidateCount write fValidateCount;
   end;
 
 implementation
@@ -35,54 +41,68 @@ implementation
 uses
   SysUtils,
   BoldLogHandler,
-  BoldEnvironment,
-  BoldCoreConsts;
+  BoldDefs,
+  BoldEnvironment;
 
 { TBoldComponentValidator }
+
 
 function TBoldComponentValidator.ValidateComponent(Component: TPersistent; NamePrefix: String = ''; TraverseSubComponents: Boolean = false): Boolean;
 var
   OCLComponent: IBoldOCLComponent;
   ValidateableComponent: IBoldValidateableComponent;
   i: integer;
+  vCounter: integer;
+  vIsFormOrDataModule: boolean;
 begin
-  if BoldEffectiveEnvironment.IsFormOrDataModule(Component) then
-    BoldLog.LogHeader := Format(sValidatingHeader, [(Component as TComponent).Name]);
+  vCounter := ValidateCount;
+  vIsFormOrDataModule := BoldEffectiveEnvironment.IsFormOrDataModule(Component);
+  if vIsFormOrDataModule then
+    BoldLog.LogFmt('Validating %s', [(Component as TComponent).Name], ltInfo);
 
   result := true;
-  if Component.GetInterface(IBoldOCLComponent, OCLComponent) then
+  if Supports(Component, IBoldValidateableComponent, ValidateableComponent) then
+    result := result and ValidateValidateableComponent(ValidateableComponent, NamePrefix + Component.GetNamePath)
+  else
+  if Supports(Component, IBoldOCLComponent, OCLComponent) then
     result := result and ValidateOCLComponent(OclComponent, NamePrefix + Component.GetNamePath);
-
-  if Component.GetInterface(IBoldValidateableComponent, ValidateableComponent) then
-    result := result and ValidateValidateableComponent(ValidateableComponent, NamePrefix);
 
   if TraverseSubComponents and (Component is TComponent) then
     for i := 0 to (Component as TComponent).ComponentCount - 1 do
       result := result and ValidateComponent((Component as TComponent).Components[i], NamePrefix + Component.GetNamePath + '.', TraverseSubComponents);
+  if vIsFormOrDataModule then
+  begin
+    if result then
+      BoldLog.LogFmt('%s ok, checked %d expressions.', [(Component as TComponent).Name, ValidateCount - vCounter], ltInfo)
+    else
+      BoldLog.LogFmt('%s failed, checked %d expressions.', [(Component as TComponent).Name, ValidateCount - vCounter], ltWarning);
+  end;
 end;
 
-function TBoldComponentValidator.ValidateExpressionInContext(Expression: string; Context: TBoldElementTypeInfo; Name: String): Boolean;
+
+function TBoldComponentValidator.ValidateExpressionInContext(Expression: string; Context: TBoldElementTypeInfo; Name: String; const VariableList: TBoldExternalVariableList = nil): Boolean;
 begin
+  inc(fValidateCount);
   result := true;
   if not assigned(Context) then
   begin
     result := false;
-    BoldLog.LogFmt(sNoContext, [Name]);
+    BoldLog.LogFmt('No context for %s', [Name], ltWarning);
   end
   else
   begin
     try
-      Context.Evaluator.ExpressionType(Expression, Context, true);
+      Context.Evaluator.ExpressionType(Expression, Context, true, VariableList);
     except
       on e: exception do
       begin
         result := false;
-        BoldLog.LogFmt(sValidationError, [Name, e.Message]);
+        BoldLog.LogFmt('Error in %s: %s', [Name, e.Message], ltError);
       end;
     end;
+    if not Result then
+      BoldLog.LogFmt('Expression: %s', [Expression], ltWarning);
   end;
-  if not Result then
-    BoldLog.LogFmt(sValidationExpression, [Expression]);
 end;
 
 procedure TBoldComponentValidator.ValidateApplication;
@@ -98,8 +118,9 @@ end;
 
 function TBoldComponentValidator.ValidateOCLComponent(Component: IBoldOCLComponent; Name: String): Boolean;
 begin
-  result := ValidateExpressionInContext(Component.Expression, Component.ContextType, Name);
+  result := ValidateExpressionInContext(Component.Expression, Component.ContextType, Name, Component.VariableList);
 end;
+
 
 function TBoldComponentValidator.ValidateValidateableComponent(Component: IBoldValidateableComponent; NamePrefix: String): Boolean;
 begin
@@ -109,7 +130,7 @@ end;
 procedure TBoldComponentValidator.InitializeLog;
 begin
   BoldLog.Show;
-  BoldLog.StartLog(sComponentValidation);
+  BoldLog.StartLog('Component validation');
 end;
 
 procedure TBoldComponentValidator.CompleteLog;
@@ -119,4 +140,5 @@ begin
   BoldLog.Show;
 end;
 
+initialization
 end.

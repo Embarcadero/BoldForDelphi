@@ -1,9 +1,11 @@
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLRequests;
 
 interface
 
 uses
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   Classes,
   BoldStringList,
   BoldDefs;
@@ -62,7 +64,7 @@ type
     procedure AddIdentifiedValue(const IdString: string; const Value: string;
         const DomElementTag: string = DEFAULT_IDENTIFIEDVALUE_TAG;
         const AttributeTag: string = DEFAULT_IDSTRING_TAG);
-    procedure ReloadIdentifiedValues;
+    procedure ReloadIdentifiedValues;    
     property DomDocument: IXMLDomDocument read FDomDocument;
     property Params: TBoldStringList read getParams;
     property IdentifiedValues: TBoldStringList read getIdentifiedValues;
@@ -77,7 +79,9 @@ uses
   SysUtils,
   BoldUtils,
   Windows,
-  BoldCommonConst;
+  BoldRev;
+
+
 
   {TBoldXMLRequest}
 
@@ -155,10 +159,10 @@ begin
     if Assigned(ActionElement) then
       LoadIdentifiedValues(ActionElement, Values, DomElementTag, AttributeTag)
     else
-      raise EBold.CreateFmt(sSOAPActionNotSet, [ClassName, 'SetIdentifiedValues']); // do not localize
+      raise EBold.CreateFmt('%s.SetIdentifiedValues: Action not set', [ClassName]);
   end
   else
-    raise EBold.CreateFmt(sCannotSetPropertyWhenReadOnly, [ClassName, 'SetIdentifiedValues']); // do not localize
+    raise EBold.CreateFmt('%s.SetIdentifiedValues: cannot set BoldIds in ReadOnly mode', [ClassName]);
 end;
 
 procedure TBoldXMLRequest.SetParams(const Params: TStrings);
@@ -168,10 +172,10 @@ begin
     if Assigned(ActionElement) then
       LoadParams(ActionElement, Params)
     else
-      raise EBold.CreateFmt(sSOAPActionNotSet, [ClassName, 'SetParams']); // do not localize
+      raise EBold.CreateFmt('%s.SetParams: Action not set', [ClassName]);
   end
   else
-    raise EBold.CreateFmt(sCannotSetPropertyWhenReadOnly, [ClassName, 'SetParams']); // do not localize
+    raise EBold.CreateFmt('%s.SetParams: cannot set Params in ReadOnly mode', [ClassName]);
 end;
 
 function TBoldXMLRequest.getActionName: string;
@@ -222,7 +226,7 @@ begin
     end
   end
   else
-    raise EBold.CreateFmt(sCannotSetPropertyWhenReadOnly, [ClassName, 'ActionPath']);; // do not localize
+    raise EBold.CreateFmt('%s.ActionPath: property cannot be set', [ClassName]);;
 end;
 
 constructor TBoldXMLRequest.CreateInitialized(const VersionNo: string = DEFAULT_VERSION_NO; const Encoding: string = DEFAULT_ENCODING;
@@ -230,9 +234,9 @@ constructor TBoldXMLRequest.CreateInitialized(const VersionNo: string = DEFAULT_
   function BooleanToStr(value: Boolean): string;
   begin
     if Value then
-      result := 'yes' // do not localize
+      result := 'yes'
     else
-      result := 'no'; // do not localize
+      result := 'no';
   end;
 var
   ProcessingInstruction: IXMLDOMProcessingInstruction;
@@ -241,9 +245,9 @@ begin
   FIsReadOnly := false;
   FDomDocument := CoDOMDocument.Create;
   FDomDocument.async := FALSE;
-  ProcessingInstruction := FDomDocument.createProcessingInstruction('xml', Format('version="%s" encoding="%s" standalone="%s"', [VersionNo, Encoding, BooleantoStr(StandAlone)])); // do not localize
+  ProcessingInstruction := FDomDocument.createProcessingInstruction('xml', Format('version="%s" encoding="%s" standalone="%s"', [VersionNo, Encoding, BooleantoStr(StandAlone)]));
   FDomDocument.appendChild(ProcessingInstruction);
-  FActionPath := DEFAULT_ACTION_PATH;
+  FActionPath := DEFAULT_ACTION_PATH;  
 end;
 
 function TBoldXMLRequest.SetAction( const ActionName: string; const ActionPath: string = DEFAULT_ACTION_PATH): IXMLDomElement;
@@ -259,7 +263,7 @@ begin
     if (Trim(ActionPath) = '') or (Trim(ActionName) = '') then
     begin
       Result := nil;
-      raise EBold.CreateFmt(sSetActionInvalidArgs, [ClassName]);
+      raise EBold.CreateFmt('%s.SetAction: Invalid arguments "ActionPath" or "ActionName"', [ClassName]);
     end;
     if ((Trim(ActionPath) <> FActionPath) and (ActionName <> self.ActionName)) or
       not Assigned(ActionElement) then
@@ -277,12 +281,10 @@ begin
           Tag := Copy(temp, p+1, Maxint);
           temp := Copy(temp, 1, p - 1);
           NewElement := DomDocument.CreateElement(Tag);
-          //****************************************************************************//
-          if IsDefault and (Tag = 'SOAP:Envelope') then // do not localize
-            NewElement.setAttribute('xmlns:SOAP', 'urn:schemas-xmlssoap-org:soap.v1'); // do not localize
-          if IsDefault and (AnsiPos('m:', Tag) > 0) then // do not localize
-            NewElement.setAttribute('xmlns:m', 'www.borland.com/products/boldfordelphi'); // do not localize
-          //****************************************************************************//
+          if IsDefault and (Tag = 'SOAP:Envelope') then
+            NewElement.setAttribute('xmlns:SOAP', 'urn:schemas-xmlssoap-org:soap.v1');
+          if IsDefault and (Pos('m:', Tag) > 0) then
+            NewElement.setAttribute('xmlns:m', 'www.boldsoft.com/products/boldfordelphi');
           if Assigned(ChildElement) then
             NewElement.appendChild(ChildElement);
           ChildElement := NewElement;
@@ -312,7 +314,7 @@ begin
   if not FIsReadOnly then
   begin
     if not assigned(DomDocument) then
-      raise EBold.CreateFmt(sSOAPDOMDocumentMissing, [classname]);
+      raise EBold.CreateFmt('%s.EnsureRoot: The XMLRequest has no DomDocument. ', [classname]);
     RootElement := DomDocument.Get_documentElement;
     if not Assigned(RootElement) then
     begin
@@ -359,7 +361,7 @@ var
   NewElement: IXMLDomElement;
 begin
   if FIsReadOnly then
-    raise EBold.CreateFmt(sCannotPerformInReadOnlyMode, [ClassName, 'AddParam']) // do not localize
+    raise EBold.CreateFmt('%s.AddParam: cannot AddParam in ReadOnly mode', [ClassName])
   else if Assigned(ActionElement) then
   begin
     NewElement := DomDocument.createElement(Name);
@@ -367,7 +369,7 @@ begin
     ActionElement.appendChild(NewElement);
   end
   else
-    raise EBold.CreateFmt(sSOAPActionNotSet, [ClassName, 'AddParam']); // do not localize
+    raise EBold.CreateFmt('%s.AddParam: no action set', [ClassName]);
 end;
 
 procedure TBoldXMLRequest.DeleteAction;
@@ -375,7 +377,7 @@ var
   parentNode: IXMLDomNode;
 begin
   if FIsReadOnly then
-    raise EBold.CreateFmt(sCannotPerformInReadOnlyMode, [ClassName, 'DeleteAction']) // do not localize
+    raise EBold.CreateFmt('%s.DeleteAction: cannot perform this operation in ReadOnly mode', [ClassName])
   else
   begin
     parentNode := ActionElement.parentNode;
@@ -391,14 +393,16 @@ var
   NewElement: IXMLDomElement;
 begin
   if FIsReadOnly then
-    raise EBold.CreateFmt(sCannotPerformInReadOnlyMode, [ClassName, 'AddIdentifiedValue']); // do not localize
-  if not Assigned(ActionElement) then
-    raise EBold.CreateFmt(sSOAPActionNotSet, [ClassName, 'AddIdentifiedValue']); // do not localize
-
-  NewElement := DomDocument.createElement(DomElementTag);
-  NewElement.setAttribute(AttributeTag, IdString);
-  NewElement.Set_text(Value);
-  ActionElement.appendChild(NewElement);
+    raise EBold.CreateFmt('%s.AddIdentifiedValue: cannot AddParam in ReadOnly mode', [ClassName])
+  else if Assigned(ActionElement) then
+  begin
+    NewElement := DomDocument.createElement(DomElementTag);
+    NewElement.setAttribute(AttributeTag, IdString);
+    NewElement.Set_text(Value);
+    ActionElement.appendChild(NewElement);
+  end
+  else
+    raise EBold.CreateFmt('%s.AddIdentifiedValue: no action set', [ClassName]);
 end;
 
 procedure TBoldXMLRequest.ReloadIdentifiedValues;
@@ -412,7 +416,9 @@ end;
 
 constructor TBoldXMLRequest.Create;
 begin
-  raise EBold.CreateFmt(sSOAPBadConstructorToUse, [ClassName]);
+  raise EBold.CreateFmt('%s.Create: Use the constructors CreateFromXML or CreateInitialized', [ClassName]);
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldActions;
 
 interface
@@ -15,7 +18,9 @@ type
   TBoldActivateSystemAction = class;
   TBoldUpdateDBAction = class;
   TBoldFailureDetectionAction = class;
-
+  TBoldCreateDatabaseAction = class;
+  TBoldDiscardChangesAction = class;
+  
   TBoldSaveAction = (saAsk, saYes, saNo, saFail);
 
   { TBoldSystemHandleAction }
@@ -37,6 +42,15 @@ type
 
   { TBoldUpdateDBAction }
   TBoldUpdateDBAction = class(TBoldSystemHandleAction)
+  protected
+    procedure CheckAllowEnable(var EnableAction: boolean); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure ExecuteTarget(Target: TObject); override;
+  end;
+
+  { TBoldDiscardChangesAction }
+  TBoldDiscardChangesAction = class(TBoldSystemHandleAction)
   protected
     procedure CheckAllowEnable(var EnableAction: boolean); override;
   public
@@ -77,15 +91,34 @@ type
     property SaveOnClose: TBoldSaveAction read FSaveOnClose write fSaveOnClose;
   end;
 
+  TBoldCreateDatabaseAction = class(TBoldSystemHandleAction)
+  private
+    fOnSchemaGenerated: TNotifyEvent;
+    fIgnoreUnknownTables: boolean;
+    fDropExisting: boolean;
+    procedure SchemaGenerated;
+  protected
+    procedure GenerateSchema;
+    procedure CheckAllowEnable(var EnableAction: boolean); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure ExecuteTarget(Target: TObject); override;
+  published
+    property OnSchemaGenerated: TNotifyEvent read fOnSchemaGenerated write fOnSchemaGenerated;
+    property IgnoreUnknownTables: boolean read fIgnoreUnknownTables write fIgnoreUnknownTables default false;
+    property DropExisting: boolean read fDropExisting write fDropExisting default false;
+  end;
+
 implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldDefs,
+  Forms,
   Controls,
   Dialogs,
   ComCtrls,
+  Menus, // for TextToShortCut
   BoldSystem;
 
 const
@@ -104,7 +137,8 @@ end;
 constructor TBoldUpdateDBAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sUpdateDB;
+  Caption := 'Update DB';
+  ShortCut := TextToShortCut('Ctrl+S');
 end;
 
 procedure TBoldUpdateDBAction.ExecuteTarget(Target: TObject);
@@ -120,9 +154,9 @@ constructor TBoldActivateSystemAction.Create(AOwner: TComponent);
 begin
   inherited;
   fHandleIdentitySubscriber := TBoldPassthroughSubscriber.Create(_Receive);
-  fOpenCaption := sOpenSystem;
-  fCloseCaption := sCloseSystem;
-  fSaveQuestion := sThereAreDirtyObjects;
+  fOpenCaption := 'Open system';
+  fCloseCaption := 'Close system';
+  fSaveQuestion := 'There are dirty objects. Save them before closing system?';
   UpdateCaption;
 end;
 
@@ -151,7 +185,7 @@ begin
         saYes: BoldSystemHandle.UpdateDatabase;
         saNo: BoldSystemHandle.System.Discard;
         saFail: if BoldSystemHandle.System.DirtyObjects.Count > 0 then
-                raise EBold.Create(sClosingWithDirtyObjects);
+                raise EBold.Create('Closing system with dirty objects!!');
       end;
     if Update then
       BoldSystemHandle.Active := not BoldSystemHandle.Active;
@@ -245,6 +279,8 @@ begin
             ((Target as TControl).Action = self);
 end;
 
+type TControlAccess = class(TControl);
+
 procedure TBoldFailureDetectionAction.UpdateTarget(Target: TObject);
 var
   failure: TBoldFailureReason;
@@ -255,12 +291,11 @@ begin
     Caption := failure.Reason
   else
     Caption := '';
-
-  // The statusbar seems to have a bug, it does not correctly update its caption...
-  // even this does not make it work fully... Bug in VCL
-
   if Target is TStatusBar then
-    (Target as TStatusBar).SimpleText := Caption;
+    (Target as TStatusBar).SimpleText := Caption
+  else
+  if Target is TControl then
+    (Target as TControlAccess).Caption := Caption
 end;
 
 { TBoldSystemHandleAction }
@@ -274,6 +309,68 @@ procedure TBoldSystemHandleAction.SetBoldSystemHandle(
   const Value: TBoldSystemHandle);
 begin
   BoldElementHandle := Value;
+end;
+
+{ TBoldCreateDatabaseAction }
+
+procedure TBoldCreateDatabaseAction.CheckAllowEnable(var EnableAction: boolean);
+begin
+  EnableAction := Assigned(BoldSystemHandle) and Assigned(BoldSystemHandle.PersistenceHandleDB) and not BoldSystemHandle.Active;
+end;
+
+constructor TBoldCreateDatabaseAction.Create(AOwner: TComponent);
+begin
+  inherited;
+  Caption := 'Create DB';
+end;
+
+procedure TBoldCreateDatabaseAction.ExecuteTarget(Target: TObject);
+begin
+  GenerateSchema;
+end;
+
+procedure TBoldCreateDatabaseAction.GenerateSchema;
+begin
+  if Assigned(BoldSystemHandle) and Assigned(BoldSystemHandle.PersistenceHandleDB) then
+  begin
+    Screen.Cursor := crHourGlass;
+    try
+      BoldSystemHandle.PersistenceHandleDB.CreateDataBase(DropExisting);
+      BoldSystemHandle.PersistenceHandleDB.CreateDataBaseSchema(IgnoreUnknownTables);
+    finally
+      Screen.Cursor := crDefault;
+    end;
+    SchemaGenerated;
+  end;
+end;
+
+procedure TBoldCreateDatabaseAction.SchemaGenerated;
+begin
+  if Assigned(fOnSchemaGenerated) then
+    fOnSchemaGenerated(Self);
+end;
+
+{ TBoldDiscardChangesAction }
+
+procedure TBoldDiscardChangesAction.CheckAllowEnable(var EnableAction: boolean);
+begin
+  inherited;
+  if EnableAction then
+    EnableAction := BoldSystemHandle.Active and
+                    (BoldSystemHandle.System.DirtyObjects.Count > 0);
+end;
+
+constructor TBoldDiscardChangesAction.Create(AOwner: TComponent);
+begin
+  inherited;
+  Caption := 'Discard changes';
+end;
+
+procedure TBoldDiscardChangesAction.ExecuteTarget(Target: TObject);
+begin
+  inherited;
+  if Assigned(BoldSystemHandle) then
+    BoldSystemHandle.Discard;
 end;
 
 end.

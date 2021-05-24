@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLPlugins;
 
 interface
@@ -68,7 +71,7 @@ type
     function GetPlugInType: TPlugInType; override;
     function GetImageResourceName: String; override;
     function GetImageMaskColor: TColor; override;
-    function GetOptions: TBoldUMLPluginOptions; override;
+    function GetOptions: TBoldUMLPluginOptions; override;    
   public
     procedure Execute(context: IUMLModelPlugInContext); override;
   end;
@@ -85,6 +88,7 @@ type
   end;
 
 implementation
+
 {$R BoldUMLPlugins.res}
 
 uses
@@ -106,7 +110,6 @@ uses
 var
   _LinkExporter: TUMLLinkExporter;
   _LinkImporter: TUMLLinkImporter;
-//  _ModelUpdater: TUMLModelUpdaterPlugIn;
 
 { TUMLPlugInFunction }
 
@@ -169,7 +172,7 @@ end;
 
 function TUMLLinkImporter.GetImageResourceName: String;
 begin
-  result := 'UMLPluginImportImage'; // do not localize
+  result := 'UMLPluginImportImage';
 end;
 
 function TUMLLinkImporter.GetImageMaskColor: TColor;
@@ -214,7 +217,7 @@ end;
 
 function TUMLLinkExporter.GetImageResourceName: String;
 begin
-  result := 'UMLPluginExportImage'; // do not localize
+  result := 'UMLPluginExportImage';
 end;
 
 function TUMLLinkExporter.GetImageMaskColor: TColor;
@@ -279,7 +282,7 @@ end;
 
 function TUMLModelUpdaterPlugIn.GetImageResourceName: String;
 begin
-  result := 'UMLPluginModelUpdater'; // do not localize
+  result := 'UMLPluginModelUpdater';
 end;
 
 function TUMLModelUpdaterPlugIn.GetMenuItemName: String;
@@ -293,13 +296,12 @@ begin
 end;
 
 initialization
+
   _LinkExporter   := TUMLLinkExporter.Create(true);
   _LinkImporter   := TUMLLinkImporter.Create(true);
-//  _ModelUpdater   := TUMLModelUpdaterPlugIn.Create(true);
 
 finalization
   FreeAndNil(_LinkExporter);
   FreeAndNil(_LinkImporter);
-//  FreeAndNil(_ModelUpdater);
 
 end.

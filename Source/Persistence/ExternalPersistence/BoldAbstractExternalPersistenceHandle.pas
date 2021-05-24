@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractExternalPersistenceHandle;
 
 interface
@@ -9,6 +12,7 @@ uses
   BoldPersistenceHandlePTWithModel,
   BoldAbstractExternalPersistenceController;
 
+
 type
   TBoldAbstractExternalPersistenceHandle = class(TBoldPersistenceHandlePassthroughWithModel)
   private
@@ -17,6 +21,7 @@ type
     fOnFailUpdates: TNotifyEvent;
     FOnActivate: TNotifyEvent;
     FOnDeActivate: TNotifyEvent;
+    FUpdateBoldDatabaseFirst: boolean;
     function GetPersistenceController: TBoldAbstractExternalPersistenceController;
   protected
     procedure SetActive(Value: Boolean); override;
@@ -36,13 +41,16 @@ type
     function IntValueForObject(ObjectContents: IBoldObjectContents; MemberExpressionName: string): Integer;
     function GetReferredObject(ObjectContents: IBoldObjectContents; MemberExpressionName: string; ValueSpace: IBoldValueSpace): IBoldObjectContents;
     property PersistenceController: TBoldAbstractExternalPersistenceController read GetPersistenceController;
+    property UpdateBoldDatabaseFirst: boolean read FUpdateBoldDatabaseFirst write FUpdateBoldDatabaseFirst default false;
   end;
+
+
 
 implementation
 
 uses
-  BoldDefs,
-  ExPeConsts;
+  BoldDefs;
+
 
 { TBoldAbstractExternalPersistenceHandle }
 
@@ -57,7 +65,7 @@ begin
   if Value.QueryInterface(IBoldCurrencyContent, Currvalue) = S_OK then
     result := Currvalue.asCurrency
   else
-    raise EBold.createFmt(sValueNotCurrency, [classname, MemberExpressionName]);
+    raise EBold.createFmt('%s.CurrencyValueForObject: The value (%s) is not a currency', [classname, MemberExpressionName]);
 end;
 
 function TBoldAbstractExternalPersistenceHandle.DateValueForObject(
@@ -71,7 +79,7 @@ begin
   if Value.QueryInterface(IBoldDateContent, Datevalue) = S_OK then
     result := Datevalue.asDate
   else
-    raise EBold.createFmt(sValueNotDate, [classname, MemberExpressionName]);
+    raise EBold.createFmt('%s.DateValueForObject: The value (%s) is not a date', [classname, MemberExpressionName]);
 end;
 
 function TBoldAbstractExternalPersistenceHandle.GetPersistenceController: TBoldAbstractExternalPersistenceController;
@@ -107,7 +115,7 @@ begin
   if Value.QueryInterface(IBoldIntegerContent, Intvalue) = S_OK then
     result := Intvalue.asInteger
   else
-    raise EBold.createFmt(sValueNotInteger, [classname, MemberExpressionName]);
+    raise EBold.createFmt('%s.IntValueForObject: The value (%s) is not an integer', [classname, MemberExpressionName]);
 end;
 
 function TBoldAbstractExternalPersistenceHandle.KeyForObject(ObjectContents: IBoldObjectContents): IBoldValue;
@@ -125,7 +133,7 @@ begin
   if Value.QueryInterface(IBoldIntegerContent, Intvalue) = S_OK then
     result := Intvalue.asInteger
   else
-    raise EBold.createFmt(sKeyNotInteger, [classname]);
+    raise EBold.createFmt('%s.KeyIntForObject: The key is not an integer', [classname]);
 end;
 
 function TBoldAbstractExternalPersistenceHandle.KeyStringForObject(
@@ -138,7 +146,7 @@ begin
   if Value.QueryInterface(IBoldStringContent, Strvalue) = S_OK then
     result := (Value as IBoldStringContent).asString
   else
-    raise EBold.createFmt(sKeyNotString, [classname]);
+    raise EBold.createFmt('%s.KeyStringForObject: The key is not a string', [classname]);
 end;
 
 function TBoldAbstractExternalPersistenceHandle.StringValueForObject(
@@ -153,7 +161,7 @@ begin
   if Value.QueryInterface(IBoldStringContent, StrValue) = S_OK then
     result := StrValue.asString
   else
-    raise EBold.createFmt(sValueNotString, [classname, MemberExpressionName]);
+    raise EBold.createFmt('%s.StringValueForObject: The value (%s) is not is not a string', [classname, MemberExpressionName]);
 end;
 
 function TBoldAbstractExternalPersistenceHandle.ValueForObject(
@@ -178,5 +186,8 @@ begin
       OnDeActivate(self);
   end;
 end;
+
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCodePlugins;
 
 interface
@@ -112,7 +115,7 @@ end;
 
 function TUMLCodeGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenCodeImage'; // do not localize
+  result := 'UMLPluginGenCodeImage';
 end;
 
 procedure TUMLCodeGenerator.GenerateCode(Generator: TBoldGenerator);
@@ -131,7 +134,7 @@ end;
 
 function TUMLIDLGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenIDLImage'; // do not localize
+  result := 'UMLPluginGenIDLImage';
 end;
 
 function TUMLIDLGenerator.GetMenuItemName: String;
@@ -144,13 +147,13 @@ end;
 procedure TUMLMIDLGenerator.GenerateCode(Generator: TBoldGenerator);
 begin
   Generator.GenerateMIDLCode := true;
-  Generator.UseTypedLists := true;
+  Generator.UseTypedLists := false;
   Generator.GenerateComInterfaces;
 end;
 
 function TUMLMIDLGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenMIDLImage'; // do not localize
+  result := 'UMLPluginGenMIDLImage';
 end;
 
 function TUMLMIDLGenerator.GetMenuItemName: String;
@@ -169,7 +172,7 @@ begin
   BoldGuard := TBoldGuard.Create(Validator);
   BoldModel := Context.GetCurrentModelHandle;
 
-  Validator := TBoldUMLModelValidator.Create(Context.GetCurrentModelHandle.EnsuredUMLModel, nil, BoldDefaultValidatorSourceLanguage);
+  Validator := TBoldUMLModelValidator.Create(Context.GetCurrentModelHandle, nil, BoldDefaultValidatorSourceLanguage);
   Validator.validate(BoldModel.TypeNameDictionary);
 
   if context.GetCurrentModelHandle.EnsuredUMLModel.Validator.HighestSeverity = sError then
@@ -191,7 +194,7 @@ var
   BoldGuard: IBoldGuard;
 begin
   BoldGuard := TBoldGuard.Create(Generator);
-  Generator := BoldGeneratorClass.Create(TypenameDictionary);
+  Generator := TBoldGenerator.Create(TypenameDictionary);
   Generator.BaseFilePath := Path;
   Generator.UseTypedLists := true;
   Generator.MoldModel := MoldModel;
@@ -247,7 +250,7 @@ end;
 
 function TUMLGUIDGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenGUIDs'; // do not localize
+  result := 'UMLPluginGenGUIDs';
 end;
 
 function TUMLGUIDGenerator.GetMenuItemName: String;
@@ -274,7 +277,7 @@ end;
 
 function TUMLPersistenceInterfaceGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenPersistenceInterfaceImage'; // do not localize
+  result := 'UMLPluginGenPersistenceInterfaceImage';
 end;
 
 function TUMLPersistenceInterfaceGenerator.GetMenuItemName: String;
@@ -296,5 +299,3 @@ finalization
   FreeAndNil(_IDLGenerator);
   FreeAndNil(_MIDLGenerator);
 end.
-
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDOA;
 
 interface
@@ -24,7 +27,7 @@ type
     procedure SetPassword(const Value: string); override;
     procedure SetUserName(const Value: string); override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property OracleSession: TOracleSession read fOracleSession write SetOracleSession;
@@ -33,7 +36,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldPersistenceHandleDOA }
 
@@ -49,11 +53,12 @@ begin
   if not assigned(fDataBaseAdapter) then
   begin
     if not assigned(fOracleSession) then
-      raise Exception.CreateFmt(sNoOracleSession, [classname]);
+      raise Exception.CreateFmt('%s.GetDatabaseInterface: There is no OracleSession, can''t create a database interface', [classname]); 
     fDataBaseAdapter := TBoldDOADataBase.create(fOracleSession, SQLDataBaseConfig);
   end;
   result := fDataBaseAdapter;
 end;
+
 
 procedure TBoldPersistenceHandleDOA.Notification(AComponent: TComponent;
   Operation: TOperation);
@@ -71,7 +76,7 @@ procedure TBoldPersistenceHandleDOA.SetOracleSession(const NewValue: TOracleSess
 begin
   if fOracleSession <> NewValue then
   begin
-    CheckInactive('SetDataBase'); // do not localize
+    CheckInactive('SetDataBase');
     fOracleSession := NewValue;
     if assigned(fOracleSession) then
       fOracleSession.FreeNotification(self);
@@ -80,12 +85,14 @@ end;
 
 procedure TBoldPersistenceHandleDOA.SetPassword(const Value: string);
 begin
-  raise Exception.CreateFmt(sSetOnOracleSession, [classname, 'SetPassword']); // do not localize
+  raise Exception.CreateFmt('%s.SetPassword: Not supported, set the password directly on your OracleSession-object', [classname]);
 end;
 
 procedure TBoldPersistenceHandleDOA.SetUserName(const Value: string);
 begin
-  raise Exception.CreateFmt(sSetOnOracleSession, [classname, 'SetUserName']); // do not localize
+  raise Exception.CreateFmt('%s.SetUserName: Not supported, set the Username directly on your OracleSession-object', [classname]);
 end;
+
+initialization
 
 end.

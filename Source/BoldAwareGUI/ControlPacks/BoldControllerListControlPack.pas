@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControllerListControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -6,7 +9,7 @@ interface
 
 uses
   Classes,
-  BoldControlPackDefs,
+  BoldControlPackDefs,  
   BoldElements,
   BoldControlPack,
   BoldListControlPack;
@@ -19,19 +22,21 @@ type
   TBoldControllerList = class(TBoldAsFollowerListController)
   private
     FList: TList;
-    function GetCount: Integer;
-    function GetSubController(index: Integer): TBoldFollowerController;
+    function GetCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSubController(index: Integer): TBoldFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
     function GetEffectiveRenderer: TBoldRenderer; override;
-    function GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer;
+    function GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function PrecreateFollowers: boolean; override;
   public
     constructor Create(aOwningComponent: TComponent);
     destructor Destroy; override;
-    procedure Add(BoldFollowerController: TBoldFollowerController);
-    procedure Delete(index: Integer);
-    procedure Remove(BoldFollowerController: TBoldFollowerController);
-    procedure Move(CurIndex, ToIndex: Integer);
+    procedure Add(BoldFollowerController: TBoldFollowerController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Delete(index: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Remove(BoldFollowerController: TBoldFollowerController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Move(CurIndex, ToIndex: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function IndexOf(BoldFollowerController: TBoldFollowerController): integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property Count: Integer read GetCount;
     property Items[index: Integer]: TBoldFollowerController read GetSubController; default;
   published
@@ -49,7 +54,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 var
   DefaultDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer;
@@ -61,6 +67,16 @@ begin
   FList := TList.Create;
   DragMode := bdgSelection;
   DropMode := bdpInsert;
+end;
+
+function TBoldControllerList.GetCount: Integer;
+begin
+  Result := FList.Count;
+end;
+
+function TBoldControllerList.GetSubController(index: Integer): TBoldFollowerController;
+begin
+  Result := TBoldSingleFollowerController(FList[index]);
 end;
 
 destructor TBoldControllerList.Destroy;
@@ -78,16 +94,11 @@ begin
   inherited DoMakeUptodateAndSubscribe(Follower, Subscribe);
   (EffectiveRenderer as TBoldControllerListAsFollowerListRenderer).MakeUptodate(Follower, Follower.Element);
   if Subscribe and Assigned(Follower.Element) then
-  {$IFDEF BOLDCOMCLIENT} // MakeUpToDate
+  {$IFDEF BOLDCOMCLIENT}
     Follower.Element.SubscribeToExpression('', Follower.Subscriber.ClientId, Follower.Subscriber.SubscriberId, False, true);
   {$ELSE}
-    Follower.Element.SubscribeToExpression('', Follower.Subscriber, False);
+    Follower.Element.SubscribeToExpression('', Follower.Subscriber, False); //       Follower.Element.DefaultSubscribe(Follower.Subscriber);
   {$ENDIF}
-end;
-
-function TBoldControllerList.GetSubController(index: Integer): TBoldFollowerController;
-begin
-  Result := TBoldSingleFollowerController(FList[index]);
 end;
 
 procedure TBoldControllerList.Add(BoldFollowerController: TBoldFollowerController);
@@ -115,9 +126,9 @@ begin
   Changed;
 end;
 
-function TBoldControllerList.GetCount: Integer;
+function TBoldControllerList.GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer;
 begin
-  Result := FList.Count;
+  Result := TBoldControllerListAsFollowerListRenderer.DefaultRenderer;
 end;
 
 function TBoldControllerList.GetEffectiveRenderer: TBoldRenderer;
@@ -125,9 +136,15 @@ begin
   Result := GetEffectiveDisplayPropertyListRenderer;
 end;
 
-function TBoldControllerList.GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer;
+function TBoldControllerList.IndexOf(
+  BoldFollowerController: TBoldFollowerController): integer;
 begin
-  Result := TBoldControllerListAsFollowerListRenderer.DefaultRenderer; // currently always uses default.
+  result := fList.IndexOf(BoldFollowerController);
+end;
+
+class function TBoldControllerList.PrecreateFollowers: boolean;
+begin
+  result := false;
 end;
 
 {---TBoldControllerListAsFollowerListRenderer---}
@@ -142,11 +159,17 @@ var
   SourceList: TBoldControllerList;
   SourceIndex: Integer;
   DestList: TBoldFollowerList;
+  lPrecreateFollowers: boolean;
 begin
   DestList := Follower.RendererData as TBoldFollowerList;
   SourceList := Follower.Controller as TBoldControllerList;
+  lPrecreateFollowers := SourceList.PrecreateFollowers;
+  DestList.SetCapacity(SourceList.Count);
   for sourceIndex := 0 to SourceList.Count-1 do
-    DestList.EnsureFollower(SourceList, SourceIndex, Element, SourceList[SourceIndex]);
+    if lPrecreateFollowers then
+      DestList.EnsuredFollower(SourceList, SourceIndex, Element, SourceList[SourceIndex])
+    else
+      DestList.EnsuredFollower(SourceList, SourceIndex, nil, SourceList[SourceIndex]);
   DestList.PurgeEnd(SourceList, SourceList.Count);
 end;
 
@@ -157,4 +180,3 @@ finalization
   FreeAndNil(DefaultDisplayPropertyListRenderer);
 
 end.
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSOAPServerPersistenceHandles;
 
 interface
@@ -33,6 +36,9 @@ type
 
 implementation
 
+uses
+  BoldRev;
+
 {-- TBoldComServerPersistenceHandle -------------------------------------------}
 
 function TBoldSOAPServerPersistenceHandle.GetComObject: IUnknown;
@@ -67,5 +73,7 @@ begin
       FBoldHandle.FreeNotification(Self);
   end;
 end;
+
+initialization
 
 end.

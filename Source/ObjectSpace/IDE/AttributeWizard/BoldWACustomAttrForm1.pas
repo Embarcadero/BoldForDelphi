@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWACustomAttrForm1;
 
 interface
@@ -26,14 +29,11 @@ uses
 const
   YES = '1';
   NO = '0';
-  // StringGridMethods columns
   COL_METHOD_VISIBILITY = 0;
   COL_METHOD_TYPE = 1;
   COL_METHOD_NAME = 2;
   COL_METHOD_PARAMS = 3;
   COL_METHOD_RETURNTYPE = 4;
-
-  //StringGridProperties columns
   COL_PROPERTY_NAME = 0;
   COL_PROPERTY_TYPE = 1;
   COL_PROPERTY_ACCESSTYPE = 2;
@@ -114,7 +114,7 @@ type
     procedure StringGridMethodsDrawCell(Sender: TObject; ACol,
       ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure FormDestroy(Sender: TObject);
-    function getTypeDictionary: TBoldTypeNameDictionary;
+    function getTypeDictionary: TBoldTypeNameDictionary;    
     procedure edUnitnameChange(Sender: TObject);
     function DelphiToBDEType(const DelphiType: string): string;
     function DelphiToAccessorType(const DelphiType: string): string;
@@ -159,7 +159,7 @@ type
     function GetDefaultMapperName(const ClassName: string; const NumOfProperties: integer): string;
     property SteppedBack: Boolean read GetSteppedBack default false;
     property UnitGenerator: IUnitGenerator read getUnitGeneratorIntf write setUnitGeneratorIntf;
-    property EnableNext: TEnableNextEvent write setEnableNext; // CallBack function
+    property EnableNext: TEnableNextEvent write setEnableNext;
   end;
   function BooleanToStr(value: Boolean): string;
 
@@ -182,9 +182,9 @@ uses
 function BooleanToStr(value: Boolean): string;
 begin
   if value then
-    Result := 'true' // do not localize
+    Result := 'true'
   else
-    Result := 'false'; // do not localize
+    Result := 'false';
 end;
 
 procedure TCustomAttrForm1.EnableNextBtn(const Enable: Boolean);
@@ -210,13 +210,12 @@ destructor TCustomAttrForm1.Destroy;
 begin
   FreeAndNil(fMgrStringGridProperties);
   FreeAndNil(fMgrStringGridMethods);
-  inherited Destroy;
+  inherited destroy;
 end;
 
 procedure TCustomAttrForm1.Initialize;
 begin
   Align := alClient;
-  // hide all control fields
   cbPropertyTypes.Visible := false;
   cbAccessTypes.Visible := false;
   cbMethodTypes.Visible := false;
@@ -227,11 +226,11 @@ begin
   edMethodSignature.Visible := false;
 
   { StringGridMethods }
-  StringGridMethods.Cells[COL_METHOD_TYPE,0] := 'Method type'; // do not localize
-  StringGridMethods.Cells[COL_METHOD_NAME,0] := 'Name'; // do not localize
-  StringGridMethods.Cells[COL_METHOD_PARAMS,0] := 'Parameters'; // do not localize
-  StringGridMethods.Cells[COL_METHOD_RETURNTYPE,0] := 'Return Type'; // do not localize
-  StringGridMethods.Cells[COL_METHOD_VISIBILITY,0] := 'Visibility'; // do not localize
+  StringGridMethods.Cells[COL_METHOD_TYPE,0] := 'Method type';
+  StringGridMethods.Cells[COL_METHOD_NAME,0] := 'Name';
+  StringGridMethods.Cells[COL_METHOD_PARAMS,0] := 'Parameters';
+  StringGridMethods.Cells[COL_METHOD_RETURNTYPE,0] := 'Return Type';
+  StringGridMethods.Cells[COL_METHOD_VISIBILITY,0] := 'Visibility';
   fMgrStringGridMethods.addCtrlForColumn(cbMethodTypes, TComboBox, COL_METHOD_TYPE);
   fMgrStringGridMethods.addCtrlForColumn(edMethodName, TEdit, COL_METHOD_NAME);
   fMgrStringGridMethods.addCtrlForColumn(edMethodSignature, TEdit, COL_METHOD_PARAMS);
@@ -239,21 +238,18 @@ begin
   fMgrStringGridMethods.addCtrlForColumn(cbVisibility, TComboBox, COL_METHOD_VISIBILITY);
 
   { StringGridProperties  }
-  StringGridProperties.Cells[COL_PROPERTY_NAME,0] := 'Name'; // do not localize
-  StringGridProperties.Cells[COL_PROPERTY_TYPE,0] := 'Type'; // do not localize
-  StringGridProperties.Cells[COL_PROPERTY_ACCESSTYPE,0] := 'Access type'; // do not localize
+  StringGridProperties.Cells[COL_PROPERTY_NAME,0] := 'Name';
+  StringGridProperties.Cells[COL_PROPERTY_TYPE,0] := 'Type';
+  StringGridProperties.Cells[COL_PROPERTY_ACCESSTYPE,0] := 'Access type';
   fMgrStringGridProperties.addCtrlForColumn(edPropertyName, TEdit, COL_PROPERTY_NAME);
   fMgrStringGridProperties.addCtrlForColumn(cbPropertyTypes, TComboBox, COL_PROPERTY_TYPE);
   fMgrStringGridProperties.addCtrlForColumn(cbAccessTypes, TComboBox, COL_PROPERTY_ACCESSTYPE);
 
   fOverrideMethodsParser := TClassParser.Create(TStringStream.Create(MemoMethodsToOverride.Lines.Text));
   fOverrideMethodsParser.Start;
-
-  // display base classes
   GetBaseClasses(cbParent.Items);
 
   DisplayOverrideMethods(CheckListBoxOverride.Items);
-  //set proper view
   PageControl1.ActivePage := tsClassDef;
 end;
 
@@ -280,7 +276,6 @@ begin
   if PageControl1.ActivePage = tsClassDef then
   begin
     Result := wfaNext;
-    //check the class definition
     if IsValidClassDef then
     begin
       PageControl1.ActivePage := tsProperties;
@@ -325,31 +320,28 @@ begin
     UnitNamePrefix := NewAttribute.ExpressionName
   else
     UnitNamePrefix := NewAttribute.UnitName;
-  PMapperUnitName := Format('%sPMapper',[UnitNamePrefix]); // do not localize
-  InterfaceUnitName := Format('%sInterface',[UnitNamePrefix]); // do not localize
-  InterfaceName := Format('I%s',[NewAttribute.ExpressionName]); // do not localize
-  MapperName :=Format('%sPMapper',[NewAttribute.DelphiName]); // do not localize
+  PMapperUnitName := Format('%sPMapper',[UnitNamePrefix]);
+  InterfaceUnitName := Format('%sInterface',[UnitNamePrefix]);
+  InterfaceName := Format('I%s',[NewAttribute.ExpressionName]);
+  MapperName :=Format('%sPMapper',[NewAttribute.DelphiName]);
   try
-    // set the attribute template variables
     with attrdatamodule.AttributeTemplate do
     begin
-      Variables.Add('UNITNAME', NewAttribute.UnitName, []); // do not localize
-      Variables.Add('EXPRESSIONNAME', NewAttribute.ExpressionName, []); // do not localize
-      Variables.Add('DELPHINAME', NewAttribute.DelphiName, []); // do not localize
-      Variables.Add('SUPERCLASS', NewAttribute.Parent, []); // do not localize
-      Variables.Add('INTERFACENAME', InterfaceName, []); // do not localize
-      Variables.Add('INTERFACEUNITNAME', InterfaceUnitName, []); // do not localize
+      Variables.Add('UNITNAME', NewAttribute.UnitName, []);
+      Variables.Add('EXPRESSIONNAME', NewAttribute.ExpressionName, []);
+      Variables.Add('DELPHINAME', NewAttribute.DelphiName, []);
+      Variables.Add('SUPERCLASS', NewAttribute.Parent, []);
+      Variables.Add('INTERFACENAME', InterfaceName, []);
+      Variables.Add('INTERFACEUNITNAME', InterfaceUnitName, []);
       if (NewAttribute.Properties.Count > 0) then
       begin
-       // new mapper and interface classes
-        Variables.Add('MAPPERNAME',MapperName,[]); // do not localize
-        Variables.Add('CONTENTNAME', Format('ContentName_%s', [NewAttribute.ExpressionName]), []); // do not localize
+        Variables.Add('MAPPERNAME',MapperName,[]);
+        Variables.Add('CONTENTNAME', Format('ContentName_%s', [NewAttribute.ExpressionName]), []);
       end
       else
       begin
-        // parent's mapper and interface classes
-        Variables.Add('MAPPERNAME',Format('<same as for %s>',[NewAttribute.Parent]),[]); // do not localize
-        Variables.Add('CONTENTNAME', Format('<same as for %s>', [NewAttribute.Parent]), []); // do not localize
+        Variables.Add('MAPPERNAME',Format('<same as for %s>',[NewAttribute.Parent]),[]);
+        Variables.Add('CONTENTNAME', Format('<same as for %s>', [NewAttribute.Parent]), []);
       end
     end;
     NewAttribute.AssignMethodsToTemplate(attrdatamodule.AttributeTemplate);
@@ -358,29 +350,27 @@ begin
     begin
       with attrdatamodule.InterfaceTemplate do
       begin
-        Variables.Add('SUPERINTERFACENAME', BaseInterfaceName, []); // do not localize
-        Variables.Add('INTERFACENAME',InterfaceName, []); // do not localize
-        Variables.Add('UNITNAME',InterfaceUnitName, []); // do not localize
-        Variables.Add('INTERFACEGUID',BoldCreateGUIDAsString, []); // do not localize
-        Variables.Add('FREESTANDINGDELPHINAME','TBFS' + NewAttribute.ExpressionName,[]); // do not localize
-        Variables.Add('FREESTANDINGSUPERCLASS','TBoldFreeStandingNullableValue',[]); // do not localize
-        Variables.Add('INTERFACEUNITNAME',Format('%sInterface',[NewAttribute.UnitName]), []); // do not localize
-        Variables.Add('EXPRESSIONNAME', NewAttribute.ExpressionName, []); // do not localize
+        Variables.Add('SUPERINTERFACENAME', BaseInterfaceName, []);
+        Variables.Add('INTERFACENAME',InterfaceName, []);
+        Variables.Add('UNITNAME',InterfaceUnitName, []);
+        Variables.Add('INTERFACEGUID',BoldCreateGUIDAsString, []);
+        Variables.Add('FREESTANDINGDELPHINAME','TBFS' + NewAttribute.ExpressionName,[]);
+        Variables.Add('FREESTANDINGSUPERCLASS','TBoldFreeStandingNullableValue',[]);
+        Variables.Add('INTERFACEUNITNAME',Format('%sInterface',[NewAttribute.UnitName]), []);
+        Variables.Add('EXPRESSIONNAME', NewAttribute.ExpressionName, []);
       end;
       AssignProperties(NewAttribute, attrdatamodule.InterfaceTemplate);
-      //set the PMapper template's variables
       with attrdatamodule.MapperTemplate do
       begin
-        Variables.Add('MAPPERNAME',NewAttribute.DelphiName+ 'PMapper',[]); // do not localize
-        Variables.Add('SUPERMAPPERNAME',getDefaultMapperName(NewAttribute.parent, NewAttribute.Properties.Count) ,[]); // do not localize
-        Variables.Add('STREAMCONSTANT', 'StreamName',[]); // do not localize
-        Variables.Add('INTERFACEUNITNAME',InterfaceUnitName, []); // do not localize
-        Variables.Add('UNITNAME', PMapperUnitName, []); // do not localize
-        Variables.Add('INTERFACENAME',InterfaceName, []); // do not localize
+        Variables.Add('MAPPERNAME',NewAttribute.DelphiName+ 'PMapper',[]);
+        Variables.Add('SUPERMAPPERNAME',getDefaultMapperName(NewAttribute.parent, NewAttribute.Properties.Count) ,[]);
+        Variables.Add('STREAMCONSTANT', 'StreamName',[]);
+        Variables.Add('INTERFACEUNITNAME',InterfaceUnitName, []);
+        Variables.Add('UNITNAME', PMapperUnitName, []);
+        Variables.Add('INTERFACENAME',InterfaceName, []);
       end;
       AssignProperties(NewAttribute, attrdatamodule.MapperTemplate);
     end;
-    // Generate Code
     if Assigned(UnitGenerator) then
       UnitGenerator.GenerateUnit(NewAttribute.UnitName, attrdatamodule.AttributeTemplate);
       if (NewAttribute.Properties.Count > 0) then
@@ -454,8 +444,7 @@ begin
     ExpressionName := edExpressionName.Text;
     UnitName := trim(edUnitname.Text);
     Properties.Clear;
-    // Properties
-    // row 0 is for the column titles
+
     for i:= 1 to StringGridProperties.RowCount - 1 do
       if not IsEmptyStr(StringGridProperties.Rows[i].Text) then
       begin
@@ -463,27 +452,25 @@ begin
                             StrToAccessType(StringGridProperties.Cells[2,i])));
       end;
     Methods.Clear;
-    //new methods
-    // row 0 is for the column titles
+
     for i := 1 to StringGridMethods.RowCount - 1 do
       if not IsEmptyStr(StringGridMethods.Rows[i].Text) then
       begin
         NewMethod := TMethodInfo.Create;
-//        NewMethod.methodType := StrToMethodType(Trim(StringGridMethods.Cells[COL_METHOD_TYPE,i]));
-//        NewMethod.Name := Trim(StringGridMethods.Cells[COL_METHOD_NAME,i]);
-//        NewMethod.Params := Trim(StringGridMethods.Cells[COL_METHOD_PARAMS,i]) ;
-//        if (Newmethod.Params[1] <> '(') then
-//          NewMethod.Params := Format('(%s',[NewMethod.Params]);
-//        if (NewMethod.Params[length(NewMethod.Params)] <> ')') then
-//          NewMethod.Params := Format('%s)',[NewMethod.Params]);
-//        NewMethod.ReturnType := Trim(StringGridMethods.Cells[COL_METHOD_RETURNTYPE, i]);
-//        NewMethod.Visibility := StrToVisibility(Trim(StringGridMethods.Cells[COL_METHOD_VISIBILITY, i]));
+
+
+
+
+
+
+
+
         NewMethod.Assign(TMethodInfo.StrToMethodType(Trim(StringGridMethods.Cells[COL_METHOD_TYPE,i])),
           Trim(StringGridMethods.Cells[COL_METHOD_NAME,i]), Trim(StringGridMethods.Cells[COL_METHOD_PARAMS,i]),
           Trim(StringGridMethods.Cells[COL_METHOD_RETURNTYPE, i]), TMethodInfo.StrToVisibility(Trim(StringGridMethods.Cells[COL_METHOD_VISIBILITY, i])), []);
         Methods.Add(NewMethod);
-      end; //if
-    // get override methods
+      end;
+
     for i:= 0 to CheckListBoxOverride.Items.Count - 1 do
     if CheckListBoxOverride.Checked[i] then
     begin
@@ -493,7 +480,7 @@ begin
                           temp.Visibility, [mdOverride]);
       Methods.Add(NewMethod);
     end;
-  end; //with
+  end;
 end;
 
   { FormCreate  }
@@ -555,39 +542,37 @@ var
   i: integer;
   aProperty: TPropertyInfo;
 begin
-  //set the properties
   for i:= 0 to NewAttribute.Properties.Count - 1 do
     begin
       aProperty := NewAttribute.Properties[i];
-      Template.Variables.Add(Format('FIELDNAME.%d',[i]), aProperty.Name, []); // do not localize
-      Template.Variables.Add(Format('FIELDTYPE.%d',[i]), aProperty.pType, []); // do not localize
-      Template.Variables.Add(Format('FIELDBDETYPE.%d',[i]), DelphiToBDEType(aProperty.pType), []); // do not localize
-      Template.Variables.Add(Format('FIELDACCESSORTYPE.%d',[i]), DelphiToAccessorType(aProperty.pType), []); // do not localize
+      Template.Variables.Add(Format('FIELDNAME.%d',[i]), aProperty.Name, []);
+      Template.Variables.Add(Format('FIELDTYPE.%d',[i]), aProperty.pType, []);
+      Template.Variables.Add(Format('FIELDBDETYPE.%d',[i]), DelphiToBDEType(aProperty.pType), []);
+      Template.Variables.Add(Format('FIELDACCESSORTYPE.%d',[i]), DelphiToAccessorType(aProperty.pType), []);
       if (aProperty.AccessType  = atWriteOnly)  then
-        Template.Variables.Add(Format('FIELDREADABLE.%d',[i]), NO, []) // do not localize
+        Template.Variables.Add(Format('FIELDREADABLE.%d',[i]), NO, [])
       else
-        Template.Variables.Add(Format('FIELDREADABLE.%d',[i]), YES, []); // do not localize
+        Template.Variables.Add(Format('FIELDREADABLE.%d',[i]), YES, []);
       if (aProperty.AccessType  = atReadOnly)  then
-        Template.Variables.Add(Format('FIELDWRITABLE.%d',[i]), NO, []) // do not localize
+        Template.Variables.Add(Format('FIELDWRITABLE.%d',[i]), NO, [])
       else
-        Template.Variables.Add(Format('FIELDWRITABLE.%d',[i]), YES, []); // do not localize
-    end; //for
-  Template.Variables.Add('FIELDCOUNT', IntToStr(NewAttribute.Properties.Count), []); // do not localize
+        Template.Variables.Add(Format('FIELDWRITABLE.%d',[i]), YES, []);
+    end;
+  Template.Variables.Add('FIELDCOUNT', IntToStr(NewAttribute.Properties.Count), []);
   if (NewAttribute.Properties.Count > 0) then
   begin
-    Template.Variables.SetVariable('PUBLIC', 'true'); // do not localize
-    Template.Variables.SetVariable('PRIVATE', 'true'); // do not localize
-    Template.Variables.SetVariable('PROTECTED', 'true'); // do not localize
-    Template.Variables.Add('INTERFACEDCLASS',YES, []); // do not localize
+    Template.Variables.SetVariable('PUBLIC', 'true');
+    Template.Variables.SetVariable('PRIVATE', 'true');
+    Template.Variables.SetVariable('PROTECTED', 'true');    
+    Template.Variables.Add('INTERFACEDCLASS',YES, []);
   end
   else
-    Template.Variables.Add('INTERFACEDCLASS', NO, []); // do not localize
+    Template.Variables.Add('INTERFACEDCLASS', NO, []);
 end;
 
 procedure TCustomAttrForm1.GetBaseClasses(list: TStrings);
 var
   i: integer;
-//  ClassInfo: TClassInfo;
 begin
 {  // create parser object, free in finalizer, classes hard coded
   fAttributeClassParser := TClassParser.Create(TStringStream.Create(MemoBoldClasses.Lines.Text));
@@ -596,8 +581,6 @@ begin
   while fAttributeClassParser.getClasses(ClassInfo, i) do
     if Assigned(ClassInfo) then
       cbParent.Items.Add(ClassInfo.DelphiName);}
-
-  // get base classes from a TypeNameDictionary
   TypeDictionary.AddDefaultMappings;
   list.BeginUpdate;
   list.Clear;
@@ -660,6 +643,7 @@ begin
       fMgrStringGridMethods.Add
     else
       MessageDlg('Invalid method entry', mtInformation, [mbOk], 0);
+
 end;
 
 procedure TCustomAttrForm1.ActionStringGridDeleteExecute(Sender: TObject);
@@ -669,6 +653,7 @@ begin
   else if tsMethods.Visible then
     fMgrStringGridMethods.Delete;
 end;
+
 
 procedure TCustomAttrForm1.cbParentChange(Sender: TObject);
 var
@@ -818,42 +803,42 @@ end;
 
 function TCustomAttrForm1.DelphiToBDEType(const DelphiType: string): string;
 begin
-  if (CompareText(DelphiType,'integer') = 0)then // do not localize
-    Result := 'ftInteger' // do not localize
-  else if (CompareText(DelphiType,'real') = 0) then // do not localize
-    Result := 'ftFloat' // do not localize
-  else if (CompareText(DelphiType,'extended') = 0) then // do not localize
-    Result := 'ftFloat' // do not localize
-  else if (CompareText(DelphiType,'cardinal')= 0) then // do not localize
-    Result := 'ftInteger' // do not localize
-  else if (CompareText(DelphiType,'char') = 0) then // do not localize
-    Result := 'ftFixedChar' // do not localize
-  else if (CompareText(DelphiType,'string')= 0) then // do not localize
-    Result := 'ftString' // do not localize
-  else if (CompareText(DelphiType,'boolean')= 0) then // do not localize
-    Result := 'ftBoolean' // do not localize
+  if (CompareText(DelphiType,'integer') = 0)then
+    Result := 'ftInteger'
+  else if (CompareText(DelphiType,'real') = 0) then
+    Result := 'ftFloat'
+  else if (CompareText(DelphiType,'extended') = 0) then
+    Result := 'ftFloat'
+  else if (CompareText(DelphiType,'cardinal')= 0) then
+    Result := 'ftInteger'
+  else if (CompareText(DelphiType,'char') = 0) then
+    Result := 'ftFixedChar'
+  else if (CompareText(DelphiType,'string')= 0) then
+    Result := 'ftString'
+  else if (CompareText(DelphiType,'boolean')= 0) then
+    Result := 'ftBoolean'
   else
-    Result := '<BDEDataType>'; // do not localize
+    Result := '<BDEDataType>';
 end;
 
 function TCustomAttrForm1.DelphiToAccessorType(const DelphiType: string): string;
 begin
-  if (CompareText(DelphiType,'integer') = 0) then // do not localize
-    Result := 'Integer' // do not localize
-  else if (CompareText(DelphiType,'real') = 0) then // do not localize
-    Result := 'Double' // do not localize
-  else if (CompareText(DelphiType,'extended') = 0) then // do not localize
-    Result := 'Double' // do not localize
-  else if (CompareText(DelphiType,'cardinal') = 0) then // do not localize
-    Result := 'Integer' // do not localize
-  else if (CompareText(DelphiType, 'char') = 0) then // do not localize
-    Result := 'Char' // do not localize
-  else if (CompareText(DelphiType,'string') = 0) then // do not localize
-    Result := 'String' // do not localize
-  else if (CompareText(DelphiType,'boolean') = 0) then // do not localize
-    Result := 'Boolean' // do not localize
+  if (CompareText(DelphiType,'integer') = 0) then
+    Result := 'Integer'
+  else if (CompareText(DelphiType,'real') = 0) then
+    Result := 'Double'
+  else if (CompareText(DelphiType,'extended') = 0) then
+    Result := 'Double'
+  else if (CompareText(DelphiType,'cardinal') = 0) then
+    Result := 'Integer'
+  else if (CompareText(DelphiType, 'char') = 0) then
+    Result := 'Char'
+  else if (CompareText(DelphiType,'string') = 0) then
+    Result := 'String'
+  else if (CompareText(DelphiType,'boolean') = 0) then
+    Result := 'Boolean'
   else
-    Result := '<DataType>'; // do not localize
+    Result := '<DataType>';
 end;
 
 procedure TCustomAttrForm1.tsOverrideShow(Sender: TObject);
@@ -861,4 +846,5 @@ begin
   CheckListBoxOverride.SetFocus;
 end;
 
+initialization
 end.

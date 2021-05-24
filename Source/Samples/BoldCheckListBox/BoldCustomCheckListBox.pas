@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCustomCheckListBox;
 
 interface
@@ -14,7 +17,8 @@ uses
   BoldSystem,
   Classes,
   Controls,
-  CheckLst;
+  CheckLst,
+  BoldDefs;
 
 const
   CHECKBOXFOLLOWER_INDEX = 0;
@@ -42,8 +46,8 @@ type
     function GetCurrentBoldElement: TBoldElement;
     function GetCurrentBoldObject: TBoldObject;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: string);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariablelist;
     function GetBoldlistHandle: TBoldAbstractListHandle;
     procedure SetBoldListHandle(const Value: TBoldAbstractListHandle);
@@ -60,7 +64,7 @@ type
     procedure _DisplayString(Follower: TBoldFollower);
     procedure Click; override;
     procedure DblClick; override;
-    procedure _ListInsertItem(Follower: TBoldFollower);
+    procedure _ListInsertItem(Index: integer; Follower: TBoldFollower);
     procedure _ListDeleteItem(Index: integer; Follower: TBoldFollower);
     procedure _ListBeforeMakeUpToDate(Follower: TBoldFollower);
     procedure _ListAfterMakeUpToDate(Follower: TBoldFollower);
@@ -101,12 +105,10 @@ uses
 constructor TBoldCustomCheckListBox.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  //handle
   fBoldRowStringProperties := TBoldStringFollowerController.Create(self);
   fBoldRowStringProperties.OnGetContextType := GetContextType;
   fBoldRowCheckBoxProperties := TBoldCheckBoxStateFollowerController.Create(self);
   fBoldRowCheckBoxProperties.OnGetContextType := GetContextType;
-  ///
   fControllerList := TBoldControllerList.Create(self);
   fControllerList.Add(fBoldRowCheckBoxProperties);
   fControllerLIst.Add(fBoldRowStringProperties);
@@ -221,7 +223,7 @@ begin
   else
     if BoldListProperties.DefaultDblClick and Assigned(CurrentBoldElement) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // autoform
+      {$IFDEF BOLDCOMCLIENT}
       Autoform := nil;
       {$ELSE}
       AutoForm := AutoFormProviderRegistry.FormForElement(CurrentBoldElement);
@@ -231,7 +233,7 @@ begin
     end;
 end;
 
-function TBoldCustomCheckListBox.GetExpression: String;
+function TBoldCustomCheckListBox.GetExpression: TBoldExpression;
 begin
   result := BoldRowStringProperties.Expression;
 end;
@@ -241,9 +243,9 @@ begin
   Result := BoldListProperties.VariableList;
 end;
 
-procedure TBoldCustomCheckListBox.SetExpression(Expression: string);
+procedure TBoldCustomCheckListBox.SetExpression(const Value: TBoldExpression);
 begin
-  BoldRowStringProperties.Expression := Expression;
+  BoldRowStringProperties.Expression := Value;
 end;
 
 function TBoldCustomCheckListBox.GetBoldlistHandle: TBoldAbstractListHandle;
@@ -262,7 +264,7 @@ begin
   Items.Delete(Index);
 end;
 
-procedure TBoldCustomCheckListBox._ListInsertItem(Follower: TBoldFollower);
+procedure TBoldCustomCheckListBox._ListInsertItem(Index: integer; Follower: TBoldFollower);
 begin
   Items.Insert(Follower.Index, '');
 end;
@@ -299,7 +301,6 @@ end;
 procedure TBoldCustomCheckListBox._ListBeforeMakeUpToDate(
   Follower: TBoldFollower);
 begin
-  // will fetch all
   if Assigned(BoldListHandle) and Assigned(BoldListHandle.List) then
     BoldListHandle.List.EnsureRange(0, BoldListHandle.List.Count - 1);
   Items.BeginUpdate;
@@ -373,7 +374,6 @@ begin
   if Value <> FAlignment then
   begin
     FAlignment := Value;
-    // Enough to invalidate drawing surface
     Invalidate;
   end;
 end;
@@ -399,5 +399,7 @@ procedure TBoldCustomCheckListBox.SetBoldListProperties(
 begin
   FBoldListProperties.Assign(Value);
 end;
+
+initialization
 
 end.

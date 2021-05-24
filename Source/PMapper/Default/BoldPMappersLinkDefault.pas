@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMappersLinkDefault;
 
 interface
@@ -59,14 +62,15 @@ type
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
     function GetColumnSize(ColumnIndex: Integer): Integer; override;
     function GetInitialColumnName(ColumnIndex: Integer): string; override;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
     procedure InitializePSDescriptions; override;
     function GetOtherEndObjectMapper: TBoldObjectDefaultMapper; override;
     function DefaultDefaultDbValue: String; override;
   public
     class function CanStore(const ContentName: string): Boolean; override;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); override;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); override;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); override;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; override;
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
     property OtherEndObjectPMIndex: Integer read fOtherEndObjectPMIndex;
     property OtherEndMemberPMIndex: Integer read GetOtherEndMemberPMIndex;
@@ -86,8 +90,8 @@ type
     fRemoteInnerLinkMemberIndex: integer;
     fIsIndirect: Boolean;
     fRemoteOtherEndObjectMapperIndex: Integer;
-    procedure ProcessSQL(Query: IBoldQuery; WhereFragment: String; resultList: TList; TimeStamp: TBoldTimeStampType);
-    procedure ProcessResult(ResultList: TList; ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; timeStamp: TBoldTimeStampType; FetchMode: integer; FailureList: TBoldObjectIdList);
+    procedure ProcessSQL(const Query: IBoldQuery; WhereFragment: String; resultList: TList; TimeStamp: TBoldTimeStampType);
+    procedure ProcessResult(ResultList: TList; const ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; timeStamp: TBoldTimeStampType; FetchMode: integer; FailureList: TBoldObjectIdList);
     function GetLinkClassTableName: string;
     function GetLinkClassObjectMapper: TBoldObjectDefaultMapper; virtual; abstract;
     function GetClosestColumnName: string;
@@ -100,9 +104,9 @@ type
     function GetIsOrdered: Boolean; virtual; abstract;
     procedure GetChangePoints(ObjectIDList: TBoldObjectIdList; Condition: TBoldChangePointCondition; NameSpace: TBoldSqlnameSpace); override;
     function GetColumnCount: Integer; override;
-    procedure CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); virtual; abstract;
-    procedure StuffValuesFromLists(MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); virtual; abstract;
-    function CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
+    procedure CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); virtual; abstract;
+    procedure StuffValuesFromLists(const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); virtual; abstract;
+    function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean; override;
     function EmbeddingMapper: TBoldEmbeddedSingleLinkDefaultMapper;
     function GetOtherEndObjectMapper: TBoldObjectDefaultMapper; override;
     function GetSupportsPolymorphicFetch: Boolean; override;
@@ -114,7 +118,7 @@ type
     property LinkClassTablename: string read GetLinkClassTableName;
     property LinkClassObjectMapper: TBoldObjectDefaultMapper read GetLinkClassObjectMapper;
     property Ordered: Boolean read GetIsOrdered;
-    procedure PMFetch(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList); override;
+    procedure PMFetch(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList); override;
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
   end;
 
@@ -128,8 +132,8 @@ type
   { TBoldDirectSingleLinkDefaultmapper }
   TBoldDirectSingleLinkDefaultmapper = class(TBoldSingleLinkDefaultMapper)
   protected
-    procedure StuffValuesFromLists(MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
-    procedure CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    procedure StuffValuesFromLists(const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
+    procedure CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     function GetLinkClassObjectMapper: TBoldObjectDefaultMapper; override;
    public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
@@ -139,8 +143,8 @@ type
   { TBoldIndirectSingleLinkDefaultmapper }
   TBoldIndirectSingleLinkDefaultmapper = class(TBoldSingleLinkDefaultMapper)
   protected
-    procedure StuffValuesFromLists(MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
-    procedure CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    procedure StuffValuesFromLists(const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
+    procedure CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     function GetLinkClassObjectMapper: TBoldObjectDefaultMapper; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
@@ -160,8 +164,8 @@ type
   { TBoldDirectMultiLinkDefaultmapper }
   TBoldDirectMultiLinkDefaultmapper = class(TBoldMultiLinkDefaultMapper)
   protected
-    procedure StuffValuesFromLists(MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
-    procedure CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    procedure StuffValuesFromLists(const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
+    procedure CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     function GetLinkClassObjectMapper: TBoldObjectDefaultMapper; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
@@ -171,13 +175,16 @@ type
   { TBoldIndirectMultiLinkDefaultmapper }
   TBoldIndirectMultiLinkDefaultmapper = class(TBoldMultiLinkDefaultMapper)
   protected
-    procedure StuffValuesFromLists(MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
-    procedure CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    procedure StuffValuesFromLists(const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist); override;
+    procedure CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     function GetLinkClassObjectMapper: TBoldObjectDefaultMapper; override;
   public
     constructor CreateFromMold(moldMember: TMoldMember; moldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
     class function CanStore(const ContentName: string): Boolean; override;
   end;
+
+  const
+    MaxUnion = 30;
 
 implementation
 
@@ -194,13 +201,17 @@ uses
   BoldTaggedValueSupport,
   BoldPMapperLists,
   BoldGuard,
-  BoldDefaultStreamNames,
-  BoldPMConsts;
+  {$IFDEF RIL}
+  {$IFNDEF BOLD_UNICODE}
+  StringBuilder,
+  {$ENDIF}
+  {$ENDIF}
+  BoldDefaultStreamNames;
 
 { Supporting functions/procedures }
 
 {Returns new ObjectId with owned ClassId, both must be freed}
-function CreateAndEnsureId(ObjectId: Integer; ClassId: Integer; Exact: Boolean; TransLationlist: TBoldIdTranslationList; ValueSpace: IBoldValueSpace; TimeStamp: TBoldTimeStampType): TBoldDefaultId;
+function CreateAndEnsureId(ObjectId: Integer; ClassId: Integer; Exact: Boolean; TransLationlist: TBoldIdTranslationList; const ValueSpace: IBoldValueSpace; TimeStamp: TBoldTimeStampType): TBoldDefaultId;
 begin
   Assert (ClassID <> -1);
   if TimeStamp = BOLDMAXTIMESTAMP then
@@ -210,7 +221,7 @@ begin
 
   Result.AsInteger := ObjectId;
   if assigned(TranslationList) then
-    TranslationList.AddTranslation(nil, Result); // needed?
+    TranslationList.AddTranslation(nil, Result);
   ValueSpace.EnsureObjectId(Result);
 end;
 
@@ -242,14 +253,18 @@ type
   end;
 
 function SortLinkValues(Item1, Item2: Pointer): integer;
+var
+  Tl1, Tl2: TTempLinkValues;
 begin
-  result := TTempLinkValues(Item1).Objectid - TTempLinkValues(Item2).Objectid;
+  Tl1 := TTempLinkValues(Item1);
+  Tl2 := TTempLinkValues(Item2);
+  result := Tl1.Objectid - Tl2.Objectid;
   if result = 0 then
-    result := TTempLinkValues(Item1).OrderValue - TTempLinkValues(Item2).OrderValue;
+    result := Tl1.OrderValue - Tl2.OrderValue;
   if result = 0 then
-    result := TTempLinkValues(Item1).RemoteId - TTempLinkValues(Item2).RemoteId;
+    result := Tl1.RemoteId - Tl2.RemoteId;
   if result = 0 then
-    result := TTempLinkValues(Item1).ClosestId - TTempLinkValues(Item2).ClosestId;
+    result := Tl1.ClosestId - Tl2.ClosestId;
 end;
 
 constructor TBoldNonEmbeddedLinkDefaultMapper.CreateFromMold(
@@ -262,9 +277,9 @@ begin
   fIsStoredInObject := IsStoredInObject and ((MoldMember as TMoldRole).RoleType in [rtRole, rtInnerLinkRole]);
 end;
 
-function TBoldNonEmbeddedLinkDefaultMapper.CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
+function TBoldNonEmbeddedLinkDefaultMapper.CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
 begin
-  raise EBold.CreateFmt(sCannotCallOnTransientClass, [classname]);
+  raise EBold.CreateFmt('%s.CompareField: Can not be called for this class, it is not stored', [classname]);
 end;
 
 function TBoldNonEmbeddedLinkDefaultMapper.GetColumnCount: Integer;
@@ -272,7 +287,268 @@ begin
   Result := 0;
 end;
 
-procedure TBoldNonEmbeddedLinkDefaultMapper.ProcessSQL(Query: IBoldQuery; WhereFragment: String; resultList: TList; TimeStamp: TBoldTimeStampType);
+procedure TBoldNonEmbeddedLinkDefaultMapper.ProcessSQL(const Query: IBoldQuery; WhereFragment: String; resultList: TList; TimeStamp: TBoldTimeStampType);
+{$IFDEF RIL}
+var
+  Cnt: integer;
+
+  i, j: integer;
+  ClassIdRequired: Boolean;
+  NextColumnIndex: integer;
+  LinkData: TTempLinkValues;
+  MappingInfo: TBoldMemberMappingArray;
+  AIMappingInfo: TBoldAllInstancesMappingArray; // of TBoldAllInstancesMappingInfo
+  EmbeddingColumnName,
+  EmbeddingOrderColumnName: String;
+  WhereClause,
+  SelectClause: String;
+  Selectlist: TStringList;
+  SQL: TStringList;
+  OperatingOnRootTable: Boolean;
+  RootTableJoin,
+  sMappingInfoTableName: string;
+  First: Boolean;
+const
+  LinkTableAlias:     String = 'LinkTable_Alias';
+  LinkTableAlias_Dot: String = 'LinkTable_Alias.';
+  RootTableAlias:     String = 'RootTable_Alias';
+  procedure ExecQuery;
+  var
+    tmpQuery: IBoldQuery;
+  begin
+    tmpQuery := Query;
+    tmpQuery.AssignSQL(SQL);
+    SQL.Clear;
+    tmpQuery.Open;
+    if tmpQuery.RecordCount > resultList.Capacity then
+      resultList.Capacity := tmpQuery.RecordCount;
+    while not tmpQuery.Eof do
+    begin
+      LinkData := TTempLinkValues.Create;
+      LinkData.ClosestId :=      tmpQuery.Fields[0].AsInteger;
+      LinkData.ClosestClassid := tmpQuery.Fields[1].AsInteger;
+      LinkData.ObjectId :=       tmpQuery.Fields[2].AsInteger;
+      NextColumnIndex := 3;
+      if ordered then
+      begin
+        LinkData.Ordervalue :=   tmpQuery.Fields[NextColumnIndex].AsInteger;
+        INC(NextColumnIndex);
+      end
+      else
+        LinkData.OrderValue := 0;
+
+      if isIndirect then
+        LinkData.RemoteId :=     tmpQuery.Fields[NextColumnIndex].AsInteger;
+      ResultList.Add(LinkData);
+      tmpQuery.Next;
+    end;
+    tmpQuery.Close;
+  end;
+var
+  SB: TStringBuilder;
+
+
+begin
+  AIMappingInfo := nil;
+  SelectList := TStringList.Create;
+  sql := TStringList.Create;
+  SB := TStringBuilder.Create;
+  first := true;
+  MappingInfo := SystemPersistenceMapper.MappingInfo.GetMemberMappings(ClosestOtherEndObjectMapper.ExpressionName, EmbeddingMapper.ExpressionName);
+  try
+    if length(MappingInfo)>1 then
+      BoldPMLogFmt('Fetching accross %4d tables for %s', [length(MappingInfo), EmbeddingMapper.ExpressionName]);
+    for i := 0 to length(MappingInfo) - 1 do
+    begin
+      if not first then
+        SQL.Append(' UNION ');
+      sMappingInfoTableName := MappingInfo[i].TableName;
+
+      EmbeddingColumnName := MappingInfo[i].ColumnByIndex[0];
+      if Ordered then
+      begin
+        if ORDERCOLUMN_INDEX >= MappingInfo[i].ColumnCount then
+          raise EBoldBadColumnIndex.CreateFmt('%s.: Order column not found for association %s', [ClassName, EmbeddingColumnName]);
+        EmbeddingOrderColumnName := MappingInfo[i].ColumnByIndex[ORDERCOLUMN_INDEX];
+      end
+      else
+        EmbeddingOrderColumnName := '';
+
+      SelectList.Clear;
+      {ID, TYPE, ClosstId, [OderColumn], [RemoteColumn]}
+
+      //SelectList.Add(LinkTableAlias + '.' + IDCOLUMN_NAME);
+      SB.Clear;
+        SB.Append(LinkTableAlias_Dot);
+        SB.Append(IDCOLUMN_NAME);
+      SelectList.Append(SB.ToString);
+      //SelectList.Add(LinkTableAlias + '.' + TYPECOLUMN_NAME);
+      SB.Clear;
+        SB.Append(LinkTableAlias_Dot);
+        SB.Append(TYPECOLUMN_NAME);
+      SelectList.Append(SB.ToString);
+      //SelectList.Append(LinkTableAlias + '.' + EmbeddingColumnName);
+      SB.Clear;
+        SB.Append(LinkTableAlias_Dot);
+        SB.Append(EmbeddingColumnName);
+      SelectList.Append(SB.ToString);
+
+      if ordered then
+        SelectList.Append(EmbeddingOrderColumnName);
+      if IsIndirect then
+        SelectList.Append(RemoteInnerLinkMapper.MainColumnName);
+
+      //SelectClause := Format('SELECT %s', [BoldSeparateStringList(SelectList, ', ', '', '')]);
+      SelectClause := 'SELECT ' + BoldSeparateStringList(SelectList,', ','','');
+
+      //WhereClause := Format('WHERE (%s.%s) %s', [LinkTableAlias, EmbeddingColumnName, WhereFragment]);
+        SB.Clear;
+        SB.Append('WHERE (');
+        SB.Append(LinkTableAlias_Dot);
+        SB.Append(EmbeddingColumnName);
+        SB.Append(') ');
+        SB.Append(WhereFragment);
+        WhereClause := SB.ToString;
+
+      SQL.Append(SelectClause);
+        //SQL.Add('FROM '+ MappingInfo[i].TableName + ' ' + LinkTableAlias);
+        SB.Clear;
+        SB.Append('FROM ');
+        SB.Append(sMappingInfoTableName);
+        SB.Append(' ');
+        SB.Append(LinkTableAlias);
+      SQL.Append(SB.ToString);
+
+      RootTableJoin := ''; { build this string conditionally, only if needed !! //ril }
+      {
+      RootTableJoin := format('((%s.%s = %s.%s) and (%s.%s = %s.%s))', [
+            LinkTableAlias, TIMESTAMPSTARTCOLUMNNAME,
+            RootTableAlias, TIMESTAMPSTARTCOLUMNNAME,
+            LinkTableAlias, IDCOLUMN_NAME,
+            RootTableAlias, IDCOLUMN_NAME]);
+      }
+
+      if ClosestOtherEndObjectMapper.Versioned and
+         not SameText(sMappingInfoTableName, SystemPersistenceMapper.RootClassObjectPersistenceMapper.Maintable.SQLName) {=OperatingOnRootTable} then
+      begin
+        if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins then
+        begin
+          SB.Clear;
+            SB.Append('((');
+            SB.Append(LinkTableAlias_Dot);
+            SB.Append(TIMESTAMPSTARTCOLUMNNAME);
+            SB.Append(' = ');
+            SB.Append(RootTableAlias);
+            SB.Append('.');
+            SB.Append(TIMESTAMPSTARTCOLUMNNAME);
+            SB.Append(') and (');
+            SB.Append(LinkTableAlias_Dot);
+            SB.Append(IDCOLUMN_NAME);
+            SB.Append(' = ');
+            SB.Append(RootTableAlias);
+            SB.Append('.');
+            SB.Append(IDCOLUMN_NAME);
+            SB.Append('))');
+          RootTableJoin := SB.ToString;
+          {
+          SQL.append(format(' left join %s %s on %s', [
+             SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName, RootTableAlias, RootTableJoin] ))
+          }
+
+          SB.Clear;
+            SB.Append(' left join ');
+            SB.Append(SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName);
+            SB.Append(' ');
+            SB.Append(RootTableAlias);
+            SB.Append(' on ');
+            SB.Append(RootTableJoin);
+          SQL.Append(SB.ToString);
+        end
+        else
+        begin
+          {SQL.Append(format(', %s %s', [SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName, RootTableAlias] )); }
+           SQL.Append(', '+SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName+' '+RootTableAlias);
+        end;
+      end;
+
+      SQL.Append(WhereClause);
+
+      ClassIDRequired := true;
+      AIMappingInfo := SystemPersistenceMapper.MappingInfo.GetAllInstancesMapping(ClosestOtherEndObjectMapper.ExpressionName);
+      { 1. Cheapest check first.
+        2. Break when false as this won't change anymore... }
+      Cnt := Length(AIMappingInfo);
+      for j := 0 to Cnt-1 do
+      begin
+        if not AIMappingInfo[j].ClassIdRequired and
+           SameText(AIMappingInfo[j].TableName, sMappingInfoTableName) then
+        begin
+          ClassIdRequired := False;
+          Break;
+        end;
+      end;
+
+      if ClassIdRequired then
+      begin
+        {ril}//SQL.Add(format('AND (%s in (%s))', [TYPECOLUMN_NAME, ClosestOtherEndObjectMapper.SubClassesID]));
+        //SQL.Append('AND ('+TYPECOLUMN_NAME+' in ('+ClosestOtherEndObjectMapper.SubClassesID+'))');
+        SB.Clear;
+          SB.Append('AND (');
+          SB.Append(TYPECOLUMN_NAME);
+          SB.Append(' in (');
+          SB.Append(ClosestOtherEndObjectMapper.SubClassesID);
+          SB.Append('))');
+        SQL.Append(SB.ToString);
+      end;
+      
+      if ClosestOtherEndObjectMapper.Versioned then
+      begin
+        OperatingOnRootTable := SameText(sMappingInfoTableName, SystemPersistenceMapper.RootClassObjectPersistenceMapper.Maintable.SQLName);
+        if OperatingOnRootTable then
+          ClosestOtherEndObjectMapper.RetrieveTimeStampCondition(SQL, TimeStamp, false, 'AND', True, LinkTableAlias, LinkTableAlias)
+        else
+          ClosestOtherEndObjectMapper.RetrieveTimeStampCondition(SQL, TimeStamp, false, 'AND', True, LinkTableAlias, RootTableAlias);
+        if not OperatingOnRootTable and not SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins then
+        begin
+          if RootTableJoin='' then { not prepared yet }
+          begin
+            SB.Clear;
+              SB.Append('((');
+              SB.Append(LinkTableAlias_Dot);
+              SB.Append(TIMESTAMPSTARTCOLUMNNAME);
+              SB.Append(' = ');
+              SB.Append(RootTableAlias);
+              SB.Append('.');
+              SB.Append(TIMESTAMPSTARTCOLUMNNAME);
+              SB.Append(') and (');
+              SB.Append(LinkTableAlias_Dot);
+              SB.Append(IDCOLUMN_NAME);
+              SB.Append(' = ');
+              SB.Append(RootTableAlias);
+              SB.Append('.');
+              SB.Append(IDCOLUMN_NAME);
+              SB.Append('))');
+            RootTableJoin := SB.ToString;
+          end;
+          SQL.Append('and '+RootTableJoin);
+        end;
+      end;
+      if ((i+1) mod MaxUnion) = 0 then
+    begin
+      ExecQuery;
+      first := true;
+    end
+    else
+      first := false;
+     end;
+    if Sql.Count > 0 then
+      ExecQuery;
+   finally
+    SelectList.Free;
+    SQL.free;
+    SB.Free;
+  end;
+{$ELSE}
 var
   i, j: integer;
   ClassIdRequired: Boolean;
@@ -299,47 +575,44 @@ begin
     begin
       EmbeddingColumnName := MappingInfo[i].ColumnByIndex[0];
       if Ordered then
-        EmbeddingOrderColumnName := MappingInfo[i].ColumnByIndex[1]
+        EmbeddingOrderColumnName := MappingInfo[i].ColumnByIndex[ORDERCOLUMN_INDEX]
       else
         EmbeddingOrderColumnName := '';
 
       SelectList.Clear;
       {ID, TYPE, ClosstId, [OderColumn], [RemoteColumn]}
       SelectList.Add(LinkTableAlias + '.' + IDCOLUMN_NAME);
-      SelectList.Add(LinkTableAlias + '.' + TYPECOLUMN_NAME); // FIXME hardwired
+      SelectList.Add(LinkTableAlias + '.' + TYPECOLUMN_NAME);
       SelectList.Append(LinkTableAlias + '.' + EmbeddingColumnName);
-      // there is no need to add an OrderBy clause since the list will be ordered in memory prior to processing
       if ordered then
         SelectList.Append(EmbeddingOrderColumnName);
       if IsIndirect then
         SelectList.Append(Format('%s', [RemoteInnerLinkMapper.MainColumnName]));
-      SelectClause := Format('SELECT %s', [BoldSeparateStringList(SelectList, ', ', '', '')]); // do not localize
+      SelectClause := Format('SELECT %s', [BoldSeparateStringList(SelectList, ', ', '', '')]);
 
-      WhereClause := Format('WHERE (%s.%s) %s', [LinkTableAlias, EmbeddingColumnName, WhereFragment]); // do not localize
+      WhereClause := Format('WHERE (%s.%s) %s', [LinkTableAlias, EmbeddingColumnName, WhereFragment]);
 
       SQL.Clear;
       SQL.Add(SelectClause);
-      SQL.Add('FROM '+ MappingInfo[i].TableName + ' ' + LinkTableAlias); // do not localize
+      SQL.Add('FROM '+ MappingInfo[i].TableName + ' ' + LinkTableAlias);
 
       OperatingOnRootTable := SameText(MappingInfo[i].TableName, SystemPersistenceMapper.RootClassObjectPersistenceMapper.Maintable.SQLName);
 
-      RootTableJoin := format('((%s.%s = %s.%s) and (%s.%s = %s.%s))', [ // do not localize
+      RootTableJoin := format('((%s.%s = %s.%s) and (%s.%s = %s.%s))', [
             LinkTableAlias, TIMESTAMPSTARTCOLUMNNAME,
             RootTableAlias, TIMESTAMPSTARTCOLUMNNAME,
             LinkTableAlias, IDCOLUMN_NAME,
             RootTableAlias, IDCOLUMN_NAME]);
 
-      // Add the root table if it is needed and not already there
-
       if ClosestOtherEndObjectMapper.Versioned and not OperatingOnRootTable then
       begin
         if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins then
-          SQL.append(format(' left join %s %s on %s', [ // do not localize
+          SQL.append(format(' left join %s %s on %s', [
             SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName,
             RootTableAlias,
             RootTableJoin] ))
         else
-          SQL.Append(format(', %s %s', [ // do not localize
+          SQL.Append(format(', %s %s', [
             SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName,
             RootTableAlias] ));
       end;
@@ -354,17 +627,15 @@ begin
           ClassIdRequired := false;
 
       if ClassIdRequired then
-        SQL.Add(format('AND (%s in (%s))', [TYPECOLUMN_NAME, ClosestOtherEndObjectMapper.SubClassesID])); // do not localize
-
-      // add timestamp conditions and nessesary joins
+        SQL.Add(format('AND (%s in (%s))', [TYPECOLUMN_NAME, ClosestOtherEndObjectMapper.SubClassesID]));
       if ClosestOtherEndObjectMapper.Versioned then
       begin
         if OperatingOnRootTable then
-          ClosestOtherEndObjectMapper.RetrieveTimeStampCondition(SQL, TimeStamp, false, 'AND', True, LinkTableAlias, LinkTableAlias) // do not localize
+          ClosestOtherEndObjectMapper.RetrieveTimeStampCondition(SQL, TimeStamp, false, 'AND', True, LinkTableAlias, LinkTableAlias)
         else
-          ClosestOtherEndObjectMapper.RetrieveTimeStampCondition(SQL, TimeStamp, false, 'AND', True, LinkTableAlias, RootTableAlias); // do not localize
+          ClosestOtherEndObjectMapper.RetrieveTimeStampCondition(SQL, TimeStamp, false, 'AND', True, LinkTableAlias, RootTableAlias);
         if not OperatingOnRootTable and not SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins then
-          SQL.Append(format('and %s', [RootTableJoin])); // do not localize
+          SQL.Append(format('and %s', [RootTableJoin]));
       end;
 
       Query.AssignSQL(SQL);
@@ -394,9 +665,11 @@ begin
     SelectList.Free;
     sql.free;
   end;
-end;
+{$ENDIF} 
+end; { TBoldNonEmbeddedLinkDefaultMapper.ProcessSQL }
 
-procedure TBoldNonEmbeddedLinkDefaultMapper.ProcessResult(ResultList: TList; ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; TimeStamp: TBoldTimeStampType; FetchMode: integer; FailureList: TBoldObjectIdList);
+
+procedure TBoldNonEmbeddedLinkDefaultMapper.ProcessResult(ResultList: TList; const ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; TimeStamp: TBoldTimeStampType; FetchMode: integer; FailureList: TBoldObjectIdList);
 var
   UnprocessedObjects: TBoldObjectidList;
   ListOfClosestEnd: TBoldObjectIdlist;
@@ -410,19 +683,18 @@ var
     i, OldfailureCount: integer;
   begin
     ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[CurrentobjectId];
-    ObjectContents.EnsureMember(MemberId, ContentName);
-    MemberInterface := ObjectContents.ValueByMemberId[MemberID];
+    MemberInterface := ObjectContents.EnsureMemberAndGetValueByIndex(MemberId.MemberIndex, ContentName);
     if FetchMode = fmCompare then
     begin
       OldFailureCount := failureLIst.Count;
       CompareValuestoLists(CurrentObjectId, MemberInterface, ListOfClosestEnd, ListOfRemoteEnd, FailureList, TranslationList);
       if FailureList.Count > OldFailureCount then
       begin
-        BoldLog.LogFmt(sOptimisticLockingFailedForTheFollowing, [
+        BoldLog.LogFmt('Optimistic Locking failed for %s.%s for the following objects', [
           ObjectPersistenceMapper.ExpressionName,
           ExpressionName]);
         for i := OldFailureCount to FailureList.Count - 1 do
-          BoldLog.LogFmt(sLogIdAsString, [FailureList[i].AsString]);
+          BoldLog.Log('Id: '+ FailureList[i].AsString);
       end;
     end
     else if MemberInterface.BoldPersistenceState = bvpsInvalid then
@@ -435,16 +707,14 @@ var
   procedure EnsureAndAddToList(List: TBoldObjectIdList; ClassId: integer; Exact: Boolean; IdAsInteger: integer);
   var
     BoldId: TBoldDefaultId;
-    BoldGuard: IBoldGuard;
   begin
-    BoldGuard := TBoldGuard.Create(BoldID);
     BoldId := CreateAndEnsureId(IdAsInteger,
                                 ClassId,
                                 Exact,
                                 TranslationList,
                                 ValueSpace,
                                 TimeStamp);
-    List.Add(BoldId);
+    List.AddAndAdopt(BoldId);
   end;
 
   function FindInListByIdAsInteger(List: TBoldObjectIdList; IdAsInteger: integer): TBoldObjectId;
@@ -465,6 +735,7 @@ var
   Currentresult: TTempLinkValues;
   RemoteOtherEndExact: Boolean;
   TranslatedClassId: integer;
+  BoldObjectId: TBoldObjectId;
   BoldGuard: IBoldGuard;
 begin
   BoldGuard := TBoldGuard.Create(ListOfRemoteEnd, ListOfClosestEnd, UnprocessedObjects, MemberID);
@@ -472,12 +743,13 @@ begin
                          (not ObjectPersistenceMappers[RemoteOtherEndObjectMapperIndex].HasSubClasses);
 
   UnprocessedObjects := ObjectIDList.Clone;
+  MemberID := TBoldMemberId.Create(MemberIndex);
   ListOfClosestEnd := TBoldObjectIdlist.Create;
   ListOfRemoteEnd := TBoldObjectIdlist.Create;
-  MemberID := TBoldMemberId.Create(MemberIndex);
-
+  CurrentId := -1;
   if resultList.Count > 0 then
-  begin
+  try
+    ListOfClosestEnd.Capacity := resultList.Count;
     CurrentId := TTempLinkValues(ResultList[0]).ObjectId;
     for i := 0 to ResultList.Count - 1 do
     begin
@@ -496,10 +768,18 @@ begin
                            CurrentResult.RemoteId);
     end;
 
-    ProcessResultForOneObject(FindInListByIdAsInteger(UnprocessedObjects, CurrentId));
-  end;
+    BoldObjectId := FindInListByIdAsInteger(UnprocessedObjects, CurrentId);
+    ProcessResultForOneObject(BoldObjectId);
+  except
+    on e:EBoldDuplicateSingleLinkValueInDb do
+    begin
+      e.Message := 'BoldId: ' + IntToStr(CurrentId) + ' ' + e.Message;
 
-  // clear links for objects that had no related objects in the database
+      raise;
+    end
+    else
+      raise;
+  end;
 
   while UnprocessedObjects.Count > 0 do
     ProcessResultForOneObject(UnprocessedObjects[0] as TBoldDefaultId); {Lists empty at this point}
@@ -527,12 +807,12 @@ begin
 end;
 *)
 
-procedure TBoldNonEmbeddedLinkDefaultMapper.PMFetch(ObjectIDList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
+procedure TBoldNonEmbeddedLinkDefaultMapper.PMFetch(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
 var
   TimeStamp: TBoldTimeStampType;
   ResultList: TList;
   start, stop: integer;
-  Block, ObjectCount, I: Integer;
+  Block, ObjectCount, I, FetchBlockSize, unions: Integer;
   WhereFragment: String;
   TopSortedIndex: Integer;
   aQuery: IBoldQuery;
@@ -541,8 +821,6 @@ begin
     Exit;
 
   TopSortedIndex := ObjectPersistenceMapper.TopSortedIndex;
-
-  // splitting on timestamps is performed by the objectpersistencemapper already
 
   TimeStamp := ObjectIdList[0].TimeStamp;
 
@@ -567,19 +845,24 @@ begin
 
   try
     ObjectCount := ObjectIDList.Count - 1;
-    // only do the fetching in blocks, the actual processing must be done in one go
-    // since ProcessResult will clear all objects with empty links
-    // besides, the point of blockfetching is mainly to reduce the size of the SQL-statement
-    for Block := 0 to (ObjectCount div SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize) do
+    Unions := MinIntValue([MaxUnion, length(SystemPersistenceMapper.MappingInfo.GetMemberMappings(ClosestOtherEndObjectMapper.ExpressionName, EmbeddingMapper.ExpressionName))]);
+    FetchBlockSize := 1;
+    if Unions > 0 then
+      FetchBlockSize := SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize div Unions;
+    if FetchBlockSize = 0 then
+      FetchBlockSize := 1;
+    for Block := 0 to (ObjectCount div FetchBlockSize) do
     begin
       aQuery.ClearParams;
-      Start := Block * SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize;
-      Stop := MinIntValue([Pred(Succ(Block) * SystemPersistenceMapper.SQLDataBaseConfig.FetchBlockSize), ObjectCount]);
-      WhereFragment := ObjectPersistenceMapper.IdListSegmentToWhereFragment(ObjectIdList, Start, Stop, aQuery);
+      Start := Block * FetchBlockSize;
+      Stop := MinIntValue([Pred(Succ(Block) * FetchBlockSize), ObjectCount]);
+      WhereFragment := ObjectPersistenceMapper.IdListSegmentToWhereFragment(ObjectIdList, Start, Stop, false, aQuery);
       ProcessSQL(aQuery, WhereFragment, resultList, TimeStamp);
     end;
-    ResultList.Sort(SortLinkValues);
-    BoldPMLogFmt(sLogFetchIDs, [ResultLIst.Count, ObjectIdList.Count, ObjectPersistenceMapper.ExpressionName, ExpressionName]);
+    if ResultList.Count > 1 then
+      ResultList.Sort(SortLinkValues);
+    if BoldPMLogHandler<>nil then
+      BoldPMLogFmt('Fetched %4d ids for %4d nonembedded links %s.%s', [ResultLIst.Count, ObjectIdList.Count, ObjectPersistenceMapper.ExpressionName, ExpressionName]);
 
     ProcessResult(ResultList, ValueSpace, ObjectIdList, TranslationList, timeStamp, FetchMode, FailureList);
   finally
@@ -602,7 +885,7 @@ begin
   case ColumnIndex of
     0, 1: Result := SystemPersistenceMapper.SQLDataBaseConfig.ColumnTypeForInteger;
   else
-    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnTypeAsSQL', ColumnIndex]); // do not localize
+    raise EBoldBadColumnIndex.CreateFmt('%s.GetColumnTypeAsSQL: Bad column index', [ClassName]);
   end;
 end;
 
@@ -616,7 +899,7 @@ begin
   case ColumnIndex of
     0, 1: Result := ftInteger;
   else
-    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnBDEFieldType', ColumnIndex]); // do not localize
+    raise EBoldBadColumnIndex.CreateFmt('%s.GetColumnBDEFieldType: Bad column index', [ClassName]);
   end;
 end;
 
@@ -625,7 +908,7 @@ begin
   Result := 0;
 end;
 
-function TBoldEmbeddedSingleLinkDefaultMapper.CompareField(ObjectContent: IBoldObjectContents; Field: IBoldField; ColumnIndex: integer; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
+function TBoldEmbeddedSingleLinkDefaultMapper.CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
 var
   anIdRef: IBoldObjectIdRef;
 begin
@@ -650,37 +933,72 @@ begin
         result := Field.AsInteger = anIdRef.OrderNo;
     end;
   end;
+
 end;
 
 function TBoldEmbeddedSingleLinkDefaultMapper.GetInitialColumnName(ColumnIndex: Integer): string;
 begin
   case ColumnIndex of
     0: Result := InitialColumnRootName;
-    1: Result := InitialColumnRootName + '_O';
+    1: Result := InitialColumnRootName + ORDERCOLUMN_SUFFIX;
   else
-    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [classname, 'GetInitialColumnName', ColumnIndex]); // do not localize
+    raise EBoldBadColumnIndex.CreateFmt('%s.GetInitialColumnName: Bad column index', [classname]);
   end;
 end;
 
-procedure TBoldEmbeddedSingleLinkDefaultMapper.ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
+procedure TBoldEmbeddedSingleLinkDefaultMapper.ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 var
   SingleLink: IBoldObjectIdRef;
+  aBoldObjectID: TBoldObjectID;
 begin
   SingleLink := GetEnsuredValue(ObjectContent) as IBoldObjectIdRef;
   case ColumnIndex of
     0:
       if assigned(SingleLink.Id) then
-        Param.AsInteger := (TranslationList.TranslateToNewID[SingleLink.Id] as TBoldDefaultId).asInteger
+      begin
+        aBoldObjectID := TranslationList.TranslateToNewID[SingleLink.Id];
+        if aBoldObjectID is TBoldDefaultId then
+          Param.AsInteger := TBoldDefaultId(aBoldObjectID).asInteger
+        else
+          Param.AsInteger := INTERNALNULLKEY;
+      end
       else
         Param.AsInteger := INTERNALNULLKEY;
     1:
       Param.AsInteger := SingleLink.OrderNo;
   else
-    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'ValueToParam', ColumnIndex]); // do not localize
+    raise EBoldBadColumnIndex.CreateFmt('%s.ValueToParam: Bad column index (%d)', [ClassName, ColumnIndex]);
   end;
 end;
 
-procedure TBoldEmbeddedSingleLinkDefaultMapper.ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer);
+function TBoldEmbeddedSingleLinkDefaultMapper.ValueAsVariant(
+  const ObjectContent: IBoldObjectContents; ColumnIndex: Integer;
+  TranslationList: TBoldIdTranslationList): variant;
+var
+  SingleLink: IBoldObjectIdRef;
+  aBoldObjectID: TBoldObjectID;
+begin
+  SingleLink := GetEnsuredValue(ObjectContent) as IBoldObjectIdRef;
+  case ColumnIndex of
+    0:
+      if assigned(SingleLink.Id) then
+      begin
+        aBoldObjectID := TranslationList.TranslateToNewID[SingleLink.Id];
+        if aBoldObjectID is TBoldDefaultId then
+          result := TBoldDefaultId(aBoldObjectID).asInteger
+        else
+          result := INTERNALNULLKEY;
+      end
+      else
+        result := INTERNALNULLKEY;
+    1:
+      result := SingleLink.OrderNo;
+  else
+    raise EBoldBadColumnIndex.CreateFmt('%s.ValueAsVariant: Bad column index (%d)', [ClassName, ColumnIndex]);
+  end;
+end;
+
+procedure TBoldEmbeddedSingleLinkDefaultMapper.ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer);
 var
   ObjectId: TBoldObjectId;
   anIdRef: IBoldObjectIdRef;
@@ -691,15 +1009,14 @@ begin
       if not Field.IsNull and (Field.AsInteger <> INTERNALNULLKEY) then
       begin
         ObjectId := CreateAndEnsureId(Field.AsInteger, OtherEndObjectPMIndex, OtherEndExact, TranslationList, ValueSpace, OwningObjectId.TimeStamp);
-        anIdRef.SetFromId(ObjectId);
-        ObjectID.Free;
+        anIdRef.SetFromId(ObjectId, true);
       end
       else
-       anIdRef.SetFromId(nil);
+       anIdRef.SetFromId(nil, false);
     1:
       anIdRef.Orderno := Field.AsInteger;
     else
-      raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'ValueFromField', ColumnIndex]); // do not localize
+      raise EBoldBadColumnIndex.CreateFmt('%s.ValueFromField: Bad column index', [ClassName]);
   end;
 end;
 
@@ -794,7 +1111,7 @@ begin
   result := nil;
 end;
 
-procedure TBoldDirectSingleLinkDefaultmapper.CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+procedure TBoldDirectSingleLinkDefaultmapper.CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
 var
   IdRef: IBoldObjectIdRef;
 begin
@@ -812,10 +1129,10 @@ begin
 end;
 
 procedure TBoldDirectSingleLinkDefaultmapper.StuffValuesFromLists(
-  MemberInterface: IBoldValue; ListOfClosestEnd,
+  const MemberInterface: IBoldValue; ListOfClosestEnd,
   ListOfRemoteEnd: TBoldObjectIdlist);
 begin
-   (MemberInterface as IBoldObjectIdRef).SetFromId(FirstIdInList(ListOfClosestEnd));
+   (MemberInterface as IBoldObjectIdRef).SetFromId(FirstIdInList(ListOfClosestEnd), false);
 end;
 
 { TBoldIndirectSingleLinkDefaultmapper }
@@ -838,7 +1155,7 @@ begin
 
   fRemoteInnerLinkMemberIndex := LinkClass.AllBoldMembers.IndexOf(Role.OtherEnd.LinkRole.OtherEnd);
   if (LinkClass.TableMapping = tmChildren) then
-    raise EBoldFeatureNotImplementedYet.CreateFmt(sChildMappedLinkClassesNotSupported,
+    raise EBoldFeatureNotImplementedYet.CreateFmt('%s.%s: ChildMapped LinkObjects (%s) are not supported!',
                                                   [MoldClass.name, Role.Name, LinkClass.Name]);
 end;
 
@@ -847,7 +1164,7 @@ begin
   result := ObjectPersistenceMappers[ClosestOtherEndObjectMapperIndex];
 end;
 
-procedure TBoldIndirectSingleLinkDefaultmapper.CompareValuesToLists(OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
+procedure TBoldIndirectSingleLinkDefaultmapper.CompareValuesToLists(OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd: TBoldObjectIdlist; ListOfRemoteEnd: TBoldObjectIdlist; FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
 var
   IdRefPair: IBoldObjectIdRefPair;
 begin
@@ -867,7 +1184,7 @@ begin
 end;
 
 procedure TBoldIndirectSingleLinkDefaultmapper.StuffValuesFromLists(
-  MemberInterface: IBoldValue; ListOfClosestEnd,
+  const MemberInterface: IBoldValue; ListOfClosestEnd,
   ListOfRemoteEnd: TBoldObjectIdlist);
 begin
   (MemberInterface as IBoldObjectIdRefPair).SetFromIds(FirstIdInList(ListOfClosestEnd), FirstIdInList(ListOfRemoteEnd));
@@ -876,7 +1193,7 @@ end;
 { TBoldDirectMultiLinkDefaultmapper }
 
 procedure TBoldDirectMultiLinkDefaultmapper.CompareValuesToLists(
-  OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd,
+  OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd,
   ListOfRemoteEnd, FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
 var
   IdList: IBoldObjectIdListRef;
@@ -921,7 +1238,7 @@ begin
 end;
 
 procedure TBoldDirectMultiLinkDefaultmapper.StuffValuesFromLists(
-  MemberInterface: IBoldValue; ListOfClosestEnd,
+  const MemberInterface: IBoldValue; ListOfClosestEnd,
   ListOfRemoteEnd: TBoldObjectIdlist);
 begin
   (MemberInterface as IBoldObjectIdListRef).SetFromIdList(ListOfClosestEnd);
@@ -930,7 +1247,7 @@ end;
 { TBoldIndirectMultiLinkDefaultmapper }
 
 procedure TBoldIndirectMultiLinkDefaultmapper.CompareValuesToLists(
-  OwningId: TBoldObjectId; MemberInterface: IBoldValue; ListOfClosestEnd,
+  OwningId: TBoldObjectId; const MemberInterface: IBoldValue; ListOfClosestEnd,
   ListOfRemoteEnd, FailureList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList);
 var
   IdLists: IBoldObjectIdListRefPair;
@@ -973,7 +1290,7 @@ begin
   fRemoteInnerLinkMemberIndex := LinkClass.AllBoldMembers.IndexOf(Role.OtherEnd.LinkRole.OtherEnd);
 
   if (LinkClass.TableMapping = tmChildren) then
-    raise EBoldFeatureNotImplementedYet.CreateFmt(sChildMappedLinkClassesNotSupported,
+    raise EBoldFeatureNotImplementedYet.CreateFmt('%s.%s: ChildMapped LinkObjects (%s) are not supported!',
                                                   [MoldClass.name, Role.Name, LinkClass.Name]);
 end;
 
@@ -983,7 +1300,7 @@ begin
 end;
 
 procedure TBoldIndirectMultiLinkDefaultmapper.StuffValuesFromLists(
-  MemberInterface: IBoldValue; ListOfClosestEnd,
+  const MemberInterface: IBoldValue; ListOfClosestEnd,
   ListOfRemoteEnd: TBoldObjectIdlist);
 begin
   (MemberInterface as IBoldObjectIdListRefPair).SetFromIdLists(ListOfClosestEnd, ListOfRemoteEnd);
@@ -993,7 +1310,8 @@ end;
 
 function TBoldSingleLinkDefaultMapper.FirstIdInList(List: TBoldObjectIdList): TBoldObjectId;
 begin
-  Assert(List.Count <= 1);
+  if List.Count > 1 then
+    raise EBoldDuplicateSingleLinkValueInDb.Create(ObjectPersistenceMapper.ExpressionName + '.' + ExpressionName + ';List count is ' + IntToStr(List.Count) + ', expected <= 1, possible reason: duplicate values in DB for a single link');
   if List.Count = 0 then
     Result := nil
   else
@@ -1064,7 +1382,7 @@ procedure TBoldEmbeddedSingleLinkDefaultMapper.GetNonEmbeddedChangePoints(
     result.AddJoin(NewTableRef.GetColumnReference(MemberMapping.ColumnByIndex[0]), JoinTableRef.GetColumnReference(MemberMapping.ColumnByIndex[0]));
     result.AddJoin(NewTableRef.GetColumnReference(IDCOLUMN_NAME), JoinTableRef.GetColumnReference(IDCOLUMN_NAME));
     Query.AddWCF(TBoldSQLWCFUnaryPrefix.Create(TBoldSQLWCFExists.Create(result, NewTableRef),
-                                               'not')); // do not localize
+                                               'not'));
   end;
 
   function JoinRootTableInto(Query: TBoldSQLQuery; TableRef: TBoldSQLTableReference): TBoldSQLTableReference;
@@ -1141,6 +1459,7 @@ var
   i, j: Integer;
   MemberMappings: TBoldMemberMappingArray;
   Columns: TStringList;
+  CatenatedColumns: string;
   BoldGuard: IBoldGuard;
 begin
   inherited;
@@ -1150,14 +1469,29 @@ begin
 
   if not IsInherited then
   begin
-    Columns := TStringList.create;
     MemberMappings := SystemPersistenceMapper.MappingInfo.GetMemberMappings(ObjectPersistenceMapper.ExpressionName, ExpressionName);
-    for i := 0 to length(MemberMappings) - 1 do
+    Columns := TStringList.create;      
+    if SystemPersistenceMapper.SQLDataBaseConfig.SingleIndexOrderedLinks then
     begin
-      Columns.CommaText := MemberMappings[i].Columns;
-      for j := 0 to Columns.Count - 1 do
+      for i := 0 to length(MemberMappings) - 1 do
+      begin
+        Columns.CommaText := MemberMappings[i].Columns;
+        CatenatedColumns := Columns[0];
+        for j := 1 to Columns.Count - 1 do
+          CatenatedColumns := CatenatedColumns + ';'  + Columns[j];
         SystemPersistenceMapper.EnsureIndex(MemberMappings[i].TableName,
-          Columns[j], False, False, ObjectPersistenceMapper.Versioned);
+          CatenatedColumns, False, False, False, ObjectPersistenceMapper.Versioned);
+      end;
+    end
+    else
+    begin
+      for i := 0 to length(MemberMappings) - 1 do
+      begin
+        Columns.CommaText := MemberMappings[i].Columns;
+        for j := 0 to Columns.Count - 1 do
+          SystemPersistenceMapper.EnsureIndex(MemberMappings[i].TableName,
+            Columns[j], False, False, False, ObjectPersistenceMapper.Versioned);
+      end;
     end;
   end;
 end;
@@ -1182,7 +1516,7 @@ end;
 
 function TBoldEmbeddedSingleLinkDefaultMapper.GetOrderColumnName: String;
 begin
-  result := ColumnDescriptions[1].SQLName;
+  result := ColumnDescriptions[ORDERCOLUMN_INDEX].SQLName;
 end;
 
 function TBoldNonEmbeddedLinkDefaultMapper.GetLinkClassTableName: string;
@@ -1252,6 +1586,7 @@ begin
 end;
 
 initialization
+
   with BoldMemberPersistenceMappers do
   begin
     AddDescriptor(TBoldNonEmbeddedLinkDefaultMapper, alAbstract);
@@ -1279,5 +1614,4 @@ finalization
   {end - finalization}
 
 end.
-
 

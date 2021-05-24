@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDebugActions;
 
 interface
@@ -38,7 +41,7 @@ type
   protected
     function GetLogHandler: TBoldLogHandler; virtual; abstract;
     function GetLogType: string; virtual; abstract;
-    procedure SetLogHandler(Value: TBoldLogHandler); virtual; abstract;
+    procedure SetLogHandler(Value: TBoldLogHandler); virtual; abstract; 
     property LogType: string read GetLogType;
     property LogHandler: TBoldLogHandler read GetLogHandler write SetLogHandler;
   public
@@ -72,10 +75,15 @@ type
     procedure SetLogHandler(Value: TBoldLogHandler); override;
   end;
 
+  { TBoldLogOSSAction }
+  TBoldLogOSSAction = class(TBoldLogAction)
+  protected
+    function GetLogHandler: TBoldLogHandler; override;
+    function GetLogType: string; override;
+    procedure SetLogHandler(Value: TBoldLogHandler); override;
+  end;
+
   { TBoldLogFormAction }
-  // Note that as long as it's possible to determine the visible state
-  // from BoldLog it's impossible to be sure if next ExecuteTarget will show
-  // or hide the form...
   TBoldLogFormAction = class(TAction)
   private
     fShowing: boolean;
@@ -89,9 +97,11 @@ implementation
 
 uses
   SysUtils,
+  Menus, // for TextToShortCut
   BoldOCL,
   BoldDBInterfaces,
-  BoldPMappers;
+  BoldPMappers,
+  BoldObjectSpaceExternalEvents;
 
 { TBoldSystemDebuggerAction }
 
@@ -105,6 +115,7 @@ constructor TBoldSystemDebuggerAction.Create(AOwner: TComponent);
 begin
   inherited;
   Caption := 'System debugger';
+  ShortCut := TextToShortCut('Ctrl+Shift+D');
 end;
 
 procedure TBoldSystemDebuggerAction.ExecuteTarget(Target: TObject);
@@ -133,20 +144,15 @@ end;
 
 procedure TBoldSystemDebuggerAction.CloseDebugForm;
 begin
-  if assigned(fDebugForm) then
-    fDebugForm.Close;
+  fDebugForm.Close;
 end;
-
 
 procedure TBoldSystemDebuggerAction.Notification(AComponent: TComponent;
   Operation: TOperation);
 begin
   inherited;
   if (AComponent = fDebugForm) and (Operation = opRemove) then
-  begin
     fDebugForm := nil;
-    Checked:=False;
-  end;
 end;
 
 { TBoldLogOCLAction }
@@ -241,7 +247,8 @@ end;
 constructor TBoldLogFormAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Toggle log';
+  Caption := 'Log view';
+  ShortCut := TextToShortCut('Ctrl+L');
 end;
 
 procedure TBoldLogFormAction.ExecuteTarget(Target: TObject);
@@ -257,6 +264,23 @@ end;
 function TBoldLogFormAction.HandlesTarget(Target: TObject): Boolean;
 begin
   Result := True;
+end;
+
+{ TBoldLogOSSAction }
+
+function TBoldLogOSSAction.GetLogHandler: TBoldLogHandler;
+begin
+  result := BoldOSSLogHandler;
+end;
+
+function TBoldLogOSSAction.GetLogType: string;
+begin
+  Result := 'OSS traffic';
+end;
+
+procedure TBoldLogOSSAction.SetLogHandler(Value: TBoldLogHandler);
+begin
+  BoldOSSLogHandler := Value;
 end;
 
 end.

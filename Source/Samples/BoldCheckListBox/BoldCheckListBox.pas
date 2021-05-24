@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCheckListBox;
 
 interface
@@ -21,5 +24,11 @@ type
   end;
 
 implementation
+
+uses
+  BoldRev;
+
+{ TBoldCheckListBox }
+initialization
 
 end.

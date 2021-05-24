@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComponentValidatorIDE;
 
 interface
@@ -18,8 +21,8 @@ type
     fMenuItemCurrent: TMenuItem;
     procedure ChangeFocus;
   public
-    constructor Create;
-    destructor Destroy; override;
+    constructor create;
+    destructor destroy; override;
     procedure ValidateIOTAModule(Module: IOTAModule);
     procedure ValidateFormEditor(FormEditor: IOTAFormEditor);
     procedure ValidateIOTAModules;
@@ -39,8 +42,7 @@ uses
   BoldLogHandler,
   BoldGuard,
   BoldIDEMenus,
-  BoldEnvironment,
-  BoldCoreConsts;
+  BoldEnvironment;
 
 var
   G_BoldComponentValidatorIDE: TBoldComponentValidatorIDE = nil;
@@ -50,15 +52,16 @@ begin
   G_BoldComponentValidatorIDE := TBoldComponentValidatorIDE.Create;
 end;
 
+
 { TBoldComponentValidatorIDE }
 constructor TBoldComponentValidatorIDE.create;
 begin
-  fMenuItemAll := BoldMenuExpert.AddMenuItem('mnuValidateAllForms', // do not localize
-                                             sValidateAllForms,
+  fMenuItemAll := BoldMenuExpert.AddMenuItem('mnuValidateAllForms',
+                                             'Validate All Forms',
                                              ValidateAllMenuAction,
                                              True);
-  fMenuItemCurrent := BoldMenuExpert.AddMenuItem('mnuValidateCurrentForm', // do not localize
-                                                 sValidateCurrentForm,
+  fMenuItemCurrent := BoldMenuExpert.AddMenuItem('mnuValidateCurrentForm',
+                                                 'Validate Current Form',
                                                  ValidateCurrentMenuAction,
                                                  True);
 end;
@@ -92,7 +95,7 @@ begin
       Editor := Module.GetModuleFileEditor(i);
       if Editor.QueryInterface(IOTAFormEditor, FormEditor) = S_OK then
       begin
-        BoldLog.LogFmtIndent(sValidatingForm, [FormEditor.FileName]);
+        BoldLog.LogFmtIndent('Validating form %s', [FormEditor.FileName]);
         ValidateFormEditor(FormEditor);
         HasEditor := True;
         BoldLog.Dedent;
@@ -100,10 +103,10 @@ begin
     end;
   except
     on e: Exception do
-      BoldLog.LogFmt(sFailedToValidate, [Module.FileName, e.Message]);
+      BoldLog.LogFmt('Failed to validate %s. %s', [Module.FileName, e.Message]);
   end;
   if not HasEditor then
-    BoldLog.LogFmt(sNothingToValidate, [Module.FileName]);
+    BoldLog.LogFmt('Nothing to validate in %s', [Module.FileName]);
 end;
 
 procedure TBoldComponentValidatorIDE.ValidateIOTAModules;
@@ -117,11 +120,10 @@ var
   FileNames: TStringList;
   Guard: IBoldGuard;
 begin
-  // Filenames of open modules are stored and not revalidated later.
   Guard := TBoldGuard.Create(FileNames);
   FileNames := TStringList.Create;
   ModuleServices := (BorlandIDEServices as IOTAModuleServices);
-  BoldLog.LogIndent(sValidatingAllOpenModules);
+  BoldLog.LogIndent('Validating all open modules');
   BoldLog.ProgressMax := ModuleServices.GetModuleCount;
   ChangeFocus;
   for i := 0 to ModuleServices.GetModuleCount - 1 do
@@ -133,13 +135,13 @@ begin
   BoldLog.Dedent;
 
   ChangeFocus;
-  BoldLog.LogIndent(sLookingForDefaultProject);
+  BoldLog.LogIndent('Starting looking project group with default project');
   for i := 0 to ModuleServices.GetModuleCount - 1 do
   begin
     if ModuleServices.GetModule(i).QueryInterface(IOTAProjectGroup, ProjectGroup) = S_OK then
     begin
       Project := ProjectGroup.ActiveProject;
-      BoldLog.LogFmt(sDefaultProject, [Project.FileName]);
+      BoldLog.LogFmt('Default project: %s', [Project.FileName]);
       Break;
     end;
   end;
@@ -148,12 +150,12 @@ begin
   ChangeFocus;
   if not Assigned(Project) then
   begin
-    BoldLog.LogIndent(sLookingForAnyProject);
+    BoldLog.LogIndent('Starting looking for any project');
     for i := 0 to ModuleServices.GetModuleCount - 1 do
     begin
       if ModuleServices.GetModule(i).QueryInterface(IOTAProject, Project) = S_OK then
       begin
-        BoldLog.LogFmt(sFoundProject, [Project.FileName]);
+        BoldLog.LogFmt('Found project: %s', [Project.FileName]);
         Break;
       end;
     end;
@@ -209,8 +211,6 @@ begin
   if assigned(RealComponent) then
     ValidateComponent(RealComponent, NamePrefix);
 
-    //if not ValidateComponent(RealComponent, NamePrefix) then
-    //  fLastFailedComponent := Component;
   for i := 0 to Component.GetComponentCount - 1 do
     ValidateIOTAComponent(Component.GetComponent(i),
                           NamePrefix + ComponentName + '.');
@@ -242,7 +242,7 @@ begin
     CompleteLog;
   end
   else
-    raise Exception.Create(sNoValidateableModuleAvailable);
+    raise Exception.Create('No module available for validation');
 end;
 
 procedure TBoldComponentValidatorIDE.ChangeFocus;
@@ -256,4 +256,3 @@ finalization
   FreeAndNil(G_BoldComponentValidatorIDE);
 
 end.
-

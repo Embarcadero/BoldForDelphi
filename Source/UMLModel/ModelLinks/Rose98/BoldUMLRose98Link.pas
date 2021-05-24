@@ -1,8 +1,8 @@
-unit BoldUMLRose98Link;
 
-{ TODO : Use new signature support methods on import to. }
-{ TODO : Write specific importer for Rose2K }
-{$WARN SYMBOL_PLATFORM OFF}  // WINDOWS only
+{ Global compiler directives }
+{$include bold.inc}
+unit BoldUMLRose98Link;  
+{$WARN SYMBOL_PLATFORM OFF}
 
 interface
 
@@ -43,7 +43,7 @@ type
     fImplicitRolesUMLCompliant: Boolean;
     fMapping: TBoldUMLRose98MappingUtils;
     fGetToolIdOnExport: Boolean;
-    function DefaultLogicalPackage: IRoseCategory;
+    function DefaultLogicalPackage: IRoseCategory; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure EnsureModel;
     procedure ExportAssociation(UMLAssociation: TUMLAssociation; RoseAssociation : IRoseAssociation);
     procedure EnsureandExportAssociations(TheModel: TUMLModel);
@@ -65,20 +65,20 @@ type
     procedure ImportQualifier(RoseAttribute: IRoseAttribute; UMLAssociationEnd: TUMLAssociationEnd);
     procedure ImportSignature(RoseOperation: IRoseOperation; UMLOperation: TUMLOperation);
     procedure ImportConstraints(RoseItem: IRoseItem; UMLElement: TUMLModelElement);
-    procedure SetLogicalPackages(Value: TStrings);
-    procedure SetTools(Value: TStrings);
+    procedure SetLogicalPackages(Value: TStrings); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetTools(Value: TStrings); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property RoseModel: IRoseModel read fRoseModel;
-    function GetBoldSystem: TBoldSystem;
+    function GetBoldSystem: TBoldSystem; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function FindPackage(const UniqueId: String): TUMLPackage;
     procedure RefreshCache(var Cache: TStringList; FilterType: TClass);
     function FindInCache(Cache: TStringList; UniqueId: string): TUMLElement;
-    procedure ReadObsoleteProperty(Reader: TReader; const PropertyName, NewPropertyName: string); // Compatibility
-    procedure ReadObsoletePluralSuffix(Reader: TReader); // Compatibility
-    procedure ReadObsoletMultiplicityForRoles(Reader: TReader); // Compatibility
-    procedure ReadObsoleteMultiplicityForNonNavigableRoles(Reader: TReader);
-    function GetLogicalPackages: TStrings;
-    function GetIncludeSubPackages: Boolean;
-    procedure SetIncludeSubPackages(const Value: Boolean);
+    procedure ReadObsoleteProperty(Reader: TReader; const PropertyName, NewPropertyName: string);
+    procedure ReadObsoletePluralSuffix(Reader: TReader); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ReadObsoletMultiplicityForRoles(Reader: TReader); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ReadObsoleteMultiplicityForNonNavigableRoles(Reader: TReader); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLogicalPackages: TStrings; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIncludeSubPackages: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetIncludeSubPackages(const Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetCanExport: Boolean; override;
     function GetDisplayName: string; override;
@@ -270,20 +270,16 @@ begin
     TBoldUMLSupport.AddToolId(UMLAssociation, RoseAssociation.getUniqueId);
 
     RoseProp.GetTaggedValues(RoseItem, (UMLAssociation as TUMLModelElement), Tools);
-
-    // "unroseify" the standard tagged values
     TVPersistence := taggedValue[BOLDSTDUMLTOOLNAME + '.' + TAG_PERSISTENCE ];
     if not assigned(TVPersistence) then
-      TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ]; // do not localize
+      TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ];
     if assigned(TVPersistence) then
       TVPersistence.tag := TAG_PERSISTENCE;
-
-    // if both tagged values existed in the model, then remove the obsolete.
-    TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ]; // do not localize
+    TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ];
     if assigned(TVPersistence) then
       TVPersistence.Delete;
 
-    TVPersistence := taggedValue[BOLDSTDUMLTOOLNAME + '.' + 'PersistenceSet']; // do not localize
+    TVPersistence := taggedValue[BOLDSTDUMLTOOLNAME + '.' + 'PersistenceSet'];
     if assigned(TVPersistence) then
       TVPersistence.Delete;
 
@@ -316,19 +312,16 @@ begin
     Name := RoseAttribute.Name;
     TBoldUMLSupport.AddToolId(UMLAttribute, RoseAttribute.getUniqueId);
     RoseProp.GetTaggedValues(RoseItem, (UMLAttribute as TUMLModelElement), Tools);
-    // "unroseify" the standard tagged values
     TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + TAG_PERSISTENCE ];
     if not assigned(TVPersistence) then
-      TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ]; // do not localize
+      TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ];
     if assigned(TVPersistence) then
       TVPersistence.tag := TAG_PERSISTENCE;
-
-    // if both tagged values existed in the model, then remove the obsolete.
-    TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ]; // do not localize
+    TVPersistence := taggedValue[ BOLDSTDUMLTOOLNAME + '.' + 'Persistence' ];
     if assigned(TVPersistence) then
       TVPersistence.Delete;
 
-    TVPersistence := taggedValue[BOLDSTDUMLTOOLNAME + '.' + 'PersistenceSet']; // do not localize
+    TVPersistence := taggedValue[BOLDSTDUMLTOOLNAME + '.' + 'PersistenceSet'];
     if assigned(TVPersistence) then
       TVPersistence.Delete;
 
@@ -400,10 +393,10 @@ begin
         ImportOperation(RoseOperation, UMLOperation);
       end;
      end
-     else // pass2
+     else
       case RoseClass.GetSuperClasses.Count of
       0:
-        ; // no action
+        ;
       1:
         SetFirstParent(fMapping.FindClass(RoseClass.GetSuperClasses.GetAt(1).GetUniqueID));
       else
@@ -441,7 +434,7 @@ begin
       TBoldUMLSupport.EnsureBoldTaggedValues(NewParameter);
       with NewParameter do
       begin
-        name := 'return'; // do not localize
+        name := 'return';
         kind := pdReturn;
         SetBoldTV(TAG_EXPRESSIONNAME, RoseProp.GetString(RoseItem, TAG_EXPRESSIONNAME, TV_NAME));
         type_ := GetEnsuredUMLDataType(RoseOperation.ReturnType);
@@ -451,10 +444,6 @@ begin
 end;
 
 procedure TBoldUMLRoseLink.ImportSignature(RoseOperation: IRoseOperation; UMLOperation: TUMLOperation);
-const
-  var_var = 'VAR ';
-  var_out = 'OUT ';
-  var_const = 'CONST ';
 var
     Index: Integer;
     RoseParams: IRoseParameterCollection;
@@ -474,27 +463,25 @@ begin
     TBoldUMLSupport.AddToolId(UMLParameter, RoseParam.getUniqueId);
     UMLParameter.StereotypeName := RoseParam.Stereotype;
     UMLParameter.type_ := GetEnsuredUMLDataType(RoseParam.Type_);
-
-    //Check for occurence of "var" and "const"...
     ParamName := UMLParameter.Name;
-    if Pos(var_var, UpperCase(ParamName)) > 0 then
+    if Pos(UpperCase('var '), UpperCase(ParamName)) > 0 then
     begin
       UMLParameter.SetBoldTV(TAG_ISCONST, TV_FALSE);
       UMLParameter.kind := pdInOut;
-      Delete(ParamName, Pos(var_var, UpperCase(ParamName)), Length(var_var));
+      Delete(ParamName, Pos(UpperCase('var '), UpperCase(ParamName)), Length('var '));
       UMLParameter.Name := ParamName;
     end
-    else if Pos(var_out, UpperCase(ParamName)) > 0 then
+    else if Pos(UpperCase('out '), UpperCase(ParamName)) > 0 then
     begin
       UMLParameter.SetBoldTV(TAG_ISCONST, TV_FALSE);
       UMLParameter.kind := pdOut;
-      Delete(ParamName, Pos(var_out, UpperCase(ParamName)), Length(var_out));
+      Delete(ParamName, Pos(UpperCase('out '), UpperCase(ParamName)), Length('out '));
       UMLParameter.Name := ParamName;
     end
-    else if Pos(var_const, UpperCase(ParamName)) > 0 then
+    else if Pos(UpperCase('const '), UpperCase(ParamName)) > 0 then
     begin
       UMLParameter.SetBoldTV(TAG_ISCONST, TV_TRUE);
-      Delete(ParamName, Pos(var_const, UpperCase(ParamName)), Length(var_const));
+      Delete(ParamName, Pos(UpperCase('const '), UpperCase(ParamName)), Length('const '));
       UMLParameter.Name := ParamName;
     end;
   end;
@@ -563,11 +550,9 @@ begin
       Assert(UMLModel.Associations.Count = 0);
       BoldLog.ProgressMax := 2 * RoseModel.GetAllClasses.Count + RoseModel.GetAllAssociations.Count + RoseModel.GetAllCategories.Count;
       BoldLog.Progress := 0;
-      // import tagged values for the model first, to initialize what is overriden
       RoseProp.GetTaggedValues(RoseItem, UMLModel, Tools);
       ImportPackage(RoseModel.RootCategory, UMLModel, pass1);
-      // reimport the tagged values for the model since it is overwritten by the top-package...
-      // this is a workaround... why is the top rose package imported to the UMLModel?
+
       RoseProp.GetTaggedValues(RoseItem, UMLModel, Tools);
       if not BoldLog.ProcessInterruption then
         ImportPackage(RoseModel.RootCategory, UMLModel, pass2);
@@ -621,7 +606,7 @@ begin
     if AdjustEmbedFlag and (UMLAssociationEnd.Multi or assigned(UMLAssociationEnd.Association.Class_)) then
       UMLAssociationEnd.SetBoldTV(TAG_EMBED, TV_FALSE);
 
-    with RoseRole.Keys do // Rose seems to publish the qualifiers at the wrong end, compared to the UML
+    with RoseRole.Keys do
       for i := 1 to Count do ImportQualifier(GetAt(I), UMLAssociationEnd);
   end;
 end;
@@ -713,7 +698,7 @@ begin
       RoseLinkClassName := RoseProp.GetString(RoseItem, TAG_LINKCLASSNAME, TV_NAME);
       if CompareText(BoldExpandName(RoseLinkClassName, RoseAssociation.Name, xtDelphi, -1,
                 TBoldTaggedValueSupport.StringToNationalCharConversion(UMLAssociation.model.GetBoldTV(TAG_NATIONALCHARCONVERSION))), UMLAssociation.Class_.Name) <> 0 then
-        RoseProp.SetString(RoseItem, 'LinkClassName', TV_NAME, UMLAssociation.Class_.Name, LogName); // do not localize
+        RoseProp.SetString(RoseItem, 'LinkClassName', TV_NAME, UMLAssociation.Class_.Name, LogName);
     end
     else
       RoseAssociation.LinkClass := LinkClass;
@@ -800,7 +785,6 @@ begin
   RoseItem := RoseClass as IRoseItem;
   with UMLClass do
   begin
-    // properties
     RoseProp.SetTaggedValues(RoseItem, UMLClass, Tools);
     ExportConstraints(RoseItem, UMLClass);
     if RoseClass.Stereotype <> StereotypeName then
@@ -823,7 +807,6 @@ begin
       BoldLog.LogFmt('Setting %s.Persistence to %s', [LogName, BooleanToString(Persistent)]);
       RoseClass.Persistence := Persistent;
     end;
-    // Trim attributes
     RoseAttributes := RoseClass.Attributes;
     I := 1;
     while I <= RoseAttributes.Count do
@@ -839,7 +822,6 @@ begin
         I := 1;
       end;
     end;
-    // Trim operations
     RoseOperations := RoseClass.Operations;
     I := 1;
     while I <= RoseOperations.Count do
@@ -873,7 +855,7 @@ var
   UMLReturnType: TUMLClassifier;
 begin
   LogName := TBoldUMLRose98Properties.LogName(UMLOperation);
-  UMLReturnType := UMLOperation.EvaluateExpressionAsDirectElement('parameter->select(kind=#return)->first.type->first') as TUMLClassifier; // do not localize
+  UMLReturnType := UMLOperation.EvaluateExpressionAsDirectElement('parameter->select(kind=#return)->first.type->first') as TUMLClassifier;
   if ASsigned(UMLReturnType) then
     ReturnTypeName := UMLReturnType.name
   else
@@ -897,7 +879,7 @@ begin
   ExportConstraints(RoseItem, UMLOperation);
   TBoldUMLRose98Support.SetExportControl(UMLOperation.Visibility, RoseOperation.ExportControl, UMLOperation.qualifiedName);
   RoseProp.SetTaggedValues(RoseItem, UMLOperation, Tools);
-  RoseProp.SetBoolean(RoseItem, 'IsClassMethod', False, UMLOperation.ownerScope = skClassifier, LogName); // do not localize
+  RoseProp.SetBoolean(RoseItem, 'IsClassMethod', False, UMLOperation.ownerScope = skClassifier, LogName);
    if CompareText(RoseOperation.ReturnType, ReturnTypeName) <> 0 then
   begin
     BoldLog.LogFmt('Setting %s.Type to %s', [LogName, ReturnTypeName]);
@@ -948,7 +930,6 @@ begin
         RoseModel.Stereotype := UMLModel.StereotypeName;
       end;
       ExportConstraints(RoseItem, UMLModel);
-      // Remove all classes in Rose that are not in Bold
       RoseClasses := RoseModel.GetAllClasses;
       I := 1;
       BoldLog.ProgressMax := RoseClasses.Count - 1;
@@ -968,7 +949,6 @@ begin
           else
           begin
             BoldLog.LogFmt('Deleting class %s', [RoseClass.Name]);
-            // we must remove all associations also or the model will be corrupt
             RoseAssociations := RoseClass.GetAssociations;
             while roseAssociations.count > 0 do
             begin
@@ -984,8 +964,6 @@ begin
         else
           inc(i);
       end;
-
-      // Remove all associations in Rose that are not in Bold
       RoseAssociations := RoseModel.GetAllAssociations;
       I := 1;
       BoldLog.ProgressMax := RoseAssociations.Count - 1;
@@ -1049,7 +1027,7 @@ begin
     end;
   finally
     fRoseModel := nil;
-  end;
+  end;  
 end;
 
 procedure TBoldUMLRoseLink.ExportSignature(UMLOperation: TUMLOperation; RoseOperation: IRoseOperation);
@@ -1148,7 +1126,7 @@ begin
   TBoldUMLRose98Support.SetContainment(UMLAssociationEnd.Aggregation, RoseRole, OtherRoseRole, UMLAssociationEnd.qualifiedName);
   TBoldUMLRose98Support.SetExportControl(UMLAssociationEnd.visibility, RoseRole.ExportControl, UMLAssociationEnd.qualifiedName);
 
-  RoseProp.SetString(RoseItem, 'Changeability', 'Changeable', TBoldRose98TaggedValueSupport.ChangeableKindToString(UMLAssociationEnd.Changeability), LogName); // do not localize
+  RoseProp.SetString(RoseItem, 'Changeability', 'Changeable', TBoldRose98TaggedValueSupport.ChangeableKindToString(UMLAssociationEnd.Changeability), LogName);
   RoseProp.SetTaggedValues(RoseItem, UMLAssociationEnd, Tools);
   RoseProp.SetBoolean(RoseItem, TAG_ORDERED, False, UMLAssociationEnd.isOrdered, LogName);
 
@@ -1157,8 +1135,6 @@ begin
     BoldLog.LogFmt('Setting %s.Navigable to %s', [LogName, BooleanToString(UMLAssociationEnd.isNavigable)]);
     RoseRole.Navigable := UMLAssociationEnd.isNavigable;
   end;
-
-  // Trim qualifiers
   RoseAttributes := RoseRole.Keys;
   I := 1;
   while I <= RoseAttributes.Count do
@@ -1299,8 +1275,7 @@ var
 begin
   ConstrString := TBoldUMLModelLinkSupport.ConstraintsAsString(UMLElement);
   RoseConstr := RoseProp.GetString(RoseItem, TAG_CONSTRAINTS, '');
-  // if the Rose constraint does not end with CRLF then add that, this is because a CRLF
-  // should not affect the export. And empty strings should not affect anything
+
   if  (RoseConstr <> '')  and (Copy(RoseConstr, Length(RoseConstr) - 2, MaxInt) <> BOLDCRLF) then
     RoseConstr := RoseConstr + BOLDCRLF;
   if ConstrString <> RoseConstr then
@@ -1485,24 +1460,24 @@ end;
 procedure TBoldUMLRoseLink.DefineProperties(Filer: TFiler);
 begin
   inherited;
-  Filer.DefineProperty('PluralSuffix', ReadObsoletePluralSuffix, nil, False); // do not localize
-  Filer.DefineProperty('DefaultMultiplicityForRoles', ReadObsoletMultiplicityForRoles, nil, False); // do not localize
-  Filer.DefineProperty('DefaultMultiplicityForNonNavigableRoles', ReadObsoleteMultiplicityForNonNavigableRoles, nil, False); // do not localize
+  Filer.DefineProperty('PluralSuffix', ReadObsoletePluralSuffix, nil, False);
+  Filer.DefineProperty('DefaultMultiplicityForRoles', ReadObsoletMultiplicityForRoles, nil, False);
+  Filer.DefineProperty('DefaultMultiplicityForNonNavigableRoles', ReadObsoleteMultiplicityForNonNavigableRoles, nil, False);
 end;
 
 procedure TBoldUMLRoseLink.ReadObsoletePluralSuffix(Reader: TReader);
 begin
-  ReadObsoleteProperty(Reader, 'PluralSuffix', 'PluralSuffix'); // do not localize
+  ReadObsoleteProperty(Reader, 'PluralSuffix', 'PluralSuffix');
 end;
 
 procedure TBoldUMLRoseLink.ReadObsoleteMultiplicityForNonNavigableRoles(Reader: TReader);
 begin
-  ReadObsoleteProperty(Reader, 'DefaultMultiplicityForNonNavigableRoles', 'DefaultNonNavigableMultiplicity'); // do not localize
+  ReadObsoleteProperty(Reader, 'DefaultMultiplicityForNonNavigableRoles', 'DefaultNonNavigableMultiplicity');
 end;
 
 procedure TBoldUMLRoseLink.ReadObsoletMultiplicityForRoles(Reader: TReader);
 begin
-  ReadObsoleteProperty(Reader, 'DefaultMultiplicityForRoles', 'DefaultNavigableMultiplicity'); // do not localize
+  ReadObsoleteProperty(Reader, 'DefaultMultiplicityForRoles', 'DefaultNavigableMultiplicity');
 end;
 
 procedure TBoldUMLRoseLink.ReadObsoleteProperty(Reader: TReader; const PropertyName, NewPropertyName: string);
@@ -1533,6 +1508,7 @@ procedure TBoldUMLRoseLink.SetIncludeSubPackages(const Value: Boolean);
 begin
   fMapping.IncludeSubPackages := Value;
 end;
+
 
 initialization
   BoldUMLModelLinkList.AddLink(ROSE_LINKEXTENSION, ROSE_LINKDESC, TBoldUMLRoseLink);

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDerivedValueSet;
 
 interface
@@ -23,7 +26,6 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  BoldCoreConsts,
   BoldSystemRT;
 
 procedure TBADerivedValueSetValueList.AddMembers(Int: Integer; Members: Array of TBoldMember);
@@ -51,13 +53,13 @@ begin
 
   ClassTypeInfo := System.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassToFollow];
   if not assigned(ClassTypeInfo) then
-    raise Ebold.createFmt(sNoClassCalledX, [ClassName, ClassToFollow]);
+    raise Ebold.createFmt('%s.create: No class called %s', [ClassName, ClassToFollow]);
 
   RTAttr := ClassTypeInfo.MemberRTInfoByExpressionName[IntValueAttribute];
   if not assigned(RTAttr) then
-    raise Ebold.createFmt(sNoAttributeCalledX, [ClassName, ClassToFollow, IntValueAttribute]);
+    raise Ebold.createFmt('%s.create: No attribute called %s.%s', [ClassName, ClassToFollow, IntValueAttribute]);
   if not RTAttr.MemberClass.InheritsFrom(TBAInteger) then
-    raise Ebold.createFmt(sXIsNotAnInteger, [ClassName, ClassToFollow, IntValueAttribute]);
+    raise Ebold.createFmt('%s.create: %s.%s is not an integer', [ClassName, ClassToFollow, IntValueAttribute]);
 
   IntIndex := RTAttr.Index;
 
@@ -68,16 +70,16 @@ begin
   begin
     RTAttr := ClassTypeInfo.MemberRTInfoByExpressionName[StrValueAttributes[i]];
     if not assigned(RTAttr) then
-      raise Ebold.createFmt(sNoAttributeCalledX, [ClassName, ClassToFollow, StrValueAttributes[i]]);
+      raise Ebold.createFmt('%s.create: No attribute called %s.%s', [ClassName, ClassToFollow, StrValueAttributes[i]]);
     if not RTAttr.MemberClass.InheritsFrom(TBoldAttribute) then
-      raise Ebold.createFmt(sXIsNotAnAttribute, [ClassName, ClassToFollow, StrValueAttributes[i]]);
+      raise Ebold.createFmt('%s.create: %s.%s is not an Attribute', [ClassName, ClassToFollow, StrValueAttributes[i]]);
 
     IndexArr[i] := RTAttr.Index;
   end;
 
   ObjectList := System.Classes[ClassTypeInfo.TopSortedIndex];
   if objectlist.count = 0 then
-    raise EBold.CreateFmt(sNoValuesInValueSetList, [Classname, ClassTypeInfo.ExpressionName]);
+    raise EBold.CreateFmt('%s.Create: No values in valuesetlist: %s', [Classname, ClassTypeInfo.ExpressionName]);
   for i := 0 to ObjectList.count - 1 do
   begin
     for j := 0 to High(StrValueAttributes) do
@@ -85,5 +87,7 @@ begin
       AddMembers((ObjectList[i].BoldMembers[IntIndex] as TBAInteger).AsInteger, DynArr);
   end;
 end;
+
+initialization
 
 end.

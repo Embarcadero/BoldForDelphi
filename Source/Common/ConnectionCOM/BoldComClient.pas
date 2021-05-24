@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComClient;
 
 interface
@@ -134,7 +137,7 @@ implementation
 
 uses
   Windows,
-  SysUtils,  // InterlockedIncrement/Decrement for non-WIN32
+  SysUtils,
   ActiveX,
   Variants,
   ComObj,
@@ -142,8 +145,7 @@ uses
   BoldHashIndexes,
   BoldGUIDUtils,
   BoldComUtils,
-  BoldComThreads,
-  BoldComConst;
+  BoldComThreads;
 
 type
   TBoldProtectedAccessSubscriber = class(TBoldSubscriber)
@@ -161,7 +163,7 @@ type
     function FindSubscriberBySubscriberId(SubscriberId: integer): TBoldComClientSubscriber;
   end;
 
-
+  
 {-- TBoldComClientSubscriber --------------------------------------------------}
 
 constructor TBoldComClientSubscriber.create;
@@ -272,7 +274,7 @@ begin
   Result := True;
   if (ConnectionState = bceConnected) then Exit;
   if (ConnectionState <> bceDisconnected) then
-    raise EBoldCom.Create(sConnectionStateError);
+    raise EBoldCom.Create('Connection state error.');
   FConnectClientInterface := ConnectClientInterface;
   Connecting;
   try
@@ -355,7 +357,7 @@ begin
   Result := True;
   if (ConnectionState = bceDisconnected) then Exit;
   if (ConnectionState <> bceConnected) then
-    raise EBoldCom.Create(sConnectionStateError);
+    raise EBoldCom.Create('Connection state error.');
   try
     Disconnecting;
   finally
@@ -433,15 +435,13 @@ begin
 end;
 
 procedure TBoldComClient.CancelSubscriptions(SubscriberId: Integer; Connection: TBoldComClientConnection = nil);
-const
-  Meth_CancelSubscriptions = 'CancelSubscriptions';
 var
   I: Integer;
   Conn: TBoldComClientConnection;
 begin
   if Assigned(Connection) and Assigned(Connection.BoldServer) and
     (Connection.ConnectionState = bceConnected) then
-    Connection.BoldServer.Execute(Meth_CancelSubscriptions,SubscriberId)
+    Connection.BoldServer.Execute('CancelSubscriptions',SubscriberId)
   else
   begin
     for I := 0 to ConnectionCount - 1 do
@@ -449,7 +449,7 @@ begin
       Conn := Connections[I];
       if Assigned(Conn) and Assigned(Conn.BoldServer) and
         (Conn.ConnectionState = bceConnected) then
-        Conn.BoldServer.Execute(Meth_CancelSubscriptions,SubscriberId)
+        Conn.BoldServer.Execute('CancelSubscriptions',SubscriberId)
     end;
   end;
 end;
@@ -467,12 +467,12 @@ begin
       Connection := Connections[I];
       if Assigned(Connection) and Assigned(Connection.BoldServer) and
         (Connection.ConnectionState = bceConnected) then
-        Connection.BoldServer.Execute('RemoveSubscriber', Subscriber.SubscriberId) // do not localize
+        Connection.BoldServer.Execute('RemoveSubscriber', Subscriber.SubscriberId)
     end;
   end
   else
     FUnusedSubscriberIds.Add(Subscriber.SubscriberId);
-
+    
   fSubscribers.remove(Subscriber);
 end;
 
@@ -569,5 +569,3 @@ finalization
   G_BoldComClient.Free;
 
 end.
-
-

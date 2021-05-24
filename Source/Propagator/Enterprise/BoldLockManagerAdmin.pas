@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerAdmin;
 
 interface
@@ -5,10 +8,11 @@ interface
 uses
   BoldLockManager,
   BoldDefs,
-  Classes;
+  Classes
+  ;
 
 type
-  { TBoldLockManagerAdmin }
+
   TBoldLockManagerAdmin = class
   private
     fLockManager: TBoldLockManager;
@@ -31,8 +35,7 @@ uses
   Sysutils,
   BoldUtils,
   BoldLockList,
-  windows,
-  PropagatorConsts;
+  windows;
 
 { TBoldLockManagerAdmin }
 
@@ -111,14 +114,14 @@ var
     result := trunc(source - temp*factor);
     source := temp;
   end;
-
+  
 begin
   if not Assigned(ClientIds) then
-    raise EBold.CreateFmt(sClientIDsNotAssigned, [ClassName, 'LocksForClients']); // do not localize
+    raise EBold.CreateFmt('%s.LocksForClients: ClientIds is not assigned', [ClassName]);
   if not Assigned(Locks) then
-    raise EBold.CreateFmt(sLocksNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.LocksForClients: Locks is not assigned', [ClassName]);
   if not Assigned(LockDurations) then
-    raise EBold.CreateFmt(sLockDurationNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.LocksForClients: LockDurations is not assigned', [ClassName]);
   ClientLocks := TStringList.Create;
   try
     CurrentTime := DateTimeToTimeStamp(Now);
@@ -139,11 +142,11 @@ begin
           sec := Getpart(temp, 60);
           min := Getpart(temp, 60);
           hour := Getpart(temp, 24);
-          LockDur := Format('%.2d:%.2d:%.2d:%.3d', [Hour, Min, Sec, MSec]); // do not localize
+          LockDur := Format('%.2d:%.2d:%.2d:%.3d', [Hour, Min, Sec, MSec]);
           if temp > 0 then
-            LockDur := format('%d day(s) ', [temp])+LockDur; // do not localize
+            LockDur := format('%d day(s) ', [temp])+LockDur;
           LockDurations.Add(LockDur);
-          Locks.Add(Format('%d=%s', [CurrentClientId, ClientLocks[j]])); // do not localize
+          Locks.Add(Format('%d=%s', [CurrentClientId, ClientLocks[j]]));
         end;
         ClientLocks.Clear;
       end;
@@ -163,5 +166,7 @@ procedure TBoldLockManagerAdmin.SetLockManagerSuspended(Value: Boolean);
 begin
   LockManager.Suspended := Value;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAValueSetForm1;
 
 interface
@@ -74,7 +77,7 @@ type
     procedure edDelphiNameChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure edUnitNameChange(Sender: TObject);
-    procedure tsValuesShow(Sender: TObject); // init template and generate unit
+    procedure tsValuesShow(Sender: TObject);
   private
     { Private declarations }
     fStage: TStageType;
@@ -89,7 +92,7 @@ type
   public
     { Public declarations }
     constructor Create(AOwner: TComponent);  override;
-    procedure AssignParent(aParent: TWinControl);
+    procedure AssignParent(aParent: TWinControl); 
     procedure ClearParent;
     procedure Initialize;
     function Next: integer;
@@ -101,7 +104,7 @@ type
     property Stage: TStageType read fStage;
     property SteppedBack: Boolean read GetSteppedBack default false ;
     property UnitGenerator: IUnitGenerator read getUnitGeneratorIntf write setUnitGeneratorIntf;
-    property EnableNext: TEnableNextEvent write setEnableNext; //CallBack function
+    property EnableNext: TEnableNextEvent write setEnableNext;
   end;
 
 var
@@ -121,9 +124,9 @@ uses
 function BooleanToStr(value: Boolean): string;
 begin
   if value then
-    Result := 'true' // do not localize
+    Result := 'true'
   else
-    Result := 'false'; // do not localize
+    Result := 'false';
 end;
 
 constructor TValueSetForm1.Create(AOwner: TComponent);
@@ -188,7 +191,6 @@ var
   item: TListItem;
   index: integer;
 begin
-  //delete selected item
   if Assigned(ListViewValues.Selected) and (ListViewValues.Items.Count <> 0) then
     begin
       item := ListViewValues.Selected;
@@ -261,7 +263,6 @@ begin
   if PageControl1.ActivePage = tsClassDef then
   begin
     Result := wfaNext;
-    // check input
     if IsValidClassDef then
     begin
       PageControl1.ActivePage := tsValues;
@@ -287,40 +288,35 @@ var
   i, j, NumberOfValues: Integer;
   Values: TStringList;
 begin
-  // get class definition
   ExpressionName := Trim(edExpressionName.Text);
   UnitName := Trim(edUnitName.Text) ;
   DelphiName := Trim(edDelphiName.Text);
   ValuePrefix := Trim(edValuePrefix.Text);
   NumberOfValues := ListViewValues.Items.Count;
-  // set template variables
   with attrdatamodule.ValueSetTemplate do
   begin
-    Variables.Add('UNITNAME', UnitName, []); // do not localize
-    Variables.Add('EXPRESSIONNAME', ExpressionName, []); // do not localize
-    Variables.Add('DELPHINAME', DelphiName, []); // do not localize
-//    Variables.Add('VALUEPREFIX', ValuePrefix, []); // do not localize
-    Variables.Add('VALUECOUNT', InttoStr(NumberOfValues), []); // do not localize
-    // get the values
+    Variables.Add('UNITNAME', UnitName, []);
+    Variables.Add('EXPRESSIONNAME', ExpressionName, []);
+    Variables.Add('DELPHINAME', DelphiName, []);
+    Variables.Add('VALUECOUNT', InttoStr(NumberOfValues), []);
     Values := TStringList.Create;
     try
-      Variables.Add('VALUES', BooleanToStr(ListViewValues.Items.Count > 0), []); // do not localize
+      Variables.Add('VALUES', BooleanToStr(ListViewValues.Items.Count > 0), []);
       for i:= 0 to ListViewValues.Items.Count - 1 do
       begin
         Values.CommaText := ListViewValues.Items[i].SubItems[0];
-        Variables.Add(format('VALUENAME.%d',[i]), ListViewValues.Items[i].Caption, []); // do not localize
-        Variables.Add(format('VALUEREPRESENTATIONCOUNT.%d',[i]), IntToStr(Values.Count), []); // do not localize
+        Variables.Add(format('VALUENAME.%d',[i]), ListViewValues.Items[i].Caption, []);
+        Variables.Add(format('VALUEREPRESENTATIONCOUNT.%d',[i]), IntToStr(Values.Count), []);
         for j:= 0 to  Values.Count - 1 do
         begin
           Rep := PChar(Values[j]);
-          Variables.Add(format('VALUEREPRESENTATION.%d.%d',[i,j]), AnsiExtractQuotedStr(Rep, ''''), []); // do not localize
+          Variables.Add(format('VALUEREPRESENTATION.%d.%d',[i,j]), AnsiExtractQuotedStr(Rep, ''''), []);
         end;
       end;
     finally
       FreeAndNil(Values);
     end;
   end;
-  // generate code
   UnitGenerator.GenerateUnit(UnitName, attrdatamodule.ValueSetTemplate);
 end;
 
@@ -361,7 +357,6 @@ procedure TValueSetForm1.Initialize;
 begin
   Align := alClient;
   self.TabOrder := 0;
-  //set the proper view
   PageControl1.ActivePage := tsClassDef;
 end;
 
@@ -385,7 +380,7 @@ procedure TValueSetForm1.ActionInsertExecute(Sender: TObject);
 begin
   fEditMode := emInsert;
   InsertValue;
-  EnableNextBtn(ListViewValues.Items.Count > 0);
+  EnableNextBtn(ListViewValues.Items.Count > 0);  
 end;
 
 procedure TValueSetForm1.ActionDeleteExecute(Sender: TObject);
@@ -447,7 +442,9 @@ end;
 procedure TValueSetForm1.tsValuesShow(Sender: TObject);
 begin
   bbInsert.SetFocus;
-  tsValues.Parent.HelpContext := tsValues.HelpContext;
+  tsValues.Parent.HelpContext := tsValues.HelpContext;  
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOTAFileHandler;
 
 interface
@@ -35,7 +38,6 @@ type
     function GetOTAEditWriter: IOTAEditWriter;
     function GetOTAModule: IOTAModule;
     function GetOTASourceEditor: IOTASourceEditor;
-    procedure SetEditorLine(Line: Integer);
   protected
     procedure LoadStringList; override;
     procedure DoFlushFile; override;
@@ -46,6 +48,7 @@ type
     function FileInProject(const name: string): Boolean;
     function FilePathInProject(const name: string): string;
     function PositionToTextInEditor(const S: string): Boolean;
+    procedure SetEditorLine(Line: Integer);    
     property ModuleCreator: TBoldModuleCreator read GetModuleCreator;
     property OTAEditReader: IOTAEditReader read GetOTAEditReader;
     property OTAEditWriter: IOTAEditWriter read GetOTAEditWriter;
@@ -79,12 +82,12 @@ uses
   SysUtils,
   BoldUtils,
   BoldLogHandler,
-  BoldCommonConst;
+  BoldRev;
 
 constructor TBoldOTAFileHandler.create(const FileName: string; ModuleType: TBoldModuleType; ShowFileInGuiIfPossible: Boolean; OnInitializeFileContents: TBoldInitializeFileContents);
 begin
-  // in OTA, strip away the path... we will find a new one later.
-  OTADEBUGLogFmt(sLogCreatingOTAFileHandler, [FileName]);
+  if OTADEBUG then
+    BoldLog.LogFmt('Creating an OTA filehandler for file: %s', [FileName]);
   inherited Create(ExtractFileName(FileName), ModuleType, ShowFileInGuiIfPossible, OnInitializeFileContents);
   fModuleCreator := nil;
 end;
@@ -112,15 +115,17 @@ begin
   result := nil;
   if not assigned(fOTAModule) then
   begin
+    if OTADEBUG then
+      BoldLog.LogFmt('Getting a module for %s', [FileName]);
+
     fOtaModule := EnsuredModule(FileName, ModuleCreator, ModuleType = mttext, fWasOpen);
     if OTADEBUG then
     begin
       if fWasOpen then
-        BoldLog.LogFmt(sLogModuleWasOpen, [FileName])
+        BoldLog.Log(FileName + ' was already open')
       else
-        BoldLog.LogFmt(sLogHadToOpenModule, [FileName]);
+        BoldLog.Log('had to open ' + FileName );
     end;
-//    OTADEBUGLogFmt('Done Creating OTAModule');
   end;
 
   result := fOTAModule;
@@ -142,7 +147,7 @@ begin
     end;
 
     if not Assigned(fOTASourceEditor) then
-      raise EBoldDesignTime.CreateFmt(sUnableToOpenSourceEditor, [filename]);
+      raise EBoldDesignTime.CreateFmt('Unable to open Source Editor for %s', [filename]);
   end;
 
   Result := fOTASourceEditor;
@@ -157,13 +162,13 @@ begin
     begin
       EditPos.Col := 0;
       EditPos.Line := Line;
-      SetCursorPos(EditPos); // set cursorpos
+      SetCursorPos(EditPos);
       EditPos.Col := 1;
-      SetTopPos(EditPos); // set viewpos
+      SetTopPos(EditPos);
     end;
   except
     on E: Exception do
-      Raise EBoldDesignTime.CreateFmt(sUnableToPositionCursor, [FileName, Line]);
+      Raise EBoldDesignTime.CreateFmt('Unable to position cursor in %s (line %d)', [FileName, Line]);
   end;
 end;
 
@@ -171,7 +176,7 @@ procedure TBoldOTAFileHandler.LoadStringList;
 const
   ChunkSize = 30000;
 var
-  Buf: PChar;
+  Buf: PAnsiChar;
   position: integer;
   s: String;
   Size,
@@ -185,7 +190,7 @@ begin
       position := 0;
       while position < Size do
       begin
- //marco       ReadChars := OTAEditReader.GetText(position, buf + position, ChunkSize);  // bug, must be less that 2**31-1
+        ReadChars := OTAEditReader.GetText(position, buf + position, ChunkSize);
         position := position + ReadChars;
       end;
       Buf[Size] := BoldNULL;
@@ -196,14 +201,8 @@ begin
     finally
       FreeMem(Buf, Size + 1);
     end;
-  end
-  else
-  begin
+  end else
     Stringlist.Clear;
-  end;
-//  OTADEBUGLogFmt('Adding to project');
-// Doesn't work well!  (BorlandIDEServices as IOTAModuleServices).GetActiveProject.AddFile(FileName, true);
-//  OTADEBUGLogFmt('DONE - Adding to project');
 end;
 
 function TBoldOTAFileHandler.PositionToTextInEditor(const S: string): Boolean;
@@ -224,13 +223,13 @@ begin
   if CheckWriteable(OTAModule.FileName) then
   begin
     OTAEditWriter.DeleteTo(GetEditorSize - 2);
-//marco    OTAEditWriter.Insert(PChar(StringList.Text));
+    OTAEditWriter.Insert(PAnsiChar({$IFDEF BOLD_UNICODE}AnsiString{$ENDIF}(StringList.Text)));
     OTAModule.Save(False, True);
   end
   else
   begin
-    BoldLog.LogFmt(sModuleReadOnly, [OTAModule.FileName], ltError);
-    ShowMessage(SysUtils.Format(sModuleReadOnly, [OTAModule.FileName]));
+    BoldLog.LogFmt('%s is readonly!', [OTAModule.FileName], ltError);
+    ShowMessage(OTAModule.FileName + ' is readonly!');
   end;
 end;
 
@@ -239,23 +238,24 @@ begin
   if not assigned(fModuleCreator) then
   begin
     fModuleCreator := TBoldModuleCreator.Create(FileName, ModuleType, fShowInEditor);
-    if not FileInProject(Filename) then
-      OTADEBUGLogFmt('File %s not in Project... ', [Filename]);
+{    if not FileInProject(Filename) then
+      ShowMessage('File not in Project... ' + Filename);}
   end;
 
   result := fModuleCreator;
 end;
 
+
 function TBoldOTAFileHandler.GetEditorSize: Integer;
 const
   ChunkSize = 30000;
 var
-  buf: array[0..ChunkSize] of Char;
+  buf: array[0..ChunkSize] of AnsiChar;
   ReadChars: integer;
 begin
   result := 0;
   repeat
-//marco    ReadChars := OTAEditReader.GetText(Result, buf, ChunkSize);
+    ReadChars := OTAEditReader.GetText(Result, buf, ChunkSize);
     Result := Result + ReadChars;
   until ReadChars < ChunkSize;
 end;
@@ -271,7 +271,7 @@ begin
   except
     on e: exception do
     begin
-      BoldLog.LogFmt(sUnableToCreateReader, [e.message], ltError);
+      BoldLog.LogFmt('Unable to create reader: %s', [e.message], ltError);
       raise
     end;
   end;
@@ -289,9 +289,9 @@ begin
   result := fOTAEditWriter;
 end;
 
-destructor TBoldOTAFileHandler.Destroy;
+destructor TBoldOTAFileHandler.destroy;
 begin
-  inherited; // Need to call inherited before freeing interfaces
+  inherited;
   fOTAEditReader := nil;
   fOTAEditWriter := nil;
   fModuleCreator := nil;
@@ -301,12 +301,10 @@ end;
 
 procedure TBoldIOTANotifier.AfterSave;
 begin
-  // Nothing implemented here
 end;
 
 procedure TBoldIOTANotifier.BeforeSave;
 begin
-  // Nothing implemented here
 end;
 
 constructor TBoldIOTANotifier.create(fileHandler: TBoldOTAFileHandler);
@@ -317,7 +315,6 @@ end;
 
 procedure TBoldIOTANotifier.Destroyed;
 begin
-  // Nothing implemented here
 end;
 
 procedure TBoldIOTANotifier.Modified;
@@ -334,13 +331,11 @@ end;
 
 procedure TBoldIOTAEditorNotifier.ViewActivated(const View: IOTAEditView);
 begin
-  // Nothing implemented here
 end;
 
 procedure TBoldIOTAEditorNotifier.ViewNotification(
   const View: IOTAEditView; Operation: TOperation);
 begin
-  // Nothing implemented here
 end;
 
 procedure TBoldOTAFileHandler.CloseFile;
@@ -351,18 +346,21 @@ begin
     fOTAEditWriter := nil;
     fModuleCreator := nil;
 
-    OTADEBUGLogFmt('%s has %d editors', [FileNAme, FOTASourceEditor.GetEditViewCount]); // do not localize
+    if OTADEBUG then
+      BoldLog.Log(SysUtils.format('%s has %d editors', [FileNAme, FOTASourceEditor.GetEditViewCount]));
 
     fOTASourceEditor := nil;
-    OTADEBUGLogFmt('Closing %s', [FileName]); // do not localize
+    if OTADEBUG then
+      BoldLog.Log('Closing '+FileName);
     try
       if OTAModule.Close and OTADEBUG then
-        BoldLog.Log('Closed '+FileName); // do not localize
+        BoldLog.Log('Closed '+FileName);
     except
       on e: exception do
-        BoldLog.LogFmt(sFailedToCloseModule, [FileName, e.Message]); // do not localize
+        BoldLog.Log('Failed to Close '+FileName+': '+e.message);
     end;
-    OTADEBUGLogFmt('Done Closing %s', [FileName]); // do not localize
+    if OTADEBUG then
+      BoldLog.Log('Done Closing '+FileName);
     fOTAModule := nil;
   end;
 end;
@@ -371,3 +369,4 @@ initialization
   BoldPrefferedFileHandlerClass := TBoldOTAFileHandler;
 
 end.
+

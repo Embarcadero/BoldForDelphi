@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleIBReg;
 
 interface
@@ -14,6 +17,7 @@ uses
   DesignIntf,
   Controls,
   ActnList,
+  Actions,
   DesignEditors,
   Classes,
   BoldPropertyEditors,
@@ -48,10 +52,8 @@ end;
 procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterIB]);
-  {$WARNINGS OFF}
   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleIB]);
-  RegisterPropertyEditor(TypeInfo(string), TBoldPersistenceHandleIB, 'DataBaseName', TBoldIBDatabaseProperty); // do not localize
-  {$WARNINGS ON}
+  RegisterPropertyEditor(TypeInfo(string), TBoldPersistenceHandleIB, 'DataBaseName', TBoldIBDatabaseProperty);
 
   RegisterActions(BOLDACTIONGROUPNAME, [TBoldIBDatabaseAction], nil);
   RegisterComponentEditor(TBoldDatabaseAdapterIB, TBoldDatabaseAdapterIBEditor);
@@ -124,6 +126,7 @@ begin
     1: CreateIBDatabase;
   end;
 end;
+
 
 function TBoldDatabaseAdapterIBEditor.GetVerb(Index: Integer): string;
 begin

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorUtils;
 
 interface
@@ -35,9 +38,7 @@ begin
   if Obj.BoldPersistent then
   begin
     Id := Obj.BoldObjectLocator.BoldObjectId;
-    // Add a subscription for the embedded state changes
     Subscriptions.Add(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, '', '', '', Id));
-    // and one subscription for each nonembedded member that is current/modified in memory
     for i := 0 to obj.BoldMemberCount - 1 do
     begin
       MemberRTInfo := obj.BoldClassTypeInfo.AllMembers[i];
@@ -65,14 +66,11 @@ var
 begin
   Guard := TBoldGuard.Create(Traverser);
   Traverser := system.Locators.CreateTraverser;
-  // add subscriptions for all objects in memory
-  while not Traverser.EndOfList do
+  while Traverser.MoveNext do
   begin
     if assigned(Traverser.locator.BoldObject) then
       GetActiveObjectSubscriptions(Traverser.locator.BoldObject, Subscriptions);
-    Traverser.Next;
   end;
-  // Add subscriptions to classes (Why is the classlist transient?)
   TopSortedClasses := system.BoldSystemTypeInfo.TopSortedClasses;
   for i := 0 to TopSortedClasses.Count-1 do
     if system.Classes[i].BoldPersistenceState in [bvpsTransient, bvpsCurrent, bvpsmodified] then
@@ -101,7 +99,6 @@ var
 begin
   result := false;
   Guard := TBoldGuard.Create(Subscriptions);
-  // disconnect and reconnect the COM-interface
   ComConnectionHandle.Connected := false;
   ComConnectionHandle.Connected := true;
   if ComConnectionHandle.Connected then
@@ -118,4 +115,6 @@ begin
   end;
 end;
 
+
+initialization
 end.

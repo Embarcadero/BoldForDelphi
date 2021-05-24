@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorHandleCOM;
 
 interface
@@ -229,7 +232,7 @@ begin
       end;
     beDestroying:
       ConnectionHandle := nil;
-  end; //end
+  end;
 end;
 
 procedure TBoldPropagatorHandleCOM.SetConnected(const Value: Boolean);
@@ -238,17 +241,17 @@ begin
   begin
     if Value then
     begin
-      //request connection
       FConnectionHandle.Connected := True;
-      DoConnect; // is this necessary??
+      DoConnect;
     end
     else
     begin
-      //request disconnect
       FConnectionHandle.Connected := false;
-      DoDisconnect; //is this necessary??
+      DoDisconnect;
     end;
   end;
 end;
+
+initialization
 
 end.

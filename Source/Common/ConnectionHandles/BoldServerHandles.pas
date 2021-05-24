@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldServerHandles;
 
 interface
@@ -34,7 +37,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 {-- TBoldServerHandle ---------------------------------------------------------}
 
@@ -78,5 +82,7 @@ begin
       FObjectName := Value;
   end;
 end;
+
+initialization
 
 end.

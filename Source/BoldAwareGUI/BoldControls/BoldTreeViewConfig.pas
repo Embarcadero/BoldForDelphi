@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTreeViewConfig;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -9,8 +12,8 @@ uses
   BoldGenericListControlPack,
   BoldNodeControlPack,
   BoldSystemRT,
-  {$IFDEF BOLDCOMCLIENT}   // uses
-  BoldSystem, // to get the ObjectSpace interfaces
+  {$IFDEF BOLDCOMCLIENT}
+  BoldSystem,
   {$ENDIF}
   BoldTreeView;
 
@@ -22,7 +25,7 @@ uses
   SysUtils,
   BoldUtils;
 
-{$IFDEF BOLDCOMCLIENT}  // BoldGenericTreeView
+{$IFDEF BOLDCOMCLIENT}
 procedure BoldGenericTreeView(SystemTypeInfo: IBoldSystemTypeInfo; TreeView: TBoldTreeViewCom);
 begin
 end;
@@ -33,11 +36,11 @@ procedure FillListpartForAttr(RTAttr: TBoldAttributeRTInfo;
 var
   s: string;
 begin
-  s := format('''%s: '' + %s.asString', [RTAttr.ExpressionName, RTAttr.ExpressionName]); // do not localize
+  s := format('''%s: '' + %s.asString', [RTAttr.ExpressionName, RTAttr.ExpressionName]);
   s[2] := UpCase(s[2]);
   ListPart.ElementExpression := s;
   ListPart.InterpretAsList := False;
-  ListPart.ControllerExpression := '''AttributeNode'''; // do not localize
+  ListPart.ControllerExpression := '''AttributeNode''';
 end;
 
 
@@ -54,15 +57,13 @@ begin
   ListPart.ControllerExpression := format('''%s''', [RoleName]);
   ListPart.InterpretAsList := False;
   if DefiningClass = RTRole.ClassTypeInfo then
-    with TreeView.BoldProperties.NodeDescriptions.Add do
-    begin
+    with TreeView.BoldProperties.NodeDescriptions.Add do begin
       Name := RoleName;
       s := format('''%s:''', [RTRole.ExpressionName]);
       s[2] := UpCase(s[2]);
       TextController.Expression := s;
-      with ListController.Parts.Add do
-      begin
-        ControllerExpression := 'oclType';  // do not localize
+      with ListController.Parts.Add do begin
+        ControllerExpression := 'oclType';
         InterpretAsList := RTRole.IsMultiRole;
       end;
     end;
@@ -76,9 +77,8 @@ var
   Role: TBoldRoleRTInfo;
 begin
   NodeDescriptor.Name := ClassTypeInfo.ExpressionName;
-  NodeDescriptor.TextController.Expression := 'self.asString + '': '' + oclType.asString'; // do not localize
-  for i := 0 to ClassTypeInfo.AllMembers.Count - 1 do
-  begin
+  NodeDescriptor.TextController.Expression := 'self.asString + '': '' + oclType.asString';
+  for i := 0 to ClassTypeInfo.AllMembers.Count-1 do begin
     DefiningClass := ClassTypeInfo;
     while i < DefiningClass.FirstOwnMemberIndex do
       DefiningClass := DefiningClass.SuperClassTypeInfo;
@@ -104,18 +104,15 @@ procedure BoldGenericTreeView(SystemTypeInfo: TBoldSystemTypeInfo; TreeView: TBo
 var
   i: integer;
 begin
-  with TreeView.BoldProperties.NodeDescriptions.Add do
-  begin
-    Name := 'AttributeNode'; // do not localize
+  With TreeView.BoldProperties.NodeDescriptions.Add do begin
+    Name := 'AttributeNode';
   end;
 
-  with TreeView.BoldProperties.parts.add do
-  begin
+  With TreeView.BoldProperties.parts.add do begin
     InterpretAsList := true;
   end;
 
-  for i := 0 to SystemTypeInfo.TopSortedClasses.count - 1 do
-  begin
+  for i := 0 to SystemTypeInfo.TopSortedClasses.count-1 do begin
     FillNodeDescriptorForClass(
       SystemTypeInfo.TopSortedClasses[i],
       TreeView.BoldProperties.NodeDescriptions.Add,
@@ -125,4 +122,5 @@ end;
 
 {$ENDIF}
 
+initialization
 end.

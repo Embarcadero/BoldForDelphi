@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractModel;
 
 interface
@@ -13,7 +16,6 @@ const
   beModelChanged = 25;
 
 type
-  // Forward declarations of all classes
   TBoldAbstractModel = class;
 
   { TBoldAbstractModel }
@@ -36,10 +38,10 @@ type
     procedure DefineProperties(Filer: TFiler); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure EnsureMoldModelCurrent; virtual;
-    procedure SetFromModel(model: TMoldModel);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetFromModel(model: TMoldModel); //PATCH CFloury made public
     procedure UpdateDesigner;
     procedure WriteToBeRemovedInfoToFile(FileName: String);
     property MoldModel: TMoldModel read GetMoldModel;
@@ -64,7 +66,6 @@ uses
 constructor TBoldAbstractModel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  fComponentStyle := fComponentStyle - [csInheritable];
   SetFromModel(nil);
 end;
 
@@ -96,7 +97,6 @@ procedure TBoldAbstractModel.DefineProperties(Filer: TFiler);
     begin
       ModelAsStrings := TStringList.Create;
       AncestorModelAsStrings := TStringList.Create;
-      // takes care of not writing the model on an inherited form if it has not been changed
       TMoldBLDRW.ModelToStrings(RawMoldModel, ModelAsStrings);
       TMoldBLDRW.ModelToStrings((Filer.Ancestor as TBoldAbstractModel).RawMoldModel,AncestorModelAsStrings);
       Result := not ModelAsStrings.Equals(AncestorModelAsStrings);
@@ -105,7 +105,7 @@ procedure TBoldAbstractModel.DefineProperties(Filer: TFiler);
 
 begin
   inherited DefineProperties(Filer);
-  Filer.DefineProperty('Model', ReadModel, WriteModel, DoWriteModel); // do not localize
+  Filer.DefineProperty('Model', ReadModel, WriteModel, DoWriteModel);
 end;
 
 procedure TBoldAbstractModel.ReadModel(Reader: TReader);
@@ -285,9 +285,12 @@ begin
   end;
 end;
 
+
 procedure TBoldAbstractModel.EnsureMoldModelCurrent;
 begin
 
 end;
+
+initialization
 
 end.

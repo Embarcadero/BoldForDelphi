@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldImageCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -10,8 +13,8 @@ uses
   Classes,
   Graphics,
   Controls,
-  Forms,  // TBorderStyle
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  Forms,
+  BoldEnvironmentVCL,
   BoldControlsDefs,
   BoldHandlesCom,
   BoldElementHandleFollowerCom,
@@ -38,7 +41,7 @@ type
     fQuickDraw: Boolean;
     fScale: Double;
     fDisplayRect: TRect;
-    FOnResize: TNotifyEvent;
+    FOnResize: TNotifyEvent;   
     function GetContextType: IBoldElementTypeInfo;
     procedure SetExpression(Expression: String);
     function GetExpression: String;
@@ -95,7 +98,6 @@ type
     property Scale: Integer read GetScale write SetScale default 100;
     property Center: Boolean read fCenter write fCenter;
     property QuickDraw: Boolean read fQuickDraw write fQuickDraw;
-//    property ContentType: string //Use this property to specify
     property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsSingle;
     property OnResize: TNotifyEvent read FOnResize write FOnResize;
     {Standard properties}
@@ -138,7 +140,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldDefs,
   BoldControlPackDefs;
 
@@ -205,7 +206,6 @@ end;
 procedure TBoldImageCom.SetViewer(Value: TBoldAbstractViewAdapterCom);
 begin
   fBoldProperties.MayHaveChanged(Value, Follower);
-//  Invalidate;
 end;
 
 procedure TBoldImageCom.SetBorderStyle(Value: TBorderStyle);
@@ -314,12 +314,10 @@ end;
 procedure TBoldImageCom.CMTextChanged(var Message: TMessage);
 begin
   inherited;
-// FIXME Invalidate to redraw Caption  when there is no picture
 end;
 
 procedure TBoldImageCom.WMEraseBkgnd(var Message: TWMEraseBkgnd);
 begin
-//Ignore erase background to prevent flicker
 end;
 
 {}
@@ -447,7 +445,7 @@ begin
       if (csDesigning in ComponentState) then
         S := '(' + Name + ')'
       else
-        S := ''; //FIXME Some text in runtime?
+        S := '';
       Size := TextExtent(S);
       R := ClientRect;
       TextRect(R, (R.Right - Size.cx) div 2, (R.Bottom - Size.cy) div 2, S);
@@ -536,8 +534,7 @@ var
   aViewer: TBoldAbstractViewAdapterCom;
 
   function GetViewer: TBoldAbstractViewAdapterCom;
-  // FixMe: Could be a classmethod on TBoldAbstractViewAdapterCom
-  // reuse in method above aswell /JoHo
+
   var
     I: Integer;
   begin

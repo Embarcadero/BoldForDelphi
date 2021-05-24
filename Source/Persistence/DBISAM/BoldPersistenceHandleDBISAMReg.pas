@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDBISAMReg;
 
 interface
@@ -11,16 +14,22 @@ implementation
 uses
   SysUtils,
   Classes,
+  BoldIDESupport,
+  BoldVersionInfo,
   BoldDatabaseAdapterDBIsam,
   BoldPersistenceHandleDBISAM,
-  BoldIDESupport,
-  BoldIDEConsts;
+  BoldIDEConsts;  
 
 procedure Register;
 begin
-  RemovePackageFromDisabledPackagesRegistry(format('BoldDBISAM%s', [LIBSUFFIX])); // do not localize
+  RemovePackageFromDisabledPackagesRegistry(format('Bold%d%d%sDOA', [
+    BoldBuildVersionNumberMajor,
+    BoldBuildVersionNumberMinor,
+    BoldBuildTarget]));
   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleDBISAM]);
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterDBISAM]);
 end;
+
+initialization
 
 end.

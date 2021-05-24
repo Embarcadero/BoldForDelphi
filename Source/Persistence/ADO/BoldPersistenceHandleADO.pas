@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleADO;
 
 interface
@@ -47,8 +50,8 @@ type
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); override;
     {$ENDIF}
   public
-    constructor Create(owner: tComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: tComponent); override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -74,8 +77,7 @@ uses
   SysUtils,
   BoldDefs,
   BoldDatabaseAdapterAdo,
-  BoldUtils,
-  ADOConsts;
+  BoldUtils;
 
 function BoldStringToNetworkProtocol(s: String): TBoldNetworkProtocol;
 var
@@ -87,7 +89,7 @@ begin
       result := i;
       exit;
     end;
-
+    
   result := bnwpLocal;
 end;
 
@@ -97,13 +99,13 @@ procedure TBoldPersistenceHandleADO.AddExtendedProperties(
   Result: TStrings);
 begin
   if trim(DataSource) <> '' then
-    result.Add('DSN='+trim(DataSource)); // do not localize
+    result.Add('DSN='+trim(DataSource));
   if trim(HostName) <> '' then
-    Result.Add('Hostname='+trim(HostName)); // do not localize
+    Result.Add('Hostname='+trim(HostName));
   if trim(InitialCatalog) <> '' then
-    Result.Add('Initial Catalog='+trim(InitialCatalog)); // do not localize
+    Result.Add('Initial Catalog='+trim(InitialCatalog));
 
-  result.Add('NetworkProt='+BoldNetWorkProtocolStringRep[NetWorkProtocol]); // do not localize
+  result.Add('NetworkProt='+BoldNetWorkProtocolStringRep[NetWorkProtocol]);
 
   Result.AddStrings(ExtendedProperties);
 end;
@@ -127,7 +129,7 @@ begin
     LExtendedProperties := TStringList.Create;
     AddExtendedProperties(LExtendedProperties);
 
-    ConnectionString := format('Provider=%s;Persist Security Info=%s;Data Source=%s;Extended Properties=%s', // do not localize
+    ConnectionString := format('Provider=%s;Persist Security Info=%s;Data Source=%s;Extended Properties=%s',
     [Provider,
       BoolToStr[PersistSecurityInfo],
       DataSource,
@@ -140,11 +142,12 @@ end;
 constructor TBoldPersistenceHandleADO.create(owner: tComponent);
 begin
   inherited;
-  FHostName := '<Local>'; // do not localize
+  FHostName := '<Local>';
   fExtendedProperties := TStringList.Create;
 end;
 
-destructor TBoldPersistenceHandleADO.Destroy;
+
+destructor TBoldPersistenceHandleADO.destroy;
 begin
   Active := false;
   FreeAndNil(fOwnConnection);
@@ -152,12 +155,13 @@ begin
   inherited;
 end;
 
+
 procedure TBoldPersistenceHandleADO.SetADOConnection(
   const Value: TADOConnection);
 begin
   if fADOConnection <> Value then
   begin
-    CheckInactive('SetDataBase'); // do not localize
+    CheckInactive('SetDataBase');
     if assigned(fOwnConnection) then
     begin
       FreeAndNil(fOwnConnection);
@@ -186,7 +190,7 @@ procedure TBoldPersistenceHandleADO.SetHostName(const Value: String);
 begin
   FHostName := Value;
   if trim(fHostName) = '' then
-    FHostName := '<Local>'; // do not localize
+    FHostName := '<Local>';
   UpdateInternalConnectionString;
 end;
 
@@ -243,7 +247,7 @@ begin
       UpdateInternalConnectionString;
     end;
     result := fOwnConnection;
-  end;
+  end;                      
 end;
 
 procedure TBoldPersistenceHandleADO.SetPassword(const Value: string);
@@ -280,14 +284,14 @@ begin
   if not assigned(Target.DatabaseAdapter) then
   begin
     Target.DatabaseAdapter := TBoldDatabaseAdapterADO.Create(Target.Owner);
-    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterADO'); // do not localize
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterADO');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Target.DatabaseAdapter.DesignInfo          := DesInfo;
-    showmessage(sCreatedNewAdapter);
+    showmessage('Created a new DatabaseAdapterADO');
   end
   else if not (target.DatabaseAdapter is TBoldDatabaseAdapterADO) then
-    raise Exception.CreateFmt(sCanOnlyTransferToADOAdapter, [target.DatabaseAdapter.ClassName] );
+    raise Exception.CreateFmt('The persistencehandle is connected to a %s, properties can only be transfered to a TBoldDatabaseAdapterADO', [target.DatabaseAdapter.ClassName] );
 
   Adapter := target.DatabaseAdapter as tBoldDatabaseAdapterADO;
   if assigned(fADOConnection) then
@@ -296,17 +300,17 @@ begin
   if not assigned(Adapter.Connection) then
   begin
     Adapter.Connection := TADOConnection.Create(Target.owner);
-    Adapter.Connection.Name := GetNewComponentName(Adapter.Connection, 'ADODatabase'); // do not localize
-    showmessage(sCreatedNewDB);
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Adapter.Connection.Name := GetNewComponentName(Adapter.Connection, 'ADODatabase');
+    showmessage('Created a new ADODatabase');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Adapter.Connection.DesignInfo          := DesInfo;
 
     try
       LExtendedProperties := TStringList.Create;
       AddExtendedProperties(LExtendedProperties);
 
-      ConnectionString := format('Provider=%s;Persist Security Info=%s;Data Source=%s;Extended Properties=%s', // do not localize
+      ConnectionString := format('Provider=%s;Persist Security Info=%s;Data Source=%s;Extended Properties=%s',
       [Provider,
         BoolToStr[PersistSecurityInfo],
         DataSource,
@@ -316,9 +320,9 @@ begin
     except
       on e: exception do
       begin
-        showmessage(sCouldNotTransferConnectionString+BOLDCRLF+BOLDCRLF+
+        showmessage('Connection string settings could not be transferred to the new ADO connection: '+BOLDCRLF+BOLDCRLF+
           e.message + BOLDCRLF+BOLDCRLF +
-          sTransferManually);
+          'Please transfer these manually!');
         Adapter.Connection.ConnectionString := '';
 
       end;
@@ -326,7 +330,6 @@ begin
 
   end;
 end;
+initialization
 
 end.
-
-

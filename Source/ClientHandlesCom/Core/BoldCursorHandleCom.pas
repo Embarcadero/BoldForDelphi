@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCursorHandleCom;
 
 interface
@@ -36,8 +39,6 @@ uses
   BoldComObjectSpace,
   BoldComObjectSpace_TLB,
   BoldDefs,
-  ComHandlesConst,
-  BoldComHandlesConst,
   BoldComUtils;
 
 { TBoldCursorHandleCom }
@@ -50,16 +51,13 @@ end;
 
 procedure TBoldCursorHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType      := nil;
   FStaticBoldType       := nil;
   FStaticSystemTypeInfo := nil;
   FValue                := nil;
   FHandleId             := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldRootedHandleCom
+
   FStaticRootType := nil;
-  // from TBoldAbstractListHandleCom
   FCount              := 0;
   FCurrentBoldObject  := nil;
   FCurrentIndex       := -1;
@@ -79,7 +77,7 @@ begin
   if Value <> AutoFirst then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.Create(sAutoFirstIsReadOnly);
+      raise EBold.Create('AutoFirst is read-only');
     FAutoFirst := Value;
     LocalValueChanged;
   end;
@@ -102,16 +100,16 @@ begin
     FListElementType,
     NamedValues);
 
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
-  FCount    := BoldGetNamedValue(NamedValues, nv_Count);
+  FHandleId := BoldGetNamedValue(NamedValues, 'HandleId');
+  FCount    := BoldGetNamedValue(NamedValues, 'Count');
 
   if not OwnsHandleOnServer then
   begin
-    FEnabled      := BoldGetNamedValue(NamedValues, nv_Enabled);
-    FRootTypeName := BoldGetNamedValue(NamedValues, nv_RootTypeName);
-    FSubscribe    := BoldGetNamedValue(NamedValues, nv_Subscribe);
-    FCurrentIndex := BoldGetNamedValue(NamedValues, nv_CurrentIndex);
-    FAutoFirst    := BoldGetNamedValue(NamedValues, nv_AutoFirst);
+    FEnabled      := BoldGetNamedValue(NamedValues, 'Enabled');
+    FRootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName');
+    FSubscribe    := BoldGetNamedValue(NamedValues, 'Subscribe');
+    FCurrentIndex := BoldGetNamedValue(NamedValues, 'CurrentIndex');
+    FAutoFirst    := BoldGetNamedValue(NamedValues, 'AutoFirst');
   end
   else
     AdjustCurrentIndex;
@@ -142,13 +140,13 @@ begin
   else
     RootHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-     nv_Enabled,
-     nv_RootHandle,
-     nv_RootTypeName,
-     nv_Subscribe,
-     nv_CurrentIndex,
-     nv_AutoFirst],
+    ['StaticSystemHandle',
+     'Enabled',
+     'RootHandle',
+     'RootTypeName',
+     'Subscribe',
+     'CurrentIndex',
+     'AutoFirst'],
     [StaticSystemHandleId,
      FEnabled,
      RootHandleId,
@@ -161,7 +159,7 @@ end;
 
 function TBoldCursorHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_CursorHandle;
+  result := 'TBoldCursorHandle';
 end;
 
 constructor TBoldCursorHandleCom.Create(Owner: TComponent);
@@ -179,5 +177,7 @@ begin
   else if fCurrentIndex >= fList.Count then
     fCurrentIndex := fList.Count-1;
 end;
+
+initialization
 
 end.

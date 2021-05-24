@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorMainForm;
 
 interface
@@ -10,7 +13,6 @@ uses
   Forms,
   ComCtrls,
   StdCtrls,
-  BoldMemoryManager,
   ExtCtrls,
   Messages,
   Grids,
@@ -176,8 +178,7 @@ uses
   BoldPropagatorServer,
   BoldThreadSafeLog,
   Sysutils,
-  Boldutils,
-  PropagatorConsts;
+  Boldutils;
 
 {$R *.dfm}
 
@@ -216,7 +217,7 @@ begin
     else if Whole >= 10 then
       result := IntToStr(Whole) + '.' + IntToStr(tenths) + Result
     else
-      result := IntToStr(Whole) + '.' + format('%.2d', [hundreds]) + Result // do not localize
+      result := IntToStr(Whole) + '.' + format('%.2d', [hundreds]) + Result
   end;
 
 (*  OldDecimalSeparator := DecimalSeparator;
@@ -244,7 +245,6 @@ begin
   finally
     fClientInfoLock.Release;
   end;
-//  NewClient.RefreshGrid;
 end;
 
 procedure TPropagatorMainForm.ClearAllUsers;
@@ -252,9 +252,8 @@ begin
   fClientINfoLock.Acquire;
   try
     fLastTopRow := sgClients.TopRow;
-//    sgClients.RowCount := 2;
-//    for i := 0 to sgClients.ColCount-1 do
-//      sgClients.Cells[i, 1] := '';
+
+
     fClients.Clear;
     fClientsUpdated := true;
   finally
@@ -267,27 +266,26 @@ var
   ConfigFile: TStringList;
   fileName: String;
 begin
-//  ComServer.UIInteractive := false;
   fClientInfoLock := TCriticalSection.Create;
-  BoldLogThread('ID=MainThread/GUI'); // do not localize
+  BoldLogThread('ID=MainThread/GUI');
   fClients := TClientGUIInfoList.Create;
   fLastTopRow := -1;
-  Caption := Format(sFormCaption, [TBoldPropagatorServer.Instance.ServerName]);
+  Caption := Format('%s Console', [TBoldPropagatorServer.Instance.ServerName]);
   fStartTime := now;
   PageControl1.ActivePage := tsClients;
   UpdateUptime;
-  sgClients.Cells[0, 0] := sClientID;
-  sgClients.Cells[1, 0] := sName;
-  sgClients.Cells[2, 0] := sRegTime;
-  sgClients.Cells[3, 0] := sTimeOut;
-  sgClients.Cells[4, 0] := sSubscriptions;
-  sgClients.Cells[5, 0] := sQueue;
-  sgClients.Cells[6, 0] := sLongestInt;
-  sgClients.Cells[7, 0] := sLast;
-  sgClients.Cells[8, 0] := sPkg;
-  sgClients.Cells[9, 0] := sEv;
-  sgClients.Cells[10, 0] := sStatus;
-  sgClients.Cells[11, 0] := sLost;
+  sgClients.Cells[0, 0] := 'ClientID';
+  sgClients.Cells[1, 0] := 'Name';
+  sgClients.Cells[2, 0] := 'RegTime';
+  sgClients.Cells[3, 0] := 'Timeout';
+  sgClients.Cells[4, 0] := 'Subscriptions';
+  sgClients.Cells[5, 0] := 'Queue';
+  sgClients.Cells[6, 0] := 'Longest Int';
+  sgClients.Cells[7, 0] := 'Last (ago)';
+  sgClients.Cells[8, 0] := 'Pkg';
+  sgClients.Cells[9, 0] := 'Ev';
+  sgClients.Cells[10, 0] := 'Status';
+  sgClients.Cells[11, 0] := 'Lost';
   mnuCountSubscriptionsClick(self);
   rbDequeue.Parent := StatusBar1;
   rbDeQueue.Height := 13;
@@ -295,23 +293,23 @@ begin
   rbDequeue.Left := 2;
 
   mmoDebugInfo.lines.Clear;
-  mmoDebugInfo.lines.add(Format(sFile, [paramStr(0)]));
+  mmoDebugInfo.lines.add('File: '+paramStr(0));
   mmoDebugInfo.lines.add('');
   {$IFDEF DEBUG}
   mnuHangPropagatorDEBUG.Visible := true;
   formstyle := fsStayOnTop;
-  {$ENDIF}
+  {$ENDIF} 
 
-  FileName := ChangeFileExt(GetModuleFileNameAsString(true), '.ini'); // do not localize
+  FileName := ChangeFileExt(GetModuleFileNameAsString(true), '.ini');
   if not FileExists(FileName) then
   begin
-    mmoDebugInfo.lines.add(sNoINIFile);
+    mmoDebugInfo.lines.add('INI file: N/A');
   end
   else
   begin
     ConfigFile := TStringList.Create;
     ConfigFile.LoadFromFile(FileName);
-    mmoDebugInfo.lines.add(sINIFile);
+    mmoDebugInfo.lines.add('INI file:');
     mmoDebugInfo.lines.add('---------------');
     mmoDebugInfo.lines.AddStrings(ConfigFile);
     mmoDebugInfo.lines.add('---------------');
@@ -326,14 +324,13 @@ end;
 
 procedure TPropagatorMainForm.UpdateUptime;
 begin
-  mnuStarted.Caption := format(sStarted, [DateTimeToStr(startTime)]);
-  mnuUptime.Caption := format(sUptime, [trunc(Uptime), TimetoStr(Frac(Uptime))]);
+  mnuStarted.Caption := format('Started: %s', [DateTimeToStr(startTime)]);
+  mnuUptime.Caption := format('Uptime: %d days %s', [trunc(Uptime), TimetoStr(Frac(Uptime))]);
 end;
 
 procedure TPropagatorMainForm.mnuRefreshClick(Sender: TObject);
 begin
-  // this event will be replaced by the UIManager when it takes control of the GUI.
-  mnuRefreshGUI.Caption := sHangon;
+  mnuRefreshGUI.Caption := 'Hang on...';
   UpdateUptime;
   UpdateStatistics;
   UpdateMemoryStats;
@@ -348,6 +345,7 @@ procedure TPropagatorMainForm.SetIsDequeueing(const Value: boolean);
 begin
   rbDequeue.Checked := value;
 end;
+
 
 procedure TPropagatorMainForm.UpdateStatistics;
 var
@@ -384,8 +382,8 @@ begin
   end;
   s := '';
   AllStatus := '';
-  AddStatus(sCli, ClientCount);
-  AddStatus(sTot, fTotalClients);
+  AddStatus('Cli', ClientCount);
+  AddStatus('Tot', fTotalClients);
   AddStatus('^', fPeakClients);
 
   StatusBar1.Panels[3].Width := StatusBar1.Canvas.TextWidth(s) + 20;
@@ -393,19 +391,19 @@ begin
   s := '';
 
   if mnuCountSubscriptions.Checked then
-    AddStatus(sSubs, Subscriptions);
-  AddStatus(sInQ, InQ);
-  AddStatus(sInQPeak, InQPeak);
-  AddStatus(sOutQ, OutQ);
-  AddStatus(sAdded, Added);
-  AddStatus(sSent, sent);
-  AddStatus(sLost, fTotalLostEvents);
+    AddStatus('Subs', Subscriptions);
+  AddStatus('InQ', InQ);
+  AddStatus('InQ^', InQPeak);
+  AddStatus('OutQ', OutQ);
+  AddStatus('Added', Added);
+  AddStatus('Sent', sent);
+  AddStatus('Lost', fTotalLostEvents);
   StatusBar1.Panels[4].Text := s;
   BoldLog(AllStatus);
 
   while lbStatisticsHistory.items.Count > 100 do
     lbStatisticsHistory.items.Delete(lbStatisticsHistory.items.Count-1);
-  lbStatisticsHistory.items.insert(0, DateTimeToStr(now) + ': ' + AllStatus);
+  lbStatisticsHistory.items.insert(0, DateTimeToStr(now)+': '+AllStatus);
   if fLastTopRow <> -1 then
   begin
     if fLastTopRow > sgClients.RowCount - sgClients.VisibleRowCount then
@@ -415,15 +413,16 @@ begin
   end;
 end;
 
+
+
 procedure TPropagatorMainForm.UpdateMemoryStats;
 begin
-  mmoMemory.Text := BoldMemoryManager_.MemoryInfo;
   if Subscriptions > 0 then
   begin
     mmoMemory.Lines.Add('---');
-    mmoMemory.Lines.Add(format(sBytesPerSubscription, [GetHeapStatus.TotalAllocated/Subscriptions]));
+    mmoMemory.Lines.Add(format('%0.2f bytes per subscription', [GetHeapStatus.TotalAllocated/Subscriptions]));
   end;
-  lbxSystemMemory.Items.Add(format(sMemAllocated, [GetHeapStatus.TotalAllocated/(1024*1024)]));
+  lbxSystemMemory.Items.Add(format('Allocated %6.2f Mb', [GetHeapStatus.TotalAllocated/(1024*1024)]));
   lbxSystemMemory.TopIndex := lbxSystemMemory.items.Count - lbxSystemMemory.Height div lbxSystemMemory.ItemHeight;
 end;
 
@@ -452,7 +451,7 @@ end;
 
 procedure TPropagatorMainForm.BMPropagatorStartDequeue(var Msg: TMessage);
 begin
-  rbDequeue.Checked := true;
+  rbDequeue.Checked := true; 
 end;
 
 procedure TPropagatorMainForm.ClientInfoChanged(Id: integer; ClientSubscriptions, OutQ: integer);
@@ -485,8 +484,7 @@ begin
   fLongestInterval := LongestInterval;
   fStatus := Status;
   fLostEvents := LostEvents;
-//  if GuiForm.fClients.Count <> 1 then
-//    GuiForm.sgClients.RowCount := GuiForm.sgClients.RowCount + 1;
+
   fRow := FGuiForm.ClientCount + 1;
 end;
 
@@ -495,7 +493,7 @@ begin
   fAdded := Added;
   fSent := Sent;
   UpdateStatistics;
-  mnuRefreshGUI.Caption := sRefresh;
+  mnuRefreshGUI.Caption := 'Refresh';
 end;
 
 procedure TClientGuiInfo.RefreshGrid;
@@ -506,7 +504,7 @@ begin
   if LeaseExpires <> 0 then
     GuiForm.sgClients.Cells[3, Row] := TimeToStr(LeaseExpires)
   else
-    GuiForm.sgClients.Cells[3, Row] := '?'; // do not localize
+    GuiForm.sgClients.Cells[3, Row] := '?';
   GuiForm.sgClients.Cells[4, row] := StatToStr(Subscriptions);
   GuiForm.sgClients.Cells[5, row] := StatToStr(OutQ);
 
@@ -562,13 +560,13 @@ begin
   begin
     fLocked := false;
     fClientHandler.DebugUnLock;
-    mnuHangPropagatorDEBUG.Caption := 'Hang Propagator (DEBUG)'; // do not localize
+    mnuHangPropagatorDEBUG.Caption := 'Hang Propagator (DEBUG)';
   end
   else
   begin
     fLocked := true;
     fClientHandler.DebugLock;
-    mnuHangPropagatorDEBUG.Caption := 'Release propagator'; // do not localize
+    mnuHangPropagatorDEBUG.Caption := 'Release propagator';
   end;
   {$ENDIF}
 end;
@@ -591,7 +589,6 @@ begin
 
       if fClients.Count = 0 then
       begin
-        // Fix GhostRow;
         sgClients.RowCount := 2;
         SgClients.Rows[1].Text := '';
       end
@@ -616,16 +613,16 @@ begin
       if fLongestLockTime < EncodeTime(0, 0, 3, 0) then
       begin
         DecodeTime(fLongestLockTime, h, m, s, ms);
-        StatusBar1.Panels[1].Text := IntToStr(s*1000+ms) + 'ms'; // do not localize
+        StatusBar1.Panels[1].Text := IntToStr(s*1000+ms) + 'ms';
       end
       else
         StatusBar1.Panels[1].Text := TimeToStr(fLongestLockTime);
     end;
 
     if LockTime > 0 then
-      StatusBar1.Panels[2].Text := sDL
+      StatusBar1.Panels[2].Text := 'DL?'
     else
-      StatusBar1.Panels[2].Text := sOK;
+      StatusBar1.Panels[2].Text := 'OK';
 
     if LockTime > EncodeTime(0, 0, 3, 0) then
     begin
@@ -634,6 +631,7 @@ begin
   end;
 
   tmrDeadLockChecker.Enabled := true;
+
 end;
 
 procedure TPropagatorMainForm.SetClientHandlerStats(TotalClients,
@@ -711,11 +709,14 @@ begin
     sgClients.ColWidths[4] := -1;
     sgClients.ColWidths[1] := 225;
   end
+
 end;
 
 procedure TPropagatorMainForm.rbDequeueClick(Sender: TObject);
 begin
-  ; // do nothing
+  ;
 end;
+
+initialization
 
 end.

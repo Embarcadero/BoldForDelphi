@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOCLGraphicRTDebug;
 
 interface
@@ -37,8 +40,7 @@ uses
   Controls,
   Dialogs,
   BoldOcl,
-  BoldOclPropEditor,
-  BoldCoreConsts;
+  BoldOclPropEditor;
 
 
 function CaseSensitiveIndexOf(Strings: TStrings; Str: String): integer;
@@ -61,10 +63,13 @@ begin
   Fixform := TBoldOclPropEditForm.Create(nil);
   fixform.Context := Context;
   FixForm.OclExpr := ocl;
-  FixForm.Caption := sIllegalExpressionEncountered;
-  FixForm.ExpressionPage.Caption := Format(sInComponent, [Componentpath]);
-//   BoldDeActivateDisplayQueue;
-  ShowMessage(format(sIncorrectMessage, [ocl, BOLDCRLF, Componentpath, BOLDCRLF, Message, BOLDCRLF, Context.AsString]));
+  FixForm.Caption := 'Runtime OCL Debugger: Illegal expression encountered, Please try to fix it';
+  FixForm.ExpressionPage.Caption := 'In component: ' + Componentpath;
+  ShowMessage(format(
+    'Incorrect OCL-expression: %s' + BOLDCRLF +
+    'In Component: %s' + BOLDCRLF +
+    'Message: %s' + BOLDCRLF +
+    'Context: %s', [ocl, Componentpath, Message, Context.AsString]));
   if (FixForm.ShowModal = mrOK) and
     (ocl <> FixForm.OclExpr) then
   begin
@@ -81,7 +86,6 @@ begin
   else
     result := false;
   BoldOCLRTDebugger := self;
-//  BoldActivateDisplayQueue;
 end;
 
 function TBoldOclGraphicRTDebugger.GetFixFor(const Ocl: String;
@@ -124,8 +128,8 @@ begin
   if assigned(Context) then
     result := Context.AsString + '.' + Ocl
   else
-    result := '<no context>.' + Ocl; //do not localize
+    result := '<no context>.' + Ocl;
 end;
 
+initialization
 end.
-

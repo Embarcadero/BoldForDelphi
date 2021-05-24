@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDerivedHandle;
 
 interface
@@ -23,6 +26,7 @@ type
     procedure SetOnDeriveAndSubscribe(Value: TBoldHandleDeriveAndSubscribe);
     procedure SetValueTypeName(Value: string);
   protected
+    procedure DoAssign(Source: TPersistent); override;
     procedure DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber); override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
   published
@@ -34,16 +38,27 @@ implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldSystemRT,
   BoldDefs;
 
+
 { TBoldDerviedHandle }
 
-procedure TBoldDerivedHandle.DeriveAndSubscribe(DerivedObject: TObject;
-  Subscriber: TBoldSubscriber);
+procedure TBoldDerivedHandle.DoAssign(Source: TPersistent);
 begin
-  Assert (DerivedObject is TBoldIndirectElement);
+  inherited;
+  if Source is TBoldDerivedHandle then with TBoldDerivedHandle(Source) do
+  begin
+    self.ValueTypeName := ValueTypeName;
+    self.OnDeriveAndSubscribe := OnDeriveAndSubscribe;
+  end;
+end;
+
+procedure TBoldDerivedHandle.DeriveAndSubscribe(DerivedObject: TObject;Subscriber: TBoldSubscriber);
+begin
+  if csDestroying in ComponentState then
+    raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
+  Assert(DerivedObject is TBoldIndirectElement);
   if Assigned(fOnDeriveAndSubscribe) then
     fOnDeriveAndSubscribe(Self, EffectiveRootValue, TBoldIndirectElement(DerivedObject), Subscriber);
 end;
@@ -63,7 +78,7 @@ begin
   begin
     result := SystemTypeInfo.ElementTypeInfoByExpressionName[ValueTypeName];
     if assigned(result) and not (result.BoldValueType in [bvtAttr, bvtList]) then
-      raise EBold.CreateFmt(sIllegalTypeSelected, [ClassName, ValueTypeName]);
+      raise EBold.CreateFmt('%s.GetStaticBoldType: Only lists and attributes are allowed as types (expr: %s)', [ClassName, ValueTypeName]);
   end
   else
     result := nil;

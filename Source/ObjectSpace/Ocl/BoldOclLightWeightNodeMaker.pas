@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclLightWeightNodeMaker;
 
 interface
@@ -62,8 +65,8 @@ uses
   SysUtils,
   BoldDefs,
   BoldElements,
-  BoldCoreConsts,
-  BoldAttributes;
+  BoldAttributes,
+  BoldOcl;
 
 { TBoldOLWNodeMaker }
 
@@ -77,13 +80,15 @@ begin
   fEnv := Env;
   if not (OclRootNode.BoldType is TBoldListTypeInfo) or
      not OclRootNode.BoldType.ConformsTo(SystemTypeInfo.RootClassTypeInfo.ListTypeInfo) then
-    SetFailure(0, format(sPSResultMustBeObjectList, [OclRootNode.BoldType.AsString]));
-
+    begin
+      if not (OclRootNode.BoldType is TBoldClassTypeInfo) or not OclRootNode.BoldType.ConformsTo(SystemTypeInfo.RootClassTypeInfo) then
+        SetFailure(0, format('Result of PS-evaluation must be an objectlist (was type: %s)', [OclRootNode.BoldType.AsString]));
+    end;
   if not assigned(System) then
-    SetFailure(0, sPSEvalrequiresSystem);
+    SetFailure(0, 'PS-evaluation can not be performed without a system');
 end;
 
-destructor TBoldOLWNodeMaker.Destroy;
+destructor TBoldOLWNodeMaker.destroy;
 var
   i: integer;
 begin
@@ -121,7 +126,7 @@ end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLIteral);
 begin
-  SetFailure(n.Position, sCollectionLiteralsNotSupported);
+  SetFailure(n.Position, 'OLWNodes does not support CollectionLiterals');
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral);
@@ -143,7 +148,7 @@ begin
   OLWIteration := TBoldOLWIteration.create(n.Position,
                                            n.OperationName,
                                            RootNode as TBoldOLWVariableBinding);
-  for i := 0 to n.Args.Count-1 do
+  for i := 0 to Length(n.Args)-1 do
   begin
     n.Args[i].AcceptVisitor(self);
     OLWIteration.Args.Add(RootNode);
@@ -172,7 +177,7 @@ var
 begin
   inherited;
   n.MemberOf.AcceptVisitor(self);
-  IsBoolean := n.BoldType.ConformsTo(((n.BoldType.SystemTypeInfo) as TBoldSystemTypeInfo).AttributeTypeInfoByExpressionName['Boolean']); // do not localize
+  IsBoolean := n.BoldType.ConformsTo(TBoldOCL(n.BoldType.evaluator).BooleanType);
   OLWMember := TBoldOLWMember.Create(n.Position, n.MemberName, n.MemberIndex, RootNode, IsBoolean);
 
   if not n.RTInfo.Persistent then
@@ -188,11 +193,11 @@ begin
       end;
     end;
     if not EffectivePersistent then
-      SetFailure(n.Position, format(sTransientMembersCannoteUsed, [n.RTInfo.ExpressionName]));
+      SetFailure(n.Position, format('Non persistent members (%s) can not be used in OLWNodes', [n.RTInfo.ExpressionName]));
   end;
 
   if assigned(n.Qualifier) then
-    for i := 0 to n.Qualifier.Count-1 do
+    for i := 0 to Length(n.Qualifier)-1 do
     begin
       n.Qualifier[i].AcceptVisitor(self);
       OLWMember.Qualifier.Add(RootNode);
@@ -202,12 +207,11 @@ end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclMethod(N: TBoldOclMethod);
 begin
-  SetFailure(n.Position, sMethodsNotSupported);
+  SetFailure(n.Position, 'OLWNodes does not support methods');
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclNode(N: TBoldOclNode);
 begin
-  // abstract class
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral);
@@ -225,11 +229,12 @@ var
   LiteralType: TBoldElementTypeInfo;
   BooleanType: TBoldAttributeTypeInfo;
   ValueSet: TBAValueSet;
+  ValueSetValue: TBAValueSetValue;
 begin
   if n.ClassType = TBoldOclOperation then
   begin
     OLWOperation := TBoldOLWOperation.create(n.Position, n.OperationName);
-    for i := 0 to n.Args.Count-1 do
+    for i := 0 to Length(n.Args)-1 do
     begin
       n.Args[i].AcceptVisitor(self);
       OLWOperation.Args.Add(RootNode);
@@ -257,30 +262,39 @@ begin
         Literal := OLWOperation.args[1] as TBoldOLWEnumLiteral;
       end;
 
-      BooleanType := (n.Boldtype.SystemTypeInfo as TBoldSystemTypeInfo).AttributeTypeInfoByExpressionName['Boolean']; // do not localize
+      BooleanType := TBoldOCL(n.BoldType.evaluator).BooleanType;
 
       if n.args[0].BoldType.ConformsTo(BooleanType) and
          n.args[1].BoldType.ConformsTo(BooleanType) then
-        SetFailure(n.Position, sUseBooleanOperations);
+        SetFailure(n.Position, 'Can not compare two booleans to each other with "=" or "<>", use boolean operations instead');
 
       if assigned(Literal) then
       begin
         if LiteralType.ConformsTo(BooleanType) then
-          SetFailure(n.Position, sUseBooleanOperationsWithLiterals);
+          SetFailure(n.Position, 'Can not compare boolean values to literals when converting to SQL, use boolean operations instead');
 
-        if LiteralType.ConformsTo((LiteralType.SystemTypeInfo as TBoldSystemTypeInfo).AttributeTypeInfoByExpressionName['ValueSet']) then // do not localize
+        if LiteralType.ConformsTo((LiteralType.SystemTypeInfo as TBoldSystemTypeInfo).ValueSetTypeInfo) then
         begin
           ValueSet := TBoldMemberFactory.CreateMemberFromBoldType(LiteralType) as TBAValueSet;
-          if assigned(ValueSet.Values.FindByString(brDefault, LiteralName)) then
-          begin
-            ValueSet.AsString := LIteralName;
-            Literal.IntValue := ValueSet.AsInteger;
-          end
-          else
-            SetFailure(n.Position, format(sEnumNameNotValid, [LiteralName, LiteralType.ExpressionName]));
+          try
+            // Do not compare default representation on first place, because it is not
+            // well suited for a comparison. Instead first compare short representation,
+            // which should be used to represent the enum value itself, instead of a translation.
+            ValueSetValue := ValueSet.Values.FindByString(brShort, LiteralName);
+            if ValueSetValue = nil then begin
+              ValueSetValue := ValueSet.Values.FindByString(brDefault, LiteralName);
+            end;
+            if Assigned(ValueSetValue) then begin
+              Literal.IntValue := ValueSetValue.AsInteger;
+            end else begin
+              SetFailure(n.Position, format('EnumName (%s) not valid for %s', [LiteralName, LiteralType.ExpressionName]));
+            end;
+          finally
+            ValueSet.Free;
+          end;
         end
         else
-          SetFailure(n.Position, format(sEnumComparedToNonEnum, [LiteralName, LiteralType.ExpressionName]));
+          SetFailure(n.Position, format('Enum (%s) compared to a non Enum (%s)', [LiteralName, LiteralType.ExpressionName]));
       end;
     end;
   end;
@@ -297,7 +311,7 @@ begin
   if n.Value is TBoldClassTypeInfo then
     fRootNode := TBoldOLWTypeNode.Create(n.Position, N.typeName, (n.Value as TBoldClassTypeInfo).TopSortedIndex)
   else
-    SetFailure(n.Position, Format(sTypeNotSupported, [n.TypeName]));
+    SetFailure(n.Position, 'OLWNodes does not support the type ' + n.TypeName);
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclVariableBinding(N: TBoldOclVariableBinding);
@@ -332,7 +346,7 @@ begin
         VarBind.ExternalVarvalue := -1;
     end
     else if n.Value is TBoldAttribute then
-      VarBind.ExternalVarvalue := n.Value.GetAsVariant;
+      VarBind.ExternalVarvalue := n.Value.AsVariant;
 
     Varbindings.Add(n);
     OLWvarBindings.Add(VarBind);
@@ -343,7 +357,7 @@ begin
   else
   begin
     fRootNode := TBoldOLWVariableBinding.Create(N.Position, n.VariableName, -1);
-    setFailure(n.Position, Format(sLoopVariablesMustBeClassType, [n.BoldType.AsString]));
+    setFailure(n.Position, Format('LoopVariables can only have class type, not %s', [n.BoldType.AsString]));
   end;
 end;
 
@@ -375,4 +389,5 @@ begin
   fRootNode := TBoldOLWTimeLiteral.Create(n.Position, n.TimeValue);
 end;
 
+initialization
 end.

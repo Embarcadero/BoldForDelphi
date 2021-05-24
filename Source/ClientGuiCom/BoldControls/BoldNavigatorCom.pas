@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNavigatorCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 14:59:57}
@@ -5,25 +8,22 @@ unit BoldNavigatorCom;
 interface
 
 uses
+  // VCL
   Windows,
   Messages,
   Classes,
   Controls,
-  ExtCtrls,
-  Buttons,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+
+  // Bold
+  {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   {$ENDIF}
-  BoldDefs,
+  BoldComObjectSpace_TLB,
   BoldNavigatorDefs,
   BoldAbstractListHandleCom,
   BoldListHandleFollowerCom,
   BoldStringControlPackCom,
   BoldControlPackCom,
-  BoldCommonBitmaps,
-  BoldListControlPackCom,
   BoldListListControlPackCom;
 
 type
@@ -96,7 +96,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Assign(Source: TPersistent); override;
+    procedure assign(Source: TPersistent); override;
     procedure BtnClick(index: TBoldNavigateBtn);
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   end;
@@ -152,16 +152,19 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev,
+  // VCL
+  Buttons,
   Dialogs,
+  ExtCtrls,
+  SysUtils,
+
+  // Bold
+  BoldDefs,
+  BoldCommonBitmaps,
   {!! DO NOT REMOVE !! BoldSystemRT ,}
-  BoldUtils,
-  BoldGuiResourceStringsCom,
-  BoldControlsDefs;
+  BoldGuiResourceStringsCom;
 
 var
-//  BtnTypeName: array[TBoldNavigateBtn] of PChar = ('FIRST', 'PRIOR', 'NEXT', 'LAST', 'INSERT', 'DELETE', 'MOVEUP', 'MOVEDOWN'); //Do not localize
   BtnHintId: array[TBoldNavigateBtn] of Pointer = (@SNavHintFirst, @SNavHintPrior, @SNavHintNext, @SNavHintLast, @SNavHintNew, @SNavHintDelete, @SNavHintMoveUp, @SNavHintMoveDown);
 
 procedure TBoldCustomNavigatorCom.InitHints;
@@ -202,8 +205,7 @@ end;
 
 procedure TBoldCustomNavigatorCom.GetChildren(Proc: TGetChildProc; ROOT: TComponent);
 begin
-  // Implementation is empty to prevent control
-  // from behaving like a TPanel
+
 end;
 
 procedure TBoldCustomNavigatorCom.SetVisible(Value: TBoldButtonSet);
@@ -501,7 +503,6 @@ procedure TBoldCustomNavigatorCom.BtnClick(index: TBoldNavigateBtn);
 
     if BoldDeleteMode = dmDefault then
     begin
-      // Delete from classlists, remove from other lists
       if assigned(BoldHandle.ObjectList) and (BoldHandle.ObjectList.OwningElement is IBoldSystem) then
         EffectiveDeleteMode := dmDelete
       else
@@ -514,7 +515,6 @@ procedure TBoldCustomNavigatorCom.BtnClick(index: TBoldNavigateBtn);
     begin
       if assigned(RoleRTInfo) then
       begin
-        // linkobjects will be deleted... other objects will be unlinked
         if RoleRTInfo.RoleType = rtLinkRole then
           EffectiveDeleteMode := dmDelete
         else
@@ -580,7 +580,7 @@ begin
       nbInsert:
         CurrentIndex := List.IndexOf(MutableList.AddNew);
       nbDelete:
-          Delete(fConfirmDelete); //FIXME Localize
+          Delete(fConfirmDelete);
       nbMoveUp:
         List.Move(CurrentIndex, CurrentIndex - 1);
       nbMoveDown:
@@ -617,8 +617,8 @@ begin
   end;
   FixButtonGlyphs;
   InitHints;
-  Buttons[nbPrior].NavStyle := Buttons[nbPrior].NavStyle + [nsAllowTimer];
-  Buttons[nbNext].NavStyle := Buttons[nbNext].NavStyle + [nsAllowTimer];
+//  Buttons[nbPrior].NavStyle := Buttons[nbPrior].NavStyle + [nsAllowTimer];
+//  Buttons[nbNext].NavStyle := Buttons[nbNext].NavStyle + [nsAllowTimer];
 end;
 
 procedure TBoldCustomNavigatorCom.SetActiveButtons;
@@ -739,5 +739,3 @@ end;
 initialization
 
 end.
-
-

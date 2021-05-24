@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleADOReg;
 
 interface
@@ -17,9 +20,7 @@ uses
 
 procedure Register;
 begin
-	{$WARNINGS OFF}
-  RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleADO]);
-  {$WARNINGS ON}
+   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleADO]);
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterADO]);
 end;
 

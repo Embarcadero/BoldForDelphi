@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPageControlCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -7,7 +10,7 @@ interface
 uses
   Classes,
   Controls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldHandlesCom,
   BoldControlPackCom,
   BoldElementHandleFollowerCom,
@@ -32,8 +35,8 @@ type
     property Follower: TBoldFollowerCom read GetFollower;
   public
     { Public declarations }
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
   published
     { Published declarations }
     property BoldHandle: TBoldElementHandleCom read GetBoldHandle write SetBoldHandle;
@@ -44,7 +47,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 { TBoldPageControlCom }
@@ -58,7 +60,7 @@ begin
   fBoldProperties.OnGetContextType := _GetContextType;
 end;
 
-destructor TBoldPageControlCom.Destroy;
+destructor TBoldPageControlCom.destroy;
 begin
   FreeAndNil(fHandleFollower);
   FreeAndNil(fBoldProperties);

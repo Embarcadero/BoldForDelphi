@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldElementList;
 
 interface
@@ -22,12 +25,14 @@ type
     function GetElement(index: Integer): TBoldElement; override;
     function IncludesElement(Item: TBoldElement): Boolean; override;
     function IndexOfElement(Item: TBoldElement): Integer; override;
-    procedure InitializeMember(AOwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo); override;
+    procedure Initialize; override;
     procedure InsertElement(index: Integer; Element: TBoldElement); override;
     procedure SetElement(index: Integer; Value: TBoldElement); override;
     function InternalAddNew: TBoldElement; override;
     function GetCanCreateNew: Boolean; override;
-    function ProxyClass: TBoldMember_ProxyClass; override;
+    procedure InternalClear; override;
+    function GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;    
+    //function ProxyClass: TBoldMember_ProxyClass; override;
   public
     procedure Assign(Source: TBoldElement); override;
     procedure InsertNew(index: Integer); override;
@@ -49,7 +54,7 @@ uses
   BoldSubscription,
   BoldSystemRT,
   BoldIndexableList,
-  BoldCoreConsts;
+  BoldRev;
 
 type
   { TBoldIndexableElementList }
@@ -67,7 +72,7 @@ type
     property List: TBoldIndexableElementList read fList;
     function GetStreamName: string; override;
   public
-    constructor Create(OwningList: TBoldList);
+    constructor Create(OwningList: TBoldList);  override;
     destructor Destroy; override;
     procedure AddElement(Element: TBoldElement); override;
     function GetElement(index: Integer): TBoldElement; override;
@@ -83,16 +88,15 @@ type
 
 procedure TBoldElementList.AddElement(Element: TBoldElement);
 begin
-  if (ListController.IndexOfElement(Element) = -1) or DuplicateControl then
+  if (DuplicateMode = bldmAllow) or (ListController.IndexOfElement(Element) = -1) or DuplicateControl then
   begin
-    listcontroller.AddElement(Element);
+    ListController.AddElement(Element);
     Changed(beItemAdded, [Element]);
   end;
 end;
 
 procedure TBoldElementList.AllocateData;
 begin
-  // do nothing
 end;
 
 procedure TBoldElementList.Assign(Source: TBoldElement);
@@ -105,7 +109,6 @@ end;
 
 procedure TBoldElementList.FreeData;
 begin
-  // do nothing
 end;
 
 function TBoldElementList.GetCanCreateNew: Boolean;
@@ -118,9 +121,23 @@ begin
   result := ListController.Count;
 end;
 
+procedure TBoldElementList.InternalClear;
+var
+  i: integer;
+begin
+  for i := Count - 1 downto 0 do
+    RemoveByIndex(I);
+end;
+
 function TBoldElementList.GetElement(index: Integer): TBoldElement;
 begin
   result := ListController.GetElement(index);
+end;
+
+function TBoldElementList.GetProxy(
+  Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
+begin
+  raise EBoldInternal.Create('TBoldElementList.GetProxy called');
 end;
 
 function TBoldElementList.IncludesElement(Item: TBoldElement): Boolean;
@@ -133,7 +150,7 @@ begin
   result := ListController.IndexOfElement(item);
 end;
 
-procedure TBoldElementList.InitializeMember(AOwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo);
+procedure TBoldElementList.Initialize;
 begin
   ListController := TBoldElementListController.Create(self);
   DuplicateMode := bldmAllow;
@@ -148,12 +165,12 @@ end;
 
 procedure TBoldElementList.InsertNew(index: Integer);
 begin
-  raise EBold.CreateFmt(sOperationNotAllowed, [className, 'InsertNew']); // do not localize
+  raise EBold.CreateFmt('%s.InsertNew: This operation is not allowed', [className]);
 end;
 
 function TBoldElementList.InternalAddNew: TBoldElement;
 begin
-  raise EBold.CreateFmt(sOperationNotAllowed, [className, 'InternalAddNew']); // do not localize
+  raise EBold.CreateFmt('%s.InternalAddNew: This operation is not allowed', [className]);
 end;
 
 procedure TBoldElementList.Move(CurIndex, NewIndex: Integer);
@@ -161,10 +178,12 @@ begin
   ListController.Move(CurIndex, NewIndex);
 end;
 
+(*
 function TBoldElementList.ProxyClass: TBoldMember_ProxyClass;
 begin
-  raise EBold.CreateFmt(sOperationNotAllowed, [className, 'ProxyClass']); // do not localize
+  raise EBold.CreateFmt('%s.ProxyClass: This operation is not allowed', [className]);
 end;
+*)
 
 procedure TBoldElementList.RemoveByIndex(index: Integer);
 begin
@@ -187,13 +206,14 @@ end;
 
 constructor TBoldElementListController.Create(OwningList: TBoldList);
 begin
+  inherited;
   fList := TBoldIndexableElementList.Create;
   fList.OwnsEntries := false;
 end;
 
 function TBoldElementListController.CreateNew: TBoldElement;
 begin
-  raise EBold.Create(sNotImplemented);
+  raise EBold.Create('not implemented');
 end;
 
 destructor TBoldElementListController.Destroy;
@@ -214,13 +234,14 @@ end;
 
 function TBoldElementListController.GetElement(index: Integer): TBoldElement;
 begin
-  result := list.Items[index] as TBoldElement;
+  result := TBoldElement(list.Items[index]);
+  Assert(result is TBoldElement, result.classname);
 end;
 
 function TBoldElementListController.GetStreamName: string;
 begin
   result := '';
-  raise EBold.create(sNotImplemented);
+  raise EBold.create('not implemented');
 end;
 
 function TBoldElementListController.IncludesElement(Item: TBoldElement): Boolean;
@@ -250,7 +271,7 @@ end;
 
 procedure TBoldElementListController.SetElement(index: Integer; Value: TBoldElement);
 begin
-  Raise EBold.Create(sCannotSetElementsInTypeLists);
+  List.Items[index] := Value;
 end;
 
 { TBoldElementListFactory }
@@ -260,6 +281,5 @@ begin
   result := TBoldElementList.CreateWithTypeInfo(aSystem.BoldSystemTypeInfo.ListTypeInfoByElement[nil]);
 end;
 
+initialization
 end.
-
-

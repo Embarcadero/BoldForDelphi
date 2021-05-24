@@ -1,3 +1,7 @@
+/////////////////////////////////////////////////////////
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldBase64;
 
 // uTBase64 v1.0 - Simple Base64 encoding/decoding class
@@ -45,18 +49,20 @@ unit BoldBase64;
 
 interface
 
+uses
+  BoldDefs;
+
 type
   TBase64 = class(TObject)
   private
     ffilterdecodeinput:boolean;
     function ValueToCharacter(value: Byte; var character: char):boolean;
     function CharacterToValue(character: char; var value: byte):boolean;
-    function filterLine(InputData: string):string;
-  protected
+    function filterLine(const InputData: string): string;
   public
     constructor Create;
-    function EncodeData(InputData:string; var OutputData: string): Byte;
-    function DecodeData(InputData:string; var OutputData: string): Byte;
+    function EncodeData(InputData: TBoldAnsiString; var OutputData: string): Byte;
+    function DecodeData(InputData: string; var OutputData: TBoldAnsiString): Byte;
     property FilterdecodeInput: boolean read ffilterdecodeinput write ffilterdecodeinput;
   end;
 
@@ -70,9 +76,20 @@ const
 
 implementation
 
+uses
+  BoldRev;
+
 const
   AlphabetLength = 64;
-  Alphabet: string[AlphabetLength] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  Alphabet: array[1..AlphabetLength] of AnsiChar = (
+      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+      'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+      'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+      'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+      'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+      'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+      'w', 'x', 'y', 'z', '0', '1', '2', '3',
+      '4', '5', '6', '7', '8', '9', '+', '/');
   Pad = '=';
 
 
@@ -94,7 +111,7 @@ begin
   if (value > AlphabetLength-1) then
     Result := false
   else
-    character := Char (Alphabet[value+1]);  // marco
+    character := Char(Alphabet[value+1]);
 end;
 
 
@@ -105,7 +122,7 @@ end;
 function TBase64.CharacterToValue(character: char; var value: byte): boolean;
 begin
   Result := true;
-  value := Pos(character, Alphabet);
+  value := Pos(AnsiChar(character), Alphabet);
   if value = 0 then
     Result := false
   else
@@ -117,12 +134,12 @@ end;
 // Encodes a string to its base64 representation in ASCII Format
 // returns BASE64_OK if conversion was done without errors
 //******************************************************************
-function TBase64.EncodeData(InputData: string; var OutputData: string): Byte;
+function TBase64.EncodeData(InputData: TBoldAnsiString; var OutputData: string): Byte;
 var
   i: integer;
   currentb, prevb: Byte;
   c: Byte;
-  s: char;
+  s: Char;
   InputLength: integer;
 begin
   OutPutData := '';
@@ -135,7 +152,7 @@ begin
   end;
 
   repeat
-  // process first group
+    // process first group
     currentb := ord(InputData[i]);
     i := i+1;
     InputLength := InputLength-1;
@@ -212,7 +229,7 @@ end;
 // ignores all characters not in base64 alphabet
 // and returns the filtered string
 //******************************************************************
-function TBase64.filterLine(InputData: string): string;
+function TBase64.filterLine(const InputData: string): string;
 var
   f:byte;
   i:integer;
@@ -229,13 +246,13 @@ end;
 // Decodes a base64 representation in ASCII format into a string
 // returns BASE64_OK if conversion was done without errors
 //******************************************************************
-function TBase64.DecodeData(InputData: string; var OutputData: string): Byte;
+function TBase64.DecodeData(InputData: string; var OutputData: TBoldAnsiString): Byte;
 var
   i: integer;
   InputLength: integer;
   currentb, prevb: Byte;
   c: Byte;
-  s: char;
+  s: Char;
 
 begin
   if (InputData = '') then
@@ -274,7 +291,7 @@ begin
     end;
 
     c := ((currentb shl 2)+(prevb shr 4)) and 255;
-    OutPutData := OutPutData+chr(c);
+    OutPutData := OutPutData + AnsiChar(Chr(c));
 
     // process second Byte
     i := i+1;s := InputData[i];
@@ -299,7 +316,7 @@ begin
         exit;
       end;
       c := ((prevb shl 4) + (currentb shr 2)) and 255;
-      OutPutData := OutPutData + chr(c);
+      OutPutData := OutPutData + AnsiChar(Chr(c));
     end;
     // process third Byte
     i := i+1;
@@ -320,11 +337,11 @@ begin
         exit;
       end;
       c := ((currentb shl 6) + (prevb)) and 255;
-      OutPutData := OutPutData + chr(c);
+      OutPutData := OutPutData + AnsiChar(Chr(c));
      end;
   until (i >= InputLength);
   result := BASE64_OK;
 end;
 
+initialization
 end.
-

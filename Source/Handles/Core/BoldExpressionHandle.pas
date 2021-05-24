@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExpressionHandle;
 
 interface
@@ -14,6 +17,8 @@ type
   { forward declaration of classes }
   TBoldExpressionHandle = class;
 
+  TBoldExpressionHandleClass = class of TBoldExpressionHandle;       
+
   {---TBoldExpressionHandle---}
   TBoldExpressionHandle = class(TBoldRootedHandle, IBoldOCLComponent)
   function IBoldOCLComponent.GetContextType = GetStaticRootType;
@@ -22,33 +27,42 @@ type
     FVariables: TBoldOclVariables;
     fVariablesSubscriber: TBoldPassThroughSubscriber;
     fEvaluateInPS: Boolean;
+    fUsePrefetch: Boolean;
     procedure _VariablesReceive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    procedure SetExpression(Value: string);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     procedure SetVariables(const Value: TBoldOclVariables);
-    function GetVariableList: TBoldExternalVariableList;
     procedure SetEvaluateInPS(const Value: Boolean);
    protected
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     procedure DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber); override;
+    procedure DoAssign(Source: TPersistent); override;
+    procedure DoExpressionChanged; virtual;
+    function GetVariables: TBoldOclVariables; virtual;
+    function GetVariableList: TBoldExternalVariableList; virtual;
+    property VariableList: TBoldExternalVariableList read GetVariableList;
   public
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; override;
   published
-    property Expression: TBoldExpression read fExpression write SetExpression;
-    property Variables: TBoldOclVariables read FVariables write SetVariables;
+    property Expression: TBoldExpression read GetExpression write SetExpression;
+    property Variables: TBoldOclVariables read GetVariables write SetVariables;
     property EvaluateInPS: Boolean read fEvaluateInPS write SetEvaluateInPS default false;
     {$IFNDEF T2H}
     property Subscribe;
     {$ENDIF}
+    property UsePrefetch: Boolean read fUsePrefetch write fUsePrefetch default true;
   end;
 
 implementation
 
 uses
   SysUtils,
-  HandlesConst;
+  {$IFDEF SpanFetch}
+  AttracsSpanFetchManager,
+  {$ENDIF}  
+  BoldRev;
 
 const
   breVariablesDestroyed = 200;
@@ -56,50 +70,64 @@ const
 {---TBoldExpressionHandle---}
 
 function TBoldExpressionHandle.GetStaticBoldType: TBoldElementTypeInfo;
+var
+  vStaticRootType: TBoldElementTypeInfo;
 begin
-  if Assigned(StaticRootType) then
-  begin
-    if assigned(Variables) then
-      Result := StaticRootType.Evaluator.ExpressionType(Expression, StaticRootType, False, Variables.VariableList)
-    else
-      Result := StaticRootType.Evaluator.ExpressionType(Expression, StaticRootType, False);
-  end
+  vStaticRootType := StaticRootType;
+  if Assigned(vStaticRootType) then
+    Result := vStaticRootType.Evaluator.ExpressionType(Expression, vStaticRootType, True, VariableList)
   else
     Result := nil;
 end;
 
-procedure TBoldExpressionHandle.SetExpression(Value: string);
+procedure TBoldExpressionHandle.SetExpression(const Value: TBoldExpression);
 begin
   if Value <> fExpression then
   begin
     fExpression := Value;
     MarkSubscriptionOutOfdate;
+    DoExpressionChanged;
   end;
 end;
 
 procedure TBoldExpressionHandle.DeriveAndSubscribe(DerivedObject: TObject;
   Subscriber: TBoldSubscriber);
+
+  function GetFullName(AComponent: TComponent): string;
+  begin
+    result := AComponent.GetNamePath;
+    if result = '' then
+      result := '('+AComponent.ClassName+')';
+    if (AComponent is TComponent) and Assigned(TComponent(AComponent).Owner) then
+      result := GetFullName(TComponent(AComponent).Owner) +  '.' + result;
+  end;
+
 var
   RootValue: TBoldElement;
   vars: TBoldExternalVariableList;
 begin
+  if csDestroying in ComponentState then
+    raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
   RootValue := EffectiveRootValue;
   if Assigned(RootValue) then
   begin
     if assigned(Variables) then
-    begin
-      Vars := variables.VariableList;
-      variables.SubscribeToHandles(Subscriber);
-    end
-    else
-      vars := nil;
+      variables.SubscribeToHandles(Subscriber, Expression);
+    Vars := VariableList;
     try
-      RootValue.EvaluateAndSubscribeToExpression(Expression, Subscriber, ResultElement, False, EvaluateInPS, vars)
+    begin
+{$IFDEF SpanFetch}
+    if UsePrefetch and not EvaluateInps then
+      FetchOclSpan(RootValue, Expression, vars);
+{$ENDIF}
+      if Assigned(RootValue.BoldType) then // ValueSetValue has no BoldType
+        RootValue.EvaluateAndSubscribeToExpression(Expression, Subscriber, ResultElement, False, EvaluateInPS, vars)
+    end;
     except
       on e: Exception do
       begin
-        e.message := format(sDeriveAndSubscribeFailed,
-          [ClassName, Name, e.Message]);
+        e.message := format('%s.DeriveAndSubscribe (%s): Failed with message: %s',
+          [ClassName, GetFullName(self), e.Message]);
         raise
       end;
     end;
@@ -118,7 +146,7 @@ begin
   if Value <> Variables then
   begin
     if assigned(value) and value.LinksToHandle(self) then
-      raise EBold.CreateFmt(sCircularReference, [classname, name, value.name]);
+      raise EBold.CreateFmt('%s.SetVariables: %s can not be linked to %s. Circular reference', [classname, name, value.name]);
     FVariables := Value;
     StaticBoldTypeChanged;
     fVariablesSubscriber.CancelAllSubscriptions;
@@ -143,10 +171,26 @@ begin
     FVariables := nil;
 end;
 
-constructor TBoldExpressionHandle.create(owner: TComponent);
+procedure TBoldExpressionHandle.DoAssign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TBoldExpressionHandle then with TBoldExpressionHandle(Source) do
+  begin
+    self.Expression := Expression;
+    self.Variables := Variables;
+    self.EvaluateInPS := EvaluateInPS;
+  end;
+end;
+
+procedure TBoldExpressionHandle.DoExpressionChanged;
+begin
+end;
+
+constructor TBoldExpressionHandle.Create(owner: TComponent);
 begin
   inherited;
   fVariablesSubscriber := TBoldPassthroughSubscriber.create(_VariablesReceive);
+  fUsePrefetch := true;
 end;
 
 destructor TBoldExpressionHandle.Destroy;
@@ -163,6 +207,11 @@ begin
     result := nil;
 end;
 
+function TBoldExpressionHandle.GetVariables: TBoldOclVariables;
+begin
+  result := fVariables;
+end;
+
 function TBoldExpressionHandle.RefersToComponent(Component: TBoldSubscribableComponent): Boolean;
 begin
   result := inherited RefersToComponent(Component);
@@ -170,4 +219,6 @@ begin
     result := Component = variables;
 end;
 
+initialization
 end.
+

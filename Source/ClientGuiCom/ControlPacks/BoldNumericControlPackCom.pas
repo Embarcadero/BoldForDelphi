@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNumericControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 14:59:57}
@@ -5,15 +8,13 @@ unit BoldNumericControlPackCom;
 interface
 
 uses
-  BoldDefs,
-  BoldSubscription,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  BoldControlPackCom;
+  BoldClientElementSupport,
+  BoldComClient,
+  BoldComObjectSpace_TLB,
+  BoldControlPackCom,
+  BoldDefs;
 
-//TODO: Implement AsFloatRenderer.
-//TODO: Find default numeric representation for class
-
-type
+type             
   {Forward declarations}
   TBoldIntegerRendererDataCom = class;
   TBoldAsIntegerRendererCom = class;
@@ -50,7 +51,7 @@ type
     class function DefaultRenderer: TBoldAsIntegerRendererCom;
     function DefaultIsChanged(RendererData: TBoldIntegerRendererDataCom; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     function DefaultMayModify(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): Boolean; override;
-    procedure MakeUptodateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
     function IsChanged(RendererData: TBoldIntegerRendererDataCom; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
   published
     property OnGetAsInteger: TBoldGetAsIntegerEventCom read FOnGetAsInteger write FOnGetAsInteger;
@@ -80,8 +81,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
-  BoldUtils,
   BoldGuiResourceStringsCom,
   {!! DO NOT REMOVE !! BoldAttributes ,}
   BoldControlPackDefs;
@@ -101,11 +100,10 @@ begin
 end;
 
 function TBoldAsIntegerRendererCom.DefaultMayModify(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): Boolean;
-{$IFNDEF BOLDCOMCLIENT} // defaultMayModify
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: IBoldElement;
 begin
-  // Note! We don't call inherited DefaultMayModify to prevent evaluation of expression two times!
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
   result := (ValueElement is TBANumeric) and ValueElement.ObserverMayModify(Subscriber)
 end;
@@ -117,7 +115,7 @@ end;
 
 function TBoldAsIntegerRendererCom.DefaultGetAsIntegerAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): Integer;
 var
-  {$IFDEF BOLDCOMCLIENT} // defaultGet
+  {$IFDEF BOLDCOMCLIENT}
   el: IBoldElement;
   attr: IBoldAttribute;
   {$ELSE}
@@ -127,7 +125,7 @@ begin
   Result := 0;
   if Assigned(Element) then
   begin
-    {$IFDEF BOLDCOMCLIENT} // defaultGet
+    {$IFDEF BOLDCOMCLIENT}
     if assigned(Subscriber) then
       el := Element.EvaluateAndSubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, false, false)
     else
@@ -159,12 +157,12 @@ end;
 procedure TBoldAsIntegerRendererCom.DefaultSetAsInteger(Element: IBoldElement; const Value: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
 var
   ValueElement: IBoldElement;
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   Attr: IBoldAttribute;
   {$ENDIF}
 begin
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   if assigned(ValueElement) and (ValueElement.QueryInterface(IBoldAttribute, attr) = S_OK) then
     attr.AsVariant := Value
   else
@@ -248,7 +246,7 @@ begin
   if Assigned(Renderer) then
     Result := Renderer
   else
-    Result := DefaultAsIntegerRenderer; //FIXME
+    Result := DefaultAsIntegerRenderer;
 end;
 
 procedure TBoldIntegerFollowerControllerCom.MakeClean(Follower: TBoldFollowerCom);
@@ -283,4 +281,3 @@ finalization
   FreeAndNil(DefaultAsIntegerRenderer);
 
 end.
-

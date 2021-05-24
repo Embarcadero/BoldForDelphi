@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropertiesControllerPropertyEditors;
 
 interface
@@ -5,31 +8,25 @@ interface
 uses
   Classes,
   DesignEditors,
-  DesignIntf,
+  DesignIntf, 
   BoldAbstractPropertyEditors;
 
 type
-  // A Property editor for the PropertyName property.
-  // It lists all meaningful properties of "Component" including properties of "sub-components"
-  // It has currently some trouble with collections and will not show panels[0] for example
-  { TPropertyNameProperty }
+
+
   TPropertyNameProperty = class(TBoldStringProperty)
   public
     function  GetAttributes: TPropertyAttributes; override;
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
-  // A Property editor for VCLComponent property
-  // It is based on the TComponentProperty which lists all components of the form
-  // In addition to those it will also list the form so we can control its properties !
-  { TVCLComponentProperty }
+
   TVCLComponentProperty = class(TBoldComponentProperty)
   public
     procedure GetValues(Proc: TGetStrProc); override;
     procedure SetValue(const Value: string); override;
   end;
 
-  { TBoldPropertiesControllerComponentEditor }
   TBoldPropertiesControllerComponentEditor = class(TDefaultEditor)
   protected
     procedure EditProperty(const PropertyEditor: IProperty; var Continue: Boolean); override;
@@ -43,7 +40,6 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   TypInfo,
   BoldControlsDefs,
   BoldPropertiesController;
@@ -72,9 +68,9 @@ var
     for I := 0 to Count - 1 do
     begin
       if Path = '' then
-        NewPath := PropList[I]^.Name
+        NewPath := String(PropList[I]^.Name)
       else
-        NewPath := Path + '.' + PropList[I]^.Name;
+        NewPath := Path + '.' + String(PropList[I]^.Name);
 
       if (PropList[I]^.PropType^.Kind <> tkClass) then
       begin
@@ -84,7 +80,7 @@ var
       else
       begin
         if Assigned(LastObject) then
-          NewObj := TObject(GetOrdProp(LastObject, PropList[I]^.Name));
+          NewObj := TObject(GetOrdProp(LastObject, String(PropList[I]^.Name)));
 
         if NewObj is TCollection then
           for J := 0 to TCollection(NewObj).Count - 1 do
@@ -102,7 +98,7 @@ var
 begin
   if PropCount < 1 then exit;
 
-  SelectedComponent := GetComponent(0) as TBoldDrivenProperty; //we don't allow multiselect
+  SelectedComponent := GetComponent(0) as TBoldDrivenProperty;
   if Assigned(SelectedComponent) and Assigned(SelectedComponent.VCLComponent) then
     DeclareProperties(SelectedComponent.VCLComponent,SelectedComponent.VCLComponent.ClassInfo,'');
 end;
@@ -111,7 +107,7 @@ end;
 
 procedure TVCLComponentProperty.GetValues(Proc: TGetStrProc);
 begin
-  Proc(TBoldDrivenProperty(GetComponent(0)).PropertiesController.Owner.Name); // Add the Form's name to available components
+  Proc(TBoldDrivenProperty(GetComponent(0)).PropertiesController.Owner.Name);
   inherited;
 end;
 
@@ -119,7 +115,6 @@ procedure TVCLComponentProperty.SetValue(const Value: string);
 var
   Component: TComponent;
 begin
-  // Special case for the form
   if Value = TBoldDrivenProperty(GetComponent(0)).PropertiesController.Owner.Name then
   begin
     Component := TBoldDrivenProperty(GetComponent(0)).PropertiesController.Owner;
@@ -133,7 +128,7 @@ end;
 
 procedure TBoldPropertiesControllerComponentEditor.EditProperty(const PropertyEditor: IProperty; var Continue: Boolean);
 begin
-  if PropertyEditor.GetName = 'DrivenProperties' then  //do not localize
+  if PropertyEditor.GetName = 'DrivenProperties' then
   begin
     PropertyEditor.Edit;
     Continue := False;
@@ -151,7 +146,7 @@ end;
 function TBoldPropertiesControllerComponentEditor.GetVerb(Index: Integer): string;
 begin
   case Index of
-    0: Result := sEditDrivenProperties;
+    0: Result := 'Edit driven properties...';
   end;
 end;
 
@@ -160,4 +155,5 @@ begin
   Result := 1;
 end;
 
+initialization
 end.

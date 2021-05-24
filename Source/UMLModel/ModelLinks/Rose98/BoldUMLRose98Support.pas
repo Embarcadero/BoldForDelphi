@@ -1,6 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLRose98Support;
 
-{$WARN SYMBOL_PLATFORM OFF}  // WINDOWS only
+{$WARN SYMBOL_PLATFORM OFF}
 
 
 interface
@@ -34,9 +37,9 @@ type
     procedure TaggedValueToElement(UmlElement: TUMLModelElement; RoseProp: IRoseProperty; Toolname: String);
     function GetEffectiveDefaults: TBoldTaggedValuePerClassList;
     function GetBoldDefaultsForClass(const UMLModelName: string; RoseItem: IRoseItem): TBoldTaggedValueList;
-    property EffectiveDefaults: TBoldTaggedValuePerClassList read GetEffectiveDefaults;
+    property EffectiveDefaults: TBoldTaggedValuePerClassList read GetEffectiveDefaults;      
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure GetTaggedValues(RoseItem: IRoseItem; UMLElement: TUMLModelElement; AdditionalTools: TStrings);
     procedure SetTaggedValues(RoseItem: IRoseItem; UMLElement: TUMLModelElement; AdditionalTools: TStrings);
     procedure SetTaggedValuesAsDefaultProps(RoseItem: IRoseItem; UMLElement: TUMLModelElement; AdditionalTools: TStrings);
@@ -73,7 +76,7 @@ begin
     if Assocation.connection.Count = 2 then
       Result := EffectiveName(Assocation.connection[0]) + EffectiveName(Assocation.connection[1])
     else
-      Result := '<Unnamed Association>';
+      Result := '<Unnamed Association>';  
   end
   else if (UMLElement is TUMLAssociationEnd) then
   begin
@@ -118,7 +121,6 @@ begin
   else
   begin
     PropCollection := GetToolProps(RoseItem, aToolName);
-//    aToolName := aToolName + '.';
     for Index := 1 to PropCollection.Count do
       TaggedValueToElement(UmlElement, PropCollection.GetAt(Index), aToolname);
   end;
@@ -240,8 +242,7 @@ var
   PropCollection: IRosePropertyCollection;
   DefaultProp: IRoseProperty;}
 begin
-  // the import spends quite a lot of time here...
-
+  
   GetTaggedValuesForTool(RoseItem, UMLElement, ToolName);
   GetTaggedValuesForTool(RoseItem, UMLElement, BOLDSTDUMLTOOLNAME);
   for i := 0 to AdditionalTools.Count-1 do
@@ -336,5 +337,7 @@ begin
     Tag := Copy(Tag, DotPos+1, MAXINT);
   end;
 end;
+
+initialization
 
 end.

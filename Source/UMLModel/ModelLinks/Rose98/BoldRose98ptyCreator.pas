@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRose98ptyCreator;
 
 interface
@@ -15,7 +18,7 @@ type
   private
     fLeadingSpaces: integer;
     fList: TStrings;
-    fRoseEnums: TBoldTaggedValuePerClassList; // Slightly unorthodox reuse, ClassName=EnumName
+    fRoseEnums: TBoldTaggedValuePerClassList;
     procedure InitializeRoseEnums;
     procedure PutLine(const s: string); overload;
     procedure PutLine; overload;
@@ -42,7 +45,7 @@ uses
   sysutils,
   BoldDefaultTaggedValues,
   BoldUMLTaggedValues,
-  BoldUMLRose98Support,
+  BoldUMLRose98Support,  
   BoldRose98TaggedValues;
 
 const
@@ -67,131 +70,131 @@ end;
 
 procedure TBoldRose98ptyCreator.CreateContents;
 begin
-  PutLine('(object Petal version 40)'); // do not localize
+  PutLine('(object Petal version 40)');
   PutLine;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   Indent;
-  PutLine('(object Attribute tool "Bold" name "roseId"     value "753117540")'); // do not localize
-  PutLine('(object Attribute tool "Bold" name "propertyId" value "809135966")'); // do not localize
+  PutLine('(object Attribute tool "Bold" name "roseId"     value "753117540")');
+  PutLine('(object Attribute tool "Bold" name "propertyId" value "809135966")');
 
-  StartSection('Project', 'Model'); // do not localize
-  PutLine('## Enum Declarations'); // do not localize
+  StartSection('Project', 'Model');
+  PutLine('## Enum Declarations');
   PutLine;
-  PutEnumDefinition('OptimisticLockingSet'); // do not localize
-  PutEnumDefinition('NationalCharConversionEnum'); // do not localize
+  PutEnumDefinition('OptimisticLockingSet');
+  PutEnumDefinition('NationalCharConversionEnum');
 
-  PutLine('## Enum Declarations'); // do not localize
+  PutLine('## Enum Declarations');
   PutLine;
-  PutLine('## This enum has only one value and is used to ensure the correct PTY-version when importing to BfD'); // do not localize
-  PutEnumDefinition('PTYVersionSet'); // do not localize
+  PutLine('## This enum has only one value and is used to ensure the correct PTY-version when importing to BfD');
+  PutEnumDefinition('PTYVersionSet');
 
-  PutTaggedValuesForClass('Model'); // do not localize
-  PutLine('## removed tagged values'); // do not localize
-  PutLine('## (object Attribute tool "Bold" name "DefaultMemberInfoClass" value "")'); // do not localize
+  PutTaggedValuesForClass('Model');
+  PutLine('## removed tagged values');
+  PutLine('## (object Attribute tool "Bold" name "DefaultMemberInfoClass" value "")');
   EndSection;
 
-  PutSeparator('Class definitions'); // do not localize
-  PutLine('(object Attribute tool "Bold" name "default__Class" value'); // do not localize
+  PutSeparator('Class definitions');
+  PutLine('(object Attribute tool "Bold" name "default__Class" value');
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   Indent;
   PutLine;
-  PutLine('## Enum Declarations'); // do not localize
+  PutLine('## Enum Declarations');
   PutLine;
-  PutEnumDefinition('EvolutionStateEnum'); // do not localize
-  PutEnumDefinition('TableMappingSet'); // do not localize
-  PutEnumDefinition('OptimisticLockingSet'); // do not localize
+  PutEnumDefinition('EvolutionStateEnum');
+  PutEnumDefinition('TableMappingSet');
+  PutEnumDefinition('OptimisticLockingSet');
   PutEnumDefinition(ENUM_TAG_CLASS_STORAGE);
-  PutTaggedValuesForClass('Class'); // do not localize
+  PutTaggedValuesForClass('Class');
   EndSection;
 
-  StartSection('Attribute', 'Attribute'); // do not localize
-  PutLine('## Enum Declarations'); // do not localize
+  StartSection('Attribute', 'Attribute');
+  PutLine('## Enum Declarations');
   PutLine;
-  PutEnumDefinition('AttributeKindSet'); // do not localize
-  PutEnumDefinition('DelphiPropertySet'); // do not localize
-  PutEnumDefinition('EvolutionStateEnum'); // do not localize
+  PutEnumDefinition('AttributeKindSet');
+  PutEnumDefinition('DelphiPropertySet');
+  PutEnumDefinition('EvolutionStateEnum');
   PutEnumDefinition(ENUM_TAG_ATTRIBUTE_STORAGE);
-  PutTaggedValuesForClass('Attribute'); // do not localize
-  PutLine('## removed tagged values'); // do not localize
-  PutLine('## (object Attribute tool "Bold" name "MemberInfoClass" value "<Default>")'); // do not localize
+  PutTaggedValuesForClass('Attribute');
+  PutLine('## removed tagged values');
+  PutLine('## (object Attribute tool "Bold" name "MemberInfoClass" value "<Default>")');
   EndSection;
 
-  PutSeparator('Attribute definitions STDUML'); // do not localize
-  PutLine(Format('(object Attribute tool "%s" name "roseId"     value "753117540")', [BOLDSTDUMLTOOLNAME])); // do not localize
-  PutLine(Format('(object Attribute tool "%s" name "propertyId" value "809135966")', [BOLDSTDUMLTOOLNAME])); // do not localize
+  PutSeparator('Attribute definitions STDUML');
+  PutLine(Format('(object Attribute tool "%s" name "roseId"     value "753117540")', [BOLDSTDUMLTOOLNAME]));
+  PutLine(Format('(object Attribute tool "%s" name "propertyId" value "809135966")', [BOLDSTDUMLTOOLNAME]));
   PutLine;
   PutLine;
-  PutLine(Format('(object Attribute tool "%s" name "default__Attribute" value', [BOLDSTDUMLTOOLNAME])); // do not localize
+  PutLine(Format('(object Attribute tool "%s" name "default__Attribute" value', [BOLDSTDUMLTOOLNAME]));
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   PutLine;
   Indent;
   Indent;
-  PutLine('## Enum Declarations'); // do not localize
+  PutLine('## Enum Declarations');
   PutLine;
-  PutLine(Format('(object Attribute tool "%s" name	"PersistenceSet" value', [BOLDSTDUMLTOOLNAME])); // do not localize
+  PutLine(Format('(object Attribute tool "%s" name	"PersistenceSet" value', [BOLDSTDUMLTOOLNAME]));
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
-  PutLine(Format('  (object Attribute tool "%s" name "%s" value	0)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_PERSISTENT])); // do not localize
-  PutLine(Format('  (object Attribute tool "%s" name "%s"  value	1)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_TRANSIENT])); // do not localize
+  PutLine('(list Attribute_Set');
+  PutLine(Format('  (object Attribute tool "%s" name "%s" value	0)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_PERSISTENT]));
+  PutLine(Format('  (object Attribute tool "%s" name "%s"  value	1)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_TRANSIENT]));
   EndSection;
   PutLine;
-  PutLine(Format('(object Attribute tool "%s" name "%s" value ("PersistenceSet" 0))', [BOLDSTDUMLTOOLNAME, TAG_PERSISTENCE])); // do not localize
+  PutLine(Format('(object Attribute tool "%s" name "%s" value ("PersistenceSet" 0))', [BOLDSTDUMLTOOLNAME, TAG_PERSISTENCE]));
   EndSection;
 
-  StartSection('Association', 'Association'); // do not localize
-  PutLine('## Enum Declarations'); // do not localize
-  PutEnumDefinition('EvolutionStateEnum'); // do not localize
+  StartSection('Association', 'Association');
+  PutLine('## Enum Declarations');
+  PutEnumDefinition('EvolutionStateEnum');
   PutEnumDefinition(ENUM_TAG_ASSOCIATION_STORAGE);
-  PutTaggedValuesForClass('Association'); // do not localize
-  PutLine('## removed tagged values:'); // do not localize
-  PutLine('## (object Attribute tool "Bold" name "LinkClassId"    value -1)'); // do not localize
+  PutTaggedValuesForClass('Association');
+  PutLine('## removed tagged values:');
+  PutLine('## (object Attribute tool "Bold" name "LinkClassId"    value -1)');
   EndSection;
 
-  PutSeparator(' Association definitions STDUML'); // do not localize
+  PutSeparator(' Association definitions STDUML');
   Indent;
-  PutLine(Format('(object Attribute tool "%s" name "roseId"     value "753117540")', [BOLDSTDUMLTOOLNAME])); // do not localize
-  PutLine(Format('(object Attribute tool "%s" name "propertyId" value "809135966")', [BOLDSTDUMLTOOLNAME])); // do not localize
+  PutLine(Format('(object Attribute tool "%s" name "roseId"     value "753117540")', [BOLDSTDUMLTOOLNAME]));
+  PutLine(Format('(object Attribute tool "%s" name "propertyId" value "809135966")', [BOLDSTDUMLTOOLNAME]));
   PutLine;
-  PutLine(Format('(object Attribute tool "%s" name "default__Association" value', [BOLDSTDUMLTOOLNAME])); // do not localize
+  PutLine(Format('(object Attribute tool "%s" name "default__Association" value', [BOLDSTDUMLTOOLNAME]));
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   Indent;
-  PutLine(Format('(object Attribute tool "%s" name	"PersistenceSet" value', [BOLDSTDUMLTOOLNAME])); // do not localize
+ PutLine(Format('(object Attribute tool "%s" name	"PersistenceSet" value', [BOLDSTDUMLTOOLNAME]));
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
-  PutLine(Format('  (object Attribute tool "%s" name "%s" value	0)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_PERSISTENT])); // do not localize
-  PutLine(Format('  (object Attribute tool "%s" name "%s"  value	1)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_TRANSIENT])); // do not localize
+  PutLine('(list Attribute_Set');
+  PutLine(Format('  (object Attribute tool "%s" name "%s" value	0)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_PERSISTENT]));
+  PutLine(Format('  (object Attribute tool "%s" name "%s"  value	1)', [BOLDSTDUMLTOOLNAME, TV_PERSISTENCE_TRANSIENT]));
   EndSection;
   PutLine;
-  PutLine(Format('(object Attribute tool "%s" name "%s" value ("PersistenceSet" 0))', [BOLDSTDUMLTOOLNAME, TAG_PERSISTENCE])); // do not localize
+  PutLine(Format('(object Attribute tool "%s" name "%s" value ("PersistenceSet" 0))', [BOLDSTDUMLTOOLNAME, TAG_PERSISTENCE]));
   EndSection;
 
-  StartSection('Role', 'AssociationEnd'); // do not localize
-  PutEnumDefinition('DeleteActions'); // do not localize
-  PutEnumDefinition('ChangeabilityKind'); // do not localize
-  PutEnumDefinition('DefaultRegionModeAssociationEnum'); // do not localize
-  PutTaggedValuesForClass('AssociationEnd'); // do not localize
+  StartSection('Role', 'AssociationEnd');
+  PutEnumDefinition('DeleteActions');
+  PutEnumDefinition('ChangeabilityKind');
+  PutEnumDefinition('DefaultRegionModeAssociationEnum');
+  PutTaggedValuesForClass('AssociationEnd');
 
-  PutLine('## removed tagged values'); // do not localize
-  PutLine('## (object Attribute tool	"Bold" name	"MemberInfoClass" value	"<Default>")'); // do not localize
+  PutLine('## removed tagged values');
+  PutLine('## (object Attribute tool	"Bold" name	"MemberInfoClass" value	"<Default>")');
   EndSection;
 
-  StartSection('Operation', 'Operation'); // do not localize
-  PutLine('## Enum Declarations'); // do not localize
+  StartSection('Operation', 'Operation');
+  PutLine('## Enum Declarations');
   PutLine;
-  PutEnumDefinition('BoldOperationKindSet'); // do not localize
-  PutTaggedValuesForClass('Operation'); // do not localize
+  PutEnumDefinition('BoldOperationKindSet');
+  PutTaggedValuesForClass('Operation');
   EndSection;
 
-  PutSeparator('Module definitions'); // do not localize
-  PutLine('(object Attribute tool "Bold" name "default__Module-Spec" value'); // do not localize
+  PutSeparator('Module definitions');
+  PutLine('(object Attribute tool "Bold" name "default__Module-Spec" value');
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   Indent;
-  PutLine('(object Attribute tool "Bold" name "CopyrightNotice" value "")'); // do not localize
-  PutLine('(object Attribute tool "Bold" name "FileName"        value "<Name>.inc")'); // do not localize
+  PutLine('(object Attribute tool "Bold" name "CopyrightNotice" value "")');
+  PutLine('(object Attribute tool "Bold" name "FileName"        value "<Name>.inc")');
   EndSection;
   Dedent;
   PutLine(')');
@@ -214,7 +217,7 @@ begin
   Inc(fLeadingSpaces, INDENTSIZE);
 end;
 
-procedure TBoldRose98ptyCreator.PutSeparator(const s: string);
+procedure TBoldRose98ptyCreator.PutSeparator(const s: string); 
 begin
   PutLine;
   PutLine(StringOfChar('#', 60));
@@ -227,7 +230,7 @@ procedure TBoldRose98ptyCreator.PutTaggedValuesForClass(const UMLName: string);
 var
   i: integer;
 begin
-  PutLine(Format('## Tagged values for %s', [UMLName])); // do not localize
+  PutLine(Format('## Tagged values for %s', [UMLName]));
   PutLine;
   with BoldDefaultTaggedValueList.ListForClassName[UMLName] do
     for i := 0 to Count - 1 do
@@ -241,96 +244,96 @@ end;
 procedure TBoldRose98ptyCreator.InitializeRoseEnums;
 begin
   fRoseEnums := TBoldTaggedValuePerClassList.Create;
-  with fRoseEnums.ListForClassName['AttributeKindSet'] do // do not localize
+  with fRoseEnums.ListForClassName['AttributeKindSet'] do
   begin
-    Add('Integer', TV_ATTRIBUTEKIND_BOLD,        '0'); // do not localize
-    Add('Integer', TV_ATTRIBUTEKIND_DELPHI,      '1'); // do not localize
+    Add('Integer', TV_ATTRIBUTEKIND_BOLD,        '0');
+    Add('Integer', TV_ATTRIBUTEKIND_DELPHI,      '1');
   end;
-  with fRoseEnums.ListForClassName['BoldOperationKindSet'] do // do not localize
+  with fRoseEnums.ListForClassName['BoldOperationKindSet'] do
   begin
-    Add('Integer', TV_DELPHIOPERATIONKIND_NORMAL,          '200'); // do not localize
-    Add('Integer', TV_DELPHIOPERATIONKIND_VIRTUAL,         '201'); // do not localize
-    Add('Integer', TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL, '204'); // do not localize
-    Add('Integer', TV_DELPHIOPERATIONKIND_DYNAMIC,         '203'); // do not localize
-    Add('Integer', TV_DELPHIOPERATIONKIND_OVERRIDE,        '202'); // do not localize
+    Add('Integer', TV_DELPHIOPERATIONKIND_NORMAL,          '200');
+    Add('Integer', TV_DELPHIOPERATIONKIND_VIRTUAL,         '201');
+    Add('Integer', TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL, '204');
+    Add('Integer', TV_DELPHIOPERATIONKIND_DYNAMIC,         '203');
+    Add('Integer', TV_DELPHIOPERATIONKIND_OVERRIDE,        '202');
   end;
-  with fRoseEnums.ListForClassName['ChangeabilityKind'] do // do not localize
+  with fRoseEnums.ListForClassName['ChangeabilityKind'] do
   begin
-    Add('Integer', TV_CHANGEABILITY_ADDONLY,          '0'); // do not localize
-    Add('Integer', TV_CHANGEABILITY_CHANGEABLE,       '1'); // do not localize
-    Add('Integer', TV_CHANGEABILITY_FROZEN,           '2'); // do not localize
+    Add('Integer', TV_CHANGEABILITY_ADDONLY,          '0');
+    Add('Integer', TV_CHANGEABILITY_CHANGEABLE,       '1');
+    Add('Integer', TV_CHANGEABILITY_FROZEN,           '2');
   end;
-  with fRoseEnums.ListForClassName['DeleteActions'] do // do not localize
+  with fRoseEnums.ListForClassName['DeleteActions'] do
   begin
-    Add('Integer', TV_DELETEACTION_DEFAULT,        '0'); // do not localize
-    Add('Integer', TV_DELETEACTION_ALLOW,          '1'); // do not localize
-    Add('Integer', TV_DELETEACTION_PROHIBIT,       '2'); // do not localize
-    Add('Integer', TV_DELETEACTION_CASCADE,        '3'); // do not localize
+    Add('Integer', TV_DELETEACTION_DEFAULT,        '0');
+    Add('Integer', TV_DELETEACTION_ALLOW,          '1');
+    Add('Integer', TV_DELETEACTION_PROHIBIT,       '2');
+    Add('Integer', TV_DELETEACTION_CASCADE,        '3');
   end;
-  with fRoseEnums.ListForClassName['DelphiPropertySet'] do // do not localize
+  with fRoseEnums.ListForClassName['DelphiPropertySet'] do
   begin
-    Add('Integer', TV_DPNONE,                   '0'); // do not localize
-    Add('Integer', TV_DPFIELD,                  '1'); // do not localize
-    Add('Integer', TV_DPPRIVATEMETHOD,          '2'); // do not localize
-    Add('Integer', TV_DPPROTECTEDVIRTUALMETHOD, '3'); // do not localize
+    Add('Integer', TV_DPNONE,                   '0');
+    Add('Integer', TV_DPFIELD,                  '1');
+    Add('Integer', TV_DPPRIVATEMETHOD,          '2');
+    Add('Integer', TV_DPPROTECTEDVIRTUALMETHOD, '3');
   end;
-  with fRoseEnums.ListForClassName['EvolutionStateEnum'] do // do not localize
+  with fRoseEnums.ListForClassName['EvolutionStateEnum'] do
   begin
-    Add('Integer', TV_EVOLUTIONSTATE_NORMAL,       '0'); // do not localize
-    Add('Integer', TV_EVOLUTIONSTATE_TOBEREMOVED,  '1'); // do not localize
-    Add('Integer', TV_EVOLUTIONSTATE_REMOVED,      '2'); // do not localize
+    Add('Integer', TV_EVOLUTIONSTATE_NORMAL,       '0');
+    Add('Integer', TV_EVOLUTIONSTATE_TOBEREMOVED,  '1');
+    Add('Integer', TV_EVOLUTIONSTATE_REMOVED,      '2');
   end;
-  with fRoseEnums.ListForClassName['NationalCharConversionEnum'] do // do not localize
+  with fRoseEnums.ListForClassName['NationalCharConversionEnum'] do
   begin
-    Add('Integer', TV_NATIONALCHARCONVERSION_DEFAULT,    '0'); // do not localize
-    Add('Integer', TV_NATIONALCHARCONVERSION_TRUE,       '1'); // do not localize
-    Add('Integer', TV_NATIONALCHARCONVERSION_FALSE,      '2'); // do not localize
+    Add('Integer', TV_NATIONALCHARCONVERSION_DEFAULT,    '0');
+    Add('Integer', TV_NATIONALCHARCONVERSION_TRUE,       '1');
+    Add('Integer', TV_NATIONALCHARCONVERSION_FALSE,      '2');
   end;
-  with fRoseEnums.ListForClassName['OptimisticLockingSet'] do // do not localize
+  with fRoseEnums.ListForClassName['OptimisticLockingSet'] do
   begin
-    Add('Integer', TV_OPTIMISTICLOCKING_DEFAULT,         '0'); // do not localize
-    Add('Integer', TV_OPTIMISTICLOCKING_OFF,             '1'); // do not localize
-    Add('Integer', TV_OPTIMISTICLOCKING_MODIFIEDMEMBERS, '2'); // do not localize
-    Add('Integer', TV_OPTIMISTICLOCKING_ALLMEMBERS,      '3'); // do not localize
-    Add('Integer', TV_OPTIMISTICLOCKING_TIMESTAMP,       '4'); // do not localize
+    Add('Integer', TV_OPTIMISTICLOCKING_DEFAULT,         '0');
+    Add('Integer', TV_OPTIMISTICLOCKING_OFF,             '1');
+    Add('Integer', TV_OPTIMISTICLOCKING_MODIFIEDMEMBERS, '2');
+    Add('Integer', TV_OPTIMISTICLOCKING_ALLMEMBERS,      '3');
+    Add('Integer', TV_OPTIMISTICLOCKING_TIMESTAMP,       '4');
   end;
-  with fRoseEnums.ListForClassName['TableMappingSet'] do // do not localize
+  with fRoseEnums.ListForClassName['TableMappingSet'] do
   begin
-    Add('Integer', TV_TABLEMAPPING_OWN,         '0'); // do not localize
-    Add('Integer', TV_TABLEMAPPING_PARENT,      '1'); // do not localize
-    Add('Integer', TV_TABLEMAPPING_CHILDREN,    '2'); // do not localize
-    Add('Integer', TV_TABLEMAPPING_IMPORTED,    '3'); // do not localize
-  end;
-
-  with fRoseEnums.ListForClassName['DefaultRegionModeAssociationEnum'] do // do not localize
-  begin
-    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_DEFAULT,         '0'); // do not localize
-    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_NONE,      '1'); // do not localize
-    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_EXISTENCE,    '2'); // do not localize
-    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_CASCADE,    '3'); // do not localize
-    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_INDEPENDENTCASCADE,    '4'); // do not localize
+    Add('Integer', TV_TABLEMAPPING_OWN,         '0');
+    Add('Integer', TV_TABLEMAPPING_PARENT,      '1');
+    Add('Integer', TV_TABLEMAPPING_CHILDREN,    '2');
+    Add('Integer', TV_TABLEMAPPING_IMPORTED,    '3');
   end;
 
-  fRoseEnums.ListForClassName['PTYVersionSet'].Add('Integer', BOLDTVREV, '0'); // do not localize
+  with fRoseEnums.ListForClassName['DefaultRegionModeAssociationEnum'] do
+  begin
+    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_DEFAULT,         '0');
+    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_NONE,      '1');
+    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_EXISTENCE,    '2');
+    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_CASCADE,    '3');
+    Add('Integer', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_INDEPENDENTCASCADE,    '4');
+  end;
+
+  fRoseEnums.ListForClassName['PTYVersionSet'].Add('Integer', BOLDTVREV, '0');
 
   with fRoseEnums.ListForClassName[ENUM_TAG_CLASS_STORAGE] do
   begin
-    Add('Integer', TV_STORAGE_INTERNAL,         '0'); // do not localize
-    Add('Integer', TV_STORAGE_PARTIALLYEXTERNAL,      '1'); // do not localize
-    Add('Integer', TV_STORAGE_EXTERNAL,    '2'); // do not localize
+    Add('Integer', TV_STORAGE_INTERNAL,         '0');
+    Add('Integer', TV_STORAGE_PARTIALLYEXTERNAL,      '1');
+    Add('Integer', TV_STORAGE_EXTERNAL,    '2');
   end;
 
   with fRoseEnums.ListForClassName[ENUM_TAG_ASSOCIATION_STORAGE] do
   begin
-    Add('Integer', TV_STORAGE_INTERNAL,         '0'); // do not localize
-    Add('Integer', TV_STORAGE_EXTERNAL,    '1'); // do not localize
+    Add('Integer', TV_STORAGE_INTERNAL,         '0');
+    Add('Integer', TV_STORAGE_EXTERNAL,    '1');
   end;
 
   with fRoseEnums.ListForClassName[ENUM_TAG_ATTRIBUTE_STORAGE] do
   begin
-    Add('Integer', TV_STORAGE_INTERNAL,         '0'); // do not localize
-    Add('Integer', TV_STORAGE_EXTERNAL,    '1'); // do not localize
-    Add('Integer', TV_STORAGE_EXTERNALKEY,    '2'); // do not localize
+    Add('Integer', TV_STORAGE_INTERNAL,         '0');
+    Add('Integer', TV_STORAGE_EXTERNAL,    '1');
+    Add('Integer', TV_STORAGE_EXTERNALKEY,    '2');
   end;
 end;
 
@@ -340,18 +343,18 @@ var
 begin
   With TaggedValue do
   begin
-  if TypeName = 'String' then // do not localize
+  if TypeName = 'String' then
     ValueString := Format('"%s"', [DefaultValue])
-  else if TypeName = 'Boolean' then // do not localize
+  else if TypeName = 'Boolean' then
     ValueString := UpperCase(DefaultValue)
-  else if TypeName = 'Integer' then // do not localize
+  else if TypeName = 'Integer' then
     ValueString := DefaultValue
-  else if TypeName = 'Text' then // do not localize
-    ValueString := Format('(value Text "%s")', [DefaultValue]) // do not localize
+  else if TypeName = 'Text' then
+    ValueString := Format('(value Text "%s")', [DefaultValue])
   else
-    ValueString := Format('("%s" %s)', [TypeName, LookupRoseEnumValue(TypeName, DefaultValue)]); // do not localize
+    ValueString := Format('("%s" %s)', [TypeName, LookupRoseEnumValue(TypeName, DefaultValue)]);
 
-    PutLine(Format('(object Attribute tool "Bold" name %-33s value %s)', ['"' + Tag + '"', ValueString])); // do not localize
+    PutLine(Format('(object Attribute tool "Bold" name %-33s value %s)', ['"' + Tag + '"', ValueString]));
   end;
 end;
 
@@ -375,9 +378,9 @@ procedure TBoldRose98ptyCreator.PutEnumDefinition(const EnumName: string);
 var
   i: integer;
 begin
-  PutLine(Format('(object Attribute tool "Bold" name "%s" value', [EnumName])); // do not localize
+  PutLine(Format('(object Attribute tool "Bold" name "%s" value', [EnumName]));
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   Indent;
   with fRoseEnums.ListForClassName[EnumName] do
     for i := 0 to Count - 1 do
@@ -396,10 +399,10 @@ end;
 
 procedure TBoldRose98ptyCreator.StartSection(const RoseName, UMLName: string);
 begin
-  putSeparator(Format('%s definitions', [UMLName])); // do not localize
-  PutLine(Format('(object Attribute tool "Bold" name "default__%s" value', [RoseName])); // do not localize
+  putSeparator(Format('%s definitions', [UMLName]));
+  PutLine(Format('(object Attribute tool "Bold" name "default__%s" value', [RoseName]));
   Indent;
-  PutLine('(list Attribute_Set'); // do not localize
+  PutLine('(list Attribute_Set');
   Indent;
   PutLine;
 end;
@@ -408,5 +411,7 @@ procedure TBoldRose98ptyCreator.PutLine;
 begin
   PutLine('');
 end;
+
+initialization
 
 end.

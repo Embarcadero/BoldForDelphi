@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockHolder;
 
 interface
@@ -17,13 +20,12 @@ type
   TBoldLock = class;
   TBoldLockList = class;
   TBoldLockHolder = class;
-//  TBoldDatabaseLock = class;
 
   TBoldLock = class(TBoldMemoryManagedObject)
   private
     fName: string;
   public
-    constructor Create(Name: string);
+    constructor Create(const Name: string);
     property Name: string read fName;
   end;
 
@@ -36,16 +38,16 @@ type
 }
   TBoldLockList = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   public
     destructor Destroy; override;
     procedure Add(Item: TObject); override;
     procedure AddList(List: TBoldLockList);
-    procedure AddLock(Name: string);
+    procedure AddLock(const Name: string);
     function AsOLEVariant: OleVariant;
-    function Includes(Name: string): Boolean;
+    function Includes(const Name: string): Boolean;
     procedure RemoveList(List: TBoldLockList);
-    procedure RemoveLock(Name: string);
+    procedure RemoveLock(const Name: string);
   end;
 
   TBoldAbstractLockHolder = class(TBoldMemoryManagedObject)
@@ -72,7 +74,7 @@ type
     fDequeuer: TBoldAbstractDequeuer;
     procedure WaitForWakeup;
     procedure WakeUp;
-    function _ListenerMessage(Msg: string): Boolean;
+    function _ListenerMessage(const Msg: string): Boolean;
   protected
     function GetHeldExclusive: TBoldLockList; override;
     function GetHeldShared: TBoldLockList; override;
@@ -82,11 +84,12 @@ type
     function Lock(Shared: TBoldLockList; Exclusive: TBoldLockList; HeldLocks, ClientsHoldingRequestedLocks: TStringList): Boolean; override;
     procedure Release(Locks: TBoldLockList); override;
     function EnsureLocks: Boolean; override;
-    function LockDatabase: Boolean;
+    function LockDatabase: Boolean; 
     procedure GetPropagationEvents(EventList: TStringList); override;
     property TimeOut: Integer read fTimeOut write fTimeOut;
     property LockManager: IBoldLockManager read fLockManager write fLockManager;
   end;
+
 
 implementation
 
@@ -97,8 +100,8 @@ uses
   BoldIndex,
   BoldLockingDefs,
   BoldObjectSpaceExternalEvents,
-  BoldDefaultID,
-  BoldCoreConsts;
+  BoldDefaultID
+  ;
 
 { TBoldLockHolder }
 
@@ -144,7 +147,7 @@ end;
 
 procedure TBoldLockHolder.GetPropagationEvents(EventList: TStringList);
 begin
-  fListener.Queue.AppendToStringList(EventList);
+  fListener.InQueue.AppendToStringList(EventList);
 end;
 
 function TBoldLockHolder.Lock(Shared: TBoldLockList; Exclusive: TBoldLockList; HeldLocks, ClientsHoldingRequestedLocks: TStringList): Boolean;
@@ -166,7 +169,6 @@ begin
       WaitForWakeup;
       fHeldShared.AddList(Shared);
       fHeldExclusive.AddList(Exclusive);
-      // upgrade shared locks that we now aquired as exclusive
       fHeldShared.RemoveList(Exclusive);
     end
     else
@@ -185,7 +187,7 @@ var
   ConflictingUsers: TStringList;
 begin
   if not assigned(fDequeuer) then
-    raise EBold.CreateFmt(sNoDequeuerAvailable, [classname]);
+    raise EBold.CreateFmt('%s.LockDatabase: there is no dequeuer available', [classname]);
   SharedLocks := TBoldLockList.Create;
   ExclusiveLocks := TBoldLockList.Create;
   Conflicts := TStringList.Create;
@@ -217,7 +219,7 @@ end;
 procedure TBoldLockHolder.WaitForWakeup;
 begin
   if fWakeUpEvent.WaitFor(Timeout) <> wrSignaled then
-    raise EBold.CreateFmt(sOperationTimedOut, [ClassName]);
+    raise EBold.CreateFmt('%s.WaitForWakeUp: Operation timed out', [ClassName]);
   fWakeUpEvent.ResetEvent;
 end;
 
@@ -226,7 +228,7 @@ begin
   fWakeUpEvent.SetEvent;
 end;
 
-function TBoldLockHolder._ListenerMessage(Msg: string): Boolean;
+function TBoldLockHolder._ListenerMessage(const Msg: string): Boolean;
 var
   ClassName, MemberName, LockName: string;
 begin
@@ -240,7 +242,7 @@ end;
 
 { TBoldLock }
 
-constructor TBoldLock.Create(Name: string);
+constructor TBoldLock.Create(const Name: string);
 begin
   fName := Name;
 end;
@@ -250,7 +252,7 @@ end;
 procedure TBoldLockList.Add(Item: TObject);
 begin
   if not (Item is TBoldLock) then
-    raise EBold.CreateFmt(sWrongItemType, [classname, Item.classname]);
+    raise EBold.CreateFmt('%s.Add: Item should be TBoldLock, but is %s', [classname, Item.classname]);
   inherited;
 end;
 
@@ -258,19 +260,18 @@ procedure TBoldLockList.AddList(List: TBoldLockList);
 var
   aTraverser: TBoldIndexTraverser;
 begin
+  if List.Count = 0 then
+    exit;
   aTraverser := List.CreateTraverser;
   try
-    while not aTraverser.EndOfList do
-    begin
+    while aTraverser.MoveNext do
       AddLock(TBoldLock(aTraverser.Item).Name);
-      aTraverser.Next;
-    end;
   finally
     aTraverser.Free;
   end;
 end;
 
-procedure TBoldLockList.AddLock(Name: string);
+procedure TBoldLockList.AddLock(const Name: string);
 begin
   if not Includes(Name) then
     Add(TBoldLock.Create(Name));
@@ -285,24 +286,23 @@ begin
   aTraverser := CreateTraverser;
   try
     i := 0;
-    while not aTraverser.EndOfList do
+    while aTraverser.MoveNext do
     begin
       result[i] := (aTraverser.Item as TBoldLock).Name;
       inc(i);
-      aTraverser.Next;
     end;
   finally
     aTraverser.Free;
   end;
 end;
 
-destructor TBoldLockList.Destroy;
+destructor TBoldLockList.destroy;
 begin
   Clear(True);
   inherited;
 end;
 
-function TBoldLockList.Includes(Name: string): Boolean;
+function TBoldLockList.Includes(const Name: string): Boolean;
 begin
   result := assigned(FindByString(Name));
 end;
@@ -317,30 +317,27 @@ var
   aTraverser: TBoldIndexTraverser;
   aLock: TBoldLock;
 begin
+  if (count = 0) or (List.Count = 0) then
+    exit;
   if List.Count > Count then
   begin
     aTraverser := CreateTraverser;
-    while not aTraverser.EndOfList do
-    begin
-      aLock := aTraverser.Item as TBoldLock;
-      aTraverser.Next;
-      if List.Includes(aLock.Name) then
-        RemoveLock(aLock.Name);
-    end;
+    while aTraverser.MoveNext do // double while loop is needed as removing from traversing list moves to next item automatically on remove
+      while Assigned(aTraverser.Item) and List.Includes((aTraverser.Item as TBoldLock).Name) do
+        RemoveLock((aTraverser.Item as TBoldLock).Name);
     aTraverser.Free;
   end else
   begin
     aTraverser := List.CreateTraverser;
-    while not aTraverser.EndOfList do
+    while aTraverser.MoveNext do
     begin
       RemoveLock((aTraverser.Item as TBoldLock).Name);
-      aTraverser.Next;
     end;
     aTraverser.Free;
   end;
 end;
 
-procedure TBoldLockList.RemoveLock(Name: string);
+procedure TBoldLockList.RemoveLock(const Name: string);
 var
   Item: TObject;
 begin
@@ -365,4 +362,6 @@ begin
   inherited Create(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsDBLock, '', '', '', nil));
 end;
 }
+initialization
+
 end.

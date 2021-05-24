@@ -1,8 +1,16 @@
+
+{ Global compiler directives }
+{$include bold.inc}
+
 unit BoldBase;
 
 interface
 
 uses
+{$IFDEF DebugInstanceCounter}
+  Classes,
+  SysUtils,
+{$ENDIF}
   BoldDefs;
 
 type
@@ -12,11 +20,17 @@ type
   TBoldNonRefCountedObject = class;
 
   {-- TBoldMemoryManagedObject --}
+//  TBoldMemoryManagedObject = TObject; // Just an alias, to avoid 1 level deeper inheritance for no reason
   TBoldMemoryManagedObject = class(TObject)
+  protected
+    function GetDebugInfo: string; virtual;
+    function ContextObject: TObject; virtual;
   public
     class function NewInstance: TObject; override;
     procedure FreeInstance; override;
+    property DebugInfo: string read GetDebugInfo;
   end;
+
 
   {-- TBoldInterfacedObject --}
   TBoldInterfacedObject = class(TBoldMemoryManagedObject, IInterface)
@@ -35,7 +49,7 @@ type
     function _AddRef: Integer; override;
     function _Release: Integer; override;
   public
-    {$IFNDEF BOLD_BCB}  { TODO : Check if needed in BCB6 }
+    {$IFNDEF BOLD_BCB}
     procedure AfterConstruction; override;
     class function NewInstance: TObject; override;
     {$ENDIF}
@@ -79,26 +93,88 @@ type
   BoldElementFlag22 = 1 shl 22;
   BoldElementFlag23 = 1 shl 23;
 
- type
+type
+
   {---TBoldFlaggedObject---}
   TBoldFlaggedObject = class(TBoldMemoryManagedObject)
   private
     fStateAndFlagBank: cardinal;
   protected
-    procedure SetInternalState(Mask, shift, value: cardinal);
-    function GetInternalState(Mask, shift: cardinal): cardinal;
-    procedure SetElementFlag(Flag: TBoldElementFlag; Value: Boolean);
-    function GetElementFlag(Flag: TBoldElementFlag): Boolean;
+    procedure SetInternalState(Mask, shift, value: cardinal); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetInternalState(Mask, shift: cardinal): cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetElementFlag(Flag: TBoldElementFlag; Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetElementFlag(Flag: TBoldElementFlag): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    property StateAndFlagBank: cardinal read fStateAndFlagBank;  // allow reading in subclasses
   end;
+
+{$IFDEF DebugInstanceCounter}
+const
+  cDefaultInstanceLimit = 1000;
+var
+  DebugInstanceCounter: boolean = false;
+
+procedure GetInstaceList(AStringList: TStringList; ASort: boolean = true; AInstanceLimit: integer = cDefaultInstanceLimit);
+procedure ClearInstanceLog;
+{$ENDIF}
 
 implementation
 
 uses
   BoldCommonConst,
+ 
+  {$IFDEF DebugInstanceCounter}
+  BoldIndexableList,
+  BoldHashIndexes,
+  {$ENDIF}
   {$IFNDEF BOLD_DISABLEMEMORYMANAGER}
   BoldMemoryManager,
   {$ENDIF}
   Windows;
+
+var
+  Finalized: boolean;
+
+{$IFDEF DebugInstanceCounter}
+type
+  TBoldClassStats = class(TObject)
+  strict private
+    fClass: TClass;
+    fCreatedInstances: int64;
+    fDestroyedInstances: int64;
+  private
+    fChanged: boolean;
+  public
+    function LiveInstances: int64;
+    function MemoryUsage: int64;
+    procedure InstanceCreated;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure InstanceDestroyed;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    property BoldClass: TClass read fClass;
+    property CreatedInstances: int64 read fCreatedInstances;
+    property DestroyedInstances: int64 read fDestroyedInstances;
+    constructor Create(AClass: TClass);
+  end;
+
+  TBoldClassStatsList = class(TBoldIndexableList)
+  private
+    function GetClassStats(const index: integer): TBoldClassStats; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class var IX_Class: integer;
+  public
+    constructor Create;
+    function StatsForClass(AClassType: TClass): TBoldClassStats;
+    property ClassStats[const index: integer]: TBoldClassStats read GetClassStats; default;
+    property Count;
+  end;
+
+  TClassIndex = class(TBoldClassHashIndex)
+  protected
+    function ItemAsKeyClass(Item: TObject): TClass; override;
+  end;
+
+var
+  gClassStatsList: TBoldClassStatsList;
+  gInternalUpdate: integer = 0;
+
+{$ENDIF}
 
 {-- TBoldInterfacedObject -----------------------------------------------------}
 
@@ -185,32 +261,218 @@ begin
    cardinal(Value shl Shift);
 end;
 
+// warning, this code is duplicated in TBoldMember since inlining does not work as it should
 function TBoldFlaggedObject.GetInternalState(Mask, shift: cardinal): cardinal;
 begin
   result := (fStateAndFlagBank and mask) shr shift;
 end;
 
-{-- TBoldMemoryManagedObject -----------------------------------------------------}
+{$IFDEF DebugInstanceCounter}
 
-procedure TBoldMemoryManagedObject.FreeInstance;
+{ TBoldClassStatsList }
+
+constructor TBoldClassStatsList.Create;
 begin
-  {$IFNDEF BOLD_DISABLEMEMORYMANAGER}
-  CleanUpInstance;
-  BoldMemoryManager_.DeAllocateMemory(Pointer(self), InstanceSize);
-  {$ELSE}
   inherited;
-  {$ENDIF}
+  SetIndexCapacity(1);
+  IX_Class := -1;
+  SetIndexVariable(IX_Class, AddIndex(TClassIndex.Create));
+end;
+
+function TBoldClassStatsList.GetClassStats(
+  const index: integer): TBoldClassStats;
+begin
+  Result := TBoldClassStats(inherited Items[index]);
+end;
+
+function TBoldClassStatsList.StatsForClass(AClassType: TClass): TBoldClassStats;
+begin
+  Result := TBoldClassStats(TClassIndex(Indexes[IX_Class]).FindByClass(AClassType));
+  if not Assigned(Result) then
+  begin
+    Result := TBoldClassStats.Create(AClassType);
+    self.Add(result);
+  end;
+end;
+
+{ TClassIndex }
+
+function TClassIndex.ItemAsKeyClass(Item: TObject): TClass;
+begin
+  Result := TBoldClassStats(Item).BoldClass;
+end;
+
+{ TBoldClassStats }
+
+constructor TBoldClassStats.Create(AClass: TClass);
+begin
+  fClass := AClass;
+end;
+
+procedure TBoldClassStats.InstanceCreated;
+begin
+  inc(fCreatedInstances);
+  fChanged := true;
+end;
+
+procedure TBoldClassStats.InstanceDestroyed;
+begin
+  inc(fDestroyedInstances);
+  fChanged := true;
+end;
+
+function TBoldClassStats.LiveInstances: int64;
+begin
+  result := fCreatedInstances - fDestroyedInstances;
+end;
+
+function TBoldClassStats.MemoryUsage: int64;
+begin
+  result := LiveInstances * BoldClass.InstanceSize;
+end;
+
+procedure GetInstaceList(AStringList: TStringList; ASort: boolean = true; AInstanceLimit: integer = cDefaultInstanceLimit);
+var
+  vSl: TStringList;
+  i: integer;
+  vBoldClassStats: TBoldClassStats;
+  vTotalCreated, vTotalDestroyed, vTotalMemoryUsage: int64;
+begin
+  vTotalCreated := 0;
+  vTotalDestroyed := 0;
+  vTotalMemoryUsage := 0;
+  vSl := TStringList.Create;
+  vSl.sorted := ASort;
+  try
+    for I := 0 to gClassStatsList.Count - 1 do
+    begin
+      vBoldClassStats := gClassStatsList[i];
+      vBoldClassStats.fChanged := false;
+      Inc(vTotalCreated, vBoldClassStats.CreatedInstances);
+      inc(vTotalDestroyed, vBoldClassStats.DestroyedInstances);
+      Inc(vTotalMemoryUsage, vBoldClassStats.MemoryUsage);
+      if vBoldClassStats.LiveInstances > AInstanceLimit then
+        vSl.Add( Format('%10d - %10d = %10d: %s (%d bytes)', [vBoldClassStats.CreatedInstances, vBoldClassStats.DestroyedInstances, vBoldClassStats.LiveInstances, vBoldClassStats.BoldClass.ClassName, vBoldClassStats.MemoryUsage]));
+    end;
+    AStringList.Add(StringOfChar('-', 37));
+    AStringList.Add('   Created - Destroyed  =      Live : ClassName (Minimal Memory usage in bytes)');
+    AStringList.Add(StringOfChar('-', 37));
+    AStringList.AddStrings(vSl);
+    AStringList.Add(StringOfChar('-', 37));
+    AStringList.Add( Format('%10d - %10d = %10d: (%d bytes)', [vTotalCreated, vTotalDestroyed, vTotalCreated - vTotalDestroyed, vTotalMemoryUsage]));
+    AStringList.Add(StringOfChar('-', 37));
+  finally
+    vSl.free;
+  end;
+end;
+
+procedure ClearInstanceLog;
+begin
+  gClassStatsList.Clear;
+end;
+
+procedure CheckForLiveInstances;
+var
+  i: integer;
+  vBoldClassStats: TBoldClassStats;
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  try
+    for I := 0 to gClassStatsList.Count - 1 do
+    begin
+      vBoldClassStats := gClassStatsList[i];
+      if vBoldClassStats.LiveInstances > 0 then
+        sl.Add(Format('%d instances of %s', [vBoldClassStats.LiveInstances, vBoldClassStats.BoldClass.ClassName]));
+    end;
+    if sl.count > 0 then
+      raise Exception.Create(sl.text);
+  finally
+    sl.free;
+  end;
+end;
+{$ENDIF}
+
+
+{ TBoldMemoryManagedObject }
+
+function TBoldMemoryManagedObject.GetDebugInfo: string;
+begin
+  if ContextObject <> nil then
+    result := ContextObject.ClassName
+  else
+    result := ClassName;
+end;
+
+function TBoldMemoryManagedObject.ContextObject: TObject;
+begin
+  result := self;
 end;
 
 class function TBoldMemoryManagedObject.NewInstance: TObject;
 begin
-  {$IFNDEF BOLD_DISABLEMEMORYMANAGER}
+{$IFNDEF BOLD_DISABLEMEMORYMANAGER}
   result := TObject(BoldMemoryManager_.AllocateMemory(InstanceSize));
   InitInstance(result);
-  {$ELSE}
+{$ELSE}
   result := inherited NewInstance;
-  {$ENDIF}
+{$ENDIF}
+{$IFDEF DebugInstanceCounter}
+  if DebugInstanceCounter and (gInternalUpdate = 0) then
+    gClassStatsList.StatsForClass(self).InstanceCreated;
+{$ENDIF}
 end;
+
+procedure TBoldMemoryManagedObject.FreeInstance;
+
+  procedure InternalRaise;
+  begin
+    raise EBold.Create('TBoldMemoryManagedObject.FreeInstance: Attempt to destroy object after BoldBase Finalization. Inspect/revert recent Uses clause changes.');
+  end;
+
+begin
+  if Finalized then
+    InternalRaise;
+  {$IFDEF DebugInstanceCounter}
+  if DebugInstanceCounter and (gInternalUpdate = 0) then
+    gClassStatsList.StatsForClass(ClassType).InstanceDestroyed;
+  {$ENDIF}
+{$IFNDEF BOLD_DISABLEMEMORYMANAGER}
+  CleanUpInstance;
+  BoldMemoryManager_.DeAllocateMemory(Pointer(self), InstanceSize);
+{$ELSE}
+  inherited;
+{$ENDIF}
+end;
+
+procedure InitDebugMethods;
+begin
+  exit;
+{$IFDEF BOLD_DISABLEMEMORYMANAGER}
+  with TBoldMemoryManagedObject(nil) do
+  begin
+    DebugInfo;
+    GetDebugInfo;
+  end;
+{$ENDIF}
+end;
+
+initialization
+{$IFDEF DebugInstanceCounter}
+  inc(gInternalUpdate);
+  gClassStatsList := TBoldClassStatsList.Create;
+  dec(gInternalUpdate);
+{$ENDIF}
+InitDebugMethods;
+
+finalization
+{$IFDEF DebugInstanceCounter}
+  CheckForLiveInstances;
+  inc(gInternalUpdate);
+  gClassStatsList.free;
+  dec(gInternalUpdate);
+{$ENDIF}
+  Finalized := true;
 
 end.
 

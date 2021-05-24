@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceControllerConfig;
 
 interface
@@ -32,6 +35,7 @@ type
 
   TBoldExternalPersistenceConfigItem = class(TBoldUniquelyNamedCollectionItemWithNameStorage)
   private
+    FFetchAllMembersWhenFetchingKey: boolean;
     FOnCreateObject: TBoldExternalPersistenceCreateEvent;
     FOnReadObject: TBoldExternalPersistenceFetchEvent;
     FOnUpdateObject: TBoldExternalPersistenceUpdateEvent;
@@ -51,6 +55,7 @@ type
   public
   published
     property ExpressionName: String read GetExpressionName write SetExpressionName;
+    property FetchAllMembersWhenFetchingKey: boolean read FFetchAllMembersWhenFetchingKey write FFetchAllMembersWhenFetchingKey default false;
     property OnCreateObject: TBoldExternalPersistenceCreateEvent read FOnCreateObject write FOnCreateObject;
     property OnReadObject: TBoldExternalPersistenceFetchEvent read FOnReadObject write FOnReadObject;
     property OnUpdateObject: TBoldExternalPersistenceUpdateEvent read FOnUpdateObject write FOnUpdateObject;
@@ -77,6 +82,9 @@ type
 
 
 implementation
+
+uses
+  Boldrev;
 
 { TBoldExternalPersistenceConfigItem }
 
@@ -117,4 +125,5 @@ begin
   Result := inherited GetItem(Index) as TBoldExternalPersistenceConfigItem;
 end;
 
+initialization
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDBreg;
 
 interface
@@ -6,7 +9,7 @@ procedure Register;
 
 implementation
 
-{.$R BoldPersistenceHandleDB.res}
+{$R BoldPersistenceHandleDB.res}
 
 uses
   Classes,
@@ -15,11 +18,14 @@ uses
   BoldDbActions,
   DesignEditors,
   DesignIntf,
-  actnlist,
+{$IFDEF BOLD_DELPHI17_OR_LATER}
+  Actions,
+{$ELSE}
+  ActnList,
+{$ENDIF}
   SysUtils,
   BoldPersistenceHandleDB,
-  BoldIDEConsts,
-  BoldPMConsts;
+  BoldIDEConsts;
 
 type
   { TBoldPersistenceHandleDBEditor }
@@ -36,8 +42,10 @@ type
 procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldPersistenceHandleDB]);
-//  RegisterActions(BOLDACTIONGROUPNAME,
-//                [TBoldGenerateSchemaAction], nil);
+  RegisterActions(BOLDACTIONGROUPNAME,
+                [TBoldGenerateSchemaAction,
+                TBoldValidateDBStructureAction,
+                TBoldValidateDBDataAction], nil);
   RegisterComponentEditor(TBoldPersistenceHandleDB, TBoldPersistenceHandleDBEditor);
 end;
 
@@ -56,11 +64,11 @@ begin
   begin
     try
       TBoldPersistenceHandleDB(Component).CreateDataBaseSchema;
-      showmessage(sSchemaGenerated);
+      showmessage('Database schema generated');
     except
       on e: Exception do
       begin
-        Showmessage(Format(sSchemaGenerationFailed, [BOLDCRLF, BOLDCRLF, e.message]));
+        Showmessage('Database schema generation failed: '+BOLDCRLF+BOLDCRLF+e.message);
       end;
     end;
   end;
@@ -69,7 +77,7 @@ end;
 function TBoldPersistenceHandleDBEditor.GetVerb(Index: Integer): string;
 begin
   case Index of
-    0: Result := sGenerateSchema;
+    0: Result := 'Generate Database Schema...';
   end;
 end;
 

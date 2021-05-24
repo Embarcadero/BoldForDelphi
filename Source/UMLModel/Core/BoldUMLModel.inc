@@ -10,10 +10,15 @@
 
 procedure TUMLModel.Clear;
 begin
+  BoldSystem.StartTransaction();
+  try
   while ownedElement.Count > 0 do
     ownedElement[ownedElement.Count-1].Delete;
   while M_taggedValue.Count > 0 do
     M_taggedValue[M_taggedValue.Count-1].Delete;
+  finally
+    BoldSystem.CommitTransaction();
+  end;
 end;
 
 function TUMLAssociationEnd.GetOtherEnd: TUMLAssociationEnd;
@@ -201,7 +206,9 @@ end;
 procedure TUMLClassifier.GetAllOverrideableMethods(Methods: TList);
 
   procedure GetSuperclassMethods(aClass: TUMLClassifier; SuperMethods: TList);
-  var Index: Integer;
+  var
+    Index: Integer;
+    UMLOperation: TUMLOperation;
   begin
     if Assigned(aClass.SuperClass) then
       GetSuperclassMethods(aClass.SuperClass, SuperMethods);
@@ -209,9 +216,10 @@ procedure TUMLClassifier.GetAllOverrideableMethods(Methods: TList);
     begin
       if aClass.Feature[Index] is TUMLOperation then
       begin
-        if ((aClass.Feature[Index] as TUMLOperation).GetBoldTV(TAG_DELPHIOPERATIONKIND) = TV_DELPHIOPERATIONKIND_VIRTUAL) or
-           ((aClass.Feature[Index] as TUMLOperation).GetBoldTV(TAG_DELPHIOPERATIONKIND) = TV_DELPHIOPERATIONKIND_DYNAMIC) or
-           ((aClass.Feature[Index] as TUMLOperation).GetBoldTV(TAG_DELPHIOPERATIONKIND) = TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL) then
+        UMLOperation := (aClass.Feature[Index] as TUMLOperation);
+        if (UMLOperation.GetBoldTV(TAG_DELPHIOPERATIONKIND) = TV_DELPHIOPERATIONKIND_VIRTUAL) or
+           (UMLOperation.GetBoldTV(TAG_DELPHIOPERATIONKIND) = TV_DELPHIOPERATIONKIND_DYNAMIC) or
+           (UMLOperation.GetBoldTV(TAG_DELPHIOPERATIONKIND) = TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL) then
 
           Methods.Add(aClass.Feature[Index]);
       end;
@@ -337,7 +345,7 @@ var
   i: Integer;
 begin
   Result := nil;
-  AllStereotypes := (aSystem.Classes[aSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName['UMLStereotype'].TopSortedIndex] as TUMLStereotypeList);
+  AllStereotypes := aSystem.ClassByObjectClass[TUMLStereotype] as TUMLStereotypeList;
   for i := 0 to AllStereotypes.Count - 1 do
   begin
     if AllStereotypes[i].Name = aName then
@@ -463,8 +471,6 @@ begin
     NewValue := TV_FALSE;
   SetTaggedValue(TAG_DERIVED, NewValue);
 end;
-
-
 
 procedure TUMLAssociationEnd._isOrdered_DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
 begin

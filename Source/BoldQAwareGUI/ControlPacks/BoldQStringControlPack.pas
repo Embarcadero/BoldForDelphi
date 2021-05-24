@@ -122,7 +122,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 var

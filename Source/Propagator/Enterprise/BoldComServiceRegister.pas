@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComServiceRegister;
 
 interface
@@ -26,7 +29,7 @@ type
 procedure RegisterClassFactories(const Reg: Boolean;
                                  const AppId: string;
                                  ClsIds: array of string);
-procedure RegisterServerAsService(const bReg: Boolean; const ClassID, ServiceName: string);
+procedure RegisterServerAsService(const bReg: Boolean; const ClassID, ServiceName: string);                                 
 
 implementation
 
@@ -47,7 +50,7 @@ begin
   try
     Reg.RootKey := RootKey;
     if Reg.OpenKey(Key, False)
-      then Reg.DeleteValue('AppID'); // do not localize
+      then Reg.DeleteValue('AppID');
   finally
     Reg.CloseKey;
     Reg.Free;
@@ -81,8 +84,8 @@ begin
     Reg := TRegistry.Create;
     try
       Reg.RootKey := HKEY_CLASSES_ROOT;
-      if Reg.OpenKey('AppID\' + ClassID, False) // do not localize
-        then Reg.DeleteValue('LocalService'); // do not localize
+      if Reg.OpenKey('AppID\' + ClassID, False)
+        then Reg.DeleteValue('LocalService');
     finally
       Reg.CloseKey;
       Reg.Free;
@@ -100,13 +103,13 @@ begin
   begin
     comserv.comserver.UpdateRegistry(true);
     for i := 0 to High(ClsIds) do
-      CreateRegKey(Format('%s\%s', ['CLSID', ClsIds[i]]), 'AppID', AppId); // do not localize
+      CreateRegKey(Format('%s\%s', ['CLSID', ClsIds[i]]), 'AppID', AppId);
   end
   else
   begin
     comserv.comserver.UpdateRegistry(false);
     for i := 0 to High(ClsIds) do
-      DeleteAppId(HKEY_CLASSES_ROOT, Format('%s\%s', ['CLSID', ClsIds[i]])); // do not localize
+      DeleteAppId(HKEY_CLASSES_ROOT, Format('%s\%s', ['CLSID', ClsIds[i]]));
   end;
 end;
 
@@ -118,10 +121,10 @@ var
 begin
   if Reg then
     for i := 0 to High(ClsIds) do
-      CreateRegKey(Format('%s\%s', ['CLSID', ClsIds[i]]), 'AppID', AppId) // do not localize
+      CreateRegKey(Format('%s\%s', ['CLSID', ClsIds[i]]), 'AppID', AppId)
   else
     for i := 0 to High(ClsIds) do
-      DeleteAppId(HKEY_CLASSES_ROOT, Format('%s\%s', ['CLSID', ClsIds[i]])); // do not localize
+      DeleteAppId(HKEY_CLASSES_ROOT, Format('%s\%s', ['CLSID', ClsIds[i]]));
 end;
 
 procedure DeleteCLSIDs(const RootKey: DWord; ClsIds: array of string);
@@ -133,7 +136,7 @@ begin
   Reg.RootKey := RootKey;
   try
     for i := 0 to High(ClsIds) do
-      Reg.DeleteKey(Format('%s\%s', ['CLSID', ClsIds[i]])); // do not localize
+      Reg.DeleteKey(Format('%s\%s', ['CLSID', ClsIds[i]]));
   finally
     Reg.CloseKey;
     Reg.Free;
@@ -166,5 +169,7 @@ procedure TBoldComServiceRegister.DoServiceStop;
 begin
   RegisterClassFactories(False, AppID, [AppID]);
 end;
+
+initialization
 
 end.

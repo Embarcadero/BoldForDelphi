@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldVclUtils;
 
 interface
@@ -30,7 +33,6 @@ var
   i: Integer;
 begin
   if ((a < StringGrid.RowCount) AND (b < StringGrid.RowCount) AND (a <> 0) AND (b <> 0))  then
-    //ExchangeRows
     for i:= 0 to StringGrid.ColCount - 1 do
       StringGrid.Cols[i].Exchange(a,b);
 end;
@@ -74,7 +76,6 @@ var
 begin
   if ((StartRow >= StringGrid.FixedRows) AND (StartRow < StringGrid.RowCount)) then
   begin
-    // append an empty to the stringgrid
     AppendRow(StringGrid);
     for i := (StringGrid.RowCount -1) downto (StartRow + 1) do
        ExchangeRows(StringGrid,i, i - 1);
@@ -85,7 +86,6 @@ procedure SelectCell(var StringGrid: TStringGrid; const Col, Row: integer);
 var
  t: TGridRect;
 begin
-  // Selecting a cell in the stringGrid
   t.Left := Col ;
   t.Right := Col ;
   t.Top := Row;
@@ -95,7 +95,6 @@ end;
 
 procedure AppendRow(var StringGrid: TStringGrid);
 begin
-  // append an empty to the stringgrid
   if not IsEmptyStr(Trim(StringGrid.Rows[StringGrid.RowCount - 1].Text)) then
   begin
     StringGrid.RowCount := StringGrid.RowCount + 1;
@@ -119,5 +118,7 @@ function IsEmptyStr(const str: string): Boolean;
 begin
   Result := (length(trim(str)) = 0);
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelHandleReg;
 
 interface
@@ -6,13 +9,14 @@ procedure Register;
 
 implementation
 
+{$R BoldUMLModelHandleReg.res}
+
 uses
   SysUtils,
   Classes,
   BoldIDEConsts,
   BoldModel;
 
-{$R BoldUMLModelHandleReg.res}
 
 procedure RegisterComponentsOnPalette;
 begin

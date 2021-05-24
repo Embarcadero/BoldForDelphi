@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLDispatcher;
 
 interface
@@ -7,7 +10,7 @@ uses
   BoldUtils,
   BoldSOAP_TLB,
   BoldStringList,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldComServerHandles,
   BoldDefs,
   BoldXMLRequests,
@@ -36,7 +39,7 @@ type
   end;
 
   TBoldXMLDispatchErrorEvent = procedure (const E: Exception; out response: string) of object;
-
+  
   TBoldGetXMLRequestEvent = procedure (const XML: string; out Request: TBoldXMLRequest) of object;
   TBoldXMLDispatcher = class(TBoldComExportHandle)
   private
@@ -75,7 +78,6 @@ type
     constructor Create(Collection: TCollection); override;
     destructor Destroy; override;
     procedure DispatchAction(const request: TBoldXMLRequest; out response: string);
-//    function GetActionNode(const DomDocument: IXMLDomDocument; out DomNode: IXMLDomNode): Boolean;
   published
     property Default: Boolean read FDefault write SetDefault default False;
     property ActionName: string read getActionName write setActionName;
@@ -98,12 +100,10 @@ type
 
 implementation
 
-{$R *.res}
-
 uses
   ActiveX,
-  windows,
-  BoldComConst;
+  windows
+  ;
 
 const
   breProducerDestroying = 100;
@@ -113,14 +113,16 @@ const
 constructor TBoldXMLSOAPService.Create(Owner: TObject);
 var
   typelib: ITypeLib;
+  Res: HResult;
 begin
-  if (LoadRegTypeLib(LIBID_BoldSOAP, 1, 0, 0, typelib) = S_OK) then
+  Res := LoadRegTypeLib(LIBID_BoldSOAP, 1, 0, 0, typelib);
+  if (Res = S_OK) then
   begin
     inherited Create(typelib, IBoldSOAPService);
     FOwner := Owner;
-  end
+  end                  
   else
-    raise EBold.CreateFmt(sUnableToLoadTypeLibBoldSoap, [ClassName]);
+    raise EBold.CreateFmt('%s.Create: Unable to load type library LIBID_BoldSOAP. (LoadRegTypeLib Result: %d)', [ClassName, Res]);
 end;
 
 procedure TBoldXMLSOAPService.Get(const request: WideString;
@@ -134,7 +136,7 @@ begin
   else
     XMLRequest := TBoldXMLRequest.CreateFromXML(request);
   if not Assigned(XMLRequest) then
-    raise EBold.CreateFmt(sXMLRequestNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.Get: XMLRequest not assigned', [ClassName]);   
   (Owner as TBoldXMLDispatcher).DispatchAction(XMLRequest, ResponseXML);
   reply := ResponseXML;
 end;
@@ -162,7 +164,7 @@ var
 begin
   try
     if not Assigned(request) then
-      raise EBold.CreateFmt(sXMLRequestIsNil, [ClassName]);
+      raise EBold.CreateFmt('%s.DispatchAction: request is nil', [ClassName]);
     I := 0;
     Default := nil;
     ActionName := request.ActionName;
@@ -210,8 +212,8 @@ var
 begin
     xmlresponse := TBoldXMLRequest.CreateInitialized;
   try
-    xmlresponse.SetAction('SOAP:Fault'); // do not localize
-    xmlresponse.AddParam('SOAP:faultstring', E.Message); // do not localize
+    xmlresponse.SetAction('SOAP:Fault');
+    xmlresponse.AddParam('SOAP:faultstring', E.Message);
     response := xmlresponse.DomDocument.XML;
   finally
     FreeAndNil(xmlresponse);
@@ -235,7 +237,7 @@ begin
   s := Copy(ClassName, 2, MaxInt);
   repeat
     Inc(I);
-    aName := Format('%s%d',[s, I]); // do not localize
+    aName := Format('%s%d',[s, I]);
   until not Assigned(self.Collection.ItemByName[aName]);
   ActionName := aName;
   FSubscriber := TBoldPassThroughSubscriber.Create(_Receive);
@@ -345,4 +347,5 @@ begin
     Producer := nil;
 end;
 
+initialization
 end.

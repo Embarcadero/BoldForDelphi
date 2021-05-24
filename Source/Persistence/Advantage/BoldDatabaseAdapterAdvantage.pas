@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterAdvantage;
 
 interface
@@ -22,7 +25,7 @@ type
     procedure ReleaseBoldDatabase; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
   published
     property DataBase: TADSConnection read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -34,16 +37,17 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 
-{ TBoldDatabaseAdapterAdvantage }
+{ TBoldDatabaseAdapterAdvantage }      
 
-destructor TBoldDatabaseAdapterAdvantage.Destroy;
+destructor TBoldDatabaseAdapterAdvantage.destroy;
 begin
   Changed;
   FreePublisher;
   FreeAndNil(fBoldDatabase);
-  inherited;
+  inherited;                   
 end;
 
 function TBoldDatabaseAdapterAdvantage.GetDataBase: TADSConnection;
@@ -54,7 +58,7 @@ end;
 function TBoldDatabaseAdapterAdvantage.GetDataBaseInterface: IBoldDatabase;
 begin
   if not assigned(Database) then
-    raise EBold.CreateFmt('%s.GetDatabaseInterface: The adapter is not connected to a database', [classname]);
+    raise EBold.CreateFmt('%s.GetDatabaseInterface: The adapter is not connected to a database', [classname]); 
   if not assigned(fBoldDatabase) then
     fBoldDatabase := TBoldAdvantageDataBase.create(Database, SQLDataBaseConfig);
   result := fBoldDatabase;
@@ -69,5 +73,7 @@ procedure TBoldDatabaseAdapterAdvantage.SetDataBase(const Value: TADSConnection)
 begin
   InternalDatabase := value;
 end;
+
+initialization
 
 end.

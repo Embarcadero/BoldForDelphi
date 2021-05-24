@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclLightWeightNodes;
 
 interface
@@ -67,21 +70,22 @@ type
   private
     fList: TList;
     fOwnsObjects: Boolean;
-    function GetItem(index: Integer): TBoldOLWNode;
-    procedure PutItem(index: Integer; Value: TBoldOLWNode);
+    function GetItem(index: Integer): TBoldOLWNode; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure PutItem(index: Integer; Value: TBoldOLWNode); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     function GetStreamName: string;
-    function GetCount: integer;
-    function GetIndexOf(Node: TBoldOLWNode): integer;
+    function GetCount: integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetIndexOf(Node: TBoldOLWNode): integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create;
     destructor Destroy; override;
-    function Add(Item: TBoldOLWNode): Integer;
+    function Add(Item: TBoldOLWNode): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     procedure TraverseList(V: TBoldOLWNodeVisitor); virtual;
     property Items[index: Integer]: TBoldOLWNode read GetItem write PutItem; default;
     property Count: integer read GetCount;
     property IndexOf[Node: TBoldOLWNode]: integer read GetIndexOf;
     property OwnsObjects: Boolean read fOwnsObjects write fOwnsObjects;
   end;
+
 
   TBoldOLWNode = class(TBoldNonRefCountedObject, IBoldStreamable)
   private
@@ -93,6 +97,7 @@ type
     procedure AcceptVisitor(V: TBoldOLWNodeVisitor); virtual;
     property Position: Integer read fPosition;
   end;
+
 
   TBoldOLWTypeNode = class(TBoldOLWNode)
   private
@@ -213,7 +218,7 @@ type
   end;
 
   TBoldOLWMomentLiteral = class(TBoldOLWLiteral)
-  private
+  protected
     fMomentValue: TDateTime;
   public
     constructor Create(Position: integer; MomentValue: TDateTime);
@@ -221,24 +226,20 @@ type
 
   TBoldOLWDateLiteral = class(TBoldOLWMomentLiteral)
   private
-    function GetDateValue: TDateTime;
-    procedure SetDateValue(const Value: TDateTime);
   protected
     function GetStreamName: string; override;
   public
     procedure AcceptVisitor(V: TBoldOLWNodeVisitor); override;
-    property DateValue: TDateTime read GetDateValue write SetDateValue;
+    property DateValue: TDateTime read fMomentValue write fMomentValue;
   end;
 
   TBoldOLWTimeLiteral = class(TBoldOLWMomentLiteral)
   private
-    function GetTimeValue: TDateTime;
-    procedure SetTimeValue(const Value: TDateTime);
   protected
     function GetStreamName: string; override;
   public
     procedure AcceptVisitor(V: TBoldOLWNodeVisitor); override;
-    property TimeValue: TDateTime read GetTimeValue write SetTimeValue;
+    property TimeValue: TDateTime read fMomentValue write fMomentValue;
   end;
 
 
@@ -282,10 +283,9 @@ implementation
 
 uses
   SysUtils,
-  MSXML_TLB,
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldXMLStreaming,
   BoldDefaultStreamNames,
-  BoldCoreConsts,
   BoldDefs;
 
 const
@@ -309,7 +309,6 @@ const
 
 type
   TBoldXMLOCLConditionStreamer = class(TBoldXMLConditionWithClassStreamer)
-  // RootNode, Context, Env, OclExpr
   protected
     function GetStreamName: string; override;
   public
@@ -329,14 +328,12 @@ type
 
 
   TBoldXMLOLWNodeStreamer = class(TBoldXMLObjectStreamer)
-  // Position
   public
     procedure WriteObject(Obj: TBoldInterfacedObject; Node: TBoldXMLNode); override;
     procedure ReadObject(Obj: TObject; Node: TBoldXMLNode); override;
   end;
 
   TBoldXMLOLWTypeNodeStreamer = class(TBoldXMLOLWNodeStreamer)
-  // TypeName, TopSortedIndex
   protected
     function GetStreamName: string; override;
   public
@@ -346,7 +343,6 @@ type
   end;
 
   TBoldXMLOLWListCoercionStreamer = class(TBoldXMLOLWNodeStreamer)
-  // Child
   protected
     function GetStreamName: string; override;
   public
@@ -356,7 +352,6 @@ type
   end;
 
   TBoldXMLOLWOperationStreamer = class(TBoldXMLOLWNodeStreamer)
-  // Args, OperationName
   protected
     function GetStreamName: string; override;
   public
@@ -366,7 +361,6 @@ type
   end;
 
   TBoldXMLOLWIterationStreamer = class(TBoldXMLOLWOperationStreamer)
-  // LoopVar
   protected
     function GetStreamName: string; override;
   public
@@ -376,7 +370,6 @@ type
   end;
 
   TBoldXMLOLWMemberStreamer = class(TBoldXMLOLWNodeStreamer)
-  // MemberIndex, MemberName, MemberOf, Qualifier, IsBoolean
   protected
     function GetStreamName: string; override;
   public
@@ -386,7 +379,6 @@ type
   end;
 
   TBoldXMLOLWVariableBindingStreamer = class(TBoldXMLOLWNodeStreamer)
-  // VariableName, TopSortedIndex, ExternalVarValue, IsLoopVar, RefCount
   protected
     function GetStreamName: string; override;
   public
@@ -397,7 +389,6 @@ type
 
 
   TBoldXMLOLWVariableReferenceStreamer = class(TBoldXMLOLWNodeStreamer)
-  // VariableBinding
   protected
     function GetStreamName: string; override;
   public
@@ -407,7 +398,6 @@ type
   end;
 
   TBoldXMLOLWStrLiteralStreamer = class(TBoldXMLOLWNodeStreamer)
-  // StrValue
   protected
     function GetStreamName: string; override;
   public
@@ -417,7 +407,6 @@ type
   end;
 
   TBoldXMLOLWFloatLiteralStreamer = class(TBoldXMLOLWNodeStreamer)
-  // FloatValue
   protected
     function GetStreamName: string; override;
   public
@@ -427,7 +416,6 @@ type
   end;
 
   TBoldXMLOLWIntLiteralStreamer = class(TBoldXMLOLWNodeStreamer)
-  // IntValue
   protected
     function GetStreamName: string; override;
   public
@@ -437,7 +425,6 @@ type
   end;
 
   TBoldXMLOLWDateLiteralStreamer = class(TBoldXMLOLWNodeStreamer)
-  // DateValue
   protected
     function GetStreamName: string; override;
   public
@@ -447,7 +434,6 @@ type
   end;
 
   TBoldXMLOLWTimeLiteralStreamer = class(TBoldXMLOLWNodeStreamer)
-  // TimeValue
   protected
     function GetStreamName: string; override;
   public
@@ -459,7 +445,6 @@ type
 
 
   TBoldXMLOLWEnumLiteralStreamer = class(TBoldXMLOLWNodeStreamer)
-  // name, IntValue
   protected
     function GetStreamName: string; override;
   public
@@ -493,7 +478,7 @@ end;
 destructor TBoldOLWOperation.Destroy;
 begin
   FreeAndNil(fArgs);
-  inherited;
+  inherited;          
 end;
 
 
@@ -656,7 +641,7 @@ procedure TBoldOLWVariableBinding.AddRef;
 begin
   inc(fRefCount);
   if (fRefCount > 1) and not fIsLoopVar then
-    raise EBold.Create(sExternalVarsCanOnlyBeReferencedOnce);
+    raise EBold.Create('external variables (and self) can currently only be referenced once');
 end;
 
 constructor TBoldOLWVariableBinding.Create(Position: integer; const VariableName: String; TopSortedIndex: integer);
@@ -678,11 +663,13 @@ begin
   v.VisitTBoldOLWStrLiteral(self);
 end;
 
+
 constructor TBoldOLWStrLiteral.Create(Position: integer; const StrValue: String);
 begin
   inherited Create(Position);
   fStrValue := StrValue;
 end;
+
 
 function TBoldOLWStrLiteral.GetStreamName: string;
 begin
@@ -923,12 +910,12 @@ begin
   Condition := Obj as TBoldOclCondition;
   Bindings := TBoldOLWNodeList.Create;
   Bindings.OwnsObjects := false;
-  Node.AddStateObject('Bindings', Bindings); // do not localize
-  Condition.fEnv := Node.ReadSubnodeObject('Env', OLWNodeListStreamName) as TBoldOLWNodeList; // do not localize
-  Condition.fRootNode := Node.ReadSubnodeObject('RootNode', '') as TBoldOLWNode; // do not localize
-  Condition.fContext := Node.ReadSubnodeObject('Context', BOLDOBJECTIDLISTNAME) as TBoldObjectidList; // do not localize
-  Condition.fOclExpr := Node.ReadSubNodeString('OCL'); // do not localize
-  Node.RemoveStateObject('Bindings'); // do not localize
+  Node.AddStateObject('Bindings', Bindings);
+  Condition.fEnv := Node.ReadSubnodeObject('Env', OLWNodeListStreamName) as TBoldOLWNodeList;
+  Condition.fRootNode := Node.ReadSubnodeObject('RootNode', '') as TBoldOLWNode;
+  Condition.fContext := Node.ReadSubnodeObject('Context', BOLDOBJECTIDLISTNAME) as TBoldObjectidList;
+  Condition.fOclExpr := Node.ReadSubNodeString('OCL');
+  Node.RemoveStateObject('Bindings');
   Bindings.Free;
 end;
 
@@ -942,14 +929,14 @@ begin
   Condition := Obj as TBoldOclCondition;
   Bindings := TBoldOLWNodeList.Create;
   Bindings.OwnsObjects := false;
-  Node.AddStateObject('Bindings', Bindings); // do not localize
+  Node.AddStateObject('Bindings', Bindings);
 
-  Node.WriteSubnodeObject('Env', OLWNodeListStreamName, Condition.fEnv); // do not localize
-  Node.WriteSubNodeObject('RootNode', '', Condition.fRootNode); // do not localize
-  Node.WriteSubnodeObject('Context', BOLDOBJECTIDLISTNAME, Condition.fContext); // do not localize
-  Node.WriteSubNodeString('OCL', Condition.fOclExpr); // do not localize
+  Node.WriteSubnodeObject('Env', OLWNodeListStreamName, Condition.fEnv);
+  Node.WriteSubNodeObject('RootNode', '', Condition.fRootNode);
+  Node.WriteSubnodeObject('Context', BOLDOBJECTIDLISTNAME, Condition.fContext);
+  Node.WriteSubNodeString('OCL', Condition.fOclExpr);
 
-  Node.RemoveStateObject('Bindings'); // do not localize
+  Node.RemoveStateObject('Bindings');
   Bindings.free;
 end;
 
@@ -964,7 +951,7 @@ var
 begin
   inherited;
   OLWNode := obj as TBoldOLWNode;
-  OLWNode.fPosition := Node.ReadSubNodeInteger('Position'); // do not localize
+  OLWNode.fPosition := Node.ReadSubNodeInteger('Position');
 end;
 
 procedure TBoldXMLOLWNodeStreamer.WriteObject(Obj: TBoldInterfacedObject;
@@ -974,7 +961,7 @@ var
 begin
   inherited;
   OLWNode := obj as TBoldOLWNode;
-  Node.WriteSubNodeInteger('Position', OLWNode.fPosition); // do not localize
+  Node.WriteSubNodeInteger('Position', OLWNode.fPosition);
 end;
 
 { TBoldXMLOLWTypeNodeStreamer }
@@ -996,8 +983,8 @@ var
 begin
   inherited;
   OLWTypeNode := Obj as TBoldOLWTypeNode;
-  OLWTypeNode.fTypeName := Node.ReadSubNodeString('TypeName'); // do not localize
-  OLWTypeNode.fTopSortedIndex := Node.ReadSubNodeInteger('TopSortedIndex'); // do not localize
+  OLWTypeNode.fTypeName := Node.ReadSubNodeString('TypeName');
+  OLWTypeNode.fTopSortedIndex := Node.ReadSubNodeInteger('TopSortedIndex');
 end;
 
 procedure TBoldXMLOLWTypeNodeStreamer.WriteObject(
@@ -1007,8 +994,8 @@ var
 begin
   inherited;
   OLWTypeNode := Obj as TBoldOLWTypeNode;
-  Node.WriteSubNodeString('TypeName', OLWTypeNode.TypeName); // do not localize
-  Node.WriteSubNodeInteger('TopSortedIndex', OLWTypeNode.TopSortedIndex); // do not localize
+  Node.WriteSubNodeString('TypeName', OLWTypeNode.TypeName);
+  Node.WriteSubNodeInteger('TopSortedIndex', OLWTypeNode.TopSortedIndex);
 end;
 
 { TBoldXMLOLWListCoercionStreamer }
@@ -1030,7 +1017,7 @@ var
 begin
   inherited;
   ListCoercion := obj as TBoldOLWListCoercion;
-  LIstCoercion.fChild := Node.readSubNodeObject('Child', '') as TBoldOLWNode; // do not localize
+  LIstCoercion.fChild := Node.readSubNodeObject('Child', '') as TBoldOLWNode;
 end;
 
 procedure TBoldXMLOLWListCoercionStreamer.WriteObject(
@@ -1040,7 +1027,7 @@ var
 begin
   inherited;
   ListCoercion := obj as TBoldOLWListCoercion;
-  Node.WriteSubNodeObject('Child', '', ListCoercion.fChild); // do not localize
+  Node.WriteSubNodeObject('Child', '', ListCoercion.fChild);
 end;
 
 { TBoldXMLOLWOperationStreamer }
@@ -1062,8 +1049,8 @@ var
 begin
   inherited;
   OLWOperation := Obj as TBoldOLWOperation;
-  OLWOperation.fArgs := Node.readSubNodeObject('Args', '') as TBoldOLWNodeList; // do not localize
-  OLWOperation.fOperationName := Node.ReadSubNodeString('OperationName'); // do not localize
+  OLWOperation.fArgs := Node.readSubNodeObject('Args', '') as TBoldOLWNodeList;
+  OLWOperation.fOperationName := Node.ReadSubNodeString('OperationName');
 end;
 
 procedure TBoldXMLOLWOperationStreamer.WriteObject(
@@ -1073,8 +1060,8 @@ var
 begin
   inherited;
   OLWOperation := Obj as TBoldOLWOperation;
-  Node.WriteSubNodeObject('Args', '', OLWOperation.fArgs); // do not localize
-  Node.WriteSubNodeString('OperationName', OLWOperation.fOperationName); // do not localize
+  Node.WriteSubNodeObject('Args', '', OLWOperation.fArgs);
+  Node.WriteSubNodeString('OperationName', OLWOperation.fOperationName);
 end;
 
 { TBoldXMLOLWIterationStreamer }
@@ -1094,12 +1081,12 @@ var
   BindingIndex: integer;
   Bindings: TBoldOLWNodeList;
 begin
-  Bindings := Node.GetStateObject('Bindings') as TBoldOLWNodeList; // do not localize
+  Bindings := Node.GetStateObject('Bindings') as TBoldOLWNodeList;
   BindingIndex := Bindings.IndexOf[Binding];
-  Node.WriteSubNodeInteger('BindingIndex', BindingIndex); // do not localize
+  Node.WriteSubNodeInteger('BindingIndex', BindingIndex);
   if BindingIndex = -1 then
   begin
-    Node.WriteSubNodeObject('Binding', OLWVariableBindingStreamName, Binding); // do not localize
+    Node.WriteSubNodeObject('Binding', OLWVariableBindingStreamName, Binding);
     Bindings.Add(Binding);
   end;
 end;
@@ -1109,15 +1096,15 @@ var
   BindingIndex: integer;
   Bindings: TBoldOLWNodeList;
 begin
-  Bindings := Node.GetStateObject('Bindings') as TBoldOLWNodeList; // do not localize
-  BindingIndex := Node.ReadSubNodeInteger('BindingIndex'); // do not localize
+  Bindings := Node.GetStateObject('Bindings') as TBoldOLWNodeList;
+  BindingIndex := Node.ReadSubNodeInteger('BindingIndex');
   if BindingIndex <> -1 then
   begin
     Result := Bindings[BindingIndex] as tBoldOLWVariableBinding;
   end
   else
   begin
-    Result := Node.ReadSubNodeObject('Binding', OLWVariableBindingStreamName) as TBoldOLWVariableBinding; // do not localize
+    Result := Node.ReadSubNodeObject('Binding', OLWVariableBindingStreamName) as TBoldOLWVariableBinding;
     Bindings.Add(result);
   end;
 end;
@@ -1161,11 +1148,11 @@ var
 begin
   inherited;
   OLWMember := Obj as TBoldOLWMember;
-  OLWMember.fMemberIndex := Node.ReadSubNodeInteger('MemberIndex'); // do not localize
-  OLWMember.fMemberName := Node.ReadSubNodeString('MemberName'); // do not localize
-  OLWMember.fMemberOf := Node.ReadSubNodeObject('MemberOf', '') as TBoldOLWNode; // do not localize
-  OLWMember.fQualifier := Node.ReadSubNodeObject('Qualifier', OLWNodeListStreamName) as TBoldOLWNodeList; // do not localize
-  OLWMember.fIsBoolean := Node.ReadSubNodeBoolean('IsBoolean'); // do not localize
+  OLWMember.fMemberIndex := Node.ReadSubNodeInteger('MemberIndex');
+  OLWMember.fMemberName := Node.ReadSubNodeString('MemberName');
+  OLWMember.fMemberOf := Node.ReadSubNodeObject('MemberOf', '') as TBoldOLWNode;
+  OLWMember.fQualifier := Node.ReadSubNodeObject('Qualifier', OLWNodeListStreamName) as TBoldOLWNodeList;
+  OLWMember.fIsBoolean := Node.ReadSubNodeBoolean('IsBoolean');
 end;
 
 procedure TBoldXMLOLWMemberStreamer.WriteObject(Obj: TBoldInterfacedObject;
@@ -1175,11 +1162,11 @@ var
 begin
   inherited;
   OLWMember := Obj as TBoldOLWMember;
-  Node.WriteSubNodeInteger('MemberIndex', OLWMember.fMemberIndex); // do not localize
-  Node.WriteSubNodeString('MemberName', OLWMember.fMemberName); // do not localize
-  Node.WriteSubNodeObject('MemberOf', '', OLWMember.fMemberOf); // do not localize
-  Node.WriteSubNodeObject('Qualifier', OLWNodeListStreamName, OLWMember.fQualifier); // do not localize
-  Node.WriteSubNodeBoolean('IsBoolean', OLWMember.fIsBoolean); // do not localize
+  Node.WriteSubNodeInteger('MemberIndex', OLWMember.fMemberIndex);
+  Node.WriteSubNodeString('MemberName', OLWMember.fMemberName);
+  Node.WriteSubNodeObject('MemberOf', '', OLWMember.fMemberOf);
+  Node.WriteSubNodeObject('Qualifier', OLWNodeListStreamName, OLWMember.fQualifier);
+  Node.WriteSubNodeBoolean('IsBoolean', OLWMember.fIsBoolean);
 end;
 
 { TBoldXMLOLWVariableBindingStreamer }
@@ -1201,11 +1188,11 @@ var
 begin
   inherited;
   OLWBinding := Obj as TBoldOLWVariableBinding;
-  OLWBinding.fVariableName := Node.ReadSubNodeString('VariableName'); // do not localize
-  OLWBinding.fTopSortedIndex := Node.ReadSubNodeInteger('TopSortedIndex'); // do not localize
-  OLWBinding.fIsLoopVar := Node.ReadSubNodeBoolean('IsLoopVar'); // do not localize
-  OLWBinding.fRefCount := Node.ReadSubNodeInteger('RefCount'); // do not localize
-  OLWBinding.fExternalVarValue := Node.ReadSubNodeString('ExternalVarValue'); // FIXME // do not localize
+  OLWBinding.fVariableName := Node.ReadSubNodeString('VariableName');
+  OLWBinding.fTopSortedIndex := Node.ReadSubNodeInteger('TopSortedIndex');
+  OLWBinding.fIsLoopVar := Node.ReadSubNodeBoolean('IsLoopVar');
+  OLWBinding.fRefCount := Node.ReadSubNodeInteger('RefCount');
+  OLWBinding.fExternalVarValue := Node.ReadSubNodeString('ExternalVarValue');
 end;
 
 procedure TBoldXMLOLWVariableBindingStreamer.WriteObject(
@@ -1215,11 +1202,11 @@ var
 begin
   inherited;
   OLWBinding := Obj as TBoldOLWVariableBinding;
-  Node.WriteSubNodeString('VariableName', OLWBinding.fVariableName); // do not localize
-  Node.WriteSubNodeInteger('TopSortedIndex', OLWBinding.fTopSortedIndex); // do not localize
-  Node.WriteSubNodeBoolean('IsLoopVar', OLWBinding.fIsLoopVar); // do not localize
-  Node.WriteSubNodeInteger('RefCount', OLWBinding.fRefCount); // do not localize
-  Node.WriteSubNodeString('ExternalVarValue', OLWBinding.fExternalVarValue); // FIXME // do not localize
+  Node.WriteSubNodeString('VariableName', OLWBinding.fVariableName);
+  Node.WriteSubNodeInteger('TopSortedIndex', OLWBinding.fTopSortedIndex);
+  Node.WriteSubNodeBoolean('IsLoopVar', OLWBinding.fIsLoopVar);
+  Node.WriteSubNodeInteger('RefCount', OLWBinding.fRefCount);
+  Node.WriteSubNodeString('ExternalVarValue', OLWBinding.fExternalVarValue);
 end;
 
 { TBoldXMLOLWVariableReferenceStreamer }
@@ -1273,7 +1260,7 @@ var
 begin
   inherited;
   StrLiteral := obj as TBoldOLWStrLiteral;
-  StrLiteral.fStrValue := Node.ReadSubNodeString('StrValue'); // do not localize
+  StrLiteral.fStrValue := Node.ReadSubNodeString('StrValue');
 end;
 
 procedure TBoldXMLOLWStrLiteralStreamer.WriteObject(
@@ -1283,7 +1270,7 @@ var
 begin
   inherited;
   StrLiteral := obj as TBoldOLWStrLiteral;
-  Node.WriteSubNodeString('StrValue', StrLiteral.fStrValue); // do not localize
+  Node.WriteSubNodeString('StrValue', StrLiteral.fStrValue);
 end;
 
 { TBoldXMLOLWIntLiteralStreamer }
@@ -1305,7 +1292,7 @@ var
 begin
   inherited;
   IntLiteral := obj as TBoldOLWIntLiteral;
-  IntLiteral.fIntValue := Node.ReadSubNodeInteger('IntValue'); // do not localize
+  IntLiteral.fIntValue := Node.ReadSubNodeInteger('IntValue');
 end;
 
 procedure TBoldXMLOLWIntLiteralStreamer.WriteObject(
@@ -1315,7 +1302,7 @@ var
 begin
   inherited;
   IntLiteral := obj as TBoldOLWIntLiteral;
-  Node.WriteSubNodeInteger('IntValue', IntLiteral.fIntValue); // do not localize
+  Node.WriteSubNodeInteger('IntValue', IntLiteral.fIntValue);
 end;
 
 { TBoldXMLOLWFloatLiteralStreamer }
@@ -1337,7 +1324,7 @@ var
 begin
   inherited;
   FloatLiteral := obj as TBoldOLWFloatLiteral;
-  FloatLiteral.fFloatValue := Node.ReadSubNodeFloat('FloatValue'); // do not localize
+  FloatLiteral.fFloatValue := Node.ReadSubNodeFloat('FloatValue');
 end;
 
 procedure TBoldXMLOLWFloatLiteralStreamer.WriteObject(
@@ -1347,8 +1334,9 @@ var
 begin
   inherited;
   FloatLiteral := obj as TBoldOLWFloatLiteral;
-  Node.WriteSubNodeFloat('FloatValue', FloatLiteral.fFloatValue); // do not localize
+  Node.WriteSubNodeFloat('FloatValue', FloatLiteral.fFloatValue);
 end;
+
 
 { TBoldXMLOLWEnumLiteralStreamer }
 
@@ -1369,8 +1357,8 @@ var
 begin
   inherited;
   EnumLiteral := obj as TBoldOLWEnumLiteral;
-  EnumLiteral.fName := Node.ReadSubNodeString('Name'); // do not localize
-  EnumLiteral.fIntValue := Node.ReadSubNodeInteger('IntValue'); // do not localize
+  EnumLiteral.fName := Node.ReadSubNodeString('Name');
+  EnumLiteral.fIntValue := Node.ReadSubNodeInteger('IntValue');
 end;
 
 procedure TBoldXMLOLWEnumLiteralStreamer.WriteObject(
@@ -1380,8 +1368,8 @@ var
 begin
   inherited;
   EnumLiteral := obj as TBoldOLWEnumLiteral;
-  Node.WriteSubNodeString('Name', EnumLIteral.fName); // do not localize
-  Node.WriteSubNodeInteger('IntValue', EnumLIteral.fIntValue); // do not localize
+  Node.WriteSubNodeString('Name', EnumLIteral.fName);
+  Node.WriteSubNodeInteger('IntValue', EnumLIteral.fIntValue);
 end;
 
 { TBoldXMLOLWNodeListStreamer }
@@ -1400,22 +1388,43 @@ procedure TBoldXMLOLWNodeListStreamer.ReadObject(Obj: TObject;
   Node: TBoldXMLNode);
 var
   OLWList: TBoldOLWNodeList;
+  {$IFDEF OXML}
+  aNodeEnumerator: TXMLChildNodeListEnumerator;
+  aNode: PXMLNode;
+  {$ELSE}
   aNodeList: IXMLDOMNodeList;
   aNode: IXMLDOMNode;
+  {$ENDIF}
   aSubNode: TBoldXMLNode;
 begin
   inherited;
   OLWList := Obj as TBoldOLWNodeList;
+  {$IFDEF OXML}
+  aNodeEnumerator := Node.XMLDomElement.ChildNodes.GetEnumerator;
+  try
+    while aNodeEnumerator.MoveNext do
+    begin
+      aNode := aNodeEnumerator.Current;
+      aSubNode := Node.MakeNodeForElement(aNode);
+      if aSubNode.Accessor = 'Node' then // do not localize
+        OLWList.Add(aSubNode.ReadObject('') as TBoldOLWNode);
+      aSubNode.Free;
+    end;
+  finally
+    aNodeEnumerator.Free;
+  end;
+  {$ELSE}
   aNodeList := Node.XMLDomElement.childNodes;
   aNode := aNodeList.nextNode;
   while assigned(aNode) do
   begin
     aSubNode := Node.MakeNodeForElement(aNode as IXMLDOMElement);
-    if aSubNode.Accessor = 'Node' then // do not localize
+    if aSubNode.Accessor = 'Node' then
       OLWList.Add(aSubNode.ReadObject('') as TBoldOLWNode);
     aSubNode.Free;
     aNode := aNodeList.nextNode;
   end;
+  {$ENDIF}
 end;
 
 procedure TBoldXMLOLWNodeListStreamer.WriteObject(
@@ -1429,7 +1438,7 @@ begin
   OLWList := Obj as TBoldOLWNodeList;
   for i := 0 to OLWList.Count-1 do
   begin
-    aSubNode := Node.NewSubNode('Node'); // do not localize
+    aSubNode := Node.NewSubNode('Node');
     aSubNode.WriteObject('', OLWList[i]);
     aSubNode.Free;
   end;
@@ -1454,7 +1463,7 @@ var
 begin
   inherited;
   DateLiteral := obj as TBoldOLWDateLiteral;
-  DateLiteral.DateValue := Node.ReadSubNodeDate('DateValue'); // do not localize
+  DateLiteral.DateValue := Node.ReadSubNodeDate('DateValue');
 end;
 
 
@@ -1465,7 +1474,7 @@ var
 begin
   inherited;
   DateLiteral := obj as TBoldOLWDateLiteral;
-  Node.WriteSubNodeDate('DateValue', DateLIteral.DateValue); // do not localize
+  Node.WriteSubNodeDate('DateValue', DateLIteral.DateValue);
 end;
 
 { TBoldXMLOLWTimeLiteralStreamer }
@@ -1487,7 +1496,7 @@ var
 begin
   inherited;
   TimeLiteral := obj as TBoldOLWTimeLiteral;
-  TimeLiteral.TimeValue := Node.ReadSubNodeTime('TimeValue'); // do not localize
+  TimeLiteral.TimeValue := Node.ReadSubNodeTime('TimeValue');
 end;
 
 
@@ -1498,7 +1507,7 @@ var
 begin
   inherited;
   TimeLiteral := obj as TBoldOLWTimeLiteral;
-  Node.WriteSubNodeTime('TimeValue', TimeLIteral.TimeValue); // do not localize
+  Node.WriteSubNodeTime('TimeValue', TimeLIteral.TimeValue);
 end;
 
 { TBoldOLWMomentLiteral }
@@ -1518,19 +1527,9 @@ begin
   v.VisitTBoldOLWDateLiteral(self);
 end;
 
-function TBoldOLWDateLiteral.GetDateValue: TDateTime;
-begin
-  result := fMomentValue;
-end;
-
 function TBoldOLWDateLiteral.GetStreamName: string;
 begin
   result := OLWDateLiteralStreamName;
-end;
-
-procedure TBoldOLWDateLiteral.SetDateValue(const Value: TDateTime);
-begin
-  fMomentValue := Value;
 end;
 
 { TBoldOLWTimeLiteral }
@@ -1546,17 +1545,8 @@ begin
   result := OLWTimeLiteralStreamName;
 end;
 
-function TBoldOLWTimeLiteral.GetTimeValue: TDateTime;
-begin
-  result := fMomentValue;
-end;
-
-procedure TBoldOLWTimeLiteral.SetTimeValue(const Value: TDateTime);
-begin
-  fMomentValue := Value;
-end;
-
 initialization
+
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLOCLConditionStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLOLWNodeListStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLOLWTypeNodeStreamer.Create);

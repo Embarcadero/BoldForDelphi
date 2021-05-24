@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGenericListControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -21,18 +24,18 @@ type
   TBoldFollowerListWithOwnedList = class;
 
   {$IFDEF BOLD_BCB}
-  TGetFollowerControllerByNameEvent = procedure (Name: string; var FollowerController: TBoldFollowerController) of object;
+  TGetFollowerControllerByNameEvent = procedure (const Name: string; var FollowerController: TBoldFollowerController) of object;
   TGetFollowerControllerEvent = procedure (Element: TBoldElement; Subscriber: TBoldSubscriber; GetFollowerControllerByName: TGetFollowerControllerByNameEvent; var FollowerController: TBoldFollowerController) of object;
   {$ENDIF}
 
   {$IFDEF BOLD_DELPHI}
-  TGetFollowerControllerByNameEvent = function (Name: string): TBoldFollowerController of object;
+  TGetFollowerControllerByNameEvent = function (const Name: string): TBoldFollowerController of object;
   TGetFollowerControllerEvent = function (Element: TBoldElement; Subscriber: TBoldSubscriber; GetFollowerControllerByName: TGetFollowerControllerByNameEvent): TBoldFollowerController of object;
   {$ENDIF}
 
-  {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+  {$IFNDEF BOLDCOMCLIENT}
   TGetElementEvent = procedure (Sender: TBoldGenericListPart; Element: TBoldElement; Subscriber: TBoldSubscriber; ResultElement: TBoldIndirectElement; Resubscribe: Boolean) of object;
-  {$ENDIF}
+  {$ENDIF}    
 
   { TBoldFollowerListWithOwnedList }
   TBoldFollowerListWithOwnedList = class (TBoldFollowerList)
@@ -41,8 +44,8 @@ type
    public
      constructor Create(OwningFollower: TBoldFollower); override;
      destructor Destroy; override;
-     procedure AddOwnedElement(Element: TBoldElement);
-     procedure FreeAllOwnedElements;
+     procedure AddOwnedElement(Element: TBoldElement); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+     procedure FreeAllOwnedElements; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   { TBoldGenericListPart }
@@ -51,18 +54,18 @@ type
     FElementExpression: TBoldExpression;
     FControllerExpression: TBoldExpression;
     FInterpretAsList: Boolean;
-    {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFNDEF BOLDCOMCLIENT}
     FOnGetElement: TGetElementEvent;
     {$ENDIF}
     FOnGetFollowerController: TGetFollowerControllerEvent;
     fEnabled: Boolean;
     fName: String;
     fPublisher: TBoldPublisher;
-    function GetPublisher: TBoldPublisher;
-    function GetContextType: TBoldElementTypeInfo;
+    function GetPublisher: TBoldPublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetContextType: TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 
-    procedure SetElementExpression(Value: TBoldExpression);
-    procedure SetControllerExpression(Value: TBoldExpression);
+    procedure SetElementExpression(const Value: TBoldExpression); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetControllerExpression(const Value: TBoldExpression); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetInterpretAsList(Value: Boolean);
     procedure SetEnabled(const Value: Boolean);
     property Publisher: TBoldPublisher read GetPublisher;
@@ -70,7 +73,7 @@ type
     constructor Create(Collection: TCollection); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    {$IFDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFDEF BOLDCOMCLIENT}
     function GetElement(Element: TBoldElement; Subscriber: TBoldSubscriber; Resubscribe: Boolean): IBoldElement;
     {$ELSE}
     procedure DefaultGetElement(Element: TBoldElement; Subscriber: TBoldSubscriber; ResultElement: TBoldIndirectElement; Resubscribe: Boolean);
@@ -85,7 +88,7 @@ type
     property InterpretAsList: Boolean read FInterpretAsList write SetInterpretAsList;
     property Name: String read fName write fName;
     property Enabled: Boolean read fEnabled write SetEnabled default true;
-    {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFNDEF BOLDCOMCLIENT}
     property OnGetElement: TGetElementEvent read FOnGetElement write FOnGetElement;
     {$ENDIF}
     property OnGetFollowerController: TGetFollowerControllerEvent read FOnGetFollowerController write FOnGetFollowerController;
@@ -95,14 +98,14 @@ type
   TBoldGenericListParts = class(TCollection)
   private
     FOwner: TBoldGenericListController;
-    function GetPart(Index: Integer): TBoldGenericListPart;
-    procedure SetPart(Index: Integer; Value: TBoldGenericListPart);
+    function GetPart(Index: Integer): TBoldGenericListPart; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetPart(Index: Integer; Value: TBoldGenericListPart); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetOwner: TPersistent; override;
     procedure Update(Item: TCollectionItem); override;
   public
     constructor Create(aOwner: TBoldGenericListController);
-    function Add: TBoldGenericListPart;
+    function Add: TBoldGenericListPart; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property Items[Index: Integer]: TBoldGenericListPart read GetPart write SetPart; default;
   end;
 
@@ -122,12 +125,13 @@ type
   private
     FParts: TBoldGenericListParts;
     FGetFollowerControllerByName: TGetFollowerControllerByNameEvent;
-    procedure SetParts(Value: TBoldGenericListParts);
-    function GetRenderer: TBoldGenericAsListRenderer;
-    procedure SetRenderer(Value: TBoldGenericAsListRenderer);
+    procedure SetParts(Value: TBoldGenericListParts); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRenderer: TBoldGenericAsListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetRenderer(Value: TBoldGenericAsListRenderer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
+    class function PrecreateFollowers: boolean; override;
     function GetEffectiveRenderer: TBoldRenderer; override;
-    function GetEffectiveGenericAsListRenderer: TBoldGenericAsListRenderer;
+    function GetEffectiveGenericAsListRenderer: TBoldGenericAsListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
     procedure DoAssign(Source: TPersistent); override;
     property EffectiveGenericAsListRenderer: TBoldGenericAsListRenderer read GetEffectiveGenericAsListRenderer;
@@ -135,8 +139,8 @@ type
     constructor Create(aOwningComponent: TComponent;
                        GetFollowerControllerByNameFunc: TGetFollowerControllerByNameEvent);
     destructor Destroy; override;
-    function FindPartByName(Name: string): TBoldGenericListPart;
-    function CanHaveSubFollowers: Boolean;
+    function FindPartByName(const Name: string): TBoldGenericListPart;
+    function CanHaveSubFollowers: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   published
     property Parts: TBoldGenericListParts read FParts write SetParts;
     property Renderer: TBoldGenericAsListRenderer read GetRenderer write SetRenderer;
@@ -149,8 +153,7 @@ uses
   BoldUtils,
   BoldContainers,
   BoldControlPackDefs,
-  BoldGuiResourceStrings,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
   {$ENDIF}
   BoldNodeControlPack;
@@ -186,7 +189,7 @@ end;
 constructor TBoldGenericListPart.Create(Collection: TCollection);
 begin
   inherited Create(Collection);
-  FControllerExpression := 'oclType.asstring->union(oclType.allsupertypes.asString)->union(''<Default>'')'; // do not localize
+  FControllerExpression := 'oclType.asstring->union(oclType.allsupertypes.asString)->union(''<Default>'')';
   fEnabled := true;
 end;
 
@@ -197,7 +200,7 @@ begin
     ElementExpression := TBoldGenericListPart(Source).ElementExpression;
     ControllerExpression := TBoldGenericListPart(Source).ControllerExpression;
     InterpretAsList := TBoldGenericListPart(Source).InterpretAsList;
-    {$IFNDEF BOLDCOMCLIENT} // GetElementEvent
+    {$IFNDEF BOLDCOMCLIENT}
     OnGetElement := TBoldGenericListPart(Source).OnGetElement;
     {$ENDIF}
     OnGetFollowerController := TBoldGenericListPart(Source).OnGetFollowerController;
@@ -206,7 +209,7 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TBoldGenericListPart.SetElementExpression(Value: TBoldExpression);
+procedure TBoldGenericListPart.SetElementExpression(const Value: TBoldExpression);
 begin
   if Value <> ElementExpression then
   begin
@@ -215,7 +218,7 @@ begin
   end;
 end;
 
-procedure TBoldGenericListPart.SetControllerExpression(Value: TBoldExpression);
+procedure TBoldGenericListPart.SetControllerExpression(const Value: TBoldExpression);
 begin
   if Value <> ControllerExpression then
   begin
@@ -233,7 +236,7 @@ begin
   end;
 end;
 
-{$IFDEF BOLDCOMCLIENT} // GetElementEvent
+{$IFDEF BOLDCOMCLIENT}
 function TBoldGenericListPart.GetElement(Element: TBoldElement; Subscriber: TBoldSubscriber; Resubscribe: Boolean): IBoldElement;
 begin
   if Assigned(Element) then
@@ -268,7 +271,7 @@ end;
 
 function TBoldGenericListPart.DefaultGetFollowerController(Element: TBoldElement; Subscriber: TBoldSubscriber; GetFollowerControllerByName: TGetFollowerControllerByNameEvent): TBoldFollowerController;
 var
-{$IFDEF BOLDCOMCLIENT} // DefaultGet
+{$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
 {$ELSE}
   E: TBoldIndirectElement;
@@ -296,7 +299,7 @@ end;
 
 begin
   Result := nil;
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   e := Element.EvaluateAndSubscribeToExpression(ControllerExpression, Subscriber.ClientId, Subscriber.SubscriberId, False, false);
   if Assigned(E) then
   begin
@@ -344,7 +347,7 @@ begin
   except
     on E: Exception do
     begin
-      E.message := Format(sCouldNotGetController, [E.message, BOLDCRLF, GetNamePath]);
+      E.message := Format('%s' + BOLDCRLF + 'occured when getting controller for component %s', [E.message, GetNamePath]);
       raise;
     end;
   end;
@@ -386,6 +389,11 @@ end;
 function TBoldGenericListController.GetRenderer: TBoldGenericAsListRenderer;
 begin
   Result := (UntypedRenderer as TBoldGenericAsListRenderer);
+end;
+
+class function TBoldGenericListController.PrecreateFollowers: boolean;
+begin
+  result := true;
 end;
 
 procedure TBoldGenericListController.SetRenderer(Value: TBoldGenericAsListRenderer);
@@ -457,7 +465,7 @@ var
     FollowerController := Part.GetFollowerController(Element, Follower.Subscriber, GetFollowerControllerByName);
     if Assigned(FollowerController) then
     begin
-      DestList.EnsureFollower(Controller, DestListIndex, Element, FollowerController);
+      DestList.EnsuredFollower(Controller, DestListIndex, Element, FollowerController);
       Inc(DestListIndex);
     end;
   end;
@@ -466,7 +474,7 @@ var
   {$IFDEF BOLDCOMCLIENT}
   begin
     element := part.GetElement(Follower.Element, Follower.Subscriber, False);
-    result := assigned(element); // fixme: true or false?
+    result := assigned(element);
   end;
   {$ELSE}
   var
@@ -475,12 +483,11 @@ var
     ie := TBoldIndirectElement.Create;
     try
       Part.GetElement(Follower.Element, Follower.Subscriber, ie, False);
-      if ie.OwnsValue then
+      result := ie.OwnsValue;
+      if result then
         Element := ie.RelinquishValue
       else
         Element := ie.Value;
-
-      result := ie.OwnsValue;
     finally
       ie.Free;
     end;
@@ -499,7 +506,7 @@ begin
       DestList.AddOwnedElement(Element);
     if Assigned(Element) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // listconverting
+      {$IFDEF BOLDCOMCLIENT}
       Element.QueryInterface(IBoldList, SourceList);
       {$ELSE}
       if element is TBoldList then
@@ -561,7 +568,7 @@ begin
   inherited;
 end;
 
-function TBoldGenericListController.FindPartByName(Name: string): TBoldGenericListPart;
+function TBoldGenericListController.FindPartByName(const Name: string): TBoldGenericListPart;
 var
   i: integer;
 begin

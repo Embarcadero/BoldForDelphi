@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldServer;
 
 interface
@@ -38,7 +41,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 var
   G_BoldServerApplication: TBoldServerApplication = nil;

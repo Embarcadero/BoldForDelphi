@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRose98TaggedValues;
 
 interface
@@ -30,59 +33,49 @@ type
 
 function Rose98TaggedValueList: TBoldTaggedValuePerClassList;
 
+
 implementation
 
 uses
   SysUtils,
   BoldDefaultTaggedValues,
   BoldDefs,
-  UMLConsts,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 var
  G_Rose98TaggedValues: TBoldTaggedValuePerClassList = nil;
 
 procedure AddDefaultTaggedValues;
 begin
-// Tagged values for Model
-  with G_Rose98TaggedValues.ListForClassName['Model'] do // do not localize
+  with G_Rose98TaggedValues.ListForClassName['Model'] do
   begin
-    Add('String',   TAG_MODELNAME,                       'BusinessClasses'); // do not localize
-    Add('Text',     TAG_CONSTRAINTS,                     ''); // do not localize
-    Add('PTYVersionSet', // do not localize
-                    'PTYVersion',                      BOLDTVREV); // do not localize
+    Add('String',   TAG_MODELNAME,                       'BusinessClasses');
+    Add('Text',     TAG_CONSTRAINTS,                     '');
+    Add('PTYVersionSet',
+                    'PTYVersion',                      BOLDTVREV);
   end;
-
-// Tagged values for Class
-  with G_Rose98TaggedValues.ListForClassName['Class'] do // do not localize
+  with G_Rose98TaggedValues.ListForClassName['Class'] do
   begin
-    Add('Text',     TAG_CONSTRAINTS,                    ''); // do not localize
+    Add('Text',     TAG_CONSTRAINTS,                    '');
   end;
-
-// Tagged values for Association
-  with G_Rose98TaggedValues.ListForClassName['Association'] do // do not localize
+  with G_Rose98TaggedValues.ListForClassName['Association'] do
   begin
   end;
-
-// Tagged values for Attribute
-  with G_Rose98TaggedValues.ListForClassName['Attribute'] do // do not localize
+  with G_Rose98TaggedValues.ListForClassName['Attribute'] do
   begin
-    Add('Text',    TAG_CONSTRAINTS,               ''); // do not localize
+    Add('Text',    TAG_CONSTRAINTS,               '');
   end;
-
-// Tagged values for AssociationEnd
-  with G_Rose98TaggedValues.ListForClassName['AssociationEnd'] do // do not localize
+  with G_Rose98TaggedValues.ListForClassName['AssociationEnd'] do
   begin
-     Add('ChangeabilityKind', // do not localize
+     Add('ChangeabilityKind',
                    TAG_CHANGEABILITY,              TV_CHANGEABILITY_CHANGEABLE);
-     Add('Text',    TAG_CONSTRAINTS,                ''); // do not localize
+     Add('Text',    TAG_CONSTRAINTS,                '');
   end;
-
-// Tagged values for Operation
-  with G_Rose98TaggedValues.ListForClassName['Operation'] do // do not localize
+  with G_Rose98TaggedValues.ListForClassName['Operation'] do
   begin
-    Add('Text',  TAG_CONSTRAINTS,                    ''); // do not localize
-    Add('Boolean', TAG_ISCLASSMETHOD,                  TV_FALSE); // do not localize
+    Add('Text',  TAG_CONSTRAINTS,                    '');
+    Add('Boolean', TAG_ISCLASSMETHOD,                  TV_FALSE);
   end;
 end;
 
@@ -109,7 +102,7 @@ begin
     ckAddOnly:
       Result := TV_CHANGEABILITY_ADDONLY;
     else
-      raise EBold.CreateFmt(sWrongValue, [ClassName, 'ChangeableKindToString']); // do not localize
+      raise EBold.CreateFmt('%s.ChangeableKindToString: Unknown TChangeableKind', [ClassName]);
   end;
 end;
 

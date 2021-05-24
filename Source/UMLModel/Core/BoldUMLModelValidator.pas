@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelValidator;
 
 interface
@@ -47,9 +50,6 @@ type
     property TypeNameDictionary: TBoldTypeNameDictionary read fTypeNameDictionary;
   end;
 
-const
-  beModelValidated = 1024;
-
 implementation
 
 uses
@@ -60,7 +60,9 @@ uses
   BoldPMappers,
   BoldDefaultTaggedValues,
   BoldDefaultStreamNames,
-  BoldUMLTypes;
+  BoldUMLTypes,
+  BoldUMLModelEditForm,
+  BoldAttributes;
 
 resourcestring
   // Validator errors
@@ -99,6 +101,8 @@ resourcestring
   sUMVAttributeUnknownType = 'Attribute "%s" has unknown type (%s)';
   sUMVAttributeUnknownMapper = 'Attribute "%s" has unknown persistence mapper (%s)';
   sUMVAttributeCantStore = 'Attribute "%s" can''t be stored, incompatible persistence mapper';
+  sUMVOperationVirtualOperationMissing = 'Overridden operation "%s" has no virtual operation in superclass';
+  sUMVOperationVisibilityChanged = 'Overridden operation "%s" has different visibility than the inherited operation in superclass';
   sUMVAssociationEndIsMultiWithOtherEndComposite = 'Association end "%s" is multi, but other end is composite';
   sUMVAssociationEndUnknownClass = 'Association end "%s" in association "%s" not associated with any class';
   sUMVAssociationEndUnknownMapper = 'Unknown association end persistence mapper (%s) in association "%s"';
@@ -106,7 +110,7 @@ resourcestring
   sUMVInvalidAssociationEndIndirectAndEmbed = 'Association end "%s" in association "%s" is indirect and embedded';
   sUMVInvalidAssociationEndMultiAndEmbed = 'Association end "%s" in association "%s" is multi and embedded';
   sUMVInvalidAssociationEndOrderedandSingle = 'Association end "%s" in association "%s" is non-multi and ordered';
-  sUMVSingleAssociationEndsEmbeddedInBothEnds = 'Association "%s"s both ends are embedded and single-single ends.';
+  sUMVSingleAssociationEndsEmbeddedInBothEnds = 'SingleLink between %s - %s both ends have Embed=True meaning both are persisted in database. Set one side to Embed=False';
   sUMVAssociationNeedsTwoRoles = 'Association "%s" must have two assocationEnds';
   sUMVAssociationEndNeedsType = 'AssociationEnd "%s" is not assocatied with any class';
   sUMVDerivedAssociationCanNotHaveClass = 'Derived association "%s" can not have an association class';
@@ -133,6 +137,7 @@ resourcestring
   sUMVRootClassMustHaveName = 'Root class must have name';
   sUMVLinkClassWithSuperClassAsEnd = 'LinkClass (%s) must not inherit from any of the ends (%s)';
   sUMVAssociationAndClassNotEquallyPersistent = 'Association (%s) and its association class are not equally persistent';
+  sUMVClassNameClashWithAttribute = 'Class "%s" has same name as Attribute type';
 
 function IsValidDelphiIdentifier(const Ident: string): Boolean;
 const
@@ -142,9 +147,9 @@ var
   I: Integer;
 begin
   Result := False;
-  if (Length(Ident) = 0) or not (Ident[1] in Alpha) then
+  if (Length(Ident) = 0) or not CharInSet(Ident[1], Alpha) then
     Exit;
-  for I := 2 to Length(Ident) do if not (Ident[I] in AlphaNumeric) then
+  for I := 2 to Length(Ident) do if not CharInSet(Ident[I], AlphaNumeric) then
     Exit;
   Result := True;
 end;
@@ -157,9 +162,9 @@ var
   I: Integer;
 begin
   Result := False;
-  if (Length(Ident) = 0) or not (Ident[1] in Alpha) then
+  if (Length(Ident) = 0) or not CharInSet(Ident[1], Alpha) then
     Exit;
-  for I := 2 to Length(Ident) do if not (Ident[I] in AlphaNumeric) then
+  for I := 2 to Length(Ident) do if not CharInSet(Ident[I], AlphaNumeric) then
     Exit;
   Result := True;
 end;
@@ -179,9 +184,9 @@ var
   I: Integer;
 begin
   Result := False;
-  if (Length(Ident) = 0) or not (Ident[1] in Alpha) then
+  if (Length(Ident) = 0) or not CharInSet(Ident[1], Alpha) then
     Exit;
-  for I := 2 to Length(Ident) do if not (Ident[I] in AlphaNumeric) then
+  for I := 2 to Length(Ident) do if not CharInSet(Ident[I], AlphaNumeric) then
     Exit;
   Result := True;
 end;
@@ -331,100 +336,104 @@ begin
   if not(TBoldUMLBoldify.IsBoldified(UMLModel) and TBoldUMLSupport.IsFlattened(UMLModel)) then
     raise EBoldInternal.Create('Model not Boldified and flattened');
 
-  fTypeNameDictionary := TypeNameDictionary;
-
-  ClearViolations;
   BoldLog.StartLog('Validating the model');
+  BoldModel.StartValidation;
+  try
+    fTypeNameDictionary := TypeNameDictionary;
 
-  if not assigned(TypeNameDictionary) then
-    addError('No TypeNameDictionary available', [], UMLModel);
+    ClearViolations;
 
-  if Assigned(UMLModel) then
-  begin
-    with UMLModel do
+    if not assigned(TypeNameDictionary) then
+      addError('No TypeNameDictionary available', [], UMLModel);
+
+    if Assigned(UMLModel) then
     begin
-      if Name = '' then
-        AddError(sUMVModelNameEmpty, [], UMLModel);
-
-      ValidateNames(UMLModel, UMLModel.Name);
-
-      Mapper := GetBoldTV(TAG_PMAPPERNAME);
-
-      if not SameText(Mapper, DEFAULTNAME) and CheckDbStuff then
+      with UMLModel do
       begin
-        if not Assigned(BoldSystemPersistenceMappers.DescriptorByName[Mapper]) then
-          AddError(sUMVModelUnknownMapper, [Mapper, Name], UMLModel);
-      end;
+        if Name = '' then
+          AddError(sUMVModelNameEmpty, [], UMLModel);
 
-      Names := TStringList.Create;
-      SourceCodeNames := TStringList.Create;
-      ExpressionNames := TStringList.Create;
-      TableNames := TStringList.Create;
+        ValidateNames(UMLModel, UMLModel.Name);
 
-      for I := 0 to Classes.Count - 1 do
-      begin
-          Names.AddObject(AnsiUpperCase(Classes[i].Name), Classes[i]);
-          SourceCodeNames.AddObject(AnsiUpperCase(ExpandedSourceName(Classes[i])), Classes[i]);
-          ExpressionNames.AddObject(AnsiUpperCase(Classes[i].ExpandedExpressionName), Classes[i]);
-          if CheckDBStuff and Classes[i].Persistent then
-            TableNames.AddObject(AnsiUpperCase(ExpandedDBName(Classes[i])), Classes[i]);
-      end;
-      Names.Sort;
-      SourceCodeNames.Sort;
-      ExpressionNames.Sort;
-      TableNames.Sort;
-      for i := 0 to Classes.Count-2 do
-      begin
-        if Names[i] = Names[i + 1] then
-          AddError(sUMVClassNameExists, [(Names.Objects[i] as TUMLClass).Name], Names.Objects[i] as TUMLClass);
+        Mapper := GetBoldTV(TAG_PMAPPERNAME);
 
-        if (Language <> mvslNone) and (SourceCodeNames[i] = SourceCodeNames[i + 1]) then
+        if not SameText(Mapper, DEFAULTNAME) and CheckDbStuff then
         begin
-          case Language of
-            mvslDelphi: ErrorStr := sUMVDelphiNameExists;
-            mvslCpp: ErrorStr := sUMVCppNameExists
-            else ErrorStr := 'Unknown source language in validator';
-          end;
-          AddError(ErrorStr, [ExpandedSourceName(SourceCodeNames.Objects[i] as TUMLClass),
-                                          (SourceCodeNames.Objects[i] as TUMLClass).Name],
-                                          SourceCodeNames.Objects[i] as TUMLClass)
+          if not Assigned(BoldSystemPersistenceMappers.DescriptorByName[Mapper]) then
+            AddError(sUMVModelUnknownMapper, [Mapper, Name], UMLModel);
         end;
 
+        Names := TStringList.Create;
+        SourceCodeNames := TStringList.Create;
+        ExpressionNames := TStringList.Create;
+        TableNames := TStringList.Create;
 
-        if ExpressionNames[i] = ExpressionNames[i + 1] then
-          AddError(sUMVExpressionNameExists, [(ExpressionNames.Objects[i] as TUMLClass).ExpandedExpressionName,
-                                              (ExpressionNames.Objects[i] as TUMLClass).Name],
-                                              ExpressionNames.Objects[i] as TUMLClass);
+        for I := 0 to Classes.Count - 1 do
+        begin
+            Names.AddObject(AnsiUpperCase(Classes[i].Name), Classes[i]);
+            SourceCodeNames.AddObject(AnsiUpperCase(ExpandedSourceName(Classes[i])), Classes[i]);
+            ExpressionNames.AddObject(AnsiUpperCase(Classes[i].ExpandedExpressionName), Classes[i]);
+            if CheckDBStuff and Classes[i].Persistent then
+              TableNames.AddObject(AnsiUpperCase(ExpandedDBName(Classes[i])), Classes[i]);
+        end;
+        Names.Sort;
+        SourceCodeNames.Sort;
+        ExpressionNames.Sort;
+        TableNames.Sort;
+        for i := 0 to Classes.Count-2 do
+        begin
+          if Names[i] = Names[i + 1] then
+            AddError(sUMVClassNameExists, [(Names.Objects[i] as TUMLClass).Name], Names.Objects[i] as TUMLClass);
 
-        if (i < TableNames.Count - 1) and (TableNames[i] = TableNames[i + 1]) and CheckDbStuff then
-          AddError(sUMVTableNameExists,
-            [ExpandedDBName(TableNames.Objects[i] as TUMLClass),
-             (TableNames.Objects[i] as TUMLClass).Name,
-             (TableNames.Objects[i + 1] as TUMLClass).Name],
-            TableNames.Objects[i] as TUMLClass);
+          if (Language <> mvslNone) and (SourceCodeNames[i] = SourceCodeNames[i + 1]) then
+          begin
+            case Language of
+              mvslDelphi: ErrorStr := sUMVDelphiNameExists;
+              mvslCpp: ErrorStr := sUMVCppNameExists
+              else ErrorStr := 'Unknown source language in validator';
+            end;
+            AddError(ErrorStr, [ExpandedSourceName(SourceCodeNames.Objects[i] as TUMLClass),
+                                            (SourceCodeNames.Objects[i] as TUMLClass).Name],
+                                            SourceCodeNames.Objects[i] as TUMLClass)
+          end;
+
+
+          if ExpressionNames[i] = ExpressionNames[i + 1] then
+            AddError(sUMVExpressionNameExists, [(ExpressionNames.Objects[i] as TUMLClass).ExpandedExpressionName,
+                                                (ExpressionNames.Objects[i] as TUMLClass).Name],
+                                                ExpressionNames.Objects[i] as TUMLClass);
+
+          if (i < TableNames.Count - 1) and (TableNames[i] = TableNames[i + 1]) and CheckDbStuff then
+            AddError(sUMVTableNameExists,
+              [ExpandedDBName(TableNames.Objects[i] as TUMLClass),
+               (TableNames.Objects[i] as TUMLClass).Name,
+               (TableNames.Objects[i + 1] as TUMLClass).Name],
+              TableNames.Objects[i] as TUMLClass);
+        end;
+        Names.Free;
+        SourceCodeNames.Free;
+        ExpressionNames.Free;
+        TableNames.Free;
+
+        BoldLog.ProgressMax := UMLModel.Classes.Count + UMLModel.Associations.Count;
+
+        for I := 0 to UMLModel.Classes.Count - 1 do
+        begin
+          ValidateClass(UMLModel.Classes[I]);
+          BoldLog.ProgressStep;
+        end;
+        for I := 0 to UMLModel.Associations.Count - 1 do
+        begin
+          ValidateAssociation(UMLModel.Associations[I]);
+          BoldLog.ProgressStep;
+        end;
+        ValidateDuplicates(UMLModel);
       end;
-      Names.Free;
-      SourceCodeNames.Free;
-      ExpressionNames.Free;
-      TableNames.Free;
-
-      BoldLog.ProgressMax := UMLModel.Classes.Count + UMLModel.Associations.Count;
-
-      for I := 0 to UMLModel.Classes.Count - 1 do
-      begin
-        ValidateClass(UMLModel.Classes[I]);
-        BoldLog.ProgressStep;
-      end;
-      for I := 0 to UMLModel.Associations.Count - 1 do
-      begin
-        ValidateAssociation(UMLModel.Associations[I]);
-        BoldLog.ProgressStep;
-      end;
-      ValidateDuplicates(UMLModel);
     end;
+  finally
+    BoldLog.EndLog;
+    BoldModel.EndValidation;
   end;
-  BoldLog.EndLog;
-  UMLModel.SendEvent(beModelValidated);
 end;
 
 procedure TBoldUMLModelValidator.ValidateAttribute(attribute: TUMLAttribute);
@@ -435,6 +444,8 @@ var
   Mappername: String;
   TypeDescriptor: TBoldMemberTypeDescriptor;
   Mapping: TBoldTypeNameMapping;
+  Length: Integer;
+  aValueSet: TBAValueSet;
 begin
   ValidateFeature(attribute);
   if attribute.Name = '' then
@@ -478,6 +489,33 @@ begin
       if CheckDbStuff and Attribute.Derived and Attribute.EffectivePersistent then
         AddHint(sUMVAttributeDerivedAndPersistent, [Owner.Name + '.' + Name], Attribute);
 
+      Length := StrToIntDef(GetBoldTV(TAG_LENGTH), 0);
+      if Length <= 0 then begin
+        if SameText(DelphiTypeName, 'TBAString') or
+           SameText(DelphiTypeName, 'TBAWideString') or
+           SameText(DelphiTypeName, 'TBAAnsiString') or
+           SameText(DelphiTypeName, 'TBAUnicodeString') or
+           SameText(DelphiTypeName, 'TBATrimmedString') then
+        begin
+          AddHint('%s: String has no fixed length. For unlimited length use Text instead', [Owner.Name + '.' + Name], attribute);
+        end;
+      end;
+
+      if Assigned(MemberClass) and MemberClass.InheritsFrom(TBAValueSet) then begin
+        aValueSet := MemberClass.Create as TBAValueSet;
+        try
+          if (aValueSet.Values.GetFirstValue <> nil) and
+             (aValueSet.Values.GetFirstValue.StringRepresentationCount <= 2) then
+          begin
+            AddHint('%s: ValueSet %s is not comparable without second String Representation', [Owner.Name + '.' + Name, delphiTypeName], attribute);
+          end;
+        finally
+          aValueSet.Free;
+        end;
+      end;
+
+//      if attribute.columnIndex and not attribute.persistent then
+//        AddHint('%s: An index for the column %s was set, but this attribute isn''t persistent', [owner.name, attribute.name], attribute);
     end;
   end;
 end;
@@ -497,20 +535,22 @@ var
     for I := 0 to aClass.Feature.Count - 1 do
       if aClass.Feature[i] is TUMLAttribute then
       begin
-      	attr := aClass.Feature[I] as TUMLAttribute;
-      	if Attr.EffectivePersistent and TVIsFalse(Attr.GetBoldTV(TAG_ALLOWNULL)) then
-      	  result := true;
-     end;
+        attr := aClass.Feature[I] as TUMLAttribute;
+        if Attr.EffectivePersistent and TVIsFalse(Attr.GetBoldTV(TAG_ALLOWNULL)) then
+          result := true;
+      end;
   end;
 
 begin
-  // check model name
   if aClass.Name = '' then
   begin
     AddError(sUMVClassNameEmpty, [], aClass);
     Exit;
   end;
   ValidateNames(aClass, aClass.Name);
+
+  if Assigned(BoldMemberTypes.DescriptorByDelphiName[aClass.Name]) then
+    AddError(sUMVClassNameClashWithAttribute, [aClass.name], AClass);
 
   if aClass.Persistent and CheckDBStuff then
   begin
@@ -638,7 +678,7 @@ begin
       mvslDelphi: CheckAndAddName(SourceNames, aClass.Name, ExpandedSourceName(aClass.Feature[i]), aClass.Feature[i], sUMVDelphiNameExists2, reported, false);
       mvslCpp: CheckAndAddName(SourceNames, aClass.Name, ExpandedSourceName(aClass.Feature[i]), aClass.Feature[i], sUMVCppNameExists2, reported, false);
     end;
-
+    
     if (aClass.Feature[i] is TUMLAttribute) and
        (aClass.Feature[i] as TUMLAttribute).EffectivePersistent and
        CheckDbStuff and
@@ -726,10 +766,9 @@ begin
     if end0.Name = end1.Name then
       AddError(sUMVDuplicateAssociationEndName, [Association.Name, end0.Name], Association);
 
-    if CheckDbStuff and (not (end0.Multi or end1.Multi)) and
-       TVIsTrue(end0.GetBoldTV('Embed')) and
-       TVIsTrue(end1.GetBoldTV('Embed')) then
-      AddHint(sUMVSingleAssociationEndsEmbeddedInBothEnds, [Association.name], Association);
+    if not Derived and persistent and CheckDbStuff and (not (end0.Multi or end1.Multi)) and
+               TVIsTrue(end0.GetBoldTV('Embed')) and TVIsTrue(end1.GetBoldTV('Embed')) then
+      AddError(sUMVSingleAssociationEndsEmbeddedInBothEnds, [end0.AsString, end1.AsString], Association);
 
     for I := 0 to Connection.Count - 1 do
       ValidateAssociationEnd(Connection[I] as TUMLAssociationEnd);
@@ -739,10 +778,59 @@ end;
 procedure TBoldUMLModelValidator.ValidateOperation(operation: TUMLOperation);
 var
   i: Integer;
+  bInheritedOperationFound: Boolean;
+  aClass: TUMLClassifier;
+  aFeature: TUMLFeature;
 begin
   ValidateFeature(operation);
   for i := 0 to operation.Parameter.Count - 1 do
     ValidateParameter(operation.Parameter[i] as TUMLParameter);
+
+  if operation.GetBoldTV(TAG_DELPHIOPERATIONKIND) =
+      TV_DELPHIOPERATIONKIND_OVERRIDE then
+  begin
+    bInheritedOperationFound := False;
+    aClass := operation.owner.superclass;
+    aFeature := nil;
+    while Assigned(aClass) and not bInheritedOperationFound do begin
+      for i := 0 to aClass.feature.Count - 1 do begin
+        aFeature := aClass.feature[i];
+        if (aFeature is TUMLOperation) and
+           BoldAnsiEqual(aFeature.name, operation.name) then
+        begin
+          bInheritedOperationFound := True;
+          Break;
+        end;
+      end;
+      aClass := aClass.superclass;
+    end;
+    if bInheritedOperationFound then begin
+      if operation.visibility <> aFeature.visibility then begin
+        AddHint(sUMVOperationVisibilityChanged,
+            [Operation.owner.name + '.' + Operation.name], Operation);
+      end;
+    end else begin
+      // Search for framework method
+      for i := 0 to Length(FrameworkMethods) - 1 do begin
+        if BoldAnsiEqual(TBoldModelEditFrm.GetMethodName(FrameworkMethods[i]),
+            operation.name) then
+        begin
+          if TBoldModelEditFrm.GetMethodVisibility(FrameworkMethods[i]) <>
+              operation.visibility then
+          begin
+            AddHint(sUMVOperationVisibilityChanged,
+                [Operation.owner.name + '.' + Operation.name], Operation);
+          end;
+          bInheritedOperationFound := True;
+          Break;
+        end;
+      end;
+      if not bInheritedOperationFound then begin
+        AddWarning(sUMVOperationVirtualOperationMissing,
+            [Operation.owner.name + '.' + Operation.name], Operation);
+      end;
+    end;
+  end;
 end;
 
 procedure TBoldUMLModelValidator.ValidateParameter(parameter: TUMLParameter);
@@ -786,8 +874,9 @@ begin
   if associationEnd.IsNavigable and associationEnd.Multi and (associationEnd.OtherEnd.Aggregation = akComposite) then
     AddError(sUMVAssociationEndIsMultiWithOtherEndComposite, [associationEnd.Name], AssociationEnd);
 
-  if not associationEnd.Multi and not associationEnd.IsNavigable then
-    AddHint(sUMVAssociationEndIsSingleAndNotNavigable, [associationEnd.Name], AssociationEnd);
+  // not really needed, it blows up the validation result
+//  if not associationEnd.Multi and not associationEnd.IsNavigable then
+//    AddHint(sUMVAssociationEndIsSingleAndNotNavigable, [associationEnd.Name], AssociationEnd);
 
   if not associationEnd.Multi and associationEnd.isOrdered then
     addHint(sUMVInvalidAssociationEndOrderedandSingle, [associationEnd.Name,
@@ -915,7 +1004,7 @@ begin
   end;
 
   stored := stored and (element.GetBoldTV(TAG_STORAGE) <> TV_STORAGE_EXTERNAL);
-
+  
   if Stored and CheckDBStuff then
   begin
     if element is TUMLClass then
@@ -952,7 +1041,7 @@ end;
 
 function TBoldUMLModelValidator.CheckAnsiSQLStuff: Boolean;
 begin
-  result := CheckDBStuff; // FIXME add info to SQLDatabaseConfig for this?
+  result := CheckDBStuff;
 end;
 
 function TBoldUMLModelValidator.NationalCharConversion: TBoldNationalCharConversion;
@@ -994,5 +1083,7 @@ begin
   FreeAndNil(fSQLReservedWordList);
   inherited;
 end;
+
+initialization
 
 end.

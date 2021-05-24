@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractModificationPropagator;
 
 interface
@@ -22,7 +25,7 @@ uses
   BoldThreadSafeQueue;
 
 type
-  TReceivePropagatorEvent = procedure(Sender: TObject; Event: String) of object;
+  TReceivePropagatorEvent = procedure(Sender: TObject; const Event: String) of object;
 
   { Forward declaration }
   TBoldAbstractNotificationPropagator = class;
@@ -35,7 +38,7 @@ type
     fClientId: TBoldClientid;
   public
     constructor Create(MoldModel: TMoldModel; ClientId: TBoldClientId);
-    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID); override;
+    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     procedure TransmitEvents(const ClientID: TBoldClientID); override;
     property BoldNotificationPropagator: TBoldAbstractNotificationPropagator read FBoldNotificationPropagator write FBoldNotificationPropagator;
     property ClientId: TBoldClientId read fClientId;
@@ -54,9 +57,10 @@ type
     function GetController: TBoldNotificationPropagatorPersistenceControllerPassthrough;
   protected
     { Puts one event in the out-queue }
-    procedure EnqueEvent(Event: String);
+    procedure EnqueEvent(const Event: String);
+    procedure EnqueEventList(const aEventList: TStrings);    
     { Decodes and enques a received event from the in-queue }
-    procedure ReceiveEvent(Event: String); virtual;
+    procedure ReceiveEvent(const Event: String); virtual;
 
     procedure OnReceiveQueueNotEmpty(Sender: TBoldThreadSafeQueue); virtual;
     { The following method must be overridden in the inheriting classes }
@@ -91,14 +95,14 @@ constructor TBoldAbstractNotificationPropagator.Create(AOwner: TComponent);
 begin
   inherited;
 
-  FReceiveQueue := TBoldThreadSafeStringQueue.Create('NotificationPropagator/Receive'); // do not localize
+  FReceiveQueue := TBoldThreadSafeStringQueue.Create('NotificationPropagator/Receive');
   FReceiveQueue.OnQueueNotEmpty := OnReceiveQueueNotEmpty;
 
-  FSendQueue := TBoldThreadSafeStringQueue.Create('NotificationPropagator/Send'); // do not localize
+  FSendQueue := TBoldThreadSafeStringQueue.Create('NotificationPropagator/Send');
   FSendQueue.OnQueueNotEmpty := OnSendQueueNotEmpty;
 
-  FRefreshQueue := TBoldThreadSafeStringQueue.Create('NotificationPropagator/Refresh'); // do not localize
-  fClientId := 0; // Do we need unique clientIds for any reason?
+  FRefreshQueue := TBoldThreadSafeStringQueue.Create('NotificationPropagator/Refresh');
+  fClientId := 0;
 end;
 
 destructor TBoldAbstractNotificationPropagator.Destroy;
@@ -116,13 +120,19 @@ begin
 end;
 
 { Put a single event in the out-queue }
-procedure TBoldAbstractNotificationPropagator.EnqueEvent(Event: String);
+procedure TBoldAbstractNotificationPropagator.EnqueEvent(const Event: String);
 begin
   FSendQueue.Enqueue(Event);
 end;
 
+procedure TBoldAbstractNotificationPropagator.EnqueEventList(
+  const aEventList: TStrings);
+begin
+  FSendQueue.EnqueueList(aEventList);
+end;
+
 { Decodes and deques a single event }
-procedure TBoldAbstractNotificationPropagator.ReceiveEvent(Event: String);
+procedure TBoldAbstractNotificationPropagator.ReceiveEvent(const Event: String);
 var
   AClassName, AMemberName, ALockName: String;
 begin
@@ -135,8 +145,6 @@ begin
     if TBoldObjectSpaceExternalEvent.DecodeExternalEvent(Event, AClassName,
         AMemberName, ALockName, nil) in [bsClassChanged] then
       FRefreshQueue.Enqueue(AClassName);
-
-    //FRefreshQueue.Enqueue(Event);
   end;
 
   if Assigned(FOnReceiveEvent) then
@@ -164,6 +172,7 @@ begin
   Result := TempController;
 end;
 
+
 function TBoldAbstractNotificationPropagator.GetController: TBoldNotificationPropagatorPersistenceControllerPassthrough;
 begin
   result := PersistenceController as TBoldNotificationPropagatorPersistenceControllerPassthrough;
@@ -181,17 +190,19 @@ procedure TBoldNotificationPropagatorPersistenceControllerPassthrough.PMUpdate(
   ObjectIdList: TBoldObjectIdList; ValueSpace, Old_Values: IBoldValueSpace;
   Precondition: TBoldUpdatePrecondition;
   TranslationList: TBoldIdTranslationList;
-  var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID);
+  var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID);
 begin
-  inherited PMUpdate(ObjectIdList, valueSpace, Old_Values, PreCondition, TranslationList, TimeStamp, ClientId);
+  inherited PMUpdate(ObjectIdList, valueSpace, Old_Values, PreCondition, TranslationList, TimeStamp, TimeOfLatestUpdate, ClientId);
 end;
 
 procedure TBoldNotificationPropagatorPersistenceControllerPassthrough.TransmitEvents(const ClientID: TBoldClientID);
-var
-  i: integer;
 begin
-  for i := 0 to Events.Count-1 do
-    BoldNotificationPropagator.EnqueEvent(Events[i]);
+  try
+    BoldNotificationPropagator.EnqueEventList(Events);
+  finally
+    ClearEvents;
+  end;
 end;
 
+initialization
 end.

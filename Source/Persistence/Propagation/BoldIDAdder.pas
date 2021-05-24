@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIDAdder;
 
 interface
@@ -5,7 +8,7 @@ interface
 uses
   BoldPersistenceControllerPassthrough,
   BoldID,
-  BoldUpdatePrecondition,
+  BoldUpdatePrecondition, 
   BoldCondition,
   BoldValueSpaceInterfaces,
   BoldListenerThread,
@@ -24,12 +27,15 @@ type
     constructor Create;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
-    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID); override;
+    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     property BoldClientID: TBoldClientID read GetClientID;
     property Listener: TBoldListenerThread read fListener write fListener;
   end;
 
 implementation
+
+uses
+  BoldRev;
 
 { TBoldIDAdder }
 
@@ -45,7 +51,7 @@ end;
 
 procedure TBoldIDAdder.PMFetch(ObjectIdList: TBoldObjectIdList;
   ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList;
-  FetchMode: Integer;
+  FetchMode: Integer; 
   BoldClientID: TBoldClientID);
 begin
   if Listener.Suspended then
@@ -67,8 +73,8 @@ end;
 
 procedure TBoldIDAdder.PMUpdate(ObjectIdList: TBoldObjectIdList;
   ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace;
-  Precondition: TBoldUpdatePrecondition;
-  TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType;
+  Precondition: TBoldUpdatePrecondition; 
+  TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime;
   BoldClientID: TBoldClientID);
 begin
   if Listener.Suspended then
@@ -76,5 +82,7 @@ begin
   BoldClientID := Self.BoldClientID;
   inherited;
 end;
+
+initialization
 
 end.

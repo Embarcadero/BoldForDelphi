@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComServerElementHandleFactory;
 
 interface
@@ -30,7 +33,6 @@ implementation
 uses
   SysUtils,
   BoldComAdapter,
-  // Handles
   BoldCursorHandle,
   BoldDerivedHandle,
   BoldExpressionHandle,
@@ -99,7 +101,6 @@ end;
 procedure TBoldComServerElementHandleFactory.GetObjectInfo(
   const ClassId: TGUID; ObjectNames, ClassNames: TStrings);
 begin
-  // Using Class.ClassName to get compiler errors if classes change names
   ClassNames.Add(TBoldCursorHandle.ClassName);
   ClassNames.Add(TBoldDerivedHandle.ClassName);
   ClassNames.Add(TBoldExpressionHandle.ClassName);
@@ -113,6 +114,6 @@ initialization
   G_ServerElementHandleFactory := TBoldComServerElementHandleFactory.Create;
 
 finalization
-  FreeAndNil(G_ServerElementHandleFactory);
+  FreeAndNil(G_ServerElementHandleFactory);  
 
 end.

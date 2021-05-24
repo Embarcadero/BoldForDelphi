@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCommonBitmaps;
 
 interface
@@ -24,7 +27,7 @@ var
 
 implementation
 
-{.$R *.res}
+{$R *.res}
 
 uses
   SysUtils;
@@ -81,4 +84,5 @@ finalization
   FreeAllBitmaps;
 
 end.
+
 

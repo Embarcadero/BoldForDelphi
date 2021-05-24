@@ -1,10 +1,15 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLRose98Linkreg;
 
-interface
+interface                                                       
 
 procedure Register;
 
 implementation
+
+{$R *.res}
 
 uses
   SysUtils,
@@ -13,13 +18,12 @@ uses
   DesignIntf,
   TypInfo,
   BoldDefs,
+  BoldGuard,
   BoldIDEConsts,
   BoldAbstractPropertyEditors,
   BoldPropertyEditors,
   BoldAbstractModel,
   BoldUMLRose98Link;
-
-{$R *.res}
 
 type
 
@@ -33,7 +37,7 @@ type
 { TBoldRose98FileNameProperty }
 function TBoldUMLRoseFileNameProperty.FileFilter: string;
 begin
-  Result := Format('%s (*%s)|*%1:s', [ROSE_LINKDESC, ROSE_LINKEXTENSION]); //do not localize
+  Result := Format('%s (*%s)|*%1:s', [ROSE_LINKDESC, ROSE_LINKEXTENSION]);
 end;
 
 function TBoldUMLRoseFileNameProperty.IsValid: boolean;
@@ -59,8 +63,8 @@ end;
 
 procedure RegisterEditors;
 begin
-  RegisterPropertyEditor(TypeInfo(String), TBoldUMLRoseLink, 'Filename', TBoldUMLRoseFileNameProperty); //do not localize
-  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldUMLRoseLink, 'BoldModel', TBoldComponentPropertyIndicateMissing); //do not localize
+  RegisterPropertyEditor(TypeInfo(String), TBoldUMLRoseLink, 'Filename', TBoldUMLRoseFileNameProperty);
+  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldUMLRoseLink, 'BoldModel', TBoldComponentPropertyIndicateMissing);
 end;
 
 procedure Register;

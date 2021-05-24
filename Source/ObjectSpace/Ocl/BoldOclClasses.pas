@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclClasses;
 
 interface
@@ -12,12 +15,13 @@ uses
   BoldSystemRT;
 
 type
+
   TBOCollectionKind = (OCLSet, OCLBag, OCLSequence);
   TBoldOCLIteratorSpecifier = (OclNoIterator, OclSelect, OclReject, OCLCollect, OclIterate, OclExists, OclForAll, OclOrderBy, OclOrderDescending, OclUnique);
 
   TBoldOclDeduceMethod = (tbodNo, tbodCopyLoopVar, tbodCopyArg1, tbodCopyArg1Elem,
     tbodCopyArg2, tbodCopyArg3, tbodLCC, tbodLCC23, tbodListofArg2, TbodObjectlist,
-    tbodType, tbodTypecast, tbodArg1AsList, tbodListFromArg2);
+    tbodType, tbodTypecast, tbodArg1Type, tbodArg1AsList, tbodListFromArg2);
 
   TBoldOCL_Operation = procedure (Args: array of TBoldIndirectElement; Result: TBoldIndirectElement);
 
@@ -54,26 +58,7 @@ type
 {//}    SystemTypeInfo: TBoldSystemTypeInfo;
 {//}  end;
 
-
-{ TBoldOclNodeList }
-  TBoldOclNodeList = class(TBoldMemoryManagedObject)
-  private
-    FList: TList;
-    function GetItem(index: Integer): TBoldOclNode;
-    procedure PutItem(index: Integer; Value: TBoldOclNode);
-  public
-    property Items[index: Integer]: TBoldOclNode read GetItem write PutItem; default;
-    constructor Create;
-    destructor Destroy; override;
-    function Add(Item: TBoldOclNode): Integer;
-    procedure Clear;
-    procedure ClearAndFree;
-    procedure Delete(index: Integer);
-    procedure Insert(index: Integer; Item: TBoldOclNode);
-    procedure Move(CurIndex, NewIndex: Integer);
-    function Remove(Item: TBoldOclNode): Integer;
-    function Count: Integer;
-  end;
+  TBoldOclNodeList = array of TBoldOclNode;
 
   { TBoldOclEnvironment }
   TBoldOclEnvironment = class(TBoldMemoryManagedObject)
@@ -83,17 +68,23 @@ type
     fList: TList;
     function GetCount: integer;
     function GetBindings(Index: integer): TBoldOclVariableBinding;
+    function GetBindingsAsCommaText: string;
   public
     constructor Create(OuterScope: TBoldOclEnvironment);
     property Count: integer read GetCount;
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure pushBinding(B: TBoldOclVariableBinding);
     function popBinding: TBoldOclVariableBinding;
-    function Lookup(S: string): TBoldOclVariableBinding;
+    procedure ReplaceBinding(name: string; Binding: TBoldOclVariableBinding);
+    procedure RemoveBinding(Binding: TBoldOclVariableBinding);
+    procedure RemoveVariable(Variable: TBoldExternalVariable);
+    function Lookup(const S: string): TBoldOclVariableBinding;
     function lookupSelf: TBoldOclVariableBinding;
+    function Find(const S: string): TBoldOclVariableBinding;
     function CurrentImplicitVariable: TBoldOclVariableBinding;
     function MakeGenSymName: string;
     property Bindings[Index: integer]: TBoldOclVariableBinding read GetBindings; default;
+    property BindingsAsCommaText: string read GetBindingsAsCommaText;
   end;
 
   { TBoldOclVisitor }
@@ -101,7 +92,7 @@ type
   public
     procedure VisitTBoldOclNode(N: TBoldOclNode); virtual;
     procedure VisitTBoldOclListCoercion(N: TBoldOclListCoercion); virtual;
-    procedure VisitTBoldOclCollectionLiteral(N: TBoldOclCollectionLIteral); virtual;
+    procedure VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLIteral); virtual;
     procedure VisitTBoldOclOperation(N: TBoldOclOperation); virtual;
     procedure VisitTBoldOclIteration(N: TBoldOclIteration); virtual;
     procedure VisitTBoldOclMember(N: TBoldOclMember); virtual;
@@ -109,7 +100,7 @@ type
     procedure VisitTBoldOclLiteral(N: TBoldOclLiteral); virtual;
     procedure VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); virtual;
     procedure VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral); virtual;
-    procedure VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral); virtual;
+    procedure VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral); virtual;
     procedure VisitTBoldOclIntLiteral(N: TBoldOclIntLiteral); virtual;
     procedure VisitTBoldOclMomentLiteral(N: TBoldOclMomentLiteral); virtual;
     procedure VisitTBoldOclDateLiteral(N: TBoldOclDateLiteral); virtual;
@@ -124,16 +115,16 @@ type
   protected
     fBoldType: TBoldElementTypeInfo;
     procedure SetBoldType(NewType: TBoldElementTypeInfo);
-    function GetBoldType: TBoldElementTypeInfo;
+    function GetBoldType: TBoldElementTypeInfo; virtual;
   public
     Position: Integer;
-    constructor Create;
+    constructor Create; virtual;
     procedure AcceptVisitor(V: TBoldOclVisitor); virtual;
     property BoldType: TBoldElementTypeInfo read GetBoldType write SetBoldType;
     property NeedsListCoercion: Boolean index befNeedsListCoercion read GetElementFlag write SetElementFlag;
     property IsConstant: Boolean index befIsConstant read GetElementFlag write SetElementFlag;
     property Resubscribe: boolean index befResubscribe read GetElementFlag write SetElementFlag;
-    property HastemporaryDummyValue: boolean index befHastemporaryDummyValue read GetElementFlag write SetElementFlag;
+    property HasTemporaryDummyValue: boolean index befHastemporaryDummyValue read GetElementFlag write SetElementFlag;
   end;
 
   { TBoldOclTypeNode }
@@ -147,7 +138,7 @@ type
   TBoldOCLListCoercion = class(TBoldOCLNode)
   public
     Child: TBoldOCLNode;
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure AcceptVisitor(V: TBoldOclVisitor); override;
   end;
 
@@ -180,7 +171,7 @@ type
     MemberIndex: Integer;
     Qualifier: TBoldOclNodeList;
     RTInfo: TBoldMemberRTInfo;
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
     procedure AcceptVisitor(V: TBoldOclVisitor); override;
   end;
@@ -198,18 +189,26 @@ type
   TBoldOclVariableBinding = class(TBoldOclNode)
   public
     VariableName: string;
-    TypeNameList: TStringList; //For temporary use only. The parser stores the type
-    //info from a select(i:Person|i<>self.employer)
-    //but this must be moved to the oclNode.ExpressionType
+    TypeNameList: TStringList;
     destructor Destroy; override;
     procedure AcceptVisitor(V: TBoldOclVisitor); override;
+  end;
+
+  TBoldOclVariableBindingExternal = class(TBoldOclVariableBinding)
+  private
+    fExternalVariable: TBoldExternalVariable;
+  protected
+    function GetBoldType: TBoldElementTypeInfo; override;
+  public
+    destructor Destroy; override;
+    property ExternalVariable: TBoldExternalVariable read fExternalVariable write fExternalVariable;
   end;
 
   { TBoldOclVariableReference }
   TBoldOclVariableReference = class(TBoldOclNode)
   public
     VariableName: string;
-    VariableBinding: TBoldOclVariableBinding; // Not to be traversed...
+    VariableBinding: TBoldOclVariableBinding;
     procedure AcceptVisitor(V: TBoldOclVisitor); override;
   end;
 
@@ -290,11 +289,12 @@ type
   TBoldSymbolDictionary = class(TBoldIndexableList)
   private
     fhelp: TBoldOclSymbolHelp;
-    function GetSymbol(const Name: string): TBoldOclSymbol;
+    function GetSymbol(const Name: string): TBoldOclSymbol; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetSymbolByIndex(index: Integer): TBoldOclSymbol;
+    class var IX_SymbolName: integer;
   public
     constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
-    destructor Destroy; override;
+    destructor destroy; override;
     property help: TBoldOclSymbolHelp read fHelp;
     property SymbolByName[const name: string]: TBoldOclSymbol read GetSymbol;
     property Symbols[i: Integer]: TBoldOclSymbol read GetSymbolByIndex;
@@ -321,11 +321,12 @@ type
     fNumericListType,
     fMomentListType,
     fStringListType,
+    fIntegerListType,
     fTypeListType: TBoldListTypeInfo;
     fSystemTypeInfo: tBoldSystemTypeInfo;
-    procedure fMakeNew(el: TBoldIndirectElement; NewType: TBoldElementTypeInfo);
   public
     constructor create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+    procedure MakeNew(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
     function CreateNewMember(BoldType: TBoldElementTypeInfo): TBoldMember;
     property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
     property NumericType: TBoldAttributeTypeInfo read fNumericType;
@@ -345,25 +346,29 @@ type
     property NumericListType: TBoldListTypeInfo read fNumericListType;
     property MomentListType: TBoldListTypeInfo read fMomentListType;
     property StringListType: TBoldListTypeInfo read fStringListType;
+    property IntegerListType: TBoldListTypeInfo read fIntegerListType;
     property TypeListType: TBoldListTypeInfo read fTypeListType;
     property ObjectListType: TBoldListTypeInfo read fObjectListType;
-    procedure MakeNewNumeric(El: TBoldIndirectElement; value: Double);
-    procedure MakeNewTime(El: TBoldIndirectElement; value: TDateTime);
-    procedure MakeNewDateTime(El: TBoldIndirectElement; value: TDateTime);
-    procedure MakeNewDate(El: TBoldIndirectElement; value: TDateTime);
-    procedure MakeNewBoolean(El: TBoldIndirectElement; value: Boolean);
-    procedure MakeNewInteger(El: TBoldIndirectElement; value: integer);
-    procedure MakeNewString(El: TBoldIndirectElement; const value: string);
-    procedure MakeNewCurrency(El: TBoldIndirectElement; value: currency);
+    procedure MakeNewNumeric(El: TBoldOCLNode; value: Double);
+    procedure MakeNewTime(El: TBoldOCLNode; value: TDateTime);
+    procedure MakeNewDateTime(El: TBoldOCLNode; value: TDateTime);
+    procedure MakeNewDate(El: TBoldOCLNode; value: TDateTime);
+    procedure MakeNewBoolean(El: TBoldOCLNode; value: Boolean);
+    procedure MakeNewInteger(El: TBoldOCLNode; value: integer);
+    procedure MakeNewString(El: TBoldOCLNode; const value: string);
+    procedure MakeNewCurrency(El: TBoldOCLNode; value: currency);
+    procedure MakeNewNull(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
     procedure TransferOrClone(source, dest: TBoldIndirectElement);
   end;
+
+   ShortCircuitType = (csNone, csAnd, csOr, csIf);
 
   { TBoldOclSymbol }
   TBoldOclSymbol = class(TBoldMemoryManagedObject)
   private
     fHelp: TBoldOCLSymbolHelp;
     fSymbolName: String;
-    fFormalArguments: TList;
+    fFormalArguments: array of TBoldElementTypeInfo;
     fDeduceMethod: TBoldOclDeduceMethod;
     fResultType: TBoldElementTypeInfo;
     fIsDotNotation: Boolean;
@@ -372,27 +377,28 @@ type
     fArgsNeedCommonType: Boolean;
   protected
     procedure InternalInit(const Name: string;
-                                       const Args: array of TBoldElementTypeInfo;
+                                       Args: array of TBoldElementTypeInfo;
                                        DeduceMethod: TBoldOclDeduceMethod;
                                        resultType: TBoldElementTypeInfo;
                                        IsPostfix: Boolean;
                                        HelpContext: integer;
                                        ArgsNeedCommonType: Boolean = false);
-    function GetFormalArguments(index: integer): TBoldElementTypeInfo;
-    function GetNumberOfArgs: integer;
+    function GetFormalArguments(index: integer): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetNumberOfArgs: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure Init; virtual; abstract;
-    function XBoolean(Elem: TBoldElement): Boolean;
-    function XCurrency(Elem: TBoldElement): Currency;
-    function XInteger(Elem: TBoldElement): Integer;
-    function XList(Elem: TBoldElement): tBoldList;
-    function XDateTime(Elem: TBoldElement): TDateTime;
-    function XNumeric(Elem: TBoldElement): Double;
-    function XString(Elem: TBoldElement): String;
-    function XType(Elem: TBoldElement): TBoldElementTypeInfo;
+    class function XBoolean(Elem: TBoldElement): Boolean; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XCurrency(Elem: TBoldElement): Currency; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XInteger(Elem: TBoldElement): Integer; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XList(Elem: TBoldElement): tBoldList; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XDateTime(Elem: TBoldElement): TDateTime; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XNumeric(Elem: TBoldElement): Double; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XString(Elem: TBoldElement): String; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XType(Elem: TBoldElement): TBoldElementTypeInfo; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property Help: TBoldOclSymbolHelp read fHelp;
   public
     constructor Create(Help: TBoldOclSymbolHelp);
     destructor Destroy; override;
+    function GetShortCircuitType: ShortCircuitType; virtual;
     procedure Evaluate(const Params: TBoldOclSymbolParameters); virtual; abstract;
     procedure SQL(const Args: Array of String; var result: String); virtual;
     property DeduceMethod: tBoldOclDeduceMethod read fDeduceMethod;
@@ -413,90 +419,10 @@ uses
   BoldHashIndexes,
   BoldDefs,
   BoldOclError,
-  BoldAttributes,
-  BoldCoreConsts;
-
-var
-  IX_SymbolName: integer = -1;
-
-constructor TBoldOclNodeList.Create;
-begin
-  inherited;
-  FList := TList.Create;
-end;
-
-destructor TBoldOclNodeList.Destroy;
-begin
-  FreeAndNil(FList);
-  inherited;
-end;
-
-function TBoldOclNodeList.GetItem(index: Integer): TBoldOclNode;
-begin
-  Assert((not Assigned(FList[index])) or (tObject(FList[index]) is TBoldOCLNode));
-  Result := TBoldOCLNode(FList[index]);
-end;
-
-procedure TBoldOclNodeList.PutItem(index: Integer; Value: TBoldOclNode);
-begin
-  FList[index] := Value;
-end;
-
-function TBoldOclNodeList.Add(Item: TBoldOclNode): Integer;
-begin
-  Result := FList.Add(Item);
-end;
-
-procedure TBoldOclNodeList.Clear;
-begin
-  FList.Clear;
-end;
-
-procedure TBoldOclNodeList.ClearAndFree;
-var
-  I: Integer;
-begin
-  for I := Count - 1 downto 0 do
-  begin
-    Items[I].Free;
-    items[i] := nil;
-  end;
-  FList.Clear;
-end;
-
-procedure TBoldOclNodeList.Delete(index: Integer);
-begin
-  FList.Delete(index);
-  FList.Pack;
-end;
-
-procedure TBoldOclNodeList.Insert(index: Integer; Item: TBoldOclNode);
-begin
-  FList.Insert(index, Item);
-end;
-
-procedure TBoldOclNodeList.Move(CurIndex, NewIndex: Integer);
-begin
-  FList.Move(CurIndex, NewIndex);
-end;
-
-function TBoldOclNodeList.Remove(Item: TBoldOclNode): Integer;
-begin
-  Result := FList.Remove(Item);
-end;
-
-function TBoldOclNodeList.Count: Integer;
-begin
-  Result := FList.Count
-end;
-
-//=======================================================================
-//== TBoldOCLNodes and decendants constructors and destructors
-//=======================================================================
+  BoldAttributes;
 
 procedure TBoldOclNode.AcceptVisitor(V: TBoldOclVisitor);
 begin
-  // Do nothing
 end;
 
 constructor TBoldOclNode.Create;
@@ -506,39 +432,33 @@ begin
 end;
 
 destructor TBoldOclMember.Destroy;
+var
+  i: Integer;
 begin
   FreeAndNil(MemberOf);
-  if assigned(Qualifier) then
-    Qualifier.Clearandfree;
-  FreeAndNil(Qualifier);
+  for i := 0 to Length(Qualifier)- 1 do
+    Qualifier[i].Free;
   inherited;
 end;
 
 destructor TBoldOCLCollectionLiteral.Destroy;
+var
+  i: Integer;
 begin
   FreeAndNil(RangeStart);
   FreeAndNil(RangeStop);
-  if assigned(elements) then
-  begin
-    Elements.Clearandfree;
-    FreeAndNil(Elements)
-  end;
+  for i := 0 to Length(Elements) - 1 do
+    Elements[i].Free;
   inherited;
 end;
 
 
 destructor TBoldOclOperation.Destroy;
-var I: Integer;
+var
+  I: Integer;
 begin
-  if assigned(Args) then
-  begin
-    for I := 0 to Args.Count - 1 do
-    begin
-      TBoldOclNode(Args[I]).Free;
-      Args[I] := nil;
-    end;
-    FreeAndNil(Args);
-  end;
+  for I := 0 to Length(Args) - 1 do
+    Args[I].Free;
   inherited;
 end;
 
@@ -568,9 +488,7 @@ begin
   RTInfo := nil;
 end;
 
-//=======================================================================
-//== TBoldOCLNode and descendants Visitor mechanism
-//=======================================================================
+
 
 procedure TBoldOclTypeNode.AcceptVisitor(V: TBoldOclVisitor);
 begin
@@ -662,9 +580,6 @@ procedure TBoldOclVisitor.VisitTBoldOclMomentLiteral(N: TBoldOclMomentLiteral); 
 procedure TBoldOclVisitor.VisitTBoldOclTimeLiteral(N: TBoldOclTimeLiteral); begin end;
 
 
-//=======================================================================
-//== TBoldOCLEnvironment
-//=======================================================================
 
 constructor TBoldOclEnvironment.Create(OuterScope: TBoldOclEnvironment);
 begin
@@ -674,7 +589,7 @@ begin
   fList := TList.Create;
 end;
 
-destructor TBoldOCLEnvironment.Destroy;
+destructor TBoldOCLEnvironment.destroy;
 var
   tempBinding: TBoldOclVariableBinding;
 begin
@@ -694,7 +609,6 @@ end;
 
 procedure TBoldOclEnvironment.pushBinding(B: TBoldOclVariableBinding);
 begin
-  b.variableName := uppercase(b.variableName);
   fList.Add(B);
 end;
 
@@ -704,14 +618,55 @@ begin
   fList.Delete(Count - 1);
 end;
 
-function TBoldOclEnvironment.Lookup(S: string): TBoldOclVariableBinding;
-var I: Integer;
+procedure TBoldOclEnvironment.ReplaceBinding(name: string;
+  Binding: TBoldOclVariableBinding);
+var
+  i: integer;
 begin
   I := fList.Count - 1;
-  s := uppercase(s);
   while I >= 0 do
   begin
-    if Bindings[I].VariableName = S then
+    if CompareText(Bindings[I].VariableName, name) = 0 then
+    begin
+      TObject(fList.Items[i]).free;
+      fList.Items[i] := Binding;
+      exit;
+    end;
+    Dec(I);
+  end;
+end;
+
+procedure TBoldOclEnvironment.RemoveBinding(Binding: TBoldOclVariableBinding);
+begin
+  fList.Remove(Binding);
+end;
+
+procedure TBoldOclEnvironment.RemoveVariable(Variable: TBoldExternalVariable);
+var
+  i: integer;
+begin
+  I := fList.Count - 1;
+  while I >= 0 do
+  begin
+    if Bindings[I] is TBoldOclVariableBindingExternal and (TBoldOclVariableBindingExternal(Bindings[I]).ExternalVariable = Variable) then
+    begin
+      Variable.Evaluator := nil;
+      TObject(fList[i]).free;
+      fList.Delete(i);
+      exit;
+    end;
+    Dec(I);
+  end;
+end;
+
+function TBoldOclEnvironment.Find(const S: string): TBoldOclVariableBinding;
+var
+  I: Integer;
+begin
+  I := fList.Count - 1;
+  while I >= 0 do
+  begin
+    if CompareText(Bindings[I].VariableName, s) = 0 then
     begin
       Result := Bindings[i];
       exit;
@@ -724,9 +679,39 @@ begin
     Result := nil;
 end;
 
+function TBoldOclEnvironment.Lookup(const S: string): TBoldOclVariableBinding;
+var
+  I: Integer;
+  ResolvedBinding: TBoldOclVariableBinding;
+  ExternalVariable: TBoldExternalVariable;
+begin
+  I := fList.Count - 1;
+  while I >= 0 do
+  begin
+    if CompareText(Bindings[I].VariableName, s) = 0 then
+    begin
+      Result := Bindings[i];
+      if result is TBoldOclVariableBindingExternal then
+      begin
+        ExternalVariable := TBoldOclVariableBindingExternal(result).ExternalVariable;
+        if Assigned(ExternalVariable) then
+          result.SetReferenceValue(ExternalVariable.Value)
+        else
+          result.SetReferenceValue(nil);
+      end;
+      exit;
+    end;
+    Dec(I);
+  end;
+  if assigned(fOuterScope) then
+    result := fOuterScope.Lookup(S)
+  else
+    Result := nil;
+end;
+
 function TBoldOclEnvironment.lookupSelf: TBoldOclVariableBinding;
 begin
-  Result := Lookup('SELF'); // do not localize
+  Result := Lookup('SELF');
 end;
 
 function TBoldOclEnvironment.CurrentImplicitVariable: TBoldOclVariableBinding;
@@ -736,7 +721,7 @@ end;
 
 function TBoldOclEnvironment.MakeGenSymName: string;
 begin
-  Result := IntToStr(GenSymCounter) + '#GenSym'; // do not localize
+  Result := IntToStr(GenSymCounter) + '#GenSym';
   Inc(GenSymCounter);
 end;
 
@@ -764,16 +749,16 @@ procedure InstallAttribute(const Name: String; var AttrTypeInfo: TBoldAttributeT
 begin
   AttrTypeInfo := SystemTypeInfo.AttributeTypeInfoByExpressionName[Name];
   if not assigned(AttrTypeINfo) then
-    SignalError(sMissingOCLType, [Name]);
+    SignalError('Missing required OCL-type: %s. Update your TypeNameHandle', [Name]);
 
   if not assigned(AttrTypeInfo.AttributeClass) then
-    SignalError(sMissingDelphiType, [Name, AttrTypeInfo.DelphiName])
+    SignalError('Missing DelphiType of %s (please install %s)', [Name, AttrTypeInfo.DelphiName])
   else begin
     case exact of
       true: if AttrTypeInfo.AttributeClass <> AttrClass then
-        SignalError(sTypeMustBeX, [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
+        SignalError('The %s type must BE %s (was: %s). Update your TypeNameHandle', [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
       false: if not AttrTypeInfo.AttributeClass.InheritsFrom(AttrClass) then
-        SignalError(sTypeMustInheritFromX, [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
+        SignalError('The %s type must inherit from %s (%s doesn''t).', [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
     end;
   end;
 end;
@@ -782,17 +767,17 @@ begin
   inherited create;
   fSystemTypeInfo := SystemTypeInfo;
   fTypeType := SystemTypeInfo.BoldType as TBoldTypeTypeInfo;
-  InstallAttribute('Numeric', fNumericType, TBANumeric, true); // do not localize
-  InstallAttribute('Float', fRealType, TBAFloat, false); // do not localize
-  InstallAttribute('String', fStringType, TBAString, false); // do not localize
-  InstallAttribute('Integer', fIntegerType, TBAInteger, false); // do not localize
-  InstallAttribute('Boolean', fBooleanType, TBABoolean, false); // do not localize
-  InstallAttribute('Currency', fCurrencyType, TBACurrency, false); // do not localize
-  InstallAttribute('Moment', fMomentType, TBAMoment, false); // do not localize
-  InstallAttribute('Constraint', fConstraintType, TBAConstraint, false); // do not localize
-  InstallAttribute('Date', fDateType, TBADate, false); // do not localize
-  InstallAttribute('DateTime', fDateTimeType, TBADateTime, false); // do not localize
-  InstallAttribute('Time', fTimeType, TBATime, false); // do not localize
+  InstallAttribute('Numeric', fNumericType, TBANumeric, true);
+  InstallAttribute('Float', fRealType, TBAFloat, false);
+  InstallAttribute('String', fStringType, TBAString, false);
+  InstallAttribute('Integer', fIntegerType, TBAInteger, false);
+  InstallAttribute('Boolean', fBooleanType, TBABoolean, false);
+  InstallAttribute('Currency', fCurrencyType, TBACurrency, false);
+  InstallAttribute('Moment', fMomentType, TBAMoment, false);
+  InstallAttribute('Constraint', fConstraintType, TBAConstraint, false);
+  InstallAttribute('Date', fDateType, TBADate, false);
+  InstallAttribute('DateTime', fDateTimeType, TBADateTime, false);
+  InstallAttribute('Time', fTimeType, TBATime, false);
 
   fObjectType := SystemTypeInfo.RootClassTypeInfo;
   fListType := SystemTypeInfo.ListTypeInfoByElement[nil];
@@ -801,78 +786,87 @@ begin
   fTypeListType := SystemTypeInfo.ListTypeInfoByElement[TypeType];
   fObjectListType := SystemTypeInfo.ListTypeInfoByElement[ObjectType];
   fStringListType := SystemTypeInfo.ListTypeInfoByElement[StringType];
+  fIntegerListType := SystemTypeInfo.ListTypeInfoByElement[IntegerType];
 end;
 
-procedure TBoldOclSymbolHelp.fMakeNew(el: TBoldIndirectElement; NewType: TBoldElementTypeInfo);
+procedure TBoldOclSymbolHelp.MakeNew(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
 begin
-  // if we do not own it, or it is not there, then create new element
-  if not el.OwnsValue or not assigned(el.Value) then
+  if el.OwnsValue and assigned(el.Value) then
   begin
-    if (el is TBoldOCLNode) and
-      assigned(TBoldOclNode(el).BoldType) and
-      TBoldOclNode(el).BoldType.ConformsTo(NewType) then
-      el.SetOwnedValue(CreateNewMember(TBoldOclNode(el).BoldType))
+    if el.value is TBoldAttribute then
+      TBoldAttribute(el.Value).RecycleValue;
+  end
+  else
+
+  begin
+    if assigned(el.BoldType) and
+      el.BoldType.ConformsTo(NewType) then
+      el.SetOwnedValue(CreateNewMember(el.BoldType))
     else
       el.SetOwnedValue(CreateNewMember(NewType))
   end
-  else
-    // always recycle the value, we must tell the rest of the world that this is now a new vlaue.
-    if el.value is TBoldAttribute then
-      TBoldAttribute(el.Value).RecycleValue;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewNumeric(El: TBoldIndirectElement; value: Double);
+procedure TBoldOclSymbolHelp.MakeNewNull(el: TBoldOCLNode;
+  NewType: TBoldElementTypeInfo);
 begin
-  fMakeNew(el, RealType);
+  MakeNew(el, NewType);
+  if (el.Value is TBoldAttribute) then
+    (el.Value as TBoldAttribute).SetToNull;
+end;
+
+procedure TBoldOclSymbolHelp.MakeNewNumeric(El: TBoldOCLNode; value: Double);
+begin
+  MakeNew(el, RealType);
   Assert(El.Value is TBAFloat);
   TBAFloat(El.Value).AsFloat := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewCurrency(El: TBoldIndirectElement; value: currency);
+procedure TBoldOclSymbolHelp.MakeNewCurrency(El: TBoldOCLNode; value: currency);
 begin
-  fMakeNew(el, CurrencyType);
+  MakeNew(el, CurrencyType);
   Assert(El.Value is TBACurrency);
   TBACurrency(El.Value).Ascurrency := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewString(El: TBoldIndirectElement; const value: String);
+procedure TBoldOclSymbolHelp.MakeNewString(El: TBoldOCLNode; const value: String);
 begin
-  fMakeNew(el, StringType);
+  MakeNew(el, StringType);
   Assert(El.Value is TBAString);
   TBAString(El.Value).AsString := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewInteger(El: TBoldIndirectElement; value: integer);
+procedure TBoldOclSymbolHelp.MakeNewInteger(El: TBoldOCLNode; value: integer);
 begin
-  fMakeNew(el, Integertype);
+  MakeNew(el, Integertype);
   Assert(El.Value is TBAInteger);
   TBAInteger(El.Value).AsInteger := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewTime(El: TBoldIndirectElement; value: TDateTime);
+procedure TBoldOclSymbolHelp.MakeNewTime(El: TBoldOCLNode; value: TDateTime);
 begin
-  fMakeNew(el, TimeType);
+  MakeNew(el, TimeType);
   Assert(El.Value is TBATime);
   TBATime(El.Value).AsTime := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewDateTime(El: TBoldIndirectElement; value: TDateTime);
+procedure TBoldOclSymbolHelp.MakeNewDateTime(El: TBoldOCLNode; value: TDateTime);
 begin
-  fMakeNew(el, DateTimeType);
+  MakeNew(el, DateTimeType);
   Assert(El.Value is TBADateTime);
   TBADateTime(El.Value).AsDateTime := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewDate(El: TBoldIndirectElement; value: TDateTime);
+procedure TBoldOclSymbolHelp.MakeNewDate(El: TBoldOCLNode; value: TDateTime);
 begin
-  fMakeNew(el, DateType);
+  MakeNew(el, DateType);
   Assert(El.Value is TBADate);
   TBADate(El.Value).AsDate := Value;
 end;
 
-procedure TBoldOclSymbolHelp.MakeNewBoolean(El: TBoldIndirectElement; value: Boolean);
+procedure TBoldOclSymbolHelp.MakeNewBoolean(El: TBoldOCLNode; value: Boolean);
 begin
-  fMakeNew(el, BooleanType);
+  MakeNew(el, BooleanType);
   Assert(El.Value is TBABoolean);
   TBABoolean(El.Value).AsBoolean := Value;
 end;
@@ -892,20 +886,20 @@ end;
 {-- TBoldOclSymbol -- }
 
 procedure TBoldOclSymbol.InternalInit(const Name: string;
-                                       const Args: array of TBoldElementTypeInfo;
+                                       Args: array of TBoldElementTypeInfo;
                                        DeduceMethod: TBoldOclDeduceMethod;
                                        resultType: TBoldElementTypeInfo;
                                        IsPostfix: Boolean;
                                        HelpContext: Integer;
                                        ArgsNeedCommonType: Boolean = false);
 var
-  i: integer;
+  i:Integer;
 begin
   fSymbolName := Name;
   fHelpContext := HelpContext;
-  for i := 0 to High(Args) do
-    fFormalArguments.Add(Args[i]);
-
+  SetLength(fFormalArguments, Length(args));
+  for i := 0 to Length(args) - 1 do
+    fFormalArguments[i] := args[i];
   if assigned(ResultType) then
     fResultType := ResultType
   else
@@ -916,12 +910,17 @@ end;
 
 function TBoldOclSymbol.GetFormalArguments(index: integer): TBoldElementTypeInfo;
 begin
-  result := TBoldElementTypeInfo(fFormalArguments[index]);
+  result := fFormalArguments[index];
 end;
 
 function TBoldOclSymbol.GetNumberOfArgs: integer;
 begin
-  result := fFormalArguments.Count;
+  result := Length(fFormalArguments);
+end;
+
+function TBoldOclSymbol.GetShortCircuitType: ShortCircuitType;
+begin
+  Result := csNone;
 end;
 
 procedure TBoldOclSymbol.SQL(const Args: Array of String; var result: String);
@@ -933,7 +932,6 @@ constructor TBoldOclSymbol.Create(Help: TBoldOclSymbolHelp);
 begin
   Inherited create;
   fHelp := help;
-  fFormalArguments := TList.create;
   Init;
   fIsDotNotation := isPostFix and
                     (not assigned(FormalArguments[0]) or
@@ -942,11 +940,10 @@ end;
 
 destructor TBoldOclSymbol.Destroy;
 begin
-  FreeAndNil(fFormalArguments);
   inherited;
 end;
 
-function TBoldOclSymbol.XBoolean(Elem: TBoldElement): Boolean;
+class function TBoldOclSymbol.XBoolean(Elem: TBoldElement): Boolean;
 begin
   if elem is TBABoolean  then
     result := TBABoolean(Elem).AsBoolean
@@ -954,7 +951,7 @@ begin
     result := false;
 end;
 
-function TBoldOclSymbol.XInteger(Elem: TBoldElement): Integer;
+class function TBoldOclSymbol.XInteger(Elem: TBoldElement): Integer;
 begin
   if (elem is TBAInteger) and not TBAInteger(elem).IsNull then
     result := TBAInteger(Elem).AsInteger
@@ -962,7 +959,7 @@ begin
     result := 0;
 end;
 
-function TBoldOclSymbol.XDateTime(Elem: TBoldElement): TDateTime;
+class function TBoldOclSymbol.XDateTime(Elem: TBoldElement): TDateTime;
 begin
   if elem is TBADate then
     result := TBADate(Elem).AsDate
@@ -974,7 +971,7 @@ begin
     result := 0;
 end;
 
-function TBoldOclSymbol.XNumeric(Elem: TBoldElement): Double;
+class function TBoldOclSymbol.XNumeric(Elem: TBoldElement): Double;
 begin
   if elem is TBANumeric then
     result := TBANumeric(Elem).AsFloat
@@ -982,7 +979,7 @@ begin
     result := 0;
 end;
 
-function TBoldOclSymbol.Xcurrency(Elem: TBoldElement): currency;
+class function TBoldOclSymbol.Xcurrency(Elem: TBoldElement): currency;
 begin
   if elem is TBACurrency then
     result := TBACurrency(Elem).Ascurrency
@@ -990,7 +987,7 @@ begin
     result := 0;
 end;
 
-function TBoldOclSymbol.XString(Elem: TBoldElement): String;
+class function TBoldOclSymbol.XString(Elem: TBoldElement): String;
 begin
   if assigned(elem) then
     result := Elem.AsString
@@ -998,7 +995,7 @@ begin
     result := '';
 end;
 
-function TBoldOclSymbol.XType(Elem: TBoldElement): TBoldElementTypeInfo;
+class function TBoldOclSymbol.XType(Elem: TBoldElement): TBoldElementTypeInfo;
 begin
   if elem is TBoldElementTypeInfo then
     result := TBoldElementTypeInfo(Elem)
@@ -1006,7 +1003,7 @@ begin
     result := nil;
 end;
 
-function TBoldOclSymbol.XList(Elem: TBoldElement): tBoldList;
+class function TBoldOclSymbol.XList(Elem: TBoldElement): tBoldList;
 begin
   if elem is TBoldList then
     result := TBoldList(Elem)
@@ -1036,7 +1033,7 @@ begin
   SetIndexVariable(IX_SymbolName, AddIndex(TSymbolNameIndex.Create));
 end;
 
-destructor TBoldSymbolDictionary.Destroy;
+destructor TBoldSymbolDictionary.destroy;
 begin
   FreeAndNil(fHelp);
   inherited;
@@ -1044,7 +1041,7 @@ end;
 
 function TBoldSymbolDictionary.GetSymbol(const Name: string): TBoldOclSymbol;
 begin
-  Result := TBoldOclSymbol(TSymbolNameIndex(indexes[IX_SymbolName]).FindByString(Name));;
+  Result := TBoldOclSymbol(TBoldStringHashIndex(indexes[IX_SymbolName]).FindByString(Name));
 end;
 
 function TBoldSymbolDictionary.GetSymbolByIndex(index: Integer): TBoldOclSymbol;
@@ -1064,6 +1061,18 @@ function TBoldOclEnvironment.GetBindings(
   Index: integer): TBoldOclVariableBinding;
 begin
   result := TBoldOclVariableBinding(fList[index])
+end;
+
+function TBoldOclEnvironment.GetBindingsAsCommaText: string;
+var
+  i: integer;
+  sl: TStringList;
+begin
+  sl := TStringList.Create;
+  for I := 0 to Count - 1 do
+    Sl.Add(Bindings[i].VariableName);
+  result := sl.commaText;
+  sl.free;
 end;
 
 { TBoldOCLMomentLiteral }
@@ -1107,10 +1116,39 @@ begin
   fDateTimeValue := Value;
 end;
 
-destructor TBoldOCLListCoercion.Destroy;
+destructor TBoldOCLListCoercion.destroy;
 begin
   FreeAndNil(Child);
   inherited;
 end;
+
+{ TBoldOclVariableBindingExternal }
+
+destructor TBoldOclVariableBindingExternal.Destroy;
+begin
+  inherited;
+end;
+
+function TBoldOclVariableBindingExternal.GetBoldType: TBoldElementTypeInfo;
+begin
+  if Assigned(ExternalVariable) then  
+    result := ExternalVariable.ValueType
+  else
+    result := nil;
+end;
+
+{$WARNINGS OFF}
+procedure InitDebugMethods;
+var
+  env: TBoldOclEnvironment;
+begin
+  Exit;
+  env.BindingsAsCommaText;     // This is used to force compiler to include BindingsAsCommaText
+end;
+{$WARNINGS ON}
+
+initialization
+  TBoldSymbolDictionary.IX_SymbolName := -1;
+  InitDebugMethods;
 
 end.

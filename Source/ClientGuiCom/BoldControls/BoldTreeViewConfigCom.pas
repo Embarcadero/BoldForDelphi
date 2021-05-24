@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTreeViewConfigCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -9,8 +12,8 @@ uses
   BoldGenericListControlPackCom,
   BoldNodeControlPackCom,
   {!! DO NOT REMOVE !! BoldSystemRT ,}
-  {$IFDEF BOLDCOMCLIENT}   // uses
-  BoldComObjectSpace_TLB, // to get the ObjectSpace interfaces
+  {$IFDEF BOLDCOMCLIENT}
+  BoldComObjectSpace_TLB,
   {$ENDIF}
   BoldTreeViewCom;
 
@@ -20,10 +23,9 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
-{$IFDEF BOLDCOMCLIENT}  // BoldGenericTreeView
+{$IFDEF BOLDCOMCLIENT}
 procedure BoldGenericTreeView(SystemTypeInfo: IBoldSystemTypeInfo; TreeView: TBoldTreeViewCom);
 begin
 end;

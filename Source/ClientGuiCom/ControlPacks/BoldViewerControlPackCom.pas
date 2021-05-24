@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldViewerControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -65,7 +68,7 @@ type
     procedure DefaultSetAsViewer(Element: IBoldElement; Value: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
     function DefaultIsChanged(RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     function IsChanged(RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
-    procedure MakeUptodateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
   published
     property OnGetAsViewer: TBoldGetAsViewerCom read FOnGetAsViewer write FOnGetAsViewer;
     property OnSetAsViewer: TBoldSetAsViewerCom read FOnSetAsViewer write FOnSetAsViewer;
@@ -92,8 +95,6 @@ type
 
   {-- TBoldAbstractViewAdapterCom --}
   TBoldViewAdapterClassCom = class of TBoldAbstractViewAdapterCom;
-
-  // BCB does not support abstract class methods
   TBoldAbstractViewAdapterCom = class(TBoldMemoryManagedObject)
   public
     constructor Create; virtual;
@@ -104,19 +105,19 @@ type
     function Empty: Boolean; virtual; abstract;
     procedure Clear; virtual; abstract;
     function HasChanged: Boolean; virtual; abstract;
-    class function CanReadContent(const ContentType: string): Boolean; virtual;
+    class function CanReadContent(const ContentType: string): Boolean; virtual; 
     function ContentType: string; virtual; abstract;
-    class function Description: string; virtual;  // How to handle Localizastion?
+    class function Description: string; virtual;
     {Clipboard}
     procedure CopyToClipboard; virtual; abstract;
-    class function CanPasteFromClipboard(const AcceptedContentType: string): Boolean; virtual;
+    class function CanPasteFromClipboard(const AcceptedContentType: string): Boolean; virtual; 
     procedure PasteFromClipboard; virtual; abstract;
     {Streams}
     procedure LoadFromStream(Stream: TStream); virtual; abstract;
     procedure SaveToStream(Stream: TStream); virtual; abstract;
     {Files}
-    class function DefaultExtension: string; virtual;
-    class function FileFilter: string; virtual;  // How to handle Localizastion?
+    class function DefaultExtension: string; virtual; 
+    class function FileFilter: string; virtual;
     class function CanLoadFromFile(const Filename: string): Boolean; virtual;
     procedure LoadFromFile(const Filename: string); virtual; abstract;
     procedure SaveToFile(const Filename: string); virtual; abstract;
@@ -131,9 +132,8 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
-  BoldImageBitmapCom; //FIXME Temp!
+  BoldImageBitmapCom;
 
 var
   DefaultAsViewerRenderer: TBoldAsViewerRendererCom;
@@ -182,7 +182,7 @@ function TBoldAsViewerRendererCom.DefaultGetAsViewerAndSubscribe(Element: IBoldE
 var
   e: IBoldElement;
   Stream: TStream;
-  {$IFDEF BOLDCOMCLIENT} // defaultGet
+  {$IFDEF BOLDCOMCLIENT}
   attr: IBoldAttribute;
   {$ELSE}
   IndirectElement: TBoldIndirectElement;
@@ -206,7 +206,7 @@ begin
   Result := nil;
   if Assigned(Element) then
   begin
-    {$IFDEF BOLDCOMCLIENT} // defaultGet
+    {$IFDEF BOLDCOMCLIENT}
     if assigned(Subscriber) then
       e := Element.EvaluateAndSubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, false, false)
     else
@@ -268,14 +268,14 @@ procedure TBoldAsViewerRendererCom.DefaultSetAsViewer(Element: IBoldElement; Val
 var
   ValueElement: IBoldElement;
   Stream: TStream;
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   Attr: IBoldAttribute;
   {$ENDIF}
 begin
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
   if Assigned(ValueElement) then
   begin
-    {$IFDEF BOLDCOMCLIENT} // DefaultSet
+    {$IFDEF BOLDCOMCLIENT}
     ValueElement.QueryInterface(IBoldAttribute, Attr);
     if Assigned(Value) then
     begin
@@ -406,7 +406,6 @@ end;
 
 constructor TBoldAbstractViewAdapterCom.Create;
 begin
-  // Left for subclasses to implement
 end;
 
 class procedure TBoldAbstractViewAdapterCom.RegisterViewAdapter(ViewAdapterClass: TBoldViewAdapterClassCom);
@@ -467,6 +466,5 @@ initialization
 finalization
   FreeAndNil(DefaultAsViewerRenderer);
   FreeAndNil(ViewAdapterList);
-
+  
 end.
-

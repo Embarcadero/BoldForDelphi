@@ -240,7 +240,11 @@ begin
   if DefaultBehaviour then
     inherited
   else
+  begin
     BoldHandle := RetrieveHandle;
+    if not Assigned(BoldHandle) then
+      inherited;
+  end;
 end;
 
 procedure TBoldPluggableAFP.EnsureComponents;

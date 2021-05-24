@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExceptionHandlers;
 
 interface
@@ -12,7 +15,7 @@ type
   TBoldExceptionHandler = class;
 
   { prototypes }
-  TBoldApplyExceptionEvent = procedure (E: Exception; Component: TComponent; Elem: TBoldElement; var Discard: Boolean) of object;
+  TBoldApplyExceptionEvent = procedure (E: Exception; Component: TComponent; Elem: TBoldElement; var Discard: Boolean; var HandledByUser: boolean) of object;
   TBoldDisplayExceptionEvent = procedure (E: Exception; Component: TComponent; Elem: TBoldElement) of object;
 
   { TBoldExceptionHandler }
@@ -20,6 +23,8 @@ type
   private
     fOnApplyException: TBoldApplyExceptionEvent;
     fOnDisplayException: TBoldDisplayExceptionEvent;
+    fGlobal: boolean;
+    procedure SetGlobal(const Value: boolean);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -29,14 +34,13 @@ type
   published
     property OnApplyException: TBoldApplyExceptionEvent read fOnApplyException write fOnApplyException;
     property OnDisplayException: TBoldDisplayExceptionEvent read fOnDisplayException write fOnDisplayException;
-  end;
+    property Global: boolean read fGlobal write SetGlobal default false;
+  end;      
 
 implementation
 
-
 uses
-  Controls,
-  BoldUtils;
+  BoldRev;
 
 var
   G_BoldExceptionHandlers: TList = nil;
@@ -64,61 +68,53 @@ begin
 end;
 
 class function TBoldExceptionHandler.FindExceptionHandler(Component: TComponent): TBoldExceptionHandler;
-function OwningComponent(Component: TComponent): TComponent;
-begin
-//Find topmost owning component
-  Result := Component;
-  while Assigned(Result) and Assigned(Result.Owner) do
-    Result := Result.Owner;
-end;
-
-function ParentControl(Component: TComponent): TWinControl;
-begin
-//Find topmost parent control
-  Result := nil;
-  if Component is TWinControl then
-  begin
-    Result := TWinControl(Component);
-    while Assigned(Result.Parent) do
-      Result := Result.Parent;
-  end;
-end;
-
 var
   i: integer;
-  ExceptionHandlerOwner: TComponent;
 begin
-  //Find matching exception handler
-  result := nil;
-  if assigned(G_BoldExceptionHandlers) then
+  if assigned(G_BoldExceptionHandlers) and (G_BoldExceptionHandlers.Count > 0) then
+  begin
     for i := 0 to G_BoldExceptionHandlers.Count - 1 do
     begin
-      ExceptionHandlerOwner := TBoldExceptionHandler(G_BoldExceptionHandlers[i]).Owner;
-      if (ExceptionHandlerOwner = OwningComponent(Component)) or
-         (ExceptionHandlerOwner = ParentControl(Component)) then
-      begin
-        result := TBoldExceptionHandler(G_BoldExceptionHandlers[i]);
+      result := TBoldExceptionHandler(G_BoldExceptionHandlers[i]);
+      if (result.Owner = Component.Owner) then
         exit;
-      end;
     end;
+    for i := 0 to G_BoldExceptionHandlers.Count - 1 do
+    begin
+      result := TBoldExceptionHandler(G_BoldExceptionHandlers[i]);
+      if Result.Global then
+        exit;
+    end;
+  end;
+  result := nil;
 end;
 
 procedure TBoldExceptionHandler.HandleApplyException(E: Exception;
   Component: TComponent; Elem: TBoldElement; var Discard: Boolean; var HandledByUser: boolean);
 begin
-  // Note: Discard must be set by caller, as there might be no matching exception handler
-  // to set discard!
-  HandledByUser := Assigned(fOnApplyException);
-  if HandledByUser then
-    OnApplyException(E, Component, Elem, Discard);
+  if Assigned(fOnApplyException) then
+    OnApplyException(E, Component, Elem, Discard, HandledByUser);
 end;
 
-procedure  TBoldExceptionHandler.HandleDisplayException(E: Exception;
+procedure TBoldExceptionHandler.HandleDisplayException(E: Exception;
   Component: TComponent; Elem: TBoldElement; var HandledByUser: boolean);
 begin
   HandledByUser := Assigned(fOnDisplayException);
   if HandledByUser then
     OnDisplayException(E, Component, Elem);
+end;
+
+procedure TBoldExceptionHandler.SetGlobal(const Value: boolean);
+var
+  i: integer;
+begin
+  if Value = Global then
+    exit;
+  if value and assigned(G_BoldExceptionHandlers) then
+  for i := 0 to G_BoldExceptionHandlers.Count - 1 do
+    if TBoldExceptionHandler(G_BoldExceptionHandlers[i]).Global then
+      exit;
+  fGlobal := Value;
 end;
 
 initialization

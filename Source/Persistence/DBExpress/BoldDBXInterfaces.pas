@@ -1,3 +1,5 @@
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDBXInterfaces;
 
 interface
@@ -6,7 +8,7 @@ uses
   Classes,
   Db,
   SQlExpr,
-  DBXpress,
+  DBXCommon,
   BoldSQLDataBaseConfig,
   BoldDBInterfaces;
 
@@ -16,7 +18,6 @@ type
   TBoldDBXQuery = class;
   TBoldDBXTable = class;
   TBoldDBXQueryClass = class of TBoldDBXQuery;
-
 
   { TBoldDBXParameter }
   TBoldDBXParameter = class(TBoldDbParameter)
@@ -29,29 +30,43 @@ type
   TBoldDBXQuery = class(TBoldDataSetWrapper, IBoldQuery, IBoldExecQuery, IBoldParameterized)
   private
     fQuery: TSQLQuery;
+    fSQLStrings: TStringList;
+    fReadTransactionStarted: Boolean;
+    fUseReadTransactions: boolean;
     procedure AssignParams(SourceParams: TParams);
+    function GetParams: TParams;    
     function GetParamCount: integer;
-    function GetParams(i: integer): IBoldParameter;
+    function GetParam(i: integer): IBoldParameter;
     function GetRequestLiveQuery: Boolean;
     function ParamByName(const Value: string): IBoldParameter;
     procedure SetRequestLiveQuery(NewValue: Boolean);
     function GetSQLText: String;
     procedure ClearParams;
     procedure AssignSQL(SQL: TStrings);
-    procedure AssignSQLText(SQL: String);
+    procedure AssignSQLText(const SQL: String);
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);    
     function GetRowsAffected: integer;
     function GetRecordCount: integer;
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
+    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
+    function GetUseReadTransactions: boolean;
+    procedure SetUseReadTransactions(value: boolean);
+    procedure BeginExecuteQuery;
+    procedure EndExecuteQuery;
+    function GetBatchQueryParamCount: integer;    
   protected
     function GetDataSet: TDataSet; override;
+    function GetSQLStrings: TStrings;
     procedure StartSQLBatch; virtual;
     procedure EndSQLBatch; virtual;
     procedure FailSQLBatch; virtual;
     procedure ExecSQL; virtual;
     property Query: TSQLQuery read fQuery;
     procedure Open; override;
+    procedure Close; override;
   public
     constructor Create(Query: TSQLQuery; DatabaseWrapper: TBoldDatabaseWrapper); virtual;
+    destructor Destroy; override;
   end;
 
   { TBoldDBXTable }
@@ -63,7 +78,7 @@ type
     procedure DeleteTable;
     function GetTable: TSQLTable;
     function GetIndexDefs: TIndexDefs;
-    procedure SetTableName(NewName: String);
+    procedure SetTableName(const NewName: String);
     function GetTableName: String;
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
@@ -79,9 +94,10 @@ type
   TBoldDBXDataBase = class(TBoldDatabaseWrapper, IBoldDataBase)
   private
     fDataBase: TSQLConnection;
+    fTransaction: TDBXTransaction;
     fCachedTable: TSQLTable;
     fCachedQuery: TSQLQuery;
-    fTransactionDesc: TTransactionDesc;
+    fExecuteQueryCount: integer;
     function GetConnected: Boolean;
     function GetInTransaction: Boolean;
     function GetIsSQLBased: Boolean;
@@ -90,21 +106,26 @@ type
     procedure SetKeepConnection(NewValue: Boolean);
     function GetKeepConnection: Boolean;
     procedure StartTransaction;
+    procedure StartReadTransaction;
     procedure Commit;
     procedure RollBack;
     procedure Open;
     procedure Close;
-    function GetTable: IBoldTable;
-    procedure ReleaseTable(var Table: IBoldTable);
+    procedure Reconnect;    
     function SupportsTableCreation: Boolean;
     procedure ReleaseCachedObjects;
+    function GetIsExecutingQuery: Boolean;
+    procedure BeginExecuteQuery;
+    procedure EndExecuteQuery;
   protected
     procedure AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetQuery: IBoldQuery; override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
+    function GetTable: IBoldTable; override;
+    procedure ReleaseTable(var Table: IBoldTable); override;    
   public
     constructor create(DataBase: TSQLConnection; SQLDataBaseConfig: TBoldSQLDataBaseConfig);
-    destructor Destroy; override;
+    destructor destroy; override;
   end;
 
 var
@@ -119,17 +140,28 @@ uses
   SqlTimSt,
   BoldDefs,
   SysUtils,
-  BoldUtils,
-  BoldCoreConsts;
+  BoldUtils;
 
 { TBoldDBXQuery }
 
 procedure TBoldDBXQuery.AssignParams(Sourceparams: tparams);
+var
+  i: integer;
 begin
   if assigned(Sourceparams) then
     Query.Params.Assign(SourceParams)
   else
     Query.Params.Clear;
+    for i := 0 to Query.Params.Count - 1 do
+      if Query.Params[i].DataType = ftDateTime then
+        Query.Params[i].DataType := ftDate; // Patch since DBX does not support datetime in this version.
+      
+      
+end;
+
+function TBoldDBXQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
 end;
 
 function TBoldDBXQuery.GetParamCount: integer;
@@ -137,14 +169,18 @@ begin
   result := Query.params.count;
 end;
 
-function TBoldDBXQuery.GetParams(I: integer): IBoldParameter;
+function TBoldDBXQuery.GetParams: TParams;
+begin
+  result := Query.Params;
+end;
+
+function TBoldDBXQuery.GetParam(I: integer): IBoldParameter;
 begin
   result := TBoldDBXParameter.Create(Query.Params[i], self);
 end;
 
 function TBoldDBXQuery.GetREquestLiveQuery: Boolean;
 begin
-  // FIXME result := Query.RequestLive;
   result := false;
 end;
 
@@ -159,10 +195,24 @@ begin
     result := nil;
 end;
 
+procedure TBoldDBXQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
+
 procedure TBoldDBXQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
-  // FIXME
-//  Query.RequestLive := NewValue;
+
+end;
+
+procedure TBoldDBXQuery.SetUseReadTransactions(value: boolean);
+begin
+  fUseReadTransactions := value;
+end;
+
+function TBoldDBXQuery.GetBatchQueryParamCount: integer;
+begin
+  result := 0;
 end;
 
 function TBoldDBXQuery.GetDataSet: TDataSet;
@@ -171,52 +221,136 @@ begin
 end;
 
 procedure TBoldDBXQuery.ExecSQL;
+var
+  Retries: Integer;
+  Done: Boolean;
 begin
-  BoldLogSQL(Query.SQL);
+  BeginExecuteQuery;
   try
-    Query.ExecSQL;
-  except
-    on e: Exception do
-    begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
-      raise;
+
+{$IFDEF BOLD_DELPHI10_OR_LATER}
+  {$IFDEF BOLD_UNICODE}
+  BoldLogSQL(Query.SQL);
+  {$ELSE}
+  BoldLogSQLWide(Query.SQL, self);
+  {$ENDIF}
+{$ELSE}
+  BoldLogSQL(Query.SQL);
+{$ENDIF}
+
+  Retries := 0;
+  Done := false;
+  while not Done do
+  begin
+    try
+      if Query.SQLConnection.InTransaction then
+        fReadTransactionStarted := false
+      else
+      begin
+        (DatabaseWrapper as TBoldDBXDataBase).StartReadTransaction;
+        fReadTransactionStarted := true;
+      end;
+
+      Query.ExecSQL;
+      if fReadTransactionStarted and  (DatabaseWrapper as TBoldDBXDataBase).GetInTransaction then
+      begin
+       (DatabaseWrapper as TBoldDBXDataBase).Commit;
+       fReadTransactionStarted := false;
+      end;
+      Done := true;
+    except
+      on e: Exception do
+      begin
+        e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
+        if (not fReadTransactionStarted) or (Retries > 4) then
+          raise;
+        if (DatabaseWrapper as TBoldDBXDataBase).GetInTransaction then
+          (DatabaseWrapper as TBoldDBXDataBase).Rollback;
+        fReadTransactionStarted := false;
+        INC(Retries);
+        sleep(Retries*200);
+      end;
+
     end;
-  end
+  end;
+  finally
+    EndExecuteQuery;
+  end;
 end;
 
 constructor TBoldDBXQuery.Create(Query: TSQLQuery; DatabaseWrapper: TBoldDatabaseWrapper);
 begin
   inherited Create(DatabaseWrapper);
   fQuery := Query;
+  SetParamCheck(true);
+  fUseReadTransactions := true;
+  fSQLStrings := TStringList.Create;
+end;
+
+procedure TBoldDBXQuery.BeginExecuteQuery;
+begin
+  (DatabaseWrapper as TBoldDBXDataBase).BeginExecuteQuery;
+end;
+
+procedure TBoldDBXQuery.EndExecuteQuery;
+begin
+  (DatabaseWrapper as TBoldDBXDataBase).EndExecuteQuery;
 end;
 
 procedure TBoldDBXQuery.EndSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldDBXQuery.StartSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldDBXQuery.FailSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldDBXQuery.Open;
+var
+  Retries: Integer;
+  Done: Boolean;
 begin
+{$IFDEF BOLD_DELPHI10_OR_LATER}
+  {$IFDEF BOLD_UNICODE}
   BoldLogSQL(Query.SQL);
-  try
-    inherited;
-  except
-    on e: Exception do
-    begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
-      raise;
+  {$ELSE}
+  BoldLogSQLWide(Query.SQL, self);
+  {$ENDIF}
+{$ELSE}
+  BoldLogSQL(Query.SQL);
+{$ENDIF}
+  Retries := 0;
+  Done := false;
+  while not Done do
+  begin
+    try
+      if (DatabaseWrapper as TBoldDBXDataBase).GetInTransaction then
+        fReadTransactionStarted := false
+      else
+      begin
+        (DatabaseWrapper as TBoldDBXDataBase).StartReadTransaction;
+        fReadTransactionStarted := true;
+      end;
+      inherited;
+      Done := true;
+    except
+      on e: Exception do
+      begin
+        e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
+        if (not fReadTransactionStarted) or (Retries > 4) then
+          raise;
+        if (DatabaseWrapper as TBoldDBXDataBase).GetInTransaction then
+          (DatabaseWrapper as TBoldDBXDataBase).Rollback;
+        fReadTransactionStarted := false;
+        INC(Retries);
+        sleep(Retries*200);
+      end;
     end;
-  end
+  end;
 end;
 
 procedure TBoldDBXQuery.AssignSQL(SQL: TStrings);
@@ -226,17 +360,34 @@ begin
   Query.SQL.EndUpdate;
 end;
 
-procedure TBoldDBXQuery.AssignSQLText(SQL: String);
+procedure TBoldDBXQuery.AssignSQLText(const SQL: String);
 begin
   Query.SQL.BeginUpdate;
   Query.SQL.Clear;
+{$IFDEF BOLD_DELPHI10_OR_LATER}
+  Query.SQL.Append(SQL);  // FIXME, this gives one long line.
+{$ELSE}
   BoldAppendToStrings(Query.SQL, SQL, true);
+{$ENDIF}
+
   Query.SQL.EndUpdate;
+end;
+
+function TBoldDBXQuery.GetSQLStrings: TStrings;
+begin
+  result := fSQLStrings;
+  result.clear;
+  result.Add(Query.SQL.Text);
 end;
 
 function TBoldDBXQuery.GetSQLText: String;
 begin
   result := Query.SQL.text;
+end;
+
+function TBoldDBXQuery.GetUseReadTransactions: boolean;
+begin
+  result := fUseReadTransactions;
 end;
 
 function TBoldDBXQuery.GetRowsAffected: integer;
@@ -254,6 +405,14 @@ begin
   query.params.Clear;
 end;
 
+procedure TBoldDBXQuery.Close;
+begin
+  inherited;
+  if (fReadTransactionStarted) and (DatabaseWrapper as TBoldDBXDataBase).GetInTransaction then
+    (DatabaseWrapper as TBoldDBXDataBase).Commit;
+  fReadTransactionStarted := false;
+end;
+
 function TBoldDBXQuery.Createparam(FldType: TFieldType;
   const ParamName: string; ParamType: TParamType;
   Size: integer): IBoldParameter;
@@ -261,13 +420,20 @@ begin
   result := TBoldDbParameter.Create(Query.params.CreateParam(fldType, ParamName, ParamType), self);
 end;
 
+destructor TBoldDBXQuery.Destroy;
+begin
+  if (fReadTransactionStarted) then
+    Close;
+  FreeAndNil(fSQLStrings);
+  inherited;
+end;
+
 { TBoldDBXTable }
 
 procedure TBoldDBXTable.AddIndex(const Name, Fields: string;
   Options: TIndexOptions; const DescFields: string);
 begin
-  // FIXME
-//  Table.AddIndex(Name, Fields, Options, DescFields);
+
 end;
 
 constructor TBoldDBXTable.Create(Table: TSQLTable; DatabaseWrapper: TBoldDatabaseWrapper);
@@ -278,12 +444,11 @@ end;
 
 procedure TBoldDBXTable.CreateTable;
 begin
-  raise EBold.CreateFmt(sMethodNotImplemented, [classname, 'CreateTable']); // do not localize
+  raise EBold.CreateFmt('%s.CreateTable: Not supported', [classname]);
 end;
 
 procedure TBoldDBXTable.DeleteTable;
 begin
-// FIXME  Table.DeleteTable;
 end;
 
 function TBoldDBXTable.GetDataSet: TDataSet;
@@ -293,14 +458,23 @@ end;
 
 function TBoldDBXTable.GetExclusive: Boolean;
 begin
-// FIXME  result := Table.Exclusive;
   result := false;
 end;
 
 function TBoldDBXTable.GetExists: Boolean;
+var
+  DB: IBoldDataBase;
+  NameList: TStringList;
 begin
-// FIXME  result := Table.Exists;
-  result := false;
+  NameList := TStringList.Create;
+  NameList.CaseSensitive := false;
+  try
+    DB:= DatabaseWrapper as IBoldDataBase;
+    DB.AllTableNames('', false, NameList);
+    Result := NameList.IndexOf(fTable.TableName) > -1;
+  finally
+    FreeANdNil(NameList);
+  end;
 end;
 
 function TBoldDBXTable.GetIndexDefs: TIndexDefs;
@@ -322,24 +496,63 @@ end;
 
 procedure TBoldDBXTable.SetExclusive(NewValue: Boolean);
 begin
-// FIXME  Table.Exclusive := NewValue;
 end;
 
-procedure TBoldDBXTable.SetTableName(NewName: String);
+procedure TBoldDBXTable.SetTableName(const NewName: String);
+var
+  DB: IBoldDataBase;
+  NameList: TStringList;
+  NameIndex: Integer;
+  s: string;
 begin
-  Table.TableName := NewName;
+  s := NewName;
+  NameList := TStringList.Create;
+  NameList.CaseSensitive := false;
+  try
+    DB:= DatabaseWrapper as IBoldDataBase;
+    DB.AllTableNames('', false, NameList);
+    NameIndex := NameList.IndexOf(s);
+    if NameIndex > -1 then
+      s := NameList[NameIndex];
+  finally
+    FreeANdNil(NameList);
+  end;
+  Table.TableName := s;
 end;
 
 { TBoldDBXDataBase }
 
 procedure TBoldDBXDataBase.AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings);
+var
+  SystemTableNames: TStringList;
+  TableName: string;
 begin
-  fDataBase.GetTableNames(TableNameList, ShowSystemTables);
+  if (Pattern <> '') and (Pattern <> '*') then
+    raise Exception.CreateFmt('%s.AlltableNames: This call does not allow patterns ("%s")', [ClassName, Pattern]);
+  fDataBase.GetTableNames(TableNameList, false);
+  if ShowSystemTables then
+  begin
+    SystemTableNames := TStringList.Create;
+    try
+      fDataBase.GetTableNames(SystemTableNames, true);
+      for TableName in SystemTableNames do
+        if TableNameList.IndexOf(TableName) = -1 then
+          TableNameList.Add(TableName);
+    finally
+      FreeAndNil(SystemTableNames);
+    end;
+  end;
+
 end;
 
 function TBoldDBXDataBase.GetInTransaction: Boolean;
 begin
   result := fDataBase.InTransaction;
+end;
+
+function TBoldDBXDataBase.GetIsExecutingQuery: Boolean;
+begin
+  Result := fExecuteQueryCount > 0;
 end;
 
 function TBoldDBXDataBase.GetIsSQLBased: Boolean;
@@ -378,26 +591,34 @@ begin
   result := fDataBase.Connected;
 end;
 
+procedure TBoldDBXDataBase.StartReadTransaction;
+begin
+  fTransaction :=  fDataBase.BeginTransaction(TDBXIsolations.ReadCommitted);
+end;
+
 procedure TBoldDBXDataBase.StartTransaction;
 begin
-//  fTransactionDesc.IsolationLevel := xilREADCOMMITTED;
-  fTransactionDesc.TransactionID := BOLD_DEFAULT_DBX_TRANSACTION_ID;
-  fDataBase.StartTransaction(fTransactionDesc);
+  fTransaction :=  fDataBase.BeginTransaction(TDBXIsolations.RepeatableRead);
 end;
 
 procedure TBoldDBXDataBase.Commit;
 begin
-  fDatabase.Commit(fTransactionDesc);
+  fDatabase.CommitFreeAndNil(fTransaction);
 end;
 
 procedure TBoldDBXDataBase.RollBack;
 begin
-  fDataBase.Rollback(fTransactionDesc);
+  fDataBase.RollbackFreeAndNil(fTransaction);
 end;
 
 procedure TBoldDBXDataBase.Open;
 begin
   fDataBase.Open;
+end;
+
+procedure TBoldDBXDataBase.BeginExecuteQuery;
+begin
+  inc(fExecuteQueryCount);
 end;
 
 procedure TBoldDBXDataBase.Close;
@@ -411,6 +632,11 @@ begin
   fDatabase := nil;
   FreeAndNil(fCachedTable);
   FreeAndNil(fCachedQuery);
+end;
+
+procedure TBoldDBXDataBase.EndExecuteQuery;
+begin
+  dec(fExecuteQueryCount);
 end;
 
 function TBoldDBXDataBase.GetQuery: IBoldQuery;
@@ -461,9 +687,11 @@ begin
       if fCachedQuery.Active then
         fCachedQuery.Close;
       fCachedQuery.SQL.Clear;
+      fCachedQuery.Params.Clear;
     end
     else
       DBXQuery.fQuery.free;
+    DBXQuery.fQuery := nil;  
     DBXQuery.Free;
   end;
 end;
@@ -489,6 +717,14 @@ begin
   result := false;
 end;
 
+procedure TBoldDBXDataBase.Reconnect;
+begin
+  if Assigned(fDataBase) then begin
+    fDataBase.Connected := False;
+    fDataBase.Connected := True;
+  end;
+end;
+
 procedure TBoldDBXDataBase.ReleaseCachedObjects;
 begin
   FreeAndNil(fCachedTable);
@@ -499,16 +735,14 @@ end;
 
 function TBoldDBXParameter.GetAsDateTime: TDateTime;
 begin
-  // dbexpress does not handle AsDateTime, only AsSQLTimeStamp
   result := SQLTimeStampToDateTime(Parameter.AsSQLTimeStamp);
 end;
 
 procedure TBoldDBXParameter.SetAsDateTime(const Value: TDateTime);
 begin
-  // dbexpress does not handle AsDateTime, only AsSQLTimeStamp
-//  Parameter.AsDateTime := value;
+
   Parameter.AsSQLTimeStamp := DateTimetoSQLTimeStamp(value);
 end;
 
+initialization
 end.
-

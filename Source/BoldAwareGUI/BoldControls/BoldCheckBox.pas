@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCheckBox;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -9,12 +12,13 @@ uses
   Classes,
   Controls,
   StdCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldHandles,
   BoldElementHandleFollower,
   BoldElements,
   BoldControlPack,
-  BoldCheckboxStateControlPack;
+  BoldCheckboxStateControlPack,
+  BoldDefs;
 
 type
   TBoldCustomCheckBox = class;
@@ -29,8 +33,8 @@ type
     fHandleFollower: TBoldElementHandleFollower;
     fMyReadOnly: Boolean;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
 
     function GetBoldHandle: TBoldElementHandle;
@@ -116,9 +120,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldControlPackDefs,
-  BoldGuiResourceStrings;
+  BoldControlPackDefs;
 
 {---TBoldCustomCheckBox---}
 constructor TBoldCustomCheckBox.Create(AOwner: TComponent);
@@ -177,7 +179,7 @@ begin
         Perform(CM_CHANGED, 0, 0);
       end
       else
-        raise EBold.CreateFmt(sStateNotModifiable, [ClassName]);
+        raise EBold.CreateFmt('%s.State: Not modifiable', [ClassName]);
     end;
 end;
 
@@ -241,19 +243,21 @@ begin
     result := nil;
 end;
 
-function TBoldCustomCheckBox.GetExpression: String;
+function TBoldCustomCheckBox.GetExpression: TBoldExpression;
 begin
   result := BoldProperties.Expression;
 end;
 
-procedure TBoldCustomCheckBox.SetExpression(Expression: String);
+procedure TBoldCustomCheckBox.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldCustomCheckBox.GetVariableList: TBoldExternalVariableList;
 begin
   result := BoldProperties.VariableList;
 end;
+
+initialization
 
 end.

@@ -1,11 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLTaggedValues;
 
 interface
 
 uses
-  BoldDefs,
-  BoldTaggedValueList,
-  BoldDefaultTaggedValues;
+  BoldTaggedValueList;
 
 const
   TAG_DOCUMENTATION: String ='documentation';
@@ -13,8 +14,9 @@ const
 
   ENUM_TAG_PERSISTENCE: String = 'PersistenceEnum';
   TAG_PERSISTENCE: String = 'persistence';
-  TV_PERSISTENCE_PERSISTENT: String = 'persistent';
-  TV_PERSISTENCE_TRANSIENT: String = 'transient';
+    TV_PERSISTENCE_PERSISTENT: String = 'persistent';
+    TV_PERSISTENCE_TRANSIENT: String = 'transient';
+
 
 function UMLTaggedValueList: TBoldTaggedValuePerClassList;
 
@@ -22,30 +24,26 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldDefaultTaggedValues,
+  BoldRev;
 
 var
  G_UMLTaggedValues: TBoldTaggedValuePerClassList = nil;
 
 procedure AddDefaultTaggedValues;
 begin
-// Tagged values for Class
-  with G_UMLTaggedValues.ListForClassName['Class'] do // do not localize
+  with G_UMLTaggedValues.ListForClassName['Class'] do
   begin
     Add(ENUM_TAG_PERSISTENCE,     TAG_PERSISTENCE,                    TV_PERSISTENCE_PERSISTENT);
   end;
-
-// Tagged values for Association
-  with G_UMLTaggedValues.ListForClassName['Association'] do // do not localize
-  begin // do not localize
-    Add('Boolean',                TAG_DERIVED,                        TV_FALSE); // do not localize
+  with G_UMLTaggedValues.ListForClassName['Association'] do
+  begin
+    Add('Boolean',                TAG_DERIVED,                        TV_FALSE);
     Add(ENUM_TAG_PERSISTENCE,     TAG_PERSISTENCE,                    TV_PERSISTENCE_PERSISTENT);
   end;
-
-// Tagged values for Attribute
-  with G_UMLTaggedValues.ListForClassName['Attribute'] do // do not localize
+  with G_UMLTaggedValues.ListForClassName['Attribute'] do
   begin
-    Add('Boolean',                TAG_DERIVED,                        TV_FALSE); // do not localize
+    Add('Boolean',                TAG_DERIVED,                        TV_FALSE);
     Add(ENUM_TAG_PERSISTENCE,     TAG_PERSISTENCE,                    TV_PERSISTENCE_PERSISTENT);
   end;
 end;

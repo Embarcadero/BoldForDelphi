@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldBatchUpgrader;
 
 interface
@@ -49,8 +52,7 @@ uses
   BoldCondition,
   BoldDbInterfaces,
   BoldPMappers,
-  BoldUtils,
-  PersistenceConsts;
+  BoldUtils;
 
 procedure TBoldBatchUpgrader.AutoUpgradeObjects;
 var
@@ -78,7 +80,7 @@ constructor TBoldBatchUpgrader.Create(SystemMapper: TBoldSystemDefaultMapper; Up
 begin
   inherited create;
   if not SystemMapper.SupportsObjectUpgrading then
-    raise EBold.CreateFmt(sUpgradeNotSupported, [ClassName]);
+    raise EBold.CreateFmt('%s.Create: The SystemPersistenceMapper does not support object upgrading!', [ClassName]);
   fSystemMapper := SystemMapper;
   fUpgrader := Upgrader;
   fBatchSize := 100;
@@ -99,8 +101,7 @@ begin
   TranslationList := TBoldIdTranslationList.Create;
   try
     Condition.TopSortedIndex := TopSortedIndex;
-    // exact type and not the current version.
-    Condition.WhereFragment := format( '%s = %d AND %s <> %d', [ // do not localize
+    Condition.WhereFragment := format( '%s = %d AND %s <> %d', [
       TYPECOLUMN_NAME,
       SystemMapper.BoldDbTypeForTopSortedIndex(TopSortedIndex),
       SystemMapper.RootClassObjectPersistenceMapper.ModelVersionMember.ColumnDescriptions[0].SQLName,
@@ -147,29 +148,27 @@ begin
     for i := 0 to ObjectIdList.Count - 1 do
     begin
       if not ObjectIdList[i].TopSortedIndexExact then
-        raise EBold.createFmt(sObjectIDListNotExact, [Classname]);
+        raise EBold.createFmt('%s.UpgradeObjectIdList: ObjectIdlist not Exact', [Classname]);
       if ObjectIdList[i].topSortedIndex <> ObjectMapper.TopSortedIndex then
-        raise EBold.createFmt(sObjectIDListNotHomogenous, [Classname]);
+        raise EBold.createFmt('%s.UpgradeObjectIdList: ObjectIdlist not homogenous', [Classname]);
       TempLIst.Append(ObjectIdList[i].asString);
     end;
 
     if (MemberPMList.Count > 0) and (TempList.Count > 0) then
     begin
-      BoldAppendToStrings(SQL, Format('in (%s)',[BoldSeparateStringList(TempList, ', ', '', '')]), False); // do not localize
+      BoldAppendToStrings(SQL, Format('in (%s)',[BoldSeparateStringList(TempList, ', ', '', '')]), False);
       if Objectmapper.versioned then
-        Objectmapper.RetrieveTimeStampCondition(SQL, BOLDMAXTIMESTAMP, true, 'AND', false); // do not localize
+        Objectmapper.RetrieveTimeStampCondition(SQL, BOLDMAXTIMESTAMP, true, 'AND', false);
 
       aQuery.AssignSQL(SQL);
       aQuery.Open;
       while not aQuery.EOF do
       begin
-        tempId := SystemMapper.NewIdFromQuery(aQuery, 1, 0, BOLDMAXTIMESTAMP);
+        // ClassId param -1 was added due to changes in signature of NewIdFromQuery,
+        // check if we can replace -1 with known ClassId if possible in order to get ExactId right away - Daniel
+        tempId := SystemMapper.NewIdFromQuery(aQuery, -1, 1, 0, BOLDMAXTIMESTAMP);
         NewId := ObjectIdList.IDByID[TempId];
         TempId.Free;
-
-        // is this safe? perhaps the object was guardupgraded while we were doing other things...
-//        if not ObjectMapper.IsOldVersion(aQuery) then
-//          raise EBold.CreateFmt('%s.UpgradeObjectIdList: Was fed an object that does not need upgrading!', [ClassName]);
 
         Upgrader.UpgradeObjectById(NewId, aQuery);
         inc(fUpgradedObjects);
@@ -204,7 +203,7 @@ begin
   if IsUpgrading then
     exit;
   if not assigned(SystemMapper.DataBase) then
-    raise EBold.CreateFmt(sDBMustBeOpened, [classname]);
+    raise EBold.CreateFmt('%s.UpgradeObjects: The database must be opened first', [classname]);
   fIsUpgrading := true;
   try
     fStartTime := now;
@@ -216,5 +215,7 @@ begin
     fIsUpgrading := false;
   end;
 end;
+
+initialization
 
 end.

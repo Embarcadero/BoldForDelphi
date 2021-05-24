@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceHandlesReg;
 
 interface
@@ -26,8 +29,7 @@ uses
   BoldExternalPersistenceHandleSQL,
   BoldAbstractPropertyEditors,
 
-  BoldIDEConsts,
-  ExPeConsts;
+  BoldIDEConsts;
 
 type
   { forward declarations }
@@ -86,7 +88,7 @@ begin
   RegisterPropertyEditor(TypeInfo(TBoldExternalPersistenceGetExistsEvent), nil, '', TBoldExternalPersistenceHandleEventProperty);
   RegisterPropertyEditor(TypeInfo(TBoldExternalPersistenceAssignKeyToObjectEvent), nil, '', TBoldExternalPersistenceHandleEventProperty);
   RegisterPropertyEditor(TypeInfo(TBoldExternalPersistenceGetKeyFromObject), nil, '', TBoldExternalPersistenceHandleEventProperty);
-  RegisterPropertyEditor(TypeInfo(TStrings), TBoldExternalPersistenceHandleSQL, 'ClassesToHandle', TBoldExternalPersistenceHandleSQLPropEdit); // do not localize
+  RegisterPropertyEditor(TypeInfo(TStrings), TBoldExternalPersistenceHandleSQL, 'ClassesToHandle', TBoldExternalPersistenceHandleSQLPropEdit);
 end;
 
 procedure Register;
@@ -105,7 +107,7 @@ begin
   if GetComponent(0) = Designer.GetRoot then
   begin
     Result := Designer.GetRootClassName;
-    if (Result <> '') and (Result[1] = 'T') then // do not localize
+    if (Result <> '') and (Result[1] = 'T') then
       Delete(Result, 1, 1);
   end
   else
@@ -115,11 +117,11 @@ begin
     else
       Result := Designer.GetObjectName(GetComponent(0));
     for I := Length(Result) downto 1 do
-      if Result[I] in ['.', '[', ']', '-', '>'] then
+      if CharInSet(Result[I], ['.', '[', ']', '-', '>']) then
         Delete(Result, I, 1);
   end;
   if Result = '' then
-    raise Exception.Create(sCannotCreateNameNow);
+    raise Exception.Create('Can not create name for eventhandler. Assign an expressionname for the config-item first');
   Result := Result + GetTrimmedEventName;
 end;
 
@@ -144,7 +146,7 @@ end;
 
 procedure TBoldExternalPersistenceHandleEditor.EditConfig(const PropertyEditor: IProperty);
 begin
-  if SameText(PropertyEditor.GetName, 'Config') then // do not localize
+  if SameText(PropertyEditor.GetName, 'Config') then
     PropertyEditor.Edit;
 end;
 
@@ -158,7 +160,7 @@ end;
 function TBoldExternalPersistenceHandleEditor.GetVerb(Index: Integer): string;
 begin
   case Index of
-    0: result := sEditConfiguration;
+    0: result := 'Edit configuration';
   end;
 end;
 
@@ -179,7 +181,7 @@ begin
   Handle := GetComponent(0) as TBoldExternalPersistenceHandleSQL;
 
   if not Assigned(Handle.BoldModel) then
-    raise Exception.Create(sBoldModelNotAssigned);
+    raise Exception.Create('BoldModel is not assigned!');
 
   Form := TBoldExternalPersistenceHandleSQLPropEditorForm.Create(nil);
   Form.Initialize(Handle.BoldModel.MoldModel, Handle.ClassesToHandle);
@@ -222,12 +224,12 @@ function TBoldExternalPersistenceHandleSQLPropEdit.GetValue: string;
             All := False;
     end;
     if All then
-      Result := '(All)' // do not localize
+      Result := '(All)'
     else
       if Result <> '' then
         SetLength(Result, Length(Result)-2)
       else
-        Result := '(None)'; // do not localize
+        Result := '(None)';
   end;
 
 var
@@ -235,7 +237,7 @@ var
 begin
   Result := '';
   if PropCount <> 1 then
-    Result := '(Multi)' // do not localize
+    Result := '(Multi)'
   else
   with (GetComponent(0) as TBoldExternalPersistenceHandleSQL) do
   begin
@@ -248,11 +250,9 @@ begin
       if Result <> '' then
         SetLength(Result, Length(Result)-2)
       else
-        Result := '(None)'; // do not localize
+        Result := '(None)';
     end;
   end;
 end;
 
 end.
-
-

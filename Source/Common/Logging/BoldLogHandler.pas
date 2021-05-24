@@ -1,11 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLogHandler;
 
 interface
 
 uses
-  Classes,
   BoldDefs,
-  BoldMath,
   BoldSubscription,
   BoldLogReceiverInterface;
 
@@ -20,6 +21,7 @@ type
     fIndent: integer;
     fInterrupted: Boolean;
     fInterruptHandled: Boolean;
+    fLastCommandIsSeparator: Boolean;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -44,8 +46,8 @@ type
     procedure Separator;
     procedure ProgressStep; virtual;
     procedure Sync; virtual;
-    procedure RegisterLogReceiver(LogReceiver: IBoldLogReceiver);
-    procedure UnregisterLogReceiver(LogReceiver: IBoldLogReceiver);
+    procedure RegisterLogReceiver(const LogReceiver: IBoldLogReceiver);
+    procedure UnregisterLogReceiver(const LogReceiver: IBoldLogReceiver);
     procedure InterruptProcess;
     function ProcessInterruption: Boolean;
     property ProgressMax: integer write SetProgressMax;
@@ -62,7 +64,7 @@ type
     procedure ReceiveExtended(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
     function GetHandlesExtendedEvents: Boolean; override;
   public
-    constructor Create(Receiver: IBoldLogreceiver);
+    constructor Create(const Receiver: IBoldLogreceiver);
   end;
 
 function BoldLog: TBoldLogHandler;
@@ -71,25 +73,27 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldCommonConst;
+  BoldMath,
+  BoldRev;
 
 const
   bleFirst = 1;
-  bleSetProgress = 1; // Value: integer
-  bleSetLogHeader = 2; // Value: string
-  bleSetProgressMax = 3; // Value: integer
+  bleSetProgress = 1;
+  bleSetLogHeader = 2;
+  bleSetProgressMax = 3;
   bleClear = 4;
   bleHide = 5;
-  bleLog = 6; // s: string; LogType: TBoldLogType
+  bleLog = 6;
   bleProgressStep = 7;
   bleShow = 8;
-  bleStartLog = 9; //SessionName: String
+  bleStartLog = 9;
   bleEndLog = 10;
   bleProcessInterruption = 11;
-  bleRemoveReceiver = 12; // LogReceiver;
+  bleRemoveReceiver = 12;
   bleSync = 13;
   bleLast = 13;
+
+
 
 var
   G_BoldLog: TBoldLogHandler = nil;
@@ -104,6 +108,7 @@ end;
 
 constructor TBoldLogHandler.Create;
 begin
+  fLastCommandIsSeparator := true;
   inherited;
 end;
 
@@ -119,9 +124,12 @@ end;
 
 procedure TBoldLogHandler.Separator;
 begin
+  if fLastCommandIsSeparator then
+    exit;
   Log('', ltSeparator);
   Log('-={++++}=-', ltSeparator);
   Log('', ltSeparator);
+  fLastCommandIsSeparator := true;
 end;
 
 procedure TBoldLogHandler.Clear;
@@ -157,6 +165,7 @@ end;
 procedure TBoldLogHandler.Log(const s: string; LogType: TBoldLogType = ltInfo);
 begin
   SendExtendedEvent(bleLog, [IndentSpaces + s, Integer(LogType)]);
+  fLastCommandIsSeparator := false;
 end;
 
 procedure TBoldLogHandler.LogFmt(const s: string; const Args: array of const; LogType: TBoldLogType = ltInfo);
@@ -220,12 +229,12 @@ begin
   SendEvent(bleProgressStep);
 end;
 
-procedure TBoldLogHandler.RegisterLogReceiver(LogReceiver: IBoldLogReceiver);
+procedure TBoldLogHandler.RegisterLogReceiver(const LogReceiver: IBoldLogReceiver);
 begin
   TBoldLogReceiverSubscriber.Create(LogReceiver);
 end;
 
-procedure TBoldLogHandler.UnregisterLogReceiver(LogReceiver: IBoldLogReceiver);
+procedure TBoldLogHandler.UnregisterLogReceiver(const LogReceiver: IBoldLogReceiver);
 begin
   SendExtendedEvent(bleRemoveReceiver, [LogReceiver]);
 end;
@@ -233,7 +242,7 @@ end;
 
 procedure TBoldLogHandler.InterruptProcess;
 begin
-  Log(sTryingToAbort);
+  Log('Trying to abort process');
   fInterrupted := true;
   fInterruptHandled := false;
 end;
@@ -245,14 +254,14 @@ begin
   if result then
   begin
     if not fInterruptHandled then
-      Log(sProcessStopped);
+      Log('Process stopped');
     fInterruptHandled := true;
   end;
 end;
 
 { TBoldLogReceiverSubscriber }
 
-constructor TBoldLogReceiverSubscriber.Create(Receiver: IBoldLogreceiver);
+constructor TBoldLogReceiverSubscriber.Create(const Receiver: IBoldLogreceiver);
 begin
   inherited Create;
   fReceiver := Receiver;
@@ -268,31 +277,33 @@ end;
 procedure TBoldLogReceiverSubscriber.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  // Do nothing... Handled by Extended
 end;
 
 procedure TBoldLogReceiverSubscriber.ReceiveExtended(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent;
   const Args: array of const);
-
+  
   function GetString(const VR: TVarRec): String;
   begin
     case VR.VType of
-      vtString: result := VR.VString^;
-      vtAnsiString: result := PChar(VR.VAnsiString);
+      vtString: Result := string(VR.vString);
+      vtAnsiString: Result := string(VR.vAnsiString);
+      {$IFDEF BOLD_UNICODE}
+      vtUnicodeString: Result := string(VR.vUnicodeString);
+      {$ENDIF}
       else
-        raise Exception.Create(sUnknownTypeInGetString);
+        raise Exception.Create('unknown type in GetString');
     end;
   end;
 
 begin
   case OriginalEvent of
-    bleSetProgress: fReceiver.SetProgress(args[0].VInteger); // Value: integer
-    bleSetLogHeader: fReceiver.SetLogHeader(GetString(Args[0])); // Value: string
-    bleSetProgressMax: fReceiver.SetProgressMax(args[0].VInteger); // Value: integer
-    bleLog: fReceiver.Log(GetString(Args[0]), TBoldLogType(args[1].vInteger)) ;// s: string; LogType: TBoldLogType
-    bleStartLog: fReceiver.StartLog(GetString(Args[0]));//SessionName: String
-    // commit suicide
+    bleSetProgress: fReceiver.SetProgress(args[0].VInteger);
+    bleSetLogHeader: fReceiver.SetLogHeader(GetString(Args[0]));
+    bleSetProgressMax: fReceiver.SetProgressMax(args[0].VInteger);
+    bleLog: fReceiver.Log(GetString(Args[0]), TBoldLogType(args[1].vInteger)) ;
+    bleStartLog: fReceiver.StartLog(GetString(Args[0]));
+
     bleRemoveReceiver: if IUnknown(Args[0].VInterface) = freceiver then free;
     beDestroying: Free;
     bleClear: fReceiver.Clear;
@@ -306,6 +317,7 @@ begin
       ;
   end;
 end;
+
 
 procedure TBoldLogHandler.Sync;
 begin

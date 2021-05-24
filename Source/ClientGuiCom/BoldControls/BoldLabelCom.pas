@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLabelCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,17 +8,20 @@ unit BoldLabelCom;
 interface
 
 uses
-  Messages,
+  // VCL
   Classes,
-  Graphics,
   Controls,
+  Graphics,
+  Messages,
   StdCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldHandlesCom,
+
+  // Bold
+  BoldClientElementSupport,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  BoldStringControlPackCom,
-  BoldElementHandleFollowerCom;
+  BoldElementHandleFollowerCom,
+  BoldHandlesCom,
+  BoldStringControlPackCom;
 
 type
   {Forward declaration of classes}
@@ -121,7 +127,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldControlPackDefs;
 
 type
@@ -139,7 +144,7 @@ begin
   fMyFont.OnChange := _FontChanged;
   fMyColor := EffectiveColor;
   if (csDesigning in ComponentState) then
-    ParentColor := True; //CHECKME This should not be necesary...
+    ParentColor := True;
 end;
 
 destructor TBoldCustomLabelCom.Destroy;
@@ -237,7 +242,6 @@ var
 begin
   if (csDesigning in ComponentState) then
   begin
-    //  caption during design-time
     with BoldProperties do
       if Assigned(Renderer) then
         NewText := Format('%s.%s', [Renderer.name, Expression])
@@ -247,7 +251,6 @@ begin
         NewText := name;
   end
   else
-    //  Caption at run-time
     newText := BoldProperties.GetCurrentAsString(Follower);
 
   if Text <> newText then
@@ -257,7 +260,7 @@ begin
   ec := EffectiveColor;
   BoldProperties.SetColor(ec, Color, Follower);
   EffectiveColor := ec;
-end;
+end;  
 
 function TBoldCustomLabelCom.GetText: TCaption;
 begin
@@ -327,4 +330,3 @@ end;
 
 initialization
 end.
-

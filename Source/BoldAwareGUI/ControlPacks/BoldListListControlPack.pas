@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListListControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -5,7 +8,7 @@ unit BoldListListControlPack;
 interface
 
 uses
-  Classes,
+  Classes, 
   BoldDefs,
   BoldElements,
   BoldControlPackDefs,
@@ -25,28 +28,28 @@ type
     fDefaultDblClick: Boolean;
     fFollowerController: TBoldFollowerController;
     fNilElementMode: TBoldNilElementMode;
-    function GetRenderer: TBoldListAsFollowerListRenderer;
-    procedure SetRenderer(Value: TBoldListAsFollowerListRenderer);
+    function GetRenderer: TBoldListAsFollowerListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetRenderer(Value: TBoldListAsFollowerListRenderer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetNilElementMode(const Value: TBoldNilElementMode);
    protected
+    class function PrecreateFollowers: boolean; override;
     function GetEffectiveRenderer: TBoldRenderer; override;
-    function GetEffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer;
+    function GetEffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
     procedure DoAssign(Source: TPersistent); override;
     property EffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer read GetEffectiveListAsFollowerListRenderer;
     property DefaultDblClick: Boolean read fDefaultDblClick write fDefaultDblClick default True;
-    property DragMode default bdgSelection;
-    property DropMode default bdpAppend;
+    property DragMode;
+    property DropMode;
     property InternalDrag: Boolean read fInternalDrag write fInternalDrag default True;
     property Renderer: TBoldListAsFollowerListRenderer read GetRenderer write SetRenderer;
-    property NilElementMode: TBoldNilElementMode read fNilElementMode write SetNilElementMode;
+    property NilElementMode: TBoldNilElementMode read fNilElementMode write SetNilElementMode default neNone;
   public
     constructor Create(aOwningComponent: TComponent; FollowerController: TBoldFollowerController);
-//    procedure DragDrop(Follower: TBoldFollower; ReceivingElement: TBoldElement; dropindex: Integer); override;
-//    function DragOver(Follower: TBoldFollower; ReceivingElement: TBoldElement; dropindex: Integer): Boolean; override;
-    function GetListIndex(Follower: TBoldFollower): Integer;
-    function ListIndexToIndex(Follower: TBoldFollower; ListIndex: Integer): integer;
-    function ListIndex(index: integer): integer;
+
+    function GetListIndex(Follower: TBoldFollower): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function ListIndexToIndex(Follower: TBoldFollower; ListIndex: Integer): integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function ListIndex(index: integer): integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   { TBoldListAsFollowerListController }
@@ -75,9 +78,8 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldUtils,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
   BoldGUI,
   {$ENDIF}
@@ -91,8 +93,8 @@ constructor TBoldAbstractListAsFollowerListController.Create(aOwningComponent: T
 begin
   inherited Create(aOwningComponent);
   fFollowerController := FollowerController;
-  DragMode := bdgSelection;
-  DropMode := bdpAppend;
+  DragMode := DefaultBoldDragMode;
+  DropMode := DefaultBoldDropMode;
   fDefaultDblClick := True;
   fNilElementMode := neNone;
   fInternalDrag := True;
@@ -135,7 +137,7 @@ procedure TBoldAbstractListAsFollowerListController.DoMakeUptodateAndSubscribe(F
 begin
   inherited DoMakeUptodateAndSubscribe(Follower, Subscribe);
   (EffectiveRenderer as TBoldListAsFollowerListRenderer).MakeUptodate(Follower, fFollowerController);
-  {$IFDEF BOLDCOMCLIENT} // MakeUptodateAndSubscribe
+  {$IFDEF BOLDCOMCLIENT}
   if Subscribe and Assigned(Follower.Element) then
     Follower.Element.SubscribeToExpression('', Follower.Subscriber.ClientId, Follower.Subscriber.SubscriberId, false, false);
   {$ELSE}
@@ -163,11 +165,6 @@ begin
   end;
 end;
 
-function TBoldAbstractListAsFollowerListController.GetEffectiveRenderer: TBoldRenderer;
-begin
-  Result := EffectiveListAsFollowerListRenderer;
-end;
-
 function TBoldAbstractListAsFollowerListController.GetEffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer;
 begin
   if Assigned(Renderer) then
@@ -176,11 +173,29 @@ begin
     Result := TBoldListAsFollowerListRenderer.DefaultRenderer;
 end;
 
+function TBoldAbstractListAsFollowerListController.GetEffectiveRenderer: TBoldRenderer;
+begin
+  Result := EffectiveListAsFollowerListRenderer;
+end;
+
 function TBoldAbstractListAsFollowerListController.GetListIndex(Follower: TBoldFollower): Integer;
 begin
   Result := Follower.CurrentIndex;
   if (NilElementMode = neInsertFirst) and (Result >= 0) then
-    Dec(Result);
+    Dec(Result)
+  else
+  if (NilElementMode = neAddLast) and (Result = Follower.SubFollowerCount-1) then
+    result := -1;    
+end;
+
+function TBoldAbstractListAsFollowerListController.ListIndex(index: integer): integer;
+begin
+  if index = MaxInt then
+    result := index
+  else if NilElementMode = neInsertFirst then
+    Result := index + 1
+  else
+    Result := index;
 end;
 
 {---TBoldListAsFollowerListRenderer---}
@@ -192,6 +207,7 @@ var
   FirstToEnsure, LastToEnsure: integer;
   FirstFollowerActive, LastFollowerActive: integer;
   FollowerController: TBoldAbstractListAsFollowerListController;
+  Element: TBoldElement;
 begin
   if not assigned(follower.element) then
     exit;
@@ -211,13 +227,18 @@ begin
   if FirstToEnsure < 0 then
     FirstToEnsure := 0;
 
-  if FirstToEnsure >= List.Count then
-    FirstToEnsure := List.Count - 1;
+  i := List.Count;
+  if FirstToEnsure >= i then
+    FirstToEnsure := i - 1;
 
-  if LastToEnsure >=  list.Count then
-    LastToEnsure := List.Count - 1;
+  if LastToEnsure >=  i then
+    LastToEnsure := i - 1;
 
-  list.EnsureRange(FirstToEnsure, LastToEnsure);
+  if (LastToEnsure > FirstToEnsure) and (LastToEnsure <> -1) then
+    list.EnsureRange(FirstToEnsure, LastToEnsure);
+
+  if Follower.Element <> List then
+    Follower.Element := List;
 
   FirstFollowerActive := FirstActive;
   LastFollowerActive := LastActive;
@@ -225,22 +246,30 @@ begin
   if FirstFollowerActive >= Follower.SubFollowerCount then
     FirstFollowerActive := Follower.SubFollowerCount-1;
 
-  if FirstFollowerActive >= List.Count then
-    FirstFollowerActive := List.Count - 1;
+  if FirstFollowerActive >= i then
+    FirstFollowerActive := i - 1;
 
   if FirstFollowerActive < 0 then
     FirstFollowerActive := 0;
 
   if LastFollowerActive >= Follower.SubFollowerCount then
     LastFollowerActive := Follower.SubFollowerCount - 1;
-  if LastFollowerActive >=  list.Count then
-    LastFollowerActive := List.Count - 1;
+  if LastFollowerActive >=  i then
+    LastFollowerActive := i - 1;
 
-  for i := FirstFollowerActive to LastFollowerActive do
+{  for i := FirstFollowerActive to LastFollowerActive do
     with Follower.SubFollowers[i] do
      if not ElementValid then
        Element := List.Elements[FollowerController.ListIndex(i)];
+}
+
   inherited SetActiveRange(Follower, FirstFollowerActive, LastFollowerActive);
+
+  for i := FirstFollowerActive to LastFollowerActive do
+  begin
+    Element := List.Elements[FollowerController.ListIndex(i)];
+    (Follower.RendererData as TBoldFollowerList).EnsuredFollower(FollowerController, i, Element, FollowerController.fFollowerController);
+  end;
 end;
 
 class function TBoldListAsFollowerListRenderer.DefaultRenderer: TBoldListAsFollowerListRenderer;
@@ -263,12 +292,13 @@ var
 
   procedure AddElement(aElement: TBoldElement);
   begin
-    DestList.EnsureFollower(Controller, DestIndex, aElement, FollowerController);
+    DestList.EnsuredFollower(Controller, DestIndex, aElement, FollowerController);
     Inc(DestIndex);
   end;
 
 begin
   DestList := Follower.RendererData as TBoldFollowerList;
+  Assert(DestList.BoldList = Follower.Element);
   Controller := Follower.Controller as TBoldAbstractListAsFollowerListController;
   DestIndex := 0;
 
@@ -277,27 +307,37 @@ begin
   if Assigned(Follower.Element) then
   begin
     SourceList := Follower.Element as TBoldList;
+    Assert(Assigned(SourceList), 'TBoldListAsFollowerListRenderer.MakeUptodate: Assigned(SourceList)');
   {$IFNDEF BOLDCOMCLIENT}
     SourceList.EnsureRange(Controller.ListIndex(DestList.FirstActive), Controller.ListIndex(DestList.LastActive));
   {$ELSE}
     SourceVariant := SourceList.GetRange(Controller.ListIndex(DestList.FirstActive), Controller.ListIndex(DestList.LastActive));
   {$ENDIF}
-    for SourceIndex := 0 to SourceList.Count - 1 do
-      if (DestIndex >= DestList.FirstActive) and (Destindex <= DestList.LastActive) then
-  {$IFNDEF BOLDCOMCLIENT}
-        AddElement(SourceList[SourceIndex])
-  {$ELSE}
+    SourceIndex := 0;
+    SourceList := Follower.Element as TBoldList;
+    if Assigned(SourceList) then
+    begin
+      if SourceList.Count > 4 then
+        DestList.SetCapacity(SourceList.Count);
+      while SourceIndex < SourceList.Count do
       begin
-        unk :=  SourceVariant[SourceIndex];
-        ElementInterface := unk as IBoldElement;
-        AddElement(ElementInterface);
-      end
-  {$ENDIF}
-      else
-      begin
-        AddElement(nil);
-        DestList[DestIndex-1].ElementValid := false;
+        if (DestIndex >= DestList.FirstActive) and (Destindex <= DestList.LastActive) then
+        begin
+          DestList.EnsuredFollower(Controller, DestIndex, SourceList[SourceIndex], FollowerController);
+          if not (Follower.Element = SourceList) then
+            Assert(Follower.Element = SourceList, 'If this fails, make a clone of SourceList before the loop.');
+  //        SourceList := Follower.Element as TBoldList;
+          Inc(DestIndex);
+        end
+        else
+        begin
+          DestList.EnsuredFollower(Controller, DestIndex, nil, FollowerController);
+  //        DestList[DestIndex].ElementValid := false;
+          Inc(DestIndex);
+        end;
+        inc(SourceIndex);
       end;
+    end;
   end;
   if (Controller.NilElementMode=neAddLast) then
     AddElement(nil);
@@ -305,16 +345,16 @@ begin
 end;
 
 procedure TBoldListAsFollowerListRenderer.DefaultStartDrag(Element: TBoldElement; DragMode: TBoldDragMode; RendererData: TBoldRendererData);
-{$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultStartDrag
+{$IFNDEF BOLDCOMCLIENT}
 var
   FollowerList: TBoldFollowerList;
 {$ENDIF}
 begin
-  {$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultStartDrag
+  {$IFNDEF BOLDCOMCLIENT}
   if (DragMode = bdgSelection) then
   begin
     if BoldGUIHandler.DraggedObjects.Count <> 0 then
-      raise EBold.CreateFmt(sDraggedObjectsNotCleared, [ClassName]);
+      raise EBold.Create('TBoldListAsFollowerListRenderer.DefaultStartDrag: TBoldGUIHandler.DraggedObjects not cleared');
 
     Followerlist := RendererData as TBoldFollowerList;
     Followerlist.AddSelectedToList(BoldGUIHandler.DraggedObjects);
@@ -324,16 +364,16 @@ end;
 
 function TBoldListAsFollowerListRenderer.DefaultDragOver(Element: TBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldRendererData; dropindex: Integer): Boolean;
 begin
-  {$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultDragOver
+  {$IFNDEF BOLDCOMCLIENT}
   Result := (BoldGUIHandler.DraggedObjects.Count > 0) and
-    BoldGUIHandler.DraggedObjectsAssignable(Element, DropMode); // FIXME move here
+    BoldGUIHandler.DraggedObjectsAssignable(Element, DropMode);
   {$ELSE}
   result := false;
   {$ENDIF}
 end;
 
 procedure TBoldListAsFollowerListRenderer.DefaultDragDrop(Element: TBoldElement; DropMode: TBoldDropMode; dropindex: Integer);
-{$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultDragDrop
+{$IFNDEF BOLDCOMCLIENT}
 var
   prevIndex,
   Offset,
@@ -344,7 +384,7 @@ begin
 
 (*  if (NilElementMode=neInsertFirst) then
     Offset := 1
-  else*) //FIXME
+  else*)
     Offset := 0;
   case DropMode of
     bdpInsert:
@@ -376,11 +416,10 @@ begin
 
     bdpAppend:
       for I := 0 to BoldGUIHandler.DraggedObjects.Count - 1 do
-        // Dupe checking by the ObjectList
         ObjectList.Add(BoldGUIHandler.DraggedObjects[I]);
 
     bdpReplace:
-      raise EBoldFeatureNotImplementedYet.CreateFmt(sReplaceNotImplemented, [ClassName]);
+      raise EBoldFeatureNotImplementedYet.CreateFmt('%s.DefaultDragDrop: Replace not implemented yet', [ClassName]);
   end;
 end;
 {$ELSE}
@@ -396,14 +435,10 @@ begin
     Result := Listindex;
 end;
 
-function TBoldAbstractListAsFollowerListController.ListIndex(index: integer): integer;
+
+class function TBoldAbstractListAsFollowerListController.PrecreateFollowers: boolean;
 begin
-  if index = MaxInt then
-    result := index // otherwise the result will overflow to -maxint
-  else if NilElementMode = neInsertFirst then
-    Result := index + 1
-  else
-    Result := index;
+  result := false;
 end;
 
 initialization
@@ -413,4 +448,3 @@ finalization
   FreeAndNil(DefaultListAsFollowerListRenderer);
 
 end.
-

@@ -1,3 +1,7 @@
+/////////////////////////////////////////////////////////
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMemoryManager;
 
 interface
@@ -32,10 +36,13 @@ end;
 
 ---------------------------------------------------------------------*)
 
-{.$DEFINE DEBUG}
+{.$DEFINE DEBUG_BOLDMEMORYMANAGER}
+// Define this conditional, if your application maybe uses only one thread.
+// Normaly every application is multithreaded and the check is waste.
+{.$DEFINE CHECK_ISMULTITHREAD}
 
 uses
-  {$IFDEF DEBUG}
+  {$IFDEF DEBUG_BOLDMEMORYMANAGER}
 //  Dialogs,
   {$ENDIF}
   BoldDefs,
@@ -43,12 +50,26 @@ uses
   Classes;
 
 const
-  BoldMemoryManagerPageSize = 256;
+  BoldMemoryManagerPageSize = 2048;
   BoldMemoryManagerLSBZero = 2;
 {//}  BoldMemoryManagerLSBFactor =  (1 shl BoldMemoryManagerLSBZero);
   BoldMemoryManagerMaxPage = 16; // memoryblocks with 4*MaxPage will be handled, must be power of 2
 {//}  BoldMemoryManagerMask = ((1 shl BoldMemoryManagerLSBZero)-1) or (not Cardinal((BoldMemoryManagerMaxPage shl BoldMemoryManagerLSBZero)-1));  // mask for quick test of allowed size
 
+
+// Temporarly moved from BoldCommonConst
+  sMemoryManagerCalledInFinalization = 'Attempt to allocate with BoldMemoryManager during finalization';
+  sMemoryManagerDestroyed = 'MemoryManager destroyed';
+  sMemMgrSize = 'Size: %3d  InUse: %10d(%4.0f%%) Free: %10d';
+  sMemMgrAllocated = 'Allocated';
+  sMemMgrInUse = 'InUse';
+  sMemMgrOverHead = 'Overhead';
+  sMemMgrDisabled = 'The Bold Memorymanager has been disabled. ';
+  sMemMgrDisabledReason = '(caused by compilerdirective BOLD_DISABLEMEMORYMANAGER)';
+  sMemMgrTotalBigBlocks = 'Total Big blks';
+  sMemMgrBigBlockCount = 'Big block count';
+  sMemMgrNonBold = 'Non-Bold';
+  sMemMgrNonBoldCount = 'Non-Bold Count';
 
 type
   { forward declarations }
@@ -71,13 +92,13 @@ type
     fBigBlockCount: integer;
     fCriticalSection: TCriticalSection;
     {$IFNDEF BOLD_DISABLEMEMORYMANAGER}
-    procedure AllocateNewPage(Size, PageNum: integer);
+    procedure AllocateNewPage(Size: integer);
     procedure GarbageCollectPage(PageNum: integer; Page: Pointer; PageSize: integer);
     procedure LinkIn(var Chain: Pointer; Item: POinter);
     function LinkOut(var Chain: Pointer): Pointer;
     {$ENDIF}
     function GetAllocated: integer;
-    function GetMemoryInfo: String;
+    function GetMemoryInfo: string;
     function GetOverhead: integer;
     function GetInUse: integer;
     function GetAllocatedPages: integer;
@@ -106,10 +127,9 @@ function BoldMemoryManager_: TBoldMemoryManager;
 implementation
 
 uses
-  SysUtils,
-  BoldCommonConst;
+  SysUtils, Types;
 
-{$IFDEF DEBUG}
+{$IFDEF DEBUG_BOLDMEMORYMANAGER}
 const
   LOGFILE: string = 'c:\temp\BoldMemoryManager.Log';
 
@@ -120,7 +140,7 @@ var
 
 procedure Log(const Str: String);
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF DEBUG_BOLDMEMORYMANAGER}
   if not assigned(Strl) then
   begin
     strl := TStringList.Create;
@@ -144,20 +164,18 @@ var
 
 procedure DestroyIfEmpty;
 begin
- if Assigned(G_BoldMemoryManager) and (G_BoldMemoryManager.InUse = 0) then
-  FreeAndNil(G_BoldMemoryManager);
+  if Assigned(G_BoldMemoryManager) and (G_BoldMemoryManager.InUse = 0) then
+    FreeAndNil(G_BoldMemoryManager);
 end;
 
 function BoldMemoryManager_: TBoldMemoryManager;
 begin
-  Result := G_BoldMemoryManager;
-  if not assigned(Result) then
-  begin
+  if G_BoldMemoryManager = nil then begin
     if Finalized then
       raise EBold.Create(sMemoryManagerCalledInFinalization);
-    Result :=  TBoldMemoryManager.Create;
-    G_BoldMemoryManager := Result;
+    G_BoldMemoryManager :=  TBoldMemoryManager.Create;
   end;
+  Result := G_BoldMemoryManager;
 end;
 
 
@@ -176,7 +194,7 @@ begin
   Chain := Pointer(result^);
 end;
 
-procedure TBoldMemoryManager.AllocateNewPage(Size, PageNum: integer);
+procedure TBoldMemoryManager.AllocateNewPage(Size: integer);
 var
   i: integer;
   Page: ^TPage;
@@ -186,7 +204,7 @@ begin
   Pages.Add(Page);
   PageSizes.Add(Pointer(Size * BoldMemoryManagerPageSize));
   SizeInWords := Size shr BoldMemoryManagerLSBZero;
-  {$IFDEF DEBUG}
+  {$IFDEF DEBUG_BOLDMEMORYMANAGER}
   FillChar(Page^, Size * BoldMemoryManagerPageSize, 0);
   {$ENDIF}
   for i := 0 to BoldMemoryManagerPageSize-2 do
@@ -195,9 +213,9 @@ begin
   end;
   Page^[(BoldMemoryManagerPageSize-1) * sizeInWords] := nil;
 
-  FreePointers[PageNum] := Page;
+  FreePointers[Size] := Page;
 
-  Inc(TotalAllocated[Pagenum], BoldMemoryManagerPageSize);
+  Inc(TotalAllocated[Size], BoldMemoryManagerPageSize);
 end;
 
 procedure TBoldMemoryManager.GarbageCollectPage(PageNum: integer; Page: Pointer; PageSize: integer);
@@ -244,12 +262,16 @@ function TBoldMemoryManager.GetOverhead: integer;
 var
   i: integer;
 begin
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   result := 0;
   for i := Low(TotalAllocated) to High(TotalAllocated) do
     result := result + (TotalAllocated[i] - CurrentInUse[i]) * i;
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave;
 end;
 
@@ -257,12 +279,16 @@ function TBoldMemoryManager.GetInUse: integer;
 var
   i: integer;
 begin
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   result := 0;
   for i := Low(CurrentInUse) to High(CurrentInUse) do
     result := result + CurrentInUse[i] * i;
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave;
 end;
 
@@ -277,7 +303,9 @@ begin
    INC(fBigBlockCount);
   {$ELSE}
   // Note, ordering and code repetition intentional, to give best operaion pairing.
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   if ((Size and BoldMemoryManagerMask) = 0) then
   begin
@@ -289,11 +317,11 @@ begin
       if assigned(result) then
       begin
         Inc(CurrentInUse[Size]);
-        FreePointers[Size] :=  Pointer(result^);
+        FreePointers[Size] := Pointer(result^);
       end
       else
       begin
-        AllocateNewPage(Size, Size);
+        AllocateNewPage(Size);
         result := FreePointers[Size];
         Inc(CurrentInUse[Size]);
         FreePointers[Size] :=  Pointer(result^);
@@ -302,11 +330,15 @@ begin
   end
   else
   begin
+    {$IFDEF DEBUG_BOLDMEMORYMANAGER}
     BytesInBigBlocks := BytesInBigBlocks + size;
     INC(fBigBlockCount);
+    {$ENDIF}
     getMem(result, Size);
   end;
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave;
   {$ENDIF}
 end;
@@ -319,7 +351,9 @@ begin
   if fBigBlockCount = 0 then
     FreeAndNil(G_BoldMemoryManager);
   {$ELSE}
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   if ((Size and BoldMemoryManagerMask) = 0) then
   begin
@@ -335,11 +369,15 @@ begin
   end
   else
   begin
+    {$IFDEF DEBUG_BOLDMEMORYMANAGER}
     BytesInBigBlocks := BytesInBigBlocks - size;
     DEC(fBigBlockCount);
+    {$ENDIF}
     Freemem(Ptr, size);
   end;
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave
   {$ENDIF}
 end;
@@ -351,7 +389,9 @@ var
 {$ENDIF}
 begin
   {$IFNDEF BOLD_DISABLEMEMORYMANAGER}
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   for PageNum := Low(TotalAllocated) to High(TotalAllocated) do
   begin
@@ -366,7 +406,9 @@ begin
       end;
     end;
   end;
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave;
   {$ENDIF}
 end;
@@ -382,7 +424,9 @@ end;
 
 destructor TBoldMemoryManager.Destroy;
 begin
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   while pages.Count > 0 do
   begin
@@ -391,45 +435,73 @@ begin
   end;
   FreeAndNil(fPages);
   FreeAndNil(fPageSizes);
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave;
   FreeAndNil(fCriticalSection);
   Log(sMemoryManagerDestroyed);
   inherited;
 end;
 
-function TBoldMemoryManager.GetMemoryInfo: String;
+function TBoldMemoryManager.GetMemoryInfo: string;
 {$IFNDEF BOLD_DISABLEMEMORYMANAGER}
 var
-  PageNum: integer;
+  PageNum: Integer;
+  AllocMemSize, AllocMemCount: Integer;
+  {$IFDEF BOLD_DELPHI10_OR_LATER}
+  MemMgrState: TMemoryManagerState;
+  I: Integer;
+  {$ENDIF}
 {$ENDIF}
 begin
-  result := '';
+  Result := '';
   {$IFDEF BOLD_DISABLEMEMORYMANAGER}
-  result := sMemMgrDisabled + BOLDCRLF +
+  Result := sMemMgrDisabled + BOLDCRLF +
             sMemMgrDisabledReason;
   {$ELSE}
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
-  for PageNum := Low(TotalAllocated) to High(TotalAllocated) do
-    if  TotalAllocated[PageNum] <> 0 then
-    begin
-      result := result + format(sMemMgrSize, [PageNum,   CurrentInUse[PageNum],
-      (CurrentInUse[PageNum]*100.0*PageNum)/InUse,
-      TotalAllocated[PageNum] - CurrentInUse[PageNum]]) + BOLDCRLF;
+  try
+    for PageNum := Low(TotalAllocated) to High(TotalAllocated) do begin
+      if TotalAllocated[PageNum] <> 0 then begin
+        Result := Result + Format(sMemMgrSize, [PageNum,   CurrentInUse[PageNum],
+            (CurrentInUse[PageNum]*100.0*PageNum)/InUse,
+            TotalAllocated[PageNum] - CurrentInUse[PageNum]]) + BOLDCRLF;
+      end;
     end;
-  result := result + format('%-15s: %7dkb  (%10d bytes)', [sMemMgrAllocated, allocated DIV 1024, Allocated]) + BOLDCRLF; // do not localize
-  result := result + format('%-15s: %7dkb  (%10d bytes)', [sMemMgrInUse, InUse DIV 1024, InUse]) + BOLDCRLF; // do not localize
-  result := result + format('%-15s: %7dkb  (%10d bytes)', [sMemMgrOverHead, overhead DIV 1024, overhead]) + BOLDCRLF; // do not localize
-  if BigBlockCount > 0 then
-  begin
-    result := result + format('%-15s: %7dkb  (%10d bytes)', [sMemMgrTotalBigBlocks, bytesinbigblocks DIV 1024, bytesinbigblocks]) + BOLDCRLF; // do not localize
-    result := result + format('%-15s: %7d    (%10d bytes)', [sMemMgrBigBlockCount, BigBlockCount, bytesinbigblocks DIV BigBlockCount]) + BOLDCRLF; // do not localize
-    result := result + format('%-15s: %7dkb  (%10d bytes)', [sMemMgrNonBold, (AllocMemSize - allocated-bytesinbigblocks)DIV 1024, (AllocMemSize - allocated-bytesinbigblocks)]) + BOLDCRLF; // do not localize
-    result := result + format('%-15s: %7d    (%10d bytes)', [sMemMgrNonBoldCount, AllocMemCount-BigBlockCount-AllocatedPages, (AllocMemSize - allocated - bytesinbigblocks) DIV (AllocMemCount-BigBlockCount-AllocatedPages)]) + BOLDCRLF; // do not localize
+    Result := Result + Format('%-15s: %7dkb  (%10d bytes)', [sMemMgrAllocated, allocated DIV 1024, Allocated]) + BOLDCRLF; // do not localize
+    Result := Result + Format('%-15s: %7dkb  (%10d bytes)', [sMemMgrInUse, InUse DIV 1024, InUse]) + BOLDCRLF; // do not localize
+    Result := Result + Format('%-15s: %7dkb  (%10d bytes)', [sMemMgrOverHead, overhead DIV 1024, overhead]) + BOLDCRLF; // do not localize
+    if BigBlockCount > 0 then begin
+      {$IFDEF BOLD_DELPHI10_OR_LATER}
+      GetMemoryManagerState(MemMgrState);
+      AllocMemSize := MemMgrState.TotalAllocatedMediumBlockSize +
+                      MemMgrState.TotalAllocatedLargeBlockSize;
+      AllocMemCount := MemMgrState.AllocatedMediumBlockCount +
+                       MemMgrState.AllocatedLargeBlockCount;
+      for I := 0 to High(MemMgrState.SmallBlockTypeStates) do begin
+        Inc(AllocMemSize, MemMgrState.SmallBlockTypeStates[I].InternalBlockSize +
+                          MemMgrState.SmallBlockTypeStates[I].UseableBlockSize);
+        Inc(AllocMemCount, MemMgrState.SmallBlockTypeStates[I].AllocatedBlockCount);
+      end;
+      {$ELSE}
+      AllocMemSize := System.AllocMemSize;
+      AllocMemCount := System.AllocMemCount;
+      {$ENDIF}
+      Result := Result + Format('%-15s: %7dkb  (%10d bytes)', [sMemMgrTotalBigBlocks, bytesinbigblocks DIV 1024, bytesinbigblocks]) + BOLDCRLF; // do not localize
+      Result := Result + Format('%-15s: %7d    (%10d bytes)', [sMemMgrBigBlockCount, BigBlockCount, bytesinbigblocks DIV BigBlockCount]) + BOLDCRLF; // do not localize
+      Result := Result + Format('%-15s: %7dkb  (%10d bytes)', [sMemMgrNonBold, (AllocMemSize - allocated-bytesinbigblocks)DIV 1024, (AllocMemSize - allocated-bytesinbigblocks)]) + BOLDCRLF; // do not localize
+      Result := Result + Format('%-15s: %7d    (%10d bytes)', [sMemMgrNonBoldCount, AllocMemCount-BigBlockCount-AllocatedPages, (AllocMemSize - allocated - bytesinbigblocks) DIV (AllocMemCount-BigBlockCount-AllocatedPages)]) + BOLDCRLF; // do not localize
+    end;
+  finally
+    {$IFDEF CHECK_ISMULTITHREAD}
+    if (IsMultiThread) then
+    {$ENDIF}
+      fCriticalSection.Leave;
   end;
-  if (IsMultiThread) then
-    fCriticalSection.Leave;
   {$ENDIF}
 end;
 
@@ -440,10 +512,14 @@ end;
 
 function TBoldMemoryManager.GetAllocatedPages: integer;
 begin
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Acquire;
   Result :=Pages.count;
+  {$IFDEF CHECK_ISMULTITHREAD}
   if (IsMultiThread) then
+  {$ENDIF}
     fCriticalSection.Leave;
 end;
 
@@ -458,7 +534,7 @@ begin
   if NewSize > OldSize then
   begin
     Move(Ptr^, Result^, OldSize);
-    FillChar((Pchar(Result)+Oldsize)^, NewSize-OldSize, 0);
+    FillChar((PAnsiChar(Result)+Oldsize)^, NewSize-OldSize, 0);
   end
   else // NewSize < Oldize
     Move(Ptr^ , Result^, NewSize);
@@ -476,6 +552,7 @@ initialization
 finalization
   Finalized := True;
   DestroyIfEmpty;
+{$IFDEF DEBUG_BOLDMEMORYMANAGER}
+  FreeAndNil(strl);
+{$ENDIF}
 end.
-
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMMExpert;
 
 interface
@@ -61,7 +64,6 @@ end;
 
 procedure TBoldMMExpert.Execute(Index: Integer);
 begin
-  // the menu item was clicked: perform associated action here
   case Index of
     0:
       SaveModelToFile;
@@ -74,7 +76,6 @@ end;
 
 function TBoldMMExpert.GetMenuPositions(Index: Integer): TMMMenuPosition;
 begin
-  // Define to which ModelMaker sub-menu should each verb be added
   case Index of
     0, 1: Result := mpToolsMenu;
   else
@@ -95,7 +96,6 @@ end;
 
 function TBoldMMExpert.GetVerbs(Index: Integer): WideString;
 begin
-  // Return menu items Captions here
   case Index of
     0: Result := 'Save in Bold format';
     1: Result := 'Bold tagged value editor';
@@ -125,7 +125,6 @@ var
   MoldModel: TMoldModel;
   ModelAsStrings: TStrings;
 begin
-  // Stream in .bld format for the time being.
   G := TBoldGuard.Create(Importer, Boldify, MoldModel);
   EnsureModelEditDataModule;
   UMLModel := TUMLModel.Create(dmModelEdit.bshUMLModel.System);

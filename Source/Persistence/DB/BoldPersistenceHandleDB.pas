@@ -1,17 +1,19 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDB;
 
 interface
-
 uses
   Classes,
   BoldSubscription,
   BoldDbInterfaces,
   BoldAbstractPersistenceHandleDB,
   BoldSQLDatabaseConfig,
+  BoldIndexCollection,
   BoldAbstractDataBaseAdapter;
 
 type
-  { TBoldPersistenceHandleDB }
   TBoldPersistenceHandleDB = class(TBoldAbstractPersistenceHandleDB)
   private
     fDatabaseAdapter: TBoldAbstractDatabaseAdapter;
@@ -21,6 +23,7 @@ type
     procedure PlaceComponentSubscriptions;
   protected
     function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig; override;
+    function GetCustomIndexes: TBoldIndexCollection; override;
     function GetDataBaseInterface: IBoldDatabase; override;
     procedure SetActive(Value: Boolean); override;
     procedure AssertSQLDatabaseconfig(Context: String); override;
@@ -28,8 +31,8 @@ type
     function GetNewComponentName(Comp: Tcomponent; BaseName: string): String;
     {$ENDIF}
   public
-    constructor Create(aOwner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(aOwner: TComponent); override;
+    destructor destroy; override;
   published
     property DatabaseAdapter: TBoldAbstractDatabaseAdapter read fDatabaseAdapter write SetDatabaseAdapter;
   end;
@@ -39,7 +42,7 @@ implementation
 uses
   BoldDefs,
   SysUtils,
-  PersistenceConsts;
+  BoldRev;
 
 const
   breDatabaseAdapterDestroying = 100;
@@ -56,14 +59,22 @@ end;
 destructor TBoldPersistenceHandleDB.destroy;
 begin
   FreeAndNil(fComponentSubscriber);
-  inherited;
+  inherited;                       
 end;
 
 procedure TBoldPersistenceHandleDB.AssertSQLDatabaseconfig(
   Context: String);
 begin
   if not assigned(DatabaseAdapter) then
-    raise EBold.CreateFmt(sNoDatabaseAdapterAvailable, [classname, Context]);
+    raise EBold.CreateFmt('%s: Unable to %s. There is no DatabaseAdapter available', [classname, Context]);
+end;
+
+function TBoldPersistenceHandleDB.GetCustomIndexes: TBoldIndexCollection;
+begin
+  if assigned(fDatabaseAdapter) then
+    result := fDatabaseAdapter.CustomIndexes
+  else
+    result := nil;
 end;
 
 function TBoldPersistenceHandleDB.GetDataBaseInterface: IBoldDatabase;
@@ -106,7 +117,7 @@ end;
 procedure TBoldPersistenceHandleDB.SetActive(Value: Boolean);
 begin
   if value and not assigned(DatabaseAdapter) then
-    raise EBold.CreateFmt(sCannotActivateWithoutDBAdapter, [classname]);
+    raise EBold.CreateFmt('%s.SetActive: Can not set persistence handle to active since it is not connected to a database adapter', [classname]);
   inherited;
 end;
 
@@ -129,7 +140,6 @@ begin
     begin
       if active and not (csDestroying in ComponentState) then
       begin
-        // what to do?
       end;
       fDatabaseAdapter := nil;
     end;
@@ -137,10 +147,10 @@ begin
     begin
       if active and not (csDestroying in ComponentState) then
       begin
-        // what to do?
       end;
     end;
   end;
 end;
 
+initialization
 end.

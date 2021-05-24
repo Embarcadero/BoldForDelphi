@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceControllerEventDriven;
 
 interface
@@ -18,8 +21,9 @@ type
   private
     FConfig: TBoldExternalPersistenceConfigItems;
     fMaxFetchBlockSize: integer;
-    function PersistentObjectFromObjectContents(Obj: IBoldObjectContents; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass): IPersistentBoldObject;
+    function PersistentObjectFromObjectContents(const Obj: IBoldObjectContents; const ValueSpace: IBoldValueSpace; MoldClass: TMoldClass): IPersistentBoldObject;
   protected
+    function FetchAllMembersWhenFetchingKey(MoldClass: TMoldClass): boolean; override;
     procedure PrepareFetchExternal(ExternalKeys: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList; var FetchContext: TObject); override;
     procedure PostFetch(FetchContext: TObject; MoldClass: TMoldClass); override;
     function ConfigItemByObjectContents(ObjectContents: IBoldObjectContents): TBoldExternalPersistenceConfigItem;
@@ -35,7 +39,7 @@ type
     procedure UpdateObjects(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace); override;
     function GetMaxFetchBlockSize: integer; override;
   public
-    constructor Create(MoldModel: TMoldModel; Config: TBoldExternalPersistenceConfigItems; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer);
+    constructor Create(MoldModel: TMoldModel; Config: TBoldExternalPersistenceConfigItems; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer; UpdateBoldDatabaseFirst: boolean);
     procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
     property Config: TBoldExternalPersistenceConfigItems read fConfig;
   end;
@@ -48,8 +52,7 @@ uses
   BoldDefs,
   BoldValueInterfaces,
   BoldStringId,
-  BoldDefaultId,
-  ExPeConsts;
+  BoldDefaultId;
 
 { TBoldExternalPersistenceControllerEventDriven }
 
@@ -61,7 +64,6 @@ var
   IntContent: IBoldIntegerContent;
   ConfigItem: TBoldExternalPersistenceConfigItem;
 begin
-  // Make sure that the object contains the data of the external key
   ConfigItem := Config.FindExpressionName(MoldClass.ExpandedExpressionName);
   if assigned(ConfigItem.OnAssignKeyToObject) then
     ConfigItem.OnAssignKeyToObject(PersistentObjectFromObjectContents(ObjectContents, ValueSpace, MoldClass), ExternalKey)
@@ -73,7 +75,7 @@ begin
       if MoldClass.AllBoldMembers[i].Storage = bsExternalKey then
       begin
         if assigned(Keyvalue) then
-          raise EBold.createFmt(sAssignKeyValueRequiresOneKey, [MoldClass.Name]);
+          raise EBold.createFmt('AssignKeyValue only supported automatically for classes with one external key: %s', [MoldClass.Name]);
 
         KeyValue := ObjectContents.ValueByIndex[i];
         if KeyValue.QueryInterface(IBoldStringContent, StrContent) = S_OK then
@@ -81,15 +83,15 @@ begin
         else if KeyValue.QueryInterface(IBoldIntegerContent, IntContent) = S_OK then
           IntContent.AsInteger := StrToInt(ExternalKey.AsString)
         else
-          raise EBold.createFmt(sKeyTypeNotAutoHandled, [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
+          raise EBold.createFmt('Keytype not handled automatically: %s.%s', [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
       end;
     end;
   end;
 end;
 
-constructor TBoldExternalPersistenceControllerEventDriven.Create(MoldModel: TMoldModel; Config: TBoldExternalPersistenceConfigItems; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer);
+constructor TBoldExternalPersistenceControllerEventDriven.Create(MoldModel: TMoldModel; Config: TBoldExternalPersistenceConfigItems; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer; UpdateBoldDatabaseFirst: boolean);
 begin
-  inherited Create(MoldModel, TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates);
+  inherited Create(MoldModel, TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates, UpdateBoldDatabaseFirst);
   fConfig := Config;
   fMaxFetchBlockSize := MaxFetchBlockSize;
 end;
@@ -111,12 +113,13 @@ begin
     if assigned(ConfigItem) then
     begin
       if not assigned(ConfigItem.OnCreateObject) then
-        raise EBold.CreateFmt(sCreateObjectsNotAllowed, [ConfigItem.ExpressionName]);
+        raise EBold.CreateFmt('Creating new objects of type %s not supported/allowed', [ConfigItem.ExpressionName]);
       ExternalKey := GetExternalKeyFromObject(ObjectContents, ValueSpace);
       ConfigItem.OnCreateObject(PersistentObjectFromObjectContents(ObjectContents, ValueSpace, MoldClass), ExternalKey, ValueSpace);
       ExternalKey.Free;
     end;
   end;
+
 end;
 
 procedure TBoldExternalPersistenceControllerEventDriven.DeleteObjects(
@@ -136,12 +139,21 @@ begin
     if assigned(ConfigItem) then
     begin
       if not assigned(ConfigItem.OnDeleteObject) then
-        raise EBold.CreateFmt(sDeleteObjectsNotAllowed, [ConfigItem.ExpressionName]);
+        raise EBold.CreateFmt('Deleting objects of type %s not supported/allowed', [ConfigItem.ExpressionName]);
       ExternalKey := GetExternalKeyFromObject(ObjectContents, valueSpace);
       ConfigItem.OnDeleteObject(PersistentObjectFromObjectContents(ObjectContents, ValueSpace, MoldClass), ExternalKey);
       ExternalKey.Free;
     end;
   end;
+end;
+
+function TBoldExternalPersistenceControllerEventDriven.FetchAllMembersWhenFetchingKey(
+  MoldClass: TMoldClass): boolean;
+var
+  lConfigItem: TBoldExternalPersistenceConfigItem;
+begin
+  lConfigItem := Config.FindExpressionName(MoldClass.ExpandedExpressionName);
+  result := lConfigItem.FetchAllMembersWhenFetchingKey;
 end;
 
 procedure TBoldExternalPersistenceControllerEventDriven.FetchObject(
@@ -157,21 +169,25 @@ begin
   ConfigItem := ConfigItemByObjectContents(ObjectContents);
   MoldClass := MoldModel.Classes[ObjectContents.ObjectId.TopSortedIndex];
   PersistentObject := PersistentObjectFromObjectContents(ObjectContents, valueSpace, MoldClass);
-  ExternalKey :=GetExternalKeyFromObject(ObjectContents, valueSpace);
-  if assigned(MemberidList) and assigned(ConfigItem.OnReadMember) then
-  begin
-    for i := 0 to MemberIdList.Count-1 do
-      ConfigItem.OnReadMember(PersistentObject, ExternalKey, MoldClass.AllBoldMembers[MemberIdList[i].MemberIndex], FetchContext);
-  end
-  else
-  begin
-    if Assigned(ConfigItem.OnReadObject) then
-      ConfigItem.OnReadObject(PersistentObject, ExternalKey, FetchContext)
+  ExternalKey := GetExternalKeyFromObject(ObjectContents, valueSpace);
+  try
+    if assigned(MemberidList) and assigned(ConfigItem.OnReadMember) then
+    begin
+      for i := 0 to MemberIdList.Count-1 do
+        ConfigItem.OnReadMember(PersistentObject, ExternalKey, MoldClass.AllBoldMembers[MemberIdList[i].MemberIndex], FetchContext);
+    end
     else
-      raise EBold.CreateFmt(sReadObjectNotImplementedForClass, [MoldClass.Name]);
+    begin
+      if Assigned(ConfigItem.OnReadObject) then
+        ConfigItem.OnReadObject(PersistentObject, ExternalKey, FetchContext)
+      else
+        raise EBold.CreateFmt('Event ReadObject is not implemented for class %s', [MoldClass.Name]);
+    end;
+  finally
+    ExternalKey.free;
   end;
   if not assigned(ConfigItem.OnUpdateObject) and not assigned(ConfigItem.OnDeleteObject) then
-    ObjectContents.IsReadOnly := true;
+    ObjectContents.IsReadOnly := true; 
 end;
 
 procedure TBoldExternalPersistenceControllerEventDriven.GetExternalKeys(MoldClass: TMoldClass; ExternalKeys: TBoldObjectIdList);
@@ -182,7 +198,7 @@ begin
   if assigned(ConfigItem) and assigned(ConfigItem.OngetKeyList) then
     ConfigItem.OnGetKeyList(ExternalKeys)
   else
-    raise EBold.CreateFmt(sGetExternalKeyNotImplementedForClass, [MoldClass.Name]);
+    raise EBold.CreateFmt('Getting external keys for class %s not implemented', [MoldClass.Name]);
 end;
 
 function TBoldExternalPersistenceControllerEventDriven.HandlesClass(MoldClass: TMoldClass): Boolean;
@@ -232,7 +248,7 @@ begin
     if assigned(ConfigItem) then
     begin
       if not assigned(ConfigItem.OnUpdateObject) then
-        raise EBold.CreateFmt(sModifyObjectsNotAllowed, [ConfigItem.ExpressionName]);
+        raise EBold.CreateFmt('Modifying objects of type %s not supported/allowed', [ConfigItem.ExpressionName]);
       ExternalKey := GetExternalKeyFromObject(ObjectContents, ValueSpace);
       ConfigItem.OnUpdateObject(PersistentObjectFromObjectContents(ObjectContents, valueSpace, MoldClass), ExternalKey, ValueSpace);
       ExternalKey.Free;
@@ -266,7 +282,7 @@ begin
       if MoldClass.AllBoldMembers[i].Storage = bsExternalKey then
       begin
         if assigned(Result) then
-          raise EBold.createFmt(sAssignKeyValueRequiresOneKey, [MoldClass.Name]);
+          raise EBold.createFmt('AssignKeyValue only supported automatically for classes with one external key: %s', [MoldClass.Name]);
 
         KeyValue := ObjectContents.ValueByIndex[i];
         if not assigned(KeyValue) then
@@ -284,11 +300,12 @@ begin
           result := DefId;
         end
         else
-          raise EBold.createFmt(sKeyTypeNotAutoHandled, [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
+          raise EBold.createFmt('Keytype not handled automatically: %s.%s', [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
       end;
     end;
   end;
 end;
+
 
 procedure TBoldExternalPersistenceControllerEventDriven.PostFetch(
   FetchContext: TObject; MoldClass: TMoldClass);
@@ -317,7 +334,7 @@ begin
 end;
 
 function TBoldExternalPersistenceControllerEventDriven.PersistentObjectFromObjectContents(
-  Obj: IBoldObjectContents; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass): IPersistentBoldObject;
+  const Obj: IBoldObjectContents; const ValueSpace: IBoldValueSpace; MoldClass: TMoldClass): IPersistentBoldObject;
 var
   adapterClass: TBoldObjectPersistenceAdapterClass;
 begin
@@ -338,4 +355,5 @@ begin
     result := inherited ExternalKeysToInternalSQL(MoldClass, ExternalKeys);
 end;
 
+initialization
 end.

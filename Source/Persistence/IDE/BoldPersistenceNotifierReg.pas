@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceNotifierReg;
 
 interface
@@ -5,6 +8,8 @@ interface
 procedure Register;
 
 implementation
+
+{$R *.res}
 
 uses
   DesignIntf,
@@ -14,7 +19,6 @@ uses
   BoldAbstractPropertyEditors,
   BoldIDEConsts;
 
-{.$R *.res}
 
 procedure RegisterComponentsOnPalette;
 begin
@@ -27,7 +31,7 @@ end;
 
 procedure RegisterEditors;
 begin
-  RegisterPropertyEditor(TypeInfo(TBoldPersistenceHandle), TBoldAbstractPersistenceNotifier, 'PersistenceHandle', TBoldComponentPropertyIndicateMissing); // do not localize
+  RegisterPropertyEditor(TypeInfo(TBoldPersistenceHandle), TBoldAbstractPersistenceNotifier, 'PersistenceHandle', TBoldComponentPropertyIndicateMissing);
 end;
 
 procedure Register;

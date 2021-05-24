@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelEditReg;
 
 interface
@@ -14,6 +17,7 @@ uses
   Classes,
   BoldCursorGuard,
   BoldSmallLogFrame,
+  BoldLogHandlerForm,
   BoldUMLModel,
   BoldDefsDT,
   BoldUMLModelEdit,
@@ -119,7 +123,7 @@ end;
 procedure Register;
 begin
   RegisterComponentEditor(TBoldModel, TUMLModelComponentEditor);
-  RegisterPropertyEditor(TypeInfo(Boolean), TBoldModel, 'EditableModel', TUMLModelPropertyEditor); //do not localize
+  RegisterPropertyEditor(TypeInfo(Boolean), TBoldModel, 'EditableModel', TUMLModelPropertyEditor);
 end;
 
 constructor TUMLModelComponentEditor.Create(AComponent: TComponent; ADesigner: IDesigner);
@@ -156,7 +160,7 @@ end;
 
 function TUMLModelPropertyEditor.GetAttributes: TPropertyAttributes;
 begin
-  Result := inherited GetAttributes + [paDialog, paReadOnly] - [paMultiSelect];
+  Result := inherited GetAttributes + [paDialog, paReadOnly] - [paMultiSelect]; 
 end;
 
 function TUMLModelPropertyEditor.GetValue: string;
@@ -164,5 +168,6 @@ begin
   Result := '(Open model editor)';
 end;
 
-end.
+initialization
 
+end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDBISAMInterfaces;
 
 interface
@@ -23,7 +26,7 @@ type
     fQuery: TDBISAMQuery;
     function GetQuery: TDBISAMQuery;
     procedure AssignParams(SourceParams: TParams);
-    procedure ClearParams;
+    procedure ClearParams; 
     function GetParamCount: integer;
     function GetParams(i: integer): IBoldParameter;
     function GetRequestLiveQuery: Boolean;
@@ -32,6 +35,8 @@ type
     function GetSQLText: String;
     procedure AssignSQL(SQL: TStrings);
     procedure AssignSQLText(SQL: String);
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);    
     function GetRowsAffected: integer;
     function GetRecordCount: integer;
     function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
@@ -86,8 +91,6 @@ type
     procedure RollBack;
     procedure Open;
     procedure Close;
-    function GetTable: IBoldTable;
-    procedure ReleaseTable(var Table: IBoldTable);
     function SupportsTableCreation: Boolean;
     procedure ReleaseCachedObjects;
   protected
@@ -95,9 +98,11 @@ type
     procedure AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetQuery: IBoldQuery; override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
+    function GetTable: IBoldTable; override;
+    procedure ReleaseTable(var Table: IBoldTable); override;
   public
-    constructor Create(DataBase: TDBISAMDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor Destroy; override;
+    constructor create(DataBase: TDBISAMDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor destroy; override;
   end;
 
 var
@@ -107,7 +112,8 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 
 { TBoldDBISAMQuery }
 
@@ -124,6 +130,11 @@ begin
   if not assigned(fQuery) then
     fQuery := TDBISAMQuery.Create(nil);
   result := fQuery;
+end;
+
+function TBoldDBISAMQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
 end;
 
 function TBoldDBISAMQuery.GetParamCount: integer;
@@ -152,6 +163,11 @@ begin
     result := nil;
 end;
 
+procedure TBoldDBISAMQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
+
 procedure TBoldDBISAMQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
   Query.RequestLive := NewValue;
@@ -170,7 +186,7 @@ begin
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end
@@ -180,21 +196,19 @@ constructor TBoldDBISAMQuery.Create(Query: TDBISAMQuery; DatabaseWrapper: TBoldD
 begin
   inherited Create(DatabaseWrapper);
   fQuery := Query;
+  SetParamCheck(true);  
 end;
 
 procedure TBoldDBISAMQuery.EndSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldDBISAMQuery.StartSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldDBISAMQuery.FailSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldDBISAMQuery.Open;
@@ -205,7 +219,7 @@ begin
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end
@@ -333,7 +347,7 @@ end;
 
 function TBoldDBISAMDataBase.GetIsSQLBased: Boolean;
 begin
-  result := true; // CHECKME: fDataBase.IsSQLBased;
+  result := true;
 end;
 
 function TBoldDBISAMDataBase.GetKeepConnection: Boolean;
@@ -343,7 +357,7 @@ end;
 
 function TBoldDBISAMDataBase.GetLogInPrompt: Boolean;
 begin
-  result := false; // CHECKME: fDataBase.LoginPrompt;
+  result := false;
 end;
 
 procedure TBoldDBISAMDataBase.SetKeepConnection(NewValue: Boolean);
@@ -353,7 +367,6 @@ end;
 
 procedure TBoldDBISAMDataBase.SetlogInPrompt(NewValue: Boolean);
 begin
-  // DO NOTHING; // CHECKME: fDataBase.LoginPrompt := NewValue;
 end;
 
 constructor TBoldDBISAMDataBase.create(DataBase: TDBISAMDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
@@ -489,7 +502,5 @@ begin
   result := false;
 end;
 
+initialization
 end.
-
-
-

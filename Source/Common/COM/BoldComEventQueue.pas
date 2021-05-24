@@ -1,9 +1,13 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComEventQueue;
+
 
 interface
 
 uses
-  SyncObjs,
+  SyncObjs, //NEW
   BoldBase;
 
 type
@@ -35,7 +39,7 @@ type
     FOnEvent: TBoldComEventQueueEvent;
     FPopMode: TBoldComEventQueuePopMode;
     FTail: PBoldComEventQueueItem;
-    FCriticalSection: TCriticalSection;
+//TODO    FCriticalSection: TCriticalSection; //TODO Remove comment when interface change is allowed
     class procedure CreateQueueWindow;
     class procedure FreeQueueWindow;
   protected
@@ -52,13 +56,28 @@ type
     property PopMode: TBoldComEventQueuePopMode read FPopMode;
   end;
 
+  TBoldComEventQueue2 = class(TBoldComEventQueue)
+    FCriticalSection: TCriticalSection;
+  end;
+
+
 implementation
 
 uses
   BoldEnvironment,
-  BoldMemoryManager,
-  SysUtils,
+  SysUtils, //NEW
   Windows;
+
+var
+  G_FCriticalSection: TCriticalSection = nil; //TODO Remove when interface change is allowed
+
+function FCriticalSection: TCriticalSection; //TODO Remove when interface change is allowed
+begin
+  if not Assigned(G_FCriticalSection) then
+    G_FCriticalSection := TCriticalSection.Create;
+  Result := G_FCriticalSection;
+end;
+
 
 const
   BM_POPEVENTQUEUE = $8FFF;
@@ -99,16 +118,15 @@ var
     hCursor: 0;
     hbrBackground: 0;
     lpszMenuName: nil;
-    lpszClassName: 'TBoldComEventQueueWindow'); // do not localize
+    lpszClassName: 'TBoldComEventQueueWindow');
 
 constructor TBoldComEventQueue.Create(PopMode: TBoldComEventQueuePopMode);
 begin
   inherited Create;
-  FCriticalSection := TCriticalSection.Create;
+//TODO  FCriticalSection := TCriticalSection.Create; //TODO Remove comment when interface change is allowed
   FPopMode := PopMode;
   Inc(BoldComEventQueueWindowCount);
   if BoldComEventQueueWindowCount = 1 then
-    // first queue instance creates the window
     CreateQueueWindow;
 end;
 
@@ -119,9 +137,8 @@ begin
     BoldEffectiveEnvironment.ProcessMessages;
   Dec(BoldComEventQueueWindowCount);
   if BoldComEventQueueWindowCount = 0 then
-    // last queue instance destroys window
     SendMessage(BoldComEventQueueWindow, BM_DESTROYWINDOW, 0, 0);
-  FreeAndNil(FCriticalSection);
+//TODO  FreeAndNil(FCriticalSection); //TODO Remove comment when interface change is allowed
   inherited Destroy;
 end;
 
@@ -159,8 +176,8 @@ begin
   Item := PopItem;
   while Assigned(Item) do
   begin
-    BoldMemoryManager_.DeAllocateMemory(Item, SizeOf(TBoldComEventQueueItem));
-    Item := PopItem;
+  FreeMem(Item, sizeof(TBoldComEventQueueItem));
+  Item := PopItem;
   end;
   FCount := 0;
 end;
@@ -182,7 +199,8 @@ begin
       try
         HandleEvent(Item^.EventData);
       finally
-        BoldMemoryManager_.DeAllocateMemory(Item, SizeOf(TBoldComEventQueueItem));
+        FreeMem(Item, sizeof(TBoldComEventQueueItem));
+//OLD        Dispose(Item);
       end;
       Item := PopItem;
     end;
@@ -192,53 +210,54 @@ begin
     try
       HandleEvent(Item^.EventData);
     finally
-      BoldMemoryManager_.DeAllocateMemory(Item, SizeOf(TBoldComEventQueueItem));
+        FreeMem(Item, sizeof(TBoldComEventQueueItem));
+//OLD      Dispose(Item);
     end;
   end;
 end;
 
 function TBoldComEventQueue.PopItem: PBoldComEventQueueItem;
 begin
-  // get first item in list
   Result := nil;
   if Assigned(FHead) then
   begin
-    FCriticalSection.Enter;
+    FCriticalSection.Enter; //NEW
     Result := FHead;
-    // remove from list
     FHead := Result^.Next;
     if not Assigned(FHead) then
       FTail := nil;
     Dec(FCount);
-    FCriticalSection.Leave;
+    FCriticalSection.Leave; //NEW
   end;
 end;
 
 procedure TBoldComEventQueue.Push(const EventData: TBoldComEventData);
 var
   Item: PBoldComEventQueueItem;
-  PostMessagePopEventQueueMessage: Boolean;
+  PostMessagePopEventQueueMessage: Boolean; //NEW
 begin
-  // allocate new list item
-  Item := BoldMemoryManager_.AllocateMemory(SizeOf(TBoldComEventQueueItem));
-  // copy event data between structures
+  GetMem(Item, sizeof(TBoldComEventQueueItem));
+//OLD  New(Item);
   Move(EventData,Item^.EventData,SizeOf(EventData));
-  // no next item, since this will be the last item
   Item^.Next := nil;
-  // add to end of list
-  FCriticalSection.Enter;
+  FCriticalSection.Enter; //NEW
   if not Assigned(FHead) then
     FHead := Item;
   if Assigned(FTail) then
     FTail^.Next := Item;
   FTail := Item;
   Inc(FCount);
-  PostMessagePopEventQueueMessage := (popMode=pmSingleEvent) or (FCount=1);
-  FCriticalSection.Leave;
-  if PostMessagePopEventQueueMessage then
-    PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self));
+  PostMessagePopEventQueueMessage := (popMode=pmSingleEvent) or (FCount=1); //NEW
+  FCriticalSection.Leave; //NEW
+  if PostMessagePopEventQueueMessage then //NEW
+    PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self)); //NEW
+//OLD  case popMode of
+//OLD    pmSingleEvent: PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self));
+//OLD    pmAllEvents: if Count = 1 then PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self));
+//OLD  end;
 end;
 
+initialization
+finalization
+  FreeAndNil(G_FCriticalSection); //TODO Remove when interface change is allowed
 end.
-
-

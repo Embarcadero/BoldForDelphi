@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleBDEPropertyEditors;
 
 interface
@@ -7,7 +10,7 @@ uses
   BoldPropertyEditors;
 
 type
-  { forward declarations }
+  { forward declarations }         
   TBoldDatabaseNameProperty = class;
   TBoldSessionNameProperty = class;
 
@@ -23,10 +26,11 @@ type
     procedure GetValueList(List: TStrings); override;
   end;
 
-implementation
+implementation      
 
 uses
-  DBTables;
+  DBTables,
+  BoldRev;
 
 { TBoldDatabaseNameProperty }
 
@@ -42,5 +46,7 @@ procedure TBoldSessionNameProperty.GetValueList(List: TStrings);
 begin
   Sessions.GetSessionNames(List);
 end;
+
+initialization
 
 end.

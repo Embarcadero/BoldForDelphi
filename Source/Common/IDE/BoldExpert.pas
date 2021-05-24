@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExpert;
 
 interface
@@ -15,7 +18,7 @@ type
   TBoldExpert = class(TInterfacedObject, IOTANotifier, IOTAWizard)
   public
     constructor Create; virtual;
-    procedure ExecuteEvent(Sender: TObject); //TNotifyEvent compatible. Calls Execute.
+    procedure ExecuteEvent(Sender: TObject);
     {IOTANotifier}
     procedure AfterSave; virtual;
     procedure BeforeSave; virtual;
@@ -37,33 +40,31 @@ type
 
 implementation
 
-{.$R *.res}
+uses
+  BoldRev;
+
+{$R *.res}
 
 { TBoldExpert }
 
 procedure TBoldExpert.AfterSave;
 begin
-  // Required for interface
 end;
 
 procedure TBoldExpert.BeforeSave;
 begin
-  // Required for interface
 end;
 
 constructor TBoldExpert.Create;
 begin
-  // To avoid abstract constructor.
 end;
 
 procedure TBoldExpert.Destroyed;
 begin
-  // Required for interface
 end;
 
 procedure TBoldExpert.Execute;
 begin
-  // Required for interface
 end;
 
 procedure TBoldExpert.ExecuteEvent(Sender: TObject);
@@ -73,7 +74,7 @@ end;
 
 function TBoldExpert.GetAuthor: string;
 begin
-  Result := 'BoldSoft'; // do not localize
+  Result := 'BoldSoft';
 end;
 
 function TBoldExpert.GetComment: string;
@@ -83,12 +84,12 @@ end;
 
 function TBoldExpert.GetGlyph: HICON;
 begin
-  Result := LoadIcon(FindClassHInstance(ClassType), 'BOLDEXPERT'); // do not localize
+  Result := LoadIcon(FindClassHInstance(ClassType), 'BOLDEXPERT');
 end;
 
 function TBoldExpert.GetIDString: string;
 begin
-  Result := 'BoldSoft.' + GetName; // do not localize
+  Result := 'BoldSoft.' + GetName;
 end;
 
 function TBoldExpert.GetMenuText: string;
@@ -103,7 +104,7 @@ end;
 
 function TBoldExpert.GetPage: string;
 begin
-  Result := 'Bold'; // do not localize
+  Result := 'Bold';
 end;
 
 function TBoldExpert.GetState: TWizardState;
@@ -113,7 +114,8 @@ end;
 
 procedure TBoldExpert.Modified;
 begin
-  // Required for interface
 end;
+
+initialization
 
 end.

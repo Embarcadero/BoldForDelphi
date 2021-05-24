@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComObjectSpaceAdapters;
 
 interface
@@ -633,8 +636,7 @@ uses
   BoldComUtils,
   BoldComObj,
   BoldComServer,
-  BoldComObjectSpace,
-  BoldComConst;
+  BoldComObjectSpace;
 
 procedure CreateIndirectAdapter(IndirectElement: TBoldIndirectElement; const IID: TGUID; out Obj);
 var
@@ -660,13 +662,13 @@ begin
     if not Assigned(Adapter) then
     begin
       if Owner then Adaptee.Free;
-      raise EBoldCom.CreateFmt(sNoAdapterRegistered, [Adaptee.ClassName]);
+      raise EBoldCom.CreateFmt('No adapter registered for %s', [Adaptee.ClassName]);
     end;
     UnknownAdapter := Adapter;
     if UnknownAdapter.QueryInterface(IID,Obj) <> 0 then
     begin
       UnknownAdapter := nil;
-      raise EBoldCom.CreateFmt(sUnsupportedInterface, [Adapter.ClassName]);
+      raise EBoldCom.CreateFmt('%s: Unsupported interface', [Adapter.ClassName]);
     end;
   end;
 end;
@@ -1081,12 +1083,12 @@ end;
 
 function  TBoldComElementAdapter.Get_AsVariant: OleVariant;
 begin
-  Result := AsElement.GetAsVariant;
+  Result := AsElement.AsVariant;
 end;
 
 procedure TBoldComElementAdapter.Set_AsVariant(Value: OleVariant);
 begin
-  AsElement.SetAsVariant(Value);
+  AsElement.AsVariant := Value;
 end;
 
 function TBoldComElementAdapter.Get_BoldType: IBoldElementTypeInfo;
@@ -1599,7 +1601,7 @@ begin
     else if LinkObj is TBoldObjectList then
       TBoldObjectList(LinkObj).Add(BoldObj)
     else
-      raise EBoldCom.CreateFmt(sRoleDoesNotExist, [ClassName, 'LinkObject', RoleName]); // do not localize
+      raise EBoldCom.CreateFmt('%.LinkObject: Role %s does not exist', [ClassName, RoleName]);
   end;
 end;
 
@@ -1644,7 +1646,7 @@ begin
     end;
   end
   else
-      raise EBoldCom.CreateFmt(sRoleDoesNotExist, [ClassName, 'UnlinkObject', RoleName]); // do not localize
+    raise EBoldCom.CreateFmt('%.UnlinkObject: Role %s does not exist', [ClassName, RoleName]);
 end;
 
 function TBoldComObjectAdapter.Get_BoldClassTypeInfo: IBoldClassTypeInfo;
@@ -1673,17 +1675,17 @@ end;
 function TBoldComObjectAdapter.Get_BoldMemberValue(Index: OleVariant): OleVariant;
 begin
   if BoldVariantIsType(Index,varOleStr) then
-    Result := AsObject.BoldMemberByExpressionName[Index].GetAsVariant
+    Result := AsObject.BoldMemberByExpressionName[Index].AsVariant
   else
-    Result := AsObject.BoldMembers[Index].GetAsVariant;
+    Result := AsObject.BoldMembers[Index].AsVariant;
 end;
 
 procedure TBoldComObjectAdapter.Set_BoldMemberValue(Index: OleVariant; Value: OleVariant);
 begin
   if BoldVariantIsType(Index,varOleStr) then
-    AsObject.BoldMemberByExpressionName[Index].SetAsVariant(Value)
+    AsObject.BoldMemberByExpressionName[Index].AsVariant := Value
   else
-    AsObject.BoldMembers[Index].SetAsVariant(Value);
+    AsObject.BoldMembers[Index].AsVariant := Value;
 end;
 
 function TBoldComObjectAdapter.Get_BoldMemberValues: OleVariant;
@@ -1704,7 +1706,7 @@ begin
     begin
       Member := ThisObject.BoldMembers[MemberIndex];
       NameArray[MemberIndex] := Member.BoldMemberRtInfo.ExpressionName;
-      DataArray[MemberIndex] := Member.GetAsVariant;
+      DataArray[MemberIndex] := Member.AsVariant;
     end;
     Result := VarArrayCreate([0, 1], varVariant);
     Result[0] := NameArray;
@@ -1728,7 +1730,7 @@ begin
     end;
   end
   else
-    raise EBoldCom.CreateFmt(sUnknownDataFormat, [ClassName]);
+    raise EBoldCom.CreateFmt('%s.BoldMemberValues: Unknown data format', [ClassName]);
 end;
 
 function TBoldComObjectAdapter.Get_BoldPersistenceState: Integer;
@@ -1837,6 +1839,7 @@ begin
    else
     inherited;
 end;
+
 
 {-- TBoldComAttributeAdapter -----------------------------------------------------}
 
@@ -2345,7 +2348,7 @@ begin
   Result := True;
   This := AsSystemHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2361,9 +2364,9 @@ begin
     BoldList := nil;
     ListElementType := nil;
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-       'Active', // do not localize
-       'Persistent'], // do not localize
+      ['HandleId',
+       'Active',
+       'Persistent'],
       [Integer(This),
        This.Active,
        This.Persistent]);
@@ -2373,7 +2376,6 @@ end;
 function TBoldComSystemHandleAdapter.SetData(DataFlags: Integer;
   const Value: IBoldElement; NamedValues: OleVariant): WordBool;
 begin
-  // not allowed to set
   Result := False;
 end;
 
@@ -2406,7 +2408,7 @@ begin
   Result := True;
   This := AsDerivedHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2419,12 +2421,12 @@ begin
     BoldList := nil;
     ListElementType := nil;
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-       'StaticSystemHandle', // do not localize
-       'Enabled', // do not localize
-       'RootHandle', // do not localize
-       'RootTypeName', // do not localize
-       'Subscribe'], // do not localize
+      ['HandleId',
+       'StaticSystemHandle',
+       'Enabled',
+       'RootHandle',
+       'RootTypeName',
+       'Subscribe'],
       [Integer(This),
        Integer(This.StaticSystemHandle),
        This.Enabled,
@@ -2443,7 +2445,7 @@ begin
   This := AsDerivedHandle;
   if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues,'StaticSystemHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues,'StaticSystemHandle');
     if HandleId = 0 then
       This.StaticSystemHandle := nil
     else
@@ -2451,11 +2453,11 @@ begin
   end;
   if (DataFlags and DF_ENABLED) <> 0 then
   begin
-    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled'); // do not localize
+    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled');
   end;
   if (DataFlags and DF_ROOTHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle');
     if HandleId = 0 then
       This.RootHandle := nil
     else
@@ -2463,11 +2465,11 @@ begin
   end;
   if (DataFlags and DF_ROOTTYPENAME) <> 0 then
   begin
-    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName'); // do not localize
+    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName');
   end;
   if (DataFlags and DF_SUBSCRIBE) <> 0 then
   begin
-    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe'); // do not localize
+    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe');
   end;
 end;
 
@@ -2500,7 +2502,7 @@ begin
   Result := True;
   This := AsExpressionHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2513,14 +2515,14 @@ begin
     BoldList := nil;
     ListElementType := nil;
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-      'StaticSystemHandle', // do not localize
-      'Enabled', // do not localize
-      'RootHandle', // do not localize
-      'RootTypeName', // do not localize
-      'Subscribe', // do not localize
-      'Expression', // do not localize
-      'EvaluateInPS'], // do not localize
+      ['HandleId',
+      'StaticSystemHandle',
+      'Enabled',
+      'RootHandle',
+      'RootTypeName',
+      'Subscribe',
+      'Expression',
+      'EvaluateInPS'],
       [Integer(This),
       Integer(This.StaticSystemHandle),
       This.Enabled,
@@ -2541,7 +2543,7 @@ begin
   This := AsExpressionHandle;
   if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle');
     if HandleId = 0 then
       This.StaticSystemHandle := nil
     else
@@ -2549,11 +2551,11 @@ begin
   end;
   if (DataFlags and DF_ENABLED) <> 0 then
   begin
-    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled'); // do not localize
+    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled');
   end;
   if (DataFlags and DF_ROOTHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle');
     if HandleId = 0 then
       This.RootHandle := nil
     else
@@ -2561,19 +2563,19 @@ begin
   end;
   if (DataFlags and DF_ROOTTYPENAME) <> 0 then
   begin
-    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName'); // do not localize
+    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName');
   end;
   if (DataFlags and DF_SUBSCRIBE) <> 0 then
   begin
-    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe'); // do not localize
+    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe');
   end;
   if (DataFlags and DF_EXPRESSION) <> 0 then
   begin
-    This.Expression := BoldGetNamedValue(NamedValues, 'Expression'); // do not localize
+    This.Expression := BoldGetNamedValue(NamedValues, 'Expression');
   end;
   if (DataFlags and DF_EVALUATEINPS) <> 0 then
   begin
-    This.EvaluateInPs := BoldGetNamedValue(NamedValues,'EvaluateInPS'); // do not localize
+    This.EvaluateInPs := BoldGetNamedValue(NamedValues,'EvaluateInPS');
   end;
 end;
 
@@ -2606,7 +2608,7 @@ begin
   Result := True;
   This := AsCursorHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2622,15 +2624,15 @@ begin
     BoldComCreateAdapter(This.List, False, IBoldList, BoldList);
     BoldComCreateAdapter(This.ListElementType, False, IBoldElementTypeInfo, ListElementType);
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-      'StaticSystemHandle', // do not localize
-      'Enabled', // do not localize
-      'RootHandle', // do not localize
-      'RootTypeName', // do not localize
-      'Subscribe', // do not localize
-      'Count', // do not localize
-      'CurrentIndex', // do not localize
-      'AutoFirst'], // do not localize
+      ['HandleId',
+      'StaticSystemHandle',
+      'Enabled',
+      'RootHandle',
+      'RootTypeName',
+      'Subscribe',
+      'Count',
+      'CurrentIndex',
+      'AutoFirst'],
       [Integer(This),
       Integer(This.StaticSystemHandle),
       This.Enabled,
@@ -2653,7 +2655,7 @@ begin
   This := AsCursorHandle;
   if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle');
     if HandleId = 0 then
       This.StaticSystemHandle := nil
     else
@@ -2662,12 +2664,12 @@ begin
 
   if (DataFlags and DF_ENABLED) <> 0 then
   begin
-    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled'); // do not localize
+    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled');
   end;
 
   if (DataFlags and DF_ROOTHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle');
     if HandleId = 0 then
       This.RootHandle := nil
     else
@@ -2676,24 +2678,24 @@ begin
 
   if (DataFlags and DF_ROOTTYPENAME) <> 0 then
   begin
-    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName'); // do not localize
+    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName');
   end;
 
   if (DataFlags and DF_SUBSCRIBE) <> 0 then
   begin
-    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe'); // do not localize
+    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe');
   end;
 
   if (DataFlags and DF_CURRENTINDEX) <> 0 then
   begin
-     NewIndex := BoldGetNamedValue(NamedValues,'CurrentIndex'); // do not localize
+     NewIndex := BoldGetNamedValue(NamedValues,'CurrentIndex');
      if assigned(this.list) and (NewIndex < this.list.Count) and (newIndex >= -1) then
       This.CurrentIndex := NewIndex;
   end;
 
   if (DataFlags and DF_AUTOFIRST) <> 0 then
   begin
-    This.AutoFirst := BoldGetNamedValue(NamedValues, 'AutoFirst'); // do not localize
+    This.AutoFirst := BoldGetNamedValue(NamedValues, 'AutoFirst');
   end;
 end;
 
@@ -2726,7 +2728,7 @@ begin
   Result := True;
   This := AsListHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2742,17 +2744,17 @@ begin
     BoldComCreateAdapter(This.List, False, IBoldList, BoldList);
     BoldComCreateAdapter(This.ListElementType, False, IBoldElementTypeInfo, ListElementType);
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-      'StaticSystemHandle', // do not localize
-      'Enabled', // do not localize
-      'RootHandle', // do not localize
-      'RootTypeName', // do not localize
-      'Subscribe', // do not localize
-      'Count', // do not localize
-      'CurrentIndex', // do not localize
-      'AutoFirst', // do not localize
-      'Expression', // do not localize
-      'EvaluateInPS'], // do not localize
+      ['HandleId',
+      'StaticSystemHandle',
+      'Enabled',
+      'RootHandle',
+      'RootTypeName',
+      'Subscribe',
+      'Count',
+      'CurrentIndex',
+      'AutoFirst',
+      'Expression',
+      'EvaluateInPS'],
       [Integer(This),
       Integer(This.StaticSystemHandle),
       This.Enabled,
@@ -2777,7 +2779,7 @@ begin
   This := AsListHandle;
   if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle');
     if HandleId = 0 then
       This.StaticSystemHandle := nil
     else
@@ -2786,7 +2788,7 @@ begin
 
   if (DataFlags and DF_ROOTHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'RootHandle');
     if HandleId = 0 then
       This.RootHandle := nil
     else
@@ -2795,40 +2797,41 @@ begin
 
   if (DataFlags and DF_ROOTTYPENAME) <> 0 then
   begin
-    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName'); // do not localize
+    This.RootTypeName := BoldGetNamedValue(NamedValues, 'RootTypeName');
   end;
 
   if (DataFlags and DF_SUBSCRIBE) <> 0 then
   begin
-    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe'); // do not localize
+    This.Subscribe := BoldGetNamedValue(NamedValues, 'Subscribe');
   end;
 
   if (DataFlags and DF_EXPRESSION) <> 0 then
   begin
-    This.Expression := BoldGetNamedValue(NamedValues, 'Expression'); // do not localize
+    This.Expression := BoldGetNamedValue(NamedValues, 'Expression');
   end;
 
   if (DataFlags and DF_ENABLED) <> 0 then
   begin
-    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled'); // do not localize
+    This.Enabled := BoldGetNamedValue(NamedValues, 'Enabled');
   end;
 
   if (DataFlags and DF_CURRENTINDEX) <> 0 then
   begin
-    NewIndex := BoldGetNamedValue(NamedValues,'CurrentIndex'); // do not localize
+    NewIndex := BoldGetNamedValue(NamedValues,'CurrentIndex');
     if assigned(this.list) and (NewIndex < this.list.Count) and (newIndex >= -1) then
       This.CurrentIndex := NewIndex;
   end;
 
   if (DataFlags and DF_AUTOFIRST) <> 0 then
   begin
-    This.AutoFirst := BoldGetNamedValue(NamedValues,'AutoFirst'); // do not localize
+    This.AutoFirst := BoldGetNamedValue(NamedValues,'AutoFirst');
   end;
 
   if (DataFlags and DF_EVALUATEINPS) <> 0 then
   begin
-    This.EvaluateInPs := BoldGetNamedValue(NamedValues,'EvaluateInPS'); // do not localize
+    This.EvaluateInPs := BoldGetNamedValue(NamedValues,'EvaluateInPS');
   end;
+
 end;
 
 {-- TBoldComReferenceHandleAdapter --------------------------------------------}
@@ -2860,7 +2863,7 @@ begin
   Result := True;
   This := AsReferenceHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2873,9 +2876,9 @@ begin
     BoldList := nil;
     ListElementType := nil;
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-      'StaticSystemHandle', // do not localize
-      'StaticValueTypeName'], // do not localize
+      ['HandleId',
+      'StaticSystemHandle',
+      'StaticValueTypeName'],
       [Integer(This),
       Integer(This.StaticSystemHandle),
       This.StaticValueTypeName]);
@@ -2896,7 +2899,7 @@ begin
 
   if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle');
     if HandleId = 0 then
       This.StaticSystemHandle := nil
     else
@@ -2905,7 +2908,7 @@ begin
 
   if (DataFlags and DF_STATICVALUETYPENAME) <> 0 then
   begin
-    This.StaticValueTypeName := BoldGetNamedValue(NamedValues, 'StaticValueTypeName'); // do not localize
+    This.StaticValueTypeName := BoldGetNamedValue(NamedValues, 'StaticValueTypeName');
   end;
 end;
 
@@ -2938,7 +2941,7 @@ begin
   Result := True;
   This := AsSQLHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -2951,12 +2954,12 @@ begin
     BoldList := nil;
     ListElementType := nil;
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-      'StaticSystemHandle', // do not localize
-      'ClassExpressionName', // do not localize
-      'ClearBeforeExecute', // do not localize
-      'SQLOrderByClause', // do not localize
-      'SQLWhereClause'], // do not localize
+      ['HandleId',
+      'StaticSystemHandle',
+      'ClassExpressionName',
+      'ClearBeforeExecute',
+      'SQLOrderByClause',
+      'SQLWhereClause'],
       [Integer(This),
       Integer(This.StaticSystemHandle),
       This.ClassExpressionName,
@@ -2976,16 +2979,16 @@ begin
   This := AsSQLHandle;
   if DataFlags = -1 then
   begin
-    Action := BoldGetnamedValue(NamedValues, 'Action'); // do not localize
-    if SameText(Action, 'ExecuteSQL') then // do not localize
+    Action := BoldGetnamedValue(NamedValues, 'Action');
+    if SameText(Action, 'ExecuteSQL') then
       this.ExecuteSQL
-    else if SameText(Action, 'ClearList') then // do not localize
+    else if SameText(Action, 'ClearList') then
       this.ClearList
   end
   else begin
     if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
     begin
-      HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle'); // do not localize
+      HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle');
       if HandleId = 0 then
         This.StaticSystemHandle := nil
       else
@@ -2993,19 +2996,19 @@ begin
     end;
     if (DataFlags and DF_CLASSEXPRESSIONNAME) <> 0 then
     begin
-      This.ClassExpressionName := BoldGetNamedValue(NamedValues, 'ClassExpressionName'); // do not localize
+      This.ClassExpressionName := BoldGetNamedValue(NamedValues, 'ClassExpressionName');
     end;
     if (DataFlags and DF_CLEARBEFOREEXECUTE) <> 0 then
     begin
-      This.ClearBeforeExecute := BoldGetNamedValue(NamedValues, 'ClearBeforeExecute'); // do not localize
+      This.ClearBeforeExecute := BoldGetNamedValue(NamedValues, 'ClearBeforeExecute');
     end;
     if (DataFlags and DF_SQLORDERBYCLAUSE) <> 0 then
     begin
-      This.SQLOrderByClause := BoldGetNamedValue(NamedValues, 'SQLOrderByClause'); // do not localize
+      This.SQLOrderByClause := BoldGetNamedValue(NamedValues, 'SQLOrderByClause');
     end;
     if (DataFlags and DF_SQLWHERECLAUSE) <> 0 then
     begin
-      This.SQLWhereClause := BoldGetNamedValue(NamedValues, 'SQLWhereClause'); // do not localize
+      This.SQLWhereClause := BoldGetNamedValue(NamedValues, 'SQLWhereClause');
     end;
   end;
 end;
@@ -3039,7 +3042,7 @@ begin
   Result := True;
   This := AsVariableHandle;
   if dataflags = DF_HANDLEID then
-    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)]) // do not localize
+    NamedValues := BoldCreateNamedValues(['HandleId'], [integer(this)])
   else
   begin
     BoldComCreateAdapter(This.Value, False, IBoldElement, Value);
@@ -3052,10 +3055,10 @@ begin
     BoldList := nil;
     ListElementType := nil;
     NamedValues := BoldCreateNamedValues(
-      ['HandleId', // do not localize
-      'StaticSystemHandle', // do not localize
-      'ValueTypeName', // do not localize
-      'InitialValues'], // do not localize
+      ['HandleId',
+      'StaticSystemHandle',
+      'ValueTypeName',
+      'InitialValues'],
       [Integer(This),
       Integer(This.StaticSystemHandle),
       This.ValueTypeName,
@@ -3073,7 +3076,7 @@ begin
   This := AsVariableHandle;
   if (DataFlags and DF_STATICSYSTEMHANDLE) <> 0 then
   begin
-    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle'); // do not localize
+    HandleId := BoldGetNamedValue(NamedValues, 'StaticSystemHandle');
     if HandleId = 0 then
       This.StaticSystemHandle := nil
     else
@@ -3081,13 +3084,13 @@ begin
   end;
   if (DataFlags and DF_VALUETYPENAME) <> 0 then
   begin
-    This.ValueTypeName := BoldGetNamedValue(NamedValues, 'ValueTypeName'); // do not localize
+    This.ValueTypeName := BoldGetNamedValue(NamedValues, 'ValueTypeName');
   end;
   if (DataFlags and DF_INITIALVALUES) <> 0 then
   begin
     Temp := TStringList.Create;
     try
-      BoldVariantToStrings(BoldGetNamedValue(NamedValues, 'InitialValues'),Temp); // do not localize
+      BoldVariantToStrings(BoldGetNamedValue(NamedValues, 'InitialValues'),Temp);
       This.InitialValues.Assign(Temp);
     finally
       Temp.Free;
@@ -3180,7 +3183,6 @@ end;
 
 initialization
   BoldComRegisterAdapter(TBoldComElementAdapter,TBoldElement);
-  // type info
   BoldComRegisterAdapter(TBoldComMetaElementAdapter,TBoldMetaElement);
   BoldComRegisterAdapter(TBoldComElementTypeInfoAdapter,TBoldElementTypeInfo);
   BoldComRegisterAdapter(TBoldComTypeTypeInfoAdapter,TBoldTypeTypeInfo);
@@ -3189,7 +3191,6 @@ initialization
   BoldComRegisterAdapter(TBoldComListTypeInfoAdapter,TBoldListTypeInfo);
   BoldComRegisterAdapter(TBoldComAttributeTypeInfoAdapter,TBoldAttributeTypeInfo);
   BoldComRegisterAdapter(TBoldComSystemTypeInfoAdapter,TBoldSystemTypeInfo);
-  // domain & system
   BoldComRegisterAdapter(TBoldComDomainElementAdapter,TBoldDomainElement);
   BoldComRegisterAdapter(TBoldComObjectAdapter,TBoldObject);
   BoldComRegisterAdapter(TBoldComMemberAdapter,TBoldMember);
@@ -3199,9 +3200,7 @@ initialization
   BoldComRegisterAdapter(TBoldComObjectListAdapter,TBoldObjectList);
   BoldComRegisterAdapter(TBoldComMemberListAdapter,TBoldMemberList);
   BoldComRegisterAdapter(TBoldComSystemAdapter,TBoldSystem);
-  // attributes
   BoldComRegisterAdapter(TBoldComBlobAdapter,TBABlob);
-  // handles
   BoldComRegisterAdapter(TBoldComElementHandleAdapter,TBoldElementHandle);
   BoldComRegisterAdapter(TBoldComSystemHandleAdapter,TBoldSystemHandle);
   BoldComRegisterAdapter(TBoldComDerivedHandleAdapter,TBoldDerivedHandle);

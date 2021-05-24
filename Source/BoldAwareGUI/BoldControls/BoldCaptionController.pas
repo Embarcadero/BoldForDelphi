@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCaptionController;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -7,12 +10,13 @@ interface
 uses
   Classes,
   Controls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldHandles,
   BoldElementHandleFollower,
   BoldElements,
   BoldControlPack,
-  BoldStringControlPack;
+  BoldStringControlPack,
+  BoldDefs;
 
 type
   TBoldCustomCaptionController = class;
@@ -27,8 +31,8 @@ type
     fHandleFollower: TBoldElementHandleFollower;
     fTrackControl: TWinControl;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
 
     function GetBoldHandle: TBoldElementHandle;
@@ -55,23 +59,21 @@ type
   {---TBoldCaptionController---}
   TBoldCaptionController = class(TBoldCustomCaptionController)
   published
-    {$IFNDEF T2H}
     property BoldHandle;
     property BoldProperties;
     property TrackControl;
-    {$ENDIF}
   end;
 
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 type
   {---TWinControlWithCaption---}
   {Dummy class to access protected caption property of TWinControl}
   TWinControlWithCaption = class(TwinControl);
-
 
 {---TBoldCustomCaptionController---}
 constructor TBoldCustomCaptionController.Create(AOwner: TComponent);
@@ -110,7 +112,7 @@ begin
     (s <> TrackedCaption) then
   begin
     fCaption := s;
-    TrackedCaption := Caption; //TrackedCaption ensures valid fTrackControl
+    TrackedCaption := Caption;
   end;
 end;
 
@@ -119,10 +121,9 @@ begin
   if Control <> fTrackControl then
   begin
     fTrackControl := Control;
-    Caption := Caption; //Update caption if new Control;
+    Caption := Caption;
   end;
 end;
-
 
 procedure TBoldCustomCaptionController.SetBoldHandle(value: TBoldElementHandle);
 begin
@@ -158,7 +159,6 @@ begin
   Result := fHandleFollower.BoldHandle;
 end;
 
-
 function TBoldCustomCaptionController.GetContextType: TBoldElementTypeInfo;
 begin
   if assigned(BoldHandle) then
@@ -167,15 +167,14 @@ begin
     result := nil;
 end;
 
-function TBoldCustomCaptionController.GetExpression: String;
+function TBoldCustomCaptionController.GetExpression: TBoldExpression;
 begin
   result := BoldProperties.Expression;
-
 end;
 
-procedure TBoldCustomCaptionController.SetExpression(Expression: String);
+procedure TBoldCustomCaptionController.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldCustomCaptionController.GetVariableList: TBoldExternalVariableList;
@@ -183,5 +182,6 @@ begin
   result := BoldProperties.VariableList;
 end;
 
-end.
+initialization
 
+end.

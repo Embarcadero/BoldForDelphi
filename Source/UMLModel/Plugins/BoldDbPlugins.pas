@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDbPlugins;
 
 interface
@@ -24,7 +27,7 @@ type
   private
     function GetPersistenceHandle(BoldModel: TBoldModel): TBoldAbstractPersistenceHandleDB;
   protected
-    function GetImageMaskColor: TColor; override;
+    function GetImageMaskColor: TColor; override;            
     function GetPlugInType: TPlugInType; override;
     function GetOptions: TBoldUMLPluginOptions; override;
     function GetValidPersistenceHandle(Context: IUMLModelPlugInContext): TBoldAbstractPersistenceHandleDB;
@@ -104,7 +107,7 @@ end;
 
 function TUMLDBGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenDBImage'; // do not localize
+  result := 'UMLPluginGenDBImage';
 end;
 
 procedure TUMLDBGenerator.Execute(context: IUMLModelPlugInContext);
@@ -146,7 +149,7 @@ end;
 
 function TBoldDbDataValidatorPlugin.GetImageResourceName: String;
 begin
-   result := 'UMLPluginDataValidator'; // do not localize
+   result := 'UMLPluginDataValidator';
 end;
 
 function TBoldDbDataValidatorPlugin.GetMenuItemName: String;
@@ -185,7 +188,7 @@ end;
 
 function TBoldUMLDBEvolutorPlugin.GetImageResourceName: String;
 begin
-  result := 'UMLPluginDbEvolutor'; // do not localize
+  result := 'UMLPluginDbEvolutor';
 end;
 
 function TBoldUMLDBEvolutorPlugin.GetMenuItemName: String;
@@ -210,21 +213,35 @@ function TUMLGenericDBPlugin.GetPersistenceHandle(BoldModel: TBoldModel): TBoldA
 var
   i: integer;
   temp: TBoldAbstractPersistenceHandleDB;
+  List: TList;
 begin
   result := nil;
-  for i := 0 to BoldHandle.BoldHandleList.Count - 1 do
-    if (BoldHandleList[i] is TBoldAbstractPersistenceHandleDB) then
+  List := TList.Create;
+  try
+    for i := 0 to BoldHandle.BoldHandleList.Count - 1 do
+      if (BoldHandleList[i] is TBoldAbstractPersistenceHandleDB) then
+      begin
+        temp := BoldHandleList[i] as TBoldAbstractPersistenceHandleDB;
+        if (temp.BoldModel = BoldModel) then
+          List.Add(Temp);
+      end;
+    if List.Count = 0 then
+      raise Exception.Create('No persistencehandle found. If your persistencehandle is on a datamodule/form that has not been opened, please open the datamodule/form and try again');
+    if List.Count = 1 then
+      Result := TBoldAbstractPersistenceHandleDB(List[0])
+    else
+    for I := 0 to List.Count - 1 do
     begin
-      temp := BoldHandleList[i] as TBoldAbstractPersistenceHandleDB;
-      if (temp.BoldModel = BoldModel) and
-        (MessageDlg(format('Use Database settings from %s?', [Temp.Name]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+      Temp := TBoldAbstractPersistenceHandleDB(List[0]);
+      if (MessageDlg(format('Use Database settings from %s?', [Temp.Name]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
       begin
         result := temp;
         break;
       end;
     end;
-  if not assigned(Result) then
-    raise Exception.Create('No persistencehandle found. If your persistencehandle is on a datamodule/form that has not been opened, please open the datamodule/form and try again');
+  finally
+    List.free;
+  end;
 end;
 
 function TUMLGenericDBPlugin.GetPlugInType: TPlugInType;
@@ -246,7 +263,9 @@ begin
   Result := GetPersistenceHandle(BoldModel);
   if not assigned(Result) then
     raise EBold.CreateFmt('%s: No persistence handle to act on', [MenuItemName]);
-  Validator := TBoldUMLModelValidator.Create(Context.GetCurrentModelHandle.EnsuredUMLModel, Result.SQLDataBaseConfig);
+  if not assigned(Result.SQLDataBaseConfig) then
+    raise EBold.CreateFmt('%s: No SQLDataBaseConfig found.', [MenuItemName]);
+  Validator := TBoldUMLModelValidator.Create(Context.GetCurrentModelHandle, Result.SQLDataBaseConfig);
   Validator.validate(BoldModel.TypeNameDictionary);
 
   if Context.GetCurrentModelHandle.EnsuredUMLModel.Validator.HighestSeverity = sError then
@@ -254,6 +273,7 @@ begin
 end;
 
 initialization
+
   _DBGenerator    := TUMLDBGenerator.Create(true);
   _dbStructureValidator := TBolddbStructureValidatorPlugin.Create(true);
   _dbDataValidator := TBolddbDataValidatorPlugin.Create(true);
@@ -265,4 +285,3 @@ finalization
   FreeAndNil(_dbDataValidator);
   FreeAndNil(_DbEvolutor);
 end.
-

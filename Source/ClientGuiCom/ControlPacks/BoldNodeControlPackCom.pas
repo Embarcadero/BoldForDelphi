@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNodeControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 14:59:57}
@@ -6,17 +9,13 @@ interface
 
 uses
   Classes,
-  BoldDefs,
-  BoldControlPackDefs,
   BoldControlPackCom,
   BoldStringControlPackCom,
   BoldNumericControlPackCom,
-  BoldListControlPackCom,
   BoldControllerListControlPackCom,
   BoldGenericListControlPackCom,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+  BoldComObjectSpace_TLB;
   {!! DO NOT REMOVE !! BoldSystemRT ,}
-  BoldSubscription;
 
 type
   { Forward declarations }
@@ -143,9 +142,11 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
+  BoldControlPackDefs,
+  BoldDefs,
   BoldGuiResourceStringsCom,
-  BoldUtils;
+  BoldListControlPackCom,
+  BoldSubscription;
 
 {-- TBoldTreeFollowerControllerCom --}
 
@@ -320,7 +321,6 @@ end;
 
 destructor TBoldNodeDescriptionCom.Destroy;
 begin
- // FIXME ??? FreePublisher; //CHECKME Is this really needed?
   FreeAndNil(FNodeFollowerController);
   inherited Destroy;
 end;
@@ -442,7 +442,7 @@ end;
 
 destructor TBoldNodeFollowerControllerCom.Destroy;
 begin
-  FreePublisher; //CHECKME Is this really needed?
+  FreePublisher;
   inherited Destroy;
 end;
 
@@ -501,5 +501,3 @@ end;
 
 initialization
 end.
-
-

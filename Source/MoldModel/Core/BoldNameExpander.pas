@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNameExpander;
 
 interface
@@ -5,11 +8,6 @@ interface
 uses
   BoldDefs,
   BoldTaggedValueSupport;
-
-// Ideas for the future:
-// German double-S to ss
-// Handle danish ae, oe
-// Drawbacks: Performance!
 
 type
   { forward declarations }
@@ -24,7 +22,7 @@ type
   TBoldExpressionNameExpanderClass = class of TBoldExpressionNameExpander;
 
   TExpansionType = (xtDelphi, xtSQL, xtExpression);
-  TBoldCharacterSet = set of char;
+  TBoldCharacterSet = set of {$IFDEF BOLD_UNICODE}AnsiChar{$ELSE}Char{$ENDIF};
 
   { TBoldAbstractNameExpander }
   TBoldAbstractNameExpander = class
@@ -47,7 +45,6 @@ type
   protected
     function GetValidCharacters: TBoldCharacterSet; override;
   public
-//    function TruncateName(const Name: String; MaxIdentifierLength: integer): string; override;
     function ExpandName(const Name, ReplacementName: string): string; override;
   end;
 
@@ -78,8 +75,8 @@ var
   BoldSQLNameExpanderNameLimit: integer = 255;
   BoldSQLNameExpanderUpperCaseNames: boolean = false;
 
-function BoldExpandName(Name, ReplacementName: string; ExpansionType: TExpansionType; MaxIdentifierLength: integer; NationalCharConversion: TBoldNationalCharConversion): string;
-function BoldExpandPrefix(value: String; const ReplacementName, Prefix: String; MaxIdentifierLength: integer; NationalCharConversion: TBoldNationalCharConversion): String;
+function BoldExpandName(const Name, ReplacementName: string; ExpansionType: TExpansionType; MaxIdentifierLength: integer; NationalCharConversion: TBoldNationalCharConversion): string;
+function BoldExpandPrefix(const value: String; const ReplacementName, Prefix: String; MaxIdentifierLength: integer; NationalCharConversion: TBoldNationalCharConversion): String;
 
 implementation
 
@@ -87,15 +84,14 @@ uses
   SysUtils,
   BoldUtils,
   BoldSharedStrings,
-  BoldDefaultTaggedValues,
-  BoldMoldConsts;
+  BoldDefaultTaggedValues;
 
 var
   BoldSQLNameExpander: TBoldSQLNameExpander = nil;
   BoldDelphiNameExpander: TBoldDelphiNameExpander = nil;
   BoldExpressionNameExpander: TBoldExpressionNameExpander = nil;
 
-function BoldExpandName(Name, ReplacementName: string;
+function BoldExpandName(const Name, ReplacementName: string;
                         ExpansionType: TExpansionType;
                         MaxIdentifierLength: integer;
                         NationalCharConversion: TBoldNationalCharConversion): string;
@@ -110,10 +106,10 @@ begin
         BoldSQLNameExpander.Free;
         BoldSQLNameExpander := BoldSQLNameExpanderClass.Create;
       end;
-
+      
       if MaxIdentifierLength = -1 then
         MaxIdentifierLength := BoldSQLNameExpanderNameLimit;
-
+        
       CurrentNameExpander := BoldSQLNameExpander;
     end;
     xtDelphi: begin
@@ -146,7 +142,7 @@ begin
   result := BoldSharedStringManager.GetSharedString(Result);
 end;
 
-function BoldExpandPrefix(value: String;
+function BoldExpandPrefix(const value: String;
                           const ReplacementName, Prefix: String;
                           MaxIdentifierLength: integer;
                           NationalCharConversion: TBoldNationalCharConversion): String;
@@ -184,7 +180,7 @@ function TBoldAbstractNameExpander.ExpandName(const Name, ReplacementName: strin
                   DoExpand(Copy(S, I + TV_NAME_Length, MaxInt))
       else
         Result := S;
-     end;
+     end;   
    end;
 begin
   Result :=  DoExpand(Name);
@@ -278,7 +274,7 @@ begin
   validChars := ValidCharacters;
   if validChars <> [] then
     for i := 1 to Length(result) do
-      if not (result[i] in ValidChars) then
+      if not CharInSet(result[i], ValidChars) then
         result[i] := MapCharacter[result[i], NationalCharConversion];
 end;
 
@@ -320,18 +316,18 @@ begin
   if name <> MapCharacters(Name, NationalCharConversion) then
   begin
     result := false;
-    reason := sNameHasInvalidChars;
+    reason := 'Name has invalid characters';
   end;
   if name <> truncateName(Name, MaxIdentifierLength) then
   begin
     result := false;
-    reason := sNameTooLong;
+    reason := 'Name is too long';
   end;
   if result then
   begin
     if not LanguageIsCaseSensitive then
       name := UpperCase(Name);
-  end;
+  end;   
 end;
 
 { TBoldSQLNameExpander }
@@ -386,7 +382,7 @@ function TBoldDelphiNameExpander.MapCharacters(const Name: String;
                                                NationalCharConversion: TBoldNationalCharConversion): string;
 begin
   result := inherited MapCharacters(Name, NationalCharConversion);
-  if (length(result) > 0) and not (result[1] in ['a'..'z', 'A'..'Z', '_']) then
+  if (length(result) > 0) and not CharInSet(result[1], ['a'..'z', 'A'..'Z', '_']) then
     result[1] := MapCharacter[result[1], NationalCharConversion];
 end;
 
@@ -399,12 +395,12 @@ begin
   if result and (length(name) = 0) then
   begin
     result := false;
-    reason := sNameCannotBeEmpty;
+    reason := 'Name can not be empty';
   end;
-  if result and not (name[1] in ['a'..'z', 'A'..'Z', '_']) then
+  if result and not CharInSet(name[1], ['a'..'z', 'A'..'Z', '_']) then
   begin
     result := false;
-    reason := sInvalidFirstChar;
+    reason := 'Name must begin with an alpha-character or underscore';
   end;
 end;
 
@@ -419,7 +415,7 @@ function TBoldExpressionNameExpander.MapCharacters(const Name: String;
                                                    NationalCharConversion: TBoldNationalCharConversion): string;
 begin
   result := inherited MapCharacters(Name, NationalCharConversion);
-  if (length(result) > 0) and not (result[1] in ['a'..'z', 'A'..'Z', '_']) then
+  if (length(result) > 0) and not CharInSet(result[1], ['a'..'z', 'A'..'Z', '_']) then
     result[1] := MapCharacter[result[1], NationalCharConversion];
 end;
 
@@ -432,13 +428,13 @@ begin
   if result and (length(name) = 0) then
   begin
     result := false;
-    reason := sNameCannotBeEmpty;
+    reason := 'Name can not be empty';
   end;
 
-  if result and not (name[1] in ['a'..'z', 'A'..'Z', '_']) then
+  if result and not CharInSet(name[1], ['a'..'z', 'A'..'Z', '_']) then
   begin
     result := false;
-    reason := sInvalidFirstChar;
+    reason := 'Name must begin with an alpha-character or underscore';
   end;
 end;
 

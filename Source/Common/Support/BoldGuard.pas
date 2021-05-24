@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGuard;
 
 interface
@@ -10,7 +13,7 @@ const
 
 type
   { forward declarations }
-  TBoldGuard = class;
+  TBoldGuard = class;     
 
   TBoldObjectVariableReference = ^TObject;
 
@@ -40,8 +43,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldUtils;
+  BoldRev;
 
 constructor TBoldGuard.Create(var v0);
 begin
@@ -216,4 +218,6 @@ begin
   inherited;
 end;
 
+initialization
+  
 end.

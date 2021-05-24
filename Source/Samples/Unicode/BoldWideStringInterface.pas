@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWideStringInterface;
 
 interface
@@ -34,7 +37,7 @@ type
     procedure SetContentAsWideString(NewValue: WideString);
   protected
     function GetStreamName: string; override;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
   public
     property asString: String read GetContentAsString write SetContentAsString;
     property asWideString: WideString read GetContentAsWideString write SetContentAsWideString;
@@ -47,7 +50,10 @@ implementation
 
 uses
   { RTL / VCL }
-  SysUtils;
+  SysUtils,
+
+  { Bold }
+  BoldRev;
 
 {******************************************************************************}
 {* TBFSUnicodeString                                                          *}
@@ -61,7 +67,7 @@ end;
 
 {* Content management *********************************************************}
 
-procedure TBFSWideString.AssignContentValue(Source: IBoldValue);
+procedure TBFSWideString.AssignContentValue(const Source: IBoldValue);
 var
   U: IBoldWideStringContent;
   S: IBoldStringContent;
@@ -103,5 +109,5 @@ end;
 initialization
   with FreeStandingValueFactory do
     RegisterFreeStandingClass(BoldContentName_WideString, TBFSWideString);
-
+    
 end.

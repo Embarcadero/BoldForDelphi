@@ -1,7 +1,10 @@
+
+{ Global compiler directives }
+{$include bold.inc}
+unit RationalRose98_TLB;
+
 {$WARNINGS OFF}
 {$WARN SYMBOL_PLATFORM OFF}
-
-unit RationalRose98_TLB;
 
 { This file contains pascal declarations imported from a type library.
   This file will be written during each import or refresh of the type

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldApartmentThread;
 
 interface
@@ -12,10 +15,8 @@ const
   BM_CREATEOBJECTINTHREAD = WM_USER + $1234;
 
 type
-  { forward declarations }
   TBoldApartmentThread = class;
 
-  { prototypes }
   TCreateInstanceProc = function(const UnkOuter: IUnknown;
     const IID: TGUID; out Obj): HResult of object; stdcall;
   TBoldApartmentType = (batMTA, batSTA);
@@ -25,7 +26,6 @@ type
     ApartmentThread: TBoldApartmentThread;
   end;
 
-  { TBoldApartmentThread }
   TBoldApartmentThread = class(TBoldNotifiableThread)
   private
     FCreateInstanceProc: TCreateInstanceProc;
@@ -59,8 +59,8 @@ implementation
 uses
   SysUtils,
   ActiveX,
-  BoldThreadSafeLog,
-  BoldComConst;
+  BoldThreadSafeLog
+  ;
 
 { apartment handler window }
 function ApartmentThreadWndProc (hWndTarget: HWND; iMessage, wParam, lParam: longint): longint; stdcall;
@@ -79,10 +79,10 @@ begin
       if Succeeded (at.CreateResult) then
         at.CreateResult := at.MarshalInterface (pUnk);
       ReleaseSemaphore(at.ObjectCreatedEvent, 1, nil);
-      pUnk := nil;  // get rid of own reference, MarshalInterface already added one
+      pUnk := nil;
       Result := 0;
     except
-      BoldLogError(spciInfoNotInitialized);
+      BoldLogError('ApartmentThreadWndProc: pciInfo not initialized');
     end;
   end
   else
@@ -94,7 +94,6 @@ begin
 end;
 
 var
-  // this variable is initialized (zeroed) in the initializationsection)
   cApartmentThreadWindowClass: TWndClass;
 
 { TBoldApartmentThread }
@@ -140,7 +139,7 @@ var
   res: integer;
 begin
   InitServerWindow (TRUE);
-  BoldLogThread('ID=AptThread'); // do not localize
+  BoldLogThread('ID=AptThread');
 
   case ApartmentType of
     batSTA: CoInitializeEx(nil, COINIT_APARTMENTTHREADED);
@@ -187,7 +186,7 @@ begin
     Result := CoGetInterfaceAndReleaseStream (IStream (FStream), iid, pObject);
     FStream := NIL;
   except on E: Exception do
-    BoldLogError('%s.UnmarshalInterface: %s', [ClassName, E.Message]); // do not localize
+    BoldLogError('%s.UnmarshalInterface: %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -207,5 +206,5 @@ initialization
   cApartmentThreadWindowClass.hCursor := 0;
   cApartmentThreadWindowClass.hbrBackground := 0;
   cApartmentThreadWindowClass.lpszMenuName := NIL;
-  cApartmentThreadWindowClass.lpszClassName := 'TBoldApartmentThreadWindow'; // do not localize
+  cApartmentThreadWindowClass.lpszClassName := 'TBoldApartmentThreadWindow'
 end.

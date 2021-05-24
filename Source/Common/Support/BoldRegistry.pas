@@ -1,9 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRegistry;
 
 interface
 
 uses
-  Windows,  // HKEY_LOCAL_MACHINE
+  Windows,
   Registry;
 
 {** Usage (kala 990714)
@@ -169,5 +172,6 @@ begin
   fRegistry.WriteString(Name, Value);
 end;
 
+initialization
 
 end.

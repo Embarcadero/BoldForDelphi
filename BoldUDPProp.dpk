@@ -31,7 +31,8 @@ package BoldUDPProp;
 
 requires
   vcl,
-  Indy9v,
+  IndySystem,
+  IndyCore,
   Bold;
 
 contains

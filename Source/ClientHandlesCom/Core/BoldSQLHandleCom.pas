@@ -1,11 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSQLHandleCom;
 
 interface
 
 uses
   Classes,
-  BoldComObjectSpace,
-  BoldComObjectSpace_TLB,
   BoldHandlesCom;
 
 type
@@ -44,15 +45,16 @@ type
     property SQLWhereClause: string read GetSQLWhereClause write SetSQLWhereClause;
   end;
 
+
 implementation
 
 uses
   SysUtils,
-  BoldComHandlesConst,
-  ComHandlesConst,
-  BoldUtils,
+  BoldComObjectSpace,
+  BoldComObjectSpace_TLB,
+  BoldComUtils,
   BoldDefs,
-  BoldComUtils;
+  BoldRev;
 
 constructor TBoldSQLHandleCom.Create(Owner: TComponent);
 begin
@@ -68,24 +70,22 @@ end;
 
 procedure TBoldSQLHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldSQLHandleCom
+
 end;
 
 procedure TBoldSQLHandleCom.ClearList;
 begin
-  ServerElementHandle.SetData(-1, nil, BoldCreateNamedValues([nv_Action], [nv_ClearList]));
+  ServerElementHandle.SetData(-1, nil, BoldCreateNamedValues(['Action'], ['ClearList']));
 end;
 
 procedure TBoldSQLHandleCom.ExecuteSQL;
 begin
-  ServerElementHandle.SetData(-1, nil, BoldCreateNamedValues([nv_Action], [nv_ExecuteSQL]));
+  ServerElementHandle.SetData(-1, nil, BoldCreateNamedValues(['Action'], ['ExecuteSQL']));
 end;
 
 function TBoldSQLHandleCom.GetClassExpressionName: string;
@@ -118,7 +118,7 @@ end;
 
 function TBoldSQLHandleCom.ServerHandleClassName: string;
 begin
-  Result := ServerHandleClassName_SQLHandle;
+  Result := 'TBoldSQLHandle';
 end;
 
 procedure TBoldSQLHandleCom.SetClassExpressionName(const Value: string);
@@ -126,7 +126,7 @@ begin
   if Value <> FClassExpressionName then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['ClassExpressionName']); // do not localize
+      raise EBold.Create('ClassExpressionName is read-only');
     FClassExpressionName := Value;
     LocalValueChanged;
   end;
@@ -137,7 +137,7 @@ begin
   if Value <> FClearBeforeExecute then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['ClearBeforeExecute']); // do not localize
+      raise EBold.Create('ClearBeforeExecute is read-only');
     FClearBeforeExecute := Value;
     LocalValueChanged;
   end;
@@ -148,7 +148,7 @@ begin
   if Value <> FSQLOrderByClause then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['SQLOrderByClause']); // do not localize
+      raise EBold.Create('SQLOrderByClause is read-only');
     FSQLOrderByClause := Value;
     LocalValueChanged;
   end;
@@ -159,7 +159,7 @@ begin
   if Value <> FSQLWhereClause then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['SQLWhereClause']); // do not localize
+      raise EBold.Create('SQLWhereClause is read-only');
     FSQLWhereClause := Value;
     LocalValueChanged;
   end;
@@ -185,13 +185,13 @@ begin
     DummyList,
     DummyListType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
+  FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
   if not OwnsHandleOnServer then
   begin
-    FClassExpressionName := BoldGetNamedValue(NamedValues, nv_ClassExpressionName);
-    FClearBeforeExecute := BoldGetNamedValue(NamedValues, nv_ClearBeforeExecute);
-    FSQLOrderByClause := BoldGetNamedValue(NamedValues, nv_SQLOrderByClause);
-    FSQLWhereClause := BoldGetNamedValue(NamedValues, nv_SQLWhereClause);
+    FClassExpressionName := BoldGetNamedValue(NamedValues,'ClassExpressionName');
+    FClearBeforeExecute := BoldGetNamedValue(NamedValues,'ClearBeforeExecute');
+    FSQLOrderByClause := BoldGetNamedValue(NamedValues,'SQLOrderByClause');
+    FSQLWhereClause := BoldGetNamedValue(NamedValues,'SQLWhereClause');
   end;
 end;
 
@@ -208,17 +208,18 @@ begin
   else
     StaticSystemHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-     nv_ClassExpressionName,
-     nv_ClearBeforeExecute,
-     nv_SQLOrderByClause,
-     nv_SQLWhereClause],
+    ['StaticSystemHandle',
+    'ClassExpressionName',
+    'ClearBeforeExecute',
+    'SQLOrderByClause',
+    'SQLWhereClause'],
     [StaticSystemHandleId,
-     FClassExpressionName,
-     FClearBeforeExecute,
-     FSQLOrderByClause,
-     FSQLWhereClause]);
+    FClassExpressionName,
+    FClearBeforeExecute,
+    FSQLOrderByClause,
+    FSQLWhereClause]);
   ServerElementHandle.SetData(DataFlags,nil,NamedValues);
 end;
 
+initialization
 end.

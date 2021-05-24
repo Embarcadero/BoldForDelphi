@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnvironmentCLX;
 
 interface
@@ -14,14 +17,14 @@ uses
   QExtCtrls,
   BoldEnvironment,
   BoldQueue,
-  BoldCommonConst;
+  BoldRev;
 
 type
   TBoldCLXEnvironmentConfiguration = class(TBoldEnvironmentConfiguration)
   protected
     function GetName: string; override;
     function GetRootComponent: TComponent; override;
-    function GetQueueClass: TBoldQueueClass; override;
+    function GetQueueClass: TBoldQueueClass; override;    
   public
     procedure HandleDesigntimeException(Sender: TObject); override;
     procedure UpdateDesigner(Sender: TObject);override;
@@ -32,8 +35,6 @@ type
     procedure FocusMainForm; override;
   end;
 
-  // Use the fact the a timer with 0 time will be placed last in queue
-  // This was communicated by Chuck J, does not seem to be documented, but is used in QForms.Application
 
   TBoldTimerQueue = class(TBoldQueue)
   private
@@ -53,26 +54,23 @@ type
 
 function TBoldCLXEnvironmentConfiguration.AskUser(const Text: string): Boolean;
 begin
-    // Don't call inherited
     Result := MessageDlg(Text, mtWarning, [mbYes, mbNo], 0) = mrYes;
 end;
 
 procedure TBoldCLXEnvironmentConfiguration.BringToFront;
 begin
-  // Don't call inherited
   Application.BringToFront
 end;
 
 procedure TBoldCLXEnvironmentConfiguration.FocusMainForm;
 begin
-  // Don't call inherited
   if Assigned(Application) and Assigned(Application.MainForm) then
     Application.MainForm.SetFocus;
 end;
 
 function TBoldCLXEnvironmentConfiguration.GetName: string;
 begin
-  Result := 'CLX'; // do not localize
+  Result := 'CLX';
 end;
 
 function TBoldCLXEnvironmentConfiguration.GetQueueClass: TBoldQueueClass;
@@ -82,27 +80,23 @@ end;
 
 function TBoldCLXEnvironmentConfiguration.GetRootComponent: TComponent;
 begin
-  // Don't call inherited
   Result := Application;
 end;
 
 procedure TBoldCLXEnvironmentConfiguration.HandleDesigntimeException(
   Sender: TObject);
 begin
-  // Don't call inherited
   Application.HandleException(Sender);
 end;
 
 function TBoldCLXEnvironmentConfiguration.IsFormOrDataModule(
   Sender: TObject): Boolean;
 begin
-  // Don't call inherited
   Result := (Sender is TForm) or (Sender is TDataModule);
 end;
 
 procedure TBoldCLXEnvironmentConfiguration.ProcessMessages;
 begin
-  // Don't call inherited;
   Application.ProcessMessages;
 end;
 
@@ -112,8 +106,7 @@ var
   Owner: TComponent;
 begin
   if not RunningInIDE then
-    raise EBold.CreateFmt(sNotRunningInIDE, ['UpdateDesigner']); // do not localize
-  // Don't call inherited
+    raise EBold.CreateFmt('%s: Not running in IDE', ['UpdateDesigner']);
   ParentForm := nil;
   Owner := nil;
   if (Sender is TControl) then
@@ -125,13 +118,10 @@ begin
     if Assigned(Owner) then
     begin
       if (Owner is TCustomFrame) then
-        // this happens if the model resides in a frame
         ParentForm := GetParentForm(TCustomFrame(Owner))
       else if (Owner is TCustomForm) then
-        // this happens if the model resides on a form
         ParentForm := TCustomForm(Owner)
       else if (Owner is TDataModule) and Assigned(Owner.Owner) and (Owner.Owner is TCustomForm) then
-        // this happens if the component resides on a Datamodule, the owner.owner is a TDatamoduleDesigner...
         ParentForm := TCustomForm(Owner.Owner);
     end;
   end;
@@ -158,7 +148,7 @@ begin
   if not Assigned(fIdleTimer) then
   begin
     fIdleTimer := TTimer.Create(nil);
-    fIdleTimer.Interval := MaxInt;
+    fIdleTimer.Interval := MaxInt; 
     fIdleTimer.OnTimer := IdleTimerEvent;
   end;
   Result := fIdleTimer;
@@ -176,7 +166,7 @@ begin
         dmDisplayOne: Done := not DisplayOne;
         dmDisplayAll: Done := not DisplayAll;
         else
-          raise EBoldInternal.CreateFmt(sUnknownDisplayMode, [classname]);
+          raise EBoldInternal.CreateFmt('%s.ApplicationEventsOnIdle: Unknown displaymode', [classname]);
       end;
     end;
   except
@@ -190,18 +180,16 @@ end;
 
 procedure TBoldTimerQueue.ActivateDisplayQueue;
 begin
-  // Don't call inherited, abstract in parent
   fBoldQueueActive := true;
   IdleTimer.Interval := 0;
 end;
 
 procedure TBoldTimerQueue.DeActivateDisplayQueue;
 begin
-  // Don't call inherited, abstract in parent
   fBoldQueueActive := false;
   IdleTimer.Interval := MaxInt;
 end;
 
 initialization
-  BoldInternalCLXConfiguration := TBoldCLXEnvironmentConfiguration.Create; // Freed in finalization of BoldEnvironment
+  BoldInternalCLXConfiguration := TBoldCLXEnvironmentConfiguration.Create;
 end.

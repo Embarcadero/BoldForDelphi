@@ -1,27 +1,27 @@
 package Bold;
 
-{.$R *.res}
+{$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
-{ ALIGN 8}
-{ ASSERTIONS ON}
-{ BOOLEVAL OFF}
-{ DEBUGINFO ON}
-{ EXTENDEDSYNTAX ON}
-{ IMPORTEDDATA ON}
-{ IOCHECKS ON}
-{ LOCALSYMBOLS ON}
-{ LONGSTRINGS ON}
-{ OPENSTRINGS ON}
-{ OPTIMIZATION OFF}
-{ OVERFLOWCHECKS ON}
-{ RANGECHECKS ON}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
-{ SAFEDIVIDE OFF}
-{ STACKFRAMES ON}
-{ TYPEDADDRESS OFF}
-{ VARSTRINGCHECKS ON}
-{ WRITEABLECONST ON}
-{ MINENUMSIZE 1}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DEFINE BOLD_DELPHI}
 {$DEFINE DEBUG}
@@ -88,7 +88,6 @@ contains
   BoldOclSemantics in 'Source\ObjectSpace\Ocl\BoldOclSemantics.pas',
   BoldOclSymbolImplementations in 'Source\ObjectSpace\Ocl\BoldOclSymbolImplementations.pas',
   BoldORed in 'Source\ObjectSpace\Ocl\BoldORed.pas',
-  BoldRegularExpression in 'Source\ObjectSpace\Ocl\BoldRegularExpression.pas',
   BoldSSExcept in 'Source\ObjectSpace\Ocl\BoldSSExcept.pas',
   BoldSSLexU in 'Source\ObjectSpace\Ocl\BoldSSLexU.pas',
   BoldSSYaccU in 'Source\ObjectSpace\Ocl\BoldSSYaccU.pas',
@@ -123,13 +122,10 @@ contains
   BoldHandle in 'Source\Common\Handles\BoldHandle.pas',
   BoldDataBlock in 'Source\Common\HTTP\BoldDataBlock.pas',
   BoldWebConnection in 'Source\Common\HTTP\BoldWebConnection.pas',
-  BoldAbout in 'Source\Common\IDE\BoldAbout.pas',
   BoldAbstractPropertyEditors in 'Source\Common\IDE\BoldAbstractPropertyEditors.pas',
   BoldDefsDT in 'Source\Common\IDE\BoldDefsDT.pas',
   BoldExpert in 'Source\Common\IDE\BoldExpert.pas',
   BoldExpertMenus in 'Source\Common\IDE\BoldExpertMenus.pas',
-  BoldGettingStartedExpert in 'Source\Common\IDE\BoldGettingStartedExpert.pas',
-  BoldGettingStartedForm in 'Source\Common\IDE\BoldGettingStartedForm.pas',
   BoldIDEConsts in 'Source\Common\IDE\BoldIDEConsts.pas',
   BoldIDEMenus in 'Source\Common\IDE\BoldIDEMenus.pas',
   BoldIDESupport in 'Source\Common\IDE\BoldIDESupport.pas',
@@ -147,7 +143,7 @@ contains
   BoldLogReceiverInterface in 'Source\Common\Logging\BoldLogReceiverInterface.pas',
   BoldSmallLogFrame in 'Source\Common\Logging\BoldSmallLogFrame.pas',
   BoldThreadSafeLog in 'Source\Common\Logging\BoldThreadSafeLog.pas',
-  MSXML_TLB in 'Source\Common\MsXml\MSXML_TLB.pas',
+  Bold_MSXML_TLB in 'Source\Common\MsXml\Bold_MSXML_TLB.pas',
   BoldAbstractDequeuer in 'Source\Common\Queue\BoldAbstractDequeuer.pas',
   BoldEventQueue in 'Source\Common\Queue\BoldEventQueue.pas',
   BoldQueue in 'Source\Common\Queue\BoldQueue.pas',
@@ -163,6 +159,7 @@ contains
   BoldSubscription in 'Source\Common\Subscription\BoldSubscription.pas',
   BoldBase64 in 'Source\Common\Support\BoldBase64.pas',
   BoldCollections in 'Source\Common\Support\BoldCollections.pas',
+  BoldIndexCollection in 'Source\Common\Support\BoldIndexCollection.pas',
   BoldCommonBitmaps in 'Source\Common\Support\BoldCommonBitmaps.pas',
   BoldControlPackDefs in 'Source\Common\Support\BoldControlPackDefs.pas',
   BoldControlsDefs in 'Source\Common\Support\BoldControlsDefs.pas',
@@ -223,11 +220,13 @@ contains
   BoldListHandle in 'Source\Handles\Core\BoldListHandle.pas',
   BoldOclRepository in 'Source\Handles\Core\BoldOclRepository.pas',
   BoldOclVariables in 'Source\Handles\Core\BoldOclVariables.pas',
+  BoldOSSMessage in 'Source\ObjectSpace\BORepresentation\BoldOSSMessage.pas',
   BoldPlaceableSubscriber in 'Source\Handles\Core\BoldPlaceableSubscriber.pas',
   BoldReferenceHandle in 'Source\Handles\Core\BoldReferenceHandle.pas',
   BoldRootedHandles in 'Source\Handles\Core\BoldRootedHandles.pas',
   BoldSortedHandle in 'Source\Handles\Core\BoldSortedHandle.pas',
   BoldSQLHandle in 'Source\Handles\Core\BoldSQLHandle.pas',
+  BoldRawSQLHandle in 'Source\Handles\Core\BoldRawSQLHandle.pas',
   BoldSystemHandle in 'Source\Handles\Core\BoldSystemHandle.pas',
   BoldVariableDefinition in 'Source\Handles\Core\BoldVariableDefinition.pas',
   BoldVariableHandle in 'Source\Handles\Core\BoldVariableHandle.pas',
@@ -269,7 +268,6 @@ contains
   BoldDBActions in 'Source\Persistence\DB\BoldDBActions.pas',
   BoldDBInterfaces in 'Source\Persistence\DB\BoldDBInterfaces.pas',
   BoldPersistenceControllerDefault in 'Source\Persistence\DB\BoldPersistenceControllerDefault.pas',
-  BoldPersistenceHandleDB_deprecated in 'Source\Persistence\DB\BoldPersistenceHandleDB_deprecated.pas',
   BoldPersistenceHandleDB in 'Source\Persistence\DB\BoldPersistenceHandleDB.pas',
   BoldPersistenceHandleDBreg in 'Source\Persistence\DB\BoldPersistenceHandleDBreg.pas',
   BoldPersistenceHandleFile in 'Source\Persistence\File\BoldPersistenceHandleFile.pas',

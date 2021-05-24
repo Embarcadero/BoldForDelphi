@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLNameTrimmer;
 
 interface
@@ -32,14 +35,13 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 var
   _UMLNameFixer: TUMLNameFixer = nil;
 
 { TUMLNameFixer }
-
-// Main method to invoke plug in functionality
 procedure TUMLNameFixer.Execute(context: IUMLModelPlugInContext);
 var
   UMLModel: TUMLModel;
@@ -54,32 +56,22 @@ begin
     BoldLog.EndLog;
   end;
 end;
-
-// Mask color for bitmap
 function TUMLNameFixer.GetImageMaskColor: TColor;
 begin
   Result := clTeal;
 end;
-
-// Resource for menu and button icon
 function TUMLNameFixer.GetImageResourceName: String;
 begin
   result := 'NameTrimmer';
 end;
-
-// Caption for menu and hint for button
 function TUMLNameFixer.GetMenuItemName: String;
 begin
   Result := 'Name trimmer';
 end;
-
-// Type of tool
 function TUMLNameFixer.GetPlugInType: TPlugInType;
 begin
   Result := ptTool;
 end;
-
-// Trims name of class + all its members and association ends
 procedure TUMLNameFixer.TrimClassAndMembers(UMLClass: TUMLClass);
 var
   i: integer;
@@ -92,8 +84,6 @@ begin
   for i := 0 to UMLClass.AssociationEnd.Count - 1 do
     TrimName(UMLClass.AssociationEnd[i]);
 end;
-
-// Trimmer of names
 procedure TUMLNameFixer.TrimName(UMLElement: TUMLModelElement);
 begin
   if UMLElement.Name <> Trim(UMLElement.Name) then
@@ -104,6 +94,7 @@ begin
 end;
 
 initialization
+
   _UMLNameFixer := TUMLNameFixer.Create(true);
 
 finalization

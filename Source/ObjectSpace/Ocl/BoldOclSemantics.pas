@@ -1,9 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclSemantics;
 
 interface
 
 uses
-  Classes,
   BoldSystemRT,
   BoldElements,
   BoldOclClasses;
@@ -27,7 +29,7 @@ type
     procedure AddListCoercionOnArgs(N: TBoldOCLOperation);
     procedure CheckArgumentType(actArg: TBoldOCLNode; FormArg: TBoldElementTypeInfo);
     procedure DeduceBoldType(N: TBoldOCLOperation);
-    function FindSymbol(name: string): TBoldOclSymbol;
+    function FindSymbol(const name: string): TBoldOclSymbol;
     function LeastCommonSuperClass(C1, C2: TBoldClassTypeInfo): TBoldClassTypeInfo;
     function LeastCommonSuperType(AttributeTypeInfo1, AttributeTypeInfo2: TBoldAttributetypeInfo): TBoldAttributeTypeInfo;
     procedure PushResubscribe(var ReSubscribe, OldReSubscribe: Boolean);
@@ -46,15 +48,15 @@ type
     procedure VisitTBoldOclOperation(N: TBoldOCLOperation); override;
     procedure VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); override;
     procedure VisitTBoldOclTypeNode(N: TBoldOclTypeNode); override;
-    procedure VisitTBoldOclVariableReference(N: TBoldOCLVariableReference); override;
+    procedure VisitTBoldOclVariablereference(N: TBoldOCLVariableReference); override;
     property IgnoreNelCompatibility: Boolean read fIgnoreNelCompatibility write fIgnoreNelCompatibility;
   end;
 
 implementation
 
 uses
+  Classes,
   SysUtils,
-  BoldCoreConsts,
   BoldUtils,
   BoldOclError,
   BoldOcl;
@@ -64,7 +66,7 @@ const
     'No DeduceMethod', 'Same type as loopvariable', 'Same type as arg1',
     'Same type as listelement of arg1', 'Same type as arg2', 'Same type as arg3',
     'Least common supertype of arg1 and arg2', 'Least common supertype of arg2 and arg3',
-    'Same type as listelement of arg2', 'Type is ObjectList', 'Type is Metatype', 'Type is arg2 (typecast)', 'Arg1 as a list', 'a list with the type of Arg2');
+    'Same type as listelement of arg2', 'Type is ObjectList', 'Type is Metatype', 'Type is arg2 (typecast)', 'Type is arg1 ', 'Arg1 as a list', 'a list with the type of Arg2');
 
 constructor TBoldOclSemanticsVisitor.Create(Model: TBoldSystemTypeInfo; Evaluator: TBoldEvaluator; SymTab: TBoldSymbolDictionary; Env: TBoldOclEnvironment);
 begin
@@ -87,7 +89,7 @@ begin
   begin
     if not actArg.BoldType.ConformsTo(FormArg) then
       raise EBoldOCLAbort.CreateFmt(boeNoConform,
-      [actArg.Position, actArg.BoldType.ExpressionName, FormArg.ExpressionName]);
+      [actArg.Position, actArg.BoldType.AsString, FormArg.AsString]);
   end;
   { else begin
     if actArg.BoldType is TBoldSystemtypeInfo then
@@ -105,8 +107,7 @@ var
   TempNode: TBoldOCLLIstCoercion;
   LocalReSubscribe: Boolean;
 begin
-  // It is not certain the listcoercion will be needed in the current context
-  // so we remove it here and then it might be reinserted again later.
+
   if Node is TBoldOCLLIstCoercion then
   begin
     TempNode := TBoldOCLLIstCoercion(Node);
@@ -120,7 +121,6 @@ begin
   Node.SetReferenceValue(nil);
 
   LocalReSubscribe := ReSubscribe;
-//  Node.Evaluator := fEvaluator;
   try
     Node.AcceptVisitor(self);
     ReSubscribe := LocalReSubscribe;
@@ -143,8 +143,7 @@ var
 begin
   for I := Start to Stop do
   begin
-    // It is not certain the listcoercion will be needed in the current context
-    // so we remove it here and then it might be reinserted again later.
+
     if List[I] is TBoldOCLLIstCoercion then
     begin
       TempNode := TBoldOCLLIstCoercion(List[I]);
@@ -172,7 +171,7 @@ begin
   end;
 end;
 
-function TBoldOclSemanticsVisitor.FindSymbol(name: string): TBoldOclSymbol;
+function TBoldOclSemanticsVisitor.FindSymbol(const name: string): TBoldOclSymbol;
 begin
   result := Symboltable.SymbolByName[name];
 end;
@@ -182,7 +181,7 @@ var
   I: Integer;
   CoercionNode: TBoldOCLLIstCoercion;
 begin
-  for I := 0 to N.Args.Count - 1 do
+  for I := 0 to Length(N.Args) - 1 do
   begin
     if N.Args[I].NeedsListCoercion then
     begin
@@ -208,9 +207,6 @@ var
   i: integer;
 begin
 
-  // This is an implicit Collect. Change NodeType!
-
-  // We really have to create a new node since the old one will be freed when replaced by the replacementNode!!!
 
   if n is TBoldOclMethod then
   begin
@@ -222,7 +218,6 @@ begin
     NewOperation := TBoldOclOperation.Create;
 
   OldNode0 := n.args[0];
-  n.args.Delete(0);
 
   VarName := fEnv.MakeGenSymName;
   VarNode := TBoldOClVariableReference.Create;
@@ -231,37 +226,33 @@ begin
 
   NewOperation.OperationName := n.OperationName;
   NewOperation.Position := n.Position;
-  NewOperation.Args := TBoldOclNodeLIst.create;
-  NewOperation.Args.add(VarNode);
-  for i := 0 to n.args.count - 1 do
+  SetLength(NewOperation.Args, Length(n.args));
+  NewOperation.Args[0] := VarNode;
+  for i := 1 to Length(n.args) - 1 do
   begin
-    NewOperation.args.Add(n.args[0]);
-    n.Args.Delete(0);
+    NewOperation.args[i] := n.args[i];
   end;
 
+  SetLength(n.Args, 0);
   CollectNode := TBoldOclIteration.Create;
   collectNode.IteratorSpecifier := OclCollect;
-  CollectNode.OperationName := 'Collect'; // do not localize
+  CollectNode.OperationName := 'Collect';
   collectNode.Position := n.Position;
-  CollectNode.Args := TBoldOClNodeList.create;
-  CollectNode.Args.Add(OldNode0);
-  CollectNode.Args.Add(NewOperation);
+  SetLength(CollectNode.Args, 2);
+  CollectNode.Args[0] := OldNode0;
+  CollectNode.Args[1] := NewOperation;
 
   VarBind := TBoldOCLVariableBinding.Create;
   VarBind.VariableName := VarName;
   CollectNode.LoopVar := VarBind;
 
-  // Now Traverse the node and make sure we put the correct node in the replacementNode-variable
-
-  tempList := TBoldOclNodeList.create;
-  TempLIst.Add(CollectNode);
+  SetLength(TempList, 1);
+  TempList[0] := CollectNode;
   try
-    TraverseList(tempLIst, 0, 0);
+    TraverseList(TempList, 0, 0);
   finally
-    // even if things fail, it is better to have the new node than no node at all.
-    ReplacementNode := TempLIst[0];
-    TempLIst[0] := nil;
-    TempList.Free;
+    ReplacementNode := TempList[0];
+    SetLength(TempList, 0);
   end;
 end;
 
@@ -279,10 +270,9 @@ begin
 
   N.IsConstant := True;
   try
-    // boolean shortcut must force resubscribe on the shortcutting node
-    if SameText(N.OperationName, 'if') or // do not localize
-      SameText(N.OperationName, 'or') or // do not localize
-      SameText(N.OperationName, 'and') then // do not localize
+    if SameText(N.OperationName, 'if') or
+      SameText(N.OperationName, 'or') or
+      SameText(N.OperationName, 'and') then
     begin
       OldResubscribe := Resubscribe;
       Resubscribe := true;
@@ -299,12 +289,12 @@ begin
       exit;
     end;
 
-    if N.Args.Count <> N.Symbol.NumberOfArgs then
-      raise EBoldOCLAbort.CreateFmt(boeWrongnumberofargs, [N.Position, N.Symbol.NumberOfArgs, N.Args.Count]);
+    if Length(N.Args) <> N.Symbol.NumberOfArgs then
+      raise EBoldOCLAbort.CreateFmt(boeWrongnumberofargs, [N.Position, N.Symbol.NumberOfArgs, Length(N.Args)]);
 
-    TraverseList(N.Args, 1, N.Args.Count - 1);
+    TraverseList(N.Args, 1, Length(N.Args) - 1);
 
-    for I := 0 to N.Args.Count - 1 do
+    for I := 0 to Length(N.Args) - 1 do
     begin
       N.IsConstant := N.IsConstant and N.Args[I].IsConstant;
       CheckArgumentType(N.Args[I], N.Symbol.FormalArguments[i]);
@@ -322,7 +312,7 @@ begin
 
       if not Type2.ConformsTo(type1) and
         not Type1.ConformsTo(Type2) then
-        raise EBoldOCLAbort.CreateFmt(sArgumentsDoNotConform, [n.Position, n.Symbol.SymbolName, Type1.AsString, type2.AsString]);
+        raise EBoldOCLAbort.CreateFmt('%d: In "%s", one of the arguments must conform to the other (%s and %s does not)', [n.Position, n.Symbol.SymbolName, Type1.AsString, type2.AsString]);
     end;
   except
     on e: Exception do
@@ -342,8 +332,8 @@ begin
   if not assigned(N.Symbol) then
     raise EBoldOCLAbort.CreateFmt(boeUndefinedOperation, [N.Position, N.OperationName]);
 
-  if N.Args.Count <> N.Symbol.NumberOfArgs then
-    raise EBoldOCLAbort.CreateFmt(boeWrongnumberofargs, [N.Position, N.Symbol.NumberOfArgs, N.Args.Count]);
+  if Length(N.Args) <> N.Symbol.NumberOfArgs then
+    raise EBoldOCLAbort.CreateFmt(boeWrongnumberofargs, [N.Position, N.Symbol.NumberOfArgs, Length(N.Args)]);
 
   PushResubscribe(ReSubscribe, OldReSubscribe);
 
@@ -354,16 +344,13 @@ begin
     ReSubscribe := OldReSubscribe;
 
     if not assigned(N.LoopVar) then
-      //  CHECKME N.LoopVar := TBoldOclVariableBinding.Create(n);
       N.LoopVar := TBoldOclVariableBinding.Create;
 
     if N.LoopVar.VariableName = '' then
       N.LoopVar.VariableName := fEnv.MakeGenSymName;
-
-    // we must coerce the first arguement before using its type
     AddListCoercionOnArgs(N);
 
-    n.LoopVar.SetReferenceValue(nil);  // reset dynamic boldtype
+    n.LoopVar.SetReferenceValue(nil);
 
     if not assigned(N.LoopVar.BoldType) then
       if n.args[0].BoldType is TBoldListTypeInfo then
@@ -372,8 +359,8 @@ begin
         raise EBoldOCLInternalError.CreateFmt(boeUnKnownTypeOfLoopVar, [N.Position, N.Args[0].BoldType.ClassName]);
     fEnv.PushBinding(N.LoopVar);
     try
-      TraverseList(N.Args, 1, N.Args.Count - 1);
-      for I := 1 to N.Args.Count - 1 do
+      TraverseList(N.Args, 1, Length(N.Args) - 1);
+      for I := 1 to Length(N.Args) - 1 do
       begin
         N.IsConstant := N.IsConstant and N.Args[I].IsConstant;
         CheckArgumentType(N.Args[I], N.Symbol.FormalArguments[i]);
@@ -395,6 +382,7 @@ end;
 function TBoldOclSemanticsVisitor.TestForOperation(n: TBoldOclNode): Boolean;
 var
   TempOperation: TBoldOCLOperation;
+  nAsMethod: TBoldOclMethod;
   i: integer;
   PossibleOperation: TBoldOclSymbol;
   OpName: String;
@@ -406,7 +394,7 @@ begin
   else if n is TBoldOclMethod then
     OpName := TBoldOclMethod(n).OperationName
   else
-    raise EBoldOclInternalError.CreateFmt('%d:Illegal call for TestForOperation', [n.Position]); // do not localize
+    raise EBoldOclInternalError.CreateFmt('%d:Illegal call for TestForOperation', [n.Position]);
 
   PossibleOperation := FindSymbol(OpName);
 
@@ -416,34 +404,31 @@ begin
     TempOperation.Symbol := PossibleOperation;
     TempOperation.ReSubscribe := Resubscribe;
     TempOperation.OperationName := OpName;
-    TempOperation.Args := TBoldOCLNodeList.Create;
     if n is TBoldOclMember then
     begin
-      TempOperation.args.add(TBoldOclMember(n).Memberof);
+      SetLength(TempOperation.Args, 1);
+      TempOperation.args[0] := TBoldOclMember(n).Memberof;
       TBoldOclMember(n).Memberof := nil;
     end
     else if n is TBoldOclMethod then
     begin
-      TempOperation.args.add(TBoldOclMethod(n).Methodof);
-      for i := 0 to TBoldOclMethod(n).args.count - 1 do
+      nAsMethod := TBoldOclMethod(n);
+      SetLength(TempOperation.Args, Length(nAsMethod.args)+1);
+      TempOperation.args[0] := nAsMethod.Methodof;
+      for i := 0 to Length(nAsMethod.args) - 1 do
       begin
-        TempOperation.args.add(TBoldOclMethod(n).args[i]);
-        TBoldOclMethod(n).args[i] := nil;
+        TempOperation.args[i+1] := nAsMethod.args[i];
+        nAsMethod.args[i] := nil;
       end;
-      TBoldOclMethod(n).Methodof := nil;
+      nAsMethod.Methodof := nil;
     end;
     TempOperation.Position := n.Position;
     try
-      TempOperation.AcceptVisitor(self); // HAs to traverse the whole subtree again :-(
+      TempOperation.AcceptVisitor(self);
     finally
-      //Now, publish the operation to be exchanged to.
       if not assigned(ReplacementNode) then
         ReplacementNode := TempOperation
       else
-        // this occurs if the operation was also a part of an implicit collect such as
-        // Person.allInstances.constraints, in that case, the replacementnode will
-        // refer to a copy of the tempoperation, and the copy will have stolen the
-        // arguments already (see FixImplicitCollect)
         TempOperation.Free;
     end;
     Result := true;
@@ -455,6 +440,7 @@ var
   VarRef: TBoldOCLVariableReference;
   MethodRTInfo: TBoldMethodRTInfo;
   ClassTypeInfo: TBoldClassTypeInfo;
+  I, L: Integer;
 begin
   if not assigned(N.MethodOf) then
   begin
@@ -476,7 +462,11 @@ begin
 
     if not n.MethodOf_AddedToArgs then
     begin
-      n.Args.Insert(0, n.MethodOf);
+      L := Length(n.Args);
+      SetLength(n.Args, (L+1));
+      for I := 0 to L-1 do
+        n.Args[i+1] := n.Args[I];
+      n.Args[0] := n.MethodOf;
       n.MethodOf_AddedToArgs := true;
     end;
 
@@ -489,14 +479,13 @@ begin
       ClassTypeInfo := TBoldListTypeInfo(n.MethodOf.BoldType).ListElementTypeInfo as TBoldClassTypeInfo;
 
     if not assigned(classTypeInfo) then
-      raise EBoldOclInternalError.CreateFmt(sMethodNotoperatingOnClass, [N.Position, N.OperationName]);
+      raise EBoldOclInternalError.CreateFmt('%d: Method (%s) is not operating on a class...', [N.Position, N.OperationName]);
 
     MethodRTInfo := ClassTypeInfo.Methods.ItemsByExpressionName[n.OperationName];
     if not assigned(MethodRTInfo) then
       raise EBoldOCLAbort.CreateFmt(boeUndefinedOperation, [N.Position, N.OperationName]);
 
     N.Symbol := nil;
-//    N.Symbol := MethodRTInfo.OclSymbol as TBoldOclSymbol;
 
     if not assigned(N.Symbol) then
       raise EBoldOCLAbort.CreateFmt(boeOperationNotOclable, [N.Position, N.OperationName]);
@@ -536,7 +525,6 @@ begin
     end
     else
     begin
-      // The Current node will be replaced with a var-reference inside Traverse
       VarRef := TBoldOCLVariableReference.Create;
       Varref.VariableBinding := Binding;
       Varref.VariableName := N.Membername;
@@ -558,10 +546,9 @@ begin
 
 
   if not assigned(ElementType) then
-    // this is most likely due to absence of a context. Current member is assumed to have
-    // an implicit Self-var-reference, but it has no context.
-    // It also occurs when trying to evaluate an empty single-link and is then taken care of by
-    // the TBoldOCL.CheckSemantics
+
+
+
     raise EBoldOCLAbort.CreateFmt(boeVariableNotAssigned, [N.Position, '']);
 
   case ElementType.BoldValueType of
@@ -573,7 +560,7 @@ begin
         if not assigned(ClassTypeInfo) then
           raise EBoldOCLAbort.CreateFmt(boeUnknownclass, [N.Position, N.Membername]);
         N.BoldType := CurrentSystemTypeInfo.ListTypeInfoByElement[ClassTypeInfo];
-        n.MemberType := nil; // needed if the expression has been evaluated in another context previously
+        n.MemberType := nil;
       end;
     end;
     bvtClass: begin
@@ -610,23 +597,21 @@ begin
           roleRTInfo := nil;
 
         if not assigned(RoleRTInfo) then
-          raise EBoldOclAbort.CreateFmt(sOnlyRolesCanBeQualified, [n.position]);
+          raise EBoldOclAbort.CreateFmt('%d: Only roles may be qualified', [n.position]);
         if not RoleRTInfo.IsQualified then
-          raise EBoldOclAbort.CreateFmt(sXIsNotAQualifiedRole, [n.position, ClassTypeInfo.ExpressionName, RoleRTInfo.ExpressionName]);
-        if N.Qualifier.Count <> RoleRTInfo.Qualifiers.count then
-          raise EBoldOCLAbort.CreateFmt(boeWrongnumberofargs, [N.Position, RoleRTInfo.Qualifiers.count, N.Qualifier.Count]);
+          raise EBoldOclAbort.CreateFmt('%d: %s.%s is not a qualified role', [n.position, ClassTypeInfo.ExpressionName, RoleRTInfo.ExpressionName]);
+        if Length(N.Qualifier) <> RoleRTInfo.Qualifiers.count then
+          raise EBoldOCLAbort.CreateFmt(boeWrongnumberofargs, [N.Position, RoleRTInfo.Qualifiers.count, Length(N.Qualifier)]);
 
         if RoleRTInfo.IsQualifiedMulti or
-          // qualified access starting from an objectlist
           (assigned(n.MemberOf) and (n.MemberOf.BoldType is TBoldListTypeInfo)) then
         begin
-//          raise EBoldOclAbort.CreateFmt('%d: %s.%s - Qualified relations with multiplicity > 1 not supported', [n.position, ClassTypeInfo.ExpressionName, RoleRTInfo.ExpressionName]);
           n.BoldType := n.MemberType
         end
         else
           n.BoldType := RoleRTInfo.ClassTypeInfoOfOtherEnd;
 
-        TraverseList(N.qualifier, 0, N.Qualifier.Count - 1);
+        TraverseList(N.qualifier, 0, Length(N.Qualifier) - 1);
 
         for i := 0 to RoleRTInfo.Qualifiers.count - 1 do
           CheckArgumentType(n.Qualifier[i], RoleRTInfo.Qualifiers[i].BoldType);
@@ -660,7 +645,7 @@ begin
 
   N.BoldType := N.VariableBinding.BoldType;
   if not assigned(N.BoldType) then
-    raise EBoldOCLAbort.CreateFmt(boeVariableNotAssigned, [N.Position, n.VariableName]);
+    raise EBoldOCLAbort.CreateFmt(boeVariableNotAssigned, [N.Position, n.VariableName]); 
 end;
 
 procedure TBoldOCLSemanticsVisitor.VisitTBoldOCLTypeNode(n: TBoldOclTypeNode);
@@ -711,7 +696,7 @@ end;
 
 procedure TBoldOclSemanticsVisitor.VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral);
 begin
-  N.BoldType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['String']; // do not localize
+  N.BoldType := TBoldOcl(fEvaluator).StringType;
   N.IsConstant := True;
 end;
 
@@ -735,8 +720,7 @@ begin
   else if AttributeTypeInfo2.BoldIsA(AttributeTypeInfo1) then
     Result := AttributeTypeInfo1
   else if AttributeTypeInfo2.AttributeClass=AttributeTypeInfo1.AttributeClass then
-    // attributes with the same delphitype will conform to each other, but they will not support BoldIsA
-    // either attribute will do as good as result from here
+
     result := AttributeTypeInfo1
   else
     Result := LeastCommonSuperType(AttributeTypeInfo1.SuperAttributeTypeInfo, AttributeTypeInfo2);
@@ -753,7 +737,7 @@ begin
   begin
     Traverse(N.rangeStart);
     Traverse(N.rangeStop);
-    IntType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['Integer']; // do not localize
+    IntType := TBoldOcl(fEvaluator).IntegerType;
     if not N.rangeStart.BoldType.ConformsTo(IntType) then
       raise EBoldOCLAbort.CreateFmt(boeRangeMustBeInt, [N.rangeStart.Position]);
     if not N.rangeStop.BoldType.ConformsTo(IntType) then
@@ -763,18 +747,18 @@ begin
   end
   else
   begin
-    if N.Elements.Count = 0 then
+    if Length(N.Elements) = 0 then
     begin
       N.BoldType := CurrentSystemTypeInfo.ListTypeInfoByElement[nil];
     end
     else
     begin
-      TraverseList(N.Elements, 0, N.Elements.Count - 1);
+      TraverseList(N.Elements, 0, Length(N.Elements) - 1);
       N.IsConstant := N.Elements[0].IsConstant;
       if N.Elements[0].BoldType is TBoldClasstypeInfo then
       begin
         TopClass := N.Elements[0].BoldType as TBoldClassTypeInfo;
-        for I := 1 to N.Elements.Count - 1 do
+        for I := 1 to Length(N.Elements) - 1 do
         begin
           N.IsConstant := N.IsConstant and N.Elements[I].IsConstant;
           if not (N.Elements[I].BoldType is TBoldClassTypeInfo) then
@@ -786,7 +770,7 @@ begin
       else
       begin
         TopType := N.Elements[0].BoldType as TBoldAttributetypeInfo;
-        for I := 1 to N.Elements.Count - 1 do
+        for I := 1 to Length(N.Elements) - 1 do
         begin
           if not (N.Elements[I].BoldType is TBoldAttributeTypeInfo) then
             raise EBoldOCLAbort.CreateFmt(boeElementnotConformToCollection, [N.Elements[I].Position]);
@@ -799,24 +783,28 @@ begin
       end;
     end;
   end;
-  //  n.IsConstant := False; // Needed as long as values are transfered out of the OCL-nodes
 end;
 
 procedure TBoldOclSemanticsVisitor.VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral);
 begin
-  N.BoldType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['Float']; // do not localize
+  N.BoldType := TBoldOcl(fEvaluator).FloatType;
   N.IsConstant := True;
 end;
 
 procedure TBoldOclSemanticsVisitor.VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral);
+var
+  vElement: TBoldElement;
+  vTypeInfo: TBoldElementTypeInfo;
 begin
-  N.BoldType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['ValueSet']; // do not localize
+  if not CurrentSystemTypeInfo.FindValueSetAndTypeByName(N.Name, vElement, vTypeInfo) then
+    raise EBoldOCLAbort.CreateFmt(boeEnumValueNotFound, [N.Position, N.Name]);
+  N.BoldType := vTypeInfo; //CurrentSystemTypeInfo.ValueSetTypeInfo;
   N.IsConstant := True;
 end;
 
 procedure TBoldOclSemanticsVisitor.VisitTBoldOclIntLiteral(N: TBoldOclIntLiteral);
 begin
-  N.BoldType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['Integer']; // do not localize
+  N.BoldType := TBoldOcl(fEvaluator).IntegerType;
   N.IsConstant := True;
 end;
 
@@ -841,10 +829,8 @@ begin
       else
         N.BoldType := CurrentSystemTypeInfo.ListTypeInfoByElement[N.Args[0].BoldType];
 
-//    tbodBoolean: N.BoldType := CurrentModel.AttributeTypeByExpressionName['Boolean'];
-//    tbodInteger: N.BoldType := CurrentModel.AttributeTypeByExpressionName['Integer'];
-//    tbodreal: N.BoldType := CurrentModel.AttributeTypeByExpressionName['Float'];
-//    tbodString: N.BoldType := CurrentModel.AttributeTypeByExpressionName['String'];
+
+
 
     tbodListofArg2: begin
       if N.Args[1].BoldType.BoldValueType = bvtList then
@@ -900,6 +886,14 @@ begin
         N.BoldType := nil;
 
       if not assigned(N.BoldType) then
+      begin
+        if arg1 is TBoldNilTypeInfo then
+          N.BoldType := arg2
+        else
+        if arg2 is TBoldNilTypeInfo then
+          N.BoldType := arg1
+      end;
+      if not assigned(N.BoldType) then
         raise EBoldOCLAbort.CreateFmt(boeNoCommonSuperclass,
         [N.Position, arg1.ExpressionName, arg2.ExpressionName]);
 
@@ -908,6 +902,7 @@ begin
     end;
     tbodType: n.BoldType := N.Args[0].BoldType.BoldType;
     tbodTypeCast: n.BoldType  := n.Args[1].value as TBoldElementTypeInfo;
+    tbodArg1Type: n.BoldType  := n.Args[0].value as TBoldElementTypeInfo;    
     tbodObjectList:
       if assigned(n.args[0].Value) then
         n.BoldType := CurrentSystemTypeInfo.ListTypeInfoByElement[n.args[0].Value as TBoldElementTypeInfo];
@@ -916,8 +911,8 @@ begin
   if not assigned(n.BoldType) then
   begin
     ArgTypes := TStringList.Create;
-    for i := 0 to n.args.count - 1 do
-      ArgTypes.Add(Format('Arg %s: %s', [IntToStr(i + 1), n.args[i].BoldType.AsString])); // do not localize
+    for i := 0 to Length(n.args) - 1 do
+      ArgTypes.Add(Format('Arg %s: %s', [IntToStr(i + 1), n.args[i].BoldType.AsString]));
     ContextStr := BoldSeparateStringList(ArgTypes, ', ', '', '');
     ArgTypes.Free;
 
@@ -927,14 +922,15 @@ end;
 
 procedure TBoldOclSemanticsVisitor.VisitTBoldOclDateLiteral(N: TBoldOclDateLiteral);
 begin
-  N.BoldType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['Date']; // do not localize
+  N.BoldType := TBoldOcl(fEvaluator).DateType;
   N.IsConstant := True;
 end;
 
 procedure TBoldOclSemanticsVisitor.VisitTBoldOclTimeLiteral(N: TBoldOclTimeLiteral);
 begin
-  N.BoldType := CurrentSystemTypeInfo.AttributeTypeInfoByExpressionName['Time']; // do not localize
+  N.BoldType := TBoldOcl(fEvaluator).TimeType;
   N.IsConstant := True;
 end;
 
+initialization
 end.

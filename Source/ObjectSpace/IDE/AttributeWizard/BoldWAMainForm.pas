@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAMainForm;
 
 interface
@@ -139,7 +142,6 @@ begin
   HelpFile := ATTRIBUTEWIZARDHELPFILE;
   attrdatamodule := Tattrdatamodule.Create(MainForm);
   Initialize;
-  //create input form
   InputForm := TInputForm.Create(MainForm);
 end;
 
@@ -184,7 +186,7 @@ begin
       begin
         Result := nil;
       end;
-  end; //case
+  end;
   PreviousSelection := Selection;
 end;
 
@@ -198,6 +200,6 @@ begin
   FreeAndNil(InputForm);
 end;
 
+initialization
+
 end.
-
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTrackBarCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 14:59:57}
@@ -13,7 +16,7 @@ uses
   CommCtrl,
   Menus,
   BoldDefs,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldControlPackDefs,
   BoldHandlesCom,
   BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
@@ -71,7 +74,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
   BoldGuiResourceStringsCom,
   BoldControlsDefs;

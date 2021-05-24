@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnvironmentVCL;
 
 interface
@@ -16,7 +19,7 @@ uses
   Forms,
   BoldQueue,
   BoldEnvironment,
-  BoldCommonConst;
+  BoldRev;
 
 type
   { forward declarations }
@@ -57,26 +60,23 @@ type
 
 function TBoldVCLEnvironmentConfiguration.AskUser(const Text: string): Boolean;
 begin
-  // Don't call inherited
   Result := MessageDlg(Text, mtWarning, [mbYes, mbNo], 0) = mrYes;
 end;
 
 procedure TBoldVCLEnvironmentConfiguration.BringToFront;
 begin
-  // Don't call inherited
   Application.BringToFront
 end;
 
 procedure TBoldVCLEnvironmentConfiguration.FocusMainForm;
 begin
-  // Don't call inherited
   if Assigned(Application) and Assigned(Application.MainForm) then
     Application.MainForm.SetFocus;
 end;
 
 function TBoldVCLEnvironmentConfiguration.GetName: string;
 begin
-  Result := 'VCL'; // do not localize
+  Result := 'VCL';
 end;
 
 function TBoldVCLEnvironmentConfiguration.GetQueueClass: TBoldQueueClass;
@@ -86,33 +86,28 @@ end;
 
 function TBoldVCLEnvironmentConfiguration.GetRootComponent: TComponent;
 begin
-  // Don't call inherited
   Result := Application;
 end;
 
 procedure TBoldVCLEnvironmentConfiguration.HandleDesigntimeException(Sender: TObject);
 begin
-  // Don't call inherited
   Application.HandleException(Sender);
 end;
 
 function TBoldVCLEnvironmentConfiguration.IsFormOrDataModule(Sender: TObject): Boolean;
 begin
-  // Don't call inherited
   Result := (Sender is TForm) or (Sender is TDataModule);
 end;
 
 procedure TBoldVCLEnvironmentConfiguration.ProcessMessages;
 begin
-  // Don't call inherited;
   Application.ProcessMessages;
 end;
 
 procedure TBoldVCLEnvironmentConfiguration.TriggerQueueMechanism;
 begin
-  // is there a better message to send to get the applicaiton to exit the idlestate?
-  // perhaps a timer?
-  // remember that it might be called from another thread...
+
+
   PostMessage(Application.Handle, WM_PAINT, 0, 0);
 end;
 
@@ -121,9 +116,8 @@ var
   ParentForm: TCustomForm;
   Owner: TComponent;
 begin
-  // Don't call inherited
   if not RunningInIDE then
-    raise EBold.CreateFmt(sNotRunningInIDE, ['UpdateDesigner']); // do not localize
+    raise EBold.CreateFmt('%s: Not running in IDE', ['UpdateDesigner']);
   ParentForm := nil;
   Owner := nil;
   if (Sender is TControl) then
@@ -135,13 +129,10 @@ begin
     if Assigned(Owner) then
     begin
       if (Owner is TCustomFrame) then
-        // this happens if the model resides in a frame
         ParentForm := GetParentForm(TCustomFrame(Owner))
       else if (Owner is TCustomForm) then
-        // this happens if the model resides on a form
         ParentForm := TCustomForm(Owner)
       else if (Owner is TDataModule) and Assigned(Owner.Owner) and (Owner.Owner is TCustomForm) then
-        // this happens if the component resides on a Datamodule, the owner.owner is a TDatamoduleDesigner...
         ParentForm := TCustomForm(Owner.Owner);
     end;
   end;
@@ -153,7 +144,6 @@ end;
 
 procedure TBoldAppEventQueue.ActivateDisplayQueue;
 begin
-  // Don't call inherited, abstract in parent
   fBoldQueueActive := true;
   AppEvents.OnIdle := ApplicationEventsOnIdle;
 end;
@@ -168,17 +158,19 @@ begin
         dmDisplayOne: Done := not DisplayOne;
         dmDisplayAll: Done := not DisplayAll;
         else
-          raise EBoldInternal.CreateFmt(sUnknownDisplayMode, [classname]);
+          raise EBoldInternal.CreateFmt('%s.ApplicationEventsOnIdle: Unknown displaymode', [classname]);
       end;
+      if Done then
+        PerformPostDisplayQueue;
     end;
   except
     Application.HandleException(nil);
   end;
+
 end;
 
 procedure TBoldAppEventQueue.DeActivateDisplayQueue;
 begin
-  // Don't call inherited, abstract in parent
   fBoldQueueActive := false;
   AppEvents.OnIdle := nil;
 end;

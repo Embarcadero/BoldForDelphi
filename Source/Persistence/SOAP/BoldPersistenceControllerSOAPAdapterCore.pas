@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceControllerSOAPAdapterCore;
 
 interface
@@ -6,10 +9,11 @@ uses
   BoldPersistenceController,
   BoldMeta,
   BoldDefaultXMLStreaming,
-  BoldPersistenceOperationXMLStreaming;
+  BoldPersistenceOperationXMLStreaming
+  ;
 
 type
-  { TBoldPersistenceControllerSOAPAdapterCore }
+
   TBoldPersistenceControllerSOAPAdapterCore = class
   private
     fStreamManager: TBoldDefaultXMLStreamManager;
@@ -23,11 +27,11 @@ implementation
 
 uses
   SysUtils,
-  MSXML_TLB,
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldDefs,
   BoldXMLStreaming,
-  BoldComConst;
-
+  BoldRev
+  ;
 { TBoldPersistenceControllerSOAPAdapterCore }
 
 constructor TBoldPersistenceControllerSOAPAdapterCore.Create(Model: TMoldModel);
@@ -47,48 +51,59 @@ end;
 procedure TBoldPersistenceControllerSOAPAdapterCore.Get(const request: WideString;
   out reply: WideString; PersistenceController: TBoldPersistenceController);
 var
-  RequestDoc, ReplyDoc: TDOMDocument;
+  RequestDoc, ReplyDoc: {$IFDEF OXML}TXMLDocument{$ELSE}TDOMDocument{$ENDIF};
   RequestBodyNode, ReplyBodyNode: TBoldXMLNode;
-  anXMLNode: IXMLDOMNode;
+  anXMLNode: {$IFDEF OXML}PXMLNode{$ELSE}IXMLDOMNode{$ENDIF};
   OpNode: TBoldXMLNode;
   OpName: string;
   PMOperation: TBoldPersistenceOperation;
 begin
+  {$IFDEF OXML}
+  RequestDoc := TXMLDocument.Create;
+  ReplyDoc := TXMLDocument.Create;
+  {$ELSE}
   RequestDoc := TDOMDocument.Create(nil);
   ReplyDoc := TDOMDocument.Create(nil);
+  {$ENDIF}
   RequestBodyNode := nil;
   ReplyBodyNode := nil;
   OpNode := nil;
   PMOperation := nil;
   try
+    {$IFDEF OXML}
+    RequestDoc.LoadFromXML(request);
+    RequestBodyNode := fStreamManager.GetSOAP(RequestDoc);
+    anXMLNode := RequestBodyNode.XMLDomElement.ChildNodes.GetFirst;
+    OpNode := TBoldXMLNode.Create(fStreamManager, anXMLNode, nil);
+    {$ELSE}
     RequestDoc.loadXML(request);
     RequestBodyNode := fStreamManager.GetSOAP(RequestDoc);
     anXMLNode := RequestBodyNode.XMLDomElement.childNodes.nextNode;
     OpNode := TBoldXMLNode.Create(fStreamManager, anXMLNode as IXMLDOMElement, nil);
+    {$ENDIF}
     OpName := OpNode.Accessor;
-    anXMLNode := nil;
 
     ReplyBodyNode := fStreamManager.NewSOAP(ReplyDoc);
 
-    if OpName = 'PMFetch' then // do not localize
+    if OpName = 'PMFetch' then
       PMOperation := TBoldPMFetchOperation.Create(fStreamManager)
-    else if OpName = 'PMFetchIDListWithCondition' then // do not localize
+    else if OpName = 'PMFetchIDListWithCondition' then
       PMOperation := TBoldPMFetchIdListOperation.Create(fStreamManager)
-    else if OpName = 'PMExactifyIds' then // do not localize
+    else if OpName = 'PMExactifyIds' then
       PMOperation := TBoldPMExactifyIdsOperation.Create(fStreamManager)
-    else if OpName = 'PMUpdate' then // do not localize
+    else if OpName = 'PMUpdate' then
       PMOperation := TBoldPMUpdateOperation.Create(fStreamManager)
-    else if OpName = 'ReserveNewIds' then // do not localize
+    else if OpName = 'ReserveNewIds' then
       PMOperation := TBoldPMReserveNewIdsOperation.Create(fStreamManager)
-    else if OpName = 'PMTimeForTimestamp' then // do not localize
+    else if OpName = 'PMTimeForTimestamp' then
       PMOperation := TBoldPMTimeForTimestampOperation.Create(fStreamManager)
-    else if OpName = 'PMTimestampForTime' then // do not localize
+    else if OpName = 'PMTimestampForTime' then
       PMOperation := TBoldPMTimestampForTimeOperation.Create(fStreamManager)
     else
-      raise EBold.CreateFmt(sUnknownOperation, [classname, OpName]);
+      raise EBold.CreateFmt('%s.Get: Unrecognized operation %s', [classname, OpName]);
 
     PMOperation.ExecuteStreamed(PersistenceController, RequestBodyNode, ReplyBodyNode);
-    reply := ReplyDoc.DefaultInterface.xml;
+    reply := {$IFDEF OXML}ReplyDoc.XML{$ELSE}ReplyDoc.DefaultInterface.xml{$ENDIF};
   finally
     RequestBodyNode.Free;
     ReplyBodyNode.Free;
@@ -98,5 +113,7 @@ begin
     PMOperation.Free;
   end;
 end;
+
+initialization
 
 end.

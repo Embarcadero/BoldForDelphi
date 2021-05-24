@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockRegions;
 
 interface
@@ -9,13 +12,10 @@ uses
   BoldSystemRT,
   BoldDefs,
   BoldBase,
-  BoldElements,
-  BoldGuard,
   BoldDomainElement,
   BoldRegionDefinitions,
   BoldLogHandler,
   BoldIndexableList;
-
 
 const
   breNone = 0;
@@ -72,13 +72,26 @@ type
     property OnRegionChanged: TBoldRegionEvent read fOnRegionChanged write fOnRegionChanged;
   end;
 
+  TBoldRegionLookupTraverser = class(TBoldIndexableListTraverser)
+  private
+    function GetRegion: TBoldRegion; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+  public
+    property Region: TBoldRegion read GetRegion;
+    property Current: TBoldRegion read GetRegion;
+  end;
+
   TBoldRegionLookup = class(TBoldUnOrderedIndexableList)
   private
+    class var IX_RegionId: integer;
     procedure ExpandOneLevelRegionsForNavigation(Regions: TBoldRegionLookup; Navigation: TBoldRoleRTInfo; CoreDef: TBoldRegionCoreDefinition; AlreadyExpandedRegions, AlreadyKnownRegions: TBoldregionLookup);
     procedure AddIfNotInLookup(Region: TBoldRegion);
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
     constructor Create;
-    function FindByID(RegionId: string): TBoldRegion;
+    function CreateTraverser: TBoldRegionLookupTraverser;
+    function GetEnumerator: TBoldRegionLookupTraverser;
+    function FindByID(RegionId: string): TBoldRegion; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure AddRegionLookup(Regions: TBoldRegionLookup);
     procedure AddRegionLookupWithFilter(Regions: TBoldRegionLookup; Filter: TBoldRegionLookup);
     procedure AddRegionList(Regions: TBoldRegionList);
@@ -89,7 +102,8 @@ type
 
   TBoldOrderedRegionLookup = class(TBoldRegionLookup)
   private
-    function GetFirstRegion: TBoldRegion;
+    class var IX_RegionOrder: integer;
+    function GetFirstRegion: TBoldRegion; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     property FirstRegion: TBoldRegion read GetFirstRegion;
@@ -99,12 +113,13 @@ type
   TBoldRegionList = class(TList)
   private
     function GetItems(i: Integer): TBoldRegion;
+    function GetAsString: string;
   public
     procedure AddList(List: TBoldRegionList);
     procedure AddRegionLookup(Regions: TBoldRegionLookup);
     procedure Assign(List: TBoldRegionList);
-//    procedure EnsureSubRegionObjects;
     property Items[i: Integer]: TBoldRegion read GetItems; default;
+    property AsString: string read GetAsString;
   end;
 
 {  TBoldRegionState =
@@ -128,10 +143,13 @@ type
     destructor Destroy; override;
     procedure ExpandParentRegions(RegionsToExpand: TBoldRegionLookup; KnownParentRegions, KnownSubregions: TBoldRegionLookup);
     procedure ExpandSubregions(RegionsToExpand: TBoldRegionLookup; KnownSubregions: TBoldregionLookup);
+
     procedure ExpandRegionEnclosure(Regions: TBoldRegionLookup);
+
     property NewParentRegions: TBoldRegionLookup read fNewParentRegions;
     property NewSubRegions: TBoldRegionLookup read fNewSubRegions;
     property OnProgress: TBoldLockManagerProgressEvent read fOnActivityProgress write fOnActivityProgress;
+
   end;
 
 var
@@ -141,23 +159,20 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldIndex,
-  BoldId,
   BoldDefaultId,
+  BoldElements,
+  BoldGuard,
   BoldHashIndexes,
-  BoldCoreConsts;
-
-var
-  IX_RegionId: integer = -1;
-  IX_RegionOrder: integer = -1;
-
+  BoldId,
+  BoldIndex,
+  BoldRev;
 
 type
   TBoldRegionIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   end;
+
 
 procedure NavigateAndSubscribe(Obj: TBoldObject; RoleRT: TBoldRoleRtInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: Integer);
 var
@@ -170,7 +185,7 @@ begin
     if (aMember is TBoldObjectList) or (aMember is TBoldObjectReference) then
       AMember.GetAsList(ResultElement)
     else
-      raise EBoldInternal.CreateFmt(sTriedToNavigateNonAssociation, [Obj.BoldClassTypeInfo.ExpressionName, aMember.BoldMemberRTInfo.ExpressionName]);
+      raise EBoldInternal.CreateFmt('Tried to navigate %s.%s that is not an association', [Obj.BoldClassTypeInfo.ExpressionName, aMember.BoldMemberRTInfo.ExpressionName]);
     if assigned(Subscriber) then
       aMember.DefaultSubscribe(Subscriber, RequestedEvent);
   end
@@ -192,6 +207,19 @@ begin
   NavigateAndSubscribe(Obj, Navigation, ResultElement, Subscriber, RequestedEvent);
 end;
 
+{ TBoldOrderedRegionLookup }
+
+constructor TBoldOrderedRegionLookup.Create;
+begin
+  inherited;
+  SetIndexVariable(IX_RegionOrder, AddIndex(TBoldIntegerIndex.Create));
+end;
+
+function TBoldOrderedRegionLookup.GetFirstRegion: TBoldRegion;
+begin
+  Result := (Indexes[IX_RegionOrder] as TBoldIntegerIndex).items[0] as TBoldRegion;
+end;
+
 { TBoldRegion }
 
 constructor TBoldRegion.Create(Definition: TBoldConcreteRegionDefinition;
@@ -202,12 +230,10 @@ begin
   fFactory := Factory;
   fDefinition := Definition;
   PlaceRootSubscriptions;
-//  BoldLog.Log('RegConstr: '+AsString + ':' + RootLocator.BoldObject.ClassName + ':'+IntTOStr(Integer(Self)));
 end;
 
 destructor TBoldRegion.Destroy;
 begin
-//  BoldLog.Log('RegDestr: '+AsString + ':' + RootLocator.BoldObject.ClassName + ':'+IntTOStr(Integer(Self)));
   fRootLocator := nil;
   inherited;
 end;
@@ -265,7 +291,7 @@ begin
   if assigned(RootLocator) and assigned(RootLocator.BoldObjectID) then
     result := fFactory.RegionId(Definition.CoreDefinition, RootLocator)
   else
-    raise EBoldInternal.CreateFmt(sRegionMissingIDOrLocator, [ClassName]);
+    raise EBoldInternal.Create('TBoldRegion.GetAsString: Region is missing either a locator or an ID');
 end;
 
 procedure TBoldRegion.GetElements(ResultList: TList);
@@ -292,15 +318,13 @@ begin
   if (Originator is TBoldObject) and not assigned(TBoldObject(Originator).BoldObjectLocator) and
     not assigned(RootLocator.BoldObject) then
   begin
-    // The object has been destroyed without getting a proper locator.
-    // We must be very careful.
+
     fFactory.fLookup.ItemChanged(self);
     fFactory.fLookup.Remove(self);
   end
   else if (Originator = Root) then
   begin
     case OriginalEvent of
-      // removing the region form the factory lookup will destroy it automatically
       beDestroying:
         fFactory.fLookup.Remove(self);
 
@@ -319,6 +343,21 @@ begin
   end;
 end;
 
+function TBoldRegionLookup.FindByID(RegionId: string): TBoldRegion;
+begin
+  result := (Indexes[IX_RegionId] as TBoldStringHashIndex).FindByString(RegionId) as TBoldRegion;
+end;
+
+function TBoldRegionLookup.GetEnumerator: TBoldRegionLookupTraverser;
+begin
+  result := CreateTraverser as TBoldRegionLookupTraverser;
+end;
+
+function TBoldRegionLookup.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TBoldRegionLookupTraverser;
+end;
+
 { TBoldRegionFactory }
 
 function TBoldRegionFactory.CoreDefintionFromRegionId(
@@ -326,7 +365,7 @@ function TBoldRegionFactory.CoreDefintionFromRegionId(
 begin
   result := fDefinitions.CoreDefinition[Copy(RegionId, Pos('.', RegionId)+1, MaxInt)];
   if not assigned(Result) then
-    raise EBoldInternal.CreateFmt(sBadRegionID, [classname, 'CoreDefintionFromRegionId', RegionId]); // do not localize
+    raise EBoldInternal.CreateFmt('%s.CoreDefinitionFromRegionId: Erroneous RegionId %s', [classname, RegionId]);
 end;
 
 constructor TBoldRegionFactory.Create(Definitions: TBoldRegionDefinitions);
@@ -343,6 +382,7 @@ begin
   inherited;
 end;
 
+
 function TBoldRegionFactory.GetRegion(
   Definition: TBoldRegionCoreDefinition; RootLocator: TBoldObjectLocator): TBoldRegion;
 var
@@ -353,7 +393,7 @@ begin
   begin
     ConcreteDef := Definition.ConcreteDefinitions.FindByRootClass(RootLocator.EnsuredBoldObject.BoldClassTypeInfo);
     if not assigned(ConcreteDef) then
-      raise EBold.CreateFmt(sBadRegionDefinition, [classname, Definition.Name, RootLocator.EnsuredBoldObject.BoldClassTypeInfo.ExpressionName]);
+      raise EBold.CreateFmt('%s.GetRegion: Erroneous region definitions. The region %s does not have %s as root class.', [classname, Definition.Name, RootLocator.EnsuredBoldObject.BoldClassTypeInfo.ExpressionName]);
     result := TBoldRegion.Create(ConcreteDef, RootLocator, Self);
     fLookup.Add(result);
   end;
@@ -403,7 +443,7 @@ function TBoldRegionFactory.RegionId(Definition: TBoldRegionCoreDefinition;
 begin
   result := RootLocator.BoldObjectID.AsString + '.' + Definition.Name;
   if RootLocator.BoldObjectID is TBoldInternalObjectId then
-    result := 'i' + Result;
+    result := 'i' + Result; 
 end;
 
 function TBoldRegionFactory.RootObjectLocatorFromRegionId(RegionId: string): TBoldObjectLocator;
@@ -418,13 +458,13 @@ begin
     begin
       AsInt := StrToIntDef(Copy(RegionId, 2, Pos('.', RegionId)-1), -1);
       if AsInt = -1 then
-        raise EBoldInternal.CreateFmt(sBadRegionID, [classname, 'RootObjectFromRegionId', RegionId]); // do not localize
+        raise EBoldInternal.CreateFmt('%s.RootObjectFromRegionId: Erroneous RegionId %s', [classname, RegionId]);
       ObjId := TBoldInternalObjectId.CreateWithClassIDandInternalId(AsInt, 0, false);
     end else
     begin
       AsInt := StrToIntDef(Copy(RegionId, 1, Pos('.', RegionId)-1), -1);
       if AsInt = -1 then
-        raise EBoldInternal.CreateFmt(sBadRegionID, [classname, 'RootObjectFromRegionId', RegionId]); // do not localize
+        raise EBoldInternal.CreateFmt('%s.RootObjectFromRegionId: Erroneous RegionId %s', [classname, RegionId]);
       ObjId := TBoldDefaultID.CreateWithClassID(0, false);
       (ObjId as TBoldDefaultId).AsInteger := AsInt;
     end;
@@ -443,20 +483,12 @@ end;
 
 { TBoldRegionLookup }
 
-procedure TBoldRegionLookup.AddRegionLookup(Regions: TBoldregionLookup);
+procedure TBoldRegionLookup.AddRegionLookup(Regions: TBoldRegionLookup);
 var
-  Traverser: TBoldIndexableListTraverser;
+  Region: TBoldRegion;
 begin
-  Traverser := Regions.CreateTraverser;
-  try
-    while not Traverser.EndOfList do
-    begin
-      AddIfNotInLookup(Traverser.Item as TBoldRegion);
-      Traverser.Next;
-    end;
-  finally
-    Traverser.Free;
-  end;
+  for Region in Regions do
+    AddIfNotInLookup(Region);
 end;
 
 constructor TBoldRegionLookup.Create;
@@ -464,20 +496,18 @@ begin
   SetIndexVariable(IX_RegionId, AddIndex(TBoldRegionIndex.Create));
 end;
 
+function TBoldRegionLookup.CreateTraverser: TBoldRegionLookupTraverser;
+begin
+  result := TBoldRegionLookupTraverser(inherited CreateTraverser);
+  Assert(Result is TBoldRegionLookupTraverser);
+end;
+
 procedure TBoldRegionLookup.FillObjectList(ObjectList: TBoldObjectList);
 var
-  Traverser: TBoldIndexableListTraverser;
+  Region: TBoldRegion;
 begin
-  Traverser := CreateTraverser;
-  try
-    while not Traverser.EndOfList do
-    begin
-      ObjectList.AddLocator((Traverser.Item as TBoldRegion).RootLocator);
-      Traverser.Next;
-    end;
-  finally
-    Traverser.Free;
-  end;
+  for Region in self do
+    ObjectList.AddLocator(Region.RootLocator);
 end;
 
 procedure TBoldRegionLookup.FetchAndExpandOneLevelParentRegions(ParentRegions: TBoldRegionLookup; AlreadyExpandedRegions, AlreadyKnownRegions: TBoldRegionLookup);
@@ -518,16 +548,18 @@ begin
           assert(ReverseRole.RoleType = rtLinkRole);
         end;
         else
-          raise EBoldInternal.CreateFmt(sUnknownRoleType, [ClassName, Navigation.AsString]);
+          raise EBoldInternal.CreateFmt('%s.FetchAndExpandOneLevelParentRegions: unknown roletype of role %s', [
+            ClassName, Navigation.AsString]);
       end;
       assert(ConcreteDef.RootClass.Conformsto(ReverseRole.ClassTypeInfo));
-      assert(ObjectList[0].BOldClassTypeInfo.Conformsto(ReverseRole.ClassTypeInfo));
+      assert(ObjectList[0].BoldClassTypeInfo.ConformsTo(ReverseRole.ClassTypeInfo));
 
       ObjectList[0].BoldSystem.FetchLinksWithObjects(ObjectList, ReverseRole.ExpressionName);
       ExpandOneLevelRegionsForNavigation(ParentRegions, ReverseRole, SubRegionRef.ParentRegion.CoreDefinition, AlreadyExpandedRegions, AlreadyKnownRegions);
     end;
   end;
 end;
+
 
 procedure TBoldRegionLookup.FetchAndExpandOneLevelSubRegions(SubRegions: TBoldRegionLookup; AdditionalRegions: TBoldRegionLookup; AlreadyExpandedRegions, AlreadyKnownRegions: TBoldregionLookup);
   procedure MassiveFetch(System: TBoldSystem; ObjectList: TBoldObjectList; RoleRTInfo: TBoldRoleRTInfo );
@@ -539,7 +571,6 @@ procedure TBoldRegionLookup.FetchAndExpandOneLevelSubRegions(SubRegions: TBoldRe
     FetchNeeded: Boolean;
     i: integer;
   begin
-    // first, check if we actually need to fetch anything right now
     TempObjectLIst := ObjectLIst.Clone as TBoldObjectList;
     try
       FetchNeeded := false;
@@ -551,26 +582,23 @@ procedure TBoldRegionLookup.FetchAndExpandOneLevelSubRegions(SubRegions: TBoldRe
 
       if FetchNeeded then
       begin
-        // If we need to fetch any relations in the original set, then add all the unprocessed objects
-        // that have the same link.
+
         DefiningClass := RoleRTINfo.ClassTypeInfo;
         while DefiningClass.FirstOwnMemberIndex > RoleRTInfo.index do
           DefiningClass := DefiningClass.SuperClassTypeInfo;
 
         Traverser := AdditionalRegions.CreateTraverser;
         try
-          while not Traverser.EndOfList do
+          while Traverser.MoveNext do
           begin
             aRegion := Traverser.Item as TBoldRegion;
             if aRegion.fDefinition.RootClass.ConformsTo(DefiningClass) then
               TempObjectList.AddLocator(aRegion.RootLocator);
-            Traverser.Next;
           end;
         finally
           Traverser.Free;
         end;
       end;
-      // even if the links are fetched, the objects might not be, so we better call FetchLinksWithObjects anyway.
       System.FetchLinksWithObjects(TempObjectList, RoleRTInfo.ExpressionName);
     finally
       TempObjectList.Free;
@@ -601,11 +629,6 @@ begin
   end;
 end;
 
-function TBoldRegionLookup.FindByID(RegionId: string): TBoldRegion;
-begin
-  result := (Indexes[IX_RegionId] as TBoldRegionIndex).FindByString(RegionId) as TBoldRegion;
-end;
-
 procedure TBoldRegionLookup.ExpandOneLevelRegionsForNavigation(Regions: TBoldRegionLookup; Navigation: TBoldRoleRTInfo; CoreDef: TBoldRegionCoreDefinition; AlreadyExpandedRegions, AlreadyKnownRegions: TBoldRegionLookup);
 
   procedure ExpandRegion(Region: TBoldRegion);
@@ -630,7 +653,7 @@ procedure TBoldRegionLookup.ExpandOneLevelRegionsForNavigation(Regions: TBoldReg
             Regions.AddIfNotInLookup(NewRegion);
         end;
         if (Regions.Count > OldRegionsCount) and assigned(BoldRegionExpansionDebugLogHandler) then
-          BoldRegionExpansionDebugLogHandler.LogFmt(sLogAddedRegions, [
+          BoldRegionExpansionDebugLogHandler.LogFmt('%s.%s Added Regions: %d', [
             Region.Root.BoldClassTypeInfo.ExpressionName,
             Navigation.ExpressionName,
             Regions.Count - OldRegionsCount]);
@@ -641,18 +664,10 @@ procedure TBoldRegionLookup.ExpandOneLevelRegionsForNavigation(Regions: TBoldReg
   end;
 
 var
-  Traverser: TBoldIndexableListTraverser;
+  Region: TBoldRegion;
 begin
-  Traverser := CreateTraverser;
-  try
-    while not Traverser.EndOfList do
-    begin
-      ExpandRegion(Traverser.Item as TBoldRegion);
-      Traverser.Next;
-    end;
-  finally
-    Traverser.Free;
-  end;
+  for Region in self do
+    ExpandRegion(Region);
 end;
 
 procedure TBoldRegionLookup.AddRegionList(Regions: TBoldRegionList);
@@ -672,19 +687,11 @@ end;
 procedure TBoldRegionLookup.AddRegionLookupWithFilter(Regions,
   Filter: TBoldRegionLookup);
 var
-  Traverser: TBoldIndexableListTraverser;
-  Guard: IBoldGuard;
   Region: TBoldRegion;
 begin
-  Guard := TBoldGuard.Create(Traverser);
-  Traverser := Regions.CreateTraverser;
-  while not Traverser.EndOfList do
-  begin
-    Region := Traverser.Item as TBoldRegion;
+  for Region in Regions do
     if not assigned(Filter.FindById(Region.AsString)) then
       AddIfNotInLookup(Region);
-    Traverser.Next;
-  end;
 end;
 
 { TBoldRegionList }
@@ -700,18 +707,10 @@ end;
 
 procedure TBoldRegionList.AddRegionLookup(Regions: TBoldRegionLookup);
 var
-  Traverser: TBoldIndexableListTraverser;
+  Region: TBoldRegion;
 begin
-  Traverser := Regions.CreateTraverser;
-  try
-    while not Traverser.EndOfList do
-    begin
-      Add(Traverser.Item as TBoldRegion);
-      Traverser.Next;
-    end;
-  finally
-    Traverser.Free;
-  end;
+  for Region in Regions do
+    Add(Region);
 end;
 
 procedure TBoldRegionList.Assign(List: TBoldRegionList);
@@ -762,6 +761,22 @@ begin
 end;
 }
 
+function TBoldRegionList.GetAsString: string;
+var
+  sl: TStringList;
+  i: integer;
+begin
+  result := '';
+  sl := TStringList.Create;
+  try
+    for I := 0 to Count - 1 do
+      sl.Add(self[i].Root.DebugInfo);
+  finally
+    result := sl.CommaText;
+    sl.free;
+  end;
+end;
+
 function TBoldRegionList.GetItems(i: Integer): TBoldRegion;
 begin
   result := TObject(inherited Items[i]) as TBoldRegion;
@@ -777,7 +792,7 @@ begin
   fToBeParentExpanded.Clear;
 end;
 
-constructor TBoldRegionExpander.create;
+constructor TBoldRegionExpander.Create;
 begin
   inherited;
   fNewParentRegions := TBoldRegionLookup.Create;
@@ -787,7 +802,7 @@ begin
   fToBeParentExpanded := TBoldOrderedRegionLookup.Create;
 end;
 
-destructor TBoldRegionExpander.destroy;
+destructor TBoldRegionExpander.Destroy;
 begin
   FreeAndNil(fNewParentRegions);
   FreeAndNil(fNewSubregions);
@@ -795,8 +810,6 @@ begin
   FreeAndNil(fToBeParentExpanded);
   inherited;
 end;
-
-
 
 {
 procedure TBoldRegionExpander.ExpandSubAndParentRegions(ExplicitRegions: TBoldRegionList);
@@ -813,21 +826,18 @@ end;
 
 procedure TBoldRegionExpander.ExtractSimilarRegions(Regions: TBoldRegionLookup; Region: TBoldRegion; Result: TBoldRegionLookup);
 var
-  aRegion: TBoldRegion;
-  Traverser: TBoldIndexableListTraverser;
+  Traverser: TBoldRegionLookupTraverser;
 begin
   Result.Clear;
   Traverser := Regions.CreateTraverser;
   try
-    while not Traverser.EndOfList do
+    while Traverser.MoveNext do
     begin
-      aRegion := Traverser.Item as TBoldRegion;
-      if (aRegion.Definition = Region.Definition) and (aRegion.Root.BoldClassTypeINfo = Region.Root.BoldClassTypeInfo) then
+      while Assigned(Traverser.Region) and (Traverser.Region.Definition = Region.Definition) and (Traverser.Region.Root.BoldClassTypeINfo = Region.Root.BoldClassTypeInfo) do
       begin
-        Result.Add(aRegion);
-        Regions.Remove(aRegion);
+        Result.Add(Traverser.Region);
+        Regions.Remove(Traverser.Region);
       end;
-      Traverser.Next;
     end;
   finally
     Traverser.Free;
@@ -844,7 +854,7 @@ begin
   if assigned(BoldRegionExpansionDebugLogHandler) then
   begin
     BoldRegionExpansionDebugLogHandler.Separator;
-    BoldRegionExpansionDebugLogHandler.Log(sLogExpandingParentRegions);
+    BoldRegionExpansionDebugLogHandler.Log('Expanding Parent regions');
   end;
   Guard := TBoldGuard.Create(SimilarRegions, LocalNewParentRegions);
   fToBeParentExpanded.AddRegionLookup(RegionsToExpand);
@@ -872,7 +882,7 @@ begin
   if assigned(BoldRegionExpansionDebugLogHandler) then
   begin
     BoldRegionExpansionDebugLogHandler.Separator;
-    BoldRegionExpansionDebugLogHandler.Log(sLogExpandingSubRegions);
+    BoldRegionExpansionDebugLogHandler.Log('Expanding Subregions');
   end;
   Guard := TBoldGuard.Create(SimilarRegions, LocalNewSubregions);
   fToBeSubExpanded.AddRegionLookup(RegionsToExpand);
@@ -910,17 +920,15 @@ begin
   Regions.AddRegionLookup(NewSubRegions);
 end;
 
-{ TBoldOrderedRegionLookup }
+{ TBoldRegionLookupTraverser }
 
-constructor TBoldOrderedRegionLookup.Create;
+function TBoldRegionLookupTraverser.GetRegion: TBoldRegion;
 begin
-  inherited;
-  SetIndexVariable(IX_RegionOrder, AddIndex(TBoldIntegerIndex.Create));
+  result := inherited Item as TBoldRegion;
 end;
 
-function TBoldOrderedRegionLookup.GetFirstRegion: TBoldRegion;
-begin
-  Result := (Indexes[IX_RegionOrder] as TBoldIntegerIndex).items[0] as TBoldRegion;
-end;
-
+initialization
+  TBoldOrderedRegionLookup.IX_RegionOrder := -1;
+  TBoldRegionLookup.IX_RegionId := -1;
 end.
+

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMappersSQL;
 
 interface
@@ -13,10 +16,12 @@ uses
   BoldId,
   BoldSQLMappingInfo,
   BoldSQLDatabaseConfig,
+  BoldIndexCollection,
   BoldValueSpaceInterfaces,
   BoldTypeNameDictionary,
   BoldPSDescriptionsSQL,
-  BoldTaggedValueSupport;
+  BoldTaggedValueSupport,
+  BoldElements;
 
 type
   { forward declarations }
@@ -24,11 +29,14 @@ type
   TBoldObjectSQLMapper = class;
   TBoldMemberSQLMapper = class;
   TBoldPreInitializeBoldDbType = procedure(SystemSQLMapper: TBoldSystemSQLMapper) of Object;
+  TBoldOnPsEvaluate = procedure(const ABoldQuery: IBoldQuery) of Object;
 
   EBoldDbTypeMissing = class(EBold);
 
   {---Enumerations---}
   TBoldDBStorageMode = (dsmUpdate, dsmCreate);
+
+
 
   {---TBoldSystemSQLMapper---}
   TBoldSystemSQLMapper = class(TBoldSystemPersistenceMapper)
@@ -38,42 +46,59 @@ type
     fMappingInfo: TBoldSQLMappingInfo;
     fNationalCharConversion: TBoldNationalCharConversion;
     fSQLDataBaseConfig: TBoldSQLDataBaseConfig;
+    fCustomIndexes: TBoldIndexCollection;
     fOnGetDatabase: TBoldGetDatabaseEvent;
+    fMaxDbType: integer;
+    fExecQuery: IBoldExecQuery;
+    fOnPsEvaluate: TBoldOnPsEvaluate;
+    fTopSortedIndexForBoldDbType: array of integer; // JNo, optimization
     function GetIBoldDataBase: IBoldDataBase;
     function GetAllTables: TBoldSQLTableDescriptionList;
     function GetPSSystemDescription: TBoldSQLSystemDescription;
-    function GetRootClassObjectPersistenceMapper: TBoldObjectSQLMapper;
-    function GetMappingInfo: TBoldSQLMappingInfo;
+    function GetRootClassObjectPersistenceMapper: TBoldObjectSQLMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMappingInfo: TBoldSQLMappingInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure InitializeTopSortedIndexForBoldDbType;
   protected
     procedure InitializeBoldDbType; virtual; abstract;
     procedure FillPSParams(PSParams: TBoldPSParams); override;
     function CreatePSParams: TBoldPSParams; override;
-    procedure StartTransaction(ValueSpace: IBoldValueSpace); override;
-    procedure Commit(ValueSpace: IBoldValueSpace); override;
-    procedure RollBack(ValueSpace: IBoldValueSpace); override;
+    procedure StartTransaction(const ValueSpace: IBoldValueSpace); override;
+    procedure Commit(const ValueSpace: IBoldValueSpace); override;
+    procedure RollBack(const ValueSpace: IBoldValueSpace); override;
     function CreateMappingInfo: TBoldSQLMappingInfo; virtual; abstract;
+    procedure AddCustomIndexes;
   public
-    constructor CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; SQLDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
+    constructor CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary;
+      CustomIndexes: TBoldIndexCollection; SQLDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
     destructor Destroy; override;
     procedure PMFetch(ObjectIDList: TBoldObjectIdList;
-                      ValueSpace: IBoldValueSpace;
+                      const ValueSpace: IBoldValueSpace;
                       MemberIdList: TBoldMemberIdList;
                       FetchMode: Integer;
                       TranslationList: TBoldIdTranslationList); override;
     function BoldDbTypeForTopSortedIndex(TopSortedIndex: Integer): TBoldDbType;
     procedure CloseDataBase;
     procedure CreatePersistentStorage; override;
-    procedure GenerateDatabaseScript(Script: TStrings; Separator: string); virtual;
+    procedure GenerateDatabaseScript(Script: TStrings); virtual;
     function EnsureTable(const TableName: string; TableVersioned: Boolean): TBoldSQLTableDescription; virtual; abstract;
+    function EnsureColumn(const TableName, ColumnName, SQLType,
+      SQLAllowNull: string; const BDEType: TFieldType; Length: Integer;
+      const AllowNull, InVersionedTable: Boolean;
+      const DefaultDBValue: String): TBoldSQLColumnDescription;
+    procedure EnsureIndex(const TableName, Fields: string; const PrimaryIndex,
+      Unique, InVersionedTable: Boolean);
     function GetQuery: IBoldQuery;
     function GetExecQuery: IBoldExecQuery;
+    procedure StartSQLBatch; override;
+    procedure EndSQLBatch; override;
+    procedure FailSQLBatch; override;
     procedure InvokeMemberMappersInitializeSystem; virtual;
     procedure OpenDatabase(ReadDbTypeFromDB: Boolean; ReadMappingFromDB: Boolean);
     procedure ReleaseQuery(var aQuery: IBoldQuery);
     procedure ReleaseExecQuery(var aQuery: IBoldExecQuery);
     function TopSortedIndexForBoldDbType(BoldDbType: TBoldDbType): Integer;
+    function CanEvaluateInPS(sOCL: string; aSystem: TBoldElement;  aContext: TBoldElementTypeInfo = nil; const aVariableList: TBoldExternalVariableList = nil): Boolean; virtual; abstract;
     property AllTables: TBoldSQLTableDescriptionList read GetAllTables;
-//  property Connected: Boolean read GetConnected;
     property Database: IBoldDataBase read GetIBoldDataBase;
     property OnPreInitializeBoldDbType: TBoldPreInitializeBoldDbType read fOnPreInitializeBoldDbType write fOnPreInitializeBoldDbType;
     property PSSystemDescription: TBoldSQLSystemDescription read GetPSSystemDescription;
@@ -81,12 +106,13 @@ type
     property MappingInfo: TBoldSQLMappingInfo read GetMappingInfo;
     property NationalCharConversion: TBoldNationalCharConversion read fNationalCharConversion;
     property SQLDataBaseConfig: TBoldSQLDataBaseConfig read fSQLDataBaseConfig;
+    property OnPsEvaluate: TBoldOnPsEvaluate read fOnPsEvaluate write fOnPsEvaluate;
   end;
 
   {---TBoldObjectSQLMapper---}
   TBoldObjectSQLMapper = class(TBoldObjectPersistenceMapper)
   private
-    fBoldDbType: TBoldDbType;  // FIXME move down
+    fBoldDbType: TBoldDbType;
     fAllTables: TBoldSQLTableDescriptionList;
     fMainTable: TBoldSQLTableDescription;
     function GetSystemPersistenceMapper: TBoldSystemSQLMapper;
@@ -104,15 +130,16 @@ type
   public
     constructor CreateFromMold(MoldClass: TMoldClass; Owner: TBoldSystemPersistenceMapper; TypeNameDictionary: TBoldTypeNameDictionary); override;
     destructor Destroy; override;
-    procedure GenerateDatabaseScript(Script: TStrings; Separator: string); virtual;
+    procedure GenerateDatabaseScript(Script: TStrings); virtual;
     function UpdatesMembersInTable(aTable: TBoldSQLTableDescription): Boolean; virtual; abstract;
     property AllTables: TBoldSQLtableDescriptionList read GetAllTables;
     property MainTable: TBoldSQLTableDescription read fmainTable;
     procedure RetrieveSelectStatement(s: TStrings; MemberMapperList: TBoldMemberPersistenceMapperList; FetchMode: Integer; ForceRootTable: Boolean); virtual;
     procedure RetrieveTimeStampCondition(SQL: TStrings; TimeStamp: TBoldTimeStampType; UseAlias: Boolean; WhereToken: string; UseOwnTableForStartTime: Boolean; SuggestedStartTimeAlias: string = ''; SuggestedEndTimeAlias: string = '');
     property BoldDbType: TBoldDbType read fBoldDbType write fBoldDbType;
-    procedure ValuesFromFieldsByMemberList(ObjectId: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; DataSet: IBoldDataSet; MemberList: TBoldMemberPersistenceMapperList);
-    procedure ValuesToParamsByMemberList(ObjectId: TBoldObjectId; ValueSpace: IBoldValueSpace; Query: IBoldExecQuery; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
+    procedure ValuesFromFieldsByMemberList(ObjectId: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const DataSet: IBoldDataSet; MemberList: TBoldMemberPersistenceMapperList);
+    procedure ValuesToParamsByMemberList(ObjectId: TBoldObjectId; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
+    procedure ValuesToQueryByMemberList(ObjectId: TBoldObjectId; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery; SQL: TStrings; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
     property SystemPersistenceMapper: TBoldSystemSQLMapper read GetSystemPersistenceMapper;
   end;
 
@@ -135,25 +162,25 @@ type
     function DefaultDefaultDbValue: String; virtual;
     property InitialColumnRootName: string read fInitialColumnRootName;
     function GetRequiresLiveQuery: Boolean; virtual;
-    procedure SetParamToNullWithDataType(aParam: IBoldParameter; FieldType: TFieldType);
+    procedure SetParamToNullWithDataType(const aParam: IBoldParameter; FieldType: TFieldType);
     function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; virtual;
     property InitialColumnName[Columnindex: integer]: string read GetInitialColumnName;
   public
     constructor CreateFromMold(Moldmember: TMoldMember; MoldClass: TMoldClass; Owner: TBoldObjectPersistenceMapper; const MemberIndex: Integer; TypeNameDictionary: TBoldTypeNameDictionary); override;
     destructor Destroy; override;
-    procedure GenerateDatabaseScript(Script: TStrings; Separator: string); virtual;
+    procedure GenerateDatabaseScript(Script: TStrings); virtual;
     property ColumnDescriptions: TBoldSQLDescriptionList read GetColumnDescriptions;
     property AllowNullAsSQL: string read GetAllowNullAsSQL;
     property ColumnCount: integer read GetColumnCount;
     property ColumnTypeAsSQL[Columnindex: integer]: string read GetColumnTypeAsSQL;
     property ColumnSize[Columnindex: integer]: integer read GetColumnSize;
     property AllowNull: Boolean read fAllowNull;
-//    procedure ValueToParam(Value: IBoldValue; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); virtual;
-    procedure ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); virtual;
-    procedure ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer); virtual;
-    procedure ValueToQuery(ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; Query: IBoldExecQuery; TranslationList: TBoldIdtranslationlist; DBStorageMode: TBoldDBStorageMode);
-    procedure ValueFromQuery(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; DataSet: IBoldDataSet); virtual;
-    procedure InitializeSystem(theDatabase: IBoldDataBase); virtual;
+    function ValueAsVariant(const ObjectContent: IBoldObjectContents; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant; virtual;
+    procedure ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList); virtual;
+    procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer); virtual;
+    procedure ValueToQuery(const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery; TranslationList: TBoldIdtranslationlist; DBStorageMode: TBoldDBStorageMode);
+    procedure ValueFromQuery(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const DataSet: IBoldDataSet);
+    procedure InitializeSystem(const theDatabase: IBoldDataBase); virtual;
     property ColumnBDEFieldType[Columnindex: integer]: TFieldType read GetColumnBDEFieldType;
     property RequiresLiveQuery: Boolean read GetRequiresLiveQuery;
     property SystemPersistenceMapper: TBoldSystemSQLMapper read GetSystemPersistenceMapper;
@@ -167,9 +194,17 @@ uses
   BoldUtils,
   BoldPSParamsSQL,
   BoldNameExpander,
+  BoldValueInterfaces,
+  BoldDefaultStreamNames,
+  Variants,
   SysUtils,
-  BoldPMConsts;
-
+  {$IFDEF RIL}
+  {$IFNDEF BOLD_UNICODE}
+  StringBuilder,
+  {$ENDIF}
+  {$ENDIF}
+  BoldRev;
+  
 {---TBoldSystemSQLMapper---}
 function TBoldSystemSQLMapper.GetAllTables: TBoldSQLTableDescriptionList;
 begin
@@ -181,13 +216,18 @@ begin
   result := (inherited PSSystemDescription) as TBoldSQLSystemDescription;
 end;
 
-constructor TBoldSystemSQLMapper.CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; SQlDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
+constructor TBoldSystemSQLMapper.CreateFromMold(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary;
+  CustomIndexes: TBoldIndexCollection; SQlDatabaseConfig: TBoldSQLDatabaseConfig; GetDatabaseFunc: TBoldGetDatabaseEvent);
 begin
   fNationalCharConversion := MoldModel.NationalCharConversion;
-  fSQLDataBaseConfig := TBoldSQLDataBaseConfig.Create;
-  fSQLDataBaseConfig.AssignConfig(SQLDatabaseConfig);
+  fSQLDataBaseConfig := SQlDatabaseConfig;
+  fCustomIndexes := TBoldIndexCollection.Create(nil);
+  if Assigned(CustomIndexes) then
+    fCustomIndexes.Assign(CustomIndexes);
   fOnGetDatabase := GetDatabaseFunc;
-  inherited createFromMold(MoldModel, TypeNameDictionary);
+  fMaxDbType := -1;
+  inherited CreateFromMold(MoldModel, TypeNameDictionary, SQlDatabaseConfig.DefaultObjectMapper);
+  AddCustomIndexes;
 end;
 
 procedure TBoldSystemSQLMapper.FillPSParams(PSParams: TBoldPSParams);
@@ -211,17 +251,51 @@ begin
   Database.ReleaseQuery(aQuery);
 end;
 
+function TBoldSystemSQLMapper.GetExecQuery: IBoldExecQuery;
+begin
+  if not Assigned(fExecQuery) then
+  begin
+    fExecQuery := Database.GetExecQuery;
+  end;
+  result :=  fExecQuery;
+end;
+
+procedure TBoldSystemSQLMapper.ReleaseExecQuery(var aQuery: IBoldExecQuery);
+begin
+  if fExecQuery <> aQuery then
+    Database.ReleaseExecQuery(aQuery);
+end;
+
 function TBoldSystemSQLMapper.GetIBoldDataBase: IBoldDataBase;
 begin
   if not assigned(fOnGetDatabase) then
     raise EBoldInternal.CreateFmt('%s: No event that provides an IBoldDatabase', [classname]);
   result := fOnGetDatabase;
   if not assigned(result) then
-    raise EBold.CreateFmt(sNoDatabase, [classname]);
+    raise EBold.CreateFmt('%s: No database', [classname]);
 end;
 
-procedure TBoldSystemSQLMapper.StartTransaction(ValueSpace: IBoldValueSpace);
+procedure TBoldSystemSQLMapper.StartSQLBatch;
 begin
+  GetExecQuery.StartSQLBatch;
+end;
+
+procedure TBoldSystemSQLMapper.EndSQLBatch;
+begin
+  GetExecQuery.EndSQLBatch;
+end;
+
+procedure TBoldSystemSQLMapper.FailSQLBatch;
+begin
+  GetExecQuery.FailSQLBatch;
+end;
+
+procedure TBoldSystemSQLMapper.StartTransaction(const ValueSpace: IBoldValueSpace);
+begin
+{$IFDEF BOLD_LITE}
+  if Database.InTransaction then
+    raise EBold.Create('Transactions not supported in Bold Lite');
+{$ELSE}
   with Database do
     if IsSqlBased and (not InTransaction) then
     begin
@@ -230,36 +304,83 @@ begin
     end
     else
       fTransactionStartedByMe := false;
+{$ENDIF}
 end;
 
-procedure TBoldSystemSQLMapper.Commit(ValueSpace: IBoldValueSpace);
+procedure TBoldSystemSQLMapper.Commit(const ValueSpace: IBoldValueSpace);
 begin
+{$IFDEF BOLD_LITE}
+  if Database.InTransaction then
+    raise EBold.Create('Transactions not supported in Bold Lite');
+{$ELSE}
   if fTransactionStartedByMe then
     with Database do
       if IsSqlBased and InTransaction then
         Commit;
   fTransactionStartedByMe := false;
+{$ENDIF}
 end;
 
-procedure TBoldSystemSQLMapper.RollBack(ValueSpace: IBoldValueSpace);
+procedure TBoldSystemSQLMapper.RollBack(const ValueSpace: IBoldValueSpace);
 begin
+{$IFDEF BOLD_LITE}
+  if Database.InTransaction then
+    raise EBold.Create('Transactions not supported in Bold Lite');
+{$ELSE}
   if fTransactionStartedByMe then
     with Database do
       if IsSqlBased and InTransaction then
         RollBack;
   fTransactionStartedByMe := false;
+{$ENDIF}
+end;
+
+function TBoldSystemSQLMapper.EnsureColumn(const TableName, ColumnName, SQLType, SQLAllowNull: string;
+    const BDEType: TFieldType; Length: Integer;
+    const AllowNull, InVersionedTable: Boolean;
+    const DefaultDBValue: String): TBoldSQLColumnDescription;
+var
+  Table: TBoldSQLTableDescription;
+begin
+  EnsureTable(TableName, InversionedTable);
+  Table := PSSystemDescription.SQLTablesList.ItemsBySQLName[TableName];
+  Result := Table.ColumnsList.ItemsBySQLName[ColumnName] as TBoldSQLColumnDescription;
+  if not assigned(Result) then
+    Result := Table.AddColumn(ColumnName, SQLType,  SQLAllowNull, BDEType, Length, AllowNull, DefaultDbValue)
+  else
+  begin
+    Result.Size         := Length;
+    Result.Mandatory    := not AllowNull;
+    Result.SQLType      := SQLType;
+    Result.FieldType    := BDEType;
+    Result.SQLAllowNull := SQLAllowNull;
+    result.DefaultDBValue := DefaultDBValue;
+  end;
+end;
+
+procedure TBoldSystemSQLMapper.EnsureIndex(const TableName, Fields: string; const PrimaryIndex, Unique, InVersionedTable: Boolean);
+var
+  Table: TBoldSQLTableDescription;
+begin
+  EnsureTable(TableName, InVersionedTable);
+  Table := PSSystemDescription.SQLTablesList.ItemsBySQLName[TableName];
+  Table.EnsureIndex(Fields, PrimaryIndex, Unique, false);
 end;
 
 procedure TBoldSystemSQLMapper.OpenDatabase(ReadDbTypeFromDB: Boolean; ReadMappingFromDB: Boolean);
 begin
   try
     Database.OPEN;
+    if not Database.Connected then
+      raise EBold.CreateFmt('%s.OpenDatabase: Failed to connect to database', [classname]);
+
     MappingInfo.ReadDataFromDB(DataBase, ReadDbTypeFromDB, ReadMappingFromDB);
 
     if assigned(OnPreInitializeBoldDbType) then
       OnPreInitializeBoldDbType(self);    // used for DBStructureValidator
 
     InitializeBoldDbType;
+    InitializeTopSortedIndexForBoldDbType;
     EnsurePSDescription;
   except
     DataBase.Close;
@@ -333,7 +454,7 @@ begin
   if useAlias then
   begin
     if Table = DistributableTable then
-      result := 'X_FILES' // do not localize
+      result := 'X_FILES'
     else
     begin
       i := AllTables.Indexof(Table) + 1;
@@ -349,6 +470,85 @@ begin
 end;
 
 procedure TBoldObjectSQLMapper.SQLForMembers(Table: TBoldSQLTableDescription; SQL: TStrings; const MemberList: TBoldMemberPersistenceMapperList; const SQLStyle: TBoldSQLStyle; const IncludeKey: Boolean; const StoredInObjectOnly, UseAlias: Boolean);
+{$IFDEF RIL}
+var
+  SB: TStringBuilder;
+  c, m: integer;
+  Column: TBoldSQLColumnDescription;
+  MemberMapper: TBoldMemberSQLMapper;
+begin
+  if IncludeKey and (SQLStyle in [ssColumns, ssParameters])  then
+  begin
+    if assigned(Table) then
+      SQLForKey(Table, SQL, SQLStyle, UseAlias)
+    else
+      SQLForKey(MainTable, SQL, SQLStyle, UseAlias)
+  end;
+
+{
+  if ScanRF(sMembersSQL,#13#10,0)= SLen-1 then //has ctrlf at end of str
+    SLen := SLen-2; //=removes ctrlf
+}
+  if MemberList.Count = 0 then
+    exit;
+  SB := TStringBuilder.Create(SQL.Text);
+  try
+    for m := 0 to MemberList.Count - 1 do
+    begin
+      MemberMapper := MemberList[m] as TBoldMemberSQLMapper;
+      if Assigned(MemberMapper) and
+         (not StoredInObjectOnly or MemberMapper.IsStoredInObject) then
+      begin
+        for c := 0 to MemberMapper.ColumnDescriptions.Count - 1 do
+        begin
+          Column := MemberMapper.ColumnDescriptions[c] as TBoldSQLColumnDescription;
+          if not Assigned(Table) or (Column.TableDescription = table) then
+          begin
+            if Assigned(Table) then
+            begin
+              if SB.Length>0 then
+                SB.Append(#13#10); {= "append"}
+              case SQLStyle of
+                ssColumns   : begin
+                                SB.Append(Column.SQLName);
+                              end;
+                ssParameters: begin
+                                SB.Append(':');
+                                SB.Append(Column.SQLName);
+                              end;
+                ssValues    : begin
+                                SB.Append(Format('%s = :%0:s', [Column.SQLName]));
+                              end;
+                else
+                  raise EBold.Create('unimplememnted');
+              end
+            end
+            else
+            begin
+              if SB.Length>0 then
+                SB.Append(#13#10); {= "append"}
+              case SQLStyle of               
+                ssColumns: begin
+                             // SQL.Append(Format('%s.%s', [TableAlias(Column.TableDescription, useAlias), Column.SQLName]))
+                             SB.Append(TableAlias(Column.TableDescription, useAlias));
+                             SB.Append('.');
+                             SB.Append(Column.SQLName);
+                           end;
+                else
+                  raise EBold.Create('unimplememnted');
+              end;
+            end;
+          end;
+        end;
+      end;
+    end;
+  finally
+    SB.Replace(#13#10#13#10, #13#10);
+    SQL.Text := SB.ToString;
+    FreeAndNil(SB);
+  end;
+end;
+{$ELSE}
 var
   c,
   m: integer;
@@ -373,22 +573,24 @@ begin
           if assigned(Table) then
             case SQLStyle of
               ssColumns: SQL.Append(Column.SQLName);
-              ssParameters: SQL.Append(Format(':%s', [Column.SQLName])); // do not localize
-              ssValues: SQL.Append(Format('%s = :%0:s', [Column.SQLName])); // do not localize
+              ssParameters: SQL.Append(Format(':%s', [Column.SQLName]));
+              ssValues: SQL.Append(Format('%s = :%0:s', [Column.SQLName]));
               else
-                raise EBold.Create(sUnimplemented);
+                raise EBold.Create('unimplememnted');
             end
           else
             case SQLStyle of
-              ssColumns: SQL.Append(Format('%s.%s', [TableAlias(Column.TableDescription, useAlias), Column.SQLName])) // do not localize
+              ssColumns: SQL.Append(Format('%s.%s', [TableAlias(Column.TableDescription, useAlias), Column.SQLName]))
               else
-                raise EBold.Create(sUnimplemented);
+                raise EBold.Create('unimplememnted');
             end;
         end;
       end;
 end;
+{$ENDIF}
 
 procedure TBoldObjectSQLMapper.RetrieveSelectStatement(s: TStrings; MemberMapperList: TBoldMemberPersistenceMapperList; FetchMode: Integer; ForceRootTable: Boolean);
+{$IFDEF RIL}
 var
   T: Integer;
   SelectList: TStringList;
@@ -400,6 +602,127 @@ var
   TableList: TBoldSQLtableDescriptionList;
   Table: TBoldSQLtableDescription;
   Mapper: TBoldMemberSQLMapper;
+  SB: TStringBuilder;
+begin
+  SelectList := TStringList.Create;
+  FromList := TStringList.Create;
+  WhereList := TStringList.Create;
+  JoinList :=  TStringList.Create;
+  TableList := TBoldSQLtableDescriptionList.Create(SystemPersistenceMapper.PSSystemDescription);
+  tableList.OwnsEntries := false;
+  SB := TStringBuilder.Create;
+  try
+
+    if ForceRootTable then
+      TableList.Add(SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable);
+
+    for MapperIx := 0 to MemberMapperList.count - 1 do
+    begin
+      Mapper := MemberMapperList[MapperIx] as TBoldMemberSQLMapper;
+      for ColumnIx := 0 to Mapper.ColumnDescriptions.Count - 1 do
+      begin
+        Table := (Mapper.ColumnDescriptions[ColumnIx] as TBoldSQLColumnDescription).TableDescription;
+        if TableList.IndexOf(Table) = -1 then
+          TableList.Add(Table);
+      end;
+    end;
+
+    SQLForMembers(nil, SelectList,  MemberMapperList,  ssColumns, true, false, true);
+    //FromList.Append(Format('%s %s', [MainTable.SQLName, TableAlias(MainTable, true)]));
+      SB.Clear;
+      SB.Append(MainTable.SQLName);
+      SB.Append(' ');
+      SB.Append(TableAlias(MainTable, true));
+    FromList.Append(SB.ToString);
+
+    if (FetchMode = fmNormal) and SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins  then
+    begin
+      { cheapest check first }
+      for T := 0 to TableList.COunt-1 do
+        if (TableList[T]<>MainTable) and (TableList[T].ColumnsList.Count>2)  then
+        begin
+          //Join := format('left join %s %s on ', [TableList[T].SQLName, TableAlias(TableList[T], true)]);
+          SB.Clear;
+            SB.Append('left join ');
+            SB.Append(TableList[T].SQLName);
+            SB.Append(' ');
+            SB.Append(TableAlias(TableList[T], true));
+            SB.Append(' on ');
+
+          JoinList.Clear;
+          JoinSQLTableByKey(JoinList, MainTable, TableList[T]);
+
+          //Join := Join + BoldSeparateStringList(JoinList, ' and ', '(', ')');
+            SB.Append(BoldSeparateStringList(JoinList, ' and ', '(', ')'));
+          Join := SB.ToString;
+          FromList.Append(Join);
+        end;
+    end
+    else
+    begin
+      for T := 0 to TableList.Count - 1 do
+        if (TableList[T] <> MainTable) and (TableList[T].ColumnsList.Count > 2) then
+        begin
+          //FromList.Append(Format('%s %s',[TableList[T].SQLName, TableAlias(TableList[t], true)]));
+          SB.Clear;
+            SB.Append(TableList[T].SQLName);
+            SB.Append(' ');
+            SB.Append(TableAlias(TableList[t], true));
+          FromList.Append(SB.ToString);
+        end;
+
+      for T := 0 to TableList.Count-1 do
+      begin
+        {ril} // cheapest check first
+        if (TableList[T]<>MainTable) and (TableList[T].ColumnsList.Count > 2)  then
+          JoinSQLTableByKey(WhereList, MainTable, TableList[T]);
+      end;
+
+{      if FetchMode = fmDistributable then
+      begin
+        SQLForDistributed(SelectList, ssColumns);
+        FromList.Append(Format('%s %s', [DistributableTable.SQLName,
+                                          TableAlias(DistributableTable, true)]));
+        JoinSQLTableByKey(WhereList, MainTable, DistributableTable);
+      end;}
+    end;
+
+    SQLForID(Maintable, WhereList, True);
+
+    {ril} {'SELECT %s ':}
+    BoldAppendToStrings(S, 'SELECT '+BoldSeparateStringList(SelectList, ', ', '', '')+' ', true);
+
+    if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins and (FetchMode = fmNormal) then
+      {ril} {'FROM %s ':}
+      BoldAppendToStrings(S, 'FROM '+BoldSeparateStringList(FromList, ' ', '', '')+' ', true)
+    else
+      {ril} {'FROM %s ':}
+      BoldAppendToStrings(S, 'FROM '+BoldSeparateStringList(FromList, ', ', '', '')+' ', true);
+
+    {ril} {'WHERE %s ':}
+    BoldAppendToStrings(S, 'WHERE '+BoldSeparateStringList(WhereList, ' AND ', '', '')+' ', true);
+  finally
+    SelectList.Free;
+    FromList.Free;
+    WhereList.Free;
+    JoinList.Free;
+    TableList.Free;
+    FreeAndNil(SB);
+  end;
+end;
+{$ELSE}
+var
+  T: Integer;
+  SelectList: TStringList;
+  FromList: TStringList;
+  WhereList: TStringList;
+  JoinList: TStringList;
+  Join: String;
+  MapperIx, ColumnIx: integer;
+  TableList: TBoldSQLtableDescriptionList;
+  Table: TBoldSQLtableDescription;
+  Mapper: TBoldMemberSQLMapper;
+  
 begin
   SelectList := TStringList.Create;
   FromList := TStringList.Create;
@@ -407,8 +730,8 @@ begin
   JoinLIst :=  TStringList.Create;
   TableList := TBoldSQLtableDescriptionList.Create(SystemPersistenceMapper.PSSystemDescription);
   tableList.OwnsEntries := false;
-
   try
+
     if ForceRootTable then
       TableList.Add(SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable);
 
@@ -425,17 +748,16 @@ begin
 
     SQLForMembers(nil, SelectList,  MemberMapperList,  ssColumns, true, false, true);
 
-    FromList.Append(Format('%s %s', [MainTable.SQLName, TableAlias(MainTable, true)])); // do not localize
+    FromList.Append(Format('%s %s', [MainTable.SQLName, TableAlias(MainTable, true)]));
     if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins and (FetchMode = fmNormal) then
     begin
-      // left join rateable x on Song.Bold_ID=rateable.Bold_id
       for T := 0 to TableList.COunt - 1 do
         if (TableList[T].ColumnsList.Count > 2) and (TableList[T] <> MainTable) then
         begin
-          Join := format('left join %s %s on ', [TableList[T].SQLName, TableAlias(TableList[T], true)]); // do not localize
+          Join := format('left join %s %s on ', [TableList[T].SQLName, TableAlias(TableList[T], true)]);
           JoinList.Clear;
           JoinSQLTableByKey(JoinList, MainTable, TableList[T]);
-          Join := Join + BoldSeparateStringList(JoinList, ' and ', '(', ')'); // do not localize
+          Join := Join + BoldSeparateStringList(JoinList, ' and ', '(', ')');
           FromList.Add(Join);
         end;
     end
@@ -443,7 +765,7 @@ begin
     begin
       for T := 0 to TableList.Count - 1 do
         if (TableList[T].ColumnsList.Count > 2) and (TableList[T] <> MainTable) then
-          FromList.Append(Format('%s %s',[TableList[T].SQLName, TableAlias(TableList[t], true)])); // do not localize
+          FromList.Append(Format('%s %s',[TableList[T].SQLName, TableAlias(TableList[t], true)]));
 
       for T := 0 to TableList.Count - 1 do
       begin
@@ -462,14 +784,14 @@ begin
 
     SQLForID(Maintable, WhereList, True);
 
-    BoldAppendToStrings(S, Format('SELECT %s ', [BoldSeparateStringList(SelectList, ', ', '', '')]), true); // do not localize
+    BoldAppendToStrings(S, Format('SELECT %s ', [BoldSeparateStringList(SelectList, ', ', '', '')]), true);
 
     if SystemPersistenceMapper.SQLDataBaseConfig.UseSQL92Joins and (FetchMode = fmNormal) then
-      BoldAppendToStrings(S, Format('FROM %s ', [BoldSeparateStringList(FromList, ' ', '', '')]), true) // do not localize
+      BoldAppendToStrings(S, Format('FROM %s ', [BoldSeparateStringList(FromList, ' ', '', '')]), true)
     else
-      BoldAppendToStrings(S, Format('FROM %s ', [BoldSeparateStringList(FromList, ', ', '', '')]), true); // do not localize
+      BoldAppendToStrings(S, Format('FROM %s ', [BoldSeparateStringList(FromList, ', ', '', '')]), true);
 
-    BoldAppendToStrings(S, Format('WHERE %s ', [BoldSeparateStringList(WhereList, ' AND ', '', '')]), true); // do not localize
+    BoldAppendToStrings(S, Format('WHERE %s ', [BoldSeparateStringList(WhereList, ' AND ', '', '')]), true);
   finally
     SelectList.Free;
     FromList.Free;
@@ -478,23 +800,110 @@ begin
     TableList.Free;
   end;
 end;
+{$ENDIF}
 
-procedure TBoldObjectSQLMapper.ValuesFromFieldsByMemberList(ObjectID: TBoldObjectId; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; DataSet: IBoldDataSet; memberList: TBoldMemberPersistenceMapperList);
+
+procedure TBoldObjectSQLMapper.ValuesFromFieldsByMemberList(ObjectID: TBoldObjectId; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const DataSet: IBoldDataSet; memberList: TBoldMemberPersistenceMapperList);
+var
+  i,FieldIndex: integer;
+  aField    : IBoldField;  
+  ObjectContents: IBoldObjectContents;
+  MemberMapper: TBoldMemberSQLMapper;
+  ColumnIndex: Integer;
+begin
+  ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[ObjectID];
+  FieldIndex := 2; // skip id and type
+  for i:= 0 to memberlist.count - 1 do
+  begin
+    MemberMapper := TBoldMemberSQLMapper(Memberlist[i]);
+    if MemberMapper.ShouldFetch(ObjectContents) then
+    for ColumnIndex := 0 to MemberMapper.ColumnCount - 1 do
+    begin
+      aField := nil;
+      if FieldIndex < DataSet.FieldCount then
+      begin
+        aField := DataSet.Fields[FieldIndex];
+        if not SameText(aField.FieldName, MemberMapper.ColumnDescriptions[ColumnIndex].SQLName) then
+          aField := nil;
+      end;
+      if not Assigned(aField) then
+      begin
+        aField := DataSet.FieldByUpperCaseName(MemberMapper.ColumnDescriptions[ColumnIndex].SQLNameUpper);
+        FieldIndex := aField.Field.Index;
+      end;
+      MemberMapper.ValueFromField(ObjectId, ObjectContents, ValueSpace, TranslationList, aField, ColumnIndex);
+      inc(FieldIndex);
+    end;
+  end;
+end;
+
+procedure TBoldObjectSQLMapper.ValuesToParamsByMemberList(ObjectId: TBoldObjectId; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
 var
   i: integer;
   ObjectContents: IBoldObjectContents;
 begin
   ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[ObjectID];
-  for i:= 0 to memberlist.count - 1 do
-    TBoldMemberSQLMapper(Memberlist[i]).ValueFromQuery(ObjectId, ObjectContents, ValueSpace, TranslationList, DataSet);
+  for i := 0 to memberlist.count - 1 do
+    TBoldMemberSQLMapper(Memberlist[i]).ValueToQuery(ObjectContents, ValueSpace, Query, translationList, DBStorageMode);
 end;
 
-procedure TBoldObjectSQLMapper.ValuesToParamsByMemberList(ObjectID: TBoldObjectId; ValueSpace: IBoldValueSpace; Query: IBoldExecQuery; memberList: TBoldMemberPersistenceMapperList; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
+procedure TBoldObjectSQLMapper.ValuesToQueryByMemberList(
+  ObjectId: TBoldObjectId; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery;
+  SQL: TStrings; memberList: TBoldMemberPersistenceMapperList;
+  TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
 var
   i: integer;
+  ColumnIndex: Integer;
+  MemberMapper: TBoldMemberSQLMapper;
+  ObjectContents: IBoldObjectContents;
+  Members: TStringList;
+  Value: Variant;
+  Param: IBoldParameter;
+  ParamName: string;
 begin
-  for i := 0 to memberlist.count - 1 do
-    TBoldMemberSQLMapper(Memberlist[i]).ValueToQuery(ValueSpace.ObjectContentsByObjectId[ObjectID], ValueSpace, Query, translationList, DBStorageMode);
+  if SystemPersistenceMapper.SQLDataBaseConfig.UseParamsForInteger then
+    ValuesToParamsByMemberList(ObjectID,ValueSpace,Query,MemberList,TranslationList,DbStorageMode)
+  else
+  begin
+    ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[ObjectID];
+    Members := TStringList.Create;
+    for i := 0 to MemberList.count - 1 do
+    begin
+      MemberMapper := Memberlist[i] as TBoldMemberSQLMapper;
+      if (DBStorageMode = dsmCreate) or MemberMapper.IsDirty(ObjectContents) then
+      begin
+        for ColumnIndex := 0 to MemberMapper.ColumnCount - 1 do
+        begin
+          Value := MemberMapper.ValueAsVariant(ObjectContents, ColumnIndex, TranslationList);
+          if not SystemPersistenceMapper.SQLDataBaseConfig.UseParamsForEmptyString and SameText(MemberMapper.ContentName, BoldContentName_String) and (Value = '') then
+            Members.Add(QuotedStr(''))  // handle blank strings
+          else // handle nulls
+          if VarIsNull(Value) then
+            Members.Add(SystemPersistenceMapper.SQLDataBaseConfig.SQLforNull)
+          else // handle integers
+          if (MemberMapper.ColumnTypeAsSQL[ColumnIndex] = SystemPersistenceMapper.SQLDataBaseConfig.ColumnTypeForInteger) then
+            Members.Add(Value)
+          else
+          begin
+            ParamName := 'p'+IntToStr(Query.ParamCount);
+            Param := Query.CreateParam(ftUnknown, ParamName);
+            MemberMapper.ValueToParam(ObjectContents, Param, ColumnIndex, translationList);
+            Members.Add(':'+ParamName);
+          end;
+          if DBStorageMode = dsmUpdate then
+            Members[Members.Count-1] := Format('%s=%s', [MemberMapper.ColumnDescriptions[ColumnIndex].SQLName, Members[Members.Count-1]]);
+        end;
+      end;
+    end;
+    if (Members.Count > 0) then
+    begin
+      if (DBStorageMode = dsmCreate) then
+        SQL.Add(','+Members.CommaText)
+      else
+        SQL.Add(Members.CommaText);
+    end;
+    Members.free;
+  end;
 end;
 
 {---TBoldMemberSQLMapper---}
@@ -507,15 +916,15 @@ begin
   fInitialColumnRootName := BoldExpandName(MoldMember.ColumnName, MoldMember.name, xtSQL, SystemPersistenceMapper.SQLDataBaseConfig.MaxDBIdentifierLength, MoldClass.Model.NationalCharConversion);
 
   if MoldMember is TMoldAttribute then
-    fDefaultDbValue := (MoldMember as TMoldAttribute).DefaultDBValue;
-
-  if fDefaultDbValue = '' then
-    fDefaultDbValue := DefaultDefaultDbValue;
-
-  if MoldMember is TMoldAttribute then
     fAllowNull := (MoldMember as TMoldAttribute).AllowNull
   else
     fAllowNull := true;
+      
+  if MoldMember is TMoldAttribute then
+    fDefaultDbValue := (MoldMember as TMoldAttribute).DefaultDBValue;
+        
+  if fDefaultDbValue = '' then
+    fDefaultDbValue := DefaultDefaultDbValue;
 end;
 
 destructor TBoldMemberSQLMapper.destroy;
@@ -527,14 +936,47 @@ end;
 
 function TBoldMemberSQLMapper.GetColumnSize(ColumnIndex: Integer): Integer;
 begin
-  raise EBold.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnSize', ColumnIndex]); // do not localize
+  raise EBold.CreateFmt('%s.GetColumnSize: illegal index', [ClassName]);
 end;
 
 function TBoldMemberSQLMapper.GetInitialColumnName(ColumnIndex: Integer): string;
 begin
   Result := InitialColumnRootName;
   if ColumnIndex > 0 then
-    Result := Format('%s_%d', [Result, ColumnIndex]); // do not localize
+    Result := Format('%s_%d', [Result, ColumnIndex]);
+end;
+
+
+procedure TBoldSystemSQLMapper.AddCustomIndexes;
+var
+  I: Integer;
+  Table: TBoldSQLTableDescription;
+  CustomIndex: TBoldIndexDefintion;
+  AnIndex: TBoldSQLIndexDescription;
+begin
+  for I := 0 to fCustomIndexes.Count - 1 do
+  begin
+    CustomIndex := fCustomIndexes.IndexDefinition[I];
+    Table := PSSystemDescription.SQLTablesList.ItemsBySQLName[CustomIndex.TableName];
+    if CustomIndex.Remove then
+    begin
+      AnIndex := nil;
+      if Assigned(Table) then
+        AnIndex := Table.IndexList.ItemsByIndexFields[CustomIndex.Columns];
+      if Assigned(AnIndex) then
+      begin
+        Table.IndexList.Remove(AnIndex);
+      end
+      else 
+        raise EBold.Create('Can''t Remove nonexistent index: ' + CustomIndex.TableName + ': [' + CustomIndex.Columns+ ']');
+    end
+    else
+    begin
+      if (Table = nil) then
+        raise EBold.Create('Can''t create index on nonexistant table ' + CustomIndex.TableName);
+      Table.EnsureIndex(CustomIndex.Columns, False, CustomIndex.Unique, false);
+    end;
+  end;
 end;
 
 function TBoldSystemSQLMapper.BoldDbTypeForTopSortedIndex(
@@ -543,22 +985,17 @@ begin
   result := (ObjectPersistenceMappers[TopSortedIndex] as TBoldObjectSQLMapper).BoldDbType;
 end;
 
-function TBoldSystemSQLMapper.TopSortedIndexForBoldDbType(
-  BoldDbType: TBoldDbType): Integer;
-var
-  i: integer;
+function TBoldSystemSQLMapper.TopSortedIndexForBoldDbType(BoldDbType: TBoldDbType): Integer;
 begin
-  result := -1;
-  for i := 0 to ObjectPersistenceMappers.Count - 1 do
-    if (ObjectPersistenceMappers[i] is TBoldObjectSQLMapper) and // tests for nil
-       ((ObjectPersistenceMappers[i] as TBoldObjectSQLMapper).BoldDbType = BoldDbType) then
-    begin
-      result := i;
-      break;
-    end;
+  if fMaxDbType = -1 then
+    raise Exception.Create('fTopSortedIndexForBoldDbType not initialized');
+  if BoldDbType > fMaxDbType then
+    Result := -1
+  else
+    Result := fTopSortedIndexForBoldDbType[BoldDbType];
 end;
 
-procedure TBoldMemberSQLMapper.SetParamToNullWithDataType(aParam: IBoldParameter; FieldType: TFieldType);
+procedure TBoldMemberSQLMapper.SetParamToNullWithDataType(const aParam: IBoldParameter; FieldType: TFieldType);
 begin
   with aParam do
   begin
@@ -568,17 +1005,23 @@ begin
   end;
 end;
 
-procedure TBoldMemberSQLMapper.ValueToParam(ObjectContent: IBoldObjectContents; Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
+procedure TBoldMemberSQLMapper.ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sIllegalCall, [classname, 'ValueToParam']); // do not localize
+  raise EBold.CreateFmt('%s.ValueToParam: illegal call', [classname]);
 end;
 
-procedure TBoldMemberSQLMapper.ValueFromField(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; Field: IBoldField; ColumnIndex: Integer);
+function TBoldMemberSQLMapper.ValueAsVariant(const ObjectContent: IBoldObjectContents;
+  ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant;
 begin
-  raise EBold.CreateFmt(sIllegalCall, [classname, 'ValueFromField']); // do not localize
+  raise EBold.CreateFmt('%s.ValueAsVariant: Illegal call', [classname]);
 end;
 
-procedure TBoldMemberSQLMapper.ValueToQuery(ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; Query: IBoldExecQuery; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
+procedure TBoldMemberSQLMapper.ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer);
+begin
+  raise EBold.CreateFmt('%s.ValueFromField: Illegal call', [classname]);
+end;
+
+procedure TBoldMemberSQLMapper.ValueToQuery(const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
 var
   aParam    : IBoldParameter;
   ColumnIndex: Integer;
@@ -587,44 +1030,52 @@ begin
   begin
     for ColumnIndex := 0 to ColumnCount - 1 do
     begin
-      aParam := Query.ParamByName(ColumnDescriptions[ColumnIndex].SQLName);
+      if Query.ParamCheck then
+        aParam := Query.EnsureParamByName(ColumnDescriptions[ColumnIndex].SQLName)
+      else
+        aParam := Query.CreateParam(ftUnknown, 'p'+IntToStr(Query.ParamCount));
       if Assigned(aParam) then
         ValueToParam(ObjectContent, aParam, ColumnIndex, translationList)
       else
-        raise EBoldInternal.CreateFmt(sSomeColumnsNotInTable, [classname, 'ValueToQuery', ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]); // do not localize
+        raise EBoldInternal.CreateFmt('%s.ValueToQuery: Some columns not found in table (%d:%s)', [classname, ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]);
     end;
   end;
 end;
 
-procedure TBoldMemberSQLMapper.ValueFromQuery(OwningObjectId: TBoldObjectId; ObjectContent: IBoldObjectContents; ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; DataSet: IBoldDataSet);
+procedure TBoldMemberSQLMapper.ValueFromQuery(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const DataSet: IBoldDataSet);
 var
   aField    : IBoldField;
   ColumnIndex: Integer;
+  ErrorMsg  : String;
 begin
   if ShouldFetch(ObjectContent) then
   begin
     for ColumnIndex := 0 to ColumnCount - 1 do
     begin
-      aField := DataSet.FieldByName(ColumnDescriptions[ColumnIndex].SQLName);
+      aField := DataSet.FieldByUpperCaseName(ColumnDescriptions[ColumnIndex].SQLNameUpper);
+      if not Assigned(aField) and (Length(ColumnDescriptions[ColumnIndex].SQLName) = 31) then // Could be DBX problem
+        aField := DataSet.FieldByUpperCaseName(Copy(ColumnDescriptions[ColumnIndex].SQLNameUpper,1,30));
       if Assigned(aField) then
         ValueFromField(OwningObjectId, ObjectContent, ValueSpace, TranslationList, aField, ColumnIndex)
       else
-        raise EBoldInternal.CreateFmt(sSomeColumnsNotInTable, [classname, 'ValueFromQuery', ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]); // do not localize
+        raise EBoldInternal.CreateFmt('%s.ValueFromQuery: Some columns not found in table (%d:%s).' + ErrorMsg, [classname, ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]);
     end;
   end;
 end;
 
-procedure TBoldMemberSQLMapper.InitializeSystem(theDatabase: IBoldDataBase);
+procedure TBoldMemberSQLMapper.InitializeSystem(const theDatabase: IBoldDataBase);
 begin
 end;
 
 function TBoldMemberSQLMapper.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
 begin
-  raise EBold.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnBDEFieldType', ColumnIndex]); // do not localize
+  raise EBold.CreateFmt('%s.GetColumnBDEFieldType: illegal index', [ClassName]);
 end;
 
 procedure TBoldSystemSQLMapper.CloseDataBase;
 begin
+  if assigned(fExecQuery) then
+    Database.ReleaseExecQuery(fExecQuery);
   Database.Close;
 end;
 
@@ -684,10 +1135,10 @@ begin
   end;
 
   if TimeStamp = BOLDMAXTIMESTAMP then
-    SQL.Append(Format('%s (%s.%s = %d)', [WhereToken, // do not localize
+    SQL.Append(Format('%s (%s.%s = %d)', [WhereToken,
       EndTimeTableAlias, TIMESTAMPSTOPCOLUMNNAME, TimeStamp]))
   else
-    SQL.Append(Format('%s ((%s.%s <= %d) and (%s.%s >= %d))', [WhereToken, // do not localize
+    SQL.Append(Format('%s ((%s.%s <= %d) and (%s.%s >= %d))', [WhereToken,
       StartTimeTableAlias, TIMESTAMPSTARTCOLUMNNAME, TimeStamp,
       EndTimeTableAlias, TIMESTAMPSTOPCOLUMNNAME, TimeStamp]));
 end;
@@ -707,7 +1158,7 @@ end;
 destructor TBoldSystemSQLMapper.Destroy;
 begin
   FreeAndNil(fMappingInfo);
-  FreeAndNil(fSQLDataBaseConfig);
+  FreeAndNil(fCustomIndexes);
   inherited;
 end;
 
@@ -751,27 +1202,27 @@ begin
   result := '';
 end;
 
-procedure TBoldSystemSQLMapper.GenerateDatabaseScript(Script: TStrings; Separator: string);
+procedure TBoldSystemSQLMapper.GenerateDatabaseScript(Script: TStrings);
 var
   i: integer;
 begin
-  PSSystemDescription.GenerateDatabaseScript(Script, Separator);
+  PSSystemDescription.GenerateDatabaseScript(Script);
   for i := 0 to ObjectPersistenceMappers.Count - 1 do
     if assigned(ObjectPersistenceMappers[i]) then
-      (ObjectPersistenceMappers[i] as TBoldObjectSQLMapper).GenerateDatabaseScript(script, separator);
-  MappingInfo.ScriptForWriteData(Script, Separator, false);
+      (ObjectPersistenceMappers[i] as TBoldObjectSQLMapper).GenerateDatabaseScript(script);
+  MappingInfo.ScriptForWriteData(Database, Script, False, SQLDatabaseConfig.SqlScriptSeparator, SQLDatabaseConfig.SqlScriptTerminator);
 end;
 
-procedure TBoldObjectSQLMapper.GenerateDatabaseScript(Script: TStrings; Separator: string);
+procedure TBoldObjectSQLMapper.GenerateDatabaseScript(Script: TStrings);
 var
   i: integer;
 begin
   for i := 0 to MemberPersistenceMappers.Count - 1 do
     if assigned(MemberPersistenceMappers[i]) then
-      (MemberPersistenceMappers[i] as TBoldMemberSQLMapper).GenerateDatabaseScript(script, separator);
+      (MemberPersistenceMappers[i] as TBoldMemberSQLMapper).GenerateDatabaseScript(script);
 end;
 
-procedure TBoldMemberSQLMapper.GenerateDatabaseScript(Script: TStrings; Separator: string);
+procedure TBoldMemberSQLMapper.GenerateDatabaseScript(Script: TStrings);
 begin
   // intentionally left blank
 end;
@@ -796,18 +1247,8 @@ begin
   result := fColumnDescriptions;
 end;
 
-function TBoldSystemSQLMapper.GetExecQuery: IBoldExecQuery;
-begin
-  result := Database.GetExecQuery;
-end;
-
-procedure TBoldSystemSQLMapper.ReleaseExecQuery(var aQuery: IBoldExecQuery);
-begin
-  Database.ReleaseExecQuery(aQuery);
-end;
-
 procedure TBoldSystemSQLMapper.PMFetch(ObjectIDList: TBoldObjectIdList;
-  ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList;
+  const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList;
   FetchMode: Integer; TranslationList: TBoldIdTranslationList);
 var
   WasInTransaction: Boolean;
@@ -820,5 +1261,35 @@ begin
       Database.Commit;
   end;
 end;
+
+procedure TBoldSystemSQLMapper.InitializeTopSortedIndexForBoldDbType;
+var
+  i: integer;
+  DbType: integer;
+begin
+  fMaxDbType := -1;
+  for i := 0 to ObjectPersistenceMappers.Count - 1 do
+    if ObjectPersistenceMappers[i] is TBoldObjectSQLMapper then
+    begin
+      DbType := TBoldObjectSQLMapper(ObjectPersistenceMappers[i]).BoldDbType;
+      if DbType > fMaxDbType then
+        fMaxDbType := DbType;
+    end;
+  if fMaxDbType > 50000 then
+    raise Exception.Create(Format('DbType: %d, too big', [fMaxDbType]));
+  SetLength(fTopSortedIndexForBoldDbType, fMaxDbType+1);
+  for i := 0 to fMaxDbType do
+    fTopSortedIndexForBoldDbType[i] := -1;
+  for i := 0 to ObjectPersistenceMappers.Count - 1 do
+    if (ObjectPersistenceMappers[i] is TBoldObjectSQLMapper) then
+    begin
+      DbType := TBoldObjectSQLMapper(ObjectPersistenceMappers[i]).BoldDbType;
+      if fTopSortedIndexForBoldDbType[DbType] <> -1 then
+        raise Exception.Create(Format('Duplicate DbType: %d', [i]));
+      fTopSortedIndexForBoldDbType[DbType] := i;
+    end;
+end;
+
+initialization
 
 end.

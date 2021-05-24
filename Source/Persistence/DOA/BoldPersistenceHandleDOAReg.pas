@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDOAReg;
 
 interface
@@ -11,16 +14,22 @@ implementation
 uses
   Classes,
   SysUtils,
-  BoldDatabaseAdapterDOA,
   BoldPersistenceHandleDOA,
   BoldIDESupport,
+  BoldVersionInfo,
+  BoldDatabaseAdapterDOA,
   BoldIDEConsts;
 
 procedure Register;
 begin
-  RemovePackageFromDisabledPackagesRegistry(format('BoldDOA%s', [LIBSUFFIX])); // do not localize
+  RemovePackageFromDisabledPackagesRegistry(format('Bold%d%d%sDOA', [
+    BoldBuildVersionNumberMajor,
+    BoldBuildVersionNumberMinor,
+    BoldBuildTarget]));
   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleDOA]);
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterDOA]);
 end;
+
+initialization
 
 end.

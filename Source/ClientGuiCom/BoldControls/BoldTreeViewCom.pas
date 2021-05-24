@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTreeViewCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,29 +8,26 @@ unit BoldTreeViewCom;
 interface
 
 uses
-  Windows,
-  Messages,
+  // VCL
   Classes,
-  Graphics,
-  Menus,
-  Controls,
   ComCtrls,
   CommCtrl,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  {$IFNDEF BOLDCOMCLIENT} // uses
-  BoldComObjectSpace_TLB, // IFNDEF BOLDCOMCLIENT
-  BoldGui,  // IFNDEF BOLDCOMCLIENT
+  Controls,
+  Menus,
+  Windows,
+
+  // Bold
+  {$IFNDEF BOLDCOMCLIENT}
+  BoldComObjectSpace_TLB,
+  BoldGui,
   {$ENDIF}
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  BoldHandlesCom,
-  BoldControlsDefs,
-  BoldControlPackDefs,
-  BoldElementHandleFollowerCom,
-  BoldControlPackCom,
-  BoldNumericControlPackCom,
-  BoldStringControlPackCom,
-  BoldGenericListControlPackCom,
+  BoldComObjectSpace_TLB,
   BoldComponentValidatorCom,
+  BoldControlPackCom,
+  BoldControlsDefs,
+  BoldElementHandleFollowerCom,
+  BoldGenericListControlPackCom,
+  BoldHandlesCom,
   BoldNodeControlPackCom;
 
 type
@@ -47,7 +47,7 @@ type
     procedure UpdateIcon;
     function GetTreeView: TBoldTreeViewCom;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function ExistsInParent: Boolean;
     property Follower: TBoldFollowerCom read FFollower write FFollower;
     property NodeDescription: TBoldNodeDescriptionCom read GetNodeDescription;
@@ -239,22 +239,22 @@ type
     {$ENDIF}
   end;
 
-
-
 implementation
 
 uses
+  // VCL
+  Graphics,
   SysUtils,
-  BoldRev,
-  BoldUtils;
 
+  BoldControlPackDefs,
+  BoldNumericControlPackCom,
+  BoldStringControlPackCom;
 
 {---TBoldTreeNodeCom---}
 function TBoldTreeNodeCom.GetNodeDescription: TBoldNodeDescriptionCom;
 var
   I: Integer;
 begin
-  // Check if cache is accurate.
   if Assigned(FNodeDescription) and (FNodeDescription.NodeFollowerController = Follower.Controller) then
   begin
     Result := FNodeDescription;
@@ -347,12 +347,10 @@ procedure TBoldCustomTreeViewCom.SetMaxLevels(Value: Integer);
   begin
     for I := 0 to Follower.SubFollowerCount-1 do
     begin
-      //Update this node
       if (Follower.SubFollowers[I].Controller as TBoldNodeFollowerControllerCom).HideNodeWithNoChildren   then
         DoInsertHiddenNode(Follower.SubFollowers[I])
       else
         SetNodeState(TBoldTreeNodeCom(Follower.SubFollowers[I].ControlData));
-      //Recurse through subfollowers
       if Follower.SubFollowers[I].Active and (Follower.SubFollowers[I].SubFollowerCount>=BoldNodeListIndex) and Follower.SubFollowers[I].SubFollowers[BoldNodeListIndex].Active then
           DoList(Level+1, Follower.SubFollowers[I].SubFollowers[BoldNodeListIndex])
     end;
@@ -462,13 +460,11 @@ end;
 
 procedure TBoldCustomTreeViewCom.BeginUpdate;
 begin
-//  Items.BeginUpdate;
   Inc(FUpdateCount);
 end;
 
 procedure TBoldCustomTreeViewCom.EndUpdate;
 begin
-//  Items.EndUpdate;
   Dec(FUpdateCount);
 end;
 
@@ -503,8 +499,6 @@ begin
         SelectedIndex := SelectedImageIndex
       else
         SelectedIndex := ImageIndex;
-
-      // Make a multiselected node appear selected even thjough the treeview does not know this
       if Follower.Selected and not node.Selected then
         ImageIndex := SelectedIndex;
 
@@ -529,9 +523,8 @@ end;
 
 procedure TBoldCustomTreeViewCom.AfterMakeUptoDate(Follower: TBoldFollowerCom);
 begin
-  // for some reason, the pointer to this event seems to get lost after a while.
-  // the variables below might contain space pointers outside of an update operation
-  // if this method is not executed.
+
+
   fSelectedNodePreUpdate := nil;
   fSelectedElementPreUpdate := nil;
   fSelectedNodeDescriptionPreUpdate := nil;
@@ -612,16 +605,14 @@ begin
       Follower.Active := True;
       (Follower.Controller as TBoldNodeFollowerControllerCom).SetActiveRange(Follower, BoldNodeListIndex, BoldNodeListIndex);
       Follower.EnsureDisplayable;
-      //If EnsureDisplayable creates childnodes they will create a node to this follower too.
       if (Level <= AutoExpandLevels) and Assigned(Follower.ControlData) then
-        (Follower.ControlData as TBoldTreeNodeCom).Expand(False); //CHECKME behövs detta?
+        (Follower.ControlData as TBoldTreeNodeCom).Expand(False);
     finally
       EndUpdate;
     end;
   end
   else
   begin
-    //Dont show it if we can't show any children!
     Follower.Active := False;
     if Assigned(Follower.ControlData) then
     begin
@@ -641,7 +632,6 @@ begin
   Controller := (Follower.Controller as TBoldNodeFollowerControllerCom);
   if Controller.HideNodeWithNoChildren then
   begin
-    //Nodes with HideNodeWithNoChildren is always fully shown
     Controller.SetActiveRange(Follower, BoldNodeListIndex, BoldNodeTextIndex);
   end
   else
@@ -673,7 +663,6 @@ begin
         if ((Follower.SubFollowerCount = 0) or
             (not Follower.SubFollowers[BoldNodeListIndex].Active)) then
         begin
-          //Only set node in "ExpandOnDemand" mode if it's not expanded already!
           Node.HasChildren := (Controller.Items[BoldNodeListIndex] as TBoldGenericListControllerCom).CanHaveSubFollowers;
           Controller.SetActiveRange(Follower, BoldNodeIconIndex, BoldNodeTextIndex);
           Follower.EnsureDisplayable;
@@ -682,7 +671,6 @@ begin
     end
     else
     begin
-      //Don't allow expansion
       Node.DeleteChildren;
       (Follower.Controller as TBoldNodeFollowerControllerCom).SetActiveRange(Follower, BoldNodeIconIndex, BoldNodeTextIndex);
       Follower.EnsureDisplayable;
@@ -754,7 +742,7 @@ procedure TBoldCustomTreeViewCom.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if Assigned(FEditFollower) and (Key > #32) and
-     not (FEditFollower.Controller as TBoldStringFollowerControllerCom).ValidateCharacter(Key, FEditFollower) then
+     not (FEditFollower.Controller as TBoldStringFollowerControllerCom).ValidateCharacter(AnsiChar(Key), FEditFollower) then
   begin
     MessageBeep(0);
     Key := #0;
@@ -800,7 +788,6 @@ var
   HitTests: THitTests;
 begin
   HitTests := GetHitTestInfoAt(x, y);
-  // skip the MouseUp if this is a drag...
   if abs(x - fMouseDownPos.x) + abs(y - fMouseDownPos.y) < Mouse.DragThreshold then
   begin
     if (Button = mbLeft) and (htOnItem in HitTests) then
@@ -829,7 +816,6 @@ begin
 
   if (Button = mbLeft) and (htOnItem in HitTests) then
     UpdateMultiSelect(fMouseDownNode, Shift, DirMouseDown);
-  // for some reason, the shiftstate is not preserved until mouse up
   fMouseDownShiftState := Shift;
   inherited;
 end;
@@ -1037,7 +1023,6 @@ var
   BaseName: String;
   Context: IBoldElementTypeInfo;
 begin
-  // We want to evaluate everything. Thus suboptimized expressions.
   Result := True;
   Context := GetContextType;
   ComponentValidator.ValidateExpressionInContext('', Context, NamePrefix + name);
@@ -1089,7 +1074,6 @@ end;
 procedure TBoldCustomTreeViewCom.UpdateMultiSelect(Node: TBoldTreeNodeCom; Shift: TShiftState; MouseDirection: TBoldMouseDirection);
   procedure RestoreLastSelectedNode;
   begin
-    // restore the selectedstate of the previous node...
     if assigned(fLastSelectedNode) and (fLastSelectedNode <> Node) then
       fLastSelectedNode.SetSelected(fLastSelectedNode.Follower.Selected);
   end;
@@ -1106,9 +1090,8 @@ begin
 
     if (MouseDirection = DirMouseDown) and Node.Follower.Selected then
     begin
-      // a MouseDown occured on a node that was already selected,
-      // make sure that the previous node is not unselected until
-      // mouseup if this is a drag.
+
+
       RestoreLastSelectedNode;
     end;
 
@@ -1262,7 +1245,6 @@ var
   TextController: TBoldStringFollowerControllerCom;
 begin
   Follower := (Node as TBoldTreeNodeCom).Follower;
-//  TextController := (Follower.Controller as TBoldNodeFollowerControllerCom).Items[2] as TBoldStringFollowerControllerCom;
   TextController := (Follower.Controller as TBoldNodeFollowerControllerCom).TextFollowerController;
   if not (cdsSelected in State) then
   begin

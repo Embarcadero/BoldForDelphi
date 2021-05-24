@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGettingStartedExpert;
 
 interface
@@ -24,7 +27,7 @@ type
     function getURLGettingStarted: string;
     function DoShowGettingStarted: Boolean;
     procedure OnTimer(Sender: TObject);
-    property URLGettingStarted: string read getURLGettingStarted;
+    property URLGettingStarted: string read getURLGettingStarted;    
   protected
     procedure Initialize; override;
   public
@@ -54,26 +57,22 @@ uses
   Toolsapi,
   ShellAPI,
   windows,
-  dialogs,
-  BoldCommonConst;
+  dialogs;
 
 procedure Register;
 begin
-{$MESSAGE HINT 'Wizard turned off'}
-(*
   RegisterPackageWizard(GettingStartedExpert);
-*)
 end;
 
 procedure InitExpert;
 begin
   try
     dmMenus := TDMExpertMenus.Create(nil);
-    BoldMenuExpert; //ensure "Bold" menu has been created
-    GettingStartedExpert := TBoldGettingStartedExpert.Create('BoldGettingStartedExpert', sGettingStarted, [], 5, 'Bold'); // do not localize
+    BoldMenuExpert;
+    GettingStartedExpert := TBoldGettingStartedExpert.Create('BoldGettingStartedExpert', 'Getting Started', [], 5, 'Bold');
     GettingStartedExpert.AddMenuItem(dmMenus.GettingStartedMenu);
   except on E: Exception do
-    showmessage(Format('InitExpert: ', [E.Message])); // do not localize
+    showmessage(Format('InitExpert: ', [E.Message]));
   end;
 end;
 
@@ -116,7 +115,7 @@ begin
   try
     BoldRegistry.RegistryMode := rmDesignTime;
     BoldRegistry.OpenKey(BoldGettingStartedRegKey);
-    BoldRegistry.WriteBool('Show', Show); // do not localize
+    BoldRegistry.WriteBool('Show', Show);
     BoldRegistry.CloseKey;
   finally
     FreeAndNil(BoldRegistry);
@@ -131,7 +130,7 @@ begin
   try
     BoldRegistry.RegistryMode :=  rmDesigntime;
     BoldRegistry.OpenKey(BoldGettingStartedRegKey);
-    Result := BoldRegistry.ReadBool('Show', True); // do not localize
+    Result := BoldRegistry.ReadBool('Show', True);
     BoldRegistry.CloseKey;
   finally
     FreeAndNil(BoldRegistry);
@@ -142,10 +141,10 @@ procedure TBoldGettingStartedExpert.DisplayGettingStarted(Sender: TObject);
 begin
   if not FileExists(UrlGettingStarted) then
   begin
-    showmessage(Format(sCouldNotFindGettingStarted, [UrlGettingStarted]));
+    showmessage(Format('Could not find Bold for Delphi''s GettingStarted document: %s', [UrlGettingStarted]));
   end
   else
-    ShellExecute(0, 'open', PChar(URLGettingStarted), '', '', SW_SHOWNORMAL); // do not localize
+    ShellExecute(0, 'open', PChar(URLGettingStarted), '', '', SW_SHOWNORMAL);
 end;
 
 procedure TBoldGettingStartedExpert.OnTimer(Sender: TObject);
@@ -174,14 +173,9 @@ begin
   inherited;
 end;
 
-{$MESSAGE HINT 'Getting started expert disabled'}
-(*****
-// Skip the getting started expert
 initialization
   InitExpert;
 
 finalization
   DoneExpert;
-***)
-
 end.

@@ -1,9 +1,9 @@
 object BoldLogForm: TBoldLogForm
   Left = 477
   Top = 234
-  Width = 469
-  Height = 347
   Caption = 'Bold'
+  ClientHeight = 289
+  ClientWidth = 453
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -38,15 +38,13 @@ object BoldLogForm: TBoldLogForm
   Menu = MainMenu1
   OldCreateOrder = True
   Position = poScreenCenter
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Log: TRichEdit
     Left = 0
     Top = 0
-    Width = 461
-    Height = 281
+    Width = 453
+    Height = 269
     Align = alClient
     ReadOnly = True
     ScrollBars = ssBoth
@@ -54,8 +52,8 @@ object BoldLogForm: TBoldLogForm
   end
   object Panel1: TPanel
     Left = 0
-    Top = 281
-    Width = 461
+    Top = 269
+    Width = 453
     Height = 20
     Align = alBottom
     BevelOuter = bvNone
@@ -63,7 +61,7 @@ object BoldLogForm: TBoldLogForm
     object ProgressBar1: TProgressBar
       Left = 0
       Top = 0
-      Width = 461
+      Width = 453
       Height = 20
       Align = alClient
       Step = 1
@@ -108,6 +106,7 @@ object BoldLogForm: TBoldLogForm
       end
       object mnuShowAll: TMenuItem
         Caption = 'Show all log'
+        Visible = False
         OnClick = mnuShowAllClick
       end
     end
@@ -116,7 +115,7 @@ object BoldLogForm: TBoldLogForm
     Left = 44
     Top = 8
     Bitmap = {
-      494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101030004000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

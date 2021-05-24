@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractListHandleCom;
 
 interface
@@ -50,7 +53,6 @@ implementation
 
 uses
   SysUtils,
-  BoldComHandlesConst,
   BoldDefs;
 
 {-- TBoldAbstractListHandleCom ------------------------------------------------}
@@ -117,7 +119,7 @@ begin
   if GetHasNext then
     CurrentIndex := CurrentIndex + 1
   else
-    raise EBold.Create(sNoNextElement);
+    raise EBold.Create('No next element');
 end;
 
 procedure TBoldAbstractListHandleCom.Prior;
@@ -125,13 +127,13 @@ begin
   if GetHasPrior then
     CurrentIndex := CurrentIndex - 1
   else
-    raise EBold.Create(sNoPrevElement);
+    raise EBold.Create('No previous element');
 end;
 
 procedure TBoldAbstractListHandleCom.RemoveCurrentElement;
 begin
   if CurrentIndex = -1 then
-    raise EBold.Create(sNoCurrentElement)
+    raise EBold.Create('No current element')
   else
     if HasHandleOnServer then
       List.RemoveByIndex(CurrentIndex);
@@ -153,5 +155,7 @@ begin
   else
     result := nil;
 end;
+
+initialization
 
 end.

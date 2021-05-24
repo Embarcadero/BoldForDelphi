@@ -1,5 +1,7 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSystemOldValuehandler;
-// Implementation of Old values in the form used for the optimistic locking support.
 
 interface
 
@@ -31,7 +33,9 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
+
 
 { TBoldOldValueHandler }
 
@@ -54,20 +58,29 @@ var
   ObjectIdList: TBoldObjectIdList;
   ObjectContents: TBoldFreeStandingObjectContents;
   value: TBoldFreeStandingValue;
-
 begin
-  result := true;
+  result := fOldValues.IdCount = 0;
+  if result then
+    exit;
   ObjectIdList := TBoldObjectIdList.Create;
-  fOldValues.AllObjectIds(objectIdList, false);
-  for i := 0 to ObjectIdList.Count-1 do
-  begin
-    ObjectContents := fOldValues.GetFSObjectContentsByObjectId(ObjectIdList[i]);
-    if assigned(objectContents) then
-      for m := 0 to ObjectContents.MemberCount do
-      begin
-        value := ObjectContents.FSValueByIndex[m];
-        result := result and not assigned(value);
-      end;
+  try
+    fOldValues.AllObjectIds(objectIdList, false); // do we really need ALL objects ?
+    for i := 0 to ObjectIdList.Count-1 do
+    begin
+      ObjectContents := fOldValues.GetFSObjectContentsByObjectId(ObjectIdList[i]);
+      if assigned(objectContents) then
+        for m := 0 to ObjectContents.MemberCount do
+        begin
+          value := ObjectContents.FSValueByIndex[m];
+          if assigned(value) then
+          begin
+            result := false;
+            exit;
+          end;
+        end;
+    end;
+  finally
+    ObjectIdList.Free;
   end;
 end;
 
@@ -81,12 +94,17 @@ procedure TBoldOldValueHandler.MemberPersistenceStatePreChange(
 var
   aFSObjectContent: TBoldFreeStandingObjectContents;
 begin
-  // note! multilinks can have an oldvalue even if they are current. If they are invalidated, we drop the old value
+  if fOldValues.IsEmpty then
+    exit;
   if (BoldMember.BoldPersistenceState in [bvpsModified, bvpsCurrent]) and (NewState in [bvpsCurrent, bvpsInvalid]) then
   begin
     aFSObjectContent := fOldValues.GetFSObjectContentsByObjectId(BoldMember.OwningObject.BoldObjectLocator.BoldObjectID);
     if assigned(aFSObjectContent) then
+    begin
       aFSObjectContent.RemoveMemberByIndex(BoldMember.BoldMemberRTInfo.Index);
+      if aFSObjectContent.IsEmpty then
+        fOldValues.RemoveFSObjectContents(aFSObjectContent);
+    end;
   end;
 end;
 
@@ -123,6 +141,7 @@ var
   value: TBoldFreeStandingValue;
   Id: TBoldObjectId;
   Member: TBoldMember;
+  bEqual: Boolean;
 
   function IdListPairEqual(IdList: TBFSObjectIdListrefPair; ObjectList: TBoldObjectList): Boolean;
   var
@@ -152,6 +171,14 @@ var
       result := not assigned(ObjectRef.Locator)
   end;
 
+  function IdEqual(IdRef: TBFSObjectIdRef; ObjectRef: TBoldObjectReference): Boolean;
+  begin
+    if Assigned(IdRef.Id) then
+      result := assigned(ObjectRef.Locator) and IdRef.Id.IsEqual[ObjectRef.Locator.BoldObjectID]
+    else
+      result := not assigned(ObjectRef.Locator)
+  end;
+
 begin
   ObjectIdList := TBoldObjectIdList.Create;
   try
@@ -173,24 +200,56 @@ begin
             value := ObjectContents.FSValueByIndex[m];
             if assigned(value) then
             begin
-              if not Locator.BoldObject.BoldMemberAssigned[m] then
-                ObjectContents.RemoveMemberByIndex(m)
-              else
-              begin
+              if not Locator.BoldObject.BoldMemberAssigned[m] then begin
+                ObjectContents.RemoveMemberByIndex(m);
+              end else begin
                 Member := Locator.BoldObject.BoldMembers[m];
-                if Member.BoldPersistenceState = bvpsInvalid then
-                  ObjectContents.RemoveMemberByIndex(m) // invalidate should have handled this case already...
-                else if (value is TBFSObjectIdListrefPair) and
-                   IdListPairEqual(value as TBFSObjectIdListRefPair, Member as TBoldObjectList) then
-                    ObjectContents.RemoveMemberByIndex(m)
-                else if (value is TBFSObjectIdListRef) and
-                   IdListEqual(value as TBFSObjectIdListRef, Member as TBoldObjectList) then
-                    ObjectContents.RemoveMemberByIndex(m)
-                else if (value is TBFSObjectIdRefPair) and
-                   IdPairEqual(value as TBFSObjectIdRefPair, Member as TBoldObjectReference) then
-                    ObjectContents.RemoveMemberByIndex(m)
+                if Member.BoldPersistenceState = bvpsInvalid then begin
+                  ObjectContents.RemoveMemberByIndex(m); // invalidate should have handled this case already...
+                end else if (value is TBFSObjectIdListrefPair) then begin
+                  if IdListPairEqual(TBFSObjectIdListRefPair(value),
+                                     Member as TBoldObjectList) then
+                  begin
+                    ObjectContents.RemoveMemberByIndex(m);
+                  end;
+                end else if (value is TBFSObjectIdListRef) then begin
+                  if IdListEqual(TBFSObjectIdListRef(value),
+                                 Member as TBoldObjectList) then
+                  begin
+                    ObjectContents.RemoveMemberByIndex(m);
+                  end;
+                end else if (value is TBFSObjectIdRefPair) then begin
+                  if IdPairEqual(TBFSObjectIdRefPair(value),
+                                 Member as TBoldObjectReference) then
+                  begin
+                    ObjectContents.RemoveMemberByIndex(m);
+                  end;
+                end else if (value is TBFSObjectIdRef) then begin
+                  if IdEqual(TBFSObjectIdRef(value),
+                             Member as TBoldObjectReference) then
+                  begin
+                    ObjectContents.RemoveMemberByIndex(m);
+                  end;
+                end else if (Member is TBoldAttribute) and
+                            Member.IsEqualToValue(value) then
+                begin
+                  ObjectContents.RemoveMemberByIndex(m);
+                end;
               end;
             end;
+          end;
+
+          bEqual := True;
+          // Is there no longer any difference, OldValue can be completely removed
+          for m := 0 to ObjectContents.MemberCount do begin
+            value := ObjectContents.FSValueByIndex[m];
+            if Assigned(value) then begin
+              bEqual := False;
+              Break;
+            end;
+          end;
+          if bEqual then begin
+            fOldValues.RemoveFSObjectContentsByObjectId(Id);
           end;
         end;
       end;
@@ -198,6 +257,10 @@ begin
   finally
     ObjectIdList.Free;
   end;
+
+  fOldValues.ClearWhenObjectContentsEmpty;
 end;
+
+initialization
 
 end.

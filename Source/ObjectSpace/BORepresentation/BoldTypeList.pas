@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeList;
 
 interface
@@ -7,7 +10,8 @@ uses
   BoldSubscription,
   BoldSystem,
   BoldDomainElement,
-  BoldElements;
+  BoldElements,
+  BoldDefs;
 
 type
   { forward declarations }
@@ -24,12 +28,13 @@ type
     function GetElement(index: Integer): TBoldElement; override;
     function IncludesElement(Item: TBoldElement): Boolean; override;
     function IndexOfElement(Item: TBoldElement): Integer; override;
-    procedure InitializeMember(AOwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo); override;
+    procedure Initialize; override;
     procedure InsertElement(index: Integer; Element: TBoldElement); override;
     procedure SetElement(index: Integer; Value: TBoldElement); override;
     function InternalAddNew: TBoldElement; override;
-    function ProxyClass: TBoldMember_ProxyClass; override;
+    function GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
     procedure InternalClear; override;
+    function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
   public
     procedure Assign(Source: TBoldElement); override;
     procedure DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate); override;
@@ -48,10 +53,8 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
   BoldMetaElementList,
-  BoldSystemRT,
-  BoldCoreConsts;
+  BoldSystemRT;
 
 type
   { TBoldTypeListController }
@@ -65,7 +68,7 @@ type
     property List: TBoldElementTypeInfoList read fList;
     function GetStreamName: string; override;
   public
-    constructor Create(OwningList: TBoldList);
+    constructor Create(OwningList: TBoldList); override;
     destructor Destroy; override;
     procedure AddElement(Element: TBoldElement); override;
     function GetElement(index: Integer): TBoldElement; override;
@@ -81,13 +84,12 @@ type
 
 procedure TBoldTypeList.AddElement(Element: TBoldElement);
 begin
-  if (ListController.IndexOfElement(element) = -1) or DuplicateControl then
-    listcontroller.AddElement(element);
+  if (DuplicateMode = bldmAllow) or (ListController.IndexOfElement(element) = -1) or DuplicateControl then
+    ListController.AddElement(element);
 end;
 
 procedure TBoldTypeList.AllocateData;
 begin
-  // do nothing
 end;
 
 procedure TBoldTypeList.Assign(Source: TBoldElement);
@@ -105,7 +107,6 @@ end;
 
 procedure TBoldTypeList.FreeData;
 begin
-  // do nothing
 end;
 
 function TBoldTypeList.GetCount: Integer;
@@ -118,6 +119,16 @@ begin
   result := ListController.GetElement(index);
 end;
 
+function TBoldTypeList.GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
+begin
+  raise EBold.CreateFmt('%s.GetProxy: Not available in this class.', [classname])
+end;
+
+function TBoldTypeList.GetStringRepresentation(Representation: TBoldRepresentation): string;
+begin
+  result := IntToStr(Count);
+end;
+
 function TBoldTypeList.IncludesElement(Item: TBoldElement): Boolean;
 begin
   result := ListController.IncludesElement(item);
@@ -128,7 +139,7 @@ begin
   result := ListController.IndexOfElement(item);
 end;
 
-procedure TBoldTypeList.InitializeMember(AOwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo);
+procedure TBoldTypeList.Initialize;
 begin
   ListController := TBoldTypeListController.Create(self);
   DuplicateMode := bldmAllow;
@@ -142,12 +153,12 @@ end;
 
 procedure TBoldTypeList.InsertNew(index: Integer);
 begin
-  raise EBold.CreateFmt(sCannotInsertTypes, [classname])
+  raise EBold.CreateFmt('%s.InsertNew: Types can not be inserted like this', [classname])
 end;
 
 function TBoldTypeList.InternalAddNew: TBoldElement;
 begin
-  raise EBold.CreateFmt(sCannotAddTypes, [classname])
+  raise EBold.CreateFmt('%s.InternalAddNew: Types can not be added like this', [classname])
 end;
 
 procedure TBoldTypeList.InternalClear;
@@ -163,10 +174,12 @@ begin
   ListController.Move(CurIndex, NewIndex);
 end;
 
+(*
 function TBoldTypeList.ProxyClass: TBoldMember_ProxyClass;
 begin
-  raise EBold.CreateFmt(sAbstractError_InterfaceNotSupported, [ClassName]);
+  raise EBold.CreateFmt('Abstract error: %s.ProxyClass (IBoldValue not supported!)', [ClassName]);
 end;
+*)
 
 procedure TBoldTypeList.RemoveByIndex(index: Integer);
 begin
@@ -185,7 +198,7 @@ begin
   if element is TBoldElementTypeInfo then
     list.Add(element as TBoldElementTypeInfo)
   else
-    raise EBold.CreateFmt(sCannotAddElement, [element.ClassName]);
+    raise EBold.CreateFmt('Can not add element: %s', [element.ClassName]);
 end;
 
 constructor TBoldTypeListController.Create(OwningList: TBoldList);
@@ -196,7 +209,7 @@ end;
 
 function TBoldTypeListController.CreateNew: TBoldElement;
 begin
-  raise EBold.Create(sCannotCreateNewInTypeLists);
+  raise EBold.Create('Can not create new in Typelists');
 end;
 
 destructor TBoldTypeListController.Destroy;
@@ -223,7 +236,7 @@ end;
 function TBoldTypeListController.GetStreamName: string;
 begin
   result := '';
-  raise EBold.create(sNotImplemented);
+  raise EBold.create('not implemented');
 end;
 
 function TBoldTypeListController.IncludesElement(Item: TBoldElement): Boolean;
@@ -241,6 +254,7 @@ begin
   list.Insert(index, element);
 end;
 
+
 procedure TBoldTypeListController.Move(CurrentIndex, NewIndex: Integer);
 begin
   list.Move(CurrentIndex, NewIndex);
@@ -253,7 +267,7 @@ end;
 
 procedure TBoldTypeListController.SetElement(index: Integer; Value: TBoldElement);
 begin
-  raise Ebold.Create(sCannotSetElementsInTypeLists);
+  raise Ebold.Create('Can not set elements in TypeLists');
 end;
 
 { TBoldTypeListFactory }
@@ -264,4 +278,5 @@ begin
     result := TBoldTypeList.CreateWithTypeInfo(ListTypeInfoByElement[TypeTypeInfo]);
 end;
 
+initialization
 end.

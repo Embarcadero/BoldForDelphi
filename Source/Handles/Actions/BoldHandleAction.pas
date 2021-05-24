@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHandleAction;
 
 interface
@@ -35,7 +38,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 const
   breFreeHandle = 44;
@@ -98,5 +102,6 @@ begin
   EnableAction := Assigned(BoldElementHandle);
 end;
 
-end.
+initialization
 
+end.

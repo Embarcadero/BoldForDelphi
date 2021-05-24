@@ -1,6 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMMLinkreg;
 
-interface
+interface                                                       
 
 procedure Register;
 
@@ -12,15 +15,14 @@ uses
   TypInfo,
   SysUtils,
   BoldIDESupport,
-  BoldIDEConsts,
   BoldUtils,
   BoldDefs,
+  BoldGuard,
+  BoldIDEConsts,
   BoldAbstractPropertyEditors,
   BoldPropertyEditors,
   BoldAbstractModel,
   BoldUMLMMLink;
-
-{$R *.res}
 
 type
   { forward declarations }
@@ -36,7 +38,7 @@ type
 { TBoldUMLMMFileNameProperty }
 function TBoldUMLMMFileNameProperty.FileFilter: string;
 begin
-  Result := Format('%s (*%s)|*%1:s', [MM_LINKDESC, MM_LINKEXTENSION]); //do not localize
+  Result := Format('%s (*%s)|*%1:s', [MM_LINKDESC, MM_LINKEXTENSION]);
 end;
 
 function TBoldUMLMMFileNameProperty.IsValid: boolean;
@@ -61,13 +63,12 @@ end;
 
 procedure RegisterEditors;
 begin
-  RegisterPropertyEditor(TypeInfo(String), TBoldUMLMMLink, 'Filename', TBoldUMLMMFileNameProperty); //do not localize
-  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldUMLMMLink, 'BoldModel', TBoldComponentPropertyIndicateMissing); //do not localize
+  RegisterPropertyEditor(TypeInfo(String), TBoldUMLMMLink, 'Filename', TBoldUMLMMFileNameProperty);
+  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldUMLMMLink, 'BoldModel', TBoldComponentPropertyIndicateMissing);
 end;
 
 procedure Register;
 begin
-  RemovePackageFromDisabledPackagesRegistry(format('BoldMMLink%s', [LIBSUFFIX])); // do not localize
   RegisterComponentsOnPalette;
   RegisterEditors;
 end;

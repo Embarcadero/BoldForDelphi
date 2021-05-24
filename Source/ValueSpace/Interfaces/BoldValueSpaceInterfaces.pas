@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldValueSpaceInterfaces;
 
 interface
@@ -20,21 +23,25 @@ type
     ['{A90FA286-018A-4032-8392-72EA9213F3F5}']
     procedure AllObjectIds(resultList: TBoldObjectIdList; OnlyLoaded: Boolean);
     procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList);
-    procedure ApplyValueSpace(ValueSpace: IBoldValueSpace; IgnorePersistenceState: Boolean);
+    procedure ApplyValueSpace(const ValueSpace: IBoldValueSpace; IgnorePersistenceState: Boolean);
     procedure EnsureObjectContents(ObjectId: TBoldObjectId);
     procedure EnsureObjectId(ObjectId: TBoldObjectId);
     procedure ExactifyIDs(TranslationList: TBoldIdTranslationList);
     function GetHasContentsForId(ObjectId: TBoldObjectId): boolean;
     function GetObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents;
     function GetEnsuredObjectContentsByObjectId(ObjectId: TBoldObjectId): IBoldObjectContents;
+    function GetEnsuredObjectContentsByObjectIdAndCheckIfCreated(ObjectId: TBoldObjectId; out aBoldObjectContents: IBoldObjectContents): boolean;
     property HasContentsForId[ObjectId: TBoldObjectId]: boolean read GetHasContentsForId;
     property ObjectContentsByObjectId[ObjectId: TBoldObjectId]: IBoldObjectContents read GetObjectContentsByObjectId;
     property EnsuredObjectContentsByObjectId[ObjectId: TBoldObjectId]: IBoldObjectContents read GetEnsuredObjectContentsByObjectId;
+    function IdCount: integer;
+    function IsEmpty: boolean;
    end;
 
   IBoldObjectContents = interface
     ['{67C57AC5-621B-11D2-AFF7-006008F62CFF}']
     procedure EnsureMember(MemberId: TBoldMemberId; const ContentName: string);
+    function EnsureMemberAndGetValueByIndex(MemberIndex: Integer; const ContentName: string): IBoldValue;
     function GetBoldExistenceState: TBoldExistenceState;
     function GetBoldMemberCount: Integer;
     function GetBoldPersistenceState: TBoldValuePersistenceState;
@@ -63,22 +70,23 @@ type
    end;
 
 
-procedure BoldApplyPartialValueSpace(DestVS, SourceVS: IBoldValueSpace; ObjectidList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList;
+procedure BoldApplyPartialValueSpace(const DestVS, SourceVS: IBoldValueSpace; ObjectidList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList;
   ForceCurrent: Boolean; PersistenceStatesToIgnore: TBoldValuePersistenceStateSet = [bvpsInvalid]);
+
 
 implementation
 
 uses
   SysUtils,
   BoldGuard,
-  BoldUtils;
+  BoldRev;
 
-procedure BoldApplyPartialValueSpace(DestVS, SourceVS: IBoldValueSpace; ObjectidList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList; ForceCurrent: Boolean; PersistenceStatesToIgnore: TBoldValuePersistenceStateSet = [bvpsInvalid]);
+procedure BoldApplyPartialValueSpace(const DestVS, SourceVS: IBoldValueSpace; ObjectidList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList; ForceCurrent: Boolean; PersistenceStatesToIgnore: TBoldValuePersistenceStateSet = [bvpsInvalid]);
 var
   O, M: integer;
   SourceObjectContents,
   DestObjectContents: IBoldObjectContents;
-  MemberId, OwnMemberId: TBoldMemberId;
+  MemberId: TBoldMemberId;
   ObjectId: TBoldObjectId;
   SourceValue,
   DestValue: IBoldValue;
@@ -86,7 +94,7 @@ var
   ListToCopy: TBoldObjectIdList;
   G: IBoldGuard;
 begin
-  G := TBoldGuard.Create(OwnIdList, OwnmemberId);
+  G := TBoldGuard.Create(OwnIdList);
   if Assigned(ObjectIdList) then
     ListToCopy := ObjectIdList
   else
@@ -116,8 +124,7 @@ begin
           SourceValue := SourceObjectContents.ValueByMemberId[MemberId];
           if assigned(SourceValue) and not (SourceValue.BoldPersistenceState in PersistenceStatesToIgnore) then
           begin
-            DestObjectContents.EnsureMember(MemberId, SourceValue.ContentName);;
-            DestValue := DestObjectContents.ValueByMemberId[MemberId];
+            DestValue := DestObjectContents.EnsureMemberAndGetValueByIndex(MemberId.MemberIndex, SourceValue.ContentName);;
             DestValue.AssignContent(SourceValue);
             if ForceCurrent then
               DestValue.BoldPersistenceState := bvpsCurrent;
@@ -131,18 +138,17 @@ begin
           SourceValue := SourceObjectContents.ValueByIndex[M];
           if assigned(SourceValue) and not (SourceValue.BoldPersistenceState in PersistenceStatesToIgnore) then
           begin
-            OwnMemberId := TBoldmemberId.Create(M);
-            DestObjectContents.EnsureMember(OwnMemberId, SourceValue.ContentName);
-            DestValue := DestObjectContents.ValueByMemberId[OwnMemberId];
+            DestValue := DestObjectContents.EnsureMemberAndGetValueByIndex(M, SourceValue.ContentName);
             DestValue.AssignContent(SourceValue);
             if ForceCurrent then
               DestValue.BoldPersistenceState := bvpsCurrent;
-            FreeAndNil(OwnmemberId);
           end;
         end;
       end;
     end;
   end;
 end;
+
+initialization
 
 end.

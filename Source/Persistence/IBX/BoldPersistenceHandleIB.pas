@@ -1,10 +1,13 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleIB;
 
 interface
 
 uses
   Classes,
-  IBDataBase,
+  IBX.IBDatabase,
   BoldDBInterfaces,
   BoldIBInterfaces,
   BoldSQLDatabaseConfig,
@@ -37,8 +40,8 @@ type
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); override;
     {$ENDIF}
   public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property DatabaseName: String  read fDataBaseName write SetDatabaseName;
@@ -87,8 +90,8 @@ begin
     begin
       fOwnDataBase := TIBDataBase.Create(nil);
       fOwnDataBase.DatabaseName := DatabaseName;
-      fOwnDataBase.Params.Values['USER_NAME'] := Username; // do not localize
-      fOwnDataBase.Params.Values['PASSWORD'] := Password; // do not localize
+      fOwnDataBase.Params.Values['USER_NAME'] := Username;
+      fOwnDataBase.Params.Values['PASSWORD'] := Password;
       if PassWord <> '' then
         fOwnDataBase.LoginPrompt := false;
     end;
@@ -115,7 +118,7 @@ procedure TBoldPersistenceHandleIB.SetIBDatabase(const Value: TIBDataBase);
 begin
   if fIBDataBase <> Value then
   begin
-    CheckInactive('SetDataBase'); // do not localize
+    CheckInactive('SetDataBase');
     if assigned(fOwnDataBase) then
     begin
       FreeAndNil(FOwnDataBase);
@@ -140,26 +143,25 @@ procedure TBoldPersistenceHandleIB.SetPassword(const Value: string);
 begin
   inherited;
   if assigned(fOwnDataBase) then
-    fOwnDataBase.Params.Values['PASSWORD'] := Password; // do not localize
+    fOwnDataBase.Params.Values['PASSWORD'] := Password;
 end;
 
 procedure TBoldPersistenceHandleIB.SetUserName(const Value: string);
 begin
   inherited;
   if assigned(fOwnDataBase) then
-    fOwnDataBase.Params.Values['USER_NAME'] := UserName; // do not localize
+    fOwnDataBase.Params.Values['USER_NAME'] := UserName;
 end;
 
 procedure TBoldPersistenceHandleIB.DefineProperties(Filer: TFiler);
 begin
   inherited DefineProperties(Filer);
-  // Database changed names to DatabaseName after 2.5
-  Filer.DefineProperty('Database', ReadDatabase, nil, True); // do not localize
+  Filer.DefineProperty('Database', ReadDatabase, nil, True);
 end;
 
 procedure TBoldPersistenceHandleIB.ReadDatabase(Reader: TReader);
 begin
-  DatabaseName := Reader.ReadString;
+  DatabaseName := Reader.ReadString;  
 end;
 
 procedure TBoldPersistenceHandleIB.SetDataBaseEngine(const Value: TBoldDataBaseEngine);
@@ -181,9 +183,9 @@ begin
   if not assigned(Target.DatabaseAdapter) then
   begin
     Target.DatabaseAdapter := tBoldDatabaseAdapterIB.Create(Target.Owner);
-    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterIB'); // do not localize
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterIB');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Target.DatabaseAdapter.DesignInfo          := DesInfo;
     showmessage('Created a new DatabaseAdapterIB');
   end
@@ -197,19 +199,21 @@ begin
   if not assigned(Adapter.Database) then
   begin
     Adapter.DataBase := TIBDatabase.Create(Target.owner);
-    Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'IBDatabase'); // do not localize
+    Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'IBDatabase');
     showmessage('Created a new IBDatabase');
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Adapter.DataBase.DesignInfo          := DesInfo;
   end;
-  Adapter.Database.Params.Values['PASSWORD'] := Password; // do not localize
-  Adapter.Database.Params.Values['USER_NAME'] := Username; // do not localize
-  if Adapter.Database.Params.Values['PASSWORD'] <> '' then // do not localize
+  Adapter.Database.Params.Values['PASSWORD'] := Password;
+  Adapter.Database.Params.Values['USER_NAME'] := Username;
+  if Adapter.Database.Params.Values['PASSWORD'] <> '' then
     Adapter.Database.LoginPrompt := false;
 
   if not assigned(IBDatabase) then
     Adapter.DataBase.DatabaseName := DatabaseName;
 end;
+
+initialization
 
 end.

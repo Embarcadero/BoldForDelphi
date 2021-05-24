@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMemberTypeDictionary;
 
 interface
@@ -13,15 +16,17 @@ type
   {---TBoldMemberTypeList---}
   TBoldMemberTypeList = class(TBoldIndexableList)
   private
-    function GetDescriptorByClass(BoldMemberClass: TClass): TBoldMemberTypeDescriptor;
-    function GetMemberTypeDescriptors(index: integer): TBoldMemberTypeDescriptor;
-    function GetDescriptorByDelphiName(DelphiName: string): TBoldMemberTypeDescriptor;
+    class var IX_MemberName: integer;
+    class var IX_MemberClass: integer;
+    function GetDescriptorByClass(BoldMemberClass: TClass): TBoldMemberTypeDescriptor; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMemberTypeDescriptors(index: integer): TBoldMemberTypeDescriptor; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDescriptorByDelphiName(const DelphiName: string): TBoldMemberTypeDescriptor; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     procedure AddMemberTypeDescriptor(MemberClass: TClass;
                                       const AbstractionLevel: TBoldAbstractionLevel);
     procedure RemoveDescriptorByClass(BoldMemberClass: TClass);
-    property DescriptorByDelphiName[DelphiName: string]: TBoldMemberTypeDescriptor read GetDescriptorByDelphiName;
+    property DescriptorByDelphiName[const DelphiName: string]: TBoldMemberTypeDescriptor read GetDescriptorByDelphiName;
     property DescriptorByClass[BoldMemberClass: TClass]: TBoldMemberTypeDescriptor read GetDescriptorByClass;
     property Descriptors[Index: integer]: TBoldMemberTypeDescriptor read GetMemberTypeDescriptors;
   end;
@@ -51,10 +56,6 @@ uses
 
 var
   G_BoldMemberTypes: TBoldMemberTypeList;
-
-var
-  IX_MemberName: integer = -1;
-  IX_MemberClass: integer = -1;
 
 type
 {---TMemberNameIndex---}
@@ -104,14 +105,14 @@ begin
   SetIndexVariable(IX_MemberClass, AddIndex(TMemberClassIndex.Create));
 end;
 
-function TBoldMemberTypeList.GetDescriptorByDelphiName(DelphiName: string): TBoldMemberTypeDescriptor;
+function TBoldMemberTypeList.GetDescriptorByDelphiName(const DelphiName: string): TBoldMemberTypeDescriptor;
 begin
-  Result := TBoldMemberTypeDescriptor(TMemberNameIndex(Indexes[IX_MemberName]).FindByString(DelphiName))
+  Result := TBoldMemberTypeDescriptor(TBoldStringHashIndex(Indexes[IX_MemberName]).FindByString(DelphiName))
 end;
 
 function TBoldMemberTypeList.GetDescriptorByClass(BoldMemberClass: TClass): TBoldMemberTypeDescriptor;
 begin
-  Result := TBoldMemberTypeDescriptor(TMemberClassIndex(Indexes[IX_MemberClass]).FindByClass(BoldMemberClass))
+  Result := TBoldMemberTypeDescriptor(TBoldClassHashIndex(Indexes[IX_MemberClass]).FindByClass(BoldMemberClass))
 end;
 
 procedure TBoldMemberTypeList.AddMemberTypeDescriptor(MemberClass: TClass;
@@ -139,6 +140,8 @@ begin
 end;
 
 initialization
+  TBoldMemberTypeList.IX_MemberName := -1;
+  TBoldMemberTypeList.IX_MemberClass := -1;
 
 finalization
   FreeAndNil(G_BoldMemberTypes);

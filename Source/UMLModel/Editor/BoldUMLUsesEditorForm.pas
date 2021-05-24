@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLUsesEditorForm;
 
 interface
@@ -52,7 +55,6 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldRev,
   BoldQueue;
 
 {$R *.dfm}

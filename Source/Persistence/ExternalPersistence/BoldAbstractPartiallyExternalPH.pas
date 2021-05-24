@@ -1,7 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractPartiallyExternalPH;
 
 interface
-
 uses
   BoldId,
   BoldMeta,
@@ -36,9 +38,7 @@ uses
   BoldStringId,
   BoldDefaultId,
   BoldDefs,
-  BoldGuard,
-  BoldPersistenceHandlePTWithModel,
-  ExPeConsts;
+  BoldGuard;
 
 { TBoldAbstractpartiallyExternalPH }
 
@@ -78,7 +78,7 @@ begin
   Guard := TBoldGuard.Create(ExternalKeys, InternalIds);
   MoldClass := BoldModel.MoldModel.Classes.ItemsByExpressionName[ExpressionName];
   if not assigned(MoldClass) then
-    raise EBold.CreateFmt(sInvalidClassName, [classname, expressionname]);
+    raise EBold.CreateFmt('%s.GetObjectIdByExternalKey: Invalid class name (%s)', [classname, expressionname]);
   ExternalKeys := TBoldObjectIdLIst.Create;
   InternalIds := TBoldObjectIdLIst.Create;
   ExternalKeys.Add(ExternalKey);
@@ -127,4 +127,5 @@ begin
   PersistenceController.SetSingleLink(SingleLink, ExternalKey, MoldClassOfOtherEnd);
 end;
 
+initialization
 end.

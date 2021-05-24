@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDBX;
 
 interface
@@ -24,7 +27,7 @@ type
     procedure SetPassword(const Value: string); override;
     procedure SetUserName(const Value: string); override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property SQLConnection: TSQLConnection read fSQLConnection write SetSQLConnection;
@@ -33,7 +36,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldPersistenceHandleDBX }
 
@@ -75,11 +79,13 @@ end;
 procedure TBoldPersistenceHandleDBX.SetPassword(const Value: string);
 begin
   raise Exception.Create('Can not set password directly on PersistenceHandleDBX, set it on the SQLConnection');
-end;
+end;   
 
 procedure TBoldPersistenceHandleDBX.SetUserName(const Value: string);
 begin
   raise Exception.Create('Can not set username directly on PersistenceHandleDBX, set it on the SQLConnection');
 end;
+
+initialization
 
 end.

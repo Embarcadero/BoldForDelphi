@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListenerCOM;
 
 interface
@@ -24,7 +27,7 @@ type
   TBoldExtendLeaseResult = (elrExtended, elrFailed, elrFailedExpired, elrDenied, elrNotRegistered);
   TBoldExtendLeaseFailureEvent = procedure(res: TBoldExtendLeaseResult; const Msg: string) of object;
 
-  TBoldMessageEvent = function(aMessage: string): Boolean of object;
+  TBoldMessageEvent = function(const aMessage: string): Boolean of object;
 
   { TBoldListenerCOM }
   TBoldListenerCOM = class(TComObject, IBoldListener, IBoldListenerAdmin)
@@ -99,8 +102,9 @@ uses
   SysUtils,
   Variants,
   BoldPersistenceController,
-  Activex,
-  Windows;
+  Activex,  
+  Windows,
+  BoldRev;
 
 { TBoldListenerCOM }
 
@@ -116,7 +120,6 @@ begin
   self.fPollingInterval := PollingInterval;
   self.fLeaseDuration := LeaseDuration;
   Self.fExtendLeaseAfter := ExtendLeaseAfter;
-  // It is important that the leaseduration and extendLeaseAfter is set up before the AutoExtendLease to get the correct interval
   self.AutoExtendLease := AutoExtendLease;
   self.fClientIdentifierString := ClientIdentifierString;
   Registered := false;
@@ -236,12 +239,9 @@ begin
         fTimer.Interval := DefaultExtendLeaseInterval;
       end;
       elrFailed: begin
-        // wait 20% of the remaining time
         fTimer.Interval := round(LeaseTimeLeft * 0.2);
-        // but no more than half the usual time
         if fTimer.Interval > DefaultExtendLeaseInterval div 2 then
           fTimer.Interval := DefaultExtendLeaseInterval div 2;
-        // and no less than one second
         if fTimer.Interval < 1000 then
           fTimer.Interval := 1000;
       end;
@@ -263,7 +263,7 @@ begin
       if extended then
         result := elrExtended
       else
-        result := elrDenied;
+        result := elrDenied;  
   except
     on E: Exception do
     begin
@@ -277,7 +277,6 @@ begin
 
   if result in [elrDenied, elrFailedExpired] then
   begin
-    // in the future, when the propagator allows reconnect after timeout, this code should go away...
     if Assigned(fPropagator) then
       fPropagator._Release;
     Registered := false;
@@ -355,7 +354,7 @@ begin
   MSecs := TimeStampToMSecs(DateTimeToTimeStamp(now));
   MSecs := MSecs + RemainDisconnected;
   fConnectAllowed := TimeStampToDateTime(MSecsToTimeStamp(MSecs));
-  Queue.Enqueue(format('DISCONNECT:%d:%s', [RemainDisconnected, aMessage])); //do not localize
+  Queue.Enqueue(format('DISCONNECT:%d:%s', [RemainDisconnected, aMessage]));
   if Assigned(QueueNotEmptyNotifyEvent) then
     QueueNotEmptyNotifyEvent(Self);
 end;
@@ -369,7 +368,8 @@ end;
 
 constructor TBoldListenerCOMFactory.Create(ComServer: TComServerObject);
 begin
-  inherited Create(ComServer, TBoldListenerCOM, CLASS_BoldListener, 'TBoldListenerCOM', 'BoldListenerCOM', ciInternal); //do not localize
+  inherited Create(ComServer, TBoldListenerCOM, CLASS_BoldListener, 'TBoldListenerCOM', 'BoldListenerCOM', ciInternal);
 end;
 
+initialization
 end.

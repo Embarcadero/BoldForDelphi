@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDragObject;
 
 interface
@@ -201,7 +204,7 @@ function GetControlAccepter(Target: TWinControl): TWinControl;
 begin
   while assigned(Target) and (not (csAcceptsControls in Target.ControlStyle)) do
     Target := Target.Parent;
-  Result := Target;
+  Result := Target;  
 end;
 
 
@@ -234,7 +237,6 @@ begin
     (BoldGUIHandler.DraggedObjects[0] is TUMLModelElement);
   if Result then
     begin
-      // Allow dropping on designer form if we have a matching provider.
       UMLElement := BoldGUIHandler.DraggedObjects[0] as TUMLModelElement;
       Result := ControlProviderList.MatchingProvider(UMLElement) <> nil;
     end;
@@ -276,12 +278,9 @@ begin
      (BoldGUIHandler.DraggedObjects.Count > 0) and
      (BoldGUIHandler.DraggedObjects[0] is TUMLModelElement) then
   begin
-    // At this point any component can be created on the form.
     GetCursorPos(p);
     p := Target.ScreenToClient(p);
     UMLElement := BoldGUIHandler.DraggedObjects[0] as TUMLModelElement;
-
-    //Check we have a matching provider and then invoke it
     ControlProvider := ControlProviderList.MatchingProvider(UMLElement);
     if Assigned(ControlProvider) then
       ControlProvider.MakeComponent(UMLElement, Target, p);
@@ -302,7 +301,7 @@ begin
   aLabel.Left := fPoint.x;
   aLabel.Caption := fUMLElement.Name;
 
-  aLabel.Name := UniqueName('lbl' + fUMLElement.ExpandedExpressionName); // do not localize
+  aLabel.Name := UniqueName('lbl' + fUMLElement.ExpandedExpressionName);
   if fControl is TWinControl then
     aLabel.FocusControl := fControl as TWinControl;
 end;
@@ -326,10 +325,9 @@ end;
 
 function TBoldControlProvider.GetHandleClass: TBoldHandleClass;
 begin
-  // This method may be abstract when the mechanism is in place.
-  // The theory is that we should try to find the best matching provider or
-  // create a new handle of type HandleClass.
-  // Returning nil just avoids a compiler warning.
+
+
+
   Result := nil;
 end;
 
@@ -417,7 +415,7 @@ end;
 
 function TBoldControlProviderForClass.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('grd'); // do not localize
+  Result := PrefixedUMLName('grd');
 end;
 
 function TBoldControlProviderForClass.GetControlClass: TControlClass;
@@ -442,7 +440,7 @@ end;
 
 function TBoldControlProviderForStringAttribute.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('txt'); // do not localize
+  Result := PrefixedUMLName('txt');
 end;
 
 function TBoldControlProviderForStringAttribute.GetControlClass: TControlClass;
@@ -466,7 +464,7 @@ end;
 
 function TBoldControlProviderForAssociationEndMulti.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('lbx'); // do not localize
+  Result := PrefixedUMLName('lbx');
 end;
 
 function TBoldControlProviderForAssociationEndMulti.GetControlClass: TControlClass;
@@ -484,7 +482,7 @@ end;
 
 function TBoldControlProviderForAssociationEndSingle.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('txt'); // do not localize
+  Result := PrefixedUMLName('txt');
 end;
 
 function TBoldControlProviderForAssociationEndSingle.GetControlClass: TControlClass;
@@ -502,7 +500,7 @@ end;
 
 function TBoldControlProviderForMemoAttribute.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('mmo'); // do not localize
+  Result := PrefixedUMLName('mmo');
 end;
 
 function TBoldControlProviderForMemoAttribute.GetControlClass: TControlClass;
@@ -514,14 +512,14 @@ function TBoldControlProviderForMemoAttribute.IsMatch(
   UMLElement: TUMLModelElement): boolean;
 begin
   Result := inherited IsMatch(UMLElement) and
-           (AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'Blob') = 0); // do not localize
+           (AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'Blob') = 0);
 end;
 
 { TBoldControlProviderForImageAttribute }
 
 function TBoldControlProviderForImageAttribute.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('img'); // do not localize
+  Result := PrefixedUMLName('img');
 end;
 
 function TBoldControlProviderForImageAttribute.GetControlClass: TControlClass;
@@ -533,8 +531,8 @@ function TBoldControlProviderForImageAttribute.IsMatch(
   UMLElement: TUMLModelElement): boolean;
 begin
   Result := inherited IsMatch(UMLElement) and
-           ((AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'BlobImageBMP') = 0) or // do not localize
-            (AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'BlobImageJPEG') = 0)); // do not localize
+           ((AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'BlobImageBMP') = 0) or
+            (AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'BlobImageJPEG') = 0));
 end;
 
 { TBoldControlProviderForBooleanAttribute }
@@ -546,7 +544,7 @@ end;
 
 function TBoldControlProviderForBooleanAttribute.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('cbx'); // do not localize
+  Result := PrefixedUMLName('cbx');
 end;
 
 function TBoldControlProviderForBooleanAttribute.GetControlClass: TControlClass;
@@ -558,7 +556,7 @@ function TBoldControlProviderForBooleanAttribute.IsMatch(
   UMLElement: TUMLModelElement): boolean;
 begin
   Result := inherited IsMatch(UMLElement) and
-           (AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'Boolean') = 0); // do not localize
+           (AnsiCompareStr((UMLElement as TUMLAttribute).typeName, 'Boolean') = 0);
 end;
 
 { TBoldControlProviderForOperation }
@@ -570,7 +568,7 @@ end;
 
 function TBoldControlProviderForOperation.GetComponentName: string;
 begin
-  Result := PrefixedUMLName('btn'); // do not localize
+  Result := PrefixedUMLName('btn');
 end;
 
 function TBoldControlProviderForOperation.GetControlClass: TControlClass;
@@ -586,12 +584,11 @@ end;
 procedure TBoldControlProviderForOperation.SetupComponent;
 begin
   inherited;
-  (fControl as TButton).Caption := fUMLElement.Name;
+  (fControl as TButton).Caption := fUMLElement.Name; 
 end;
 
 initialization
-  // Note: Order important. List is traversed in reverse order,
-  // so less general should be added later in the list.
+
   ControlProviderList.Add(TBoldControlProviderForClass.Create);
   ControlProviderList.Add(TBoldControlProviderForOperation.Create);
   ControlProviderList.Add(TBoldControlProviderForAssociationEndMulti.Create);
@@ -605,6 +602,3 @@ finalization
   FreeAndNil(G_BoldControlProviderList);
 
 end.
-
-
-

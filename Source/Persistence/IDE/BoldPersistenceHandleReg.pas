@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleReg;
 
 interface
@@ -7,7 +10,6 @@ procedure Register;
 implementation
 
 uses
-  SysUtils,
   DesignIntf,
   BoldAbstractPropertyEditors,
   BoldAbstractModel,
@@ -16,8 +18,8 @@ uses
 
 procedure Register;
 begin
-  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldPersistenceHandle, 'BoldModel', TBoldComponentPropertyIndicateMissing); // do not localize
-  RegisterPropertyEditor(TypeInfo(TBoldPersistenceHandle), TBoldPersistenceHandlePassthrough, 'NextPersistenceHandle', TBoldComponentPropertyIndicateMissing); // do not localize
+  RegisterPropertyEditor(TypeInfo(TBoldAbstractModel), TBoldPersistenceHandle, 'BoldModel', TBoldComponentPropertyIndicateMissing);
+  RegisterPropertyEditor(TypeInfo(TBoldPersistenceHandle), TBoldPersistenceHandlePassthrough, 'NextPersistenceHandle', TBoldComponentPropertyIndicateMissing);
 end;
 
 end.

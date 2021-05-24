@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSortedHandle;
 
 interface
@@ -19,15 +22,19 @@ type
     FOnCompare: TBoldElementCompare;
     FOnSubscribe: TBoldElementSubscribe;
     fOnPrepareSort: TBoldPrepareListOperation;
+    FOnFinishSort: TBoldPrepareListOperation;
   public
     procedure Subscribe(boldElement: TBoldElement; Subscriber: TBoldSubscriber); virtual;
     function Compare(Item1, Item2: TBoldElement): Integer; virtual;
     procedure SortList(List: TBoldList);
     procedure PrepareSort(List: TBoldList);
+    procedure FinishSort(List: TBoldList);
   published
     property OnSubscribe: TBoldElementSubscribe read FOnSubscribe write FOnSubscribe;
     property OnCompare: TBoldElementCompare read FOnCompare write FOnCompare;
     property OnPrepareSort: TBoldPrepareListOperation read fOnPrepareSort write fOnPrepareSort;
+    property OnFinishSort: TBoldPrepareListOperation read FOnFinishSort write
+        FOnFinishSort;
   end;
 
   { TBoldSortedHandle }
@@ -45,7 +52,12 @@ type
 implementation
 
 uses
-  BoldSystemRT;
+  SysUtils,
+  Classes,
+  BoldDefs,
+  BoldSystemRT,
+  BoldElementList;
+
 
 {---TBoldComparer---}
 procedure TBoldComparer.Subscribe(boldElement: TBoldElement; Subscriber: TBoldSubscriber);
@@ -72,6 +84,8 @@ var
   SourceList: TBoldList;
   NewList: TBoldList;
 begin
+  if csDestroying in ComponentState then
+    raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
   if EffectiveRootValue = nil then
     ResultElement.SetOwnedValue(nil)
   else if not Assigned(BoldComparer) then
@@ -82,22 +96,30 @@ begin
     try
       EffectiveRootValue.GetAsList(ValueAsListHolder);
       SourceList := TBoldList(ValueAsListHolder.Value);
-      NewList := TBoldMemberFactory.CreateMemberFromBoldType(SourceList.BoldType) as TBoldList;
+      if (SourceList.BoldType is TBoldListTypeInfo) and not Assigned(TBoldListTypeInfo(SourceList.BoldType).ListElementTypeInfo) then
+        NewList := TBoldElementList.CreateWithTypeInfo(SourceList.BoldType)
+      else
+        NewList := TBoldMemberFactory.CreateMemberFromBoldType(SourceList.BoldType) as TBoldList;
       NewList.DuplicateMode := bldmAllow;
+
       if Assigned(Subscriber) then
         SourceList.DefaultSubscribe(Subscriber, breResubscribe);
 
       SourceList.EnsureRange(0, SourceList.Count - 1);
       BoldComparer.PrepareSort(SourceList);
-      for i := 0 to SourceList.Count - 1 do
-      begin
-        NewList.Add(SourceList[i]);
-        if Assigned(Subscriber) then
-          BoldComparer.Subscribe(SourceList[I], Subscriber);
+      try
+        for i := 0 to SourceList.Count - 1 do
+        begin
+          NewList.Add(SourceList[i]);
+          if Assigned(Subscriber) then
+            BoldComparer.Subscribe(SourceList[I], Subscriber);
+        end;
+        NewList.Sort(BoldComparer.Compare);
+        NewList.MakeImmutable;
+        ResultElement.SetOwnedValue(NewList);
+      finally
+        BoldComparer.FinishSort(NewList);
       end;
-      NewList.Sort(BoldComparer.Compare);
-      NewList.MakeImmutable;
-      ResultElement.SetOwnedValue(NewList);
     finally
       ValueAsListHolder.Free;
     end;
@@ -138,5 +160,13 @@ begin
   if assigned(OnPrepareSort) then
     OnPrepareSort(list);
 end;
+
+procedure TBoldComparer.FinishSort(List: TBoldList);
+begin
+  if assigned(OnFinishSort) then
+    OnFinishSort(list);
+end;
+
+initialization
 
 end.

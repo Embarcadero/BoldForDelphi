@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAStringGridManager;
 
 interface
@@ -55,7 +58,7 @@ begin
   Control := nil;
   ControlClass := nil;
   AssociatedColumn := 0;
-  inherited Destroy;
+  inherited destroy;
 end;
 
 constructor TStringGridManager.Create(aStringGrid: TStringGrid);
@@ -156,12 +159,11 @@ begin
   if (Ctrl is TComboBox) then
     with (Ctrl as TComboBox) do
     begin
-      // disable the combo box's ChangeEvent
       ChangeEvent := OnChange;
       OnChange := nil;
-      if (IsEmptyStr(fStringGrid.Cells[ACol, ARow]) and (CompareText(Ctrl.Name, 'cbAccessTypes') = 0)) // do not localize
+      if (IsEmptyStr(fStringGrid.Cells[ACol, ARow]) and (CompareText(Ctrl.Name, 'cbAccessTypes') = 0))
       then
-        ItemIndex := 0 // set a default value
+        ItemIndex := 0
       else
         ItemIndex := Items.IndexOf(fStringGrid.Cells[ACol, ARow]);
       SetFocus;
@@ -201,10 +203,10 @@ end;
 
 procedure TStringGridManager.GetCtrlSelection(Ctrl: TWinControl; Hide: Boolean);
 begin
-  if (Ctrl is TComboBox) then     //if control is a TComboBox
+  if (Ctrl is TComboBox) then
     with (Ctrl as TComboBox) do
     begin
-      if ((ItemIndex = -1) and not IsEmptyStr(Text)) then  //Get the edited text and display in the grid
+      if ((ItemIndex = -1) and not IsEmptyStr(Text)) then
         fStringGrid.Cells[fStringGrid.Selection.right, fStringGrid.Selection.top] := Text
       else
         fStringGrid.Cells[fStringGrid.Selection.right, fStringGrid.Selection.top] := Items[ItemIndex];
@@ -226,7 +228,6 @@ begin
       Break;
     end;
   AppendRow(fStringGrid);
-  // select the first column of the inserted row
   SelectCell(fStringGrid, 0, fStringGrid.RowCount - 1);
   Edit;
 end;
@@ -284,5 +285,7 @@ begin
       EditCell(fStringGrid, aCol, aRow, (Ctrl as CtrlClass));
   end;
 end;
+
+initialization
 
 end.

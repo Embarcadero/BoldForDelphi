@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorCleanup;
 
 interface
@@ -12,6 +15,7 @@ uses
   BoldPropagatorConstants,
   BoldThreadSafeLog,
   ExtCtrls;
+
 
 type
   {forward declarrations}
@@ -41,7 +45,7 @@ type
     property Timer: TTimer read getTimer write fTimer;
   end;
 
-  TBoldCleanupSubscriber = class(TBoldPassthroughSubscriber)
+  TBoldCleanupSubscriber = class(TBoldExtendedPassthroughSubscriber)
   private
     fCleanUpThread: TBoldCleanUpThread;
     fClientHandler: TBoldClientHandler;
@@ -64,8 +68,7 @@ uses
   BoldPropagatorMainForm,
   BoldPropagatorServer,
   Messages,
-  Classes,
-  PropagatorConsts;
+  Classes;
 
 function BoldPropagatorCleanupWndProc(Window: HWND;
   Message, wParam, lParam: Longint): Longint; stdcall;
@@ -80,7 +83,7 @@ begin
       try
         CleanUpThread.SetTimer;
       except on E: Exception do
-        BoldLogError(sWindowProcError, [E.Message]);
+        BoldLogError('Error in WindowProc %s', [E.Message]);
       end;
     end;
   else
@@ -99,7 +102,7 @@ var
     hCursor: 0;
     hbrBackground: 0;
     lpszMenuName: nil;
-    lpszClassName: 'TBoldPropagatorCleanupWindow'); // do not localize
+    lpszClassName: 'TBoldPropagatorCleanupWindow');
 
 { TBoldCleanupSubscriber }
 
@@ -124,8 +127,8 @@ procedure TBoldCleanupSubscriber.DoLeaseChanged;
 begin
   try
     PostMessage(fCleanUpThread.QueueWindow, BM_PROPAGATOR_CLIENT_LEASE_CHANGED, 0, Integer(fCleanUpThread));
-  except on e: Exception do
-      BoldLogError(sLogError, [ClassName, 'DoLeaseChanged', e.Message]); // do not localize
+  except
+    BoldLogError('%s.DoLeaseChanged', [ClassName]);
   end;
 end;
 
@@ -144,7 +147,7 @@ begin
       end;
       DoLeaseChanged;
     except
-      BoldLogError('%s.OnGetExtendedEvent: Bold_propagator_client_lease_changed', [ClassName]); // do not localize
+      BoldLogError('%s.OnGetExtendedEvent: Bold_propagator_client_lease_changed', [ClassName]);
     end;
   end;
 end;
@@ -198,7 +201,7 @@ begin
   EnsureMessageQueue;
   InitServerWindow (TRUE);
   SignalReady;
-  BoldLogThread('ID=Cleanup'); // do not localize
+  BoldLogThread('ID=Cleanup');
 
   while not Terminated do
   begin
@@ -265,8 +268,10 @@ begin
     else
       RemoveTimedOutClient;
   except on E: Exception do
-    BoldlogError('%s.SetTimer: %s', [ClassName, E.Message]); //do not localize
+    BoldlogError('%s.SetTimer: %s', [ClassName, E.Message]);
   end;
 end;
+
+initialization
 
 end.

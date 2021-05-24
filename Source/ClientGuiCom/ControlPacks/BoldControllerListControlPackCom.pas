@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControllerListControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -7,7 +10,7 @@ interface
 uses
   Classes,
   BoldControlPackDefs,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
   BoldListControlPackCom;
 
@@ -79,7 +82,7 @@ begin
   inherited DoMakeUptodateAndSubscribe(Follower, Subscribe);
   (EffectiveRenderer as TBoldControllerListAsFollowerListRendererCom).MakeUptodate(Follower, Follower.Element);
   if Subscribe and Assigned(Follower.Element) then
-  {$IFDEF BOLDCOMCLIENT} // MakeUpToDate
+  {$IFDEF BOLDCOMCLIENT}
     Follower.Element.SubscribeToExpression('', Follower.Subscriber.ClientId, Follower.Subscriber.SubscriberId, False, true);
   {$ELSE}
     Follower.Element.SubscribeToExpression('', Follower.Subscriber, False);
@@ -128,7 +131,7 @@ end;
 
 function TBoldControllerListCom.GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRendererCom;
 begin
-  Result := TBoldControllerListAsFollowerListRendererCom.DefaultRenderer; // currently always uses default.
+  Result := TBoldControllerListAsFollowerListRendererCom.DefaultRenderer;
 end;
 
 {---TBoldControllerListAsFollowerListRendererCom---}
@@ -158,4 +161,3 @@ finalization
   FreeAndNil(DefaultDisplayPropertyListRenderer);
 
 end.
-

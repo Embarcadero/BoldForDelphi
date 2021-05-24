@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleAdvantageReg;
 
 interface
@@ -13,15 +16,21 @@ uses
   Classes,
   registry,
   BoldIDESupport,
+  BoldVersionInfo,
   BoldDatabaseAdapterAdvantage,
   BoldPersistenceHandleAdvantage,
   BoldIDEConsts;
 
 procedure Register;
 begin
-  RemovePackageFromDisabledPackagesRegistry(format('BoldAdvantage%s', [LIBSUFFIX])); // do not localize
+  RemovePackageFromDisabledPackagesRegistry(format('Bold%d%d%sAdvantage', [
+    BoldBuildVersionNumberMajor,
+    BoldBuildVersionNumberMinor,
+    BoldBuildTarget]));
   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleAdvantage]);
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterAdvantage]);
 end;
+
+initialization
 
 end.

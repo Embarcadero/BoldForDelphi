@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLTaggedValuesEditor;
 
 interface
@@ -68,17 +71,15 @@ type
       RootValue: TBoldElement; ResultElement: TBoldIndirectElement;
       Subscriber: TBoldSubscriber);
     procedure tcToolsChange(Sender: TObject);
-    function BoldAsStringRenderer1GetAsString(Element: TBoldElement;
-      Representation: Integer; Expression: String): String;
-    procedure BoldAsStringRenderer1Subscribe(Element: TBoldElement;
-      Representation: Integer; Expression: String;
-      Subscriber: TBoldSubscriber);
     procedure FormCreate(Sender: TObject);
     procedure btAddTVClick(Sender: TObject);
     procedure btDeleteTVClick(Sender: TObject);
     procedure Copy1Click(Sender: TObject);
     procedure Cut1Click(Sender: TObject);
     procedure Paste1Click(Sender: TObject);
+    function BoldAsStringRenderer1GetAsString(aFollower: TBoldFollower): string;
+    procedure BoldAsStringRenderer1Subscribe(aFollower: TBoldFollower;
+      Subscriber: TBoldSubscriber);
   private
     fRootSubscriber: TBoldPassThroughSubscriber;
     PreviousSelectedTab: Integer;
@@ -91,7 +92,7 @@ type
     procedure RefreshGUI(var Message: TMessage); message WM_REFRESHGUI;
     procedure DoMessage(Control: TControl; Msg: Cardinal);
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure SwitchMode(ReadOnly: Boolean);
   end;
 
@@ -102,7 +103,6 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldRev,
   BoldUMLModelDataModule,
   BoldUMLAddTV;
 
@@ -231,21 +231,20 @@ begin
 end;
 
 function TfrmBoldUMLTaggedValuesEditor.BoldAsStringRenderer1GetAsString(
-  Element: TBoldElement; Representation: Integer;
-  Expression: String): String;
+  aFollower: TBoldFollower): string;
 begin
   Result := '';
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
-    Result := GetTagName((Element as TUMLTaggedValue).Tag);
+    Result := GetTagName((aFollower.Element as TUMLTaggedValue).Tag);
   end;
 end;
 
+
 procedure TfrmBoldUMLTaggedValuesEditor.BoldAsStringRenderer1Subscribe(
-  Element: TBoldElement; Representation: Integer; Expression: String;
-  Subscriber: TBoldSubscriber);
+  aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 begin
-  (Element as TUMLTaggedValue).M_Tag.DefaultSubscribe(Subscriber, breReEvaluate);
+  (aFollower.Element as TUMLTaggedValue).M_Tag.DefaultSubscribe(Subscriber, breReEvaluate);
 end;
 
 procedure TfrmBoldUMLTaggedValuesEditor.PlaceSubscriptions;
@@ -267,7 +266,6 @@ begin
     breReSubscribe: PlaceSubscriptions;
   end;
   PostMessage(Handle, WM_REFRESHGUI, 0, 0);
-  //CreateTabs;
 end;
 
 procedure TfrmBoldUMLTaggedValuesEditor.FormCreate(Sender: TObject);

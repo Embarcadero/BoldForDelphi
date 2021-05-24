@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalObjectSpaceEventHandlerReg;
 
 interface
@@ -6,7 +9,7 @@ procedure Register;
 
 implementation
 
-{.$R *.res}
+{$R *.res}
 
 uses
   SysUtils,
@@ -36,3 +39,4 @@ begin
 end;
 
 end.
+

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAdatamodule;
 
 interface
@@ -28,6 +31,12 @@ var
 
 implementation
 
+uses
+  SysUtils,
+  BoldUtils;
+
 {$R *.dfm}
+
+initialization
 
 end.

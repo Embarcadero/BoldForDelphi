@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldBDEBatchInterfaces;
 
 interface
@@ -30,9 +33,10 @@ type
     property InBatch: Boolean read FInBatch write fInBatch;
     property HasCachedStatements: boolean read GetHasCachedStatements;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     class procedure InstallBatchQueries;
   end;
+
 
 var
   BOLDBATCHQUERYMAXSIZE: integer = 30000;
@@ -43,8 +47,7 @@ implementation
 uses
   SysUtils,
   dbTables,
-  BoldDefs,
-  BDEConsts;
+  BoldDefs;
 
 function ReplaceParamMarkers(const sql: String; Counter: integer; SourceParams, DestParams: TParams): String;
 const
@@ -98,7 +101,7 @@ begin
 
       NewParam := DestParams.CreateParam(OldParam.DataType, prefix+OldParam.Name, OldParam.ParamType);
       NewParam.Assign(OldParam);
-      NewParam.Name:=prefix+OldParam.Name; // HK Assign also transfers name
+      NewParam.Name:=prefix+OldParam.Name;
       if OldParam.IsNull then
         NewParam.Clear
       else
@@ -109,7 +112,7 @@ begin
       CurPos := StartPos;
     end
     else
-      if IsLiteral then
+      if IsLiteral then 
         Literal := not Literal;
     Inc(CurPos);
   until CurPos > Length(TempResult);
@@ -138,7 +141,7 @@ begin
     ExecuteBatch;
 end;
 
-destructor TBoldBDEBatchQuery.Destroy;
+destructor TBoldBDEBatchQuery.destroy;
 begin
   FreeAndNil(fAccumulatedParams);
   FreeAndNil(fAccumulatedSQL);
@@ -189,10 +192,12 @@ begin
           if assigned(BatchQuery.DBSession) then
           begin
             Driver := Query.DBSession.GetAliasDriverName(query.DatabaseName);
-            if pos('INFORMIX', UpperCase(Driver)) = 0 then // do not localize
-              DriverMsg := Format(sOnlyTestedWithInformix, [BOLDCRLF]);
+            if pos('INFORMIX', UpperCase(Driver)) = 0 then
+              DriverMsg := 'Batch operations has only been tested with Informix' + BOLDCRLF;
           end;
-          e.Message := Format(sBatchFailure, [DriverMsg, e.Message, BOLDCRLF, BatchQuery.SQL.Text]);
+          e.Message := DriverMsg+
+            'Batch operation failed: ' + e.MEssage + BOLDCRLF +
+            'SQL: '+BatchQuery.SQL.Text;
           raise;
         end;
       end;
@@ -246,5 +251,5 @@ begin
   InBatch := true;
 end;
 
+initialization
 end.
-

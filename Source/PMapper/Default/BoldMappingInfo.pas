@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMappingInfo;
 
 interface
@@ -9,10 +12,10 @@ uses
   BoldDbInterfaces;
 
 type
-  { TBoldDefaultMappingInfo }
+
   TBoldDefaultMappingInfo = class(TBoldSQLMappingInfo)
   private
-    procedure ScriptForClearData(Script: TStrings; separator: string; terminator: string);
+    procedure ScriptForClearData(Script: TStrings; Separator: string; Terminator: string);
     function AITableName: string;
     function MMTableName: string;
     function OSTableName: string;
@@ -20,7 +23,8 @@ type
     function ExpandColumn(ColumnName: String): String;
   public
     procedure ReadDataFromDB(DataBase: IBoldDataBase; ReadDbTypeFromDB, ReadMappingFromDB: Boolean); override;
-    procedure ScriptForWriteData(Script: TStrings; Separator: string; ClearFirst: Boolean = true; terminator: string = ''); override;
+    procedure ScriptForWriteData(DataBase: IBoldDataBase; Script: TStrings; ClearFirst: Boolean;
+        Separator: String; Terminator: String); override;
   end;
 
 implementation
@@ -30,20 +34,38 @@ uses
   BoldUtils,
   BoldDefs;
 
-{ TBoldDeafultMappingInfo }
+{ TBoldDefaultMappingInfo }
 
 function TBoldDefaultMappingInfo.AITableName: string;
 begin
   result := BoldExpandPrefix(AllInstancesMappingTable_NAME, '', fSystemTablePrefix, MaxDBIdentifierLength, NationalCharConversion)
 end;
 
-procedure TBoldDefaultMappingInfo.ScriptForClearData(Script: TStrings; separator: string; terminator: string);
+procedure TBoldDefaultMappingInfo.ScriptForClearData(Script: TStrings; Separator: string; Terminator: string);
 
   procedure ClearTable(TableName: string);
   begin
-    script.add('DELETE FROM ' + TableName+terminator); // do not localize
-    if separator <> '' then
+    script.add('DELETE FROM ' + TableName+Terminator); // do not localize
+    if Separator <> '' then
       Script.Add(Separator);
+  end;
+
+  procedure AddColumnIndexColumn;
+  var
+    sScript: string;
+  begin
+    if (FCurrentDatabase <> nil) and
+       (FCurrentDatabase.SQLDatabaseConfig <> nil) then
+    begin
+      sScript := Format('ALTER TABLE %s ADD %s '+FCurrentDatabase.SQLDatabaseConfig.ColumnTypeForInteger+' DEFAULT 0 '+FCurrentDatabase.SQLDatabaseConfig.SQLForNotNull,
+          [MMTableName, MMT_INDEX_COLUMN]);
+      sScript := FCurrentDatabase.SQLDatabaseConfig.GetIfColumnNotExistsQuery(
+          MMTableName, MMT_INDEX_COLUMN, sScript);
+      sScript := sScript + Terminator;
+      script.add(sScript);
+      if Separator <> '' then
+        Script.Add(Separator);
+      end;
   end;
 
 begin
@@ -51,6 +73,9 @@ begin
   ClearTable(MMTableName);
   ClearTable(OSTableName);
   ClearTable(DbTypeTableName);
+{$IFDEF IndexColumn}
+  AddColumnIndexColumn;
+{$ENDIF}
 end;
 
 
@@ -79,17 +104,25 @@ const
   SELECTFROM = 'SELECT * FROM ';
 var
   q: IBoldQuery;
-function GetMappernameFromQuery: String;
-var
-  Field: IBoldField;
-begin
-  Field := Q.FindField(ExpandColumn(MMT_MAPPERNAME_COLUMN));
-  if assigned(Field) then
-    result := Field.AsString
-  else
-    result := '';
-end;
 
+  function GetMappernameFromQuery: String;
+  var
+    Field: IBoldField;
+  begin
+    Field := Q.FindField(ExpandColumn(MMT_MAPPERNAME_COLUMN));
+    if assigned(Field) then
+      result := Field.AsString
+    else
+      result := '';
+  end;
+var
+  bColumnIndex: Boolean;
+  vClassNameField: IBoldField;
+  vTableNameField: IBoldField;
+  vMemberNameField: IBoldField;
+  vColumnsField: IBoldField;
+  vClassIdRequiredField: IBoldField;
+  vTypeColumnield: IBoldField;
 begin
   q := DataBase.GetQuery;
   try
@@ -99,11 +132,14 @@ begin
 
       q.AssignSQlText(SELECTFROM + AITableName);
       q.Open;
+      vClassNameField := q.FieldByName(ExpandColumn(AID_CLASSNAME_COLUMN));
+      vTableNameField := q.FieldByName(ExpandColumn(AID_TABLENAME_COLUMN));
+      vClassIdRequiredField := q.FieldByName(ExpandColumn(AID_CLASSIDREQUIRED_COLUMN));
       while not Q.Eof do
       begin
-        AddAllInstancesMapping(q.FieldByName(ExpandColumn(AID_CLASSNAME_COLUMN)).AsString,
-                               q.FieldByName(ExpandColumn(AID_TABLENAME_COLUMN)).AsString,
-                               q.FieldByName(ExpandColumn(AID_CLASSIDREQUIRED_COLUMN)).AsInteger=1);
+        AddAllInstancesMapping(vClassNameField.AsString,
+                               vTableNameField.AsString,
+                               vClassIdRequiredField.AsInteger=1);
         q.Next;
       end;
       q.Close;
@@ -111,13 +147,25 @@ begin
       q.AssignSQLText(SELECTFROM + MMTableName);
 
       q.Open;
+      vClassNameField := q.FieldByName(ExpandColumn(MMT_CLASSNAME_COLUMN));
+      vTableNameField := q.FieldByName(ExpandColumn(MMT_TABLENAME_COLUMN));
+      vMemberNameField := q.FieldByName(ExpandColumn(MMT_MEMBERNAME_COLUMN));
+      vColumnsField := q.FieldByName(ExpandColumn(MMT_COLUMNS_COLUMN));
       while not Q.Eof do
       begin
-        AddMemberMapping(q.FieldByName(ExpandColumn(MMT_CLASSNAME_COLUMN)).AsString,
-                               q.FieldByName(ExpandColumn(MMT_MEMBERNAME_COLUMN)).AsString,
-                               q.FieldByName(ExpandColumn(MMT_TABLENAME_COLUMN)).AsString,
-                               q.FieldByName(ExpandColumn(MMT_COLUMNS_COLUMN)).AsString,
-                               GetMapperNameFromQuery);
+        //Fallback, if the old MemberMapping was used
+        if q.FindField(ExpandColumn(MMT_INDEX_COLUMN)) = nil then begin
+          bColumnIndex := False;
+        end else begin
+          bColumnIndex := q.FieldByName(ExpandColumn(MMT_INDEX_COLUMN)).AsInteger = 1;
+        end;
+        AddMemberMapping(vClassNameField.AsString,
+                               vMemberNameField.AsString,
+                               vTableNameField.AsString,                              
+                               // Remove linebreaks, to make MappingInfo comparable in TBoldDataBaseEvolutor.MoveDataAction
+                               StringReplace(vColumnsField.AsString, #13#10, '', [rfReplaceAll]),
+                               GetMapperNameFromQuery,
+                               bColumnIndex);
         q.Next;
       end;
       q.Close;
@@ -125,10 +173,12 @@ begin
       q.AssignSQLText(SELECTFROM + OSTableName);
 
       q.Open;
+      vClassNameField := q.FieldByName(ExpandColumn(ST_CLASSNAME_COLUMN));
+      vTableNameField := q.FieldByName(ExpandColumn(ST_TABLENAME_COLUMN));
       while not Q.Eof do
       begin
-        AddObjectStorageMapping(q.FieldByName(ExpandColumn(ST_CLASSNAME_COLUMN)).AsString,
-                                q.FieldByName(ExpandColumn(ST_TABLENAME_COLUMN)).AsString);
+        AddObjectStorageMapping(vClassNameField.AsString,
+                                vTableNameField.AsString);
         q.Next;
       end;
       q.Close;
@@ -141,88 +191,175 @@ begin
       q.AssignSQLText(SELECTFROM + DbTypeTableName);
 
       q.Open;
+      vClassNameField := q.FieldByName(ExpandColumn(CLASSNAMECOLUMN_NAME));
+      vTypeColumnield := q.FieldByName(ExpandColumn(TYPECOLUMN_NAME));
       while not Q.Eof do
       begin
-        AddTypeIdMapping(q.FieldByName(ExpandColumn(CLASSNAMECOLUMN_NAME)).AsString,
-                         q.FieldByName(ExpandColumn(TYPECOLUMN_NAME)).AsInteger);
+        AddTypeIdMapping(vClassNameField.AsString,
+                         vTypeColumnield.AsInteger);
         q.Next;
       end;
       q.Close;
     end;
-
   finally
     DataBase.ReleaseQuery(q);
   end;
 end;
 
-procedure TBoldDefaultMappingInfo.ScriptForWriteData(Script: TStrings; Separator: string; ClearFirst: Boolean = true; terminator: string = '');
+procedure TBoldDefaultMappingInfo.ScriptForWriteData(DataBase: IBoldDataBase;
+    Script: TStrings; ClearFirst: Boolean; Separator: String; Terminator: String);
 var
-  i: integer;
+  i,row,Limit: integer;
+  vInsertSql: string;
+  sl: TStringList;
 const
   Bool2Int: array[Boolean] of integer=(0, 1);
 begin
-  if ClearFirst then
-    ScriptForClearData(Script, Separator, terminator);
-
-  for i := 0 to fAllInstancesMapping.Count - 1 do
-  begin
-    Script.Add(format('INSERT INTO %s (%s, %s, %s) VALUES (''%s'', ''%s'', %d)%s', [ // do not localize
-      AITableName,
-      ExpandColumn(AID_CLASSNAME_COLUMN),
-      ExpandColumn(AID_TABLENAME_COLUMN),
-      ExpandColumn(AID_CLASSIDREQUIRED_COLUMN),
-      AllInstancesMappingInfo[i].ClassExpressionName,
-      AllInstancesMappingInfo[i].TableName,
-      Bool2Int[AllInstancesMappingInfo[i].classIdrequired],
-      terminator]));
-    if separator <> '' then
-      Script.Add(Separator);
-  end;
-
-  for i := 0 to fMemberMapping.Count - 1 do
-  begin
-    Script.Add(format('INSERT INTO %s (%s, %s, %s, %s, %s) VALUES (''%s'', ''%s'', ''%s'', ''%s'', ''%s'')%s', [ // do not localize
-      MMTableName,
-      ExpandColumn(MMT_CLASSNAME_COLUMN),
-      ExpandColumn(MMT_MEMBERNAME_COLUMN),
-      ExpandColumn(MMT_TABLENAME_COLUMN),
-      ExpandColumn(MMT_COLUMNS_COLUMN),
-      ExpandColumn(MMT_MAPPERNAME_COLUMN),
-      MemberMappingInfo[i].ClassExpressionName,
-      MemberMappingInfo[i].MemberName,
-      MemberMappingInfo[i].TableName,
-      MemberMappingInfo[i].Columns,
-      MemberMappingInfo[i].MapperName,
-      terminator]));
-    if separator <> '' then
-      Script.Add(Separator);
-  end;
-
-  for i := 0 to fObjectStorageMapping.Count - 1 do
-  begin
-    Script.Add(format('INSERT INTO %s (%s, %s) VALUES (''%s'', ''%s'')%s', [ // do not localize
-      OSTableName,
-      ExpandColumn(ST_CLASSNAME_COLUMN),
-      ExpandColumn(ST_TABLENAME_COLUMN),
-      ObjectStorageMappingInfo[i].ClassExpressionName,
-      ObjectStorageMappingInfo[i].TableName,
-      terminator]));
-    if separator <> '' then
-      Script.Add(Separator);
-  end;
-
-  for i := 0 to fDbTypeMapping.Count - 1 do
-  begin
-    Script.Add(format('INSERT INTO %s (%s, %s) VALUES (%d, ''%s'')%s', [ // do not localize
-      DbTypeTableName,
-      ExpandColumn(TYPECOLUMN_NAME),
-      ExpandColumn(CLASSNAMECOLUMN_NAME),
-      DbTypeMapping[i].DbType,
-      DbTypeMapping[i].ClassExpressionName,
-      terminator]));
-    if separator <> '' then
-      Script.Add(Separator);
+  FCurrentDatabase := DataBase;
+  sl := TStringList.Create;
+  sl.LineBreak := ' ';
+  try
+    if ClearFirst then
+      ScriptForClearData(Script, Separator, Terminator);
+    Limit := FCurrentDatabase.SQLDatabaseConfig.MultiRowInsertLimit;
+    vInsertSql := format('INSERT INTO %s (%s, %s, %s) VALUES ', [
+          AITableName,
+          ExpandColumn(AID_CLASSNAME_COLUMN),
+          ExpandColumn(AID_TABLENAME_COLUMN),
+          ExpandColumn(AID_CLASSIDREQUIRED_COLUMN)
+          ]);
+    row := 0;
+    for i := 0 to fAllInstancesMapping.Count - 1 do
+    begin
+      sl.Add(format('(''%s'', ''%s'', %d)%s', [ // do not localize
+          AllInstancesMappingInfo[i].ClassExpressionName,
+          AllInstancesMappingInfo[i].TableName,
+          Bool2Int[AllInstancesMappingInfo[i].classIdrequired],
+          Terminator]));
+      if row = 0 then
+        sl[sl.count-1] := vInsertSql + sl[sl.count-1]
+      else
+        sl[sl.count-1] := ',' + sl[sl.count-1];
+      inc(row);
+      if (row = limit) or (i = fAllInstancesMapping.Count - 1) then
+      begin
+        Script.Add(sl.Text);
+        sl.clear;
+        if Separator <> '' then
+        Script.Add(Separator);
+        row := 0;
+      end;
+    end;
+    Assert(row = 0);    
+    Assert(sl.count = 0);
+{$IFDEF IndexColumn}
+    vInsertSql := format('INSERT INTO %s (%s, %s, %s, %s, %s, %s) VALUES ',
+{$ELSE}
+    vInsertSql := format('INSERT INTO %s (%s, %s, %s, %s, %s) VALUES ',
+{$ENDIF}
+          [MMTableName,
+          ExpandColumn(MMT_CLASSNAME_COLUMN),
+          ExpandColumn(MMT_MEMBERNAME_COLUMN),
+          ExpandColumn(MMT_TABLENAME_COLUMN),
+          ExpandColumn(MMT_COLUMNS_COLUMN),
+          ExpandColumn(MMT_MAPPERNAME_COLUMN)
+{$IFDEF IndexColumn}
+          ,ExpandColumn(MMT_INDEX_COLUMN)
+{$ENDIF}
+    ]);
+    for i := 0 to fMemberMapping.Count - 1 do
+    begin
+      sl.Add(Format(
+{$IFDEF IndexColumn}
+          '(''%s'', ''%s'', ''%s'', ''%s'', ''%s'', %d)%s', [ // do not localize
+{$ELSE}
+          '(''%s'', ''%s'', ''%s'', ''%s'', ''%s'')%s', [ // do not localize
+{$ENDIF}          
+          MemberMappingInfo[i].ClassExpressionName,
+          MemberMappingInfo[i].MemberName,
+          MemberMappingInfo[i].TableName,
+          MemberMappingInfo[i].Columns,
+          MemberMappingInfo[i].MapperName,
+{$IFDEF IndexColumn}
+          Integer(MemberMappingInfo[i].ColumnIndex),
+{$ENDIF}
+          terminator]));
+      if row = 0 then
+        sl[sl.count-1] := vInsertSql + sl[sl.count-1]
+      else
+        sl[sl.count-1] :=  ',' + sl[sl.count-1];
+      inc(row);
+      if (row = limit) or (i = fMemberMapping.Count - 1) then
+      begin
+        Script.Add(sl.Text);
+        sl.clear;        
+        if Separator <> '' then
+        Script.Add(Separator);
+        row := 0;
+      end;
+    end;
+    Assert(row = 0);
+    Assert(sl.count = 0);
+    vInsertSql := format('INSERT INTO %s (%s, %s) VALUES ',
+          [OSTableName,
+          ExpandColumn(ST_CLASSNAME_COLUMN),
+          ExpandColumn(ST_TABLENAME_COLUMN)
+          ]);
+    for i := 0 to fObjectStorageMapping.Count - 1 do
+    begin
+      sl.Add(format('(''%s'', ''%s'')%s', [ // do not localize
+          ObjectStorageMappingInfo[i].ClassExpressionName,
+          ObjectStorageMappingInfo[i].TableName,
+          Terminator]));
+      if row = 0 then
+        sl[sl.count-1] := vInsertSql + sl[sl.count-1]
+      else
+        sl[sl.count-1] :=  ',' + sl[sl.count-1];
+      inc(row);        
+      if (row = limit) or (i = fObjectStorageMapping.Count - 1) then
+      begin
+        Script.Add(sl.Text);
+        sl.clear;        
+        if Separator <> '' then
+        Script.Add(Separator);
+        row := 0;
+      end;
+    end;
+    Assert(row = 0);
+    Assert(sl.count = 0);
+    vInsertSql := format('INSERT INTO %s (%s, %s) VALUES ',
+          [DbTypeTableName,
+          ExpandColumn(TYPECOLUMN_NAME),
+          ExpandColumn(CLASSNAMECOLUMN_NAME)]);
+    for i := 0 to fDbTypeMapping.Count - 1 do
+    begin
+      sl.Add(format('(%d, ''%s'')%s', [ // do not localize
+          DbTypeMapping[i].DbType,
+          DbTypeMapping[i].ClassExpressionName,
+          Terminator]));
+      if row = 0 then
+        sl[sl.count-1] := vInsertSql + sl[sl.count-1]
+      else
+        sl[sl.count-1] :=  ',' + sl[sl.count-1];
+      inc(row);        
+      if (row = limit) or (i = fDbTypeMapping.Count - 1) then
+      begin
+        Script.Add(sl.Text);
+        sl.clear;        
+        if Separator <> '' then
+        Script.Add(Separator);
+        row := 0;
+      end;
+    end;
+    Assert(row = 0);    
+    Assert(sl.count = 0);
+  finally
+    FCurrentDatabase := nil;
+    sl.free;
   end;
 end;
 
+
+
+initialization
 end.

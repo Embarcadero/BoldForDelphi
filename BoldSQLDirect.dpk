@@ -33,7 +33,7 @@ requires
   vcl,
   vcldb,
   Bold,
-  SqlDir80;
+  SqlDir260;
 
 contains
   BoldDatabaseAdapterSQLDirect in 'Source\Persistence\SQLDirect\BoldDatabaseAdapterSQLDirect.pas',

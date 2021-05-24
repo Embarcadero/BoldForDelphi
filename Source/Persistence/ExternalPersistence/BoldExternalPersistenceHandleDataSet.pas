@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceHandleDataSet;
 
 interface
@@ -39,7 +42,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldExternalPersistenceHandleDataSet }
 
@@ -78,5 +82,7 @@ begin
   if Assigned(Value) then
     Config.Assign(Value);
 end;
+
+initialization
 
 end.

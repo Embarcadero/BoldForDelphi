@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAInterfaces;
 
 interface
@@ -33,7 +36,7 @@ type
     procedure setEnableNext(Value: TEnableNextEvent);
     property SteppedBack: Boolean read GetSteppedBack;
     property UnitGenerator: IUnitGenerator read getUnitGeneratorIntf write setUnitGeneratorIntf;
-    property EnableNext: TEnableNextEvent write setEnableNext; //CallBack function
+    property EnableNext: TEnableNextEvent write setEnableNext;
   end;
 
   IUnitGenerator = interface
@@ -41,5 +44,10 @@ type
   end;
 
 implementation
+
+uses
+  BoldRev;
+
+initialization
 
 end.

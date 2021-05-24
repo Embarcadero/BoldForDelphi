@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDateTimeControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -17,9 +20,9 @@ type
   TBoldDateTimeFollowerController = class;
 
   {TBoldAsDateTimeRenderer}
-  TBoldGetAsDateTimeEvent = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression): TDateTime of object;
-  TBoldSetAsDateTimeEvent = procedure (Element: TBoldElement; const Value: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression) of object;
-  TBoldDateTimeIsChangedEvent = function (RenderData: TBoldDateTimeRendererData; const NewValue: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression): Boolean of object;
+  TBoldGetAsDateTimeEvent = function (aFollower: TBoldFollower): TDateTime of object;
+  TBoldSetAsDateTimeEvent = procedure (aFollower: TBoldFollower; const Value: TDateTime) of object;
+  TBoldDateTimeIsChangedEvent = function (aFollower: TBoldFollower; const NewValue: TDateTime): Boolean of object;
 
   { TBoldDateTimeRendererData }
   TBoldDateTimeRendererData = class(TBoldRendererData)
@@ -40,15 +43,16 @@ type
   protected
     class function DefaultRenderer: TBoldAsDateTimeRenderer;
     function GetRendererDataClass: TBoldRendererDataClass; override;
-    function DefaultGetAsDateTimeAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TDateTime; virtual;
-    procedure DefaultSetAsDateTime(Element: TBoldElement; const Value: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
-    function GetAsDateTimeAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TDateTime; virtual;
-    procedure SetAsDateTime(Element: TBoldElement; const Value: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
+    function DefaultGetAsDateTimeAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TDateTime; virtual;
+    procedure DefaultSetAsDateTime(aFollower: TBoldFollower; const Value: TDateTime); virtual;
+    function GetAsDateTimeAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TDateTime; virtual;
+    procedure SetAsDateTime(aFollower: TBoldFollower; const Value: TDateTime); virtual;
+    function HasSetValueEventOverrides: boolean; override;
   public
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
-    function DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean; override;
-    function DefaultIsChanged(RendererData: TBoldDateTimeRendererData; const NewValue: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
-    function IsChanged(RendererData: TBoldDateTimeRendererData; const NewValue: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); override;
+    function DefaultMayModify(aFollower: TBoldFollower): Boolean; override;
+    function DefaultIsChanged(aFollower: TBoldFollower; const NewValue: TDateTime): Boolean;
+    function IsChanged(aFollower: TBoldFollower; const NewValue: TDateTime): Boolean;
   published
     property OnGetAsDateTime: TBoldGetAsDateTimeEvent read FOnGetAsDateTime write FOnGetAsDateTime;
     property OnSetAsDateTime: TBoldSetAsDateTimeEvent read FOnSetAsDateTime write FOnSetAsDateTime;
@@ -65,7 +69,6 @@ type
     function GetEffectiveRenderer: TBoldRenderer; override;
     property EffectiveAsDateTimeRenderer: TBoldAsDateTimeRenderer read GetEffectiveAsDateTimeRenderer;
   public
-//    procedure Assign(Source: TPersistent); override;
     function GetCurrentAsDateTime(Follower: TBoldFollower): TDateTime;
     procedure  MakeClean(Follower: TBoldFollower); override;
     procedure MayHaveChanged(NewValue: TDateTime; Follower: TBoldFollower);
@@ -78,9 +81,8 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldControlPackDefs,
-  BoldAttributes,
+  BoldAttributes,  
   BoldGuard;
 
 var
@@ -97,35 +99,41 @@ begin
   Result := TBoldDateTimeRendererData;
 end;
 
-function TBoldAsDateTimeRenderer.DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean;
-{$IFNDEF BOLDCOMCLIENT} // defaultMayModify
+function TBoldAsDateTimeRenderer.HasSetValueEventOverrides: boolean;
+begin
+  result := Assigned(FOnSetAsDateTime);
+end;
+
+function TBoldAsDateTimeRenderer.DefaultMayModify(aFollower: TBoldFollower): Boolean;
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: TBoldElement;
-{$ENDIF}
+{$ENDIF}  
 begin
-  {$IFDEF BOLDCOMCLIENT} // defaultMayModify
+  {$IFDEF BOLDCOMCLIENT}
   result := inherited DefaultMayModify(Element, Representation, Expression, VariableList, Subscriber);
   {$ELSE}
-  // Note! We don't call inherited DefaultMayModify to prevent evaluation of expression two times!
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  result := (ValueElement is TBAMoment) and ValueElement.ObserverMayModify(Subscriber);
+  ValueElement := aFollower.Value;
+  result := (ValueElement is TBAMoment) and ValueElement.ObserverMayModify(aFollower.Subscriber);
   {$ENDIF}
 end;
 
-function TBoldAsDateTimeRenderer.DefaultGetAsDateTimeAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TDateTime;
+function TBoldAsDateTimeRenderer.DefaultGetAsDateTimeAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TDateTime;
 var
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   el: IBoldElement;
   attr: IBoldAttribute;
   {$ELSE}
-  IndirectElement: TBoldIndirectElement;
-  g: IBoldGuard;
+  lBoldIndirectElement: TBoldIndirectElement;
+  lBoldGuard: IBoldGuard;
+  lResultElement: TBoldElement;
+  lBAMoment: TBAMoment;
   {$ENDIF}
 begin
   Result := 0;
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
-    {$IFDEF BOLDCOMCLIENT} //defaultGet
+    {$IFDEF BOLDCOMCLIENT}
     if assigned(Subscriber) then
       el := Element.EvaluateAndSubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, false, false)
     else
@@ -135,40 +143,59 @@ begin
       if el.QueryInterface(IBoldAttribute, attr) = S_OK then
         Result := attr.AsVariant
       else
-        raise EBold.CreateFmt(sCannotGetDateTimeValueFromElement, [Attr.Asstring])
+        raise EBold.CreateFmt('Can''t get datetime value from element (%s)', [Attr.Asstring])
     end;
     {$ELSE}
-    g := TBoldGuard.Create(IndirectElement);
-    IndirectElement := TBoldIndirectElement.Create;
-    Element.EvaluateAndSubscribeToExpression(Expression, Subscriber, IndirectElement, False, false, VariableList);
-    if Assigned(IndirectElement.Value) then
+    lResultElement := aFollower.Value;
+    if not Assigned(lResultElement) then
     begin
-      if (IndirectElement.Value is TBADateTime) then
-        Result := TBADateTime(IndirectElement.Value).AsDateTime
-      else if (IndirectElement.Value is TBADate) then
-        Result := TBADate(IndirectElement.Value).AsDate
-      else if (IndirectElement.Value is TBATime) then
-        Result := TBATime(IndirectElement.Value).AsTime
+      lBoldGuard:= TBoldGuard.Create(lBoldIndirectElement);
+      lBoldIndirectElement := TBoldIndirectElement.Create;
+      aFollower.Element.EvaluateAndSubscribeToExpression(aFollower.AssertedController.Expression, Subscriber, lBoldIndirectElement, False, False, aFollower.Controller.GetVariableListAndSubscribe(Subscriber));
+      lResultElement := lBoldIndirectElement.Value;
+    end;
+    if Assigned(lResultElement) then
+    begin
+      if (lResultElement is TBAMoment) then
+      begin
+        lBAMoment := lResultElement as TBAMoment;
+        if lBAMoment.IsNull then
+        begin
+          Result := 0; //TODO Null will display as 0 which isn't best
+        end
+        else if (lBAMoment is TBADateTime) then
+        begin
+          Result := TBADateTime(lBAMoment).AsDateTime
+        end
+        else if (lBAMoment is TBADate) then
+        begin
+          Result := TBADate(lBAMoment).AsDate
+        end
+        else if (lBAMoment is TBATime) then
+        begin
+          Result := TBATime(lBAMoment).AsTime
+        end
+      end
       else
-        raise EBold.CreateFmt(sCannotGetDateTimeValueFromElement, [IndirectElement.Value.ClassName])
+        raise EBold.CreateFmt('Can''t get datetime value from element (%s)', [lResultElement.ClassName])
     end;
     {$ENDIF}
   end;
 end;
 
-procedure TBoldAsDateTimeRenderer.DefaultSetAsDateTime(Element: TBoldElement; const Value: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsDateTimeRenderer.DefaultSetAsDateTime(aFollower: TBoldFollower; const Value: TDateTime);
 var
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   Attr: IBoldAttribute;
   {$ENDIF}
   ValueElement: TBoldElement;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  ValueElement := aFollower.Value;
+  {$IFDEF BOLDCOMCLIENT}
   if assigned(ValueElement) and (ValueElement.QueryInterface(IBoldAttribute, Attr) = S_OK) then
     Attr.AsVariant := Value
   else
-    raise EBold.CreateFmt(sCannotSetDateTimeValueOnElement, [ValueElement.AsString]);
+    raise EBold.CreateFmt('Can''t set datetime value on element (%s)', [ValueElement.AsString]);
   {$ELSE}
   if Assigned(ValueElement) and (ValueElement is TBADateTime) then
     TBADateTime(ValueElement).AsDateTime := Value
@@ -177,59 +204,54 @@ begin
   else if Assigned(ValueElement) and (ValueElement is TBATime) then
     TBATime(ValueElement).AsTime := Value
   else
-    raise EBold.CreateFmt(sCannotSetDateTimeValueOnElement, [ValueElement.ClassName]);
+    raise EBold.CreateFmt('Can''t set datetime value on element (%s)', [ValueElement.ClassName]);
   {$ENDIF}
 end;
 
-function TBoldAsDateTimeRenderer.GetAsDateTimeAndSubscribe(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): TDateTime;
+function TBoldAsDateTimeRenderer.GetAsDateTimeAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber): TDateTime;
 begin
   if Assigned(OnSubscribe) and Assigned(Subscriber) then
   begin
-    if Assigned(Element) then
-      OnSubscribe(Element, Representation, Expression, Subscriber);
+    if Assigned(aFollower.Element) then
+      OnSubscribe(aFollower, Subscriber);
     Subscriber := nil;
   end;
   if Assigned(OnGetAsDateTime) then
-    Result := OnGetAsDateTime(Element, Representation, Expression)
+    Result := OnGetAsDateTime(aFollower)
   else
-    Result := DefaultGetAsDateTimeAndSubscribe(Element, Representation, Expression, VariableList, Subscriber);
+    Result := DefaultGetAsDateTimeAndSubscribe(aFollower, Subscriber);
 end;
 
-procedure TBoldAsDateTimeRenderer.SetAsDateTime(Element: TBoldElement; const Value: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
+procedure TBoldAsDateTimeRenderer.SetAsDateTime(aFollower: TBoldFollower; const Value: TDateTime);
 begin
   if Assigned(FOnSetAsDateTime) then
-    OnSetAsDateTime(Element, Value, Representation, Expression)
+    OnSetAsDateTime(aFollower, Value)
   else
-    DefaultSetAsDateTime(Element, Value, Representation, Expression, VariableList)
+    DefaultSetAsDateTime(aFollower, Value)
 end;
 
-procedure TBoldAsDateTimeRenderer.MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber);
+procedure TBoldAsDateTimeRenderer.MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber);
 var
-  Value: TDateTime;
+  lDateTime: TDateTime;
+  lRendererData: TBoldDateTimeRendererData;
 begin
-  Assert(FollowerController is TBoldDateTimeFollowerController);
-  Value := GetAsDateTimeAndSubscribe(Element,
-    TBoldDateTimeFollowerController(FollowerController).Representation,
-    TBoldDateTimeFollowerController(FollowerController).Expression, FollowerController.GetVariableListAndSubscribe(Subscriber),
-    subscriber);
-  with (RendererData as TBoldDateTimeRendererData) do
-  begin
-    OldDateTimeValue := Value;
-    CurrentDateTimeValue := Value;
-  end;
+  lDateTime := GetAsDateTimeAndSubscribe(aFollower, subscriber);
+  lRendererData := aFollower.RendererData as TBoldDateTimeRendererData;
+  lRendererData.OldDateTimeValue := lDateTime;
+  lRendererData.CurrentDateTimeValue := lDateTime;
 end;
 
-function TBoldAsDateTimeRenderer.DefaultIsChanged(RendererData: TBoldDateTimeRendererData; const NewValue: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsDateTimeRenderer.DefaultIsChanged(aFollower: TBoldFollower; const NewValue: TDateTime): Boolean;
 begin
-  Result := NewValue <> RendererData.OldDateTimeValue;
+  Result := NewValue <> TBoldDateTimeRendererData(aFollower.RendererData).OldDateTimeValue;
 end;
 
-function TBoldAsDateTimeRenderer.IsChanged(RendererData: TBoldDateTimeRendererData; const NewValue: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
+function TBoldAsDateTimeRenderer.IsChanged(aFollower: TBoldFollower; const NewValue: TDateTime): Boolean;
 begin
   if Assigned(FOnIsChanged) then
-    Result := FOnIsChanged(RendererData, NewValue, Representation, Expression)
+    Result := FOnIsChanged(aFollower, NewValue)
   else
-    Result := DefaultIsChanged(RendererData, NewValue, Representation, Expression, VariableList);
+    Result := DefaultIsChanged(aFollower, NewValue);
 end;
 
 { TBoldDateTimeFollowerController }
@@ -260,7 +282,7 @@ begin
   if Assigned(Renderer) then
     Result := Renderer
   else
-    Result := DefaultAsDateTimeRenderer; //FIXME
+    Result := DefaultAsDateTimeRenderer;
 end;
 
 procedure TBoldDateTimeFollowerController.MakeClean(Follower: TBoldFollower);
@@ -276,15 +298,23 @@ end;
 
 procedure TBoldDateTimeFollowerController.SetAsDateTime(Value: TDateTime; Follower: TBoldFollower);
 begin
-  EffectiveAsDateTimeRenderer.SetAsDateTime(Follower.Element, Value, Representation, Expression, VariableList);
+  EffectiveAsDateTimeRenderer.SetAsDateTime(Follower, Value);
 end;
 
 procedure TBoldDateTimeFollowerController.MayHaveChanged(NewValue: TDateTime; Follower: TBoldFollower);
+var
+  lIsChanged: boolean;
+  lRendererData: TBoldDateTimeRendererData;
 begin
   if Follower.State in bfsDisplayable then
   begin
-    (Follower.RendererData as TBoldDateTimeRendererData).CurrentDateTimeValue := NewValue;
-    Follower.ControlledValueChanged(EffectiveAsDateTimeRenderer.IsChanged(Follower.RendererData as TBoldDateTimeRendererData, NewValue, Representation, Expression, VariableList));
+    lRendererData := (Follower.RendererData as TBoldDateTimeRendererData);
+    lRendererData.CurrentDateTimeValue := NewValue;
+    lIsChanged := EffectiveAsDateTimeRenderer.IsChanged(Follower, NewValue);
+    if lIsChanged then
+    begin
+      Follower.ControlledValueChanged;
+    end;
   end;
 end;
 

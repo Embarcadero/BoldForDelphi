@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSnooper;
 
 interface
@@ -13,8 +16,6 @@ type
   {forward declarations}
   TBoldSnooper = class;
 
-//  TBoldSnooperEventType = (bsetEvent, bsetSubscription);
-//  TBoldSnooperEventTypeSet = set of TBoldSnooperEventType;
 
   { TBoldSnooper }
   TBoldSnooper = class(TBoldAbstractSnooper)
@@ -44,8 +45,7 @@ uses
   BoldLockingDefs,
   BoldUtils,
   BoldSnooperHandle,
-  ComObj,
-  PersistenceConsts;
+  ComObj;
 
 function DatabaseLock_AsOLEVariant: OleVariant;
 begin
@@ -61,15 +61,15 @@ procedure TBoldSnooper.TransmitEvents(const ClientID: TBoldClientID);
     if res <> S_OK then
     begin
       if Res = E_ENQUEUER_NOT_ENABLED then
-        s := sEnqueuerNotEnabled
+        s := 'Call to %s failed. Propagator Enqueuer not enabled'
       else if res = E_CLIENT_NOT_REGISTERED then
-        s := sClientNotRegistered
+        s := 'Call to %s failed. Client not registered with propagator'
       else if res = E_INVALID_PARAMETER then
-        s := sInvalidParameter
+        s := 'Call to %s failed. Invalid parameter'
       else if res = W_CLIENT_NOT_RECEIVING then
-        s := sClientNotReceivingEvents
+        s := 'Call to %s OK, but client is currently not receiving events'
       else
-        s := Format(sCallFailed, [SysErrorMessage(Res)]);
+        s := 'Call to %s failed. Error: ' + SysErrorMessage(Res);
       DoPropagatorFailure(self, format(s, [Action]));
     end;
   end;
@@ -79,11 +79,11 @@ begin
     begin
       try
         if (Events.Count <> 0) then
-          CheckError(Propagator.SendEvents(ClientID, StringListToVarArray(Events)), 'SendEvents'); // do not localize
+          CheckError(Propagator.SendEvents(ClientID, StringListToVarArray(Events)), 'SendEvents');
         if (Subscriptions.Count <> 0) then
-          CheckError(Propagator.AddSubscriptions(ClientID, StringListToVarArray(Subscriptions)), 'AddSubscriptions'); // do not localize
+          CheckError(Propagator.AddSubscriptions(ClientID, StringListToVarArray(Subscriptions)), 'AddSubscriptions');
         if (CancelledSubscriptions.Count <> 0) then
-          CheckError(Propagator.CancelSubscriptions(ClientID, StringListToVarArray(CancelledSubscriptions)), 'CancelSubscriptions'); // do not localize
+          CheckError(Propagator.CancelSubscriptions(ClientID, StringListToVarArray(CancelledSubscriptions)), 'CancelSubscriptions');
       except on E: EOleSysError do
         DoPropagatorFailure(self, E.Message);
       end;
@@ -102,7 +102,7 @@ begin
     Exit;
   res := LockManager.EnsureLocks(ClientID, DatabaseLock_AsOLEVariant, null);
   if not res then
-    raise EBoldEnsureDatabaseLockError.CreateFmt(sCannotAcquireLock, [ClassName, 'EnsureDatabaseLock']); // do not localize
+    raise EBoldEnsureDatabaseLockError.CreateFmt('%s.EnsureDatabaseLock Cannot acquire Database Lock', [ClassName]);
 end;
 
 procedure TBoldSnooper.ReleaseDataBaseLock(const ClientID: TBoldClientID);
@@ -115,8 +115,8 @@ begin
   try
     LockManager.ReleaseLocks(ClientID, DatabaseLock_AsOLEVariant)
   except
-    raise EBoldLockManagerError.CreateFmt(sCannotAcquireLock, [ClassName, 'ReleaseDataBaseLock']); // do not localize
-  end;
+    raise EBoldLockManagerError.CreateFmt('%s.ReleaseDatabaseLock Cannot acquire Database Lock', [ClassName]);
+  end;  
 end;
 
 constructor TBoldSnooper.Create(MoldModel: TMoldModel; aOwner: TObject);
@@ -131,7 +131,7 @@ begin
   if Assigned((fOwner as TBoldSnooperHandle).LockManagerHandle) then
     Result := (fOwner as TBoldSnooperHandle).LockManagerHandle.LockManager
   else
-    raise EBoldLockManagerError.CreateFmt(sLockManagerNotAssigned, [ClassName]);
+    raise EBoldLockManagerError.CreateFmt('%s.GetLockManager: LockManager not assigned', [ClassName]);
 end;
 
 function TBoldSnooper.GetPropagator: IBoldEventPropagator;
@@ -146,6 +146,6 @@ begin
   Result := (fOwner as TBoldSnooperHandle).CheckDatabaseLock;
 end;
 
+initialization
+
 end.
-
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCheckboxStateControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,11 +8,12 @@ unit BoldCheckboxStateControlPackCom;
 interface
 
 uses
-  StdCtrls, // TCheckBoxState
-  BoldDefs,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+  StdCtrls,
+  BoldClientElementSupport,
+  BoldComClient,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
-  BoldSubscription;
+  BoldDefs;
 
 type
 
@@ -48,7 +52,7 @@ type
     class function DefaultGetAsCheckBoxStateAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): TCheckBoxState; virtual;
     class procedure DefaultSetAsCheckBoxState(Element: IBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
     class function DefaultValidateCheckBoxState(Element: IBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;  VariableList: IBoldExternalVariableList): Boolean; virtual;
-    procedure MakeUptodateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
     function DefaultIsChanged(RendererData: TBoldCheckBoxRendererDataCom; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;  VariableList: IBoldExternalVariableList): Boolean;
     function GetAsCheckBoxStateAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): TCheckBoxState; virtual;
     procedure SetAsCheckBoxState(Element: IBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
@@ -84,9 +88,7 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
-  BoldControlPackDefs,
-  BoldAttributes;
+  BoldControlPackDefs;
 
 var
   DefaultAsCheckBoxStateRenderer: TBoldAsCheckBoxStateRendererCom;
@@ -142,7 +144,7 @@ end;
 
 procedure TBoldCheckBoxStateFollowerControllerCom.MakeClean(Follower: TBoldFollowerCom);
 begin
-  ReleaseChangedValue(Follower); // note, must do first, since set can change element
+  ReleaseChangedValue(Follower);
   SetAsCheckBoxState(GetCurrentAsCheckBoxState(Follower), Follower);
 end;
 
@@ -160,7 +162,7 @@ end;
 
 class function TBoldAsCheckBoxStateRendererCom.DefaultGetAsCheckBoxStateAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): TCheckBoxState;
 var
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
   Attribute: IBoldAttribute;
   {$ELSE}
@@ -170,7 +172,7 @@ begin
   Result := cbGrayed;
   if Assigned(Element) then
   begin
-    {$IFDEF BOLDCOMCLIENT} // defaultGet
+    {$IFDEF BOLDCOMCLIENT}
     if assigned(Subscriber) then
       e := Element.EvaluateAndSubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, false, false)
     else
@@ -206,12 +208,12 @@ end;
 class procedure TBoldAsCheckBoxStateRendererCom.DefaultSetAsCheckBoxState(Element: IBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
 var
   ValueElement: IBoldElement;
-  {$IFDEF BOLDCOMCLIENT} // defaulSet
+  {$IFDEF BOLDCOMCLIENT}
   Attribute: IBoldAttribute;
   {$ENDIF}
 begin
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   if valueElement.QueryInterface(IBoldAttribute, Attribute) = S_OK then
   begin
      if NewValue = cbGrayed then
@@ -302,5 +304,5 @@ initialization
 
 finalization
   FreeAndNil(DefaultAsCheckBoxStateRenderer);
-
+  
 end.

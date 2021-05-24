@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComEditors;
 
 interface
@@ -76,8 +79,7 @@ uses
   SysUtils,
   DesignIntf,
   Windows,
-  Dialogs,
-  BoldComConst;
+  Dialogs;
 
 constructor TBoldComServerUnitFile.Create(const UnitIdent: string;
   Creator: TBoldComServerUnitCreator);
@@ -94,31 +96,31 @@ begin
   with TStringList.Create do
   begin
     try
-      Add(Format('unit %s;', [FUnitIdent])); // do not localize
-      Add(''); // do not localize
-      Add('interface'); // do not localize
-      Add(''); // do not localize
-      Add('implementation'); // do not localize
-      Add(''); // do not localize
-      Add('uses'); // do not localize
-      Add('  ComServ, BoldComServer;'); // do not localize
-      Add(''); // do not localize
-      Add('const'); // do not localize
+      Add(Format('unit %s;', [FUnitIdent]));
+      Add('');
+      Add('interface');
+      Add('');
+      Add('implementation');
+      Add('');
+      Add('uses');
+      Add('  ComServ, BoldComServer;');
+      Add('');
+      Add('const');
       for I := 0 to Creator.ServerHandle.Classes.Count - 1 do
       begin
         Item := Creator.ServerHandle.Classes[I];
-        Add(Format('  %s_CLSID: TGUID = ''%s'';', [Item.Name, Item.CLSID])); // do not localize
+        Add(Format('  %s_CLSID: TGUID = ''%s'';', [Item.Name, Item.CLSID]));
       end;
       Add('');
-      Add('initialization'); // do not localize
+      Add('initialization');
       for I := 0 to Creator.ServerHandle.Classes.Count - 1 do
       begin
         Item := Creator.ServerHandle.Classes[I];
-        Add('  TBoldComServerConnectionFactory.Create(ComServer, '); // do not localize
-        Add(Format('    %s_CLSID, ''%s'', ''%s'');', [Item.Name, Item.Name, Item.Description])); // do not localize
+        Add('  TBoldComServerConnectionFactory.Create(ComServer, ');
+        Add(Format('    %s_CLSID, ''%s'', ''%s'');', [Item.Name, Item.Name, Item.Description]));
       end;
       Add('');
-      Add('end.'); // do not localize
+      Add('end.');
       Result := Text;
     finally
       Free;
@@ -238,7 +240,7 @@ begin
     ServerHandle := Component as TBoldComServerHandle;
     if ServerHandle.Classes.Count > 0 then
     begin
-      if MessageDlg(sGenerateServerCode,
+      if MessageDlg('This will generate server code, continue?',
         mtConfirmation, [mbYes, mbNo], 0) = idYes then
       begin
         BorlandIDEServices.QueryInterface(IOTAModuleServices, Ms);
@@ -250,7 +252,7 @@ begin
       end;
     end
     else
-      MessageDlg(sCannotGenerateServerCode, mtWarning, [mbOK], 0);
+      MessageDlg('Can''t generate code, no class(es) defined.', mtWarning, [mbOK], 0);
   end;
 end;
 
@@ -258,7 +260,7 @@ function TBoldComServerHandleComponentEditor.GetVerb(Index: Integer): string;
 begin
   if Index = 0 then
   begin
-    Result := sCaptionGenerateServerCode;
+    Result := 'Generate server code...';
   end;
 end;
 
@@ -294,5 +296,7 @@ begin
   if Assigned(ServerHandle) then
     ServerHandle.Classes.GetClassNames(List);
 end;
+
+initialization
 
 end.

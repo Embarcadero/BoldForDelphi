@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelEditPlugIn;
 
 interface
@@ -58,8 +61,6 @@ type
     property PluginClassName: string read fPlugInClassName;
     procedure GuardedExecute(Context: IUMLModelPlugInContext);
     procedure UnGuardedExecute(Context: IUMLModelPlugInContext);
-
-    //property Action: TAction read FAction write FAction;
   end;
 
   TUMLPlugInMenuItem = class(TMenuItem)
@@ -121,5 +122,7 @@ begin
   if Assigned(OnExecute) then
     OnExecute(Context);
 end;
+
+initialization
 
 end.

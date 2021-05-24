@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNodeControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -39,17 +42,18 @@ type
     FOnIconChanged: TBoldFollowerEvent;
     FOnTextChanged: TBoldFollowerEvent;
     FOnGetFollowerController: TGetFollowerControllerByNameEvent;
-    procedure SetNodeDescriptions(Value: TBoldNodeDescriptions);
-    function GetDefaultNodeDescriptionName: string;
+    procedure SetNodeDescriptions(Value: TBoldNodeDescriptions); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDefaultNodeDescriptionName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetDefaultNodeDescriptionName(const Value: string);
   protected
-    procedure DoIconChanged(Follower: TBoldFollower);
-    procedure DoTextChanged(Follower: TBoldFollower);
+    class function PrecreateFollowers: boolean; override;
+    procedure DoIconChanged(Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure DoTextChanged(Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     {$IFDEF BOLD_BCB}
-    procedure DoGetFollowerController(Name: string; var FollowerController: TBoldFollowerController);
+    procedure DoGetFollowerController(const Name: string; var FollowerController: TBoldFollowerController);
     {$ENDIF}
     {$IFDEF BOLD_DELPHI}
-    function DoGetFollowerController(Name: string): TBoldFollowerController;
+    function DoGetFollowerController(const Name: string): TBoldFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     {$ENDIF}
     procedure DoAssign(Source: TPersistent); override;
     function GetBoldNodeDescriptionsClass: TBoldNodeDescriptionsClass; virtual;
@@ -69,8 +73,8 @@ type
   TBoldNodeDescriptions = class(TCollection)
   private
     FTreeFollowerController: TBoldTreeFollowerController;
-    function GetNodeControllerItem(Index: Integer): TBoldNodeDescription;
-    procedure SetNodeControllerItem(Index: Integer; Value: TBoldNodeDescription);
+    function GetNodeControllerItem(Index: Integer): TBoldNodeDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetNodeControllerItem(Index: Integer; Value: TBoldNodeDescription); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetNodeDescriptionClass: TBoldNodeDescriptionClass; virtual;
     function GetOwner: TPersistent; override;
@@ -87,17 +91,17 @@ type
   private
     FName: string;
     FNodeFollowerController: TBoldNodeFollowerController;
-    procedure SetName(Value: string);
-    function GetHideNodeWithNoChildren: Boolean;
-    procedure SetHideNodeWithNoChildren(Value: Boolean);
-    function GetListController: TBoldGenericListController;
-    function GetIconController: TBoldIntegerFollowerController;
-    function GetTextController: TBoldStringFollowerController;
-    procedure SetListController(Value: TBoldGenericListController);
-    procedure SetIconController(Value: TBoldIntegerFollowerController);
-    procedure SetTextController(Value: TBoldStringFollowerController);
-    function GetContextTypeName: String;
-    procedure SetContextTypeName(const Value: String);
+    procedure SetName(const Value: string);
+    function GetHideNodeWithNoChildren: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetHideNodeWithNoChildren(Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetListController: TBoldGenericListController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIconController: TBoldIntegerFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTextController: TBoldStringFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetListController(Value: TBoldGenericListController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetIconController(Value: TBoldIntegerFollowerController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetTextController(Value: TBoldStringFollowerController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetContextTypeName: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetContextTypeName(const Value: String); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetContextType: TBoldElementTypeInfo;
   protected
     function GetDisplayName: string; override;
@@ -128,6 +132,8 @@ type
     procedure SetHideNodeWithNoChildren(Value: Boolean);
     procedure SetContextTypeName(const Value: String);
     function GetSystemTypeInfo: TBoldSystemTypeInfo;
+  protected
+    class function PrecreateFollowers: boolean; override;  
   public
     constructor Create(aTreeFollowerController: TBoldTreeFollowerController);virtual;
     destructor Destroy; override;
@@ -179,6 +185,11 @@ begin
     Result := '';
 end;
 
+class function TBoldTreeFollowerController.PrecreateFollowers: boolean;
+begin
+  result := true;
+end;
+
 procedure TBoldTreeFollowerController.SetDefaultNodeDescriptionName(const Value: string);
 var
   NodeDescription: TBoldNodeDescription;
@@ -192,7 +203,7 @@ begin
       Changed;
     end
     else
-      raise EBold.CreateFmt(sInvalidNodeName, [ClassName, Value]);
+      raise EBold.CreateFmt('%s.SetDefaultNodeDescriptionName: ''%s'' is not a valid name', [ClassName, Value]);
   end;
 end;
 
@@ -223,10 +234,10 @@ begin
 end;
 
 {$IFDEF BOLD_BCB}
-procedure TBoldTreeFollowerController.DoGetFollowerController(Name: string; var FollowerController: TBoldFollowerController);
+procedure TBoldTreeFollowerController.DoGetFollowerController(const Name: string; var FollowerController: TBoldFollowerController);
 {$ENDIF}
 {$IFDEF BOLD_DELPHI}
-function TBoldTreeFollowerController.DoGetFollowerController(Name: string): TBoldFollowerController;
+function TBoldTreeFollowerController.DoGetFollowerController(const Name: string): TBoldFollowerController;
 {$ENDIF}
 begin
 {$IFDEF BOLD_BCB}
@@ -319,7 +330,6 @@ end;
 
 destructor TBoldNodeDescription.Destroy;
 begin
- // FIXME ??? FreePublisher; //CHECKME Is this really needed?
   FreeAndNil(FNodeFollowerController);
   inherited Destroy;
 end;
@@ -346,7 +356,7 @@ begin
     Result := inherited GetDisplayName;
 end;
 
-procedure TBoldNodeDescription.SetName(Value: string);
+procedure TBoldNodeDescription.SetName(const Value: string);
 begin
   if FName <> Value then
   begin
@@ -415,6 +425,7 @@ begin
   fGenericListFollowerController.OnBeforeDeleteItem := FTreeFollowerController.DoBeforeDeleteItem;
   fGenericListFollowerController.OnAfterDeleteItem := FTreeFollowerController.DoAfterDeleteItem;
   fGenericListFollowerController.BeforeMakeUptoDate := FTreeFollowerController.BeforeMakeUptoDate;
+//  fGenericListFollowerController.OnReplaceitem := FTreeFollowerController.OnReplaceitem;
   fGenericListFollowerController.OnGetContextType := GetContextType;
   Add(fGenericListFollowerController);
 
@@ -441,7 +452,7 @@ end;
 
 destructor TBoldNodeFollowerController.Destroy;
 begin
-  FreePublisher; //CHECKME Is this really needed?
+  FreePublisher;
   inherited Destroy;
 end;
 
@@ -482,6 +493,11 @@ begin
     result := nil;
 end;
 
+class function TBoldNodeFollowerController.PrecreateFollowers: boolean;
+begin
+  result := true;
+end;
+
 function TBoldNodeDescription.GetContextType: TBoldElementTypeInfo;
 var
   ContextType: TBoldElementTypeInfo;
@@ -498,6 +514,5 @@ begin
     result := nil;
 end;
 
+initialization
 end.
-
-

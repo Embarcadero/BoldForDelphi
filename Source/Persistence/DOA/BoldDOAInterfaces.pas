@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDOAInterfaces;
 
 interface
@@ -5,7 +8,6 @@ interface
 uses
   Classes,
   Db,
-  Contnrs,
   Oracle,
   OracleTypes,
   OracleData,
@@ -17,22 +19,12 @@ type
   { forward declarations }
   TBoldDOADataBase = class;
   TBoldDOAQuery = class;
-  TLobValues = class
-  private
-     FLOB:TLoblocator;
-     FValue:TBlobData;
-  public
-    constructor Create(aLOB:TLOBLocator;const aValue:TBlobData);
-    destructor Destroy; override;
-  end;
-//  TBoldDOATable = class;
 
 
   { TBoldDOAQuery }
   TBoldDOAQuery = class(TBoldDataSetWrapper, IBoldQuery, IBoldParameterized)
   private
     fQuery: TOracleDataSet;
-    fLOBList:TObjectList;
     function GetQuery: TOracleDataSet;
     procedure AssignParams(SourceParams: TParams);
     function GetParamCount: integer;
@@ -42,7 +34,9 @@ type
     procedure SetRequestLiveQuery(NewValue: Boolean);
     function GetSQLText: String;
     procedure AssignSQL(SQL: TStrings);
-    procedure AssignSQLText(SQL: String);
+    procedure AssignSQLText(const SQL: String);
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);
     function GetRecordCount: integer;
     function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
   protected
@@ -50,26 +44,24 @@ type
     procedure ClearParams;
     property Query: TOracleDataSet read GetQuery;
     procedure Open; override;
-    procedure BuildVariables;
-    procedure Clear;
   public
     constructor Create(Query: TOracleDataSet; DatabaseWrapper: TBoldDatabaseWrapper); virtual;
-    destructor Destroy; override;
   end;
 
   TBoldDOAExecQuery = class(TBoldNonRefCountedObject, IBoldExecQuery, IBoldParameterized)
   private
     fQuery: TOracleQuery;
     fDatabase: TBoldDOADatabase;
-    fLOBList:TObjectList;
     procedure ClearParams;
     procedure AssignParams(SourceParams: TParams);
     function ParamByName(const Value: string): IBoldParameter;
     function GetParamCount: integer;
     function GetSQLText: String;
     function GetParams(i:integer): IBoldParameter;
-    procedure AssignSQL(SQL: TStrings);
+    procedure AssignSQL(const SQL: TStrings);
     procedure AssignSQLText(SQL: String);
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);
     procedure StartSQLBatch;
     procedure EndSQLBatch;
     procedure FailSQLBatch;
@@ -78,12 +70,8 @@ type
     function GetRowsAffected: integer;
     function GetImplementor: TObject;
     property Query: TOracleQuery read fQuery;
-  protected
-    procedure BuildVariables;
-    procedure Clear;
   public
     constructor Create(Query: TOracleQuery; Database: TBoldDOADatabase);
-    destructor Destroy; override;
   end;
 
   { TBoldADOParameter }
@@ -129,6 +117,8 @@ type
     constructor create(Query: TBoldDOAQuery; ExecQuery: TBoldDOAExecQuery; ParamIndex: integer; ParamName: String);
   end;
 
+
+
   { TBoldDOADataBase }
   TBoldDOADataBase = class(TBoldDatabaseWrapper, IBoldDataBase)
   private
@@ -147,8 +137,6 @@ type
     procedure RollBack;
     procedure Open;
     procedure Close;
-    function GetTable: IBoldTable;
-    procedure ReleaseTable(var Table: IBoldTable);
     function SupportsTableCreation: Boolean;
     procedure ReleaseCachedObjects;
   protected
@@ -157,9 +145,11 @@ type
     procedure ReleaseQuery(var Query: IBoldQuery); override;
     function GetExecQuery: IBoldExecQuery; override;
     procedure ReleaseExecQuery(var Query: IBoldExecQuery); override;
+    function GetTable: IBoldTable; override;
+    procedure ReleaseTable(var Table: IBoldTable); override;
   public
-    constructor Create(DataBase: TOracleSession; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor Destroy; override;
+    constructor create(DataBase: TOracleSession; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor destroy; override;
   end;
 
 implementation
@@ -168,9 +158,7 @@ uses
   Variants,
   BoldDefs,
   SysUtils,
-  OracleCI,
-  BoldUtils,
-  DOAConsts;
+  BoldUtils;
 
 function FieldTypeToOracleType(FieldType: TFieldType): integer;
 begin
@@ -234,6 +222,9 @@ begin
   end;
 end;
 
+
+
+
 { TBoldDOAQuery }
 
 procedure TBoldDOAQuery.AssignParams(Sourceparams: tparams);
@@ -251,6 +242,11 @@ begin
   result := fQuery;
 end;
 
+function TBoldDOAQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
+end;
+
 function TBoldDOAQuery.GetParamCount: integer;
 begin
   result := Query.Variables.count;
@@ -263,7 +259,6 @@ end;
 
 function TBoldDOAQuery.GetREquestLiveQuery: Boolean;
 begin
-  // FIXME: Query.RequestLive;
   result := true;
 end;
 
@@ -272,17 +267,16 @@ var
   i: integer;
 begin
   i := Query.VariableIndex(value);
-  if i = -1 then
-  begin
-    BuildVariables;
-    i := Query.VariableIndex(value);
-  end;
   result := TBoldDOAParameter.Create(self, nil, i, value)
+end;
+
+procedure TBoldDOAQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
 end;
 
 procedure TBoldDOAQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
-  //FIXME:  Query.RequestLive := NewValue;
   ;
 end;
 
@@ -295,6 +289,7 @@ constructor TBoldDOAQuery.Create(Query: TOracleDataSet; DatabaseWrapper: TBoldDa
 begin
   inherited Create(DatabaseWrapper);
   fQuery := Query;
+  SetParamCheck(true);  
 end;
 
 procedure TBoldDOAQuery.Open;
@@ -305,7 +300,7 @@ begin
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end
@@ -318,7 +313,7 @@ begin
   Query.SQL.EndUpdate;
 end;
 
-procedure TBoldDOAQuery.AssignSQLText(SQL: String);
+procedure TBoldDOAQuery.AssignSQLText(const SQL: String);
 begin
   Query.SQL.BeginUpdate;
   Query.SQL.Clear;
@@ -347,25 +342,6 @@ begin
   query.DeleteVariables;
 end;
 
-procedure TBoldDOAQuery.BuildVariables;
-var
-  VarList: TStringList;
-  i : integer;
-begin
-  VarList := Oracle.FindVariables(Query.SQL.Text, False);
-  for i := 0 to VarList.Count - 1 do Query.DeclareVariable(VarList[i], otString);
-end;
-
-procedure TBoldDOAQuery.Clear;
-begin
-  Query.DeleteVariables;
-  FLoblist.Clear;
-end;
-destructor TBoldDOAQuery.Destroy;
-begin
-  FLobList.Free;
-  inherited;
-end;
 { TBoldDOADataBase }
 
 procedure TBoldDOADataBase.AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings);
@@ -376,14 +352,14 @@ begin
   aQuery := TOracleDataset.Create(nil);
   aQuery.Session := fDataBase;
   SQL :=
-    'select owner, table_name, tablespace_name '+ // do not localize
-    'from all_tables '; // do not localize
+    'select owner, table_name, tablespace_name '+
+    'from all_tables ';
 
   if not ShowSystemTables then
     SQL := SQL +
-      'where owner <> ''SYSTEM'' and owner <> ''DBSNMP'' and owner <> ''ORDSYS'' and '+ // do not localize
-            'owner <> ''OUTLN'' and owner <> ''SYS'' and owner <> ''MDSYS'' and owner <> ''MTSSYS'' '; // do not localize
-  SQL := SQL + 'order by owner, table_name, tablespace_name'; // do not localize
+      'where owner <> ''SYSTEM'' and owner <> ''DBSNMP'' and owner <> ''ORDSYS'' and '+
+            'owner <> ''OUTLN'' and owner <> ''SYS'' and owner <> ''MDSYS'' and owner <> ''MTSSYS'' ';
+  SQL := SQL + 'order by owner, table_name, tablespace_name';
   aQuery.SQL.Text := SQL;
   aQuery.Open;
   while not aQuery.Eof do
@@ -407,24 +383,20 @@ end;
 
 function TBoldDOADataBase.GetKeepConnection: Boolean;
 begin
-  // FIXME:   result := fDataBase.KeepConnection;
   result := true
 end;
 
 function TBoldDOADataBase.GetLogInPrompt: Boolean;
 begin
-  //FIXME:   result := fDataBase.LoginPrompt;
   result := true;
 end;
 
 procedure TBoldDOADataBase.SetKeepConnection(NewValue: Boolean);
 begin
-  // FIXME:   fDataBase.KeepConnection := NewValue;
 end;
 
 procedure TBoldDOADataBase.SetlogInPrompt(NewValue: Boolean);
 begin
-  // FIXME: fDataBase.LoginPrompt := NewValue;
 end;
 
 constructor TBoldDOADataBase.create(DataBase: TOracleSession; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
@@ -477,7 +449,6 @@ destructor TBoldDOADataBase.destroy;
 begin
   inherited;
   fDatabase := nil;
-//  FreeAndNil(fCachedTable);
   FreeAndNil(fCachedQuery);
   FreeAndNil(fCachedExecQuery);
 end;
@@ -501,7 +472,7 @@ end;
 
 function TBoldDOADataBase.GetTable: IBoldTable;
 begin
-  raise EBold.CreateFmt(sIBoldTablesNotSupported, [classname, 'GetTable']); // do not localize
+  raise EBold.CreateFmt('%s.GetTable: DOA-Implementation does not support IBoldTables', [classname]);
 end;
 {
 var
@@ -545,7 +516,7 @@ end;
 
 procedure TBoldDOADataBase.ReleaseTable(var Table: IBoldTable);
 begin
-  raise EBold.CreateFmt(sIBoldTablesNotSupported, [classname, 'ReleaseTable']); // do not localize
+  raise EBold.CreateFmt('%s.ReleaseTable: DOA-Implementation does not support IBoldTables', [classname]);
 end;
 {
 var
@@ -571,7 +542,6 @@ end;
 
 procedure TBoldDOADataBase.ReleaseCachedObjects;
 begin
-//  FreeAndNil(fCachedTable);
   FreeAndNil(fCachedQuery);
   FreeAndNil(fCachedExecQuery);
 end;
@@ -610,7 +580,9 @@ begin
       DOAExecQuery.fQuery.free;
     DOAExecQuery.Free;
   end;
+
 end;
+
 
 { TBoldDOAParameter }
 
@@ -637,17 +609,15 @@ end;
 
 procedure TBoldDOAParameter.EnsureParameter(fieldType: TFieldType);
 begin
-  if fieldType <> ftUnknown then
+  if fParamIndex = -1 then
   begin
     if assigned(fQuery) then
     begin
-      FQuery.Query.DeleteVariable(fParamName);
       fQuery.Query.DeclareVariable(fParamName, FieldTypeToOracleType(FieldType));
       fParamIndex := fQuery.Query.VariableIndex(fParamName);
     end
     else
     begin
-      fExecQuery.Query.DeleteVariable(fParamName);
       fExecQuery.Query.DeclareVariable(fParamName, FieldTypeToOracleType(FieldType));
       fParamIndex := fExecQuery.Query.VariableIndex(fParamName);
     end;
@@ -744,22 +714,12 @@ begin
 end;
 
 procedure TBoldDOAParameter.SetAsBlob(const Value: TBlobData);
-var
-  LOB:TLOBLocator;
 begin
   EnsureParameter(ftBlob);
-  if assigned(fQuery) then
-  begin
-    LOB := TLOBLocator.Create(fQuery.Query.Session,otBlob);
-    FQuery.Query.SetComplexVariable(fQuery.Query.VariableName(fParamIndex),LOB);
-  end
+  if value = '' then
+    SetAsVariant(GetDatabaseWrapper.SQLDatabaseConfig.EmptyStringMarker)
   else
-  begin
-    LOB := TLOBLocator.CreateTemporary(fExecQuery.Query.Session,otBlob,True);
-    LOB.Write(Value[1],Length(Value));
-    fExecQuery.Query.SetComplexVariable(fExecQuery.Query.VariableName(fParamIndex),LOB);
-    FExecQuery.fLOBList.Add(TLobValues.Create(LOB,value))
-  end;
+    SetAsVariant(Value);
 end;
 
 procedure TBoldDOAParameter.SetAsBoolean(Value: Boolean);
@@ -777,18 +737,13 @@ end;
 procedure TBoldDOAParameter.SetAsDate(const Value: TDateTime);
 begin
   EnsureParameter(ftDate);
-  SetAsDateTime(Value);
+  SetAsVariant(Value);
 end;
 
 procedure TBoldDOAParameter.SetAsDateTime(const Value: TDateTime);
 begin
   EnsureParameter(ftDateTime);
-  if assigned(fQuery) then
-    fQuery.Query.SetVariable(fParamIndex, Value)
-  else
-    fExecQuery.Query.SetVariable(fParamIndex, Value)
-
-//  SetAsVariant(Value);
+  SetAsVariant(Value);
 end;
 
 procedure TBoldDOAParameter.SetAsFloat(const Value: Double);
@@ -827,7 +782,7 @@ end;
 procedure TBoldDOAParameter.SetAsTime(const Value: TDateTime);
 begin
   EnsureParameter(ftTime);
-  SetAsDateTime(Value);
+  SetAsVariant(Value);
 end;
 
 procedure TBoldDOAParameter.SetAsVariant(const NewValue: Variant);
@@ -862,7 +817,7 @@ end;
 
 { TBoldDOAExecQuery }
 
-procedure TBoldDOAExecQuery.AssignSQL(SQL: TStrings);
+procedure TBoldDOAExecQuery.AssignSQL(const SQL: TStrings);
 begin
   Query.SQL.Assign(SQL);
 end;
@@ -875,14 +830,13 @@ end;
 procedure TBoldDOAExecQuery.ClearParams;
 begin
   query.DeleteVariables;
-  FLobList.Clear;
 end;
 
 constructor TBoldDOAExecQuery.Create(Query: TOracleQuery; Database: TBoldDOADatabase);
 begin
   fQuery := Query;
   fDatabase := Database;
-  FLobList := TObjectList.Create;
+  SetParamCheck(true);  
 end;
 
 function TBoldDOAExecQuery.Createparam(FldType: TFieldType;
@@ -895,17 +849,20 @@ end;
 
 procedure TBoldDOAExecQuery.EndSQLBatch;
 begin
-  // Do nothing
 end;
 
 procedure TBoldDOAExecQuery.FailSQLBatch;
 begin
-  // Do nothing
 end;
 
 function TBoldDOAExecQuery.GetImplementor: TObject;
 begin
   result := Query;
+end;
+
+function TBoldDOAExecQuery.GetParamCheck: Boolean;
+begin
+  Query.ParamCheck := Value;
 end;
 
 function TBoldDOAExecQuery.GetParamCount: integer;
@@ -934,11 +891,6 @@ var
   i: integer;
 begin
   i := Query.VariableIndex(value);
-  if i = -1 then
-  begin
-    BuildVariables;
-    i := Query.VariableIndex(value);
-  end;
   result := TBoldDOAParameter.Create(nil, self, i, Value)
 end;
 
@@ -947,19 +899,22 @@ begin
   BoldLogSQL(fQuery.SQL);
   try
     fQuery.Execute;
-    fQuery.Close;
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + fQuery.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + fQuery.SQL.text;
       raise;
     end;
   end
 end;
 
+procedure TBoldDOAExecQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
+
 procedure TBoldDOAExecQuery.StartSQLBatch;
 begin
-  // do nothing
 end;
 
 procedure TBoldDOAExecQuery.AssignParams(SourceParams: TParams);
@@ -968,42 +923,6 @@ begin
     Query.Variables.Assign(SourceParams)
   else
     Query.Variables.list.Clear;
-end;
-
-procedure TBoldDOAExecQuery.BuildVariables;
-var
-  VarList: TStringList;
-  i : integer;
-begin
-  VarList := Oracle.FindVariables(Query.SQL.Text, False);
-  for i := 0 to VarList.Count - 1 do Query.DeclareVariable(VarList[i], otString);
-end;
-
-procedure TBoldDOAExecQuery.Clear;
-begin
-  Query.DeleteVariables;
-  FLoblist.Clear;
-end;
-
-destructor TBoldDOAExecQuery.Destroy;
-begin
-  FLobList.Free;
-  inherited;
-end;
-
-{ TLobValues }
-
-constructor TLobValues.Create(aLOB: TLOBLocator;const aValue: TBlobData);
-begin
-  inherited Create;
-  FLOB := aLOB;
-  FValue := aValue;
-end;
-
-destructor TLobValues.Destroy;
-begin
-  FLOB.Free;
-  inherited Destroy;
 end;
 
 initialization

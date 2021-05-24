@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLDispatcherVBReg;
 
 interface
@@ -8,11 +11,12 @@ implementation
 
 uses
   BoldXMLDispatcherVB,
-  Classes;
+  Classes,
+  BoldGuard;
 
 procedure Register;
 begin
-  RegisterComponents('Bold XML', [TBoldXMLDispatcherVB]); // do not localize
+  RegisterComponents('Bold XML', [TBoldXMLDispatcherVB]);
 end;
 
 end.

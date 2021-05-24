@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPSParamsSQL;
 
 interface
@@ -19,5 +22,13 @@ type
 
 
 implementation
+
+uses
+  BoldRev;
+
+{ TBoldPSSQLParams }
+
+initialization
+
 
 end.

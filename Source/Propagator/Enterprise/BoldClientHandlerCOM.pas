@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientHandlerCOM;
 
 interface
@@ -9,7 +12,8 @@ uses
   BoldThreadSafeLog,
   BoldClientHandler,
   BoldPropagatorInterfaces_TLB,
-  BoldThreadedComObjectFactory;
+  BoldThreadedComObjectFactory
+  ;
 
 type
   {forward declarations}
@@ -55,7 +59,6 @@ type
 
 var
   ClientHandlerCOMFactory: TBoldClientHandlerThreadedCOMFactory;
-//  ClientHandlerCOMFactory: TBoldClientHandlerCOMFactory;
 implementation
 
 uses
@@ -69,20 +72,20 @@ function TBoldClientHandlerCOM.RegisterClient(LeaseDuration: Integer; PollingInt
                          const BoldClientListener: IBoldListener;
                          const ClientIDString: WideString; out BoldClientID: Integer): HResult; stdcall;
 begin
-  BoldLogThread('ID=ClientHandler/RegCli'); // do not localize
+  BoldLogThread('ID=ClientHandler/RegCli');
   Result := ClientHandler.RegisterClient(LeaseDuration, PollingInterval, BoldClientListener,
                                          ClientIDString, BoldClientID, fRegistrationTime);
 end;
 
 function TBoldClientHandlerCOM.ExtendLease(BoldClientID: Integer; LeaseDuration: Integer; out ExtensionOK: WordBool): HResult; stdcall;
 begin
-  BoldLogThread('ID=ClientHandler/ExtLease'); // do not localize
+  BoldLogThread('ID=ClientHandler/ExtLease');
   Result := ClientHandler.ExtendLease(BoldClientID, LeaseDuration, ExtensionOK);
 end;
 
 function TBoldClientHandlerCOM.UnRegisterClient(BoldClientID: Integer): HResult; stdcall;
 begin
-  BoldLogThread('ID=ClientHandlerH/UnReg'); // do not localize
+  BoldLogThread('ID=ClientHandlerH/UnReg');
   Result := ClientHandler.UnRegisterClient(BoldClientID, fRegistrationTime);
 end;
 
@@ -121,5 +124,7 @@ begin
   Result := inherited CreateComObject(Controller);
  (Result as TBoldClientHandlerCOM).ClientHandler := ClientHandler;
 end;
+
+initialization
 
 end.

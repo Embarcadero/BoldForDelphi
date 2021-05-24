@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDragDropTargetCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -7,7 +10,7 @@ uses
   Classes,
   Controls,
   ExtCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
   {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
@@ -50,8 +53,8 @@ type
     property Element: IBoldElement read GetElement;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
     procedure DoStartDrag(var DragObject: TDragObject); override;
     procedure DoEndDrag(Target:TObject; X, Y: Integer); override;
     procedure MouseDown(BUTTON: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -115,7 +118,7 @@ begin
   AfterMakeUptoDate(fHandleFollower.Follower);
 end;
 
-destructor TBoldDropTargetCom.Destroy;
+destructor TBoldDropTargetCom.destroy;
 begin
   FreeAndNil(FHandleFollower);
   FreeAndNil(FRepresentations);
@@ -151,12 +154,9 @@ end;
 procedure TBoldDropTargetCom.DragOver(Source: TObject; X, Y: Integer;
   State: TDragState; var Accept: Boolean);
 begin
-  // First set the hard accept value
   Accept := IsDropTarget and CanAcceptDraggedObject;
-  // Then, if we accept, invoke user code
   if Accept and Assigned(OnDragOver) then
     OnDragOver(Self, Source, X, Y, State, Accept);
-  //  Make sure we only accept if hard conditions are true.
   Accept := Accept and IsDropTarget and CanAcceptDraggedObject;
 end;
 
@@ -185,7 +185,6 @@ begin
   begin
     ie := TBoldIndirectElement.create;
     try
-      // this code should move to the treeview support classes (or is it already there???)
       Element.EvaluateAndSubscribeToExpression(NodeSelectionExpression, fHandleFollower.Follower.Subscriber, ie);
       if ie.value is IBoldList then begin
         list := ie.value as IBoldList;

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCondition;
 
 interface
@@ -60,6 +63,17 @@ type
     property JoinInheritedTables: Boolean read fJoinInheritedTables write fJoinInheritedTables;
   end;
 
+  {---TBoldRawSQLCondition---}
+  TBoldRawSQLCondition = class(TBoldConditionWithClass)
+  private
+    fSQL: string;
+    fParams: TParams;    
+  public
+    function GetStreamName: string; override;
+    property Params: TParams read fParams write fParams;    
+    property SQL: string read fSQL write fSQL;
+  end;
+
   {---TBoldTimestampCondition---}
   TBoldTimestampCondition = class(TBoldConditionWithClass)
   private
@@ -105,8 +119,8 @@ implementation
 
 uses
   classes,
-  MSXML_TLB,
-  BoldDefaultStreamNames;
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
+  BoldDefaultStreamNames;   
 
 const
   BoldNodeName_MaxAnswers = 'MaxAnswers';
@@ -130,6 +144,10 @@ const
   BoldNodeName_MemberIds = 'MemberIds';
 
 type
+  {$IFNDEF BOLD_DELPHI17_OR_LATER}
+  TValueBuffer = Pointer;
+  {$ENDIF}
+
   { TBoldXMLSQLConditionStreamer}
   TBoldXMLSQLConditionStreamer = class(TBoldXMLConditionWithClassStreamer)
   protected
@@ -162,6 +180,7 @@ type
 
 const
   SQLConditionName = 'SQLCondition';
+  RawSQLConditionName = 'RawSQLCondition';  
   ClassConditionName = 'ClassCondition';
   TimestampConditionName = 'TimestampCondition';
   OclConditionName = 'OclCondition';
@@ -191,6 +210,13 @@ end;
 function TBoldSQLCondition.GetStreamName: string;
 begin
   result := SQLConditionName;
+end;
+
+{ TBoldRawSQLCondition }
+
+function TBoldRawSQLCondition.GetStreamName: string;
+begin
+  Result := RawSQLConditionName;
 end;
 
 { TBoldTimestampCondition }
@@ -278,13 +304,19 @@ end;
 procedure TBoldXMLSQLConditionStreamer.ReadObject(Obj: TObject; Node: TBoldXMLNode);
 var
   anSQLCond: TBoldSQLCondition;
+  {$IFDEF OXML}
+  aNodeEnumerator: TXMLResNodeListEnumerator;
+  aNodeList: IXMLNodeList;
+  aNode: PXMLNode;
+  {$ELSE}
   aNodeList: IXMLDOMNodeList;
   aNode: IXMLDOMNode;
+  {$ENDIF}
   aSubNode: TBoldXMLNode;
   ParamsNode: TBoldXMLNode;
   DataNode: TBoldXMLNode;
   aParam: TParam;
-  Buf: string;
+  Buf: TBoldAnsiString;
 begin
   inherited;
   anSQLCond := Obj as TBoldSQLCondition;
@@ -296,6 +328,32 @@ begin
   if not ParamsNode.IsNull then
   begin
     anSQLCond.Params := TParams.Create;
+    {$IFDEF OXML}
+    if Node.XMLDomElement.GetElementsByTagName(BoldNodeName_Param, aNodeList) then
+    begin
+      aNodeEnumerator := aNodeList.GetEnumerator;
+      try
+        while aNodeEnumerator.MoveNext do begin
+          aNode := aNodeEnumerator.Current;
+          aSubNode := Node.MakeNodeForElement(aNode);
+          aParam := anSQLCond.Params.Add as TParam;
+          aParam.Name := aSubNode.ReadSubNodeString(BoldNodeName_Name);
+          aParam.DataType := TFieldType(aSubNode.ReadSubNodeInteger(BoldNodeName_DataType));
+          aParam.ParamType := TParamType(aSubNode.ReadSubNodeInteger(BoldNodeName_ParamType));
+          DataNode := aSubNode.GetSubNode(BoldNodeName_Data);
+          if Assigned(DataNode) then
+          begin
+            Buf := DataNode.ReadData;
+            aParam.SetData(TValueBuffer(PAnsiChar(Buf)));
+          end;
+          DataNode.Free;
+          aSubNode.Free;
+        end;
+      finally
+        aNodeEnumerator.Free;
+      end;
+    end;
+    {$ELSE}
     aNodeList := Node.XMLDomElement.getElementsByTagName(BoldNodeName_Param);
     aNode := aNodeList.nextNode;
 
@@ -311,12 +369,13 @@ begin
       if assigned(DataNode) then
       begin
         Buf := DataNode.ReadData;
-        aParam.SetData(PChar(Buf));
+        aParam.SetData(PAnsiChar(Buf));
       end;
       DataNode.Free;
       aSubNode.Free;
       aNode := aNodeList.nextNode;
     end;
+    {$ENDIF}
   end
   else
     anSQLCond.Params := nil;
@@ -326,7 +385,7 @@ end;
 procedure TBoldXMLSQLConditionStreamer.WriteObject(Obj: TBoldInterfacedObject; Node: TBoldXMLNode);
 var
   anSQLCond: TBoldSQLCondition;
-  Buf: string;
+  Buf: TBoldAnsiString;
   i: Integer;
   SubNode: TBoldXMLNode;
   ParamsNode: TBoldXMLNode;
@@ -344,7 +403,7 @@ begin
     begin
       SubNode := ParamsNode.NewSubNode(BoldNodeName_Param);
       SetLength(Buf, anSQLCond.Params[i].GetDataSize);
-      anSQLCond.Params[i].GetData(PChar(Buf));
+      anSQLCond.Params[i].GetData(TValueBuffer(PAnsiChar(Buf)));
       SubNode.WriteSubNodeString(BoldNodeName_Name, anSQLCond.Params[i].Name);
       SubNode.WriteSubNodeInteger(BoldNodeName_DataType, Integer(anSQLCond.Params[i].DataType));
       SubNode.WriteSubNodeInteger(BoldNodeName_ParamType, Integer(anSQLCond.Params[i].ParamType));
@@ -416,6 +475,7 @@ begin
   Node.WriteSubNodeInteger(BoldNodeName_EndTime, aCond.EndTime);
   Node.WriteSubNodeObject(BoldNodeName_MemberIds, BOLDMEMBERIDLISTNAME, aCond.MemberIdList);
 end;
+
 
 { TBoldCondition }
 

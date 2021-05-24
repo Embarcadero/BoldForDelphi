@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorHandleCOMReg;
 
 interface
@@ -6,10 +9,11 @@ procedure Register;
 
 implementation
 
-{$R *.res}
+{$R BoldPropagatorHandleCOMReg.res}
 
 uses
   Classes,
+  BoldGuard,
   BoldPropagatorHandleCOM,
   BoldIDEConsts;
 

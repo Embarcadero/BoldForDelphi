@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropertiesControllerPropertyEditorsCom;
 
 interface
@@ -5,22 +8,19 @@ interface
 uses
   Classes,
   DesignEditors,
-  DesignIntf,
+  DesignIntf, 
   BoldAbstractPropertyEditors;
 
 type
-  // A Property editor for the PropertyName property.
-  // It lists all meaningful properties of "Component" including properties of "sub-components"
-  // It has currently some trouble with collections and will not show panels[0] for example
+
+
   TPropertyNamePropertyCom = class(TBoldStringProperty)
   public
     function  GetAttributes: TPropertyAttributes; override;
     procedure GetValues(Proc: TGetStrProc); override;
   end;
 
-  // A Property editor for VCLComponent property
-  // It is based on the TComponentProperty which lists all components of the form
-  // In addition to those it will also list the form so we can control its properties !
+
   TVCLComponentPropertyCom = class(TBoldComponentProperty)
   public
     procedure GetValues(Proc: TGetStrProc); override;
@@ -40,7 +40,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   TypInfo,
   BoldControlsDefs,
   BoldPropertiesControllerCom;
@@ -99,7 +98,7 @@ var
 begin
   if PropCount < 1 then exit;
 
-  SelectedComponent := GetComponent(0) as TBoldDrivenPropertyCom; //we don't allow multiselect
+  SelectedComponent := GetComponent(0) as TBoldDrivenPropertyCom;
   if Assigned(SelectedComponent) and Assigned(SelectedComponent.VCLComponent) then
     DeclareProperties(SelectedComponent.VCLComponent,SelectedComponent.VCLComponent.ClassInfo,'');
 end;
@@ -108,7 +107,7 @@ end;
 
 procedure TVCLComponentPropertyCom.GetValues(Proc: TGetStrProc);
 begin
-  Proc(TBoldDrivenPropertyCom(GetComponent(0)).PropertiesController.Owner.Name); // Add the Form's name to available components
+  Proc(TBoldDrivenPropertyCom(GetComponent(0)).PropertiesController.Owner.Name);
   inherited;
 end;
 
@@ -116,7 +115,6 @@ procedure TVCLComponentPropertyCom.SetValue(const Value: string);
 var
   Component: TComponent;
 begin
-  // Special case for the form
   if Value = TBoldDrivenPropertyCom(GetComponent(0)).PropertiesController.Owner.Name then
   begin
     Component := TBoldDrivenPropertyCom(GetComponent(0)).PropertiesController.Owner;

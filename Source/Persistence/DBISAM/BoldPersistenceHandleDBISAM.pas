@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleDBISAM;
 
 interface
@@ -28,8 +31,8 @@ type
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); override;
     {$ENDIF}
   public
-    constructor Create(Owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(Owner: TComponent); override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property DataBase: TDBISAMDatabase read fDataBase write SetDataBase;
@@ -79,7 +82,7 @@ procedure TBoldPersistenceHandleDBISAM.SetDataBase(const Value: TDBISAMDatabase)
 begin
   if fDataBase <> Value then
   begin
-    CheckInactive('SetDataBase'); // do not localize
+    CheckInactive('SetDataBase');
     fDataBase := Value;
     if assigned(fDataBase) then
       fDataBase.FreeNotification(self);
@@ -97,14 +100,14 @@ begin
   if not assigned(Target.DatabaseAdapter) then
   begin
     Target.DatabaseAdapter := TBoldDatabaseAdapterDBISAM.Create(Target.Owner);
-    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterDBISAM'); // do not localize
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterDBISAM');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Target.DatabaseAdapter.DesignInfo          := DesInfo;
-    showmessage(sCreatedNewAdapter);
+    showmessage('Created a new DatabaseAdapterDBISAM');
   end
   else if not (target.DatabaseAdapter is tBoldDatabaseAdapterDBISAM) then
-    raise Exception.CreateFmt(sCannotTransferProperties, [target.DatabaseAdapter.ClassName] );
+    raise Exception.CreateFmt('The persistencehandle is connected to a %s, properties can only be transfered to a TBoldDatabaseAdapterDBISAM', [target.DatabaseAdapter.ClassName] );
 
   Adapter := target.DatabaseAdapter as tBoldDatabaseAdapterDBISAM;
   if assigned(fDatabase) then
@@ -113,14 +116,14 @@ begin
   if not assigned(Adapter.Database) then
   begin
     Adapter.DataBase := TDBISAMDatabase.Create(Target.owner);
-    Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'Database'); // do not localize
-    showmessage(sCreatedDB);
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'Database');
+    showmessage('Created a new Database');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Adapter.DataBase.DesignInfo          := DesInfo;
   end;
 end;
 
+
+initialization
 end.
-
-

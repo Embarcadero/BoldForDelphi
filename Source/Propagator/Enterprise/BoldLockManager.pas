@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManager;
 
 interface
@@ -16,7 +19,7 @@ uses
   ;
 
 type
-  TBoldLockManager = class(TBoldPassthroughSubscriber)
+  TBoldLockManager = class(TBoldExtendedPassthroughSubscriber)
   private
     fHandedLocks: TBoldLockList;
     fPropagator: TBoldAdvancedPropagator;
@@ -86,9 +89,8 @@ begin
             if (CurrentNode.ClientId <> ClientId) then
               if CurrentNode.HasTimedOut  then
               begin
-                // this is where locks get lost
                 Temp := CurrentNode;
-                CurrentNode := CurrentNode.Next[HandedLocks.LockNameIndexOrder] as TBoldLockNode; //send LockLost event
+                CurrentNode := CurrentNode.Next[HandedLocks.LockNameIndexOrder] as TBoldLockNode;
                 Temp.Remove;
                 LockLostEvent := TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsLockLost, '', '',Locks[i] ,nil);
                 Propagator.Enqueuer.SendLockEvent(Temp.ClientId, LockLostEvent, False);
@@ -104,9 +106,9 @@ begin
               end
             else
               CurrentNode := CurrentNode.Next[HandedLocks.LockNameIndexOrder] as TBoldLockNode;
-          end;//while
+          end;
         end
-    end;//for
+    end;
 end;
 
 constructor TBoldLockManager.Create(const Propagator: TBoldAdvancedPropagator);
@@ -237,5 +239,7 @@ begin
       inc(i);
     end;
 end;
+
+initialization
 
 end.

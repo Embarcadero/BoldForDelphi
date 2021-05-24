@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGridRTColEditor;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -12,7 +15,7 @@ uses
   Classes,
   BoldDefs,
   BoldGrid,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldOclPropEditor,
   {$ENDIF}
   BoldSystemRT,
@@ -69,7 +72,6 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldUtils;
 
 {$R *.dfm}
@@ -135,14 +137,14 @@ procedure TfrmRTColEditor.GetColumns;
 var
   i: integer;
 begin
-  for i := 1 to Grid.ColCount - 1 do
+  for i := 1 to Grid.ColCount-1 do
     lbxColumns.Items.AddObject(EGrid.Columns[i].Title.Caption, EGrid.Columns[i]);
 end;
 
 procedure TfrmRTColEditor.Execute(BoldCustomGrid: TBoldCustomGrid);
 begin
   if not Assigned(BoldCustomGrid) then
-    raise EBold.CreateFmt(sExecuteGridNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.Execute: BoldCustomGrid not assigned', [ClassName]);
 
   Grid := BoldCustomGrid;
   CurrentGridColumn := nil;
@@ -177,8 +179,8 @@ begin
   Grid.AddColumn;
   with EGrid do
   begin
-    Columns[ColCount - 1].Title.Caption := sNewColumn;
-    lbxColumns.Items.AddObject(Columns[ColCount - 1].Title.Caption, Columns[ColCount - 1]);
+    Columns[ColCount-1].Title.Caption := '<new column>';
+    lbxColumns.Items.AddObject(Columns[ColCount-1].Title.Caption, Columns[ColCount-1]);
   end;
 end;
 
@@ -192,12 +194,12 @@ end;
 procedure TfrmRTColEditor.PropertyKeyPress(Sender: TObject; var Key: Char);
 begin
   if not Assigned(CurrentGridColumn) then
-    Key := BOLDNULL;
+    Key := BOLDNULL; 
 end;
 
 procedure TfrmRTColEditor.cmdOCLEditorClick(Sender: TObject);
 begin
-  {$IFNDEF BOLDCOMCLIENT} // ocleditor
+  {$IFNDEF BOLDCOMCLIENT}
   with TBoldOCLPropEditForm.Create(nil) do
   try
     Context := EGrid.GetHandleListElementType;
@@ -209,5 +211,7 @@ begin
   end;
   {$ENDIF}
 end;
+
+initialization
 
 end.

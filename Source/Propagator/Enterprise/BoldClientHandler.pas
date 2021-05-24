@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientHandler;
 
 interface
@@ -28,7 +31,7 @@ type
   {TBoldClientHandler}
   TBoldClientHandler = class(TBoldPublisher)
   private
-    fClientInfoList: TBoldClientInfoList; //ClientInfoList sorted by ClientID
+    fClientInfoList: TBoldClientInfoList;
     fNOConnectedClients: integer;
     fEnabled: Boolean;
     fLockTime: TDateTime;
@@ -50,7 +53,7 @@ type
     procedure AcquireLock;
     procedure ReleaseLock;
   protected
-    procedure EnqueueRemoveClientQueueEvent(const ClientId: TBoldClientId); virtual; // virtuality is for testcases...
+    procedure EnqueueRemoveClientQueueEvent(const ClientId: TBoldClientId); virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;    {IBoldClientHandler}
@@ -71,8 +74,7 @@ type
     function IsRegistered(const ClientId: TBoldClientId): Boolean;
     function DisconnectClient(const BoldClientId: TBoldClientId; const RegistrationTime: TTimeStamp): Boolean;
     procedure SendDisconnectRequest(const BoldClientId: TBoldClientId; const msg: string; RemainDisconnected: Integer);
-//    function ExternalRemoveClient(const ClientId: TBoldClientId; const RegistrationTime: TTimeStamp;
-//              const Reason: TBoldRemoveClientReasonType): Boolean;
+
     function IsThereAClientTimingOutSoon(out ClientId: TBoldClientId; out RegistrationTime,
               LeaseTimeOut: TTimeStamp): Boolean;
     procedure RemoveExpiredLease(const ClientID: TBoldClientID; const RegistrationTime: TTimeStamp);
@@ -83,7 +85,6 @@ type
     {$IFDEF DEBUG}
     procedure DebugLock;
     procedure DebugUnlock;
-    // this function can cause a deadlock between the client and the server if called at the wrong time, use with care!
     function ValidateClientInterface(const ListenerInterface: IBoldListener; const ClientIDString: string): Boolean;
     {$ENDIF}
     function GetListener(const ClientId: TBoldClientId; const RegistrationTime: TTimeStamp; out obj): Boolean;
@@ -109,8 +110,7 @@ type
     fLongestIntervalBetweenEvents: TDateTime;
     fLostEvents: integer;
     fClientStatus: TBoldClientReceiveStatus;
-    // all instance variables should be cleared/initialized in
-    // TBoldClientInfo.Initialize
+
     function LeaseIsExpired: Boolean;
     procedure ReInitializeListenerInterface;
     function GetClientStatusString: string;
@@ -164,7 +164,6 @@ implementation
 uses
   BoldPropagatorConstants,
   BoldPropagatorServer,
-  PropagatorConsts,
   comobj;
 
 type
@@ -199,7 +198,7 @@ constructor TBoldClientHandler.Create;
 begin
   inherited Create;
   fClientInfoList := TBoldClientInfoList.Create;
-  fClientHandlerLock := TBoldLoggableCriticalSection.Create('CH'); // do not localize
+  fClientHandlerLock := TBoldLoggableCriticalSection.Create('CH');
   fLockTimeLock := TCriticalSection.Create;
   fNOConnectedClients := 0;
   fLockTime := 0;
@@ -225,7 +224,7 @@ begin
     FreeAndNil(fClientHandlerLock);
     FreeAndNil(fLockTimeLock);
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'Destroy', E.Message]); // do not localize
+    BoldLogError('%s.Destroy Error: %s)', [ClassName, E.Message]);
   end;
   inherited;
 end;
@@ -240,7 +239,7 @@ begin
       Result := Assigned(BoldClientInfo);
     end;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'InfoForClient', ClientId, E.message]); // do not localize
+    BoldLogError('%s.InfoForClient Error: [ID=%d] %s)', [ClassName, ClientId, E.message]);
   end;
 end;
 
@@ -259,13 +258,13 @@ begin
       RegistrationTime := fClientInfoList[BoldClientId].RegistrationTime;
       SendExtendedEvent(self, BOLD_PROPAGATOR_CLIENT_REGISTERED, [BoldClientID]);
       NotifyLeaseChanged;
-      BoldLog(sLoggingID, [ClientIdString, BoldClientId]);
+      BoldLog('Log In: %s [ID=%d]', [ClientIdString, BoldClientId]);
       inc(fTotalClients);
       if NoConnectedClients > fPeakClients then
         fPeakClients := NoConnectedClients;
       Result := S_OK;
     except on E: Exception do
-      BoldLogError(sLogErrorAndID, [ClassName, 'RegisterClient', BOldClientID, E.Message]); // do not localize
+      BoldLogError('%s.RegisterClient Error: [ID=%d] %s)', [ClassName, BOldClientID, E.Message]);
     end;
   finally
     ReleaseLock;
@@ -291,12 +290,12 @@ begin
         NotifyLeaseChanged;
       end
       else
-        BoldLog(sExtendLeaseFailed, [BoldClientId]);
+        BoldLog('ExtendLease failed: [ID=%d] Client already disconnected ', [BoldClientId]);
     finally
       ReleaseLock;
     end;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'ExtendLease', BoldClientId, E.Message]); // do not localize
+    BoldLogError('%s.ExtendLease Error: [ID=%d] %s', [ClassName, BoldClientId, E.Message]);
   end;
 end;
 
@@ -317,10 +316,9 @@ begin
         if InternalRemoveClient(BoldClientID) then
         begin
           Result := S_OK;
-          // notify all subscribers --- cleanup
           SendExtendedEvent(self, BOLD_PROPAGATOR_CLIENT_UNREGISTERED, [BoldClientID]);
           NotifyLeaseChanged;
-          BoldLog(sLogOff,
+          BoldLog('Log Off: %s [ID=%d] [Pkg: %d Ev: %d Int: %s Login: %s (%s ago) Status: %s]',
               [IdString, BoldClientId,
               ClientInfo.fSuccessfullyReceivedCount,
               ClientInfo.fSuccessfullyReceivedEventsCount,
@@ -334,7 +332,7 @@ begin
       ReleaseLock;
     end;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'UnRegisterClient', BoldClientId, E.Message]); // do not localize
+    BoldLogError('%s.UnRegisterClient Error: [ID=%d] %s)', [ClassName, BoldClientId, E.Message]);
   end;
 end;
 
@@ -343,7 +341,6 @@ var
   ClientInfo: TBoldClientInfo;
 begin
   Result := false;
-  // remove the clientid from the list
   if InfoForClient(BoldClientID, ClientInfo) and (ClientInfo.Initialized) then
   begin
     Result := true;
@@ -374,7 +371,7 @@ begin
     ClientId := NewClientID;
     NOConnectedClients := NOConnectedClients + 1;
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'AddClient', E.Message]); // do not localize
+    BoldLogError('%s.AddClient: %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -396,7 +393,7 @@ begin
       IdString := ClientInfo.ClientIdentifierString;
       InternalRemoveClient(ClientID);
       SendExtendedEvent(self, BOLD_PROPAGATOR_CLIENT_LEASE_EXPIRED, [ClientID]);
-      BoldLog(sLeaseExpired,
+      BoldLog('Lease Expired: %s [ID=%d] [Pkg: %d Ev: %d Int: %s Last: %s ago Login: %s (%s ago) Status: %s]',
               [IdString, ClientID,
               ClientInfo.fSuccessfullyReceivedCount,
               ClientInfo.fSuccessfullyReceivedEventsCount,
@@ -421,7 +418,7 @@ begin
     if Assigned(ClientIds) then
       for i:= 0 to fClientInfoList.Count - 1 do
         if Assigned(fClientInfoList[i]) and fClientInfoList[i].Initialized then
-          ClientIds.Add(Format('%d=%s', [fClientInfoList[i].ClientId, fClientInfoList[i].ClientIdentifierString])); // do not localize
+          ClientIds.Add(Format('%d=%s', [fClientInfoList[i].ClientId, fClientInfoList[i].ClientIdentifierString]));
   finally
     ReleaseLock;
   end;
@@ -447,18 +444,17 @@ begin
         if InternalRemoveClient(BoldClientID) then
         begin
           Result := true;
-          // notify all subscribers --- cleanup
           SendExtendedEvent(self, BOLD_PROPAGATOR_CLIENT_CONNECTION_LOST, [BoldClientID]);
           NotifyLeaseChanged;
           if ClientInfo.fSuccessfullyReceivedCount = 0 then
-            BoldLog(sClientDisconnected, [
+            BoldLog('Disconnected: %s [ID=%d] Login: %s (%s ago) Status: %s', [
               IdString, BoldClientId,
               DateTimeToStr(TimeStampToDateTime(ClientInfo.RegistrationTime)),
               TimeToStr(now - TimeStampToDateTime(ClientInfo.RegistrationTime)),
               ClientInfo.ClientStatusString
             ])
           else
-            BoldLog(sClientDisconnected_Long,
+            BoldLog('Disconnected: %s [ID=%d] [Pkg: %d Ev: %d Int: %s Last: %s ago Login: %s (%s) Status: %s]',
               [IdString, BoldClientId,
               ClientInfo.fSuccessfullyReceivedCount,
               ClientInfo.fSuccessfullyReceivedEventsCount,
@@ -473,7 +469,7 @@ begin
       ReleaseLock;
     end;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'DisconnectClient', BoldClientId, E.Message]); // do not localize
+    BoldLogError('%s.DisconnectClient Error: [ID=%d] %s)', [ClassName, BoldClientId, E.Message]);
   end;
 end;
 
@@ -493,7 +489,7 @@ begin
       ReleaseLock;
     end;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'GetRegistrationTime', ClientID, E.Message]); // do not localize
+    BoldLogError('%s.GetRegistrationTime Error: [ID=%d] %s)', [ClassName, ClientID, E.Message]);
   end;
 end;
 
@@ -523,9 +519,9 @@ begin
   try
     Guard := TBoldGuard.Create(Temp);
     Temp := TStringList.Create;
-    Temp.Add('TotalClients='+IntToStr(fTotalClients)); // do not localize
-    Temp.Add('PeakClients='+IntToStr(fPeakClients)); // do not localize
-    Temp.Add('TotalLostEvents='+IntToStr(fTotalLostEvents)); // do not localize
+    Temp.Add('TotalClients='+IntToStr(fTotalClients));
+    Temp.Add('PeakClients='+IntToStr(fPeakClients));
+    Temp.Add('TotalLostEvents='+IntToStr(fTotalLostEvents));
     ClientInfo.Add(temp.CommaText);
     if Assigned(ClientInfo) then
       for i:= 0 to fClientInfoList.Count - 1 do
@@ -533,16 +529,16 @@ begin
         begin
           ClientInfoItem := fClientInfoList[i];
           temp.Clear;
-          Temp.Add('ID='                +IntToStr(ClientInfoItem.ClientId)); // do not localize
-          Temp.Add('IDString='          +ClientInfoItem.ClientIdentifierString); // do not localize
-          Temp.Add('RegistrationTime='  +FormatDateTime('yyyy-mm-dd hh:nn:ss', TimeStampToDateTime(ClientInfoItem.RegistrationTime))); // do not localize
-          Temp.Add('LeaseTimeout='      +FormatDateTime('yyyy-mm-dd hh:nn:ss', TimeStampToDateTime(ClientInfoItem.LeaseTimeOut))); // do not localize
-          temp.add('Packages='          +intToStr(ClientInfoItem.fSuccessfullyReceivedCount)); // do not localize
-          temp.add('Events='            +intToStr(ClientInfoItem.fSuccessfullyReceivedEventsCount)); // do not localize
-          temp.add('LastSend='          +FormatDateTime('yyyy-mm-dd hh:nn:ss', ClientInfoItem.fLastSuccessfullReceive)); // do not localize
-          temp.add('LongestInterval='   +FormatDateTime('yyyy-mm-dd hh:nn:ss', ClientInfoItem.fLongestIntervalBetweenEvents)); // do not localize
-          temp.add('LostEvents='      +IntToStr(ClientInfoItem.fLostEvents)); // do not localize
-          temp.Add('Status='            +ClientInfoItem.ClientStatusString); // do not localize
+          Temp.Add('ID='                +IntToStr(ClientInfoItem.ClientId));
+          Temp.Add('IDString='          +ClientInfoItem.ClientIdentifierString);
+          Temp.Add('RegistrationTime='  +FormatDateTime('yyyy-mm-dd hh:nn:ss', TimeStampToDateTime(ClientInfoItem.RegistrationTime)));
+          Temp.Add('LeaseTimeout='      +FormatDateTime('yyyy-mm-dd hh:nn:ss', TimeStampToDateTime(ClientInfoItem.LeaseTimeOut)));
+          temp.add('Packages='          +intToStr(ClientInfoItem.fSuccessfullyReceivedCount));
+          temp.add('Events='            +intToStr(ClientInfoItem.fSuccessfullyReceivedEventsCount));
+          temp.add('LastSend='          +FormatDateTime('yyyy-mm-dd hh:nn:ss', ClientInfoItem.fLastSuccessfullReceive));
+          temp.add('LongestInterval='   +FormatDateTime('yyyy-mm-dd hh:nn:ss', ClientInfoItem.fLongestIntervalBetweenEvents));
+          temp.add('LostEvents='      +IntToStr(ClientInfoItem.fLostEvents));
+          temp.Add('Status='            +ClientInfoItem.ClientStatusString);
           ClientInfo.Add(Temp.CommaText);
         end;
   finally
@@ -601,7 +597,7 @@ begin
       ReleaseLock;
     end;
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'IsThereAClientTimingOutSoon', E.Message]); // do not localize
+    BoldLogError('%s.IsThereAClientTimingOutSoon Error: %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -758,7 +754,7 @@ begin
         end;
       end;
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'GetFirstLeaseTimeOutClient', E.Message]); // do not localize
+    BoldLogError('%s.GetFirstLeaseTimeOutClient Error: %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -834,21 +830,21 @@ begin
   if Result then
   begin
     Events := TStringList.Create;
-    Events.Add('L'); {TODO: change this to a ping message}
+    Events.Add('L'); 
     try
       OleCheck(ListenerInterface.ReceiveEvents(StringListToVarArray(Events)));
     except on E: Exception do
       begin
         Result := false;
-        ErrorMsg := Format(sInvalidListener, [ClassName, ClientIdString, E.Message]);
+        ErrorMsg := Format('%s.ValidateClientInterface: ClientListener not valid for Client %s; Error=%s', [ClassName, ClientIdString, E.Message]);
         if E is EOleSysError then
-          ErrorMsg := ErrorMsg + Format(sErrorCode, [(E as EOleSysError).ErrorCode]);
+          ErrorMsg := ErrorMsg + Format('  ErrorCode=%d', [(E as EOleSysError).ErrorCode]);
         BoldLogError(ErrorMsg);
       end;
     end;
   end
   else
-    BoldLogError(sListenerInterfaceMissing, [ClassName, ClientIdString]);
+    BoldLogError('%s.ValidateClientInterface Error: [ID=%s] Listener interface missing', [ClassName, ClientIdString]);
 end;
 {$ENDIF}
 
@@ -870,7 +866,7 @@ begin
       if ClientInfo.fClientStatus = crsNotReceiving then
       begin
         ClientInfo.fClientStatus := crsRecovered;
-        BoldLogError(sClientHasRecovered, [
+        BoldLogError('!!! Client %s (%d) has recovered and received %d messages', [
           ClientInfo.ClientIdentifierString,
           ClientId, EventCount]);
       end;
@@ -892,7 +888,7 @@ begin
     begin
       ClientInfo.fLostEvents := ClientInfo.fLostEvents + EventCount;
       ClientInfo.fClientStatus := crsNotReceiving;
-      inc(fTotalLostEvents, EventCount);
+      inc(fTotalLostEvents, EventCount); 
     end;
   finally
     ReleaseLock;
@@ -952,7 +948,7 @@ begin
       ReleaseLock;
     end;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'SendDisconnectRequest', BoldClientId, E.Message]); // do not localize
+    BoldLogError('%s.SendDisconnectRequest Error: [ID=%d] %s)', [ClassName, BoldClientId, E.Message]);
   end;
 end;
 
@@ -988,7 +984,7 @@ begin
     fClientStatus := crsOK;
     fInitialized := true;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'Initialize', ClientIdString, E.Message]); // do not localize
+    BoldLogError('%s.Initialize Error: [ID=%s] %s', [ClassName, ClientIdString, E.Message]);
   end;
 end;
 
@@ -1004,7 +1000,7 @@ begin
       fInitialized := false;
     end
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'UnInitialize', E.Message]); // do not localize
+    BoldLogError('%s.UnInitialize Error: %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -1018,7 +1014,7 @@ begin
     CurrentTime := DateTimetoTimeStamp(Now);
     Result := TimeStampComp(LeaseTimeOut, CurrentTime) <= 0;
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'LeaseIsExpired', ClientID, E.Message]); // do not localize
+    BoldLogError('%s.LeaseIsExpired Error: [ID=%d] %s', [ClassName, ClientID, E.Message]);
   end;
 end;
 
@@ -1031,11 +1027,11 @@ end;
 function TBoldClientInfo.GetClientStatusString: string;
 begin
   case fClientStatus of
-    crsOK: result := sOK;
-    crsNotReceiving: result := sNotReceiving;
-    crsRecovered: result := sRecovered;
-    else result := sUnknown;
-  end;
+    crsOK: result := 'OK';
+    crsNotReceiving: result := 'Not Receiving';
+    crsRecovered: result := 'Recovered';
+    else result := '<Unknown>';
+  end;                       
 end;
 
 procedure TBoldClientInfo.ExtendLease(LeaseDuration: integer);
@@ -1137,7 +1133,7 @@ begin
     if ((Index >= 0) and (Index < fList.Count)) then
       Result := (fList[Index] as TBoldClientInfo);
   except on E: Exception do
-    BoldLogError(sLogErrorAndID, [ClassName, 'GetExistingClientInfo', index, E.message]); // do not localize
+    BoldLogError('%s.GetExistingClientInfo Error: [ID=%d] %s', [ClassName, index, E.message]);
   end;
 end;
 
@@ -1159,4 +1155,5 @@ begin
   fFreeClientIds.Add(Pointer(ClientId));
 end;
 
+initialization
 end.

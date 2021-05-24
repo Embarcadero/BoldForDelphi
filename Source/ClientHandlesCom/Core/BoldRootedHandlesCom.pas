@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRootedHandlesCom;
 
 interface
@@ -54,19 +57,12 @@ implementation
 
 uses
   SysUtils,
-  BoldComConst,
-  BoldUtils,
   BoldDefs,
   BoldComClient;
 
-resourcestring
-  sPropertyIsReadOnly = '% is Read Only';
-    sCircularReference = 'Circular reference in RootHandle';
-
-
 const
   breFreeHandle = 42;
-
+  
 {-- TBoldRootedHandleCom ------------------------------------------------------}
 
 constructor TBoldRootedHandleCom.Create(Owner: TComponent);
@@ -156,15 +152,14 @@ end;
 
 procedure TBoldRootedHandleCom.SetConnectionHandle(Value: TBoldComConnectionHandle);
 begin
-  // if ConnectionHandle is set to nil we must subscribe to RootHandle instead
   if (Value <> ConnectionHandle) then
   begin
-    inherited; // does the actual setting
+    inherited;
     if not Assigned(ConnectionHandle) then
     begin
       if Assigned(RootHandle) then
       begin
-        RootHandle.AddSmallSubscription(ConnectionSubscriber, [bceHandleInit,bceHandleTerm], 0);
+        RootHandle.AddSmallSubscription(ConnectionSubscriber,[bceHandleInit,bceHandleTerm],0);
         if Connected then
           DoConnect;
       end;
@@ -177,11 +172,10 @@ begin
   if (Value <> RootHandle) then
   begin
     if (Value = Self) or ((Value is TBoldRootedHandleCom) and TBoldRootedHandleCom(Value).IsRootLinkedTo(Self)) then
-      raise EBold.Create(sCircularReference);
+      raise EBold.Create('Circular reference in RootHandle');
     RootHandleSubscriber.CancelAllSubscriptions;
     if not Assigned(ConnectionHandle) then
     begin
-      // if we were connected through this RootHandle
       ConnectionSubscriber.CancelAllSubscriptions;
       if Connected then
         DoDisconnect;
@@ -206,7 +200,7 @@ begin
   if Value <> FEnabled then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['Enabled']); // do not localize
+      raise EBold.Create('Enabled is read-only');
     FEnabled := Value;
     LocalValueChanged;
   end;
@@ -217,7 +211,7 @@ begin
   if FSubscribe <> Value then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['Subscribe']); // do not localize
+      raise EBold.Create('Subscribe is read-only');
     FSubscribe := Value;
     LocalValueChanged;
   end;
@@ -228,10 +222,12 @@ begin
   if Value <> RootTypeName then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['RootTypeName']); // do not localize
+      raise EBold.Create('RootTypeName is read-only');
     FRootTypeName := Value;
     LocalValueChanged;
   end;
 end;
+
+initialization
 
 end.

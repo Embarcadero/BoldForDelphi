@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFreeStandingValueFactories;
 
 interface
@@ -29,7 +32,6 @@ implementation
 
 uses
   SysUtils,
-  FreeStandingValuesConst,
   BoldDefs,
   BoldDefaultStreamNames;
 {--- TBoldFreeStandingObjectContentsFactory ---}
@@ -40,7 +42,7 @@ begin
   fClasses := TBoldNamedValueList.Create;
 end;
 
-destructor TBoldFreeStandingElementFactory.Destroy;
+destructor TBoldFreeStandingElementFactory.destroy;
 begin
   FreeAndNil(fClasses);
   inherited;
@@ -48,7 +50,7 @@ end;
 
 procedure TBoldFreeStandingElementFactory.RegisterFreeStandingClass(const ContentName: String; FreeStandingClass: TBoldFreeStandingElementClass);
 begin
-  fClasses.AddEntry(ContentName, '', TObject(FreeStandingClass));
+  fClasses.AddEntry(ContentName,  '', TObject(FreeStandingClass));
 end;
 
 function TBoldFreeStandingElementFactory.CreateInstance(const ContentName: string): TBoldInterfacedObject;
@@ -58,8 +60,8 @@ begin
   ElementClass := TBoldFreeStandingElementClass(fClasses.ObjectByName[ContentName]);
   if Assigned(ElementClass) then
     result := ElementClass.Create
-  else
-    raise EBold.createFmt(sNoClassregisteredForName, [classname, ContentName]);
+  else  
+    raise EBold.createFmt('%s.CreateInstance: No freestanding class registered for name %s', [classname, ContentName]);
 end;
 
 initialization
@@ -87,4 +89,3 @@ finalization
   FreeAndNil(FreeStandingValueFactory);
 
 end.
-

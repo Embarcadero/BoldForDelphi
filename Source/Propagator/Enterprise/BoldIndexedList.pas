@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIndexedList;
 
 interface
@@ -9,7 +12,8 @@ uses
   BoldHashIndexes,
   BoldIndexableList,
   BoldGuard,
-  BoldContainers;
+  BoldContainers
+  ;
 
 const
   Initial_Client_Count = 1000;
@@ -42,15 +46,16 @@ type
 
   TBoldExternalEventIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   end;
 
   TBoldExternalEventHashTable = class(TBoldUnorderedIndexableList)
   private
-    function GetItemByEventName(EventName: string): TBoldEventNameIndexNode;
+    class var IX_EventName: integer;
+    function GetItemByEventName(EventName: string): TBoldEventNameIndexNode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
-    procedure Add(Item: TBoldEventNameIndexNode);
+    procedure Add(Item: TBoldEventNameIndexNode); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property ItemsByEventName[ExpressionName: string]: TBoldEventNameIndexNode read GetItemByEventName;
   end;
 
@@ -58,9 +63,9 @@ type
   private
     fEvents: TBoldExternalEventHashTable;
   protected
-    function getItem(Key: variant): TBoldIndexNode; override;
-    procedure setItem(Key: variant; Value: TBoldIndexNode); override;
-    function getCount: integer; override;
+    function GetItem(Key: variant): TBoldIndexNode; override;
+    procedure SetItem(Key: variant; Value: TBoldIndexNode); override;
+    function GetCount: integer; override;
     function InsertINode(Key: variant): TBoldIndexNode; override;
   public
     constructor Create(const IndexOrder: integer); override;
@@ -78,10 +83,8 @@ uses
   BoldPropagatorSubscriptions,
   BoldDefs;
 
-var
-  IX_EventName: integer = -1;
 
-  {TBoldClientIDList}
+{TBoldClientIDList}
 constructor TBoldClientIDList.Create;
 begin
   inherited Create(IndexOrder);
@@ -104,7 +107,7 @@ begin
   inherited;
 end;
 
-function TBoldClientIDList.getClient(Index: Integer): TObject;
+function TBoldClientIDList.GetClient(Index: Integer): TObject;
 var
   cnt, increment, i: integer;
 begin
@@ -122,12 +125,12 @@ begin
     end;
 end;
 
-function TBoldClientIDList.getCount: integer;
+function TBoldClientIDList.GetCount: integer;
 begin
   Result := fClients.Count;
 end;
 
-function TBoldClientIDList.getItem(Key: variant): TBoldIndexNode;
+function TBoldClientIDList.GetItem(Key: variant): TBoldIndexNode;
 var
   aKey: integer;
 begin
@@ -148,13 +151,13 @@ begin
   Result := Clients[aKey] as TBoldIndexNode;
 end;
 
-procedure TBoldClientIDList.setClient(Index: Integer;
+procedure TBoldClientIDList.SetClient(Index: Integer;
   Value: TObject);
 begin
   Clients[Index] := Value;
 end;
 
-procedure TBoldClientIDList.setItem(Key: variant; Value: TBoldIndexNode);
+procedure TBoldClientIDList.SetItem(Key: variant; Value: TBoldIndexNode);
 var
   aKey: integer;
 begin
@@ -205,14 +208,14 @@ begin
   inherited ;
 end;
 
-function TBoldEventNameList.getCount: integer;
+function TBoldEventNameList.GetCount: integer;
 begin
   Result := fEvents.Count;
 end;
 
-function TBoldEventNameList.getItem(Key: variant): TBoldIndexNode;
+function TBoldEventNameList.GetItem(Key: variant): TBoldIndexNode;
 begin
-  Assert(VarType(Key) = varString, Format('%s.getItem: Key is not TBoldStringKey', [ClassName]));
+  Assert(VarIsStr(Key), Format('%s.getItem: Key is not TBoldStringKey', [ClassName]));
   Result := fEvents.GetItemByEventName(string(Key));
 end;
 
@@ -242,12 +245,11 @@ begin
     fEvents.Remove(node);
 end;
 
-procedure TBoldEventNameList.setItem(Key: variant; Value: TBoldIndexNode);
+procedure TBoldEventNameList.SetItem(Key: variant; Value: TBoldIndexNode);
 begin
   Assert(Value is TBoldEventNameIndexNode);
   fEvents.Add(Value as TBoldEventNameIndexNode);
 end;
-
 
 procedure TBoldEventNameList.DeleteNodes;
 var
@@ -256,12 +258,15 @@ var
 begin
   Guard := TBoldGuard.Create(Traverser);
   Traverser := fEvents.CreateTraverser;
-  while not Traverser.EndOfList do
+  Traverser.AutoMoveOnRemoveCurrent := false;
+  while Traverser.MoveNext do
   begin
     if Traverser.Item is TBoldIndexNode then
-      DeleteINode(Traverser.Item as TBoldIndexNode);
-    Traverser.Next;
-  end; //for
+      DeleteINode(Traverser.Item as TBoldIndexNode)
+  end;
 end;
+
+initialization
+  TBoldExternalEventHashTable.IX_EventName := -1;
 
 end.

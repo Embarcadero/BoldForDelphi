@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGridRTColEditorCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -12,7 +15,7 @@ uses
   Classes,
   BoldDefs,
   BoldGridCom,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldOclPropEditor,
   {$ENDIF}
   {!! DO NOT REMOVE !! BoldSystemRT ,}
@@ -69,7 +72,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 {$R *.dfm}
@@ -192,12 +194,12 @@ end;
 procedure TfrmRTColEditorCom.PropertyKeyPress(Sender: TObject; var Key: Char);
 begin
   if not Assigned(CurrentGridColumn) then
-    Key := BOLDNULL;
+    Key := BOLDNULL; 
 end;
 
 procedure TfrmRTColEditorCom.cmdOCLEditorClick(Sender: TObject);
 begin
-  {$IFNDEF BOLDCOMCLIENT} // ocleditor
+  {$IFNDEF BOLDCOMCLIENT}
   with TBoldOCLPropEditForm.Create(nil) do
   try
     Context := EGrid.GetHandleListElementType;

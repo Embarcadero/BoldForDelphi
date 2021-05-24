@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeNameEditor;
 
 interface
@@ -57,25 +60,26 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 {$R *.dfm}
 
 procedure TBoldTypeNameEditorForm.FormCreate(Sender: TObject);
 begin
-  StringGrid1.Cells[0, 0] := 'ModelName'; // do not localize
-  StringGrid1.Cells[1, 0] := 'ExpressionName'; // do not localize
-  StringGrid1.Cells[2, 0] := 'DelphiName'; // do not localize
-  StringGrid1.Cells[3, 0] := 'ContentName'; // do not localize
-  StringGrid1.Cells[4, 0] := 'PMapper'; // do not localize
-  StringGrid1.Cells[5, 0] := 'Accessor'; // do not localize
-  StringGrid1.Cells[6, 0] := 'NativeType'; // do not localize
-  StringGrid1.Cells[7, 0] := 'UnitName'; // do not localize
-  StringGrid1.Cells[8, 0] := 'ComType'; // do not localize
-  StringGrid1.Cells[9, 0] := 'IDLType'; // do not localize
-  StringGrid1.Cells[10, 0] := 'ValueInterface'; // do not localize
-  StringGrid1.Cells[11, 0] := 'VI-accessor'; // do not localize
-  StringGrid1.Cells[12, 0] := 'VI-NativeType'; // do not localize
+  StringGrid1.Cells[0, 0] := 'ModelName';
+  StringGrid1.Cells[1, 0] := 'ExpressionName';
+  StringGrid1.Cells[2, 0] := 'DelphiName';
+  StringGrid1.Cells[3, 0] := 'ContentName';
+  StringGrid1.Cells[4, 0] := 'PMapper';
+  StringGrid1.Cells[5, 0] := 'Accessor';
+  StringGrid1.Cells[6, 0] := 'NativeType';
+  StringGrid1.Cells[7, 0] := 'UnitName';
+  StringGrid1.Cells[8, 0] := 'ComType';
+  StringGrid1.Cells[9, 0] := 'IDLType';
+  StringGrid1.Cells[10, 0] := 'ValueInterface';
+  StringGrid1.Cells[11, 0] := 'VI-accessor';
+  StringGrid1.Cells[12, 0] := 'VI-NativeType';
 end;
 
 procedure TBoldTypeNameEditorForm.btnAddClick(Sender: TObject);
@@ -83,12 +87,12 @@ begin
   StringGrid1.RowCount := StringGrid1.RowCount + 1;
   StringGrid1.Row := StringGrid1.RowCount - 1;
   StringGrid1.Col := 0;
-  Stringgrid1.Cells[2, StringGrid1.RowCount - 1] := 'TXX<Name>'; // do not localize
-  Stringgrid1.Cells[3, StringGrid1.RowCount - 1] := '<Name>'; // do not localize
-  Stringgrid1.Cells[4, StringGrid1.RowCount - 1] := 'TBoldPM<Name>'; // do not localize
-  Stringgrid1.Cells[5, StringGrid1.RowCount - 1] := 'as<Name>'; // do not localize
-  Stringgrid1.Cells[6, StringGrid1.RowCount - 1] := 'T<Name>'; // do not localize
-  Stringgrid1.Cells[10, StringGrid1.RowCount - 1] := 'IBold<Name>Content'; // do not localize
+  Stringgrid1.Cells[2, StringGrid1.RowCount - 1] := 'TXX<Name>';
+  Stringgrid1.Cells[3, StringGrid1.RowCount - 1] := '<Name>';
+  Stringgrid1.Cells[4, StringGrid1.RowCount - 1] := 'TBoldPM<Name>';
+  Stringgrid1.Cells[5, StringGrid1.RowCount - 1] := 'as<Name>';
+  Stringgrid1.Cells[6, StringGrid1.RowCount - 1] := 'T<Name>';
+  Stringgrid1.Cells[10, StringGrid1.RowCount - 1] := 'IBold<Name>Content';
   StringGrid1.SetFocus;
 end;
 
@@ -104,6 +108,7 @@ begin
     StringGrid1.RowCount := StringGrid1.RowCount - 1;
   end;
 end;
+
 
 procedure TBoldTypeNameEditorForm.btnDownClick(Sender: TObject);
 begin
@@ -174,7 +179,7 @@ begin
     StringGrid1.Cells[4, i + 1] := Dictionary.Mapping[i].MapperName;
     StringGrid1.Cells[5, i + 1] := Dictionary.Mapping[i].Accessor;
     StringGrid1.Cells[6, i + 1] := Dictionary.Mapping[i].NativeType;
-    StringGrid1.Cells[7, i + 1] := Dictionary.Mapping[i].UnitNameText;
+    StringGrid1.Cells[7, i + 1] := Dictionary.Mapping[i].UnitName;
     StringGrid1.Cells[8, i + 1] := Dictionary.Mapping[i].ComType;
     StringGrid1.Cells[9, i + 1] := Dictionary.Mapping[i].IdlType;
     StringGrid1.Cells[10, i + 1] := Dictionary.Mapping[i].ValueInterface;
@@ -199,7 +204,7 @@ begin
       MapperName := StringGrid1.Cells[4, i];
       Accessor := StringGrid1.Cells[5, i];
       NativeType := StringGrid1.Cells[6, i];
-      UnitNameText := StringGrid1.Cells[7, i];
+      UnitName := StringGrid1.Cells[7, i];
       ComType := StringGrid1.Cells[8, i];
       IDLType := StringGrid1.Cells[9, i];
       ValueInterface := StringGrid1.Cells[10, i];
@@ -242,7 +247,6 @@ begin
         Mapping := CurrentMappings.ExactMappingForModelName[DefaultMappings.Mapping[i].modelName]
       else
       begin
-        // our abstract types does not have model names. Fortuantely,
         for j := 0 to CurrentMappings.Count - 1 do
           if CompareText(DefaultMappings.Mapping[i].ExpressionName, CurrentMappings.Mapping[j].ExpressionName) = 0 then
           begin
@@ -261,5 +265,7 @@ begin
     CurrentMappings.Free;
   end;
 end;
+
+initialization
 
 end.

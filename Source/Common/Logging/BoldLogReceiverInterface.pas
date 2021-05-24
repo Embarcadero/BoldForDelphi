@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLogReceiverInterface;
 
 interface
@@ -30,5 +33,12 @@ type
   end;
 
 implementation
+
+uses
+  BoldRev;
+
+
+initialization
+
 
 end.

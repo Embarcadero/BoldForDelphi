@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMemoCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,18 +8,21 @@ unit BoldMemoCom;
 interface
 
 uses
-  Windows,
+  // VCL
   Classes,
-  Graphics,
   Controls,
-  StdCtrls,
+  Graphics,
   Menus,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldHandlesCom,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+  StdCtrls,
+  Windows,
+
+  // Bold
+  BoldClientElementSupport,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
-  BoldStringControlPackCom,
-  BoldElementHandleFollowerCom;
+  BoldElementHandleFollowerCom,
+  BoldHandlesCom,
+  BoldStringControlPackCom;
 
 type
   TBoldCustomMemoCom = class;
@@ -151,7 +157,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldDefs,
   BoldControlPackDefs;
 
@@ -181,7 +186,7 @@ begin
     end;
     bapDemand: Follower.DiscardChange;
   end;
-
+  
   FreeAndNil(fHandleFollower);
   FreeAndNil(fCanvas);
   FreeAndNil(fBoldProperties);
@@ -319,12 +324,12 @@ procedure TBoldCustomMemoCom.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if (Key in [#32..#255]) and
-    not BoldProperties.ValidateCharacter(Key, Follower) then
+    not BoldProperties.ValidateCharacter(AnsiChar(Key), Follower) then
   begin
     MessageBeep(0);
     Key := BOLDNULL;
   end;
-
+  
   if Key = BOLDESC then
   begin
     Follower.DiscardChange;
@@ -370,7 +375,9 @@ begin
   RendererDataMaxLength := (Follower.RendererData as TBoldStringRendererDataCom).MaxStringLength;
 
   if RendererDataMaxLength <> -1 then
-    EffectiveMaxLength := RendererDataMaxLength;
+    EffectiveMaxLength := RendererDataMaxLength
+  else
+    EffectiveMaxLength := MaxLength;
 
   if (MaxLength > 0) and (MaxLength < EffectiveMaxLength) then
     EffectiveMaxLength := MaxLength;
@@ -387,7 +394,7 @@ end;
 procedure TBoldCustomMemoCom.CMExit(var Message: TCMExit);
 begin
   if (Follower.Controller.ApplyPolicy = bapExit) then
-    Follower.Apply;
+    Follower.Apply; 
   SetFocused(False);
   DoExit;
 end;
@@ -428,4 +435,3 @@ end;
 initialization
 
 end.
-

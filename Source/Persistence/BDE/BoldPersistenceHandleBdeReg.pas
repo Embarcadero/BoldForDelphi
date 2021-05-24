@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleBDEReg;
 
 interface
@@ -20,11 +23,9 @@ uses
 procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterBDE]);
-  {$WARNINGS OFF}
   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleBDE]);
-  RegisterPropertyEditor(TypeInfo(string), TBoldPersistenceHandleBDE, 'DatabaseName', TBoldDatabaseNameProperty); // do not localize
-  RegisterPropertyEditor(TypeInfo(string), TBoldPersistenceHandleBDE, 'SessionName', TBoldSessionNameProperty); // do not localize
-  {$WARNINGS ON}
+  RegisterPropertyEditor(TypeInfo(string), TBoldPersistenceHandleBDE, 'DatabaseName', TBoldDatabaseNameProperty);
+  RegisterPropertyEditor(TypeInfo(string), TBoldPersistenceHandleBDE, 'SessionName', TBoldSessionNameProperty);
 end;
 
 end.

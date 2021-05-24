@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorServer;
 
 interface
@@ -12,8 +15,8 @@ uses
   BoldLockManager,
   BoldLockManagerAdmin,
   BoldContainers,
-  BoldThreadedComObjectFactory;
-
+  BoldThreadedComObjectFactory
+  ;
 type
   TBoldPropagatorServer = class;
   TBoldPropagatorServerClass = class of TBoldPropagatorServer;
@@ -100,8 +103,8 @@ uses
   windows,
   comserv,
   registry,
-  BoldDefs,
-  PropagatorConsts;
+  BoldDefs
+  ;
 
 var
   G_PropagatorServer: TBoldPropagatorServer = nil;
@@ -168,9 +171,8 @@ begin
   Application.Title := ServerName;
   FAdvancedPropagator := TBoldAdvancedPropagator.Create;
   dmServerHandles := TDmServerHandles.Create(nil);
-  if FindCmdLineSwitch('ServerName', ['-', '/'], True) then // do not localize
+  if FindCmdLineSwitch('ServerName', ['-', '/'], True) then
   begin
-    //setconfiguration
     SetConfiguration(ParamStr(2));
     Halt;
   end
@@ -186,23 +188,23 @@ end;
 procedure TBoldPropagatorServer.CreateClassFactories;
 begin
  {$IFDEF BOLD_USE_CO_ADVANCED_PROPAGATOR}
-  TBoldPropagatorFactory.Create(ComServer, CLASS_BoldPropagator, Format('%s.AdvancedPropagator', [Instance.ServerName]), // do not localize
+  TBoldPropagatorFactory.Create(ComServer, CLASS_BoldPropagator, Format('%s.AdvancedPropagator', [Instance.ServerName]),
       Instance.ServerName);
  {$ELSE}
   TBoldComServerConnectionFactory.Create(ComServer, Instance.PropagatorConnectionCLSID,
-     Format('%s.PropagatorConnection', [Instance.ServerName]), Instance.ServerName); // do not localize
+     Format('%s.PropagatorConnection', [Instance.ServerName]), Instance.ServerName);
 
   {$ENDIF}
   if not Assigned(ClientHandlerComFactory) then
-    ClientHandlerCOMFactory := TBoldClientHandlerThreadedCOMFactory.Create(ComServer, Instance.ClientHandlerCLSID, Format('%s.ClientHandler', [Instance.ServerName]), // do not localize
+    ClientHandlerCOMFactory := TBoldClientHandlerThreadedCOMFactory.Create(ComServer, Instance.ClientHandlerCLSID, Format('%s.ClientHandler', [Instance.ServerName]),
       Instance.ServerName);
   if not Assigned(EnqueuerCOMFactory) then
-    EnqueuerCOMFactory := TBoldEnqueuerThreadedComFactory.Create(ComServer, TBoldEnqueuerCOM, Instance.EnqueuerCLSID, Format('%s.EventPropagator', [Instance.ServerName]), 'EventPropagator', // do not localize
+    EnqueuerCOMFactory := TBoldEnqueuerThreadedComFactory.Create(ComServer, TBoldEnqueuerCOM, Instance.EnqueuerCLSID, Format('%s.EventPropagator', [Instance.ServerName]), 'EventPropagator',
                             ciMultiInstance, batMTA);
   if not Assigned(LockManagerCOMFactory) then
-    LockManagerCOMFactory := TBoldLockManagerComFactory.Create(ComServer, Instance.LockManagerCLSID, Format('%s.LockManager', [Instance.ServerName]), 'Lock manager'); // do not localize
+    LockManagerCOMFactory := TBoldLockManagerComFactory.Create(ComServer, Instance.LockManagerCLSID, Format('%s.LockManager', [Instance.ServerName]), 'Lock manager');
   if not Assigned(LockManagerAdminCOMFactory) then
-    LockManagerAdminCOMFactory := TBoldLockManagerAdminComFactory.Create(ComServer, Instance.LockManagerAdminCLSID, Format('%s.LockManagerAdmin', [Instance.ServerName]), 'Lock manager Admin'); // do not localize
+    LockManagerAdminCOMFactory := TBoldLockManagerAdminComFactory.Create(ComServer, Instance.LockManagerAdminCLSID, Format('%s.LockManagerAdmin', [Instance.ServerName]), 'Lock manager Admin');
 end;
 
 procedure TBoldPropagatorServer.LoadConfiguration;
@@ -212,30 +214,30 @@ var
  ConfigFile: TMemIniFile;
 begin
   ConfigFileName := ModuleName;
-  ConfigFile := TMemIniFile.Create(ChangeFileExt(ConfigFileName, '.ini')); // do not localize
+  ConfigFile := TMemIniFile.Create(ChangeFileExt(ConfigFileName, '.ini'));
   try
     {Section 1: File Logging}
-    Section := 'FILE LOGGING'; // do not localize
-    FLogFileName := ChangeFileExt(ModuleName, '.log'); // do not localize
-    FErrorLogFileName := ChangeFileExt(ModuleName, '.error'); // do not localize
-    if ConfigFile.ReadBool(Section, 'THREAD', False) then // do not localize
-      fThreadLogFileName := ChangeFileExt(ModuleName, '.thread') // do not localize
+    Section := 'FILE LOGGING';
+    FLogFileName := ChangeFileExt(ModuleName, '.log');
+    FErrorLogFileName := ChangeFileExt(ModuleName, '.error');
+    if ConfigFile.ReadBool(Section, 'THREAD', False) then
+      fThreadLogFileName := ChangeFileExt(ModuleName, '.thread')
     else
       fThreadLogFileName := '';
-    FEnableLogging := ConfigFile.ReadBool(Section, 'ENABLED', DEFAULT_ENABLELOGGING); // do not localize
-    FMaxLogFileSize := ConfigFile.ReadInteger(Section, 'MAXFILESIZE', DEFAULT_LOGFILESIZE); //default size 20k // do not localize
+    FEnableLogging := ConfigFile.ReadBool(Section, 'ENABLED', DEFAULT_ENABLELOGGING);
+    FMaxLogFileSize := ConfigFile.ReadInteger(Section, 'MAXFILESIZE', DEFAULT_LOGFILESIZE);
     {Section 2: configuration parameters}
-    Section := 'CONFIG PARAMS'; // do not localize
-    FClientNotifierPoolSize := ConfigFile.ReadInteger(Section, 'THREADPOOLSIZE', DEFAULT_THREADPOOLSIZE); // do not localize
-    fDisconnectClientsOnSendFailure := ConfigFile.ReadBool(Section, 'DISCONNECTCLIENTSONSENDFAILURE', DEFAULT_DISCONNECT_CLIENTS_ON_SENDFAILURE); // do not localize
+    Section := 'CONFIG PARAMS';
+    FClientNotifierPoolSize := ConfigFile.ReadInteger(Section, 'THREADPOOLSIZE', DEFAULT_THREADPOOLSIZE);
+    fDisconnectClientsOnSendFailure := ConfigFile.ReadBool(Section, 'DISCONNECTCLIENTSONSENDFAILURE', DEFAULT_DISCONNECT_CLIENTS_ON_SENDFAILURE);
     {Section 3: ComServer configuration params}
-    Section := 'COM SERVER'; // do not localize
-    FServerName := ConfigFile.ReadString(Section, 'SERVERNAME', 'EnterprisePropagator'); // do not localize
-    FClientHandlerCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDCLIENTHANDLER', GUIDToString(CLSID_BOLDCLIENTHANDLER))); // do not localize
-    FEnqueuerCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDEVENTPROPAGATOR', GUIDToString(CLSID_BOLDENQUEUER))); // do not localize
-    FLockManagerCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDLOCKMANAGER', GUIDToString(CLSID_LOCKMANAGER))); // do not localize
-    FLockManagerAdminCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDLOCKMANAGERADMIN', GUIDToString(CLSID_LOCKMANAGERADMIN))); // do not localize
-    FPropagatorCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDENTERPRISEPROPAGATOR', GUIDToString(BoldPropagatorConnection_CLSID))); // do not localize
+    Section := 'COM SERVER';
+    FServerName := ConfigFile.ReadString(Section, 'SERVERNAME', 'EnterprisePropagator');
+    FClientHandlerCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDCLIENTHANDLER', GUIDToString(CLSID_BOLDCLIENTHANDLER)));
+    FEnqueuerCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDEVENTPROPAGATOR', GUIDToString(CLSID_BOLDENQUEUER)));
+    FLockManagerCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDLOCKMANAGER', GUIDToString(CLSID_LOCKMANAGER)));
+    FLockManagerAdminCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDLOCKMANAGERADMIN', GUIDToString(CLSID_LOCKMANAGERADMIN)));
+    FPropagatorCLSID := StringToGUID( ConfigFile.ReadString(Section, 'CLSIDENTERPRISEPROPAGATOR', GUIDToString(BoldPropagatorConnection_CLSID)));
   finally
     FreeAndNil(ConfigFile);
   end;
@@ -267,7 +269,7 @@ begin
   if Trim(aServerName) <> '' then
   begin
     tempstr := ModuleName;
-    ConfigFileName := ChangeFileExt(tempstr, '.ini'); // do not localize
+    ConfigFileName := ChangeFileExt(tempstr, '.ini');
     if not FileExists(ConfigFileName) then
     begin
       FileHandle := FileCreate(ConfigFileName);
@@ -276,14 +278,14 @@ begin
     ConfigFile := TMemIniFile.Create(ConfigFileName);
     try
       {Section 1: File Logging}
-      Section := 'COM SERVER'; // do not localize
-      ConfigFile.WriteString(Section, 'SERVERNAME', aServerName); // do not localize
+      Section := 'COM SERVER';
+      ConfigFile.WriteString(Section, 'SERVERNAME', aServerName);
       {Generate new GUIDs}
-      ConfigFile.WriteString(Section, 'CLSIDCLIENTHANDLER', BoldCreateGUIDAsString); // do not localize
-      ConfigFile.WriteString(Section, 'CLSIDEVENTPROPAGATOR', BoldCreateGUIDAsString); // do not localize
-      ConfigFile.WriteString(Section, 'CLSIDLOCKMANAGER', BoldCreateGUIDAsString); // do not localize
-      ConfigFile.WriteString(Section, 'CLSIDLOCKMANAGERADMIN', BoldCreateGUIDAsString); // do not localize
-      ConfigFile.WriteString(Section, 'CLSIDENTERPRISEPROPAGATOR', BoldCreateGUIDAsString); // do not localize
+      ConfigFile.WriteString(Section, 'CLSIDCLIENTHANDLER', BoldCreateGUIDAsString);
+      ConfigFile.WriteString(Section, 'CLSIDEVENTPROPAGATOR', BoldCreateGUIDAsString);
+      ConfigFile.WriteString(Section, 'CLSIDLOCKMANAGER', BoldCreateGUIDAsString);
+      ConfigFile.WriteString(Section, 'CLSIDLOCKMANAGERADMIN', BoldCreateGUIDAsString);
+      ConfigFile.WriteString(Section, 'CLSIDENTERPRISEPROPAGATOR', BoldCreateGUIDAsString);
 
       ConfigFile.UpdateFile;
     finally
@@ -291,7 +293,8 @@ begin
     end;
   end
   else
-    showmessage(Format(sInvalidCommandLineArgs, [aServerName]));
+    showmessage(Format('Invalid command line argument %s', [aServerName]));
+    ;
 end;
 
 function TBoldPropagatorServer.GetAppID: TGuid;
@@ -306,11 +309,11 @@ begin
       ShortFileName := ExtractShortPathName(ShortFileName);
     ShortFileName := ExtractFileName(ShortFileName);
     Reg.RootKey := HKEY_CLASSES_ROOT;
-    Reg.OpenKey('AppID\' + ShortFileName, false); // do not localize
-    if Reg.ValueExists('AppId') then // do not localize
-       Result := StringToGuid(Reg.ReadString('AppId')) // do not localize
+    Reg.OpenKey('AppID\' + ShortFileName, false);
+    if Reg.ValueExists('AppId') then
+       Result := StringToGuid(Reg.ReadString('AppId'))
     else
-      raise EBold.Create(sAppIDNotFound)
+      raise EBold.Create('AppId not found, run DCOMCNFG to add appid to registry')
   finally
     Reg.CloseKey;
     Reg.Free;
@@ -332,8 +335,8 @@ begin
   Reg := TRegistry.Create;
   try
     Reg.RootKey := HKEY_CLASSES_ROOT;
-    Reg.OpenKey('AppID\' + ModuleName, true); // do not localize
-    Reg.WriteString('AppId', GuidToString(vAppId)); // do not localize
+    Reg.OpenKey('AppID\' + ModuleName, true);
+    Reg.WriteString('AppId', GuidToString(vAppId));
   finally
     Reg.CloseKey;
     Reg.Free;
@@ -360,5 +363,7 @@ procedure TBoldPropagatorServer.RemoveComObject(Obj: TBoldComObject);
 begin
   FComObjects.Remove(Obj);
 end;
+
+initialization
 
 end.

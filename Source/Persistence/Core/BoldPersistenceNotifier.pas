@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceNotifier;
 
 interface
@@ -26,9 +29,9 @@ type
   private
     fEvents: array[bpeMinReserved..bpeMaxReserved] of TBoldExtendedEventHandler;
     FPersistenceHandle: TBoldPersistenceHandle;
-    fSubscriber: TBoldSubscriber;
+    fSubscriber: TBoldExtendedPassthroughSubscriber;
     fFetchLog: TBoldIntegerArray;
-    fOnAlertExcessiveFetch: TBoldAlertExcessiveFetchEvent;
+    fOnAlertExcessiveFetch: TBoldAlertExcessiveFetchEvent; 
     procedure SetPersistenceHandle(const Value: TBoldPersistenceHandle);
     function GetEvent(index: integer): TBoldExtendedEventHandler;
     procedure SetEvent(const index: integer; EventHandler: TBoldExtendedEventHandler);
@@ -68,7 +71,7 @@ type
     property OnFetchID: TBoldExtendedEventHandler index bpeFetchID read GetEvent write SetEvent;
     property OnProgressStart: TBoldExtendedEventHandler index bpeProgressStart read GetEvent write SetEvent;
     property OnProgressEnd: TBoldExtendedEventHandler index bpeProgressEnd read GetEvent write SetEvent;
-    property OnAlertExcessiveFetch: TBoldAlertExcessiveFetchEvent read fOnAlertExcessiveFetch write fOnAlertExcessiveFetch;
+    property OnAlertExcessiveFetch: TBoldAlertExcessiveFetchEvent read fOnAlertExcessiveFetch write fOnAlertExcessiveFetch; 
     property PersistenceHandle: TBoldPersistenceHandle read FPersistenceHandle write SetPersistenceHandle;
     property FetchLog: TBoldIntegerArray read GetFetchLog;
   public
@@ -101,6 +104,7 @@ type
   TBoldPersistenceProgressNotifier = class(TBoldAbstractPersistenceNotifier)
   private
     { Private declarations }
+    fLastUpdate: TDateTime;
     FAnimation: TAnimate;
     fAnimationTimer: TTimer;
     FWinControl: TWinControl;
@@ -116,6 +120,7 @@ type
     procedure SetMsgLabel(const Value: TLabel);
     function GetAnimationInterval: integer;
     procedure SetAnimationInterval(const Value: integer);
+    function GetAnimationTimer: TTimer;
   protected
     { Protected declarations }
     procedure EndEvent;
@@ -123,6 +128,7 @@ type
     procedure StepProgress;
     procedure StepAnimation;
     procedure SetMessage(const s: String);
+    procedure UpdateProgressBar;
     procedure EndFetch(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
     procedure EndUpdate(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
     procedure EndFetchID(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
@@ -136,6 +142,7 @@ type
     procedure StartFetchID(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
     procedure FetchID(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    property AnimationTimer: TTimer read GetAnimationTimer;    
   public
     { Public declarations }
     constructor Create(Owner: TComponent); override;
@@ -159,11 +166,14 @@ implementation
 
 uses
   SysUtils,
-  PersistenceConsts;
+  BoldRev;
 
 const
   brePersistenceHandleDestroying = 100;
 
+const
+  c100ms = 1/24/60/60/10;
+    
 { TBoldAbstractPersistenceNotifier }
 
 procedure TBoldAbstractPersistenceNotifier.CallIfAssigned(EventID: integer;
@@ -177,7 +187,7 @@ end;
 constructor TBoldAbstractPersistenceNotifier.create(owner: TComponent);
 begin
   inherited;
-  fSubscriber := TBoldPassThroughSubscriber.CreateWithExtendedReceive(ReceiveExtendedEvent);
+  fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(ReceiveExtendedEvent);
 end;
 
 procedure TBoldAbstractPersistenceNotifier.CreateObject(
@@ -320,7 +330,7 @@ begin
 
   if (OriginalEvent = bpeEndFetch) or (OriginalEvent = bpeEndUpdate) or (OriginalEvent = bpeEndFetchId) then
     ProgressEnd(Originator, OriginalEvent, RequestedEvent, args);
-
+    
   if (OriginalEvent = beDestroying) and (RequestedEvent = brePersistenceHandleDestroying) then
   begin
     PersistenceHandle := nil;
@@ -341,7 +351,6 @@ begin
     fSubscriber.CancelAllSubscriptions;
     if Assigned(Value) then
     begin
-      // delay the adding of persistence-subscriptions until "loaded". ignore in designtime
       if not (csDesigning in ComponentState) and
          not (csLoading in ComponentState) then
         Value.AddPersistenceSubscription(fSubscriber);
@@ -393,7 +402,7 @@ end;
 procedure TBoldAbstractPersistenceNotifier.Loaded;
 begin
   inherited;
-  if assigned(fPersistenceHandle) then
+  if assigned(fPersistenceHandle) and not (csDesigning in ComponentState) then
     FPersistenceHandle.AddPersistenceSubscription(fSubscriber);
 end;
 
@@ -402,19 +411,18 @@ end;
 procedure TBoldPersistenceProgressNotifier.AnimationTurnOff(Sender: TObject);
 begin
   if assigned(Animation) then
+  begin
     Animation.Stop;
-  fAnimationTimer.Enabled := false;
+    AnimationTimer.Enabled := false;
+  end;
 end;
 
 constructor TBoldPersistenceProgressNotifier.create(owner: TComponent);
 begin
   inherited;
-  fAnimationTimer := TTimer.Create(self);
-  fAnimationTimer.OnTimer := AnimationTurnOff;
-  fAnimationTimer.Interval := 100;
-  fMsgFetchObjects := sFetchingObjects;
-  fMsgRetrieveIds := sRetrievingIDs;
-  fMsgUpdateDatabase := sUpdatingDB;
+  fMsgFetchObjects := 'Fetching objects';
+  fMsgRetrieveIds := 'Retrieving object IDs';
+  fMsgUpdateDatabase := 'Updating database';
 end;
 
 procedure TBoldPersistenceProgressNotifier.CreateObject(
@@ -439,11 +447,11 @@ begin
   begin
     ProgressBar.Visible := false;
     ProgressBar.Max := 0;
-    ProgressBar.Refresh;
+    UpdateProgressBar;
   end;
   if assigned(Animation) then
   begin
-    fAnimationTimer.Enabled := true;
+    AnimationTimer.Enabled := true;
     Animation.Refresh;
   end;
   SetMessage('');
@@ -499,10 +507,21 @@ end;
 type
   TExposedWinControl = class(TWinControl);
 
-{ Handle removing of non-bold components }
+{ Handle removing of non-bold components }  
 function TBoldPersistenceProgressNotifier.GetAnimationInterval: integer;
 begin
-  result := fAnimationTimer.Interval;
+  result := AnimationTimer.Interval;
+end;
+
+function TBoldPersistenceProgressNotifier.GetAnimationTimer: TTimer;
+begin
+  if not Assigned(fAnimationTimer) then
+  begin
+    fAnimationTimer := TTimer.Create(self);
+    fAnimationTimer.OnTimer := AnimationTurnOff;
+    fAnimationTimer.Interval := 100;
+  end;
+  result := fAnimationTimer;
 end;
 
 procedure TBoldPersistenceProgressNotifier.Notification(
@@ -533,7 +552,7 @@ end;
 procedure TBoldPersistenceProgressNotifier.SetAnimationInterval(
   const Value: integer);
 begin
-  fAnimationTimer.Interval := Value;
+  AnimationTimer.Interval := Value;
 end;
 
 procedure TBoldPersistenceProgressNotifier.SetMessage(const s: String);
@@ -584,11 +603,11 @@ begin
     ProgressBar.Visible := true;
     ProgressBar.Position := 0;
     ProgressBar.Max := Count;
-    ProgressBar.Refresh;
+    UpdateProgressBar;
   end;
   if Assigned(Animation) then
   begin
-    fAnimationTimer.Enabled := False;
+    AnimationTimer.Enabled := False;
     if not Animation.Active and (Animation.FrameCount > 0) then
       Animation.Play(0, Animation.FrameCount - 1, 0);
 
@@ -627,7 +646,7 @@ procedure TBoldPersistenceProgressNotifier.StepAnimation;
 begin
   if assigned(Animation) then
   begin
-    fAnimationTimer.Enabled := false;
+    AnimationTimer.Enabled := false;
     if (Animation.FrameCount > 0) then
       Animation.Play(0, Animation.FrameCount - 1, 0);
     Animation.Refresh;
@@ -639,7 +658,7 @@ begin
   if assigned(ProgressBar) then
   begin
     ProgressBar.StepIt;
-    ProgressBar.Refresh;
+    UpdateProgressBar;
   end;
 end;
 
@@ -650,5 +669,16 @@ begin
   inherited;
   StepProgress;
 end;
+
+procedure TBoldPersistenceProgressNotifier.UpdateProgressBar;
+begin
+  if now - fLastUpdate > c100ms then
+  begin
+    ProgressBar.Refresh;
+    fLastUpdate := now;
+  end;
+end;
+
+initialization
 
 end.

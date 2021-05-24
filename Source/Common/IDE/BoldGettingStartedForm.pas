@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGettingStartedForm;
 
 interface
@@ -36,6 +39,9 @@ type
 
 implementation
 
+uses
+  BoldRev;
+
 {$R *.DFM}
 
 procedure TFGettingStarted.btnShowClick(Sender: TObject);
@@ -56,5 +62,7 @@ procedure TFGettingStarted.btnCloseClick(Sender: TObject);
 begin
   Close;
 end;
+
+initialization
 
 end.

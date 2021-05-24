@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListHandle;
 
 interface
@@ -17,7 +20,7 @@ uses
 
 type
   {---Forward declarations---}
-  TBoldListHandle = class;
+  TBoldListHandle = class;       
 
   {---TBoldListHandle---}
   TBoldListHandle = class(TBoldCursorHandle, IBoldOCLComponent)
@@ -25,21 +28,23 @@ type
     fExpressionHandle: TBoldExpressionHandle;
     fFilterHandle: TBoldFilteredHandle;
     fSorterHandle: TBoldSortedHandle;
+    FInternalRootHandle: TBoldSortedHandle;
     fMutableListExpression: TBoldExpression;
+    fUsePrefetch: boolean;
     function GetContextType: TBoldElementTypeInfo;
     function GetComparer: TBoldComparer;
     function GetExpression: TBoldExpression;
     function GetFilter: TBoldFilter;
     procedure SetComparer(Value: TBoldComparer);
-    procedure SetExpression(Value: string);
+    procedure SetExpression(const Value: TBoldExpression);
     procedure SetFilter(Value: TBoldFilter);
-    function GetVariableList: TBoldExternalVariableList;
-    function GetVariables: TBoldOclVariables;
     procedure SetVariables(Value: TBoldOclVariables);
     function GetEvaluateInPS: Boolean;
     procedure SetEvaluateInPS(const Value: Boolean);
     procedure SetMutableListExpression(const Value: TBoldExpression);
     procedure FixupRoots;
+    function GetUsePrefetch: Boolean;
+    procedure SetUsePrefetch(const Value: Boolean);
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SetSubscribe(Value: Boolean); override;
@@ -47,12 +52,18 @@ type
     procedure Loaded; override;
     function GetRootHandle: TBoldElementHandle; override;
     procedure SetRootHandle(const Value: TBoldElementHandle); override;
+    procedure SetRootTypeName(Value: string); override;
     function GetMutableList: TBoldList; override;
+    procedure DoAssign(Source: TPersistent); override;
+    function GetVariables: TBoldOclVariables; virtual;
+    function GetVariableList: TBoldExternalVariableList; virtual;
+    function GetExpressionHandleClass: TBoldExpressionHandleClass; virtual;
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
     procedure MarkOutOfDate; override;
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; override;
+    property VariableList: TBoldExternalVariableList read GetVariableList;
   published
     property BoldComparer: TBoldComparer read GetComparer write SetComparer;
     property BoldFilter: TBoldFilter read GetFilter write SetFilter;
@@ -60,21 +71,26 @@ type
     property Variables: TBoldOclVariables read GetVariables write SetVariables;
     property EvaluateInPS: Boolean read GetEvaluateInPS write SetEvaluateInPS default false;
     property MutableListExpression: TBoldExpression read fMutableListExpression write SetMutableListExpression;
+    property UsePrefetch: Boolean read GetUsePrefetch write SetUsePrefetch default true;
    end;
 
 implementation
 
 uses
   SysUtils,
-  HandlesConst,
   BoldRootedHandles;
+
+type
+  THackSortedHandle = class(TBoldSortedHandle);
 
 {---TBoldListHandle---}
 constructor TBoldListHandle.Create(Owner: TComponent);
 begin
   inherited;
-  fExpressionHandle := TBoldExpressionHandle.Create(nil);
+  fExpressionHandle := GetExpressionHandleClass.Create(self);
+  FInternalRootHandle := TBoldSortedHandle.Create(nil);
   FixupRoots;
+  UsePrefetch := true;
 end;
 
 destructor TBoldListHandle.Destroy;
@@ -83,7 +99,22 @@ begin
   FreeAndNil(fSorterHandle);
   FreeAndNil(fFilterHandle);
   FreeAndNil(fExpressionHandle);
+  FreeAndNil(FInternalRootHandle);
   inherited;
+end;
+
+procedure TBoldListHandle.DoAssign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TBoldListHandle then with TBoldListHandle(Source) do
+  begin
+    self.BoldComparer := BoldComparer;
+    self.BoldFilter := BoldFilter;
+    self.Expression := Expression;
+    self.Variables := Variables;
+    self.EvaluateInPS := EvaluateInPS;
+    self.MutableListExpression := MutableListExpression;
+  end;
 end;
 
 procedure TBoldListHandle.Notification(AComponent: TComponent; Operation: TOperation);
@@ -102,6 +133,7 @@ begin
     fFilterHandle.Subscribe := Value;
   if Assigned(fSorterHandle) then
     fSorterHandle.Subscribe := Value;
+  FInternalRootHandle.Subscribe := Value;
   inherited;
 end;
 
@@ -112,6 +144,7 @@ begin
     fFilterHandle.MarkOutOfDate;
   if Assigned(fSorterHandle) then
     fSorterHandle.MarkOutOfDate;
+  FInternalRootHandle.MarkOutOfDate;
   inherited;
 end;
 
@@ -120,25 +153,29 @@ var
   NextHandle: TBoldElementHandle;
 begin
   NextHandle := fExpressionHandle;
-  fExpressionHandle.Name := Name + '_expr';  // do not localize
+  fExpressionHandle.Name := Name + '_expr';
 
   if Assigned(fFilterHandle) then
   begin
     fFilterHandle.RootHandle := NextHandle;
-    fFilterHandle.Name := Name + '_filt'; // do not localize
+    fFilterHandle.Name := Name + '_filt';
     NextHandle := fFilterHandle;
   end;
   if Assigned(fSorterHandle) then
   begin
     FSorterHandle.RootHandle := NextHandle;
-    fSorterHandle.Name := Name + '_sort';  // do not localize
+    fSorterHandle.Name := Name + '_sort';
     NextHandle := FSorterHandle;
   end;
+
+  FInternalRootHandle.RootHandle := NextHandle;
+  FInternalRootHandle.Name := Name + '_root'; // do not localize
+  NextHandle := FInternalRootHandle;
 
   InternalRootHandle := NextHandle;
 end;
 
-procedure TBoldListHandle.SetExpression(Value: string);
+procedure TBoldListHandle.SetExpression(const Value: TBoldExpression);
 begin
   if value <> fExpressionHandle.Expression then
   begin
@@ -152,6 +189,11 @@ begin
   Result := fExpressionHandle.Expression;
 end;
 
+function TBoldListHandle.GetExpressionHandleClass: TBoldExpressionHandleClass;
+begin
+  result := TBoldExpressionHandle;
+end;
+
 procedure TBoldListHandle.SetFilter(Value: TBoldFilter);
 begin
   if Value = BoldFilter then
@@ -160,6 +202,11 @@ begin
   begin
     if Assigned(fFilterHandle) then
     begin
+      if Assigned(FSorterHandle) then begin
+        FSorterHandle.RootHandle := FExpressionHandle;
+      end else begin
+        FInternalRootHandle.RootHandle := FExpressionHandle;
+      end;
       FreeAndNil(fFilterHandle);
     end
   end
@@ -183,12 +230,21 @@ end;
 
 procedure TBoldListHandle.SetComparer(Value: TBoldComparer);
 begin
-  if Value = BoldComparer then
+  if Value = BoldComparer then begin
+    if Assigned(FSorterHandle) then begin
+      THackSortedHandle(FSorterHandle).MarkSubscriptionOutOfdate;
+    end;
     Exit;
+  end;
   if Value = nil then
   begin
     if Assigned(FSorterHandle) then
     begin
+      if Assigned(FFilterHandle) then begin
+        FInternalRootHandle.RootHandle := FFilterHandle;
+      end else begin
+        FInternalRootHandle.RootHandle := FExpressionHandle;
+      end;
       FreeAndNil(fSorterHandle);
     end
   end
@@ -222,9 +278,28 @@ begin
   Result := fExpressionHandle.RootHandle;
 end;
 
+procedure TBoldListHandle.SetUsePrefetch(const Value: Boolean);
+begin
+  fUsePrefetch := Value;
+  fExpressionHandle.UsePrefetch := Value;
+end;
+
+function TBoldListHandle.GetUsePrefetch: Boolean;
+begin
+  result := fUsePrefetch;
+end;
+
 procedure TBoldListHandle.SetRootHandle(const Value: TBoldElementHandle);
 begin
   fExpressionHandle.RootHandle := Value;
+end;
+
+procedure TBoldListHandle.SetRootTypeName(Value: string);
+begin
+  inherited;
+  fExpressionHandle.RootTypeName := Value;
+  fInternalROotHandle.RootTypeName := Value;
+  StaticBoldTypeChanged;
 end;
 
 procedure TBoldListHandle.SetStaticSystemHandle(
@@ -253,7 +328,7 @@ end;
 procedure TBoldListHandle.SetVariables(Value: TBoldOclVariables);
 begin
   if assigned(value) and value.LinksToHandle(self) then
-    raise EBold.CreateFmt(sCircularReference, [classname, name, value.name]);
+    raise EBold.CreateFmt('%s.SetVariables: %s can not be linked to %s. Circular reference', [classname, name, value.name]);
   fExpressionHandle.Variables := Value;
 end;
 
@@ -332,4 +407,5 @@ begin
     result := Component = variables;
 end;
 
+initialization
 end.

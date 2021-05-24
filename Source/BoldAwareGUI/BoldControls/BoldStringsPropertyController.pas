@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStringsPropertyController;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -38,6 +41,8 @@ type
     fOnListBeforeInsertItem: TBoldControlSubFollowerEvent;
     fOnListAfterDeleteItem: TBoldControlSubFollowerEvent;
     fOnItemAfterMakeUpToDate: TBoldControlFollowerEvent;
+    fOnReplaceItem: TBoldControlSubFollowerEvent;
+    fStringsChanged: boolean;
     function GetBoldHandle: TBoldAbstractListHandle;
     procedure SetBoldHandle(value: TBoldAbstractListHandle);
     procedure SetBoldProperties(Value: TBoldListAsFollowerListController);
@@ -46,13 +51,16 @@ type
     procedure _ListBeforeMakeUptoDate(Follower: TBoldFollower);
     procedure _ListAfterMakeUptoDate(Follower: TBoldFollower);
     procedure _ListBeforeInsertItem(index: Integer; OwningFollower: TBoldFollower);
-    procedure _ListAfterInsertItem(Follower: TBoldFollower);
+    procedure _ListAfterInsertItem(index: Integer; Follower: TBoldFollower);
     procedure _ListAfterDeleteItem(index: Integer; OwningFollower: TBoldFollower);
-    procedure _ListBeforeDeleteItem(Follower: TBoldFollower);
+    procedure _ListBeforeDeleteItem(index: Integer; Follower: TBoldFollower);
     procedure _ItemAfterMakeUptoDate(Follower: TBoldFollower);
     procedure _ItemBeforeMakeUptoDate(Follower: TBoldFollower);
+    procedure _ListReplaceItem(index: Integer; AFollower: TBoldFollower);
     function GetStringsProperty: TStrings;
     procedure SetVCLComponent(const Value: TComponent);
+    procedure MarkStringsChanged;
+    procedure EndUpdate;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     property StringsProperty: TStrings read GetStringsProperty;
@@ -87,6 +95,19 @@ uses
 
   {-- TBoldStringsPropertyController ----------------------------------------------------------}
 
+procedure TBoldStringsPropertyController.MarkStringsChanged;
+var
+  Strings: TStrings;
+begin
+  if not fStringsChanged then
+  begin
+    fStringsChanged := true;
+    Strings := StringsProperty;
+    if Assigned(Strings) then
+      Strings.BeginUpdate;
+  end;
+end;
+
 constructor TBoldStringsPropertyController.Create(AOwner: TComponent);
 begin
   inherited;
@@ -99,6 +120,7 @@ begin
   begin
     OnAfterInsertItem := _ListAfterInsertItem;
     OnAfterDeleteItem := _ListAfterDeleteItem;
+    OnReplaceitem := _ListReplaceItem;
     OnBeforeInsertItem := _ListBeforeInsertItem;
     OnBeforeDeleteItem := _ListBeforeDeleteItem;
     BeforeMakeUptoDate := _ListBeforeMakeUptoDate;
@@ -144,7 +166,7 @@ var
 begin
   Strings := StringsProperty;
   if Assigned(Strings) then
-    Strings.EndUpdate;
+    EndUpdate;
   if Assigned(fOnListAfterMakeUptoDate) then
     fOnListAfterMakeUptoDate(self, Follower);
 end;
@@ -156,15 +178,34 @@ begin
   Strings := StringsProperty;
   if Assigned(Strings) then
   begin
-   Strings.BeginUpdate;
    if Follower.SubFollowerCount <> Strings.Count then
      if Follower.SubFollowerCount = 0 then
+     begin
+       MarkStringsChanged;
        Strings.Clear
+     end
      else
-       raise EBold.CreateFmt(sStringsControlledByOtherMeans, [Name]);
+       raise EBold.CreateFmt('Strings property controlled by "%s" changed by other means', [Name]);
   end;
   if Assigned(fOnListBeforeMakeUptoDate) then
     fOnListBeforeMakeUptoDate(self, Follower);
+end;
+
+procedure TBoldStringsPropertyController._ListReplaceItem(index: Integer;
+  AFollower: TBoldFollower);
+var
+  Strings: TStrings;
+begin
+  Strings := StringsProperty;
+  if Assigned(Strings) then
+  begin
+    AFollower.EnsureDisplayable;
+    MarkStringsChanged;
+    Strings.Objects[Index] := AFollower;
+    Strings[Index] := TBoldStringFollowerController(AFollower.Controller).GetCurrentAsString(AFollower);
+  end;
+  if Assigned(fOnReplaceItem) then
+    fOnReplaceItem(self, index, AFollower);
 end;
 
 procedure TBoldStringsPropertyController._ListAfterDeleteItem(index: Integer;
@@ -174,18 +215,25 @@ var
 begin
   Strings := StringsProperty;
   if Assigned(Strings) then
+  begin
+    MarkStringsChanged;
     Strings.Delete(Index);
+  end;
   if Assigned(fOnListAfterDeleteItem) then
     fOnListAfterDeleteItem(self, index, OwningFollower);
 end;
 
-procedure TBoldStringsPropertyController._ListAfterInsertItem(Follower: TBoldFollower);
+procedure TBoldStringsPropertyController._ListAfterInsertItem(index: Integer; Follower: TBoldFollower);
 var
   Strings: TStrings;
 begin
   Strings := StringsProperty;
   if Assigned(Strings) then
-    Strings.InsertObject(Follower.Index, '', Follower);
+  begin
+    Follower.EnsureDisplayable;
+    MarkStringsChanged;
+    Strings.InsertObject(Index, TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower), Follower);
+  end;
   if Assigned(fOnListAfterInsertItem) then
     fOnListAfterInsertItem(self, Follower);
 end;
@@ -194,14 +242,26 @@ procedure TBoldStringsPropertyController._ItemAfterMakeUptoDate(Follower: TBoldF
 var
   index: Integer;
   Strings: TStrings;
+  s: string;
 begin
   Strings := StringsProperty;
   if Assigned(Strings) then
   begin
     index := Follower.index;
     if (index > -1) and (index < Strings.Count) then
-      Strings[index] := TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower);
-      Strings.Objects[index] := Follower;
+    begin
+      s := TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower);
+      if s <> Strings[index] then
+      begin
+        MarkStringsChanged;
+        Strings[index] := TBoldStringFollowerController(Follower.Controller).GetCurrentAsString(Follower);
+      end;
+      if Strings.Objects[index] <> Follower then
+      begin
+        MarkStringsChanged;
+        Strings.Objects[index] := Follower;
+      end;
+    end;
   end;
   if Assigned(fOnItemAfterMakeUptoDate) then
     fOnItemAfterMakeUptoDate(self, Follower);
@@ -230,7 +290,7 @@ begin
   end;
 end;
 
-procedure TBoldStringsPropertyController._ListBeforeDeleteItem(Follower: TBoldFollower);
+procedure TBoldStringsPropertyController._ListBeforeDeleteItem(index: Integer; Follower: TBoldFollower);
 begin
   if Assigned(fOnListBeforeDeleteItem) then
     fOnListBeforeDeleteItem(self, Follower);
@@ -258,6 +318,19 @@ begin
 
   if not Assigned(fVCLComponent) then
     PropertyName := '';
+end;
+
+procedure TBoldStringsPropertyController.EndUpdate;
+var
+  Strings: TStrings;
+begin
+  if fStringsChanged  then
+  begin
+    Strings := StringsProperty;
+    if Assigned(Strings) then
+      Strings.EndUpdate;
+    fStringsChanged := false;
+  end;
 end;
 
 end.

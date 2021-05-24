@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractComPersistenceControllerProxy;
 
 interface
@@ -29,6 +32,9 @@ type
 
 implementation
 
+uses
+  BoldRev;
+
 { TBoldAbstractComPersistenceControllerProxy }
 
 destructor TBoldAbstractComPersistenceControllerProxy.Destroy;
@@ -48,7 +54,7 @@ var
 begin
   TranslationList := TBoldIDTranslationList.Create;
   try
-    PMExactifyIds(ObjectIdList, TranslationList);
+    PMExactifyIds(ObjectIdList, TranslationList, false);
     ValueSpace.ExactifyIds(TranslationList);
     ObjectIdList.ExactifyIds(TranslationList);
   finally
@@ -62,5 +68,6 @@ begin
   inherited;
 end;
 
-end.
+initialization
 
+end.

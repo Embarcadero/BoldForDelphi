@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLConstraintEditor;
 
 interface
@@ -59,7 +62,6 @@ uses
   SysUtils,
   BoldDefs,
   BoldQueue,
-  BoldRev,
   BoldUMLModelSupport;
 
 {$R *.dfm}

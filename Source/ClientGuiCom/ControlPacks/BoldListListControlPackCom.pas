@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListListControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -6,10 +9,11 @@ interface
 
 uses
   Classes,
-  BoldDefs,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  BoldControlPackDefs,
+
+  // Bold
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
+  BoldControlPackDefs,
   BoldListControlPackCom;
 
 type
@@ -42,8 +46,7 @@ type
     property NilElementMode: TBoldNilElementMode read fNilElementMode write SetNilElementMode;
   public
     constructor Create(aOwningComponent: TComponent; FollowerController: TBoldFollowerControllerCom);
-//    procedure DragDrop(Follower: TBoldFollowerCom; ReceivingElement: IBoldElement; dropindex: Integer); override;
-//    function DragOver(Follower: TBoldFollowerCom; ReceivingElement: IBoldElement; dropindex: Integer): Boolean; override;
+
     function GetListIndex(Follower: TBoldFollowerCom): Integer;
     function ListIndexToIndex(Follower: TBoldFollowerCom; ListIndex: Integer): integer;
     function ListIndex(index: integer): integer;
@@ -75,13 +78,11 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
-  BoldUtils,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   BoldGUI,
   {$ENDIF}
-  BoldMath;
+  BoldRev;
 
 var
   DefaultListAsFollowerListRenderer: TBoldListAsFollowerListRendererCom;
@@ -135,7 +136,7 @@ procedure TBoldAbstractListAsFollowerListControllerCom.DoMakeUptodateAndSubscrib
 begin
   inherited DoMakeUptodateAndSubscribe(Follower, Subscribe);
   (EffectiveRenderer as TBoldListAsFollowerListRendererCom).MakeUptodate(Follower, fFollowerController);
-  {$IFDEF BOLDCOMCLIENT} // MakeUptodateAndSubscribe
+  {$IFDEF BOLDCOMCLIENT}
   if Subscribe and Assigned(Follower.Element) then
     Follower.Element.SubscribeToExpression('', Follower.Subscriber.ClientId, Follower.Subscriber.SubscriberId, false, false);
   {$ELSE}
@@ -291,7 +292,7 @@ begin
         unk :=  SourceVariant[SourceIndex];
         ElementInterface := unk as IBoldElement;
         AddElement(ElementInterface);
-      end
+      end  
   {$ENDIF}
       else
       begin
@@ -305,12 +306,12 @@ begin
 end;
 
 procedure TBoldListAsFollowerListRendererCom.DefaultStartDrag(Element: IBoldElement; DragMode: TBoldDragMode; RendererData: TBoldFollowerDataCom);
-{$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultStartDrag
+{$IFNDEF BOLDCOMCLIENT}
 var
   FollowerList: TBoldFollowerListCom;
 {$ENDIF}
 begin
-  {$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultStartDrag
+  {$IFNDEF BOLDCOMCLIENT}
   if (DragMode = bdgSelection) then
   begin
     if BoldGUIHandler.DraggedObjects.Count <> 0 then
@@ -324,16 +325,16 @@ end;
 
 function TBoldListAsFollowerListRendererCom.DefaultDragOver(Element: IBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldFollowerDataCom; dropindex: Integer): Boolean;
 begin
-  {$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultDragOver
+  {$IFNDEF BOLDCOMCLIENT}
   Result := (BoldGUIHandler.DraggedObjects.Count > 0) and
-    BoldGUIHandler.DraggedObjectsAssignable(Element, DropMode); // FIXME move here
+    BoldGUIHandler.DraggedObjectsAssignable(Element, DropMode);
   {$ELSE}
   result := false;
   {$ENDIF}
 end;
 
 procedure TBoldListAsFollowerListRendererCom.DefaultDragDrop(Element: IBoldElement; DropMode: TBoldDropMode; dropindex: Integer);
-{$IFNDEF BOLDCOMCLIENT} // dragdrop - DefaultDragDrop
+{$IFNDEF BOLDCOMCLIENT}
 var
   prevIndex,
   Offset,
@@ -344,7 +345,7 @@ begin
 
 (*  if (NilElementMode=neInsertFirst) then
     Offset := 1
-  else*) //FIXME
+  else*)
     Offset := 0;
   case DropMode of
     bdpInsert:
@@ -376,7 +377,6 @@ begin
 
     bdpAppend:
       for I := 0 to BoldGUIHandler.DraggedObjects.Count - 1 do
-        // Dupe checking by the ObjectList
         ObjectList.Add(BoldGUIHandler.DraggedObjects[I]);
 
     bdpReplace:
@@ -399,7 +399,7 @@ end;
 function TBoldAbstractListAsFollowerListControllerCom.ListIndex(index: integer): integer;
 begin
   if index = MaxInt then
-    result := index // otherwise the result will overflow to -maxint
+    result := index
   else if NilElementMode = neInsertFirst then
     Result := index + 1
   else
@@ -411,6 +411,5 @@ initialization
 
 finalization
   FreeAndNil(DefaultListAsFollowerListRenderer);
-
+  
 end.
-

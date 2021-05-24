@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -9,8 +12,12 @@ uses
   SysUtils,
   Controls,
   {$IFDEF BOLD_DELPH6_OR_LATER}
-  Types, // IFDEF BOLD_DELPH6_OR_LATER
+  Types,
   {$ENDIF}
+{$IFNDEF BOLDCOMCLIENT}
+  BoldSystemRT,
+  BoldSystem,
+{$ENDIF}
   Menus,
   Graphics,
   Windows,
@@ -21,7 +28,12 @@ uses
   BoldSubscription,
   BoldElements,
   BoldQueue,
+  BoldHandles,
   BoldOclVariables;
+
+const
+  befFollowerResultElementOutOfDate = BoldElementFlag4;
+  befFollowerEnsured                = BoldElementFlag5;
 
 type
   {Forward declarations of all classes}
@@ -33,12 +45,35 @@ type
   TBoldSingleFollowerController = class;
   TBoldSingleRenderer = class;
   TBoldPopup = class;
+  TBoldAbstractHandleFollower = class;
 
   TBoldRendererDataClass = class of TBoldRendererData;
+  TBoldFollowerControllerClass = class of TBoldFollowerController;
 
   TBoldFollowerEvent = procedure (Follower: TBoldFollower) of object;
   TBoldGetContextTypeEvent = function: TBoldElementTypeInfo of object;
   TBoldSubFollowerEvent = procedure (index: Integer; OwningFollower: TBoldFollower) of object;
+  TBoldValidateString = function (aFollower: TBoldFollower; const Value: string): Boolean of object;
+  TBoldApplyExceptionEvent = function (E: Exception; Elem: TBoldElement; var Discard: Boolean): Boolean of object;
+  TBoldDisplayExceptionEvent = function(E: Exception; Elem: TBoldElement): Boolean of object;
+
+  TBoldFollowerArray = array of TBoldFollower;
+
+  { TBoldAbstractHandleFollower }
+  TBoldAbstractHandleFollower = class(TBoldQueueable)
+  private
+    fFollower: TBoldFollower;
+    fSubscriber: TBoldSubscriber;
+  protected
+    function GetBoldHandle: TBoldElementHandle; virtual; abstract;
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); virtual; abstract;
+    property Subscriber: TBoldSubscriber read fSubscriber;    
+  public
+    constructor Create(AMatchObject: TObject; Controller: TBoldFollowerController);
+    destructor Destroy; override;
+    property BoldHandle: TBoldElementHandle read GetBoldHandle;
+    property Follower: TBoldFollower read fFollower;
+  end;
 
   { TBoldFollowerSubscriber }
   TBoldFollowerSubscriber = class(TBoldSubscriber)
@@ -47,39 +82,41 @@ type
   protected
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); override;
     function GetContextString: string; override;
+    function ContextObject: TObject; override;
   public
-    constructor Create(follower: TBoldFollower);
+    constructor Create(Follower: TBoldFollower);
+    destructor Destroy; override;
     property Follower: TBoldFollower read fFollower;
   end;
 
   { TBoldRendererData }
-  // Abstract class, concrete versions defined with typed renderer
   TBoldRendererData = class(TBoldMemoryManagedObject)
   private
     fOwningFollower: TBoldFollower;
-    fMayModify: Boolean;
   protected
     procedure EnsureSubfollowersDisplayable; virtual;
     function GetSubFollowerCount: Integer; virtual;
     function GetSubFollower(index: Integer): TBoldFollower; virtual;
+    function GetEnsuredSubFollower(Index: Integer): TBoldFollower; virtual;
     function GetCurrentSubFollowerIndex: Integer; virtual;
     procedure SetCurrentSubFollowerIndex(index:integer); virtual;
+    function GetSubFollowerAssigned(Index: Integer): boolean; virtual;
   public
     constructor Create(OwningFollower: TBoldFollower); virtual;
     property OwningFollower: TBoldFollower read fOwningFollower;
-    property MayModify: Boolean read fMayModify write fMayModify;
   end;
 
   { TBoldRenderer }
-  TBoldMayModify = function (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber): Boolean of object;
-  TBoldHoldsChangedValue = procedure (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber) of object;
-  TBoldReleaseChangedValue = procedure (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber) of object;
-  TBoldSubscribe = procedure (Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber) of object;
-
+  TBoldMayModify = function(aFollower: TBoldFollower): Boolean of object;
+  TBoldHoldsChangedValue = procedure(aFollower: TBoldFollower) of object;
+  TBoldReleaseChangedValue = procedure(aFollower: TBoldFollower) of object;
+  TBoldSubscribe = procedure(aFollower: TBoldFollower; Subscriber: TBoldSubscriber) of object;
+  TBoldEnsureFetched = procedure (List: TBoldObjectList; Expression: TBoldExpression) of object;
   TBoldStartDrag = procedure (Element: TBoldElement; DragMode: TBoldDragMode; RendererData: TBoldRendererData) of object;
   TBoldEndDrag = procedure (DragMode: TBoldDragMode; InternalDrag: Boolean) of object;
   TBoldDragOver = function (Element: TBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldRendererData; dropindex: Integer): Boolean of object;
   TBoldDragDrop = procedure (Element: TBoldElement; DropMode: TBoldDropMode; dropindex: Integer) of object;
+  TBoldValidateCharacter = function (AFollower: TBoldFollower; C: Char): Boolean of object;
 
   TBoldRenderer = class(TBoldSubscribableComponentViaBoldElem)
   private
@@ -91,7 +128,9 @@ type
     FOnHoldsChangedValue: TBoldHoldsChangedValue;
     FOnReleaseChangedValue: TBoldReleaseChangedValue;
     FOnSubscribe: TBoldSubscribe;
+    FOnEnsureFetched: TBoldEnsureFetched;
     FRepresentations: TStringList;
+    FOnValidateCharacter: TBoldValidateCharacter;
     function GetRepresentations: TStrings;
     procedure SetRepresentations(Value: TStrings);
     function StoreRepresentations: Boolean;
@@ -100,12 +139,17 @@ type
     class function GetExpressionAsDirectElement(Element: TBoldElement; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): TBoldElement;
     function GetRendererDataClass: TBoldRendererDataClass; virtual;
     function GetSupportsMulti: Boolean; virtual;
+    procedure DefaultHoldsChangedValue(aFollower: TBoldFollower); virtual;
+    procedure DefaultReleaseChangedValue(aFollower: TBoldFollower); virtual;
+    function DefaultMayModify(aFollower: TBoldFollower): Boolean; virtual;
+    function DefaultValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean; virtual;
     procedure DefaultStartDrag(Element: TBoldElement; DragMode: TBoldDragMode; RendererData: TBoldRendererData); virtual;
     procedure DefaultEndDrag(DragMode: TBoldDragMode; InternalDrag: Boolean); virtual;
     function DefaultDragOver(Element: TBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldRendererData; dropindex: Integer): Boolean; virtual;
     procedure DefaultDragDrop(Element: TBoldElement; DropMode: TBoldDropMode; dropindex: Integer); virtual;
     procedure DrawOnCanvas(Follower: TBoldFollower; Canvas: TCanvas; Rect: TRect; Aligment: TAlignment; Margins: TPoint); virtual;
-    function HasEventOverrides: boolean; virtual;
+    function HasSetValueEventOverrides: boolean; virtual;
+    function ValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean; virtual;
     function GetDefaultRepresentationStringList: TStringList; virtual;
     property OnStartDrag: TBoldStartDrag read FOnStartDrag write FOnStartDrag;
     property OnEndDrag: TBoldEndDrag read FOnEndDrag write FOnEndDrag;
@@ -113,18 +157,17 @@ type
     property OnDragDrop: TBoldDragDrop read FOnDragDrop write FOnDragDrop;
   public
     destructor Destroy; override;
-    procedure Changed;
-    function DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean; virtual;
-    procedure DefaultHoldsChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber); virtual;
-    procedure DefaultReleaseChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList;Subscriber: TBoldSubscriber); virtual;
-    function MayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean; virtual;
-    procedure HoldsChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber); virtual;
-    procedure ReleaseChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber); virtual;
+    procedure Assign(Source: TPersistent); override;
+    procedure Changed; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function MayModify(aFollower: TBoldFollower): Boolean; virtual;
+    procedure HoldsChangedValue(Follower: TBoldFollower); virtual;
+    procedure ReleaseChangedValue(Follower: TBoldFollower); virtual;
     procedure StartDrag(Element: TBoldElement; DragMode: TBoldDragMode; RendererData: TBoldRendererData); virtual;
     procedure EndDrag(DragMode: TBoldDragMode; InternalDrag: Boolean); virtual;
     function DragOver(Element: TBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldRendererData; dropindex: Integer): Boolean; virtual;
     procedure DragDrop(Element: TBoldElement; DropMode: TBoldDropMode; dropindex: Integer); virtual;
-    procedure SubscribeToElement(Element: TBoldElement;  Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber; VariableList: TBoldExternalVariableList = nil);
+    procedure SubscribeToElement(aFollower: TBoldFollower);
+    procedure EnsureFetched(List: TBoldObjectList; BoldType: TBoldClassTypeInfo; Expression: TBoldExpression);
     property RendererDataClass: TBoldRendererDataClass read GetRendererDataClass;
     property SupportsMulti: Boolean read GetSupportsMulti;
   published
@@ -133,6 +176,8 @@ type
     property OnHoldsChangedValue: TBoldHoldsChangedValue read FOnHoldsChangedValue write FOnHoldsChangedValue;
     property OnReleaseChangedValue: TBoldReleaseChangedValue read FOnReleaseChangedValue write FOnReleaseChangedValue;
     property OnSubscribe: TBoldSubscribe read FOnSubscribe write SetOnSubscribe;
+    property OnEnsureFetched: TBoldEnsureFetched read FOnEnsureFetched write FOnEnsureFetched;
+    property OnValidateCharacter: TBoldValidateCharacter read FOnValidateCharacter write FOnValidateCharacter;
   end;
 
   { TBoldFollower }
@@ -140,56 +185,69 @@ type
   private
     fIndex: Integer;
     fOwningFollower: TBoldFollower;
-//    fSelected: Boolean;
     fState: TBoldFollowerState;
     fElement: TBoldElement;
     fRendererData: TBoldRendererData;
     fController: TBoldFollowerController;
     fControlData: TObject;
     FSubscriber: TBoldSubscriber;
-    function GetActive: Boolean;
+    FIndirectElement: TBoldIndirectElement;
+    function GetActive: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetActive(Value: Boolean);
-    function GetElementValid: Boolean;
+    function GetElementValid: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetElementValid(Value: Boolean);
-    function GetSubFollower(index: Integer): TBoldFollower;
-    function GetSubFollowerCount: Integer;
-    function GetCurrentIndex: Integer;
+    function GetSubFollower(index: Integer): TBoldFollower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEnsuredSubFollower(Index: Integer): TBoldFollower;
+    function GetSubFollowerCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrentIndex: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetCurrentIndex(index: integer);
-    procedure SetElement(theElement: TBoldElement);
-    procedure SetState(Value: TBoldFollowerState);
-    function GetRendererData: TBoldRendererData;
-    procedure CollectMatchingDownwards(Followers: TBoldObjectArray; MatchController: TBoldFollowerController);
-    function GetAssertedController: TBoldFollowerController;
+    procedure SetElement(AElement: TBoldElement);
+    procedure SetState(AValue: TBoldFollowerState);
+    function GetRendererData: TBoldRendererData; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function CollectMatchingDownwards(Followers: TBoldFollowerArray; MatchController: TBoldFollowerController): TBoldFollowerArray;
+    function GetAssertedController: TBoldFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrentSubFollower: TBoldFollower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIsDirty: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetValue: TBoldElement;
+    function GetSubFollowerAssigned(index: Integer): boolean;
   protected
+    function GetDebugInfo: string; override;
     procedure AddToDisplayList; override;
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    {The following two are virtual to allow overriden in the old hierarchy}
-    procedure MakeUptoDateAndSubscribe; // Displays, i.e. moves from B.O. to RendereData, also resubscribes if needed
-    class procedure MultiMakeUptodateAndSubscribe(Followers: TBoldObjectArray);
-    procedure MakeClean; // Applies, i.e. moves from rendererdata to B.O.
+    procedure MakeUptodateAndSubscribe;
+    class procedure MultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray);
+    procedure MakeClean;
     {State handling}
     procedure MarkDirty;
-    procedure MarkClean;
-    procedure CollectMatching(Followers: TBoldObjectArray; MatchController: TBoldFollowerController);
+    procedure MarkClean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure MarkEnsured; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function CollectMatching(MatchController: TBoldFollowerController): TBoldFollowerArray;
+    function CollectMatchingSiblings(WindowSize: Integer): TBoldFollowerArray;
+    property Ensured: Boolean index befFollowerEnsured read GetElementFlag write SetElementFlag;
   public
     constructor Create(MatchObject: TObject; Controller: TBoldFollowerController);
     constructor CreateSubFollower(
       OwningFollower: TBoldFollower;
-      Controller: TBoldFollowerController;
-      Element: TBoldElement);
+      aController: TBoldFollowerController;
+      aElement: TBoldElement;
+      aActive: boolean;
+      aIndex: integer);
     destructor Destroy; override;
+    procedure SetElementAndMakeCurrent(AElement: TBoldElement; AActive: boolean);
     procedure Display; override;
     procedure Apply; override;
     procedure MarkValueOutOfDate;
     procedure MarkSubscriptionOutOfDate;
     function CheckIfInHierarchy(aElement: TBoldElement; aController: TBoldFollowerController): Boolean;
-    procedure ControlledValueChanged(IsChanged: Boolean);
+    procedure ControlledValueChanged;
     procedure DiscardChange; override;
-    function Displayable: Boolean;
+    function Displayable: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure EnsureDisplayable;
     function ExistInOwner: Boolean;
-    function MayChange: Boolean;
+    function MayChange: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function MayModify: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure EnsureMulti;
+    procedure EnsureSiblings;
     property Active: Boolean read GetActive write SetActive;
     property ElementValid: Boolean read GetElementValid write SetElementValid;
     property Controller: TBoldFollowerController read fController;
@@ -201,10 +259,16 @@ type
     property OwningFollower: TBoldFollower read FOwningFollower;
     property RendererData: TBoldRendererData read GetRendererData;
     property State: TBoldFollowerState read fState;
+    property IsDirty: boolean read GetIsDirty;
     property Selected: Boolean index befFollowerSelected read GetElementFlag write SetElementFlag;
+    property ResultElementOutOfDate: Boolean index befFollowerResultElementOutOfDate read GetElementFlag write SetElementFlag;
     property SubFollowerCount: Integer read GetSubFollowerCount;
     property SubFollowers[index: Integer]: TBoldFollower read GetSubFollower;
+    property SubFollowerAssigned[index: Integer]: boolean read GetSubFollowerAssigned;
+    property CurrentSubFollower : TBoldFollower read GetCurrentSubFollower;
+    property EnsuredSubFollowers[Index: Integer]: TBoldFollower read GetEnsuredSubFollower;
     property Subscriber: TBoldSubscriber read fSubscriber;
+    property Value: TBoldElement read GetValue;
   end;
 
   { TBoldFollowerController }
@@ -225,14 +289,15 @@ type
     fComponentSubscriber: TBoldPassthroughSubscriber;
     FOnGetContextType: TBoldGetContextTypeEvent;
     fVariables: TBoldOclVariables;
+    fApplyException: TBoldApplyExceptionEvent;
+    fDisplayException: TBoldDisplayExceptionEvent;
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    function GetRendererDataClass: TBoldRendererDataClass;
+    function GetRendererDataClass: TBoldRendererDataClass; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetRepresentation(Value: TBoldRepresentation);
-    procedure SetExpression(Value: string);
+    procedure SetExpression(const Value: string);
     procedure SetUntypedRenderer(NewRender: TBoldRenderer);
     procedure SetVariables(const Value: TBoldOclVariables);
     procedure Resubscribe;
-    function GetVariableList: TBoldExternalVariableList;
     function GetSupportsMulti: Boolean;
     function HandleApplyException(E: Exception; Elem: TBoldElement; var Discard: Boolean): Boolean;
     function HandleDisplayException(E: Exception; Elem: TBoldElement): Boolean;
@@ -240,19 +305,19 @@ type
     function GetOwner: TPersistent; override;
     function GetEffectiveRenderer: TBoldRenderer; virtual;
     function GetContextType: TBoldElementTypeInfo; virtual;
+    function GetVariableList: TBoldExternalVariableList; virtual;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); virtual;
-    procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldObjectArray); virtual;
-    procedure Changed;
+    procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray); virtual;
+    procedure Changed; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure DoAssign(Source: TPersistent); virtual;
+    function DoApplyException(E: Exception; Elem: TBoldElement; var Discard: Boolean): Boolean;
+    function DoDisplayException(E: Exception; Elem: TBoldElement): Boolean;
     procedure CleanRendererData(RendererData: TBoldRendererData); virtual;
-    procedure MultiMakeEnsure(Followers: TBoldObjectArray);
+    procedure MultiMakeEnsure(Followers: TBoldFollowerArray);
     function GetSupportsMultiEnsure: Boolean; virtual;
     property EffectiveRenderer: TBoldRenderer read GetEffectiveRenderer;
     property RendererDataClass: TBoldRendererDataClass read GetRendererDataClass;
-    property OwningComponent: TComponent read FOwningComponent;
     property InternalDrag: Boolean read FInternalDrag write FInternalDrag;
-    property Representation: TBoldRepresentation read FRepresentation write SetRepresentation default brDefault;
-    property Expression: TBoldExpression read FExpression write SetExpression nodefault;
     property UntypedRenderer: TBoldRenderer read fUntypedRenderer write SetUntypedRenderer;
     property Variables: TBoldOclVariables read fVariables write SetVariables;
   public
@@ -260,20 +325,22 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure MakeClean(Follower: TBoldFollower); virtual;
-    function MayModify(Follower: TBoldFollower): Boolean;
-    procedure HoldsChangedValue(Follower: TBoldFollower);
-    procedure ReleaseChangedValue(Follower: TBoldFollower);
+    function MayModify(Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure HoldsChangedValue(Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ReleaseChangedValue(Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetVariableListAndSubscribe(Subscriber: TBoldSubscriber): TBoldExternalVariableList;
     procedure StartDrag(Follower: TBoldFollower);
     procedure EndDrag;
-    procedure MakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean);
-    procedure SubscribeToElement(Element: TBoldElement; Subscriber: TBoldSubscriber);
-    procedure MultiMakeUptodateAndSubscribe(Followers: TBoldObjectArray);
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscribe: Boolean);
+    procedure SubscribeToElement(aFollower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure MultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray);
     function DragOver(Follower: TBoldFollower; ReceivingElement: TBoldElement; dropindex: Integer): Boolean; virtual;
     procedure DragDrop(Follower: TBoldFollower; ReceivingElement: TBoldElement; dropindex: Integer); virtual;
     procedure DrawOnCanvas(Follower: TBoldFollower; Canvas: TCanvas; Rect: TRect; Alignment: TAlignment; Margins: TPoint); virtual;
+    function SubFollowersActive: boolean; virtual;
+    property OwningComponent: TComponent read FOwningComponent;    
     property ApplyPolicy: TBoldApplyPolicy read FApplyPolicy write FApplyPolicy default bapExit;
-    property CleanOnEqual: Boolean read FCleanOnEqual write FCleanOnEqual default false;
+    property CleanOnEqual: Boolean read FCleanOnEqual write FCleanOnEqual default true;
     property Popup: TBoldPopup read FPopup write FPopup; {temporarily}
     property AfterMakeUptoDate: TBoldFollowerEvent read fAfterMakeUptoDate write fAfterMakeUptoDate;
     property BeforeMakeUptoDate: TBoldFollowerEvent read fBeforeMakeUptoDate write fBeforeMakeUptoDate;
@@ -282,16 +349,19 @@ type
     property VariableList: TBoldExternalVariableList read GetVariableList;
     property SupportsMulti: Boolean read GetSupportsMulti;
     property SupportsMultiEnsure : Boolean read GetSupportsMultiEnsure;
+    property Expression: TBoldExpression read FExpression write SetExpression nodefault;
+    property Representation: TBoldRepresentation read FRepresentation write SetRepresentation default brDefault;
   published
-    property DragMode: TBoldDragMode read FDragMode write FDragMode default bdgNone;
-    property DropMode: TBoldDropMode read FDropMode write FDropMode default bdpNone;
-    //   property Popup: TBoldPopup read fPopup write fPopup;
+    property DragMode: TBoldDragMode read FDragMode write FDragMode default DefaultBoldDragMode;
+    property DropMode: TBoldDropMode read FDropMode write FDropMode default DefaultBoldDropMode;
+    property OnApplyException: TBoldApplyExceptionEvent read fApplyException write fApplyException;
+    property OnDisplayException: TBoldDisplayExceptionEvent read fDisplayException write fDisplayException;
   end;
 
   { TBoldSingleRenderer }
   TBoldSingleRenderer = class(TBoldRenderer)
   public
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); virtual; abstract;
+    procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscriber: TBoldSubscriber); virtual; abstract;
   end;
 
   { TBoldSingleFollowerController }
@@ -312,7 +382,7 @@ type
   { TBoldPopup }
   TBoldPopup = class(TPersistent)
   private
-    FEnable: Boolean; // FIXME notify owner of change here
+    FEnable: Boolean;
     FInsertNew: Boolean;
     FDelete: TBoldPopupDeleteType;
     FMove: Boolean;
@@ -326,7 +396,7 @@ type
     property Move: Boolean read FMove write FMove default False;
   end;
 
-{$IFDEF BOLDCOMCLIENT} // List/InterfaceArray
+{$IFDEF BOLDCOMCLIENT}
 type
   TBoldClientableList = TBoldInterfaceArray;
 
@@ -343,12 +413,15 @@ implementation
 uses
   BoldExceptionHandlers,
   BoldGuiResourceStrings,
-{$IFNDEF BOLDCOMCLIENT} // uses
-  BoldSystem,
-  BoldSystemRT,
+{$IFNDEF BOLDCOMCLIENT}
   BoldGUI,
 {$ENDIF}
-  BoldGuard;
+{$IFDEF SpanFetch}
+  AttracsSpanFetchManager,
+{$ENDIF}
+  BoldGuard,
+  BoldListControlPack,
+  BoldDomainElement;
 
 const
   breVariablesRemoved = 42;
@@ -360,7 +433,7 @@ const
 var
   DefaultRenderer: TBoldRenderer;
 
-{$IFDEF BOLDCOMCLIENT} // BoldTestType
+{$IFDEF BOLDCOMCLIENT}
 function BoldTestType(element: IUnknown; const TypeOrInterface: TGUID): Boolean;
 var
   Res: IUnknown;
@@ -388,12 +461,18 @@ end;
 
 function TBoldRendererData.GetSubFollower(index: Integer): TBoldFollower;
 begin
-  raise EBold.CreateFmt(sClassHasNoSubfollowers, [ClassName]);
+  raise EBold.CreateFmt('%s: This class has no subfollowers', [ClassName]);
 end;
 
 function TBoldRendererData.GetCurrentSubFollowerIndex: Integer;
 begin
   Result := -1;
+end;
+
+function TBoldRendererData.GetEnsuredSubFollower(
+  Index: Integer): TBoldFollower;
+begin
+  result := GetSubFollower(Index);
 end;
 
 { TBoldFollowerController }
@@ -404,16 +483,20 @@ begin
   fComponentSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
   FOwningComponent := aOwningComponent;
   FApplyPolicy := bapExit;
-  FDragMode := bdgNone;
-  FDropMode := bdpNone;
+  FDragMode := DefaultBoldDragMode;
+  FDropMode := DefaultBoldDropMode;
   FPopup := TBoldPopup.Create;
   FRepresentation := brDefault;
+  fCleanOnEqual := true;
 end;
 
 destructor TBoldFollowerController.Destroy;
 begin
   FreeAndNil(fComponentSubscriber);
   FreeAndNil(FPopup);
+  fBeforeMakeUptodate := nil;
+  fAfterMakeUptodate := nil;
+  fVariables := nil;
   inherited;
 end;
 
@@ -423,6 +506,14 @@ begin
     DoAssign(Source)
   else
     inherited Assign(Source);
+end;
+
+function TBoldFollowerController.DoApplyException(E: Exception;
+  Elem: TBoldElement; var Discard: Boolean): Boolean;
+begin
+  result := false;
+  if Assigned(fApplyException) then
+    result := fApplyException(E, Elem, Discard);
 end;
 
 procedure TBoldFollowerController.DoAssign(Source: TPersistent);
@@ -440,21 +531,35 @@ begin
     UntypedRenderer := (TBoldFollowerController(Source).UntypedRenderer);
 end;
 
-procedure TBoldFollowerController.MakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean);
+function TBoldFollowerController.DoDisplayException(E: Exception;
+  Elem: TBoldElement): Boolean;
+begin
+  result := false;
+  if Assigned(fApplyException) then
+    result := fDisplayException(E, Elem);
+end;
+
+procedure TBoldFollower.MarkClean;
+begin
+  SetState(bfsCurrent);
+end;
+
+procedure TBoldFollowerController.MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscribe: Boolean);
 begin
   if Assigned(BeforeMakeUptoDate) then
-    BeforeMakeUptoDate(Follower);
+    BeforeMakeUptoDate(aFollower);
   try
-    DoMakeUptodateAndSubscribe(Follower, Subscribe);
+    DoMakeUptodateAndSubscribe(aFollower, Subscribe);
   finally
+    aFollower.MarkClean;
     if Assigned(AfterMakeUptoDate) then
-      AfterMakeUptoDate(Follower);
+      AfterMakeUptoDate(aFollower);
   end;
 end;
 
 procedure TBoldFollowerController.MakeClean(Follower: TBoldFollower);
 begin
-  raise EBoldInternal.CreateFmt(sNotImplemented, [ClassName, 'MakeClean']); // do not localize
+  raise EBoldInternal.CreateFmt('%s.MakeClean not implemented', [ClassName]);
 end;
 
 procedure TBoldFollowerController.Changed;
@@ -479,7 +584,64 @@ end;
 
 procedure TBoldFollowerController.DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean);
 begin
-  Follower.RendererData.MayModify := EffectiveRenderer.MayModify(Follower.Element, Representation, Expression, GetVariableListAndSubscribe(Follower.Subscriber), Follower.Subscriber);
+end;
+
+function TBoldFollower.GetAssertedController: TBoldFollowerController;
+begin
+  if not assigned(fController) then
+    raise EBold.CreateFmt('%s.GetAssertedController: Controller not assigned', [classname]);
+  result := fController;
+end;
+
+function TBoldFollower.GetActive: Boolean;
+begin
+  Result := not (State in [bfsInactiveValidElement, bfsInactiveInvalidElement]);
+end;
+
+function TBoldFollower.GetElementValid: Boolean;
+begin
+  Result := State <> bfsInactiveInValidElement;
+end;
+
+function TBoldFollower.GetRendererData: TBoldRendererData;
+begin
+  if not Active then
+    raise EBold.Create(SBoldInactiveFollowerNoRenderData);
+  if not Assigned(FRendererData) then
+    FRendererData := AssertedController.RendererDataClass.Create(Self);
+  Result := FRendererData;
+end;
+
+function TBoldFollower.GetSubFollower(index: Integer): TBoldFollower;
+begin
+  Result := RendererData.GetSubFollower(index);
+end;
+
+function TBoldFollower.GetEnsuredSubFollower(
+  Index: Integer): TBoldFollower;
+begin
+  Result := RendererData.GetEnsuredSubFollower(index);
+end;
+
+function TBoldFollower.GetSubFollowerCount: Integer;
+begin
+  if Active then
+    Result := RendererData.GetSubFollowerCount
+  else
+    result := 0
+end;
+
+function TBoldFollower.GetCurrentIndex: Integer;
+begin
+  Result := RendererData.GetCurrentSubFollowerIndex;
+end;
+
+function TBoldFollower.GetCurrentSubFollower: TBoldFollower;
+begin
+  if CurrentIndex = -1 then
+    result := nil
+  else
+    Result := SubFollowers[CurrentIndex];
 end;
 
 procedure TBoldFollowerController.StartDrag(Follower: TBoldFollower);
@@ -520,13 +682,11 @@ begin
   except
     on E: Exception do
     begin
-      Discard := true;
       Handled := HandleApplyException(E, ReceivingElement, Discard);
       if Discard then
         Follower.DiscardChange;
       if not Handled then
         raise;
-
     end;
   end;
 end;
@@ -538,7 +698,7 @@ end;
 
 function TBoldFollowerController.MayModify(Follower: TBoldFollower): Boolean;
 begin
-  Result := Follower.RendererData.MayModify;
+  result := EffectiveRenderer.MayModify(Follower)
 end;
 
 procedure TBoldFollowerController.SetRepresentation(Value: TBoldRepresentation);
@@ -550,7 +710,7 @@ begin
   end;
 end;
 
-procedure TBoldFollowerController.SetExpression(Value: string);
+procedure TBoldFollowerController.SetExpression(const Value: string);
 begin
   if Value <> Expression then
   begin
@@ -571,12 +731,12 @@ end;
 
 procedure TBoldFollowerController.HoldsChangedValue(Follower: TBoldFollower);
 begin
-  EffectiveRenderer.HoldsChangedValue(Follower.Element, Representation, Expression, VariableList, Follower.Subscriber);
+  EffectiveRenderer.HoldsChangedValue(Follower);
 end;
 
 procedure TBoldFollowerController.ReleaseChangedValue(Follower: TBoldFollower);
 begin
-  EffectiveRenderer.ReleaseChangedValue(Follower.Element, Representation, Expression, VariableList, Follower.Subscriber);
+  EffectiveRenderer.ReleaseChangedValue(Follower);
 end;
 
 { TBoldSingleFollowerController }
@@ -586,9 +746,9 @@ begin
   with EffectiveRenderer as TBoldSingleRenderer do
   begin
     if Subscribe then
-      MakeUptodateAndSubscribe(Follower.Element, Follower.RendererData, Self, Follower.Subscriber)
+      MakeUptodateAndSubscribe(Follower, Follower.Subscriber)
     else
-      MakeUptodateAndSubscribe(Follower.Element, Follower.RendererData, Self, nil);
+      MakeUptodateAndSubscribe(Follower, nil);
   end;
 end;
 
@@ -614,7 +774,6 @@ begin
 end;
 
 function TBoldRenderer.StoreRepresentations: Boolean;
-  // Don't store the stringlist if it's empty or if it's equal to the default representation stringlist.
 begin
   Result := False;
   if Assigned(FRepresentations) and (FRepresentations.Count > 0) then
@@ -630,11 +789,18 @@ class function TBoldRenderer.GetExpressionAsDirectElement(Element: TBoldElement;
 begin
   Result := nil;
   if Assigned(Element) then
-    {$IFDEF BOLDCOMCLIENT} // GetAsDirectElement // FIXME: VariableList is lost
-    Result := Element.EvaluateExpression(Expression);
-    {$ELSE}
-    Result := Element.EvaluateExpressionAsDirectElement(Expression, VariableList);
-    {$ENDIF}
+  begin
+    if Expression = '' then
+    begin
+      Result := Element;
+    end
+    else
+      {$IFDEF BOLDCOMCLIENT}
+      Result := Element.EvaluateExpression(Expression);
+      {$ELSE}
+      Result := Element.EvaluateExpressionAsDirectElement(Expression, VariableList);
+      {$ENDIF}
+  end;
 end;
 
 function TBoldRenderer.GetRendererDataClass: TBoldRendererDataClass;
@@ -658,62 +824,111 @@ begin
   end;
 end;
 
-function TBoldRenderer.DefaultMayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean;
+function TBoldRenderer.DefaultMayModify(aFollower: TBoldFollower): Boolean;
+
+  function CheckPessimisticLocking(AElement: TBoldDomainElement): boolean;
+  var
+    BoldSystem: TBoldSystem;
+  begin
+    result := true;
+    BoldSystem := TBoldDomainElement(AElement).BoldSystem as TBoldSystem;
+    if Assigned(BoldSystem) and Assigned(BoldSystem.PessimisticLockHandler) then
+      result := BoldSystem.PessimisticLockHandler.LockElement(AElement);
+  end;
+
 var
   ValueElement: TBoldElement;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   if Assigned(ValueElement) then
-    {$IFDEF BOLDCOMCLIENT}  // DefaultMayModify // fixme
-    result := ValueElement.mutable
+  begin
+    {$IFDEF BOLDCOMCLIENT}
+    result := ValueElement.mutable;
     {$ELSE}
-    Result := ValueElement.ObserverMayModify(Subscriber)
+    Result := ValueElement.ObserverMayModify(aFollower.Subscriber);
     {$ENDIF}
+    if (ValueElement is TBoldDomainElement) then
+      result := result and CheckPessimisticLocking(ValueElement as TBoldDomainElement);
+  end
   else
     Result := False;
 end;
 
-procedure TBoldRenderer.DefaultHoldsChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber);
-{$IFNDEF BOLDCOMCLIENT} // DefaultHoldsChangedValue
+procedure TBoldRenderer.DefaultHoldsChangedValue(aFollower: TBoldFollower);
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: TBoldElement;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   if Assigned(ValueElement) then
-    ValueElement.RegisterModifiedValueHolder(Subscriber)
-  else
-    raise EBold.CreateFmt(sCannotModifyValue, [ClassName]);
+    ValueElement.RegisterModifiedValueHolder(aFollower.Subscriber)
 end;
 {$ELSE}
 begin
 end;
 {$ENDIF}
 
-procedure TBoldRenderer.DefaultReleaseChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber);
-{$IFNDEF BOLDCOMCLIENT} // defaultReleaseChangedValue
+procedure TBoldRenderer.DefaultReleaseChangedValue(aFollower: TBoldFollower);
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: TBoldElement;
 begin
-  ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
+  ValueElement := aFollower.Value;
   if Assigned(ValueElement) then
-    ValueElement.UnRegisterModifiedValueHolder(Subscriber)
+    ValueElement.UnRegisterModifiedValueHolder(aFollower.Subscriber)
 end;
 {$ELSE}
 begin
 end;
 {$ENDIF}
 
-function TBoldRenderer.MayModify(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber): Boolean;
+function TBoldRenderer.MayModify(aFollower: TBoldFollower): Boolean;
 begin
-  if Assigned(FOnMayModify) and
-    Assigned(Element) then
-    Result := OnMayModify(Element, Representation, Expression, Subscriber)
-  else if HasEventOverrides then
-    // this forces readonly of renderers that has an OnSubscribeEvent but no OnMayModify
-    // OnMayModify is mandatory for a writeable renderer.
-    result := false
+  if Assigned(aFollower.Value) then
+  begin
+    Result := aFollower.Value.ObserverMayModify(aFollower.Subscriber);
+    if not result then
+      Result := HasSetValueEventOverrides and
+       ((aFollower.Value.ModifiedValueHolder = nil) or (aFollower.Value.ModifiedValueHolder = aFollower.Subscriber));
+  end
   else
-    Result := DefaultMayModify(Element, Representation, Expression, VariableList, Subscriber)
+    Result := HasSetValueEventOverrides;
+  if Assigned(FOnMayModify) then
+    Result := Result and OnMayModify(aFollower)
+  else
+    Result := Result and HasSetValueEventOverrides or DefaultMayModify(aFollower);
+end;
+
+procedure TBoldRenderer.EnsureFetched(List: TBoldObjectList; BoldType: TBoldClassTypeInfo; Expression: TBoldExpression);
+{$IFNDEF SpanFetch}
+var
+  ListType: TBoldListTypeInfo;
+  RealObjectList: TBoldObjectList;
+  ie: TBoldIndirectElement;
+  i: Integer;
+{$ENDIF}
+begin
+  if assigned(FOnEnsureFetched) then
+    FOnEnsureFetched(List, expression)
+  else if Expression <> '' then
+  {$IFDEF SpanFetch}
+    FetchOclSpan(List, Expression);
+  {$ELSE}
+    if (List.Count > 1) then
+    begin
+      try
+        List.EnsureObjects;
+        ListType := BoldType.ListTypeInfo;
+        RealObjectlist := TBoldMemberFactory.CreateMemberFromBoldType(ListType) as TBoldObjectList;
+        RealObjectList.AddList(List);
+        ie := TBoldIndirectElement.Create;
+        RealObjectList.EvaluateExpression('self->collect(' + Expression + ')', ie);
+      finally
+        FreeAndNil(RealObjectList);
+        FreeAndNil(ie);
+      end;
+    end;
+{$ENDIF}
 end;
 
 function TBoldRenderer.GetSupportsMulti: Boolean;
@@ -721,29 +936,29 @@ begin
   Result := false;
 end;
 
-procedure TBoldRenderer.HoldsChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber);
+procedure TBoldRenderer.HoldsChangedValue(Follower: TBoldFollower);
 begin
   if Assigned(FOnHoldsChangedValue) then
-    OnHoldsChangedValue(Element, Representation, Expression, Subscriber)
+    OnHoldsChangedValue(Follower)
   else
-    DefaultHoldsChangedValue(Element, Representation, Expression, VariableList, Subscriber)
+    DefaultHoldsChangedValue(Follower)
 end;
 
-procedure TBoldRenderer.ReleaseChangedValue(Element: TBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList; Subscriber: TBoldSubscriber);
+procedure TBoldRenderer.ReleaseChangedValue(Follower: TBoldFollower);
 begin
   if Assigned(FOnReleaseChangedValue) then
-    OnReleaseChangedValue(Element, Representation, Expression, Subscriber)
+    OnReleaseChangedValue(Follower)
   else
-    DefaultReleaseChangedValue(Element, Representation, Expression, VariableList, Subscriber)
+    DefaultReleaseChangedValue(Follower)
 end;
 
 procedure TBoldRenderer.DefaultStartDrag(Element: TBoldElement; DragMode: TBoldDragMode; RendererData: TBoldRendererData);
-{$IFNDEF BOLDCOMCLIENT} // DragDrop
+{$IFNDEF BOLDCOMCLIENT}
 var
   Obj: TBoldObject;
-{$ENDIF}
+{$ENDIF}  
 begin
-  {$IFNDEF BOLDCOMCLIENT} // DragDrop
+  {$IFNDEF BOLDCOMCLIENT}
   if BoldGUIHandler.DraggedObjects.Count <> 0 then
     raise EBold.Create(SDraggedObjectsNotCleared);
 
@@ -762,16 +977,27 @@ begin
   {$ENDIF}
 end;
 
+function TBoldRenderer.DefaultValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean;
+var
+  ValueElement: TBoldElement;
+begin
+  ValueElement := aFollower.Value;
+  if Assigned(ValueElement) then
+    Result := ValueElement.ValidateCharacter(C, aFollower.AssertedController.Representation)
+  else
+    Result := True;
+end;
+
 procedure TBoldRenderer.DefaultEndDrag(DragMode: TBoldDragMode; InternalDrag: Boolean);
 begin
-  {$IFNDEF BOLDCOMCLIENT} // dragdrop
+  {$IFNDEF BOLDCOMCLIENT}
   BoldGUIHandler.DraggedObjects.Clear;
   {$ENDIF}
 end;
 
 function TBoldRenderer.DefaultDragOver(Element: TBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldRendererData; dropindex: Integer): Boolean;
 begin
-  {$IFDEF BOLDCOMCLIENT} // dragdrop
+  {$IFDEF BOLDCOMCLIENT}
   result := false;
   {$ELSE}
   Result := Assigned(Element) and Element.ObserverMayModify(Self) and
@@ -781,7 +1007,7 @@ begin
 end;
 
 procedure TBoldRenderer.DefaultDragDrop(Element: TBoldElement; DropMode: TBoldDropMode; dropindex: Integer);
-{$IFNDEF BOLDCOMCLIENT} // dragdrop
+{$IFNDEF BOLDCOMCLIENT}
 var
   i: integer;
   offset,
@@ -789,17 +1015,18 @@ var
   BoldObject: TBoldObject;
   TheLink: TBoldObjectReference;
   TheList: TBoldObjectList;
+  DraggedObjects: TBoldObjectList;
 begin
+  DraggedObjects := BoldGUIHandler.DraggedObjects;
   if element is TBoldObjectReference then
   begin
     TheLink := Element as TBoldObjectReference;
-    with BoldGUIHandler.DraggedObjects do
-      if Count = 0 then
-        BoldObject := nil
-      else if Count = 1 then
-        BoldObject := BoldObjects[0]
-      else
-        raise EBold.Create(SCannotDragOverMultipleObjects);
+    if DraggedObjects.Count = 0 then
+      BoldObject := nil
+    else if DraggedObjects.Count = 1 then
+      BoldObject := DraggedObjects[0]
+    else
+      raise EBold.Create(SCannotDragOverMultipleObjects);
     case DropMode of
       bdpInsert, bdpAppend:
         if Assigned(TheLink.BoldObject) and Assigned(BoldObject) then
@@ -815,25 +1042,25 @@ begin
     TheList := Element as TBoldObjectlist;
     case DropMode of
       bdpAppend:
-        for i := 0 to BoldGUIHandler.DraggedObjects.Count - 1 do
-          if TheList.IndexOf(BoldGUIHandler.DraggedObjects[I]) = -1 then
-            TheList.Add(BoldGUIHandler.DraggedObjects[i]);
+        for i := 0 to DraggedObjects.Count - 1 do
+          if TheList.IndexOf(DraggedObjects[I]) = -1 then
+            TheList.Add(DraggedObjects[i]);
       bdpReplace:
-        raise EBoldFeatureNotImplementedYet.CreateFmt(sReplaceNotImplemented, [ClassName]);
+        raise EBoldFeatureNotImplementedYet.CreateFmt('%s.DefaultDragDrop: Replace not implemented yet', [ClassName]);
       bdpInsert:
       begin
         if dropindex < 0
           then dropindex := 0;
-        for I := 0 to BoldGUIHandler.DraggedObjects.Count - 1 do
+        for I := 0 to DraggedObjects.Count - 1 do
         begin
-          prevIndex := TheList.IndexOf(BoldGUIHandler.DraggedObjects[I]);
+          prevIndex := TheList.IndexOf(DraggedObjects[I]);
           Offset := 0;
           if prevIndex = -1 then
           begin
             if dropindex < TheList.Count then
-              TheList.Insert(dropindex + Offset, BoldGUIHandler.DraggedObjects[I])
+              TheList.Insert(dropindex + Offset, DraggedObjects[I])
             else
-              TheList.Add(BoldGUIHandler.DraggedObjects[I]);
+              TheList.Add(DraggedObjects[I]);
             INC(dropindex);
           end
           else
@@ -876,16 +1103,27 @@ begin
     Result := DefaultDragOver(Element, DropMode, InternalDrag, RendererData, dropindex)
 end;
 
-procedure TBoldRenderer.SubscribeToElement(Element: TBoldElement;  Representation: TBoldRepresentation; Expression: TBoldExpression; Subscriber: TBoldSubscriber; VariableList: TBoldExternalVariableList = nil);
+procedure TBoldRenderer.SubscribeToElement(aFollower: TBoldFollower);
 begin
-  if assigned(fOnSubscribe) then
-    fOnSubscribe(element, representation, expression, subscriber)
-  else if assigned(Element) then
-  {$IFDEF BOLDCOMCLIENT}
-    Element.SubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, False, false);
-  {$ELSE}
-    Element.SubscribeToExpression(expression, subscriber, false, false, variableList);
-  {$ENDIF}
+  if Assigned(aFollower.Element) then
+  begin
+    if assigned(fOnSubscribe) then
+      fOnSubscribe(aFollower, aFollower.Subscriber)
+    else
+    {$IFDEF BOLDCOMCLIENT}
+      Element.SubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, False, false);
+    {$ELSE}
+      aFollower.Element.SubscribeToExpression(aFollower.AssertedController.Expression, aFollower.subscriber, false, false, aFollower.Controller.GetVariableListAndSubscribe(aFollower.subscriber));
+    {$ENDIF}
+  end;
+end;
+
+function TBoldRenderer.ValidateCharacter(aFollower: TBoldFollower; C: Char): Boolean;
+begin
+  if Assigned(FOnValidateCharacter) then
+    Result := OnValidateCharacter(aFollower, C)
+  else
+    Result := DefaultValidateCharacter(aFollower, C);
 end;
 
 procedure TBoldRenderer.DragDrop(Element: TBoldElement; DropMode: TBoldDropMode; dropindex: Integer);
@@ -900,41 +1138,98 @@ procedure TBoldRenderer.DrawOnCanvas(Follower: TBoldFollower; Canvas: TCanvas; R
 begin
 end;
 
-function TBoldRenderer.HasEventOverrides: boolean;
+function TBoldRenderer.HasSetValueEventOverrides: boolean;
 begin
-  result := assigned(fOnSubscribe);
+  result := false;
 end;
 
 { TBoldFollower }
 
+procedure TBoldFollower.SetElementAndMakeCurrent(AElement: TBoldElement; AActive: boolean);
+begin
+  if {not assigned(AElement) or} (AElement <> fElement) then
+  begin
+    fElement := AElement;
+    if IsInDisplayList then
+      RemoveFromDisplayList(false);
+    if AActive then
+    begin
+      SetState(bfsActivating);
+      MakeUptodateAndSubscribe;
+    end
+    else
+    begin
+      if Assigned(fElement) then
+        fState := bfsInactiveValidElement
+      else
+        fState := bfsInactiveInvalidElement;
+    end;
+  end;
+end;
+
 constructor TBoldFollower.Create(MatchObject: TObject; Controller: TBoldFollowerController);
 begin
-  inherited Create(MatchObject);
+  inherited Create(BoldGuiHandler.FindHostingForm(MatchObject as TComponent));
   Assert(assigned(Controller));
   fController := Controller;
   fSubscriber := TBoldFollowerSubscriber.Create(Self);
+  fIndirectElement := TBoldIndirectElement.Create;
+  ResultElementOutOfDate := true;
   fIndex := -1;
 end;
 
 constructor TBoldFollower.CreateSubFollower(OwningFollower: TBoldFollower;
-    Controller: TBoldFollowerController;
-    Element: TBoldElement);
+    aController: TBoldFollowerController;
+    aElement: TBoldElement;
+    aActive: boolean;
+    aIndex: integer);
+
 begin
+  Assert(assigned(aController));
   inherited Create(OwningFollower.MatchObject);
   FOwningFollower := OwningFollower;
   PrioritizedQueuable := OwningFollower;
-  Assert(assigned(Controller));
-  fController := Controller;
+  fController := aController;
   fSubscriber := TBoldFollowerSubscriber.Create(Self);
-  fElement := Element;
-  fIndex := -1;
-  MarkSubscriptionOutOfDate;
+  fIndirectElement := TBoldIndirectElement.Create;
+  fElement := aElement;
+  fIndex := aIndex;
+  ResultElementOutOfDate := true;
+  if aActive {and not PrioritizedQueuable.IsInDisplayList} and // check MostPrioritizedQueuable instead of PrioritizedQueuable ?
+    not ((aController is TBoldAsFollowerListController) and TBoldAsFollowerListController(aController).PrecreateFollowers) then
+  begin
+    fState := bfsActivating;
+    MakeUptodateAndSubscribe;
+  end
+  else
+  if aActive then
+  begin
+//    MarkSubscriptionOutOfDate
+    fState := bfsSubscriptionOutOfDate;
+    AddToDisplayList;
+    if Assigned(fElement) then
+      fElement.AddSubscription(Subscriber, beDestroying, beDestroying);
+  end
+  else
+  begin
+    if Assigned(fElement) then
+      fState := bfsInactiveValidElement
+    else
+      fState := bfsInactiveInvalidElement;
+    if Assigned(fElement) then
+      fElement.AddSubscription(Subscriber, beDestroying, beDestroying);
+  end;
 end;
 
 destructor TBoldFollower.Destroy;
 begin
+  FreeAndNil(FIndirectElement);
   FreeAndNil(FRendererData);
   FreeAndNil(fSubscriber);
+  fCOntroller := nil;
+  fControlData := nil;
+  fElement := nil;
+  fOwningFollower := nil;
   inherited;
 end;
 
@@ -981,27 +1276,75 @@ begin
   end;
 end;
 
-function TBoldFollower.GetSubFollower(index: Integer): TBoldFollower;
+function TBoldFollower.GetIsDirty: Boolean;
 begin
-  Result := RendererData.GetSubFollower(index);
+  result := fState = bfsDirty;
 end;
 
-function TBoldFollower.GetSubFollowerCount: Integer;
+type
+  TBoldFlaggedObjectAccess = class(TBoldFlaggedObject);
+
+procedure TBoldFollower.SetState(AValue: TBoldFollowerState);
 begin
-  if Active then
-    Result := RendererData.GetSubFollowerCount
-  else
-    result := 0
+  if not (fState in [bfsEmpty, bfsCurrent, bfsDirty,
+    bfsValueOutOfDate, bfsSubscriptionOutOfDate,
+    bfsInactiveValidElement, bfsInactiveInvalidElement, bfsActivating]) then
+    raise Exception.Create('TBoldFollower.SetState old state is ' + IntToStr(Integer(fState)));
+  {action when leaving state}
+  case State of
+    bfsValueOutOfDate, bfsSubscriptionOutOfDate: {bfsOutOfDate}
+      RemoveFromDisplayList(false);
+    bfsDirty:
+    begin
+      if not ResultElementOutOfDate and Assigned(fIndirectElement.Value)
+         and TBoldFlaggedObjectAccess(fIndirectElement.Value).GetElementFlag(befHasModifiedValueHolder)
+         and (fIndirectElement.Value.ModifiedValueHolder = Subscriber) then
+           AssertedController.ReleaseChangedValue(self);
+      RemoveFromApplyList;
+    end;
+  end;
+
+  if AValue = bfsDirty then // process Dirty before changeing fState, since HoldsChangedValue can fail.
+  begin
+    AssertedController.HoldsChangedValue(Self);
+    AddToApplyList;
+  end;
+
+  fState := AValue;
+
+  {action when entering state}
+  case State of
+    bfsValueOutOfDate:
+    begin
+      AddToDisplayList;
+      Ensured := false;
+      ResultElementOutOfDate := true;
+    end;
+    bfsSubscriptionOutOfDate:
+      begin
+        AddToDisplayList;
+        Ensured := false;
+        Subscriber.CancelAllSubscriptions;
+        ResultElementOutOfDate := true;
+      end;
+    bfsInactiveValidElement, bfsInactiveInvalidElement:
+      begin
+        Subscriber.CancelAllSubscriptions;
+        FreeAndNil(fRendererData);
+        ResultElementOutOfDate := true;
+        if Assigned(fElement) then
+          Element.AddSubscription(Subscriber, beDestroying, beDestroying);
+      end;
+    bfsEmpty, bfsCurrent, bfsActivating, bfsDirty:
+      {no action}
+    else
+      raise EBoldInternal.CreateFmt('%s: Unknown FollowerState', [ClassName]);
+  end;
 end;
 
-function TBoldFollower.GetCurrentIndex: Integer;
+function TBoldFollower.GetSubFollowerAssigned(index: Integer): boolean;
 begin
-  Result := RendererData.GetCurrentSubFollowerIndex;
-end;
-
-function TBoldFollower.GetActive: Boolean;
-begin
-  Result := not (State in [bfsInactiveValidElement, bfsInactiveInvalidElement]);
+  result := Active and RendererData.GetSubFollowerAssigned(Index);
 end;
 
 procedure TBoldFollower.SetActive(Value: Boolean);
@@ -1012,8 +1355,7 @@ begin
     begin
       Assert(State <> bfsInactiveInvalidElement);
       SetState(bfsActivating);
-      MakeUptodateAndSubscribe; //CHECKME This could cause errors if an owning follower is in bfsOutOfDate
-      MarkClean;
+      MakeUptodateAndSubscribe;
     end
     else
       if (State <> bfsDirty) then
@@ -1021,30 +1363,33 @@ begin
   end;
 end;
 
-function TBoldFollower.GetElementValid: Boolean;
+function TBoldFollower.GetValue: TBoldElement;
 begin
-  Result := State <> bfsInactiveInValidElement;
+  if ResultElementOutOfDate then
+  begin
+    fIndirectElement.SetReferenceValue(nil);
+    if {ElementValid and} Assigned(Element) then
+    try
+      ResultElementOutOfDate := false;
+      Element.EvaluateAndSubscribeToExpression(Controller.Expression, Subscriber, FIndirectElement, false, false, Controller.GetVariableListAndSubscribe(Subscriber));
+    except
+      // perhaps raise exception
+    end;
+    if (state = bfsInactiveValidElement) then
+      Active := true;
+  end;
+  result := fIndirectElement.Value;
 end;
 
 procedure TBoldFollower.SetElementValid(Value: Boolean);
 begin
-   Assert(not Active or value);
-   if value <> elementValid then
-   begin
-     if value then
-       SetState(bfsInactivevalidElement)
-     else
-       SetState(bfsInactiveInvalidElement);
-   end;
-end;
-
-function TBoldFollower.GetRendererData: TBoldRendererData;
-begin
-  if not Active then
-    raise EBold.Create(SBoldInactiveFollowerNoRenderData);
-  if not Assigned(FRendererData) then
-    FRendererData := AssertedController.RendererDataClass.Create(Self);
-  Result := FRendererData;
+  if value <> elementValid then
+  begin
+    if value then
+      SetState(bfsInactivevalidElement)
+    else
+      SetState(bfsInactiveInvalidElement);
+  end;
 end;
 
 function TBoldFollower.MayChange: Boolean;
@@ -1053,6 +1398,11 @@ begin
     raise EBold.Create(SCannotChangeStateWithModifiedValue)
   else
     Result := True;
+end;
+
+function TBoldFollower.MayModify: Boolean;
+begin
+  result := AssertedController.MayModify(self);
 end;
 
 procedure TBoldFollower.DiscardChange;
@@ -1067,9 +1417,9 @@ end;
 procedure TBoldFollower.Receive(Originator: TObject; OriginalEvent: TBoldEvent;
     RequestedEvent: TBoldRequestedEvent);
 begin
-{$IFNDEF BOLDCOMCLIENT} // CHECKME
+{$IFNDEF BOLDCOMCLIENT}
   if (OriginalEvent = beDestroying) and (Originator = Element) then
-    FElement := nil; //CHECKME Is this necesary? /frha
+    FElement := nil;
 {$ENDIF}
   case RequestedEvent of
     breReEvaluate:
@@ -1080,6 +1430,7 @@ begin
       begin
         if OriginalEvent = beDestroying then
         begin
+          RemoveFromDisplayList(false);
           if assigned(fRendererData) then
             AssertedController.CleanRendererData(fRendererData);
           FreeAndNil(fRendererData);
@@ -1088,9 +1439,9 @@ begin
         if Assigned(FRendererData) and not (FRendererData is AssertedController.RendererDataClass) then
           FreeAndNil(fRendererData);
         MarkSubscriptionOutOfDate;
+        if OriginalEvent <> beDestroying then
+          AssertedController.AddSmallSubscription(Subscriber, [beValueChanged, beDestroying], breControllerChanged);
       end;
-    else
-      raise EBoldInternal.CreateFmt(sUnknownRequestedEvent, [Classname, RequestedEvent]);
   end;
 end;
 
@@ -1100,8 +1451,14 @@ begin
   begin
     Subscriber.CancelAllSubscriptions;
     AssertedController.AddSmallSubscription(Subscriber, [beValueChanged, beDestroying], breControllerChanged);
-  end;
-  AssertedController.MakeUptodateAndSubscribe(Self, State in bfdNeedResubscribe);
+    Controller.MakeUptodateAndSubscribe(Self, true);
+    if Assigned(Element) then
+      Element.AddSubscription(Subscriber, beDestroying, beDestroying);
+    if Assigned(Element) and (State in bfdNeedResubscribe) then
+      Controller.SubscribeToElement(self);
+  end
+  else
+    AssertedController.MakeUptodateAndSubscribe(Self, State in bfdNeedResubscribe);
 end;
 
 procedure TBoldFollower.MakeClean;
@@ -1111,35 +1468,18 @@ begin
     SetState(bfsSubscriptionOutOfDate);
 end;
 
-procedure TBoldFollower.ControlledValueChanged(IsChanged: Boolean);
+procedure TBoldFollower.ControlledValueChanged;
 begin
-  if IsChanged then
+  if (State <> bfsDirty) then
   begin
-    if (State <> bfsDirty) then
-    begin
-      AssertedController.HoldsChangedValue(Self);
-      MarkDirty;
-    end;
-    if AssertedController.ApplyPolicy = bapChange then
-      Apply;
-  end
-  else
-  begin
-    if (State = bfsDirty) and AssertedController.CleanOnEqual then
-      DiscardChange;
+    // if ApplyPolicy is bapChange and there are no events assigned for HoldsChangedValue and ReleaseChangedValue
+    // then there's no need to call HoldsChangedValue and ReleaseChangedValue
+    // no need to call Controller.HoldsChangedValue(Self); here as it will be called in SetState as a result of MarkDirty bellow
+    MarkDirty;
   end;
-end;
-
-procedure TBoldFollower.SetElement(theElement: TBoldElement);
-begin
-  // if the fElement is nil and the new element is nil aswell we still need
-  // to mark the follower out of date since other properties of the controller
-  // might have changed (especially the nilstringrepresentation)
-  if not assigned(theElement) or (theElement <> fElement) then
+  if AssertedController.ApplyPolicy = bapChange then
   begin
-    fElement := theElement;
-    ElementValid := true;
-    MarkSubscriptionOutOfDate;
+    Apply;
   end;
 end;
 
@@ -1149,10 +1489,10 @@ begin
     bfsEmpty, bfsCurrent, bfsDirty:
       SetState(bfsValueOutOfDate);
     bfsInactiveValidElement, bfsValueOutOfDate,
-    bfsSubscriptionOutOfDate, bfsActivating: // FIXME bfsActivating is a temporary fix for the delayd fetch problem
+    bfsSubscriptionOutOfDate, bfsActivating:
       {no action}
   else
-    raise EBoldInternal.CreateFmt(sFollowerStateError, [ClassName, 'MarkOutOfDate']); // do not localize
+    raise EBoldInternal.CreateFmt('%s.MarkOutOfDate: Follower state error', [ClassName]);
   end;
 end;
 
@@ -1165,16 +1505,27 @@ begin
     bfsSubscriptionOutOfDate, bfsActivating :
       {no action};
 
-    // these two should not happen, but it is safe to ignore them
-    // a bug in the grid seems to cause these when the grid is not displayed
-    // right after creation (if it is on an invisible pagecontrol)
+
     bfsInactiveValidElement, bfsInactiveInvalidElement:
     begin
-      // DebugCode below - can safely be removed
       SetState(State);{no action}
     end
   else
-    raise EBoldInternal.CreateFmt(sFollowerStateError, [ClassName, 'MarkSubscriptionOutOfDate']);
+    raise EBoldInternal.CreateFmt('%s.MarkSubscriptionOutOfDate: Follower state error', [ClassName]);
+  end;
+end;
+
+procedure TBoldFollower.SetElement(AElement: TBoldElement);
+begin
+  if not assigned(AElement) or (AElement <> fElement) then
+  begin
+    Assert(not (not ResultElementOutOfDate and Assigned(fIndirectElement.Value)
+       and TBoldFlaggedObjectAccess(fIndirectElement.Value).GetElementFlag(befHasModifiedValueHolder)
+       and (fIndirectElement.Value.ModifiedValueHolder = Subscriber)));
+    fElement := AElement;
+    ElementValid := true;
+    MarkSubscriptionOutOfDate;
+    ResultElementOutOfDate := true;
   end;
 end;
 
@@ -1186,13 +1537,14 @@ begin
     bfsDirty:
       {no action}
   else
-    raise EBoldInternal.CreateFmt(sFollowerStateError, [Classname, 'MarkDirty']);
+    raise EBoldInternal.CreateFmt('%s.MarkDirty: Follower state error', [Classname]);
   end;
 end;
 
-procedure TBoldFollower.MarkClean;
+
+procedure TBoldFollower.MarkEnsured;
 begin
-  SetState(bfsCurrent);
+  Ensured := true;
 end;
 
 function TBoldFollower.Displayable: Boolean;
@@ -1200,72 +1552,25 @@ begin
   Result := State in bfsDisplayable;
 end;
 
-procedure TBoldFollower.SetState(Value: TBoldFollowerState);
-begin
-  {action when leaving state}
-  case State of
-    bfsValueOutOfDate, bfsSubscriptionOutOfDate: {bfsOutOfDate}
-      RemoveFromDisplayList;
-    bfsDirty:
-      RemoveFromApplyList;
-  end;
-
-  fState := Value;
-
-  {action when entering state}
-  case State of
-    bfsValueOutOfDate:
-      AddToDisplayList;
-    bfsSubscriptionOutOfDate:
-      begin
-        AddToDisplayList;
-        Subscriber.CancelAllSubscriptions;
-      end;
-    bfsDirty:
-      begin
-        AssertedController.HoldsChangedValue(Self);
-        AddToApplyList;
-      end;
-    bfsInactiveValidElement, bfsInactiveInvalidElement:
-      begin
-        Subscriber.CancelAllSubscriptions;
-        FreeAndNil(fRendererData);
-      end;
-    bfsEmpty, bfsCurrent, bfsActivating:
-      {no action}
-    else
-      raise EBoldInternal.CreateFmt('%s: Unknown FollowerState', [ClassName]);
-  end;
-end;
-
 procedure TBoldFollower.Display;
   procedure DisplaySelf;
   begin
-    try
+{.$IFNDEF BoldQueue_Optimization}
+//  This check is already done in Queue.DisplayOne, so it only serves to protect direct calls to Display. That shouldn't be done anyway.
       if (MostPrioritizedQueuable <> nil) then
-        raise EBold.CreateFmt(sCannotDisplayInThisOrder, [ClassName]);
+        raise EBold.CreateFmt('%s.Display: Can not display because there is an owning follower that must be displayed before', [ClassName]);
+{.$ENDIF}
       MakeUptodateAndSubscribe;
-    finally
-      MarkClean;
-    end;
   end;
 
   procedure DisplayMulti;
   var
-    i: integer;
-    Followers: TBoldObjectArray;
-    BoldGuard: IBoldGuard;
+    Followers: TBoldFollowerArray;
+    F: TBoldFollower;
   begin
-    BoldGuard := TBoldGuard.Create(Followers);
-    Followers := TBoldObjectArray.Create(10, []);
-    CollectMatching(Followers, Controller);
-    if Followers.Count > 1 then
-      try
-        MultiMakeUptodateAndSubscribe(Followers);
-      finally
-        for i := 0 to Followers.Count - 1 do
-          TBoldFollower(Followers[i]).MarkClean;
-      end
+    Followers := CollectMatching( Controller);
+    if Length(Followers) > 1 then
+        MultiMakeUptodateAndSubscribe(Followers)
     else
       DisplaySelf;
   end;
@@ -1278,12 +1583,11 @@ begin
   except
     on E: Exception do
     begin
-      if assigned(Controller) and Controller.HandleDisplayException(E, Element) then
-      // don't re-raise
+      if assigned(Controller) and not Controller.HandleDisplayException(E, Element) then
       else
       begin
         if assigned(Controller) then
-          E.message := Format(sDisplayError, [E.message, BOLDCRLF, Controller.GetNamePath]);
+          E.message := Format('%s' + BOLDCRLF + 'occured when displaying component %s', [E.message, Controller.GetNamePath]);
         raise;
       end;
     end;
@@ -1292,29 +1596,46 @@ end;
 
 procedure TBoldFollower.EnsureMulti;
 var
-  Followers: TBoldObjectArray;
+  Followers: TBoldFollowerArray;
   BoldGuard: IBoldGuard;
 begin
-  BoldGuard := TBoldGuard.Create(Followers);
-  Followers := TBoldObjectArray.Create(10, []);
-  CollectMatching(Followers, Controller);
+  Followers := CollectMatching(Controller);
 
-  if Followers.Count > 1 then
+  if Length(Followers) > 1 then
   try
     Controller.MultiMakeEnsure(Followers);
   except
-    ; // silence any exceptions
+    ;
   end
 end;
 
+procedure TBoldFollower.EnsureSiblings;
+var
+  Followers: TBoldFollowerArray;
+begin
+  if (not Assigned(fOwningFollower)) and (not Ensured) then
+  begin
+    SetLength(Followers, 1);
+    Followers[0] := self;
+  end
+  else
+    Followers := CollectMatchingSiblings(20);
+  if Length(Followers) > 0 then
+    try
+      Controller.MultiMakeEnsure(Followers);
+    except
+      ;
+    end
+
+end;
+
 procedure TBoldFollower.EnsureDisplayable;
-//EnsureDisplayable may only be called when within Display or when ALL owning followers not is in bfsOutOfDate!
 begin
   if not Displayable then
   begin
     Active := True;
-    MakeUptodateAndSubscribe;
-    MarkClean;
+    if not Displayable then
+      MakeUptodateAndSubscribe;
   end;
   RendererData.EnsureSubfollowersDisplayable;
 end;
@@ -1322,7 +1643,7 @@ end;
 procedure TBoldFollower.Apply;
 var
   Discard: Boolean;
-  Handled: Boolean;
+  Handled: Boolean;  
 begin
   if State = bfsDirty then
   begin
@@ -1332,11 +1653,13 @@ begin
     except
       on E: Exception do
         begin
-          Discard := true;
           Handled := assigned(Controller) and Controller.HandleApplyException(E, Element, Discard);
           if Discard then
-            DiscardChange;
-          if not handled then
+            DiscardChange
+          else
+          if State = bfsDirty  then
+            AssertedController.HoldsChangedValue(self);
+          if not Handled then
             raise;
         end;
     end;
@@ -1347,10 +1670,9 @@ end;
 function TBoldPopup.GetMenu(CONTROL: TControl; Element: TBoldElement): TPopupMenu;
 begin
   Result := nil;
-  {$IFNDEF BOLDCOMCLIENT} // popup
+  {$IFNDEF BOLDCOMCLIENT}
   BoldGUIHandler.PopupElement := Element;
   BoldGUIHandler.PopupControl := CONTROL;
-  // fixme build actual menu
   if not Enable then
     Result := BoldPopupMenu;
   {$ENDIF}
@@ -1375,9 +1697,20 @@ begin
   fFollower := Follower;
 end;
 
+destructor TBoldFollowerSubscriber.Destroy;
+begin
+  fFollower := nil;
+  inherited;
+end;
+
 function TBoldFollowerSubscriber.GetContextString: string;
 begin
-    Result := Follower.AssertedController.Getnamepath
+  Result := Follower.AssertedController.GetNamepath
+end;
+
+function TBoldFollowerSubscriber.ContextObject: TObject;
+begin
+  result := Follower;
 end;
 
 procedure TBoldFollowerController._Receive(Originator: TObject;
@@ -1401,7 +1734,11 @@ end;
 
 procedure TBoldRendererData.SetCurrentSubFollowerIndex(index: integer);
 begin
-  // just ignore;
+end;
+
+function TBoldRendererData.GetSubFollowerAssigned(Index: Integer): boolean;
+begin
+  raise EBold.CreateFmt('%s: This class has no subfollowers', [ClassName]);
 end;
 
 function TBoldFollowerController.GetContextType: TBoldElementTypeInfo;
@@ -1410,6 +1747,21 @@ begin
     result := OnGetContextType
   else
     result := nil;
+end;
+
+procedure TBoldRenderer.Assign(Source: TPersistent);
+begin
+  inherited;
+  With Source as TBoldRenderer do
+  begin
+    self.OnMayModify := OnMayModify;
+    self.OnHoldsChangedValue := OnHoldsChangedValue;
+    self.OnReleaseChangedValue := OnReleaseChangedValue;
+    self.OnSubscribe := OnSubscribe;
+    self.OnEnsureFetched := OnEnsureFetched;
+    self.OnValidateCharacter := OnValidateCharacter;
+    self.Representations.Assign(Representations);
+  end;
 end;
 
 procedure TBoldRenderer.Changed;
@@ -1473,31 +1825,84 @@ begin
   result := GetVariableList;
   {$IFNDEF BOLDCOMCLIENT}
   if assigned(Subscriber) and assigned(Variables) then
-    Variables.SubscribeToHandles(Subscriber);
+    Variables.SubscribeToHandles(Subscriber, Expression);
   {$ENDIF}
 end;
 
-procedure TBoldFollower.CollectMatching(Followers: TBoldObjectArray;
-  MatchController: TBoldFollowerController);
+function TBoldFollower.CollectMatching(
+  MatchController: TBoldFollowerController): TBoldFollowerArray;
 begin
   if Assigned(fOwningFollower) then
-    fOwningFollower.CollectMatching(Followers, MatchController)
+    Result := fOwningFollower.CollectMatching(MatchController)
   else
-    CollectMatchingDownwards(Followers, MatchController);
+    Result := CollectMatchingDownwards(Result, MatchController);
 end;
 
-procedure TBoldFollower.CollectMatchingDownwards(Followers: TBoldObjectArray;
-  MatchController: TBoldFollowerController);
+function TBoldFollower.CollectMatchingSiblings(WindowSize: Integer): TBoldFollowerArray;
+var
+  I, FirstToEnsure, LastToEnsure, found, RowIndex: integer;
+  CellFollower: TBoldFollower;
+  RowFollower, ListFollower: TBoldFollower;
+begin
+  FirstToEnsure := 0;
+  LastToEnsure := -1;
+  // This actully only works for an array, and maybe a treewiew, but that is what we are trying to optimize anyway
+  RowFollower := OwningFollower;
+  if not Assigned(RowFollower) or (RowFollower.state in bfsOutOfDate) then
+    Exit;
+  ListFollower := RowFollower.OwningFollower;
+  if not Assigned(ListFollower) or (ListFollower.state in bfsOutOfDate) then
+    Exit;
+  RowIndex :=  RowFollower.index;
+  if WindowSize > 1 then
+  begin
+    FirstToEnsure := (RowIndex DIV WindowSize -1) * WindowSize;
+    LastToEnsure := ((RowIndex DIV WindowSize) + 1) * WindowSize;
+  end;
+  if FirstToEnsure < 0 then
+    FirstToEnsure := 0;
+  if FirstToEnsure >= ListFollower.SubfollowerCount then
+    FirstToEnsure := ListFollower.SubfollowerCount - 1;
+  if LastToEnsure >=  ListFollower.SubfollowerCount then
+    LastToEnsure := ListFollower.SubfollowerCount - 1;
+
+  SetLength(Result,LastToEnsure- FirstToEnsure+1);
+  Found := 0;
+  for I := FirstToEnsure to LastToEnsure do
+  begin
+    RowFollower := ListFollower.SubFollowers[I];
+    if (RowFollower = nil) or (not RowFollower.Active) or (RowFollower.SubfollowerCount <= Index) then
+      Continue;
+    CellFollower := RowFollower.SubFollowers[Index];
+    if Assigned(CellFollower) and (CellFollower.Controller = self.Controller) and Assigned(CellFollower.Element) and
+      (not CellFollower.Ensured) then
+    begin
+      Result[Found] := CellFollower;
+      Inc(Found);
+    end;
+  end;
+  SetLength(Result, Found);
+end;
+
+function TBoldFollower.CollectMatchingDownwards(Followers: TBoldFollowerArray;
+  MatchController: TBoldFollowerController): TBoldFollowerArray;
 var
   I: integer;
 begin
   if (Controller = MatchController) and Assigned(Element) and
     (State in bfsOutOfDate) and (MostPrioritizedQueuable = nil) then
-    Followers.Add(Self);
+  begin
+    SetLength(Result, Length(Followers) + 1);
+    for i := 0 to Length(Followers) - 1 do
+      Result[i] := Followers[i];
+    Result[Length(Followers)] := Self;
+  end
+  else
+   Result := Followers;
   if not (state in bfsOutOfDate) then
   begin
     for I := 0 to SubfollowerCount - 1 do
-       SubFollowers[I].CollectMatchingDownwards(Followers, MatchController);
+       if Assigned(SubFollowers[I]) then SubFollowers[I].CollectMatchingDownwards(Followers, MatchController);
   end;
 end;
 
@@ -1507,41 +1912,43 @@ begin
 end;
 
 class procedure TBoldFollower.MultiMakeUptodateAndSubscribe(
-  Followers: TBoldObjectArray);
+  Followers: TBoldFollowerArray);
 var
-  I: integer;
+  F: TBoldFollower;
   Controller: TBoldFollowerController;
 begin
-  Assert(Followers.Count > 0);
+  Assert(Length(Followers) > 0);
   Controller :=  TBoldFollower(Followers[0]).AssertedController;
-  for I := 0 to Followers.Count - 1 do
-    if TBoldFollower(Followers[i]).State in bfdNeedResubscribe then
+  for F in Followers do
+    if F.State in bfdNeedResubscribe then
     begin
-      TBoldFollower(Followers[i]).Subscriber.CancelAllSubscriptions;  // CHECKME ever needed?
-      Controller.AddSmallSubscription(TBoldFollower(Followers[i]).Subscriber, [beValueChanged, beDestroying], breControllerChanged);
+      F.Subscriber.CancelAllSubscriptions;
+      Controller.AddSmallSubscription(F.Subscriber, [beValueChanged, beDestroying], breControllerChanged);
     end;
   Controller.MultiMakeUptodateAndSubscribe(Followers);
 end;
 
 procedure TBoldFollowerController.MultiMakeUptodateAndSubscribe(
-  Followers: TBoldObjectArray);
+  Followers: TBoldFollowerArray);
 var
-  I: integer;
+  F: TBoldFollower;
 begin
   if Assigned(BeforeMakeUptoDate) then
-    for i := 0 to Followers.Count - 1  do
-      BeforeMakeUptoDate(TBoldFollower(Followers[I]));
+    for F in Followers  do
+      BeforeMakeUptoDate(F);
   try
     DoMultiMakeUptodateAndSubscribe(Followers);
   finally
+    for F in Followers  do  
+      F.MarkClean;
     if Assigned(AfterMakeUptoDate) then
-      for i := 0 to Followers.Count - 1  do
-      AfterMakeUptoDate(TBoldFollower(Followers[I]));
+      for F in Followers  do
+        AfterMakeUptoDate(F);
   end;
 end;
 
 procedure TBoldFollowerController.DoMultiMakeUptodateAndSubscribe(
-  Followers: TBoldObjectArray);
+  Followers: TBoldFollowerArray);
 begin
   raise EBoldInternal.Create('DoMultiMakeUptodateAndSubscribe: called when Multi not supported');
 end;
@@ -1549,34 +1956,30 @@ end;
 procedure TBoldFollowerSubscriber.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
+  if not Assigned(Follower) then
+    raise EBold.Create('TBoldFollowerSubscriber.Receive called after Destroy');
   Follower.Receive(Originator, OriginalEvent, RequestedEvent);
 end;
 
-function TBoldFollower.GetAssertedController: TBoldFollowerController;
+procedure TBoldFollowerController.SubscribeToElement(aFollower: TBoldFollower);
 begin
-  if not assigned(fController) then
-    raise EBold.CreateFmt(sControllerNotAssigned, [classname]);
-  result := fController;
-end;
-
-procedure TBoldFollowerController.SubscribeToElement(Element: TBoldElement; Subscriber: TBoldSubscriber);
-begin
-  EffectiveRenderer.SubscribeToElement(Element, representation, Expression, Subscriber, VariableList);
+  EffectiveRenderer.SubscribeToElement(aFollower);
 end;
 
 function TBoldFollowerController.HandleApplyException(E: Exception; Elem: TBoldElement; var Discard: Boolean): Boolean;
 var
   ExceptionHandler: TBoldExceptionHandler;
 begin
-  ExceptionHandler := TBoldExceptionHandler.FindExceptionHandler(fOwningComponent);
-  Result := assigned(ExceptionHandler);
-  if Result then
-    ExceptionHandler.HandleApplyException(E, fOwningComponent, Elem, Discard, Result);
-end;
-
-procedure TBoldFollowerController.CleanRendererData(RendererData: TBoldRendererData);
-begin
-  // do nothing
+  Result := false;
+  Discard := False;
+  if Assigned(fApplyException) then
+    Result := DoApplyException(E, Elem, Discard);
+  if not result and not Discard then
+  begin
+    ExceptionHandler := TBoldExceptionHandler.FindExceptionHandler(fOwningComponent);
+    if assigned(ExceptionHandler) then
+      ExceptionHandler.HandleApplyException(E, fOwningComponent, Elem, Discard, Result);
+  end;
 end;
 
 function TBoldFollowerController.HandleDisplayException(E: Exception;
@@ -1584,21 +1987,23 @@ function TBoldFollowerController.HandleDisplayException(E: Exception;
 var
   ExceptionHandler: TBoldExceptionHandler;
 begin
+  Result := false;
   ExceptionHandler := TBoldExceptionHandler.FindExceptionHandler(fOwningComponent);
-  Result := Assigned(ExceptionHandler);
-  if Result then
+  if Assigned(ExceptionHandler) then
     ExceptionHandler.HandleDisplayException(E, fOwningComponent, Elem, Result);
 end;
 
-procedure TBoldFollowerController.MultiMakeEnsure(Followers: TBoldObjectArray);
+procedure TBoldFollowerController.CleanRendererData(RendererData: TBoldRendererData);
+begin
+end;
+
+procedure TBoldFollowerController.MultiMakeEnsure(Followers: TBoldFollowerArray);
 {$IFNDEF BOLDCOMCLIENT}
 var
   BoldType: TBoldClassTypeInfo;
   ListType: TBoldListTypeInfo;
   ObjectList: TBoldObjectList;
-  RealObjectList: TBoldObjectLIst;
   ie: TBoldIndirectElement;
-  i: integer;
   follower: TBoldFollower;
   procedure AddObject(Obj: TBoldObject);
   begin
@@ -1613,12 +2018,12 @@ var
   BoldGuard: IBoldGuard;
 
 begin
-  BoldGuard := TBoldGuard.Create(ie, RealObjectList, ObjectList);
+  BoldGuard := TBoldGuard.Create(ObjectList);
   ObjectList := TBoldObjectList.Create;
   BoldType := nil;
-  for i := 0 to Followers.Count - 1 do
+  for Follower in Followers do
   begin
-    Follower := TBoldFollower(Followers[i]);
+    Follower.MarkEnsured;
     if Follower.element is TBoldObject then
     begin
       AddObject(Follower.element as TBoldObject);
@@ -1626,18 +2031,7 @@ begin
   end;
 
   if assigned(BoldType) then
-  begin
-    ObjectList.EnsureObjects;
-    if (ObjectList.Count > 1) and (Expression <> '') then
-    begin
-      ListType := BoldType.SystemTypeInfo.ListTypeInfoByElement[BoldType];
-      RealObjectlist := TBoldMemberFactory.CreateMemberFromBoldType(ListType) as TBoldObjectList;
-      RealObjectList.AddList(ObjectList);
-
-      ie := TBoldIndirectElement.Create;
-      RealObjectList.EvaluateExpression(Expression, ie);
-    end;
-  end;
+    TBoldFollower(Followers[0]).Controller.EffectiveRenderer.EnsureFetched(ObjectList,BoldType, Expression);
 end;
 
 {$ELSE}
@@ -1650,10 +2044,59 @@ begin
   result := false;
 end;
 
+function TBoldFollowerController.SubFollowersActive: boolean;
+begin
+  result := true;
+end;
+
 procedure TBoldFollower.AddToDisplayList;
 begin
   if Assigned(Controller) then
     inherited AddToDisplayList;
+end;
+
+function TBoldFollower.GetDebugInfo: string;
+var
+  vFollower: TBoldFollower;
+begin
+  result := '';
+{  vFollower := self;
+  repeat
+
+  until ;
+  if Assigned(OwningFollower) then
+    result :=  OwningFollower.GetDebugInfo
+  else
+}
+  if Assigned(MatchObject) then
+  begin
+    if MatchObject is TComponent then
+      result := TComponent(MatchObject).Name + ':' + TComponent(MatchObject).ClassName
+    else
+    if MatchObject is TBoldElement then
+      result := TBoldElement(MatchObject).DebugInfo
+    else
+      Assert(false, MatchObject.ClassName);
+  end;
+end;
+
+{ TBoldAbstractHandleFollower }
+
+constructor TBoldAbstractHandleFollower.Create(AMatchObject: TObject;
+  Controller: TBoldFollowerController);
+begin
+  inherited Create(BoldGuiHandler.FindHostingForm(AMatchObject as TComponent));
+  fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
+  fFollower := TBoldFollower.Create(MatchObject, Controller);
+  fFollower.PrioritizedQueuable := Self;
+end;
+
+destructor TBoldAbstractHandleFollower.Destroy;
+begin
+  RemoveFromDisplayList(true);
+  FreeAndNil(fFollower);
+  FreeAndNil(fSubscriber);
+  inherited;
 end;
 
 initialization
@@ -1663,4 +2106,3 @@ finalization
   FreeAndNil(DefaultRenderer);
 
 end.
-

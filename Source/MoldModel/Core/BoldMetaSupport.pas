@@ -1,11 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMetaSupport;
 
 interface
 
 uses
-  BoldMeta,
-  BoldDefaultTaggedValues,
-  BoldDefs;
+  BoldMeta;
 
 type
   { forward declarations }
@@ -52,11 +53,12 @@ const
   BoldWideStringTypeName = 'WideString';
   BoldWordBoolTypeName = 'WordBool';
 
+
 implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldRev;
 
 type
   TBoldCOMIDLTypeNameMapping = record
@@ -67,19 +69,19 @@ type
 
 const
   BoldCOMIDLTypeNameMapping: array[0..21] of TBoldCOMIDLTypeNameMapping = (
-    (DelphiName: 'String'; IDLName: 'BSTR'; ComName: BoldWideStringTypeName),        //Type Conversion, Automation safe
-    (DelphiName: 'Integer'; IDLName: 'long'; ComName: 'Integer'),                    //Automation safe
-    (DelphiName: 'Boolean'; IDLName: 'VARIANT_BOOL'; ComName: BoldWordBoolTypeName), //Type Conversion, Automation safe
-    (DelphiName: 'Currency'; IDLName: 'CURRENCY'; ComName: 'Currency'),              //Automation safe
-    (DelphiName: 'Double'; IDLName: 'double'; ComName: 'Double'),                    //Automation safe
-    (DelphiName: 'TDateTime'; IDLName: 'DATE'; ComName: 'TDateTime'),                //Automation safe
-    (DelphiName: 'Longint'; IDLName: 'long'; ComName: 'Longint'),                    //Automation safe
-    (DelphiName: 'Smallint'; IDLName: 'short'; ComName: 'Smallint'),                 //Automation safe
-    (DelphiName: 'Single'; IDLName: 'float'; ComName: 'Single'),                     //Automation safe
-    (DelphiName: 'WideString'; IDLName: 'BSTR'; ComName: 'WideString'),              //Automation safe
-    (DelphiName: 'WordBool'; IDLName: 'VARIANT_BOOL'; ComName: 'WordBool'),          //Automation safe
-    (DelphiName: 'OleVariant'; IDLName: 'VARIANT'; ComName: 'OleVariant'),           //Automation safe
-    (DelphiName: 'Variant'; IDLName: 'VARIANT'; ComName: 'OleVariant'),              //Type Conversion, Automation safe
+    (DelphiName: 'String'; IDLName: 'BSTR'; ComName: BoldWideStringTypeName),
+    (DelphiName: 'Integer'; IDLName: 'long'; ComName: 'Integer'),
+    (DelphiName: 'Boolean'; IDLName: 'VARIANT_BOOL'; ComName: BoldWordBoolTypeName),
+    (DelphiName: 'Currency'; IDLName: 'CURRENCY'; ComName: 'Currency'),
+    (DelphiName: 'Double'; IDLName: 'double'; ComName: 'Double'),
+    (DelphiName: 'TDateTime'; IDLName: 'DATE'; ComName: 'TDateTime'),
+    (DelphiName: 'Longint'; IDLName: 'long'; ComName: 'Longint'),
+    (DelphiName: 'Smallint'; IDLName: 'short'; ComName: 'Smallint'),
+    (DelphiName: 'Single'; IDLName: 'float'; ComName: 'Single'),
+    (DelphiName: 'WideString'; IDLName: 'BSTR'; ComName: 'WideString'),
+    (DelphiName: 'WordBool'; IDLName: 'VARIANT_BOOL'; ComName: 'WordBool'),
+    (DelphiName: 'OleVariant'; IDLName: 'VARIANT'; ComName: 'OleVariant'),
+    (DelphiName: 'Variant'; IDLName: 'VARIANT'; ComName: 'OleVariant'),
     (DelphiName: 'Shortint'; IDLName: 'byte'; ComName: 'Shortint'),
     (DelphiName: 'Int64'; IDLName: '__int64'; ComName: 'Int64'),
     (DelphiName: 'Byte'; IDLName: 'unsigned char'; ComName: 'Byte'),
@@ -139,8 +141,9 @@ begin
   result := '';
   MoldClass := MoldModel.Classes.ItemsByName[ParameterType];
   if assigned(MoldClass) then
-    result := MoldClass.ExpandedInterfaceName
-  else
+    result := MoldClass.ExpandedInterfaceName;
+
+  if not Assigned(MoldClass) then
   begin
     MoldClass := MoldModel.Classes.ItemsByDelphiName[ParameterType];
     if assigned(MoldClass) then
@@ -158,17 +161,29 @@ begin
     end;
   end;
 
-  if SameText(ParameterType, 'IDispatch') then // do not localize
+  if (result ='') and  (ParameterType <> 'TList') and (Pos('List',ParameterType) = Length(ParameterType)-3) then
   begin
-    result := 'IDispatch'; // do not localize
+    MoldClass := MoldModel.Classes.ItemsByDelphiName[Copy(ParameterType,1, Length(ParameterType) - 4)];
+    if not Assigned(MoldClass) then
+      MoldClass := MoldModel.Classes.ItemsByName[Copy(ParameterType,1, Length(ParameterType) - 4)];
+
+    if assigned(MoldClass) then
+      result := MoldClass.ExpandedInterfaceName + 'List';
+  end;
+
+  if SameText(ParameterType, 'IDispatch') then
+  begin
+    result := 'IDispatch';
     exit;
   end;
 
-  if SameText(ParameterType, 'IUnknown') then // do not localize
+  if SameText(ParameterType, 'IUnknown') then
   begin
-    result := 'IUnknown'; // do not localize
+    result := 'IUnknown';
     exit;
   end;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAdvantageInterfaces;
 
 interface
@@ -10,7 +13,7 @@ uses
   adstable,
   BoldSQLDatabaseConfig,
   BoldDBInterfaces;
-
+  
 type
   { forward declarations }
   TBoldAdvantageDatabase = class;
@@ -33,7 +36,9 @@ type
     procedure AssignParams(Sourceparams: TParams);
     procedure ClearParams;
     procedure AssignSQL(SQL: TStrings);
-    procedure AssignSQLText(SQL: String);
+    procedure AssignSQLText(const SQL: String);
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);    
     procedure SetRequestLiveQuery(NewValue: Boolean);
     function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
   protected
@@ -57,7 +62,7 @@ type
     procedure DeleteTable;
     function GetTable: TADSTable;
     function GetIndexDefs: TIndexDefs;
-    procedure SetTableName(NewName: String);
+    procedure SetTableName(const NewName: String);
     function GetTableName: String;
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
@@ -82,12 +87,10 @@ type
     function GetIsSQLBased: Boolean;
     function GetKeepConnection: Boolean;
     function GetLogInPrompt: Boolean;
-    function GetTable: IBoldTable;
     function SupportsTableCreation: boolean;
     procedure Close;
     procedure Commit;
     procedure Open;
-    procedure ReleaseTable(var Table: IBoldTable);
     procedure Rollback;
     procedure SetKeepConnection(NewValue: Boolean);
     procedure SetlogInPrompt(NewValue: Boolean);
@@ -98,9 +101,11 @@ type
     procedure AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetQuery: IBoldQuery; override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
+    function GetTable: IBoldTable; override;
+    procedure ReleaseTable(var Table: IBoldTable); override;    
   public
-    constructor Create(Database: TADSConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor Destroy; override;
+    constructor create(Database: TADSConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor destroy; override;
   end;
 
 var
@@ -141,7 +146,7 @@ begin
   Query.SQL.EndUpdate;
 end;
 
-procedure TBoldAdvantageQuery.AssignSQLText(SQL: String);
+procedure TBoldAdvantageQuery.AssignSQLText(const SQL: String);
 begin
   Query.SQL.BeginUpdate;
   Query.SQL.Clear;
@@ -158,6 +163,7 @@ constructor TBoldAdvantageQuery.Create(Query: TADSQuery; DatabaseWrapper: TBoldD
 begin
   inherited create(DatabaseWrapper);
   FQuery := Query;
+  SetParamCheck(true);  
 end;
 
 function TBoldAdvantageQuery.Createparam(FldType: TFieldType;
@@ -189,6 +195,11 @@ end;
 function TBoldAdvantageQuery.GetDataSet: TDataSet;
 begin
   result := Query;
+end;
+
+function TBoldAdvantageQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
 end;
 
 function TBoldAdvantageQuery.GetParamCount: integer;
@@ -243,6 +254,11 @@ begin
     result := nil;
 end;
 
+
+procedure TBoldAdvantageQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
 
 procedure TBoldAdvantageQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
@@ -313,19 +329,16 @@ begin
   Table.Exclusive := NewValue;
 end;
 
-procedure TBoldAdvantageTable.SetTableName(NewName: String);
+procedure TBoldAdvantageTable.SetTableName(const NewName: String);
 begin
   Table.TableName := NewName;
 end;
-
-
 
 { TBoldSDDataBase }
 
 procedure TBoldAdvantageDatabase.AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings);
 begin
-//  if (Pattern <> '') and (Pattern <> '*') then
-//    raise Exception.CreateFmt('%s.AlltableNames: This call does not allow patterns ("%s")', [ClassName, Pattern]);
+
   Database.GetTableNames(TableNameList, Pattern {ShowSystemTables});
 end;
 
@@ -345,7 +358,7 @@ begin
   FDataBase := DataBase;
 end;
 
-destructor TBoldAdvantageDatabase.Destroy;
+destructor TBoldAdvantageDatabase.destroy;
 begin
   inherited;
   FDatabase := nil;
@@ -487,4 +500,5 @@ begin
   result := true;
 end;
 
+initialization
 end.

@@ -1,20 +1,24 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPSDescriptions;
 
 interface
 
 uses
+  BoldBase,
   BoldPSParams;
-
+  
 type
   TBoldPSDescriptionElement = class;
   TBoldPSSystemDescription = class;
 
   {---TBoldPSDescriptionElement---}
-  TBoldPSDescriptionElement = class
+  TBoldPSDescriptionElement = class(TBoldMemoryManagedObject)
   private
     fOwner: TBoldPSDescriptionElement;
   public
-    constructor Create(aOwner: TBoldPSDescriptionElement);
+    constructor Create(aOwner: TBoldPSDescriptionElement); 
     property Owner: TBoldPSDescriptionElement read fOwner;
   end;
 
@@ -26,10 +30,15 @@ type
 
 implementation
 
+uses
+  BoldRev;
+
 {---TBoldPSDescriptionElement---}
 constructor TBoldPSDescriptionElement.Create(aOwner: TBoldPSDescriptionElement);
 begin
   fOwner := aOwner;
 end;
+
+initialization
 
 end.

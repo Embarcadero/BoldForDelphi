@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLowEndPropagatorMainForm;
 
 interface
@@ -40,7 +43,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 {$R *.dfm}
 
@@ -48,7 +52,7 @@ procedure TBoldLEPropagatorMainForm.ClearEventsList;
 begin
   try
     Memo1.Lines.BeginUpdate;
-    Memo1.Lines.Clear;
+    Memo1.Lines.Clear;  
   finally
     Memo1.Lines.EndUpdate;
   end;
@@ -92,5 +96,7 @@ procedure TBoldLEPropagatorMainForm.btnClearEventsClick(Sender: TObject);
 begin
   ClearEventsList;
 end;
+
+initialization
 
 end.

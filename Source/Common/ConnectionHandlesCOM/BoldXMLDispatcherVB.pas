@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMLDispatcherVB;
 
 interface
@@ -8,8 +11,9 @@ uses
   BoldXMLRequests,
   comobj,
   BoldXMLDispatcher;
-
 type
+
+
  TBoldXMLSOAPService2 = class(TAutoIntfObject, IBoldSOAPService2)
   private
     FOwner: TObject;
@@ -20,20 +24,17 @@ type
     constructor Create(Owner: TObject);
     property Owner: TObject read FOwner;
   end;
-
   TBoldXMLDispatcherVB = class(TBoldXMLDispatcher)
   protected
     function GetComObject: IUnknown; override;
   end;
 
-implementation
 
-{$R *.res}
+implementation
 
 uses
   ActiveX,
-  windows,
-  BoldComConst;
+  windows;
 
 { TBoldXMLSOAPService2 }
 
@@ -47,7 +48,7 @@ begin
     FOwner := Owner;
   end
   else
-    raise EBold.CreateFmt(sUnableToLoadTypeLibBoldSoap, [ClassName]);
+    raise EBold.CreateFmt('%s.Create: Unable to load type library LIBID_BoldSOAP', [ClassName]);
 end;
 
 procedure TBoldXMLSOAPService2.Get(const request: WideString;
@@ -61,10 +62,11 @@ begin
   else
     XMLRequest := TBoldXMLRequest.CreateFromXML(request);
   if not Assigned(XMLRequest) then
-    raise EBold.CreateFmt(sXMLRequestNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.Get: XMLRequest not assigned', [ClassName]);
   (Owner as TBoldXMLDispatcher).DispatchAction(XMLRequest, ResponseXML);
   reply := ResponseXML;
 end;
+
 
 function TBoldXMLSOAPService2.Get2(const request: WideString): WideString;
 begin
@@ -78,5 +80,8 @@ begin
   Result := TBoldXMLSOAPService2.Create(self) as IUnknown;
 end;
 
-end.
 
+
+
+
+end.

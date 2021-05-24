@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComboBoxPropertyEditors;
 
 interface
@@ -17,7 +20,6 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldDefs,
   BoldComboBox;
 
@@ -32,7 +34,8 @@ begin
     else
       Result := nil
   else
-    raise EBold.CreateFmt(sComponentNotComboBox, [ClassName]);
+    raise EBold.CreateFmt('%s.GetContextType: Incoming component is not a BoldComboBox', [ClassName]);
 end;
 
+initialization
 end.

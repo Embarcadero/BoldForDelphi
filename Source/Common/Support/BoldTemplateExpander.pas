@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTemplateExpander;
 
 interface
@@ -30,7 +33,7 @@ type
     fValue: String;
     fFlags: TBoldvariableFlags;
   public
-    constructor Create(const name, value: string; Flags: TBoldVariableFlags);
+    constructor create(const name, value: string; Flags: TBoldVariableFlags);
     property Name: string read fName;
     property Value: String read fValue write fValue;
     property Flags: TBoldVariableFlags read fFlags;
@@ -71,9 +74,9 @@ type
     procedure SetFileName(const Value: String);
     procedure TemplateChanged(sender: TObject);
   public
-    constructor Create(aOwner: Tcomponent); override;
+    constructor create(aOwner: Tcomponent); override;
     procedure ExpandTemplate;
-    destructor Destroy; override;
+    destructor destroy; override;
     property Variables: TBoldTemplateVariables read fvariables;
     property ExpandedTemplate: TStringList read GetExpandedTemplate;
     property LastExpansion: TStringList read fExpandedTemplate;
@@ -91,22 +94,21 @@ type
     property items[index: integer]: TBoldTemplateHolder read GetItems; default;
   end;
 
+
 function BoldExpandTemplate(const Source: string; Variables: TBoldtemplateVariables; MacroNamePad: String = ''): string;
 
 implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldCommonConst;
-
+  BoldUtils;
 var
   IX_TemplateVariables: integer = -1;
 
 type
   TBoldTemplatevariableIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   end;
 
 { TBoldTemplateHolder }
@@ -150,9 +152,9 @@ end;
 
 function TBoldTemplateVariables.ExpandString(const Source: string): string;
 begin
-  Change('DATETIME', DateTimeToStr(now)); // do not localize
-  Change('DATE', DateToStr(now)); // do not localize
-  Change('TIME', TimeToStr(now)); // do not localize
+  Change('DATETIME', DateTimeToStr(now));
+  Change('DATE', DateToStr(now));
+  Change('TIME', TimeToStr(now));
   result := BoldExpandTemplate(Source, Self);
 end;
 
@@ -214,7 +216,6 @@ var
     result := Variables.Values[MacroName];
     while (Result = '') and (pos('.', MacroName) <> 0) do
     begin
-      // variable Might to belong to an outer loop scope
       i := length(MacroName);
       While MacroName[i] <> '.' do dec(i);
       Delete(MacroName, i, maxint);
@@ -234,16 +235,16 @@ begin
     if Me > 0 then
     begin
       Result := Result + Copy(TempSource, 1, Mb - 1);
-      if not (temp[1] in ['?', ',']) then // temp cant be empty since MAcroEnd is inside temp
+      if not CharInSet(temp[1], ['?', ',']) then // temp cant be empty since MAcroEnd is inside temp
         MacroName := Copy(Temp, 1, Me - 1) + MacroNamePad
       else
-        MacroName := Copy(Temp, 1, Me - 1); // namepad has to be added later to ?-macros
-      if (Length(MacroName) > 0) and (MacroName[1] in MacroModifiers) then
+        MacroName := Copy(Temp, 1, Me - 1);
+      if (Length(MacroName) > 0) and CharInSet(MacroName[1], MacroModifiers) then
       begin
         Modifier := MacroName[1];
         MacroName := Copy(MacroName, 2, MaxInt);
         case Modifier of
-          ',': // Separation
+          ',':
           begin
             Value := copy(MacroName, pos(':', MacroName) + 1, MaxInt);
             macroName := copy(MacroName, 1, pos(':', MacroName) - 1);
@@ -251,14 +252,14 @@ begin
               result := result + Value
           end;
 
-          '+': // uppercase
+          '+':
             Result := Result + AnsiUppercase(GetVarvalue(MacroName));
-          '-': // lowercase
+          '-':
             Result := Result + AnsiLowercase(GetVarvalue(MacroName));
-          '<','>': // justification
+          '<','>':
           begin
             Number := '';
-            while MacroName[1] in MacroNumbers do
+            while CharInSet(MacroName[1], MacroNumbers) do
             begin
               Number := Number + MacroName[1];
               MacroName := Copy(MacroName, 2, MaxInt);
@@ -268,9 +269,9 @@ begin
             if (J > 0) and (J > Length(MacroValue)) then
             begin
               case Modifier of
-                '<': // left justify
+                '<':
                   Pad := MacroValue + StringOfChar(' ', J - Length(MacroValue));
-                '>': // right justify
+                '>':
                   Pad := StringOfChar(' ', J - Length(MacroValue)) + MacroValue;
               end;
             end
@@ -278,7 +279,7 @@ begin
               Pad := MacroValue;
             Result := Result + Pad;
           end;
-          '?': begin // IfStatement $(?varname:true,false)
+          '?': begin
             ColonPos := pos(':', MacroName);
             CommaPos:= pos(',', MacroName);
             if GetVarvalue(copy(MacroName, 1, ColonPos - 1) + MacroNamePad) = '1' then
@@ -291,13 +292,13 @@ begin
       else
       begin
         EndLoopPos := 0;
-        if Pos('LOOP', MacroName) = 1 then // do not localize
+        if Pos('LOOP', MacroName) = 1 then
         begin
           MacroName := Copy(MacroName, 5, maxint);
           MatchMacroName := MacroName;
           if pos('.', MatchMacroName) <> 0 then
             Delete(MatchMacroName, pos('.', MatchMacroName), MaxInt);
-          MatchMacroname := UpperCase(MacroBegin + 'ENDLOOP' + MatchMacroName + MacroEnd); // do not localize
+          MatchMacroname := UpperCase(MacroBegin + 'ENDLOOP' + MatchMacroName + MacroEnd);
 
           EndLoopPos := pos(MatchMacroName, UpperCase(temp));
           if EndLoopPos <> 0 then
@@ -313,16 +314,16 @@ begin
             Variables.SetVariable(Macroname, IntToStr(OldLoopValue));
           end
           else
-            raise Exception.CreateFmt(sUnterminatedLoop, [MacroName]);
+            raise Exception.Create('Unterminated loop in template: ' + MacroName);
 
         end
-        else if Pos('CASE', macroName) = 1 then // do not localize
+        else if Pos('CASE', macroName) = 1 then
         begin
           MacroName := Copy(MacroName, 5, maxint);
           MatchMacroName := MacroName;
           if pos('.', MatchMacroName) <> 0 then
             Delete(MatchMacroName, pos('.', MatchMacroName), MaxInt);
-          MatchMacroname := UpperCase(MacroBegin + 'ENDCASE' + MatchMacroName + MacroEnd); // do not localize
+          MatchMacroname := UpperCase(MacroBegin + 'ENDCASE' + MatchMacroName + MacroEnd);
 
           EndLoopPos := pos(MatchMacroName, UpperCase(temp));
           if EndLoopPos <> 0 then
@@ -339,7 +340,7 @@ begin
                 CurrentCaseTag := UpperCase(BoldExpandTemplate(uppercase(trim(copy(CaseText[i], 1, barpos - 1))), variables, MacroNamePad));
                 if currentCaseTag <> CaseValue then
                 begin
-                  if CurrentCasetag = 'ELSE' then // do not localize
+                  if CurrentCasetag = 'ELSE' then
                     ElseValue := copy(CaseText[i], BarPos + 1, maxint) + BOLDCRLF + ElseValue;
                   CaseText.Delete(i);
                 end
@@ -362,15 +363,15 @@ begin
             result := result + BoldExpandTemplate(CaseText.Text, Variables, MacroNamePad);
             CaseText.Free;
           end else
-            Raise Exception.CreateFmt(sUnterminatedCase, [MacroName]);
+            Raise Exception.Create('Unterminated case in template: ' + MacroName);
         end
-        else if Pos('MACROSTART', MacroName) = 1 then // do not localize
+        else if Pos('MACROSTART', MacroName) = 1 then
         begin
           MacroName := trim(Copy(MacroName, 11, maxint));
           MatchMacroName := MacroName;
           if pos('.', MatchMacroName) <> 0 then
             Delete(MatchMacroName, pos('.', MatchMacroName), MaxInt);
-          MatchMacroname := UpperCase(MacroBegin + 'MACROEND ' + MatchMacroName + MacroEnd); // do not localize
+          MatchMacroname := UpperCase(MacroBegin + 'MACROEND ' + MatchMacroName + MacroEnd);
 
           EndLoopPos := pos(MatchMacroName, UpperCase(temp));
           if EndLoopPos <> 0 then
@@ -380,17 +381,16 @@ begin
             Variables.SetVariable(Macroname, MacroText);
           end
           else
-            raise Exception.CreateFmt(sUnterminatedMacro, [MacroName]);
+            raise Exception.Create('Unterminated Macro in template: ' + MacroName);
         end;
 
-        if pos('CRLF', upperCase(MacroName)) = 1 then // in loops the CRLF becomes CRLF.0 // do not localize
+        if pos('CRLF', upperCase(MacroName)) = 1 then
           result := result + BOLDCRLF
         else if endLoopPos = 0 then
         begin
           value := Variables.Values[MacroName];
           while (value = '') and (pos('.', MacroName) <> 0) do
           begin
-            // variable seems to belong to an outer loop scope
             i := length(MacroName);
             While MacroName[i] <> '.' do dec(i);
             Delete(MacroName, i, maxint);
@@ -425,7 +425,7 @@ begin
   fExpandedTemplate := TStringList.Create;
 end;
 
-destructor TBoldTemplateHolder.Destroy;
+destructor TBoldTemplateHolder.destroy;
 begin
   FreeAndNil(fVariables);
   FreeAndNil(fTemplate);
@@ -485,9 +485,9 @@ end;
 
 procedure TBoldTemplateVariables.InitializeDateTimeMacros;
 begin
-  SetVariable('DATETIME', DateTimeToStr(now)); // do not localize
-  SetVariable('DATE', DateToStr(now)); // do not localize
-  SetVariable('TIME', TimeToStr(now)); // do not localize
+  SetVariable('DATETIME', DateTimeToStr(now));
+  SetVariable('DATE', DateToStr(now));
+  SetVariable('TIME', TimeToStr(now));
 end;
 
 procedure TBoldTemplateHolder.TemplateChanged(sender: TObject);
@@ -512,11 +512,16 @@ begin
   result := TBoldTemplatevariable(Item).Name;
 end;
 
+
+
 { TBoldTemplateList }
 
 function TBoldTemplateList.GetItems(index: integer): TBoldTemplateHolder;
 begin
   result := TBoldTemplateHolder(inherited items[index]);
 end;
+
+
+initialization
 
 end.

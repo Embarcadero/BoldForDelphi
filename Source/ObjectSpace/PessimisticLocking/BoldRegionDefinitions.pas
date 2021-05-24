@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRegionDefinitions;
 
 interface
@@ -112,23 +115,30 @@ type
   TBoldConcreteRegionDefinitionList = class(TList)
   private
     function GetItem(i: Integer): TBoldConcreteRegionDefinition;
+    function GetAsCommaText: string;
   public
     function FindByRootClass(RootClass: TBoldClassTypeInfo): TBoldConcreteRegionDefinition;
     property Items[i: Integer]: TBoldConcreteRegionDefinition read GetItem; default;
+  public
+    property AsCommaText: string read GetAsCommaText;
   end;
 
   TBoldSubregionReferenceList = class(TList)
   private
     function GetItem(i: Integer): TBoldSubregionReference;
+    function GetAsCommaText: string;
   public
     property Items[i: Integer]: TBoldSubregionReference read GetItem; default;
+    property AsCommaText: string read GetAsCommaText;
   end;
 
   TBoldRegionElementInclusionList = class(TList)
   private
     function GetItem(i: Integer): TBoldRegionElementInclusion;
+    function GetAsCommaText: string;
   public
     property Items[i: Integer]: TBoldRegionElementInclusion read GetItem; default;
+    property AsCommaText: string read GetAsCommaText;
   end;
 
 const
@@ -137,7 +147,8 @@ const
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 function GetEnsuredItem(List: TList; index: integer; theClass: TClass): TObject;
 var
@@ -168,6 +179,21 @@ begin
       result := Items[i];
       exit;
     end;
+end;
+
+function TBoldConcreteRegionDefinitionList.GetAsCommaText: string;
+var
+  sl: TStringList;
+  i: integer;
+begin
+  sl := TStringList.Create;
+  try
+    for I := 0 to Count - 1 do
+      sl.Add(self[i].AsString);
+  finally
+    result := sl.CommaText;
+    sl.free;
+  end;
 end;
 
 function TBoldConcreteRegionDefinitionList.GetItem(i: Integer): TBoldConcreteRegionDefinition;
@@ -292,6 +318,21 @@ end;
 
 { TBoldRegionElementInclusionList }
 
+function TBoldRegionElementInclusionList.GetAsCommaText: string;
+var
+  sl: TStringList;
+  i: integer;
+begin
+  sl := TStringList.Create;
+  try
+    for I := 0 to Count - 1 do
+      sl.Add(self[i].Member.DisplayName);
+  finally
+    result := sl.CommaText;
+    sl.free;
+  end;
+end;
+
 function TBoldRegionElementInclusionList.GetItem(
   i: Integer): TBoldRegionElementInclusion;
 begin
@@ -299,6 +340,21 @@ begin
 end;
 
 { TBoldSubregionReferenceList }
+
+function TBoldSubregionReferenceList.GetAsCommaText: string;
+var
+  sl: TStringList;
+  i: integer;
+begin
+  sl := TStringList.Create;
+  try
+    for I := 0 to Count - 1 do
+      sl.Add(self[i].ParentRegion.RootClass.DisplayName);
+  finally
+    result := sl.CommaText;
+    sl.free;
+  end;
+end;
 
 function TBoldSubregionReferenceList.GetItem(
   i: Integer): TBoldSubregionReference;
@@ -382,7 +438,7 @@ begin
   fElements.Clear;
   for i := 0 to fSubregions.Count-1 do
     fSubregions[i].Free;
-  fSubregions.Clear;
+  fSubregions.Clear; 
 end;
 
 constructor TBoldConcreteRegionDefinition.Create(CoreDefinition: TBoldRegionCoreDefinition; Root: TBoldClassTypeInfo);
@@ -463,4 +519,6 @@ begin
     (Member as TBoldRoleRTInfo).RoleRTInfoOfOtherEnd.SetForceOtherEnd;
 end;
 
+
+initialization
 end.

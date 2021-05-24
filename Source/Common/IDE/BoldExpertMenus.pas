@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExpertMenus;
 
 interface
@@ -18,6 +21,11 @@ type
 
 implementation
 
+uses
+  BoldRev;
+
 {$R *.DFM}
+
+initialization
 
 end.

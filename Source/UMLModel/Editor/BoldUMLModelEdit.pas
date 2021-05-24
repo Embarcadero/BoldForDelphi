@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelEdit;
 
 interface
@@ -39,10 +42,9 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldRegistry,
   Controls,
-  BoldUMLModelDataModule,
+  BoldUMLModelDataModule,  
   BoldGuard;
 
 var G_ModelEditor: TModelEdit = nil;
@@ -69,9 +71,8 @@ end;
 destructor TModelEdit.Destroy;
 begin
   while EditForms.Count > 0 do
-    TBoldModelEditFrm(EditForms.Items[EditForms.Count - 1]).Free;  // Will remove from list through notification
+    TBoldModelEditFrm(EditForms.Items[EditForms.Count - 1]).Free;
   FreeAndNil(FEditForms);
-  // The plugins are freed in the finalization part of BoldUMLPlugins.pas.
   FreeAndNil(FPlugInList);
   inherited;
 end;
@@ -117,20 +118,19 @@ begin
   try
     with BoldRegistry do
     begin
-      OpenKey('\UMLModel'); // do not localize
-      WriteInteger('Width', aForm.Width); // do not localize
-      WriteInteger('Height', aForm.Height); // do not localize
-      WriteInteger('Left', aForm.Left); // do not localize
-      WriteInteger('Top', aForm.Top); // do not localize
-      WriteInteger('TreeViewWidth', aForm.BoldTreeView1.Width); // do not localize
-      WriteInteger('ModelHeight', aForm.sbModel.Height); // do not localize
-      WriteInteger('ClassHeight', aForm.sbClass.Height); // do not localize
-      WriteInteger('OperationHeight', aForm.sbOperation.Height); // do not localize
-      WriteInteger('AssociationHeight', aForm.sbAssociation.Height); // do not localize
-      WriteInteger('AssociationEndHeight', aForm.sbAssociationEnd.Height); // do not localize
+      OpenKey('\UMLModel');
+      WriteInteger('Width', aForm.Width);
+      WriteInteger('Height', aForm.Height);
+      WriteInteger('Left', aForm.Left);
+      WriteInteger('Top', aForm.Top);
+      WriteInteger('TreeViewWidth', aForm.BoldTreeView1.Width);
+      WriteInteger('ModelHeight', aForm.sbModel.Height);
+      WriteInteger('ClassHeight', aForm.sbClass.Height);
+      WriteInteger('OperationHeight', aForm.sbOperation.Height);
+      WriteInteger('AssociationHeight', aForm.sbAssociation.Height);
+      WriteInteger('AssociationEndHeight', aForm.sbAssociationEnd.Height);
     end;
   except
-    // Silently discard exceptions
   end;
 end;
 
@@ -144,21 +144,20 @@ begin
     BoldRegistry := TBoldRegistry.Create;
     with BoldRegistry do
     begin
-      OpenKey('\UMLModel'); // do not localize
-      aForm.Width := ReadInteger('Width', 800); // do not localize
-      aForm.Height := ReadInteger('Height', 600); // do not localize
-      aForm.Left := ReadInteger('Left', 0); // do not localize
-      aForm.Top := ReadInteger('Top', 0); // do not localize
+      OpenKey('\UMLModel');
+      aForm.Width := ReadInteger('Width', 800);
+      aForm.Height := ReadInteger('Height', 600);
+      aForm.Left := ReadInteger('Left', 0);
+      aForm.Top := ReadInteger('Top', 0);
 
-      aForm.BoldTreeView1.Width := ReadInteger('TreeViewWidth', aForm.BoldTreeView1.Width); // do not localize
-      aForm.sbModel.Height := ReadInteger('ModelHeight', aForm.sbModel.Height); // do not localize
-      aForm.sbClass.Height := ReadInteger('ClassHeight', aForm.sbClass.Height); // do not localize
-      aForm.sbOperation.Height := ReadInteger('OperationHeight', aForm.sbOperation.Height); // do not localize
-      aForm.sbAssociation.Height := ReadInteger('AssociationHeight', aForm.sbAssociation.Height); // do not localize
-      aForm.sbAssociationEnd.Height := ReadInteger('AssociationEndHeight', aForm.sbAssociationEnd.Height); // do not localize
+      aForm.BoldTreeView1.Width := ReadInteger('TreeViewWidth', aForm.BoldTreeView1.Width);
+      aForm.sbModel.Height := ReadInteger('ModelHeight', aForm.sbModel.Height);
+      aForm.sbClass.Height := ReadInteger('ClassHeight', aForm.sbClass.Height);
+      aForm.sbOperation.Height := ReadInteger('OperationHeight', aForm.sbOperation.Height);
+      aForm.sbAssociation.Height := ReadInteger('AssociationHeight', aForm.sbAssociation.Height);
+      aForm.sbAssociationEnd.Height := ReadInteger('AssociationEndHeight', aForm.sbAssociationEnd.Height);
     end;
   except
-    //Silently discard exception
   end;
 end;
 

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 14:59:57}
@@ -9,7 +12,7 @@ uses
   SysUtils,
   Controls,
   {$IFDEF BOLD_DELPH6_OR_LATER}
-  Types, // IFDEF BOLD_DELPH6_OR_LATER
+  Types,
   {$ENDIF}
   Menus,
   Graphics,
@@ -53,7 +56,6 @@ type
   end;
 
   { TBoldFollowerDataCom }
-  // Abstract class, concrete versions defined with typed renderer
   TBoldFollowerDataCom = class(TBoldMemoryManagedObject)
   private
     fOwningFollower: TBoldFollowerCom;
@@ -140,7 +142,6 @@ type
   private
     fIndex: Integer;
     fOwningFollower: TBoldFollowerCom;
-//    fSelected: Boolean;
     fState: TBoldFollowerState;
     fElement: IBoldElement;
     fRendererData: TBoldFollowerDataCom;
@@ -164,9 +165,9 @@ type
     procedure AddToDisplayList; override;
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     {The following two are virtual to allow overriden in the old hierarchy}
-    procedure MakeUptodateAndSubscribe; // Displays, i.e. moves from B.O. to RendereData, also resubscribes if needed
+    procedure MakeUptodateAndSubscribe;
     class procedure MultiMakeUptodateAndSubscribe(Followers: TBoldObjectArray);
-    procedure MakeClean; // Applies, i.e. moves from rendererdata to B.O.
+    procedure MakeClean;
     {State handling}
     procedure MarkDirty;
     procedure MarkClean;
@@ -285,7 +286,6 @@ type
   published
     property DragMode: TBoldDragMode read FDragMode write FDragMode default bdgNone;
     property DropMode: TBoldDropMode read FDropMode write FDropMode default bdpNone;
-    //   property Popup: TBoldPopupCom read fPopup write fPopup;
   end;
 
   { TBoldSingleRendererCom }
@@ -312,7 +312,7 @@ type
   { TBoldPopupCom }
   TBoldPopupCom = class(TPersistent)
   private
-    FEnable: Boolean; // FIXME notify owner of change here
+    FEnable: Boolean;
     FInsertNew: Boolean;
     FDelete: TBoldPopupDeleteType;
     FMove: Boolean;
@@ -326,7 +326,7 @@ type
     property Move: Boolean read FMove write FMove default False;
   end;
 
-{$IFDEF BOLDCOMCLIENT} // List/InterfaceArray
+{$IFDEF BOLDCOMCLIENT}
 type
   TBoldClientableListCom = TBoldInterfaceArray;
 
@@ -341,10 +341,9 @@ type
 implementation
 
 uses
-  BoldRev,
   BoldExceptionHandlersCom,
   BoldGuiResourceStringsCom,
-{$IFNDEF BOLDCOMCLIENT} // uses
+{$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   {!! DO NOT REMOVE !! BoldSystemRT ,}
   BoldGUI,
@@ -361,7 +360,7 @@ const
 var
   DefaultRenderer: TBoldRendererCom;
 
-{$IFDEF BOLDCOMCLIENT} // BoldTestType
+{$IFDEF BOLDCOMCLIENT}
 function BoldTestType(element: IUnknown; const TypeOrInterface: TGUID): Boolean;
 var
   Res: IUnknown;
@@ -611,7 +610,6 @@ begin
 end;
 
 function TBoldRendererCom.StoreRepresentations: Boolean;
-  // Don't store the stringlist if it's empty or if it's equal to the default representation stringlist.
 begin
   Result := False;
   if Assigned(FRepresentations) and (FRepresentations.Count > 0) then
@@ -627,7 +625,7 @@ class function TBoldRendererCom.GetExpressionAsDirectElement(Element: IBoldEleme
 begin
   Result := nil;
   if Assigned(Element) then
-    {$IFDEF BOLDCOMCLIENT} // GetAsDirectElement // FIXME: VariableList is lost
+    {$IFDEF BOLDCOMCLIENT}
     Result := Element.EvaluateExpression(Expression);
     {$ELSE}
     Result := Element.EvaluateExpressionAsDirectElement(Expression, VariableList);
@@ -661,7 +659,7 @@ var
 begin
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
   if Assigned(ValueElement) then
-    {$IFDEF BOLDCOMCLIENT}  // DefaultMayModify // fixme
+    {$IFDEF BOLDCOMCLIENT}
     result := ValueElement.mutable
     {$ELSE}
     Result := ValueElement.ObserverMayModify(Subscriber)
@@ -671,7 +669,7 @@ begin
 end;
 
 procedure TBoldRendererCom.DefaultHoldsChangedValue(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber);
-{$IFNDEF BOLDCOMCLIENT} // DefaultHoldsChangedValue
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: IBoldElement;
 begin
@@ -687,7 +685,7 @@ end;
 {$ENDIF}
 
 procedure TBoldRendererCom.DefaultReleaseChangedValue(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber);
-{$IFNDEF BOLDCOMCLIENT} // defaultReleaseChangedValue
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: IBoldElement;
 begin
@@ -706,8 +704,7 @@ begin
     Assigned(Element) then
     Result := OnMayModify(Element, Representation, Expression, Subscriber)
   else if HasEventOverrides then
-    // this forces readonly of renderers that has an OnSubscribeEvent but no OnMayModify
-    // OnMayModify is mandatory for a writeable renderer.
+
     result := false
   else
     Result := DefaultMayModify(Element, Representation, Expression, VariableList, Subscriber)
@@ -722,7 +719,7 @@ procedure TBoldRendererCom.HoldsChangedValue(Element: IBoldElement; Representati
 begin
   if Assigned(FOnHoldsChangedValue) then
     OnHoldsChangedValue(Element, Representation, Expression, Subscriber)
-  else
+  else 
     DefaultHoldsChangedValue(Element, Representation, Expression, VariableList, Subscriber)
 end;
 
@@ -735,14 +732,14 @@ begin
 end;
 
 procedure TBoldRendererCom.DefaultStartDrag(Element: IBoldElement; DragMode: TBoldDragMode; RendererData: TBoldFollowerDataCom);
-{$IFNDEF BOLDCOMCLIENT} // DragDrop
+{$IFNDEF BOLDCOMCLIENT}
 var
   Obj: IBoldObject;
-{$ENDIF}
+{$ENDIF}  
 begin
-  {$IFNDEF BOLDCOMCLIENT} // DragDrop
+  {$IFNDEF BOLDCOMCLIENT}
   if BoldGUIHandler.DraggedObjects.Count <> 0 then
-    raise EBold.CreateFmt(SDraggedObjectsNotCleared, [ClassName]);
+    raise EBold.Create(SDraggedObjectsNotCleared);
 
   if DragMode = bdgSelection then
   begin
@@ -761,14 +758,14 @@ end;
 
 procedure TBoldRendererCom.DefaultEndDrag(DragMode: TBoldDragMode; InternalDrag: Boolean);
 begin
-  {$IFNDEF BOLDCOMCLIENT} // dragdrop
+  {$IFNDEF BOLDCOMCLIENT}
   BoldGUIHandler.DraggedObjects.Clear;
   {$ENDIF}
 end;
 
 function TBoldRendererCom.DefaultDragOver(Element: IBoldElement; DropMode: TBoldDropMode; InternalDrag: Boolean; RendererData: TBoldFollowerDataCom; dropindex: Integer): Boolean;
 begin
-  {$IFDEF BOLDCOMCLIENT} // dragdrop
+  {$IFDEF BOLDCOMCLIENT}
   result := false;
   {$ELSE}
   Result := Assigned(Element) and Element.ObserverMayModify(Self) and
@@ -778,7 +775,7 @@ begin
 end;
 
 procedure TBoldRendererCom.DefaultDragDrop(Element: IBoldElement; DropMode: TBoldDropMode; dropindex: Integer);
-{$IFNDEF BOLDCOMCLIENT} // dragdrop
+{$IFNDEF BOLDCOMCLIENT}
 var
   i: integer;
   offset,
@@ -1009,7 +1006,7 @@ begin
     begin
       Assert(State <> bfsInactiveInvalidElement);
       SetState(bfsActivating);
-      MakeUptodateAndSubscribe; //CHECKME This could cause errors if an owning follower is in bfsOutOfDate
+      MakeUptodateAndSubscribe;
       MarkClean;
     end
     else
@@ -1064,9 +1061,9 @@ end;
 procedure TBoldFollowerCom.Receive(Originator: TObject; OriginalEvent: TBoldEvent;
     RequestedEvent: TBoldRequestedEvent);
 begin
-{$IFNDEF BOLDCOMCLIENT} // CHECKME
+{$IFNDEF BOLDCOMCLIENT}
   if (OriginalEvent = beDestroying) and (Originator = Element) then
-    FElement := nil; //CHECKME Is this necesary? /frha
+    FElement := nil;
 {$ENDIF}
   case RequestedEvent of
     breReEvaluate:
@@ -1116,9 +1113,9 @@ begin
     begin
       AssertedController.HoldsChangedValue(Self);
       MarkDirty;
-    end;
-    if AssertedController.ApplyPolicy = bapChange then
-      Apply;
+      if AssertedController.ApplyPolicy = bapChange then
+        Apply;
+    end
   end
   else
   begin
@@ -1129,9 +1126,8 @@ end;
 
 procedure TBoldFollowerCom.SetElement(theElement: IBoldElement);
 begin
-  // if the fElement is nil and the new element is nil aswell we still need
-  // to mark the follower out of date since other properties of the controller
-  // might have changed (especially the nilstringrepresentation)
+
+
   if not assigned(theElement) or (theElement <> fElement) then
   begin
     fElement := theElement;
@@ -1146,7 +1142,7 @@ begin
     bfsEmpty, bfsCurrent, bfsDirty:
       SetState(bfsValueOutOfDate);
     bfsInactiveValidElement, bfsValueOutOfDate,
-    bfsSubscriptionOutOfDate, bfsActivating: // FIXME bfsActivating is a temporary fix for the delayd fetch problem
+    bfsSubscriptionOutOfDate, bfsActivating:
       {no action}
   else
     raise EBoldInternal.CreateFmt('%s.MarkOutOfDate: Follower state error', [ClassName]);
@@ -1162,12 +1158,9 @@ begin
     bfsSubscriptionOutOfDate, bfsActivating :
       {no action};
 
-    // these two should not happen, but it is safe to ignore them
-    // a bug in the grid seems to cause these when the grid is not displayed
-    // right after creation (if it is on an invisible pagecontrol)
+
     bfsInactiveValidElement, bfsInactiveInvalidElement:
     begin
-      // DebugCode below - can safely be removed
       SetState(State);{no action}
     end
   else
@@ -1202,7 +1195,7 @@ begin
   {action when leaving state}
   case State of
     bfsValueOutOfDate, bfsSubscriptionOutOfDate: {bfsOutOfDate}
-      RemoveFromDisplayList;
+      RemoveFromDisplayList(false);
     bfsDirty:
       RemoveFromApplyList;
   end;
@@ -1276,7 +1269,6 @@ begin
     on E: Exception do
     begin
       if assigned(Controller) and Controller.HandleDisplayException(E, Element) then
-      // don't re-raise
       else
       begin
         if assigned(Controller) then
@@ -1300,12 +1292,11 @@ begin
   try
     Controller.MultiMakeEnsure(Followers);
   except
-    ; // silence any exceptions
+    ;
   end
 end;
 
 procedure TBoldFollowerCom.EnsureDisplayable;
-//EnsureDisplayable may only be called when within Display or when ALL owning followers not is in bfsOutOfDate!
 begin
   if not Displayable then
   begin
@@ -1341,10 +1332,9 @@ end;
 function TBoldPopupCom.GetMenu(CONTROL: TControl; Element: IBoldElement): TPopupMenu;
 begin
   Result := nil;
-  {$IFNDEF BOLDCOMCLIENT} // popup
+  {$IFNDEF BOLDCOMCLIENT}
   BoldGUIHandler.PopupElement := Element;
   BoldGUIHandler.PopupControl := CONTROL;
-  // fixme build actual menu
   if not Enable then
     Result := BoldPopupMenu;
   {$ENDIF}
@@ -1395,7 +1385,6 @@ end;
 
 procedure TBoldFollowerDataCom.SetCurrentSubFollowerIndex(index: integer);
 begin
-  // just ignore;
 end;
 
 function TBoldFollowerControllerCom.GetContextType: IBoldElementTypeInfo;
@@ -1467,7 +1456,7 @@ begin
   result := GetVariableList;
   {$IFNDEF BOLDCOMCLIENT}
   if assigned(Subscriber) and assigned(Variables) then
-    Variables.SubscribeToHandles(Subscriber);
+    Variables.SubscribeToHandles(Subscriber, Expression);
   {$ENDIF}
 end;
 
@@ -1511,7 +1500,7 @@ begin
   for I := 0 to Followers.Count - 1 do
     if TBoldFollowerCom(Followers[i]).State in bfdNeedResubscribe then
     begin
-      TBoldFollowerCom(Followers[i]).Subscriber.CancelAllSubscriptions;  // CHECKME ever needed?
+      TBoldFollowerCom(Followers[i]).Subscriber.CancelAllSubscriptions;
       Controller.AddSmallSubscription(TBoldFollowerCom(Followers[i]).Subscriber, [beValueChanged, beDestroying], breControllerChanged);
     end;
   Controller.MultiMakeUptodateAndSubscribe(Followers);
@@ -1571,7 +1560,6 @@ end;
 
 procedure TBoldFollowerControllerCom.CleanRendererData(RendererData: TBoldFollowerDataCom);
 begin
-  // do nothing
 end;
 
 function TBoldFollowerControllerCom.HandleDisplayException(E: Exception;
@@ -1658,4 +1646,3 @@ finalization
   FreeAndNil(DefaultRenderer);
 
 end.
-

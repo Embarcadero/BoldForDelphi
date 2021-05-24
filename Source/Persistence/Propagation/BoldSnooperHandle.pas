@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSnooperHandle;
 
 interface
@@ -20,6 +23,10 @@ type
     fLockManagerHandle: TBoldAbstractLockManagerHandle;
     FCheckDatabaseLock: Boolean;
     fPropagatorHandle: TBoldAbstractPropagatorHandle;
+    fClassesToIgnore: string;
+    fUseSubscriptions: boolean;
+    fUseClassEvents: boolean;
+    fUseMemberLevelOSS: boolean;
     procedure SetLockManagerHandle(Value: TBoldAbstractLockManagerHandle);
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SetPropagatorHandle(Value: TBoldAbstractPropagatorHandle);
@@ -44,6 +51,10 @@ type
     property LockManagerHandle: TBoldAbstractLockManagerHandle read fLockManagerHandle write SetLockManagerHandle;
     property CheckDatabaseLock: Boolean read fCheckDatabaseLock write fCheckDatabaseLock;
     property PropagatorHandle: TBoldAbstractPropagatorHandle read fPropagatorHandle write SetPropagatorHandle;
+    property UseClassEvents: boolean read fUseClassEvents write fUseClassEvents;
+    property UseMemberLevelOSS: boolean read fUseMemberLevelOSS write fUseMemberLevelOSS;
+    property UseSubscriptions: boolean read fUseSubscriptions write fUseSubscriptions;
+    property ClassesToIgnore: string read fClassesToIgnore write fClassesToIgnore;
   end;
 
 implementation
@@ -53,20 +64,20 @@ uses
   BoldDefs,
   BoldPersistenceHandlePassThrough,
   dialogs,
-  PersistenceConsts;
+  BoldRev;
 
 function TBoldSnooperHandle.CreatePersistenceController: TBoldPersistenceController;
 var
   Snooper: TBoldSnooper;
 begin
   if not Assigned(BoldModel) then
-    raise EBold.CreateFmt(sBoldModelNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.CreatePersistenceController: cannot find a BoldModel', [ClassName]);
   Snooper := TBoldSnooper.Create(BoldModel.MoldModel, self);
   ChainPersistenceController(Snooper);
   if Assigned(PropagatorHandle) then
     Snooper.OnPropagatorFailure := PropagatorHandle.DoPropagatorCallFailed
   else
-    raise EBold.CreateFmt(sPropagatorHandleNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.PropagatorHandle not assigned', [ClassName]);
   result := Snooper;
 end;
 
@@ -116,6 +127,13 @@ begin
         Snooper.OnPropagatorFailure := fPropagatorHandle.DoPropagatorCallFailed
       else if not (csDestroying in ComponentState) then
         Snooper.OnPropagatorFailure := nil;
+      if Assigned(Value) then
+      begin
+        Snooper.UseClassEvents := UseClassEvents;
+        Snooper.UseMemberLevelOSS := UseMemberLevelOSS;
+        Snooper.UseSubscriptions := UseSubscriptions;
+        Snooper.ClassesToIgnore := ClassesToIgnore;
+      end;
     end;
     Subscribe(True);
   end;
@@ -131,8 +149,7 @@ end;
 procedure TBoldSnooperHandle.DefineProperties(Filer: TFiler);
 begin
   inherited;
-  // property MachineName moved to TBoldPropagatorHandleCOM
-  Filer.DefineProperty('MachineName', ReadObsoleteMachineNameProperty, nil, True); // do not localize
+  Filer.DefineProperty('MachineName', ReadObsoleteMachineNameProperty, nil, True);
 end;
 
 procedure TBoldSnooperHandle.ReadObsoleteMachineNameProperty(
@@ -141,14 +158,14 @@ var
   OldPropertyValue: string;
 begin
   OldPropertyValue := Reader.ReadString;
-  ReadObsoleteProperty(Reader, 'MachineName', 'ServerHost', OldPropertyValue, 'TBoldPropagatorHandleCom'); // do not localize
+  ReadObsoleteProperty(Reader, 'MachineName', 'ServerHost', OldPropertyValue, 'TBoldPropagatorHandleCom');
 end;
 
 procedure TBoldSnooperHandle.ReadObsoleteProperty(Reader: TReader;
   const PropertyName, NewPropertyName, OldPropertyValue, ComponentName: string);
 begin
   if (csDesigning in ComponentState) then
-    MessageDlg(Format(sPropertyMoved,
+    MessageDlg(Format('%s.%s has been moved to component (%s.%s). Old value was "%s"',
                       [ClassName, PropertyName, ComponentName, NewPropertyName, OldPropertyValue]), mtWarning, [mbOK], 0);
 end;
 
@@ -178,4 +195,5 @@ begin
     fPTSubscriber.CancelAllSubscriptions;
 end;
 
+initialization
 end.

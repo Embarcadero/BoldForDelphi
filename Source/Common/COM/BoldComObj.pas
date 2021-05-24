@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComObj;
 
 interface
@@ -47,6 +50,7 @@ type
     function Clone(out Enum: IEnumVariant): HResult; stdcall;
   public
     constructor Create(Collection: IBoldVariantCollection);
+    destructor Destroy; override;
   end;
 
   {-- TBoldAutoInterfacedObject --}
@@ -109,6 +113,11 @@ const
 constructor TBoldVariantEnumerator.Create(Collection: IBoldVariantCollection);
 begin
   FCollection := Collection;
+end;
+
+destructor TBoldVariantEnumerator.Destroy;
+begin
+  inherited;
 end;
 
 function TBoldVariantEnumerator.Next(celt: LongWord; var rgvar: OleVariant;
@@ -276,5 +285,8 @@ function TBoldAggregatedAutoInterfacedObject.QueryInterface(const IID: TGUID; ou
 begin
   Result := IUnknown(FController).QueryInterface(IID,Obj);
 end;
+
+
+initialization
 
 end.

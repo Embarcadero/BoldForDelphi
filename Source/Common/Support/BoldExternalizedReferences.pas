@@ -1,11 +1,14 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalizedReferences;
 
 interface
 
 uses
+  BoldBase,
   BoldHashIndexes,
-  BoldIndexableList,
-  BoldBase;
+  BoldIndexableList;
 
 type
   { forward declarations }
@@ -21,8 +24,8 @@ type
     function GetReferencedObject(Referee: TObject): TObject;
     procedure SetReferencedObject(Referee, Referenced: TObject);
   public
-    constructor Create;
-    destructor Destroy; override;
+    constructor create;
+    destructor destroy; override;
     property ManageReferencedObject: Boolean read FManageReferencedObject write SetManageReferencedObject;
     property ReferencedObjects[Referee: TObject]: TObject read GetReferencedObject write SetReferencedObject;
     property Count: integer read GetCount;
@@ -32,10 +35,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
-
-var
-  IX_ExternalRef: integer = -1;
+  BoldRev;
 
 type
   { TBoldExternalLink }
@@ -50,16 +50,32 @@ type
 
   { TBoldExternalizedIndexList }
   TBoldExternalizedIndexList = class(TBoldUnorderedIndexablelist)
+  private
+    class var IX_ExternalRef: integer;
   public
-    constructor create;
-    function FindByReferee(Referee: TObject): TBoldExternalLink;
+    constructor Create;
+    function FindByReferee(Referee: TObject): TBoldExternalLink; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   { TBoldExternalizedReferenceHashIndex }
   TBoldExternalizedReferenceHashIndex = class(TBoldObjectHashIndex)
   protected
-    function ItemAsKeyObject(Item: TObject): TObject; override;
+    function ItemASKeyObject(Item: TObject): TObject; override;
   end;
+
+{ TBoldExternalizedIndexList }
+
+constructor TBoldExternalizedIndexList.Create;
+begin
+  inherited;
+  SetIndexVariable(IX_ExternalRef, AddIndex(TBoldExternalizedReferenceHashIndex.Create));
+  OwnsEntries := true;
+end;
+
+function TBoldExternalizedIndexList.FindByReferee(Referee: TObject): TBoldExternalLink;
+begin
+  result := TBoldExternalLink(TBoldExternalizedReferenceHashIndex(Indexes[IX_ExternalRef]).FindByObject(Referee));
+end;
 
 constructor TBoldExternalizedReferenceList.create;
 begin
@@ -67,7 +83,7 @@ begin
   flist := TBoldExternalizedIndexList.Create;
 end;
 
-destructor TBoldExternalizedReferenceList.Destroy;
+destructor TBoldExternalizedReferenceList.destroy;
 begin
   FreeAndNil(fList);
   inherited;
@@ -103,6 +119,8 @@ begin
   Link := TBoldExternalizedIndexList(flist).FindByReferee(Referee);
   if assigned(Link) then
   begin
+    if (Link.Referee = Referee) and (Link.Referenced = Referenced) then
+      exit;
     if ManageReferencedObject then
       FreeAndNil(Link.fReferenced);
     fList.Remove(Link);
@@ -124,20 +142,7 @@ begin
   result := TBoldExternalLink(item).Referee;
 end;
 
-{ TBoldExternalizedIndexList }
-
-constructor TBoldExternalizedIndexList.create;
-begin
-  inherited;
-  SetIndexVariable(IX_ExternalRef, AddIndex(TBoldExternalizedReferenceHashIndex.Create));
-  OwnsEntries := true;
-end;
-
-function TBoldExternalizedIndexList.FindByReferee(Referee: TObject): TBoldExternalLink;
-begin
-  result := TBoldExternalLink(TBoldExternalizedReferenceHashIndex(Indexes[IX_ExternalRef]).FindByObject(Referee));
-end;
+initialization
+  TBoldExternalizedIndexList.IX_ExternalRef := -1;
 
 end.
-
-

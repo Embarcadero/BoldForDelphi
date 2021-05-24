@@ -1,9 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclEvaluator;
 
 interface
 
 uses
-  Classes,
   BoldSystem,
   BoldSystemRT,
   BoldElements,
@@ -21,6 +23,8 @@ type
     fTimeType: TBoldAttributeTypeInfo;
     fDateType: TBoldAttributeTypeInfo;
     fFloatType: TBoldAttributeTypeInfo;
+    fBooleanType: TBoldAttributeTypeInfo;
+    fTrueBool: TBABoolean;
     CurrentSystem: tBoldSystem;
     fResubscribeAll: Boolean;
     function MakeNewString: TBAString;
@@ -30,7 +34,7 @@ type
     function MakeNewFloat: TBAFloat;
     function CreateNewMember(BoldType: TBoldElementTypeInfo): TBoldMember;
   public
-    constructor Create(Subscriber: TBoldSubscriber; ResubscribeAll: Boolean; SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem; StringType, IntegerType, FloatType, DateType, TimeType: TBoldAttributeTypeInfo);
+    constructor Create(Subscriber: TBoldSubscriber; ResubscribeAll: Boolean; SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem; TrueBool: TBABoolean; BooleanType, StringType, IntegerType, FloatType, DateType, TimeType: TBoldAttributeTypeInfo);
     procedure VisitTBoldOclListCoercion(N: TBoldOclListCoercion); override;
     procedure VisitTBoldOclMethod(N: TBoldOclmethod); override;
 
@@ -38,27 +42,31 @@ type
     procedure VisitTBoldOclIteration(N: TBoldOclIteration); override;
     procedure VisitTBoldOclMember(N: TBoldOclMember); override;
     procedure VisitTBoldOclVariableReference(N: TBoldOclVariableReference); override;
-    procedure VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral); override;
+    procedure VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral); override;
     procedure VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); override;
     procedure VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral); override;
     procedure VisitTBoldOclDateLiteral(N: TBoldOclDateLiteral); override;
     procedure VisitTBoldOclTimeLiteral(N: TBoldOclTimeLiteral); override;
     procedure VisitTBoldOclIntLiteral(N: TBoldOclIntLiteral); override;
-    procedure VisitTBoldOclCollectionLiteral(N: TBoldOclCollectionLiteral); override;
+    procedure VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLiteral); override;
     procedure SubScribeToElem(N: TBoldOclNode);
   end;
+
+var
+  OclUseTemporaryDummyValue: boolean = true;
 
 implementation
 
 uses
+  Classes,
   SysUtils,
-  BoldUtils,
   BoldDefs,
   BoldOclError,
-  BoldBase,
-  BoldCoreConsts;
+  BoldContainers,
+  BoldBase;
 
-constructor TBoldOclEvaluatorVisitor.Create(Subscriber: TBoldSubscriber; ResubscribeAll: Boolean; SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem; StringType, IntegerType, FloatType, DateType, TimeType: TBoldAttributeTypeInfo);
+constructor TBoldOclEvaluatorVisitor.Create(Subscriber: TBoldSubscriber; ResubscribeAll: Boolean; SystemTypeInfo: TBoldSystemTypeInfo;
+  BoldSystem: TBoldSystem; TrueBool: TBABoolean; BooleanType, StringType, IntegerType, FloatType, DateType, TimeType: TBoldAttributeTypeInfo);
 begin
   inherited Create;
   CurrentSubscriber := Subscriber;
@@ -69,10 +77,12 @@ begin
   fFloatType := FloatType;
   fDAteType := DateType;
   fTimeType := TimeType;
+  fBooleanType := BooleanType;
+  fTrueBool := TrueBool;
   fResubscribeAll := ResubscribeAll;
 end;
 
-function MapResubscribe(Resubscribe: Boolean): TBoldRequestedEvent;
+function MapResubscribe(Resubscribe: Boolean): TBoldRequestedEvent; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 begin
   if Resubscribe then
     Result := breReSubscribe
@@ -81,56 +91,91 @@ begin
 end;
 
 type
-  TBoldOCLSortClass = class(TBoldMemoryManagedObject)
+  PBoldOCLSortData = ^TBoldOCLSortData;
+  TBoldOCLSortData = record
     SortArg: TBoldElement;
     SortObj: TBoldElement;
   end;
 
+  TBoldOCLSortArray = class(TBoldArray)
+  private
+    function Get(Index: Integer): TBoldOCLSortData;
+    procedure Put(Index: Integer; Item: TBoldOCLSortData);
+  protected
+    function GetItemSize: Integer; override;
+  public
+    property Items[Index: Integer]: TBoldOCLSortData read Get write Put; default;
+  end;
+
+function TBoldOCLSortArray.Get(Index: Integer): TBoldOCLSortData;
+begin
+  inherited Get(Index,Result);
+end;
+
+function TBoldOCLSortArray.GetItemSize: Integer;
+begin
+  Result := SizeOf(TBoldOCLSortData);
+end;
+
+procedure TBoldOCLSortArray.Put(Index: Integer; Item: TBoldOCLSortData);
+begin
+  inherited Put(Index, Item);
+end;
+
 function BoldOCLInternalSortWrapper(Item1, Item2: Pointer): Integer;
 begin
-  Result := TBoldOCLSortClass(Item1).SortArg.CompareTo(TBoldOCLSortClass(Item2).SortArg);
+  Result := PBoldOCLSortData(Item1).SortArg.CompareTo(PBoldOCLSortData(Item2).SortArg);
 end;
 
 function BoldOCLInternalReverseSortWrapper(Item1, Item2: Pointer): Integer;
 begin
-  Result := - TBoldOCLSortClass(Item1).SortArg.CompareTo(TBoldOCLSortClass(Item2).SortArg);
+  Result := - PBoldOCLSortData(Item1).SortArg.CompareTo(PBoldOCLSortData(Item2).SortArg);
 end;
 
 procedure Sortlist(Node: TBoldOclIteration; BoldList: TBoldList; SortKeyHolder: TBoldIndirectElement; Order: TBoldOclIteratorSpecifier);
 var
-  Sortlist: TList;
-  SortObj: TBoldOCLSortClass;
+  SortList: TBoldOCLSortArray;
+  SortData: TBoldOCLSortData;
   i    : Integer;
   arglist: TBoldList;
   NewList: TBoldList;
 begin
-  arglist := SortKeyHolder.Value as TBoldList;
-  Sortlist := TList.Create;
-  for i := 0 to BoldList.Count - 1 do begin
-    SortObj := TBoldOCLSortClass.Create;
-    SortObj.SortArg := arglist[i];
-    SortObj.SortObj := BoldList[i];
-    Sortlist.Add(Pointer(SortObj));
-  end;
+  case BoldList.Count of
+    0: ;
+    1: (node.Value as TBoldList).Add(BoldList[0]);
+  else
+    begin
+      arglist := SortKeyHolder.Value as TBoldList;
+      SortList := TBoldOCLSortArray.Create(BoldList.Count, []);
+      try
+        SortList.Count := BoldList.Count;
+        for i := 0 to BoldList.Count - 1 do begin
+          SortData.SortArg := ArgList[i];
+          SortData.SortObj := BoldList[i];
+          SortList[i] := SortData;
+        end;
 
-  case Order of
-    OclOrderBy: Sortlist.SORT(BoldOCLInternalSortWrapper);
-    OclOrderDescending: Sortlist.SORT(BoldOCLInternalReverseSortWrapper);
-  end;
+        case Order of
+          OclOrderBy: SortList.Sort(BoldOCLInternalSortWrapper);
+          OclOrderDescending: SortList.Sort(BoldOCLInternalReverseSortWrapper);
+        end;
 
-  NewList := node.Value as TBoldLIst;
+        NewList := node.Value as TBoldLIst;
 
-  for i := 0 to BoldList.Count - 1 do begin
-    NewList.Add(TBoldOCLSortClass(Sortlist[i]).SortObj);
-    TBoldOCLSortClass(Sortlist[i]).Free;
+        for i := 0 to BoldList.Count - 1 do begin
+          SortData := SortList[i];
+          NewList.Add(SortData.SortObj);
+        end;
+      finally
+        Sortlist.Free;
+      end;
+    end;
   end;
-  Sortlist.Free;
 end;
 
 procedure TBoldOclEvaluatorVisitor.SubScribeToElem(N: TBoldOclNode);
 begin
-  // to avoid putting a default-subscribe on objects (which will subscribe to all members
-  //  if n.resubscribe and (n.value is TBoldObject) then exit;
+
   if assigned(N.Value) and assigned(CurrentSubscriber) and not n.OwnsValue then
     N.Value.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe or fResubscribeAll))
 end;
@@ -171,56 +216,63 @@ begin
 end;
 
 procedure TBoldOclEvaluatorVisitor.VisitTBoldOclOperation(N: TBoldOclOperation);
+
+  procedure ClearIfReferenced(ie: TBoldIndirectElement);
+  begin
+    if not ie.OwnsValue then
+      ie.SetReferenceValue(nil);
+
+  end;
 var
   i                : Integer;
   backupResubscribeAll: Boolean;
   OperationParams: TBoldOclSymbolParameters;
+  ArgI: TBoldOclNode;
 begin
-  if SameText(N.OperationName, 'if') then // do not localize
-  begin
-    backupResubscribeAll := fResubscribeAll;
-    fResubscribeAll := True;
-    N.Args[0].AcceptVisitor(self);
-    fResubscribeAll := backupResubscribeAll;
-    if assigned(n.args[0].value) and (N.Args[0].Value as TBABoolean).AsBoolean then
-      N.Args[1].AcceptVisitor(self)
-    else
-      N.Args[2].AcceptVisitor(self);
-  end
-  else if SameText(N.OperationName, 'except') then // do not localize
-  begin
-    backupResubscribeAll := fResubscribeAll;
-    fResubscribeAll := True;
-    try
+  case N.Symbol.GetShortCircuitType of
+    csIf:
+    begin
+      backupResubscribeAll := fResubscribeAll;
+      fResubscribeAll := True;
       N.Args[0].AcceptVisitor(self);
-      N.Args[0].TransferValue(N);
-    except
-      // if an exception occurs, go for the alternative and silence the exception
-      N.Args[1].AcceptVisitor(self);
-      N.Args[1].TransferValue(N);
+      fResubscribeAll := backupResubscribeAll;
+      if assigned(n.args[0].value) and (N.Args[0].Value as TBABoolean).AsBoolean then
+      begin
+        N.Args[1].AcceptVisitor(self);
+        ClearIfReferenced(N.Args[2]);
+      end
+      else
+      begin
+        N.Args[2].AcceptVisitor(self);
+        ClearIfReferenced(N.Args[1]);
+      end;
+     end;
+
+    csOr:
+    begin
+      fResubscribeAll := True;
+      N.Args[0].AcceptVisitor(self);
+      if (not assigned(n.args[0].value)) or not (N.Args[0].Value as TBABoolean).AsBoolean then
+        N.Args[1].AcceptVisitor(self)
+      else
+        ClearIfReferenced(N.Args[1]);
     end;
-    fResubscribeAll := backupResubscribeAll;
-    SubScribeToElem(N);
-    exit;
-  end
-  else if SameText(N.OperationName, 'or') then // do not localize
-  begin
-    fResubscribeAll := True;
-    N.Args[0].AcceptVisitor(self);
-    if (not assigned(n.args[0].value)) or not (N.Args[0].Value as TBABoolean).AsBoolean then
-      N.Args[1].AcceptVisitor(self)
-  end
-  else if SameText(N.OperationName, 'and') then // do not localize
-  begin
-    fResubscribeAll := True;
-    N.Args[0].AcceptVisitor(self);
-    if assigned(n.args[0].value) and (N.Args[0].Value as TBABoolean).AsBoolean then
-      N.Args[1].AcceptVisitor(self)
-  end
-  else
-  begin
-    for i := 0 to N.Args.Count - 1 do
-      N.Args[i].AcceptVisitor(self);
+
+    csAnd:
+    begin
+      fResubscribeAll := True;
+      N.Args[0].AcceptVisitor(self);
+      if assigned(n.args[0].value) and (N.Args[0].Value as TBABoolean).AsBoolean then
+        N.Args[1].AcceptVisitor(self)
+      else
+        ClearIfReferenced(N.Args[1]);
+    end;
+    
+    else
+    begin
+      for i := 0 to Length(N.Args) - 1 do
+        N.Args[i].AcceptVisitor(self);
+    end;
   end;
 
   try
@@ -228,35 +280,46 @@ begin
     try
       for i := 0 to n.Symbol.numberOfArgs-1 do
       begin
-        if not assigned(n.args[i].value) and (n.args[i].BoldType is TBoldAttributeTypeInfo) and
-           not (n.args[i].BoldType as TBoldAttributeTypeInfo).IsAbstract then
+        Argi := n.args[i];
+        if not assigned(Argi.value) and (Argi.BoldType is TBoldAttributeTypeInfo) and
+           not (Argi.BoldType as TBoldAttributeTypeInfo).IsAbstract then
         begin
-          n.args[i].SetOwnedValue(TBoldMemberFactory.CreateMemberFromBoldType(n.args[i].BoldType));
-          n.args[i].HastemporaryDummyValue := true;
-        end;
-        if n.args[i].value is tBoldObjectReference then
-          OperationParams.values[i] := (n.args[i].value as tBoldObjectReference).BoldObject
+          if Argi.BoldType = fBooleanType then
+            Argi.SetReferenceValue(fTrueBool)
+          else
+          begin
+            if OclUseTemporaryDummyValue then
+            begin
+              Argi.SetOwnedValue(TBoldMemberFactory.CreateMemberFromBoldType(Argi.BoldType));
+              Argi.HasTemporaryDummyValue := true;
+            end
+            else
+              Argi.SetReferenceValue(nil);
+          end;
+        end
+        else if Argi.value is TBoldObjectReference then
+          OperationParams.values[i] := (Argi.value as TBoldObjectReference).BoldObject
         else
-          OperationParams.values[i] := n.args[i].value;
-        OperationParams.Nodes[i] := n.args[i];
+          OperationParams.values[i] := Argi.value;
+        OperationParams.Nodes[i] := Argi;
       end;
       OperationParams.Result := N;
       OperationParams.SubScriber := CurrentSubscriber;
       OperationParams.System := CurrentSystem;
       OperationParams.SystemTypeInfo := CurrentSystemTypeInfo;
       n.Symbol.Evaluate(OperationParams);
-
+      
       if OPerationParams.result.OwnsValue and assigned(OPerationParams.result.value) then
         OPerationParams.result.Value.MakeImmutable;
 
     finally
-      // if-statements don't evaluate all arguments, so we must throw away the rest so that literals can be reevaluated the next time.
       for i := 0 to n.Symbol.numberOfArgs-1 do
       begin
-        if n.args[i].HastemporaryDummyValue then
+        Argi := n.args[i];
+        if Argi.HasTemporaryDummyValue then
         begin
-          n.args[i].SetReferenceValue(nil);
-          n.args[i].HastemporaryDummyValue := false;
+          Argi.SetReferenceValue(nil);
+          Argi.HasTemporaryDummyValue := false;
         end;
       end;
     end;
@@ -268,9 +331,8 @@ begin
     end;
   end;
 
-  if assigned(n.value) and not assigned(n.value.Boldtype) then
+  if assigned(n.value) and not assigned(n.value.Boldtype) and not (n.Value is TBAValueSetValue) then // TBAValueSetValue does not have a type by design
     raise EBoldInternal.CreateFmt('Result of evaluation of operation %s has no type', [n.OperationName]);
-//    n.value.BoldType := n.ExpressionType;
 
   SubScribeToElem(N);
 end;
@@ -324,8 +386,6 @@ begin
         SortKeyHolder := TBoldOclNode.Create;
         SortKeys := TBoldMemberList.Create;
         SortKeys.DuplicateMode := bldmAllow;
-
-        // if the sort argument is not a real member (has RTinfo) then we must clone it
         SortArgIsRTMember := (N.Args[1] is TBoldOclMember) and Assigned((N.Args[1] as TBoldOclMember).RTInfo);
         SortKeys.CloneMembers := not SortArgIsRTMember;
 
@@ -345,8 +405,7 @@ begin
         begin
           for i := Sortkeys.Count-1 downto 0 do
           begin
-            // if we had to create dummy-sortkeys that are not owned by the list,
-            // we must take care of them here
+
             if not assigned(Sortkeys[i].OwningObject) then
             begin
               TempSortKey := SortKeys[i];
@@ -388,7 +447,7 @@ begin
         List.EnsureRange(0, List.Count-1);
 
         for i := 0 to List.Count - 1 do begin
-          n.LoopVar.BoldType := nil; // reset static boldtype
+          n.LoopVar.BoldType := nil;
           N.LoopVar.SetReferenceValue(List[i]);
           N.Args[1].AcceptVisitor(self);
           OperationParams.values[0] := n.args[1].Value;
@@ -413,7 +472,7 @@ var
     Role: TBoldObjectList;
   begin
     MemberList := TBoldMemberList.Create;
-    for i := 0 to n.Qualifier.count-1 do
+    for i := 0 to Length(n.Qualifier)-1 do
       MemberList.Add(n.Qualifier[i].value as TBoldMember);
     role := Obj.BoldMembers[n.MemberIndex] as TBoldObjectList;
     if assigned(CurrentSubscriber) then
@@ -434,6 +493,7 @@ var
     Result := CreateNewMember(n.BoldType) as TBoldMemberList;
     Result.DuplicateMode := bldmAllow;
     index := N.memberindex;
+    Result.Capacity := OldObjectList.Count;
     for i := 0 to OldObjectList.Count - 1 do begin
       LoopObject := OldObjectList[i];
       Result.Add(LoopObject.BoldMembers[index]);
@@ -452,7 +512,7 @@ var
 
   function retrieveMultiLink: TBoldObjectList;
   var
-    i, j : Integer;
+    i : Integer;
     roleList: TBoldObjectList;
     tempSystem: TBoldSystem;
   begin
@@ -467,7 +527,7 @@ var
     Result := CreateNewMember(n.BoldType) as TBoldObjectList;
     Result.DuplicateMode := bldmAllow;
     if assigned(n.Qualifier) then
-      for i := 0 to N.qualifier.Count - 1 do
+      for i := 0 to Length(N.qualifier) - 1 do
         N.Qualifier[i].AcceptVisitor(self);
 
     for i := 0 to OldObjectList.Count - 1 do
@@ -480,9 +540,7 @@ var
         roleList := LoopObject.BoldMembers[N.memberindex] as TBoldObjectList;
         if assigned(CurrentSubscriber) then
           roleList.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe));
-
-        for J := 0 to roleList.Count - 1 do
-          Result.Add(roleList[J]);
+        Result.AddList(roleList);
       end;
     end;
   end;
@@ -517,7 +575,7 @@ var
 begin
   N.MemberOf.AcceptVisitor(self);
 
-  if assigned(n.MemberOf.value) then begin
+  if assigned(n.MemberOf.value) then begin // and not ((n.MemberOf.Value is TBoldObjectReference) and (n.TBoldObjectReference(MemberOf.Value).BoldObject = nil))
     case N.MemberOf.Value.BoldType.BoldValueType of
       bvtSystem: N.SetReferenceValue(retrieveClass);
       bvtClass: begin
@@ -527,13 +585,13 @@ begin
         else if N.MemberOf.Value is TBoldObject then
           Obj := TBoldObject(N.MemberOf.Value)
         else if assigned(n.Memberof.Value) then
-          raise EBold.CreateFmt(sUnknownTypeOfMemberOf,[N.MemberOf.Value.ClassName]);
+          raise EBold.CreateFmt('unknown type of memberof: %s',[N.MemberOf.Value.ClassName]);
 
-        if assigned(Obj) then
+        if assigned(Obj) and assigned(Obj.BoldObjectLocator) then
         begin
           if assigned(n.Qualifier) then
           begin
-            for i := 0 to N.qualifier.Count - 1 do
+            for i := 0 to Length(N.qualifier) - 1 do
               N.Qualifier[i].AcceptVisitor(self);
             n.SetReferenceValue(RetrieveQualifiedSingle(obj));
           end else
@@ -555,11 +613,11 @@ begin
           bvtAttr: N.SetOwnedValue(retrieveAttribute);
           bvtClass: N.SetOwnedValue(RetrieveSingleLink);
           bvtList: N.SetOwnedValue(retrieveMultiLink)
-        else raise EBold.CreateFmt(sUnknownTypeOfMember,[N.MemberType.ClassName]);
+        else raise EBold.CreateFmt('unknown type of member: %s',[N.MemberType.ClassName]);
         end;
       end;
     else
-      raise EBold.CreateFmt(sUnknownTypeOfMember,[N.MemberOf.Value.BoldType.ClassName]);
+      raise EBold.CreateFmt('unknown type of member: %s',[N.MemberOf.Value.BoldType.ClassName]);
     end;
 
     SubScribeToElem(N);
@@ -574,14 +632,15 @@ begin
   VariableValue := N.VariableBinding.Value;
   N.SetReferenceValue(VariableValue);
   if assigned(currentSubscriber) and Assigned(VariableValue) then
-    VariableValue.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe or fResubscribeAll));   // CHECKME
-// Har fattas väl ett abbonememang på variablen som sådan?? Går bra så länge variablerna är konstanter.
-// Janne
+    VariableValue.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe or fResubscribeAll));
+
+
 end;
 
 procedure TBoldOclEvaluatorVisitor.VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral);
 begin
-
+  if not assigned(n.value) then
+    n.SetReferenceValue(CurrentSystemTypeInfo.FindValueSetByName(N.Name));
 end;
 
 procedure TBoldOclEvaluatorVisitor.VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLiteral);
@@ -605,13 +664,12 @@ begin
       raise EBoldOclRunTimeError.CreateFmt(boertRangeNotAssigned, [n.RangeStart.Position]);
 
     tempInteger := MakeNewInteger;
-//    TempInteger.BoldType := N.RangeStart.BoldType;
     for i := (N.RangeStart.Value as TBAInteger).AsInteger to (N.RangeStop.Value as TBAInteger).AsInteger do begin
       TempInteger.AsInteger := i;
       BoldList.Add(tempInteger);
     end;
   end else begin
-    for i := 0 to N.Elements.Count - 1 do begin
+    for i := 0 to Length(N.Elements) - 1 do begin
       N.Elements[i].AcceptVisitor(self);
       BoldList.Add(N.Elements[i].Value);
     end;
@@ -705,4 +763,6 @@ begin
   result := CreateNewMember(fTimeType) as TBATime;
 end;
 
+initialization
+  
 end.

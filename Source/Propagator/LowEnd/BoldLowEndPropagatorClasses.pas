@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLowEndPropagatorClasses;
 
 interface
@@ -99,7 +102,6 @@ var
   Count, i: integer;
   Clients: TList;
 begin
-  // get the number of registered client
   count := 0;
   Clients := nil;
   for i := 0 to ClientList.Count - 1 do
@@ -140,7 +142,6 @@ end;
 
 function TBoldClientPropagator.ExtendLease(BoldClientID: Integer; LeaseDuration: Integer; out ExtensionOK: WordBool): HResult; stdcall;
 begin
-  //NOT IMPLEMENTED
   Result := S_OK;
 end;
 
@@ -174,7 +175,6 @@ end;
 
 function TBoldClientPropagator.CancelSubscriptions(BoldClientID: Integer; Subscriptions: OleVariant): HResult;
 begin
-  // not implemented
   Result := S_OK;
 end;
 

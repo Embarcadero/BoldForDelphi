@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSqlNodesResolver;
 
 interface
@@ -19,6 +22,7 @@ type
     fRootNode: TBoldSQLNode;
     fExternalVariables: TBoldSQLNodeList;
   protected
+    function FindSymbolByName(const Name: string): TBSS_Symbol; 
     procedure VisitTBoldSqlNode(N: TBoldSqlNode); override;
     procedure VisitTBoldSqlListCoercion(N: TBoldSqlListCoercion); override;
     procedure VisitTBoldSqlOperation(N: TBoldSqlOperation); override;
@@ -44,7 +48,10 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldPMappersLinkDefault;
+  BoldPMappersLinkDefault,
+  BoldPMappers,
+  BoldIndex,
+  BoldIndexableList;
 
 { TBoldSqlNodeResolver }
 
@@ -65,6 +72,11 @@ begin
       fExternalVariables[i].AcceptVisitor(self);
   if assigned(fRootNode) then
     fRootNode.AcceptVisitor(self);
+end;
+
+function TBoldSqlNodeResolver.FindSymbolByName(const Name: string): TBSS_Symbol;
+begin
+  result := SqlSymbolDictionary.SymbolByName[Name];
 end;
 
 procedure TBoldSqlNodeResolver.VisitTBoldSqlDateLiteral(
@@ -114,8 +126,17 @@ end;
 procedure TBoldSqlNodeResolver.VisitTBoldSqlMember(N: TBoldSqlMember);
 begin
   n.MemberOf.AcceptVisitor(self);
-
-  n.MemberMapper := n.MemberOf.ObjectMapper.MemberPersistenceMappers[n.MemberOf.ObjectMapper.MemberMapperIndexByMemberIndex[n.MemberIndex]] as TBoldMemberSQLMapper;
+  try
+    n.MemberMapper := n.MemberOf.ObjectMapper.MemberPersistenceMappers[n.MemberOf.ObjectMapper.MemberMapperIndexByMemberIndex[n.MemberIndex]] as TBoldMemberSQLMapper;
+  except
+    on EAssertionFailed do
+    begin
+      if not n.MemberOf.HasObjectMapper then
+        raise EBold.CreateFmt('ObjectMapper not found for member ''%s'', possibly due to unsupported combination of child/parent mapping.', [n.MemberName])
+      else
+        raise;
+    end;
+  end;
 
   if n.MemberMapper is TBoldLinkDefaultMapper then
     n.ObjectMapper := (n.MemberMapper as TBoldLinkDefaultMapper).OtherEndObjectMapper;
@@ -130,8 +151,12 @@ begin
   if n.ClassType = TBoldSQLOperation then
   begin
     n.Symbol := FindSymbolByName(n.OperationName);
+    if not Assigned(n.Symbol) then
+      raise EBold.CreateFmt('InPs SQLSymbol ''%s'' not found, possibly not available for InPs evaluation.', [n.OperationName]);
     n.Args.TraverseList(self);
     n.ObjectMapper := n.Symbol.ResolveObjectMapper(n);
+    if not n.HasObjectMapper then
+      n.ObjectMapper := n.Symbol.ResolveObjectMapper(n);
   end;
 end;
 
@@ -159,4 +184,5 @@ begin
   n.VariableBinding.AddRef;
 end;
 
+initialization
 end.

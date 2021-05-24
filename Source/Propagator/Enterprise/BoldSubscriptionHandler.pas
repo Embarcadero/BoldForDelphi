@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSubscriptionHandler;
 
 interface
@@ -12,9 +15,11 @@ uses
   BoldThreadSafeQueue,
   BoldEnqueuer,
   BoldAbstractOutputQueueHandler,
-  BoldThread;
+  BoldThread
+  ;
 
 type
+
   {forward declarations}
   TBoldSubscriptionHandler = class;
   TBoldDequeuer = class;
@@ -90,8 +95,7 @@ uses
   Boldutils,
   BoldOutputQueueHandler,
   BoldPropagatorConstants,
-  BoldThreadSafeLog,
-  PropagatorConsts;
+  BoldThreadSafeLog;
 
   {TBoldDequeuer}
 constructor TBoldDequeuer.Create(InQueue: TBoldThreadSafeObjectQueue);
@@ -129,7 +133,7 @@ begin
       Events.Clear;
     end;
   except on E: EOutOfMemory do
-    BoldLogError(sLogError, [ClassName, 'Dequeue', E.Message]); // do not localize
+    BoldLogError('%s.Dequeue: %s', [E.Message]);
   end;
 end;
 
@@ -161,15 +165,15 @@ var
 begin
   EnsureMessageQueue;
   SignalReady;
-  BoldLogThread('ID=Dequeuer'); // do not localize
+  BoldLogThread('ID=Dequeuer');
 
   while not Terminated do
   begin
     res := Integer(getMessage(rMsg, 0, 0, 0));
     try
-      if res = -1 then //error
+      if res = -1 then
         Terminate
-      else if res = 0 then // terminated
+      else if res = 0 then
         Terminate
       else if rMsg.message = BM_QUEUE_NOT_EMPTY then
       begin
@@ -200,7 +204,6 @@ begin
     except
       on e: Exception do
       begin
-        // distinct beeps for any occasion!
         if (res=0) or (res=-1) then
           Windows.Beep(440, 500)
         else if (rMsg.Message = BM_REQUEST_CLIENT_INFO) or (rMsg.MEssage = BM_REQUEST_GLOBAL_INFO) then
@@ -237,9 +240,10 @@ begin
   try
     self.Notify(BM_QUEUE_NOT_EMPTY);
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'NotifyQueueNotEmpty', E.Message]); // do not localize
+    BoldLogError('%s.NotifyQueueNotEmpty: %s', [ClassName, E.Message]);
   end;
 end;
+
 
 procedure TBoldDequeuer.EnqueueRemoveClientQueueEvent(const ClientID: TBoldClientId);
 begin
@@ -300,7 +304,7 @@ begin
   if Assigned(fOutQueueHandler) then
     Result := fOutQueueHandler
   else
-    raise EBold.CreateFmt(sOutputQueueHandlerNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.getQueueHandler: AbstractOutputQueueHandler is not assigned.', [ClassName]);
 end;
 
 function TBoldSubscriptionHandler.GetSentEventsCount: integer;
@@ -323,7 +327,6 @@ begin
 
     case BoldExternalEvent.EventType of
       bemEvent: begin
-        // send event to all registered clients except the sender
         Clients := TBoldSortedIntegerList.Create;
         try
           FSubscriptions.GetAllSubscribedClientsExcept(EventNameWithoutParameters,
@@ -332,7 +335,6 @@ begin
         finally
           FreeAndNil(Clients);
         end;
-        // cancel subscriptions for all clients that had subscriptions except the sender
         FSubscriptions.RemoveEvent(EventNameWithoutParameters);
         FSubscriptions.AddSubscription(BoldExternalEvent.BoldClientID, EventNameWithoutParameters);
       end;
@@ -359,7 +361,7 @@ begin
       end;
     end;
   except on E: Exception do
-    BoldLogError(sLogError, [ClassName, 'ProcessExternalEvent', E.Message]); // do not localize
+    BoldLogError('%s.ProcessExternalEvent: error = %s', [ClassName, E.Message]);
   end;
 end;
 
@@ -400,5 +402,7 @@ begin
     inc(fSentEventsCount, ClientIDs.Count);
   end;
 end;
+
+initialization
 
 end.

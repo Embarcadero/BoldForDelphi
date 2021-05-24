@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRichEditCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -309,7 +312,7 @@ procedure TBoldCustomRichEditCom.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
   if (Key in [#32..#255]) and
-    not BoldProperties.ValidateCharacter(Key, Follower) then
+    not BoldProperties.ValidateCharacter(AnsiChar(Key), Follower) then
   begin
     MessageBeep(0);
     Key := BOLDNULL;

@@ -1,10 +1,13 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLXMILinkSupport;
 
 interface
 
 uses
   Variants,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldContainers,
   BoldIndexableList,
   BoldUMLModel;
@@ -89,17 +92,17 @@ var
 function FormatId(const id: TXMIId): string;
 begin
   if id.id <> '' then
-    Result := Format('id:%s ', [id.id]); // do not localize
+    Result := Format('id:%s ', [id.id]);
   if id.UUid <> '' then
-    Result := Format('UUid:%s ', [id.id]); // do not localize
+    Result := Format('UUid:%s ', [id.id]);
 end;
 
 function GetXMIId(UMLElementNode: IXMLDOMElement): TXMIId;
 begin
-  if not VarIsNull(UMLElementNode.getAttribute('xmi.id')) then // do not localize
-    Result.Id := UMLElementNode.getAttribute('xmi.id'); // do not localize
-  if not VarIsNull(UMLElementNode.getAttribute('xmi.uuid')) then // do not localize
-    Result.UUId := UMLElementNode.getAttribute('xmi.uuid'); // do not localize
+  if not VarIsNull(UMLElementNode.getAttribute('xmi.id')) then
+    Result.Id := UMLElementNode.getAttribute('xmi.id');
+  if not VarIsNull(UMLElementNode.getAttribute('xmi.uuid')) then
+    Result.UUId := UMLElementNode.getAttribute('xmi.uuid');
 end;
 
 function IsNonBlank(const XMIId: TXMIId): boolean;
@@ -109,18 +112,16 @@ end;
 
 function GetXMIIdRef(UMLElementNode: IXMLDOMElement): TXMIId;
 begin
-  if not VarIsNull(UMLElementNode.getAttribute('xmi.idref')) then // do not localize
-    Result.Id := UMLElementNode.getAttribute('xmi.idref'); // do not localize
-  if not VarIsNull(UMLElementNode.getAttribute('xmi.uuidref')) then // do not localize
-    Result.UUId := UMLElementNode.getAttribute('xmi.uuidref'); // do not localize
+  if not VarIsNull(UMLElementNode.getAttribute('xmi.idref')) then
+    Result.Id := UMLElementNode.getAttribute('xmi.idref');
+  if not VarIsNull(UMLElementNode.getAttribute('xmi.uuidref')) then
+    Result.UUId := UMLElementNode.getAttribute('xmi.uuidref');
 end;
 
 function XMIIdforId(const id: string): TXMIId;
 begin
   Result.Id := id;
-end;
-
-{ TODO : move to common IXMLDOMSupport unit}
+end; 
 function NextElementFromNodeList(List: IXMLDOMNodeList): IXMLDOMElement;
 var
   Node: IXMLDOMNode;
@@ -132,8 +133,7 @@ begin
       Result := Node as IXMLDOMElement
     else
       Node := List.NextNode;
-end;
-{ TODO : move to common IXMLDOMSupport unit}
+end; 
 function FirstElementFromNodeList(List: IXMLDOMNodeList): IXMLDOMElement;
 begin
   List.Reset;
@@ -221,5 +221,7 @@ function TUUIdIndex.ItemAsKeyString(Item: TObject): string;
 begin
   Result := (Item as TBoldXMIObjectItem).xmiid.uuid;
 end;
+
+initialization
 
 end.

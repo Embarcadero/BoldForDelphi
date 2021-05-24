@@ -1,8 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLAbstractModelValidator;
 
 interface
 
 uses
+  BoldModel,
   BoldUMLAttributes,
   BoldUMLModel,
   BoldSQLDatabaseConfig;
@@ -14,9 +18,10 @@ type
   private
     fSQLDataBaseConfig: TBoldSQLDataBaseConfig;
     fLanguage: TBoldModelValidatorSourceLanguage;
-    fUMLModel: TUMLModel;
+    fBoldModel: TBoldModel;
     function GetValidator: TValidator;
-    procedure AddViolation(severity: TSeverity; description: String; element: TUMLModelElement);
+    procedure AddViolation(severity: TSeverity; const description: String; element: TUMLModelElement);
+    function GetUMLModel: TUMLModel;
   protected
     procedure AddError(description: String; args: array of const; element: TUMLModelElement);
     procedure AddHint(description: String; args: array of const; element: TUMLModelElement);
@@ -25,8 +30,9 @@ type
     property SQLDataBaseConfig: TBoldSQLDataBaseConfig read fSQLDataBaseConfig;
     property Language: TBoldModelValidatorSourceLanguage read fLanguage;
   public
-    constructor Create(UMLModel: TUMLModel; SQLDataBaseConfig: TBoldSQLDataBaseConfig = nil; const Language: TBoldModelValidatorSourceLanguage = mvslNone);
-    property UMLModel: TUMLModel read fUMLModel;
+    constructor Create(ABoldModel: TBoldModel; SQLDataBaseConfig: TBoldSQLDataBaseConfig = nil; const Language: TBoldModelValidatorSourceLanguage = mvslNone);
+    property UMLModel: TUMLModel read GetUMLModel;
+    property BoldModel: TBoldModel read fBoldModel;
     property Validator: TValidator read GetValidator;
     function HighestSeverity: TSeverity;
   end;
@@ -39,11 +45,12 @@ const
   BoldDefaultValidatorSourceLanguage = mvslCpp;
   {$ENDIF}
 
-
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldDefs,
+  BoldRev;
 
 procedure TBoldUMLAbstractModelValidator.AddError(description: String; args: array of const; element: TUMLModelElement);
 begin
@@ -60,7 +67,7 @@ begin
   AddViolation(sHint, format(description, args), element);
 end;
 
-procedure TBoldUMLAbstractModelValidator.AddViolation(severity: TSeverity; description: String; element: TUMLModelElement);
+procedure TBoldUMLAbstractModelValidator.AddViolation(severity: TSeverity; const description: String; element: TUMLModelElement);
 var
   v : TViolation;
 begin
@@ -78,12 +85,20 @@ begin
     Validator.Violation[i].Delete
 end;
 
-constructor TBoldUMLAbstractModelValidator.Create(UMLModel: TUMLModel; SQLDataBaseConfig: TBoldSQLDataBaseConfig; const Language: TBoldModelValidatorSourceLanguage);
+constructor TBoldUMLAbstractModelValidator.Create(ABoldModel: TBoldModel; SQLDataBaseConfig: TBoldSQLDataBaseConfig; const Language: TBoldModelValidatorSourceLanguage);
 begin
   inherited Create;
   fSQLDataBaseConfig := SQLDataBaseConfig;
-  fUMLModel := UMLModel;
+  fBoldModel := ABoldModel;
   fLanguage := Language;
+end;
+
+function TBoldUMLAbstractModelValidator.GetUMLModel: TUMLModel;
+begin
+  if Assigned(BoldModel) then  
+    result := BoldModel.EnsuredUMLModel
+  else
+    result := nil;
 end;
 
 function TBoldUMLAbstractModelValidator.GetValidator: TValidator;
@@ -100,5 +115,7 @@ begin
     if Validator.Violation[i].Severity > result then
       result := Validator.violation[i].Severity;
 end;
+
+initialization
 
 end.

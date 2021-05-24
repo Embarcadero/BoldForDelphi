@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTaggedValueList;
 
 interface
@@ -70,7 +73,6 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
   BoldSharedStrings;
 
 { TBoldTaggedValueDefinition }
@@ -174,5 +176,7 @@ function TBoldTaggedValueDefinitionIndex.ItemAsKeyString(Item: TObject): string;
 begin
   result := TBoldTaggedValueDefinition(item).Tag;
 end;
+
+initialization
 
 end.

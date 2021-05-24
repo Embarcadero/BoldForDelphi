@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnvironment;
 
 interface
@@ -31,10 +34,9 @@ type
     fApplicationSubscriber: TBoldApplicationSubscriber;
     fQueueFinalized: Boolean;
     procedure FinalizeQueue;
-// this procedure should be called _ApplicationDestroyed
-    procedure DeactivateQueue;
+    procedure _ApplicationDestroyed;
 
-    function GetRunningInIDE: Boolean;
+    class function GetRunningInIDE: Boolean;
   protected
     function GetQueue: TBoldQueue;
     function GetQueueClass: TBoldQueueClass; virtual;
@@ -42,6 +44,7 @@ type
     function GetName: string; virtual; abstract;
     function GetRootComponent: TComponent; virtual;
   public
+    procedure AfterConstruction; override;
     destructor Destroy; override;
     procedure HandleDesigntimeException(Sender: TObject); virtual;
     procedure UpdateDesigner(Sender: TObject); virtual;
@@ -62,7 +65,7 @@ type
   TBoldFreestandingEnvironmentConfiguration = class(TBoldEnvironmentConfiguration)
   protected
     function GetName: string; override;
-  public
+  public  
     procedure BringToFront; override;
     procedure FocusMainForm; override;
   end;
@@ -79,20 +82,23 @@ var
 
   function BoldEffectiveEnvironment: TBoldEnvironmentConfiguration;
   function BoldEnvironmentsFinalized: Boolean;
+  function BoldInstalledQueue: TBoldQueue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 
 implementation
 
 uses
   SysUtils,
-  BoldEnvironmentVCL; //Temporary fix
+  BoldEnvironmentVCL,   // Don't remove this!
+  BoldRev;
 
 const
   UnsupportedFunction = '%s: function unsupported in environment configuration %s';
 
 var
   G_EnvironmentsFinalized: Boolean = false;
+  G_BoldEffectiveEnvironment: TBoldEnvironmentConfiguration;
 
-function BoldEffectiveEnvironment: TBoldEnvironmentConfiguration;
+function GetBoldEffectiveEnvironment: TBoldEnvironmentConfiguration;
 begin
    if Assigned(BoldInternalCustomConfiguration) then
     Result := BoldInternalCustomConfiguration
@@ -109,12 +115,33 @@ begin
     raise EBoldInternal.Create('BoldEffectiveEnvironment, no environment available. Unit BoldEnvironment either not initialized, or already finalized');
 end;
 
+function BoldEffectiveEnvironment: TBoldEnvironmentConfiguration;
+begin
+  if not Assigned(G_BoldEffectiveEnvironment) then
+    G_BoldEffectiveEnvironment := GetBoldEffectiveEnvironment;
+  result := G_BoldEffectiveEnvironment;
+end;
+
+function BoldInstalledQueue: TBoldQueue;
+begin
+  if BoldEnvironmentsFinalized then
+    result := nil
+  else
+    result := BoldEffectiveEnvironment.Queue;
+end;
+
 function BoldEnvironmentsFinalized: Boolean;
 begin
   result := G_EnvironmentsFinalized;
 end;
 
 { TBoldEnvironmentConfiguration }
+
+procedure TBoldEnvironmentConfiguration.AfterConstruction;
+begin
+  inherited;
+  G_BoldEffectiveEnvironment := nil;
+end;
 
 function TBoldEnvironmentConfiguration.AskUser(const Text: string): Boolean;
 begin
@@ -147,7 +174,7 @@ begin
   raise EBoldInternal.CreateFmt(UnsupportedFunction, ['ProcessMessages', Name])
 end;
 
-function TBoldEnvironmentConfiguration.GetRunningInIDE: Boolean;
+class function TBoldEnvironmentConfiguration.GetRunningInIDE: Boolean;
 begin
   Result := BoldInternalRunningInIDE;
 end;
@@ -168,14 +195,13 @@ begin
   begin
     fQueue := GetQueueClass.Create;
     fApplicationSubscriber := TBoldApplicationSubscriber.Create(RootComponent);
-    fApplicationSubscriber.OnApplicationDestroyed := DeactivateQueue;
+    fApplicationSubscriber.OnApplicationDestroyed := _ApplicationDestroyed;
   end;
   Result := fQueue;
 end;
 
 procedure TBoldEnvironmentConfiguration.FinalizeQueue;
 begin
-  //NOTE: Cannot use FreeAndNil, as it does things in the wrong order.
   if Assigned(fQueue) then
   begin
     fQueue.Free;
@@ -198,6 +224,7 @@ destructor TBoldEnvironmentConfiguration.Destroy;
 begin
   if not QueueFinalized then
     FinalizeQueue;
+  G_BoldEffectiveEnvironment := nil;
   inherited;
 end;
 
@@ -216,8 +243,7 @@ begin
   raise EBoldInternal.CreateFmt(UnsupportedFunction, ['TriggerQueueMechanism', Name]);
 end;
 
-// this procedure should be called _ApplicationDestroyed
-procedure TBoldEnvironmentConfiguration.DeactivateQueue;
+procedure TBoldEnvironmentConfiguration._ApplicationDestroyed;
 begin
   fApplicationSubscriber := nil;
   if assigned(fQueue) and not QueueFinalized then
@@ -228,19 +254,17 @@ end;
 
 procedure TBoldFreestandingEnvironmentConfiguration.BringToFront;
 begin
-  // Don't call inherited
-  // Ignore silently
+
 end;
 
 procedure TBoldFreestandingEnvironmentConfiguration.FocusMainForm;
 begin
-  // Don't call inherited
-  // Ignore silently
+
 end;
 
 function TBoldFreestandingEnvironmentConfiguration.GetName: string;
 begin
-  Result := 'Freestanding'; // do not localize
+  Result := 'Freestanding';
 end;
 
 { TBoldApplicationSubscriber }
@@ -263,6 +287,7 @@ finalization
   FreeAndNil(BoldInternalCLXConfiguration);
   FreeAndNil(BoldInternalCustomConfiguration);
   FreeAndNil(BoldInternalFreestandingConfiguration);
+  G_BoldEffectiveEnvironment := nil;
   G_EnvironmentsFinalized := true;
 
 end.

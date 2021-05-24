@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWebConnectionReg;
 
 interface
@@ -6,7 +9,8 @@ procedure Register;
 
 implementation
 
-{.$R *.res}
+{$R BoldWebConnectionReg.res}
+
 uses
   BoldWebConnection,
   BoldIDEConsts,
@@ -23,3 +27,4 @@ begin
 end;
 
 end.
+

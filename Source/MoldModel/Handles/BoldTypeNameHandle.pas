@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeNameHandle;
 
 interface
@@ -25,7 +28,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldTypeNameHandle }
 
@@ -46,5 +50,7 @@ procedure TBoldTypeNameHandle.SetDictionary(const Value: TBoldTypeNameDictionary
 begin
   FDictionary.Assign(Value);
 end;
+
+initialization
 
 end.

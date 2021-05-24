@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLDelphiSupport;
 
 interface
@@ -19,7 +22,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 { TBoldUMLDelphiSupport }
 
@@ -32,8 +36,8 @@ begin
   if ColonPos > 0 then
   begin
     Result := BoldTrim(Copy(ParameterName, ColonPos+1, MaxInt));
-    Delete(ParameterName, ColonPos, Maxint);
-  end;
+    Delete(ParameterName, ColonPos, Maxint); 
+  end;  
 end;
 
 class function TBoldUMLDelphiSupport.ExtractIsConst(
@@ -41,10 +45,10 @@ class function TBoldUMLDelphiSupport.ExtractIsConst(
 var
   Index: integer;
 begin
-  Index := Pos('const ', LowerCase(ParameterName)); // do not localize
+  Index := Pos('const ', LowerCase(ParameterName));
   Result := Index > 0;
   if Result then
-    Delete(ParameterName, Index, 6);  // 6 = length('const ');
+    Delete(ParameterName, Index, 6);
 end;
 
 class function TBoldUMLDelphiSupport.ExtractKind(
@@ -52,19 +56,19 @@ class function TBoldUMLDelphiSupport.ExtractKind(
 var
   Index: integer;
 begin
-  Index := Pos('var ', LowerCase(ParameterName)); // do not localize
+  Index := Pos('var ', LowerCase(ParameterName));
   if Index > 0 then
   begin
     Result := pdInOut;
-    Delete(ParameterName, Index, 4);  // 4 = length('var ');
+    Delete(ParameterName, Index, 4);
   end
   else
   begin
-    Index := Pos('out ', LowerCase(ParameterName)); // do not localize
+    Index := Pos('out ', LowerCase(ParameterName));
     if Index > 0 then
     begin
       Result := pdOut;
-      Delete(ParameterName, Index, 4);  // 4 = length('out ');
+      Delete(ParameterName, Index, 4);
     end
     else
       Result := pdIn;
@@ -75,13 +79,14 @@ class function TBoldUMLDelphiSupport.ParameterModifier(
   Kind: TBoldParameterDirectionKind; IsConst: Boolean): string;
 begin
   if IsConst then
-    Result := 'const ' // do not localize
+    Result := 'const '
   else if Kind = pdInOut then
-    Result := 'var ' // do not localize
+    Result := 'var '
   else if Kind = pdOut then
-    Result := 'out ' // do not localize
+    Result := 'out '
   else
     Result := '';
 end;
 
+initialization
 end.

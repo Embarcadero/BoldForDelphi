@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLPluginCallBacks;
 
 interface
@@ -21,7 +24,7 @@ type
   TBoldUMLModelValidatorCallBack = class
   public
     class procedure Validate(Modelhandle: TBoldModel);
-  end;
+  end;  
 
 implementation
 
@@ -40,7 +43,7 @@ var
 begin
   OCLValidityChecker := TOCLValidityChecker.Create(Modelhandle.TypeNameDictionary);
   try
-    OCLValidityChecker.ValidateModel(Modelhandle.EnsuredUMLModel);
+    OCLValidityChecker.ValidateModel(Modelhandle);
   finally
     OCLValidityChecker.Free;
   end;
@@ -52,12 +55,14 @@ class procedure TBoldUMLModelValidatorCallBack.Validate(Modelhandle: TBoldModel)
 var
   ModelValidator: TBoldUMLModelValidator;
 begin
-  ModelValidator := TBoldUMLModelValidator.Create(Modelhandle.EnsuredUMLModel, SQLDataBaseConfigforModel(Modelhandle));
+  ModelValidator := TBoldUMLModelValidator.Create(Modelhandle, SQLDataBaseConfigforModel(Modelhandle));
   try
     ModelValidator.Validate(Modelhandle.TypeNameDictionary);
   finally
     ModelValidator.Free;
   end;
 end;
+
+initialization
 
 end.

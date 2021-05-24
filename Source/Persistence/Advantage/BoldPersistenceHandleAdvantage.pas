@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleAdvantage;
 
 interface
@@ -21,7 +24,7 @@ type
     property DatabaseAdapter: TBoldAdvantageDatabase read FDatabaseAdapter;
     property EffectiveDatabase: TAdsConnection read GetEffectiveDatabase;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property AdsConnection: TAdsConnection read FAdsConnection write SetDatabase;
@@ -30,11 +33,12 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldPersistenceHandleAdvantage }
 
-destructor TBoldPersistenceHandleAdvantage.Destroy;
+destructor TBoldPersistenceHandleAdvantage.destroy;
 begin
   Active := false;
   FreeAndNil(FEffectiveDatabase);
@@ -83,5 +87,7 @@ begin
       FAdsConnection.FreeNotification(self);
   end;
 end;
+
+initialization
 
 end.

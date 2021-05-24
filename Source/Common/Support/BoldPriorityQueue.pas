@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPriorityQueue;
 
 interface
@@ -11,20 +14,18 @@ type
   TBoldPriorityQueueItem = class;
   TBoldPriorityQueue = class;
 
-  { TBoldPriorityQueueItem }
   TBoldPriorityQueueItem = class(TBoldMemoryManagedObject)
   public
     function HasHigherPriorityThan(Item: TBoldPriorityQueueItem): Boolean; virtual; abstract;
   end;
 
-  { TBoldPriorityQueue }
   TBoldPriorityQueue = class(TBoldMemoryManagedObject)
   private
     fHeap: TList;
     fOnHeadChanged: TNotifyEvent;
     fLocker: TBoldLoggableCriticalSection;
-    procedure SiftUp(pos: Integer);   // internal use only, not thread safe
-    procedure SiftDown(pos: Integer); // internal use only, not thread safe
+    procedure SiftUp(pos: Integer);
+    procedure SiftDown(pos: Integer);
     function RightChild(pos: Integer): Integer;
     function LeftChild(pos: Integer): Integer;
     function Parent(pos: Integer): Integer;
@@ -49,7 +50,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldPriorityQueue }
 
@@ -78,7 +80,7 @@ end;
 constructor TBoldPriorityQueue.Create;
 begin
   fHeap := TList.Create;
-  fLocker := TBoldLoggableCriticalSection.Create('PriQ'); // do not localize
+  fLocker := TBoldLoggableCriticalSection.Create('PriQ');
 end;
 
 destructor TBoldPriorityQueue.Destroy;
@@ -115,7 +117,7 @@ begin
     OldHead := Head;
     fHeap.Exchange(0, fHeap.Count-1);
     fHeap.Delete(fHeap.Count-1);
-    SiftDown(1); // heap positions 1-based, even though fHeap is 0-based
+    SiftDown(1);
     if (Head <> OldHead) and assigned(fOnHeadChanged) then
       OnHeadChanged(self);
   end;
@@ -168,7 +170,7 @@ begin
     fHeap[pos] := Value;
   finally
     fLocker.Release;
-  end;
+  end;  
 end;
 
 procedure TBoldPriorityQueue.SiftDown(pos: Integer);
@@ -220,5 +222,6 @@ begin
   end;
 end;
 
+initialization
 
 end.

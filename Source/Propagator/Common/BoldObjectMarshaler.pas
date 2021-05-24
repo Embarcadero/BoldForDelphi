@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectMarshaler;
 
 interface
@@ -27,7 +30,8 @@ uses
   SysUtils,
   BoldUtils,
   comobj,
-  ActiveX;
+  ActiveX
+  ;
 
 { TBoldObjectMarshaler }
 
@@ -48,7 +52,7 @@ begin
       IStream(FStream) := nil;
     end;
   except on E: Exception do
-    BoldLogError('%s.Destroy: %s', [ClassName, E.Message]); // do not localize
+    BoldLogError('%s.Destroy: %s', [ClassName, E.Message]);
   end;
   inherited;
 end;
@@ -63,13 +67,13 @@ begin
                       MSHCTX_INPROC, nil, MSHLFLAGS_TABLEWEAK);
     Result := true;
   except on E: Exception do
-      BoldLogError('%s.MarshalObject: %s', [ClassName, E.Message]); // do not localize
+      BoldLogError('%s.MarshalObject: %s', [ClassName, E.Message]);
   end;
 end;
 
 function TBoldObjectMarshaler.UnMarshalObject(out Obj): boolean;
 var
-  p: int64;
+  p: {$IFDEF BOLD_DELPHI13_OR_LATER}LargeUInt{$ELSE}int64{$ENDIF};
 begin
   Result := false;
   try
@@ -77,8 +81,10 @@ begin
     OleCheck(CoUnmarshalInterface(IStream(fStream), FMarshalIID, Obj));
     Result := True;
   except on E: Exception do
-      BoldLogError('%s.UnMarshalObject: %s', [ClassName, E.Message]); // do not localize
+      BoldLogError('%s.UnMarshalObject: %s', [ClassName, E.Message]);
   end;
 end;
+
+initialization
 
 end.

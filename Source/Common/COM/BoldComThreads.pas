@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComThreads;
 
 interface
@@ -22,6 +25,7 @@ type
     FConnectRes: HResult;
   public
     constructor Create(const HostName: string; const CLSID, IID: TGUID);
+    destructor Destroy; override;
     function Connect(out Obj): Boolean;
     property Busy: Boolean read FBusy;
     property ConnectRes: HResult read fConnectRes;
@@ -65,6 +69,7 @@ type
     procedure Execute; override;
   public
     constructor Create(Owner: TBoldComConnectionThread; CreateSuspended: Boolean);
+    destructor Destroy; override;
     property InterfaceStream: Pointer read FInterfaceStream;
     property CreateRes: HResult read fCreateRes;
   end;
@@ -75,6 +80,11 @@ begin
   FOwner := Owner;
   inherited Create(CreateSuspended);
   FCreateRes := NOERROR;
+end;
+
+destructor TBoldComCreateObjectThread.Destroy;
+begin
+  inherited;
 end;
 
 procedure TBoldComCreateObjectThread.Execute;
@@ -108,6 +118,11 @@ begin
   FHostName := HostName;
   FIID := IID;
   fConnectRes := NOERROR;
+end;
+
+destructor TBoldComConnectionThread.Destroy;
+begin
+  inherited;
 end;
 
 function TBoldComConnectionThread.Connect(out Obj): Boolean;
@@ -147,7 +162,6 @@ begin
           end;
         end;
       else
-        // Error
         Break;
       end;
     end;
@@ -230,5 +244,7 @@ procedure TBoldComWorkerThread.Release;
 begin
   SetEvent(FWaitEvent);
 end;
+
+initialization
 
 end.

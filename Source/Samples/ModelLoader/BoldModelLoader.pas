@@ -1,7 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldModelLoader;
 
 interface
-
 uses
   Classes,
   Dialogs,
@@ -30,7 +32,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldRev;
 
 var
   G_ModelLoader: TBoldModelLoader = nil;
@@ -105,4 +108,3 @@ initialization
 finalization
   FreeAndNil(G_ModelLoader);
 end.
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMetaElementList;
 
 interface
@@ -11,15 +14,25 @@ type
   TBoldMetaElementList = class;
   TBoldElementTypeInfoList = class;
 
+  TBoldMetaElementListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    property Current: TBoldMetaElement read GetCurrent;
+  end;
+
   { TBoldMetaElementList }
   TBoldMetaElementList = class(TBoldIndexableList)
   private
-    function GetItem(index: Integer): TBoldMetaElement;
-    function GetItemByExpressionName(const ExpressionName: string): TBoldMetaElement;
-    function GetItemByDelphiName(const DelphiName: string): TBoldMetaElement;
-    function GetItemByModelName(const ModelName: string): TBoldMetaElement;
+    function GetItem(index: Integer): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByExpressionName(const ExpressionName: string): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByDelphiName(const DelphiName: string): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByModelName(const ModelName: string): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class var IX_ExpressionName: integer;
+    class var IX_DelphiName: integer;
+    class var IX_ModelName: integer;
   public
     constructor Create;
+    function GetEnumerator: TBoldMetaElementListTraverser;
     procedure Add(Item: TBoldMetaElement);
     property Items[index: Integer]: TBoldMetaElement read GetItem; default;
     property ItemsByExpressionName[const ExpressionName: string]: TBoldMetaElement read GetItemByExpressionName;
@@ -27,14 +40,21 @@ type
     property ItemsByModelName[const ModelName: string]: TBoldMetaElement read GetItemByModelName;
   end;
 
+  TBoldElementTypeInfoListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    property Current: TBoldElementTypeInfo read GetCurrent;
+  end;
+
   { TBoldElementTypeInfoList }
   TBoldElementTypeInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldElementTypeInfo;
-    function GetItemByExpressionName(const ExpressionName: string): TBoldElementTypeInfo;
-    function GetItemByDelphiName(const DelphiName: string): TBoldElementTypeInfo;
-    function GetItemByModelName(const ModelName: string): TBoldElementTypeInfo;
+    function GetItem(index: Integer): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByExpressionName(const ExpressionName: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByDelphiName(const DelphiName: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByModelName(const ModelName: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
+    function GetEnumerator: TBoldElementTypeInfoListTraverser;
     procedure Add(Item: TBoldElementTypeInfo);
     property Items[index: Integer]: TBoldElementTypeInfo read GetItem; default;
     property ItemsByExpressionName[const ExpressionName: string]: TBoldElementTypeInfo read GetItemByExpressionName;
@@ -45,14 +65,8 @@ type
 implementation
 
 uses
-  SysUtils,
   BoldHashIndexes,
-  BoldUtils;
-
-var
-  IX_ExpressionName: integer = -1;
-  IX_DelphiName: integer = -1;
-  IX_ModelName: integer = -1;
+  BoldRev;
 
 type
   {---TExpressionNameIndex---}
@@ -102,6 +116,11 @@ begin
   SetIndexVariable(IX_ModelName, AddIndex(TModelNameIndex.Create));
 end;
 
+function TBoldMetaElementList.GetEnumerator: TBoldMetaElementListTraverser;
+begin
+  result := CreateTraverser as TBoldMetaElementListTraverser;
+end;
+
 function TBoldMetaElementList.GetItem(index: Integer): TBoldMetaElement;
 begin
   Result := TBoldMetaElement(inherited Items[index]);
@@ -109,12 +128,12 @@ end;
 
 function TBoldMetaElementList.GetItemByExpressionName(const ExpressionName: string): TBoldMetaElement;
 begin
-  Result := TBoldMetaElement(TBoldValueTypeNameIndex(Indexes[IX_ExpressionName]).FindByString(ExpressionName));
+  Result := TBoldMetaElement(TBoldStringHashIndex(Indexes[IX_ExpressionName]).FindByString(ExpressionName));
 end;
 
 function TBoldMetaElementList.GetItemByDelphiName(const DelphiName: string): TBoldMetaElement;
 begin
-  Result := TBoldMetaElement(TDelphiNameIndex(Indexes[IX_DelphiName]).FindByString(DelphiName));
+  Result := TBoldMetaElement(TBoldStringHashIndex(Indexes[IX_DelphiName]).FindByString(DelphiName));
 end;
 
 procedure TBoldMetaElementList.Add(Item: TBoldMetaElement);
@@ -124,7 +143,7 @@ end;
 
 function TBoldMetaElementList.GetItemByModelName(const ModelName: string): TBoldMetaElement;
 begin
-  Result := TBoldMetaElement(TModelNameIndex(Indexes[IX_ModelName]).FindByString(ModelName));
+  Result := TBoldMetaElement(TBoldStringHashIndex(Indexes[IX_ModelName]).FindByString(ModelName));
 end;
 
 { TBoldElementTypeInfoList }
@@ -132,6 +151,11 @@ end;
 procedure TBoldElementTypeInfoList.Add(Item: TBoldElementTypeInfo);
 begin
   inherited add(item);
+end;
+
+function TBoldElementTypeInfoList.GetEnumerator: TBoldElementTypeInfoListTraverser;
+begin
+  result := CreateTraverser as TBoldElementTypeInfoListTraverser;
 end;
 
 function TBoldElementTypeInfoList.GetItem(index: Integer): TBoldElementTypeInfo;
@@ -154,4 +178,25 @@ begin
   result := TBoldElementTypeInfo(inherited GetItemByModelName(ModelName));
 end;
 
+{ TBoldMetaElementListTraverser }
+
+function TBoldMetaElementListTraverser.GetCurrent: TBoldMetaElement;
+begin
+  result := inherited GetItem as TBoldMetaElement;
+end;
+
+{ TBoldElementTypeInfoListTraverser }
+
+function TBoldElementTypeInfoListTraverser.GetCurrent: TBoldElementTypeInfo;
+begin
+  result := inherited GetItem as TBoldElementTypeInfo;
+end;
+
+
+initialization
+  TBoldMetaElementList.IX_ExpressionName := -1;
+  TBoldMetaElementList.IX_DelphiName := -1;
+  TBoldMetaElementList.IX_ModelName := -1;
+
 end.
+

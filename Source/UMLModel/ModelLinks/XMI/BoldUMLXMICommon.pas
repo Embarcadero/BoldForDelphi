@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLXMICommon;
 
 interface
@@ -23,7 +26,7 @@ end;
 
 function RemoveBoldPackageNames(Name: string): string;
 const
-  BoldPackagePrefix = 'BoldUMLModel.UMLMeta.'; // do not localize
+  BoldPackagePrefix = 'BoldUMLModel.UMLMeta.';
 begin
   assert(Copy(Name, 1, Length(BoldPackagePrefix)) = BoldPackagePrefix);
   result := Copy(Name, Length(BoldPackagePrefix)+1, maxint);
@@ -55,16 +58,16 @@ end;
 
 function IsNameOfExpressionClass(Name: string): Boolean;
 begin
-  result :=(Name = 'Expression') or // do not localize
-     (Name = 'ActionExpression') or // do not localize
-     (Name = 'ArgListsExpression') or // do not localize
-     (Name = 'BooleanExpression') or // do not localize
-     (Name = 'IterationExpression') or // do not localize
-     (Name = 'MappingExpression') or // do not localize
-     (Name = 'ObjectSetExpression') or // do not localize
-     (Name = 'ProcedureExpression') or // do not localize
-     (Name = 'TimeExpression') or // do not localize
-     (Name = 'TypeExpression'); // do not localize
+  result :=(Name = 'Expression') or
+     (Name = 'ActionExpression') or
+     (Name = 'ArgListsExpression') or
+     (Name = 'BooleanExpression') or
+     (Name = 'IterationExpression') or
+     (Name = 'MappingExpression') or
+     (Name = 'ObjectSetExpression') or
+     (Name = 'ProcedureExpression') or
+     (Name = 'TimeExpression') or
+     (Name = 'TypeExpression');
 end;
 
 end.

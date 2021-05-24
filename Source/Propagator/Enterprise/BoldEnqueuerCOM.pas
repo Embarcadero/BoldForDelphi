@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnqueuerCOM;
 
 interface
@@ -58,14 +61,14 @@ uses
 function TBoldEnqueuerCOM.AddSubscriptions(BoldClientID: Integer;
   Subscriptions: OleVariant): HResult;
 begin
-  BoldLogThread('ID=Enqueuer/AddS'); // do not localize
+  BoldLogThread('ID=Enqueuer/AddS');
   Result := Enqueuer.AddSubscriptions(BoldClientID, Subscriptions);
 end;
 
 function TBoldEnqueuerCOM.CancelSubscriptions(BoldClientID: Integer;
   Subscriptions: OleVariant): HResult;
 begin
-  BoldLogThread('ID=Enqueuer/CancelS'); // do not localize
+  BoldLogThread('ID=Enqueuer/CancelS');
   Result := Enqueuer.CancelSubscriptions(BoldClientID, Subscriptions);
 end;
 
@@ -84,7 +87,7 @@ end;
 function TBoldEnqueuerCOM.SendEvents(BoldClientID: Integer;
   Events: OleVariant): HResult;
 begin
-  BoldLogThread('ID=Enqueuer/SendEv'); // do not localize
+  BoldLogThread('ID=Enqueuer/SendEv');
   Result := Enqueuer.SendEvents(BoldClientId, Events);
 end;
 
@@ -103,5 +106,7 @@ begin
   Result := inherited CreateComObject(Controller);
   (Result as TBoldEnqueuerCOM).Enqueuer := Enqueuer;
 end;
+
+initialization
 
 end.

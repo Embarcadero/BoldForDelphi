@@ -1,9 +1,13 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterSQLDirect;
 
 interface
 
 uses
   SDEngine,
+  SDCommon,
   BoldAbstractDataBaseAdapter,
   BoldDBInterfaces,
   BoldSQLDirectInterfaces;
@@ -23,6 +27,11 @@ type
     function GetDataBaseInterface: IBoldDatabase; override;
   public
     destructor Destroy; override;
+    procedure LostConnectError(Database: TSDDatabase;
+        E: ESDEngineError; var Action: TSDLostConnectAction);
+    procedure ReconnectError(Database: TSDDatabase;
+        E: ESDEngineError; var Action: TSDLostConnectAction);
+    procedure CreateDatabase; override;
   published
     property DataBase: TSDDataBase read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -34,11 +43,17 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 
 { TBoldDatabaseAdapterSQLDirect }
 
-destructor TBoldDatabaseAdapterSQLDirect.destroy;
+procedure TBoldDatabaseAdapterSQLDirect.CreateDatabase;
+begin
+  DatabaseInterface.CreateDatabase;
+end;
+
+destructor TBoldDatabaseAdapterSQLDirect.Destroy;
 begin
   Changed;
   FreePublisher;
@@ -65,9 +80,27 @@ begin
   FreeAndNil(fBoldDatabase);
 end;
 
+procedure TBoldDatabaseAdapterSQLDirect.LostConnectError(
+  Database: TSDDatabase; E: ESDEngineError;
+  var Action: TSDLostConnectAction);
+begin
+  Action:=lcWaitReconnect;
+end;
+
+procedure TBoldDatabaseAdapterSQLDirect.ReconnectError(
+  Database: TSDDatabase; E: ESDEngineError;
+  var Action: TSDLostConnectAction);
+begin
+  Action:=lcWaitReconnect;
+end;
+
 procedure TBoldDatabaseAdapterSQLDirect.SetDataBase(const Value: TSDDataBase);
 begin
+  value.OnLostConnectError:=LostConnectError;
+  value.OnReconnectError:=ReconnectError;
   InternalDatabase := value;
 end;
+
+initialization
 
 end.

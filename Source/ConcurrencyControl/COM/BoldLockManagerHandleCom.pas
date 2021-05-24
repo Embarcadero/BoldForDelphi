@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerHandleCom;
 
 interface
@@ -49,7 +52,8 @@ uses
   BoldUtils,
   BoldLockingDefs,
   BoldComClient,
-  BoldDefs;
+  BoldDefs
+  ;
 
 { TBoldLockManagerHandleCom }
 
@@ -170,5 +174,7 @@ begin
       end;
   end;
 end;
+
+initialization
 
 end.

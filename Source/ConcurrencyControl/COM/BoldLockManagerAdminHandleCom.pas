@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerAdminHandleCom;
 
 interface
@@ -183,5 +186,7 @@ begin
       end;
   end;
 end;
+
+initialization
 
 end.

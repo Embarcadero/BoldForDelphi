@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEventQueue;
 
 interface
@@ -24,20 +27,22 @@ type
     property Event: TNotifyEvent read fEvent;
     property Sender: Tobject read fSender;
     property Receiver: TObject read fReceiver;
-    procedure SendEvent;
+    procedure SendEvent; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   { TBoldEventQueue }
   TBoldEventQueue = class(TBoldMemoryManagedObject)
   private
     fItemIndex: TBoldEventQueueItemReceiverIndex;
+    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     destructor Destroy; override;
     procedure Add(Event: TNotifyEvent; Sender: TObject; Receiver: TObject);
-    procedure DequeueOne;
+    procedure DequeueOne; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure DequeueAll;
     procedure RemoveAllForReceiver(Receiver: TObject);
+    property Count: integer read GetCount;
   end;
 
   { TBoldEventQueueItemReceiverIndex }
@@ -79,24 +84,24 @@ begin
   fItemIndex := TBoldEventQueueItemReceiverIndex.Create;
 end;
 
-procedure TBoldEventQueue.DequeueAll;
-var
-  InternalCount,
-  i: Integer;
+function TBoldEventQueue.GetCount: integer;
 begin
-  InternalCount := fItemIndex.Count;
-  for i := 0 to InternalCount - 1 do
-    DequeueOne;
+  result := fItemIndex.Count;
 end;
 
 procedure TBoldEventQueue.DequeueOne;
 var
   item: TBoldEventQueueItem;
 begin
-  item := TBoldEventQueueItem(fItemIndex.Any);
-  fItemIndex.Remove(item);
+  item := TBoldEventQueueItem(fItemIndex.GetAndRemoveAny);
   item.SendEvent;
   Item.Free;
+end;
+
+procedure TBoldEventQueue.DequeueAll;
+begin
+  while Count > 0 do
+    DequeueOne;
 end;
 
 destructor TBoldEventQueue.Destroy;
@@ -112,6 +117,8 @@ var
   MatchingItems: TList;
   g: IBoldGuard;
 begin
+  if fItemIndex.Count = 0 then
+    exit;
   g := TBoldGuard.Create(MatchingItems);
   MatchingItems := TList.Create;
   fItemIndex.FindAllByObject(Receiver, MatchingItems);
@@ -129,5 +136,7 @@ function TBoldEventQueueItemReceiverIndex.ItemASKeyObject(Item: TObject): TObjec
 begin
   result := TBoldEventQueueItem(Item).Receiver;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOutputQueueHandler;
 
 interface
@@ -26,7 +29,7 @@ type
     function getPriorityListEnlister: TBoldAbstractPriorityListEnlister; virtual;
     property PriorityListEnlister: TBoldAbstractPriorityListEnlister read GetPrioritylistEnlister;
   public
-    constructor Create;
+    constructor Create; 
     destructor Destroy; override;
     procedure SendEvent(const ClientID: TBoldClientID; EventName: string); override;
     procedure ClearQueueForClient(const ClientID: TBoldClientID); override;
@@ -45,6 +48,7 @@ uses
   BoldPropagatorConstants,
   BoldPropagatorServer,
   BoldThreadSafeLog;
+
 
 { TBoldOutputQueueHandler }
 
@@ -72,7 +76,6 @@ var
   count, i: integer;
   ClientQueue: TBoldClientQueue;
 begin
-  //check index range
   if (Index >= fOutputQueues.Count) then
   begin
     count := (Index - fOutputQueues.Count) + 1;
@@ -83,7 +86,7 @@ begin
   end;
   if not Assigned(fOutputQueues[Index]) then
   begin
-    ClientQueue := TBoldClientQueue.Create(format('CliQ[%d]', [Index])); // do not localize
+    ClientQueue := TBoldClientQueue.Create(format('CliQ[%d]', [Index]));
     ClientQueue.OnQueueNotEmpty := OnQueueNotEmpty;
     ClientQueue.BoldClientID := Index;
     fOutputQueues[Index] := ClientQueue;
@@ -119,7 +122,7 @@ begin
   try
     OutputQueues[ClientID].Enqueue(EventName);
   except On E: Exception do
-    BoldLogError('%s.SendEvent: Client = %d', [ClassName, ClientId]); // do not localize
+    BoldLogError('%s.SendEvent: Client = %d', [ClassName, ClientId]);
   end;
 end;
 
@@ -130,4 +133,5 @@ begin
   PriorityListEnlister.FlushQueue(OutputQueues[ClientID]);
 end;
 
+initialization
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCollections;
 
 interface
@@ -18,7 +21,7 @@ type
 
   TBoldUniqueNameItemIndex = class(TBoldStringHashIndex)
   protected
-    function ItemAsKeyString(Item: TObject): string; override;
+    function ItemASKeyString(Item: TObject): string; override;
   end;
 
   { TBoldUniquelyNamedCollectionItem }
@@ -60,7 +63,7 @@ type
     property ItemIndex: TBoldUniqueNameItemIndex read GetItemIndex;
   public
     constructor Create(AOwner: TPersistent; ItemClass: TBoldUniquelyNamedCollectionItemClass);
-    destructor Destroy; override;
+    destructor destroy; override;
     property ItemByName[const Name: String]: TBoldUniquelyNamedCollectionItem read GetItemByName;
   end;
 
@@ -71,14 +74,14 @@ uses
   SysUtils,
   BoldDefs,
   BoldIndex,
-  BoldCommonConst;
+  BoldRev;
 
 { TBoldUniquelyNamedCollectionItem }
 
 procedure TBoldUniquelyNamedCollectionItem.EnsureNameUnique(const Value: string);
 begin
   if assigned(Collection.ItemByName[value]) then
-    raise EBold.CreateFmt(sDuplicateName, [value]);
+    raise EBold.CreateFmt('There is already an item with name "%s"', [value]);
 end;
 
 function TBoldUniquelyNamedCollectionItem.GetCollection: TBoldCollectionWithUniquelyNamedItems;
@@ -103,7 +106,7 @@ procedure TBoldUniquelyNamedCollectionItem.InternalSetUniqueName(const Value: st
 begin
   if Value <> UniqueName then
   begin
-    EnsureNameUnique(Value); // will ensure the index as well
+    EnsureNameUnique(Value);
     Collection.ItemIndex.Remove(self);
     SetUniqueName(Value);
     Collection.ItemIndex.Add(self);
@@ -125,7 +128,7 @@ begin
   inherited Create(aOwner, ItemClass);
 end;
 
-destructor TBoldCollectionWithUniquelyNamedItems.Destroy;
+destructor TBoldCollectionWithUniquelyNamedItems.destroy;
 begin
   FreeAndNil(fItemIndex);
   inherited;
@@ -151,7 +154,6 @@ end;
 
 procedure TBoldCollectionWithUniquelyNamedItems.Update(Item: TCollectionItem);
 begin
-  // implementation in superclass is empty
   FreeAndNil(fItemIndex);
 end;
 
@@ -167,4 +169,5 @@ begin
   fUniqueName := Value;
 end;
 
+initialization
 end.

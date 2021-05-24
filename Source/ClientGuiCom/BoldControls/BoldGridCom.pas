@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGridCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,33 +8,31 @@ unit BoldGridCom;
 interface
 
 uses
+  // VCL
   {$IFDEF DELPHI6_OR_LATER}
-  Types, // IFDEF DELPHI6_OR_LATER
+  Types,
   {$ELSE}
-  Windows, // else-part of IFDEF DELPHI6_OR_LATER
+  Windows,
   {$ENDIF}
-  Messages,
-  Graphics,
+  Classes,
   Controls,
+  Graphics,
   Grids,
   Menus,
-  StdCtrls,
-  Classes,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  {$IFNDEF BOLDCOMCLIENT} // uses
+
+  // Bold
+  {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   {$ENDIF}
-  BoldCommonBitmaps,
-  BoldControlPackDefs,
-  BoldControlsDefs,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
   BoldAbstractListHandleCom,
-  BoldListHandleFollowerCom,
-  BoldControlPackCom,
-  BoldControllerListControlPackCom,
-  BoldListListControlPackCom,
+  BoldComClient,
+  BoldComObjectSpace_TLB,
   BoldComponentValidatorCom,
-  BoldSubscription,
+  BoldControllerListControlPackCom,
+  BoldControlPackCom,
+  BoldControlsDefs,
+  BoldListHandleFollowerCom,
+  BoldListListControlPackCom,
   BoldStringControlPackCom;
 
 type
@@ -95,7 +96,6 @@ type
   end;
 
   { TBoldColumnTitleCom }
-  // Borrowed from TDBGrid
   TBoldColumnTitleCom = class(TPersistent)
   private
     fAlignment: TAlignment;
@@ -267,11 +267,9 @@ type
     procedure SetOptions(val: TGridOptions);
     procedure SetSelection(aRow: Integer; Shift: TShiftState; ForceClearOfOtherRows: Boolean; IgnoreToggles: Boolean);
     procedure TypeMayHaveChanged;
-    // DRAW FUNCTIONS
     function CellFont(Column: TBoldGridColumnCom): TFont;
     function GetString(GridCol, DataRow: Integer): string;
     function HighlightCell(AState: TGridDrawState; aRow: integer): Boolean;
-    //  EDIT FUNCTIONS
     procedure _AfterMakeCellUptoDate(Follower: TBoldFollowerCom);
     procedure _DeleteRow(index: Integer; owningFollower: TBoldFollowerCom);
     procedure _InsertRow(Follower: TBoldFollowerCom);
@@ -393,7 +391,7 @@ type
     procedure DisplayAllCells;
     function AsClipBoardText: String;
     procedure ActivateAllCells;
-    property ColCount;// read GetColCount;
+    property ColCount;
     property CellText[col, row: integer]: string read GetCellText;
     property MutableList: IBoldList read GetMutableList;
   end;
@@ -431,7 +429,7 @@ type
     property Color;
     property Constraints;
     property Columns;
-    {$IFNDEF BCB} // for some reason, the below line gives an error in the generated .hpp-file
+    {$IFNDEF BCB}
     property Ctl3d;
     {$ENDIF}
     property DefaultColWidth;
@@ -484,7 +482,6 @@ type
   end;
 
   { TBoldInplaceEditCom }
-  //  Used to access Font property of InplaceEditor
   TBoldInplaceEditCom = class(TInplaceEdit)
   private
     {$IFNDEF BOLDCOMCLIENT}
@@ -530,21 +527,23 @@ var
 implementation
 
 uses
+  Messages,
+  StdCtrls,
   SysUtils,
   Forms,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   {!! DO NOT REMOVE !! BoldAttributes ,}
   {!! DO NOT REMOVE !! BoldSystemRT ,}
   BoldAFP,
   BoldGUI,
   {$ENDIF}
-//  BoldGridRTColEditorCom
-  BoldEnvironment,
-  BoldRev,
+  BoldCommonBitmaps,
+  BoldControlPackDefs,
   BoldDefs,
+  BoldEnvironment,
   BoldListControlPackCom,
-  TypInfo,
-  BoldMath;
+  BoldMath,
+  TypInfo;
 
 const
   ColumnTitleValues = [cvTitleColor..cvTitleFont];
@@ -619,7 +618,6 @@ procedure TBoldInplaceEditCom.BoundsChanged;
 var
   R: TRect;
 begin
-  // This method replaces ancestor method, as it doesn't seem to do the right thING
   Assert(Assigned(Grid));
   R := Rect(2, 2, TBoldCustomGridCom(Grid).Columns[TBoldCustomGridCom(Grid).Col].Width - 2, Height);
   SendMessage(Handle, EM_SETRECTNP, 0, LongInt(@R));
@@ -632,10 +630,9 @@ var
 begin
   inherited KeyPress(Key);
   Grid := TBoldCustomGridCom(Owner);
-  // when editing, clear all other selected rows
   Grid.SetSelection(grid.DataRow(grid.Row), [], true, false);
   if (Key in [#32..#255]) and
-    not Grid.Columns[Grid.Col].BoldProperties.ValidateCharacter(Key, Grid.CurrentCellFollower) then
+    not Grid.Columns[Grid.Col].BoldProperties.ValidateCharacter(AnsiChar(Key), Grid.CurrentCellFollower) then
   begin
     MessageBeep(0);
     Key := BOLDNULL;
@@ -774,7 +771,7 @@ begin
     Exclude(fColumn.fAssignedValues, cvTitleFont)
   else
     Include(fColumn.fAssignedValues, cvTitleFont);
-  Changed; // ???
+  Changed;
 end;
 
 function TBoldColumnTitleCom.GetAlignment: TAlignment;
@@ -937,7 +934,6 @@ begin
 end;
 
 destructor TBoldGridColumnCom.Destroy;
-  // CollectionItem removes itself from collection when destroyed
 begin
   if fGrid.fFixedColumn = self then
     fGrid.fFixedColumn := nil;
@@ -955,7 +951,6 @@ end;
 
 
 procedure TBoldGridColumnCom.Assign(Source: TPersistent);
-// Code mainly from DBGrids
 var
   SourceCol: TBoldGridColumnCom;
 begin
@@ -976,12 +971,11 @@ begin
       if cvAlignment in SourceCol.AssignedValues then
         Alignment := SourceCol.Alignment;
       Title := SourceCol.Title;
-//      if cvReadOnly in SourceCol.AssignedValues then
-//        ReadOnly := SourceCol.ReadOnly;
-//      DropDownRows := SourceCol.DropDownRows;
-//      ButtonStyle := SourceCol.ButtonStyle;
-//      PickList := SourceCol.PickList;
-//      PopupMenu := SourceCol.PopupMenu;
+
+
+
+
+
     finally
       if Assigned(Collection) then
         Collection.EndUpdate;
@@ -1012,8 +1006,7 @@ begin
   FTitle.RestoreDefaults;
   FAssignedValues := [];
   RefreshDefaultFont;
-//  FreeAndNil(FPickList);
-//  ButtonStyle := cbsAuto;
+
   Changed(FontAssigned);
 end;
 
@@ -1159,7 +1152,6 @@ begin
   fBoldProperties.BeforeMakeUptoDate := _BeforeMakeListUptoDate;
   fBoldProperties.OnGetContextType := GetHandleStaticType;
   fHandleFollower     := TBoldListHandleFollowerCom.Create(Owner, fBoldProperties);
- // fHandleFollower.OnHandleIndexChanged :=  HandleIndexChanged;
   FColumns            := CreateColumns;
   fAnchor             := 0;
   Options             := [goFixedVertLine, goFixedHorzLine, goVertLine,
@@ -1209,7 +1201,7 @@ var
   {$ENDIF}
 begin
   if BoldEffectiveEnvironment.RunningInIDE and (not Assigned(BoldHandle.List) or (BoldHandle.List.Count = 0)) then
-    Exit;  // only update at runtime if there are values, avoids update on every UML model change.
+    Exit;
   NewListElementType := GetHandleListElementType;
 
   if (NewListElementType <> fCurrentListElementType) then
@@ -1242,12 +1234,11 @@ begin
     Columns[ColCount - 1].Free;
   if columns.count = 0 then
     AddColumn;
-  // ensure column 0
   EnsureOneFixedCol;
 end;
 
 procedure TBoldCustomGridCom.CreateDefaultColumns;
-{$IFNDEF BOLDCOMCLIENT} // defaultcolumns
+{$IFNDEF BOLDCOMCLIENT}
 var
   i: integer;
   ListElementType: IBoldElementTypeInfo;
@@ -1266,7 +1257,7 @@ var
 {$ENDIF}
 
 begin
-  {$IFNDEF BOLDCOMCLIENT} // defaultcolumns
+  {$IFNDEF BOLDCOMCLIENT}
   ListElementType := GetHandleListElementType;
   DeleteAllColumns;
   UsedFirstCol := false;
@@ -1370,7 +1361,6 @@ var
 begin
   Columns.MoveColumn(FromIndex, ToIndex);
   inherited ColumnMoved(FromIndex, ToIndex);
-  //  Redraw affected columns
   for Col := MinIntValue([FromIndex, ToIndex]) to MaxIntValue([FromIndex, ToIndex]) do
     Columns.Update(Columns[Col]);
 end;
@@ -1406,21 +1396,17 @@ begin
      not fIsEnsuringFixedCol then
   begin
     fIsEnsuringFixedCol := true;
-    // there must be atleast one column more than the fixed column
     while Columns.Count < 2 do
       if not FirstIsOK then
         Columns.Insert(0)
       else
         Columns.Add;
-
-    // see if the existing first column can be used as our fixed column...
     if not FirstIsOk then
       Columns.Insert(0);
 
     fFixedColumn := Columns[0];
-    // make this column the fixed column.
     fFixedColumn.BoldProperties.Expression := '';
-    fFixedColumn.Title.Caption := ''; // Clear the title
+    fFixedColumn.Title.Caption := '';
     fFixedColumn.Color := Self.FixedColor;
     if not (csDesigning in componentstate) then
       fFixedColumn.BoldProperties.Renderer := fFirstColumnRenderer;
@@ -1460,13 +1446,11 @@ begin
 end;
 
 procedure TBoldCustomGridCom.EditStop;
-  // Same as OnExit for each cell
 var
   CellFollower: TBoldFollowerCom;
 begin
   CellFollower := CurrentCellFollower;
-  // if the grid is changed under our feet (for example because it is sorted, and we just changed the sort order)
-  // then ignore the edit stop
+
   if assigned(CellFollower) and
     (CellFollower.Controller.ApplyPolicy = bapExit) then
     CellFollower.Apply;
@@ -1486,9 +1470,8 @@ begin
 end;
 
 procedure TBoldCustomGridCom.SetEditText(GridCol, GridRow: Longint; const Value: string);
-  // called for each change == OnChange
 begin
-  if not (csDesigning in ComponentState) and Editormode and assigned(CurrentCellFollower) then // CHECKME heeded?
+  if not (csDesigning in ComponentState) and Editormode and assigned(CurrentCellFollower) then
     TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).MayHaveChanged(Value, CurrentCellFollower)
 end;
 
@@ -1510,7 +1493,7 @@ begin
     else
       if BoldProperties.DefaultDblClick and Assigned(CurrentBoldElement) then
       begin
-        {$IFDEF BOLDCOMCLIENT}  // autoform
+        {$IFDEF BOLDCOMCLIENT}
         AutoForm := nil;
         {$ELSE}
         AutoForm := AutoFormProviderRegistry.FormForElement(CurrentBoldElement);
@@ -1586,8 +1569,6 @@ begin
     Exit;
 
   fIsMultiSelecting := MultiSelect and ((ssShift in Shift) or (ssCtrl in Shift));
-
-  //  Clear previous selection, Select one item
   if not ((ssShift in Shift) or (ssCtrl in Shift)) or not MultiSelect then
   begin
     if (not Follower.SubFollowers[aRow].Selected) or ForceClearOfOtherRows then
@@ -1596,22 +1577,15 @@ begin
       fBoldProperties.SetSelected(Follower, aRow, True);
     end;
   end;
-
-  //  Select range from first selected item
   if (ssShift in Shift) and MultiSelect then
   begin
     fBoldProperties.SelectRange(Follower, aRow);
   end;
-
-
-  //  Toggle selection on current item
   if (ssCtrl in Shift) and MultiSelect and (not IgnoreToggles) then
   begin
     fBoldProperties.ToggleSelected(Follower, aRow);
   end;
 
-  // At this point we would rather have invalidated col 0,
-  // but that does not yield desired redraw WHEN THE GRID SCROLLS.
 
   Invalidate;
   AdjustActiveRange;
@@ -1700,9 +1674,8 @@ begin
       M.Caption := '&Close Popup';
       M.name := '__mnuBoldGridCancel';
       Items.Add(M);
-      // Additional possibilities:
-      //   M := nil;
-      //  * Alignment
+
+
     end;
   end;
   Result := TheDefaultTitlePopup;
@@ -1753,11 +1726,10 @@ begin
   if (Button = mbLeft) then
   begin
     if not fIsDragging then
-      SetSelection(DataRow(Row), Shift, true, false) // Call setselection with currentrow and shiftstate
+      SetSelection(DataRow(Row), Shift, true, false)
     else
     begin
-      // starting a drag on a nonselected row with ctrl pressed should select the row
-      // odd behaviour cuases VCL to clear the shiftstate when we expect a ssCTRL, so we check the MouseDownstate instead
+
       if not selected[DataRow(Row)] and (ssCtrl in fLastMouseDownShiftState) then
         SetSelection(DataRow(Row), fLastMouseDownShiftState, true, false)
     end;
@@ -1793,14 +1765,13 @@ begin
   {$ENDIF}
 
   inherited;
-  // Top Left cell marks all rows
-  // FIXME FIXEDROW handling
+
   if (fLastMouseDownGridCoord.y <> -1) and (fLastMouseDownGridCoord.Y = TitleRow) then
   begin
     if fLastMouseDownGridCoord.X = Pred(FixedCols) then
     begin
       fBoldProperties.SelectAll(Follower, True);
-      ReallyInvalidateCol(Pred(FixedCols)); // FIXME InvalidateCol doesn't invalidate last when scrolling
+      ReallyInvalidateCol(Pred(FixedCols));
       AdjustActiveRange;
     end
     else
@@ -1810,17 +1781,15 @@ begin
         fLastMouseDownScreenCoord := Point(-1, -1);
       end;
   end
-  else //mark clicked row
+  else
   begin
-    if (Button = mbLeft) and (fLastMouseDownGridCoord.Y >= FixedRows) then // if clicking outside datacells, y is -1
+    if (Button = mbLeft) and (fLastMouseDownGridCoord.Y >= FixedRows) then
     begin
       Row := fLastMouseDownGridCoord.Y;
-      // if the click is in column 0 and it is already selected, don't reselect anything
       if not ((fLastMouseDownGridCoord.x = pred(FixedCols)) and Selected[fLastMouseDownGridCoord.y]) then
-        SetSelection(DataRow(Row), Shift, false, true) // SetSelection Invalidates entire grid
+        SetSelection(DataRow(Row), Shift, false, true)
     end;
   end;
-  //  drag if on col 0
   if (Button = mbLeft) and (fLastMouseDownGridCoord.X = Pred(FixedCols)) then
   begin
     try
@@ -1846,20 +1815,22 @@ begin
 
   if (Key = VK_DELETE) and (Shift = []) then
   begin
-    ShowEditor;
-    InplaceEditor.Text := '';
-    SetEditText(Col, Row, '');
+    if (goEditing in Options) and not (BoldHandle.List.Count = 0) then begin
+      ShowEditor;
+      InplaceEditor.Text := '';
+      SetEditText(Col, Row, '');
+    end;
   end;
-
+  
   if (Row = RowCount - 1) and (KEY = 40) then {40 = KeyDown}
   begin
     if AddNewAtEnd and (fBoldProperties.NilElementMode<>neAddLast) then
     begin
       BoldHandle.List.AddNew;
-      Follower.EnsureDisplayable; // Force control to get in sync with Object Layer
+      Follower.EnsureDisplayable;
     end
     else
-      KEY := 0; // Avoid walking below last row
+      KEY := 0;
   end;
   {$IFNDEF BOLDCOMCLIENT}
   if not (Key in RowMovementKeys) and not (Key in [VK_LEFT, VK_RIGHT]) and ColumnIsCheckBox(Col) then
@@ -1871,13 +1842,12 @@ end;
 
 procedure TBoldCustomGridCom.KeyUp(var KEY: Word; Shift: TShiftState);
 begin
-  if KEY in [33..40] then //PGUP..DOWN
+  if KEY in [33..40] then
   begin
-    //FIXME: It *is* possible to make non-consecutive selections with keyboard.
-    // I think the algorithm has to be rewritten to accommodate this.
-    // Also: Check how Delphi/Windows implements keyboard selections (keys/combinations)
-    Exclude(Shift, ssCtrl); // Cannot make non-consecutive selections with keyboard
-    SetSelection(DataRow(Row), Shift, true, true); // Call setselection with currentrow and shiftstate
+
+
+    Exclude(Shift, ssCtrl);
+    SetSelection(DataRow(Row), Shift, true, true);
   end;
   inherited;
 end;
@@ -1889,7 +1859,6 @@ begin
   else
   begin
     EnsureRowActive(DataRow);
-    // if a cell's controller has not be created yet then you'll get an AV (ex: setting the CWAdjust flag)
     if Assigned(CellFollowers[GridCol, DataRow]) and Assigned(CellFollowers[GridCol, DataRow].Controller) then
       Result := TBoldStringFollowerControllerCom(CellFollowers[GridCol, DataRow].Controller).GetCurrentAsString(CellFollowers[GridCol, DataRow]);
   end;
@@ -1942,15 +1911,14 @@ end;
 procedure TBoldCustomGridCom.ColWidthsChanged;
 begin
   inherited;
-  // By including TopLeftChanged, [caAllowGrow, caAllowShrink]
-  // effectively freezes the column width
-  //  TopLeftChanged;
+
+
 end;
 
 function TBoldCustomGridCom.CanEditAcceptKey(KEY: Char): Boolean;
 begin
   Result := Assigned(CurrentCellFollower) and
-            TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).ValidateCharacter(KEY, CurrentCellFollower);
+            TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).ValidateCharacter(AnsiChar(Key), CurrentCellFollower);
 end;
 
 function TBoldCustomGridCom.CanEditModify: Boolean;
@@ -1966,7 +1934,6 @@ function TBoldCustomGridCom.CanEditShow: Boolean;
 begin
   Result := (inherited CanEditShow) and Assigned(CurrentCellFollower) and
             not Columns[Col].ColReadOnly;
-  // editable if we have a write-allowing renderer or a lookup-handle
   result := result and
     (CurrentCellFollower.RendererData.MayModify
     {$IFNDEF BOLDCOMCLIENT} or assigned(Columns[Col].LookupHandle)
@@ -2004,8 +1971,7 @@ var
   FrameFlags1, FrameFlags2: DWORD;
 
 begin
-//  if (csDesigning in ComponentState) and (aRow > 0) then
-//    Exit;         //FIXME Removed to test Grids in designtime
+
 
   aListRow := DataRow(aRow);
   if (ACol > Columns.Count - 1) then
@@ -2037,7 +2003,7 @@ begin
     begin
       if (aRow = TitleRow) then {Title row}
       begin
-        if Assigned(DrawColumn.Title) then // Attempts to redraw before column is done creating
+        if Assigned(DrawColumn.Title) then
         begin
           Font.Assign(DrawColumn.Title.Font);
           Align := DrawColumn.Title.Alignment;
@@ -2049,7 +2015,6 @@ begin
       begin
         with Columns[ACol].BoldProperties do
         begin
-          // Render font and color
           SetFont(Canvas.Font, CellFont(DrawColumn), CellFollowers[ACol, aListRow]);
           SetColor(cl, DrawColumn.Color, CellFollowers[ACol, aListRow])
         end;
@@ -2127,8 +2092,8 @@ end;
 
 procedure TBoldCustomGridCom.SetCurrentRow(DataRow: Integer);
 begin
-  Row := GridRow(MaxIntValue([0, DataRow])); // Need to make sure we never focus on row 0
-  ReallyInvalidateCol(0); // Need to redraw first column FIXME let renderer to this too
+  Row := GridRow(MaxIntValue([0, DataRow]));
+  ReallyInvalidateCol(0);
 end;
 
 function TBoldCustomGridCom.GetRowFollower(DataRow: Integer): TBoldFollowerCom;
@@ -2180,12 +2145,9 @@ begin
     RowCount :=  FixedRows + 1
   else
     RowCount := Follower.SubFollowerCount + FixedRows;
-
-  // if exactly one row has been inserted, then select it.
   if AutoSelectNewRows and
     (fSubFollowerCountBeforeMakeUpToDate = Follower.SubFollowerCount - 1) then
   begin
-    // perhaps this is a bit overkill, but it works. anyone with a better suggestion?
     BoldHandle.CurrentIndex := fLastInsertedRowIndex;
     Follower.CurrentIndex := fLastInsertedRowIndex;
     SetCurrentRow(Follower.CurrentIndex);
@@ -2207,8 +2169,6 @@ begin
   AdjustActiveRange;
   if fInvalidateFrom <> MAXINT then
     InvalidateFromRow(fInvalidateFrom);
-
-  // setting the currentRow will reset the LeftCol
   if GridRow(Follower.CurrentIndex) < RowCount then
   begin
     OldLeftCol := LeftCol;
@@ -2242,7 +2202,7 @@ end;
 
 procedure TBoldCustomGridCom._BeforeMakeListUpToDate(Follower: TBoldFollowerCom);
 begin
-  TypeMayHaveChanged;  // IMPROVEME, subscribe to listidentitychanged instead.
+  TypeMayHaveChanged;
   fMakingListUpToDate := True;
   AdjustActiveRange;
   fInvalidateFrom := MAXINT;
@@ -2311,8 +2271,7 @@ begin
   result := nil;
   if assigned(cellFollower) and assigned(CellFollower.Element) then
   begin
-    // if the event is active, then return the element in the grid, otherwise
-    // see if we get any useful element from the cell.
+
     if assigned(Column.OnLookupChange) then
       result := CellFollower.Element
     else
@@ -2466,14 +2425,11 @@ begin
 end;
 
 function TBoldCustomGridCom.GetEditLimit: Integer;
-{$IFNDEF BOLDCOMCLIENT}
 var
   El: IBoldElement;
-{$ENDIF}
 begin
   result := 0;
   {$IFNDEF BOLDCOMCLIENT}
-  // set the maxlength of the editor;
   El := TBoldInplaceEditCom(InplaceEditor).GetDestElement(CurrentCellFollower, Columns[Col]);
   if (el is TBAString) and assigned((el as TBAString).BoldAttributeRTInfo) then
     Result := (el as TBAString).BoldAttributeRTInfo.Length;
@@ -2564,7 +2520,6 @@ var
 begin
   GridCoord := GRid.MouseCoord(X, Y);
   CellRect.Left := 0;
-  // sum the column widths of the fixed cols and then the visible cols.
   for i := 0 to Grid.FixedCols - 1 do
     CellRect.Left := CellRect.Left + Grid.Columns[i].Width + Grid.GridLineWidth;
   for i := GRid.LeftCol to GridCoord.x - 1 do
@@ -2783,7 +2738,7 @@ procedure TBoldGridColumnCom.SetIndex(Value: Integer);
 begin
   fGrid.fBoldColumnsProperties.Move(index, value);
   inherited;
-  fGrid.Invalidate; // Fixes a bug in Borland grid to invalidate col that does not handle scrolled grids
+  fGrid.Invalidate;
 end;
 
 procedure TBoldCustomGridCom.ReallyInvalidateCol(Column: integer);
@@ -2923,7 +2878,6 @@ function TBoldCustomGridCom.AsClipBoardText: String;
 var
   Col, Row: integer;
 begin
-  // as the grid is optimizing the active followers, we need to activate them manually
   ActivateAllCells;
   Result := '';
   for row := 0 to RowCount - 1 do
@@ -2975,13 +2929,11 @@ end;
 function TBoldGridColumnCom.GetCurrentCheckBoxState(
   Follower: TBoldFollowerCom): TCheckBoxState;
 begin
-  // will only be called if ColumnHasCheckBoxOverrides returns true
   result := cbGrayed;
 end;
 
 procedure TBoldGridColumnCom.SetCurrentCheckBoxState(Follower: TBoldFollowerCom; NewValue: TCheckBoxState);
 begin
-  // will only be called if ColumnHasCheckBoxOverrides returns true
 end;
 
 function TBoldGridColumnCom.GetLookupContext: IBoldElementTypeInfo;
@@ -3043,7 +2995,6 @@ var
 begin
   firstActive := DataRow(TopRow) - 1;
   LastActive := DataRow(TopRow + VisibleRowCount) + 1;
-  // extend range to include all selected elements
   for i := 0 to FirstActive - 1 do
     if Selected[i] then
     begin
@@ -3073,7 +3024,6 @@ begin
       else if DataRow > LastActive then
         LastActive := DataRow;
       BoldProperties.SetActiveRange(Follower, firstActive, lastActive, 10);
-      // this can fail if the FollowerHandle is invalid...
       Follower.EnsureDisplayable;
     end;
   end;
@@ -3097,7 +3047,7 @@ begin
   BoldProperties.SelectAll(Follower, true);
   Invalidate;
   AdjustActiveRange;
-  EnsureActiveCellFollowerExpressions;  {TODO: Remove? AdjustActiveRange already calls this method, why call it again??}
+  EnsureActiveCellFollowerExpressions; 
   Follower.EnsureDisplayable;
   BoldProperties.SelectAll(Follower, false);
   BoldProperties.SetSelected(Follower, DataRow(Row), true);
@@ -3120,6 +3070,3 @@ end;
 initialization
 
 end.
-
-
-

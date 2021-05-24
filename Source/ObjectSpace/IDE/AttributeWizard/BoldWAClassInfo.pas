@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAClassInfo;
 
 interface
@@ -60,13 +63,13 @@ begin
   inherited Create;
   Create;
   fDelphiName := id;
-  Parent := 'TObject'; // do not localize
+  Parent := 'TObject';
 end;
 
 destructor TClassInfo.Destroy;
 begin
   FreeAndNil(fmethods);
-  inherited Destroy;
+  inherited destroy;
 end;
 
 function TClassInfo.getMethods(const Visibility: TVisibility;var Item: TMethodInfo; var I: Integer): Boolean;
@@ -166,5 +169,7 @@ begin
   for index:= 0 to Count - 1 do
     Remove(TClassInfo(fList[Index]));
 end;
+
+initialization
 
 end.

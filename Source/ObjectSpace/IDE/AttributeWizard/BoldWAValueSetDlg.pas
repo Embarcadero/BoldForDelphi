@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAValueSetDlg;
 
 interface
@@ -54,7 +57,6 @@ uses
 
 function TValueSetDlg.IsValidInput: Boolean;
 begin
-  //validate input
   Result := not((IsEmptyStr(Trim(edValueName.Text)) or IsEmptyStr(Trim(Memo1.Lines.Text))))
 end;
 
@@ -122,7 +124,6 @@ begin
   ShowModal;
   Result := (fOk);
   New_Name := Trim(edValueName.Text);
-  // get rid of empty lines
   tempList := TStringList.Create();
   for i:= 0 to Memo1.Lines.Count - 1 do
     if (length(Memo1.Lines[i]) <> 0) then
@@ -146,5 +147,7 @@ procedure TValueSetDlg.FormCreate(Sender: TObject);
 begin
   fOk := false;
 end;
+
+initialization
 
 end.

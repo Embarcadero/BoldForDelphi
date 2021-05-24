@@ -1,10 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExpressionHandleCom;
 
 interface
 
 uses
-  BoldComObjectSpace,
-  BoldComObjectSpace_TLB,
   BoldRootedHandlesCom,
   BoldVariableDefinitionCom;
 
@@ -42,11 +43,11 @@ implementation
 
 uses
   SysUtils,
-  ComHandlesConst,
-  BoldComHandlesConst,
-  BoldUtils,
+  BoldComObjectSpace,
+  BoldComObjectSpace_TLB,
+  BoldComUtils,
   BoldDefs,
-  BoldComUtils;
+  BoldRev;
 
 {-- TBoldExpressionHandleCom --------------------------------------------------}
 
@@ -58,17 +59,15 @@ end;
 
 procedure TBoldExpressionHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldRootedHandleCom
+
   FStaticRootType := nil;
-  // from TBoldExpressionHandleCom
 end;
+
 
 function TBoldExpressionHandleCom.GetExpression: string;
 begin
@@ -103,14 +102,14 @@ begin
     DummyList,
     DummyListType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
+  FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
   if not OwnsHandleOnServer then
   begin
-    FEnabled := BoldGetNamedValue(NamedValues, nv_Enabled);
-    FRootTypeName := BoldGetNamedValue(NamedValues, nv_RootTypeName);
-    FSubscribe := BoldGetNamedValue(NamedValues, nv_Subscribe);
-    FExpression := BoldGetNamedValue(NamedValues, nv_Expression);
-    fEvaluateInPS := BoldGetNamedValue(NamedValues, nv_EvaluateInPS);
+    FEnabled := BoldGetNamedValue(NamedValues,'Enabled');
+    FRootTypeName := BoldGetNamedValue(NamedValues,'RootTypeName');
+    FSubscribe := BoldGetNamedValue(NamedValues,'Subscribe');
+    FExpression := BoldGetNamedValue(NamedValues,'Expression');
+    fEvaluateInPS := BoldGetNamedValue(NamedValues, 'EvaluateInPS');
   end;
 end;
 
@@ -131,29 +130,30 @@ begin
   else
     RootHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-     nv_Enabled,
-     nv_RootHandle,
-     nv_RootTypeName,
-     nv_Subscribe,
-     nv_Expression,
-     nv_EvaluateInPS],
+    ['StaticSystemHandle',
+    'Enabled',
+    'RootHandle',
+    'RootTypeName',
+    'Subscribe',
+    'Expression',
+    'EvaluateInPS'],
     [StaticSystemHandleId,
-     FEnabled,
-     RootHandleId,
-     FRootTypeName,
-     FSubscribe,
-     FExpression,
-     fEvaluateInPS]);
-  ServerElementHandle.SetData(DataFlags, nil, NamedValues);
+    FEnabled,
+    RootHandleId,
+    FRootTypeName,
+    FSubscribe,
+    FExpression,
+    fEvaluateInPS]);
+  ServerElementHandle.SetData(DataFlags,nil,NamedValues);
 end;
+
 
 procedure TBoldExpressionHandleCom.SetExpression(const Value: string);
 begin
   if Value <> FExpression then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['Expression']); // do not localize
+      raise EBold.Create('Expression is read-only');
     FExpression := Value;
     LocalValueChanged;
   end;
@@ -164,15 +164,16 @@ begin
   if Value <> Variables then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['Variables']); // do not localize
+      raise EBold.Create('Variables is read-only');
     FVariables := Value;
     LocalValueChanged;
   end;
 end;
 
+
 function TBoldExpressionHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_ExpressionHandle;
+  result := 'TBoldExpressionHandle';
 end;
 
 function TBoldExpressionHandleCom.GetEvaluateInPS: boolean;
@@ -187,10 +188,11 @@ begin
   if Value <> fEvaluateInPS then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, ['EvaluateInPs']); // do not localize
+      raise EBold.Create('EvaluateInPs is read-only');
     fEvaluateInPS := Value;
     LocalValueChanged;
   end;
 end;
 
+initialization
 end.

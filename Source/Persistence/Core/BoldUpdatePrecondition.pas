@@ -1,10 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUpdatePrecondition;
 
 interface
 
 uses
   BoldFreeStandingValues,
-  BoldDefs,
   BoldId,
   BoldBase,
   BoldStreams,
@@ -12,7 +14,6 @@ uses
 
 type
   TBoldUpdatePrecondition = class(TBoldNonRefCountedObject, IBoldStreamable)
-
   protected
     function GetStreamName: string; virtual; abstract;
     function GetFailureReason: string; virtual;
@@ -28,10 +29,10 @@ type
   private
     fFreeStandingValueSpace: TBoldFreeStandingValueSpace;
     fFailureList: TBoldObjectIdList;
-    function GetValueSpace: IBoldValueSpace;
-    function GetFreeStandingValueSpace: TBoldFreeStandingValueSpace;
-    function GetFailureList: TBoldObjectIdList;
-    function GetHasOptimisticLocks: Boolean;
+    function GetValueSpace: IBoldValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFreeStandingValueSpace: TBoldFreeStandingValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFailureList: TBoldObjectIdList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasOptimisticLocks: Boolean; // do not inline it causes problems in D2007 at least
   protected
     function GetStreamName: string; override;
     function GetFailureReason: string; override;
@@ -52,10 +53,10 @@ implementation
 
 uses
   SysUtils,
-  BoldXMLStreaming,
   BoldDefaultStreamNames,
   BoldDefaultXMLStreaming,
-  PersistenceConsts;
+  BoldDefs,
+  BoldXMLStreaming;
 
 const
   OptimisticLockingPreConditionStreamName = 'OptimisticLockingPreCondition';
@@ -83,7 +84,6 @@ type
 
 constructor TBoldUpdatePrecondition.create;
 begin
-  // do nothing
 end;
 
 function TBoldUpdatePrecondition.GetFailed: Boolean;
@@ -116,7 +116,7 @@ begin
   FreeAndNil(fFreeStandingValueSpace);
 end;
 
-destructor TBoldOptimisticLockingPrecondition.destroy;
+destructor TBoldOptimisticLockingPrecondition.Destroy;
 begin
   FreeAndNil(fFreeStandingValueSpace);
   FreeAndNil(fFailureList);
@@ -136,8 +136,16 @@ begin
 end;
 
 function TBoldOptimisticLockingPrecondition.GetFailureReason: string;
+var
+  I: Integer;
 begin
-  result := format(sOptimisticLockingFailedForNObjects, [FailureList.Count]);
+  result := format('Optimistic locking failed for the following %d objects:', [FailureList.Count]);
+  for i := 0 to FailureList.Count - 1 do
+  begin
+    if i > 0 then
+    Result := Result + ', ';
+    result := Result + ('Id: '+ FailureList[i].AsString);
+  end;
 end;
 
 function TBoldOptimisticLockingPrecondition.GetFreeStandingValueSpace: TBoldFreeStandingValueSpace;
@@ -147,27 +155,19 @@ begin
   result := fFreeStandingValueSpace;
 end;
 
-function TBoldOptimisticLockingPrecondition.GetHasOptimisticLocks: Boolean;
-var
-  Ids: TBoldObjectIdList;
+function TBoldOptimisticLockingPrecondition.GetValueSpace: IBoldValueSpace;
 begin
-  Ids := TBoldObjectIdList.create;
-  try
-    ValueSpace.AllObjectIds(Ids, true);
-    result := Ids.Count <> 0;
-  finally
-    Ids.Free;
-  end;
+  result := FreeStandingValueSpace;
+end;
+
+function TBoldOptimisticLockingPrecondition.GetHasOptimisticLocks: Boolean;
+begin
+  result := not ValueSpace.IsEmpty;
 end;
 
 function TBoldOptimisticLockingPrecondition.GetStreamName: string;
 begin
   result := OptimisticLockingPreConditionStreamName;
-end;
-
-function TBoldOptimisticLockingPrecondition.GetValueSpace: IBoldValueSpace;
-begin
-  result := FreeStandingValueSpace;
 end;
 
 { TBoldXMLPreConditionStreamer }
@@ -176,16 +176,13 @@ procedure TBoldXMLPreConditionStreamer.ReadObject(Obj: TObject;
   Node: TBoldXMLNode);
 begin
   inherited;
-  // do nothing yet
 end;
 
 procedure TBoldXMLPreConditionStreamer.WriteObject(
   Obj: TBoldInterfacedObject; Node: TBoldXMLNode);
 begin
   inherited;
-  // do nothing yet
 end;
-
 
 { TBoldXMLOptimisticLockingPreConditionStreamer }
 
@@ -211,12 +208,12 @@ begin
   if Node.Manager is TBoldDefaultXMLStreamManager then
   begin
     Manager := Node.Manager as TBoldDefaultXMLStreamManager;
-    SubNode := Node.GetSubNode('ValueSpace'); // do not localize
+    SubNode := Node.GetSubNode('ValueSpace');
     Manager.ReadValueSpace(Condition.ValueSpace, SubNode);
     SubNode.Free;
   end;
 
-  IdList := Node.ReadSubNodeObject('FailureList', BOLDOBJECTIDLISTNAME) as TBoldObjectIdList; // do not localize
+  IdList := Node.ReadSubNodeObject('FailureList', BOLDOBJECTIDLISTNAME) as TBoldObjectIdList;
   Condition.FailureList.Clear;
   Condition.FailureList.AddList(IdList);
   IdList.Free;
@@ -243,7 +240,7 @@ begin
 
       Manager.PersistenceStatesToBeStreamed := [bvpsCurrent];
 
-      SubNode := Node.NewSubNode('ValueSpace'); // do not localize
+      SubNode := Node.NewSubNode('ValueSpace');
       Manager.WriteValueSpace(Condition.ValueSpace, IdLIst, nil, SubNode);
       SubNode.Free;
 
@@ -252,7 +249,7 @@ begin
       FreeAndNil(IdList);
     end;
   end;
-  Node.WriteSubNodeObject('FailureList', BOLDOBJECTIDLISTNAME, Condition.FailureList); // do not localize
+  Node.WriteSubNodeObject('FailureList', BOLDOBJECTIDLISTNAME, Condition.FailureList);
 end;
 
 initialization

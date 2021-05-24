@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMLAttributes;
 
 interface
@@ -34,7 +37,7 @@ type
   protected
     function GetStringRepresentationCount: Integer; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
-    procedure SetStringRepresentation(Representation: TBoldRepresentation; Value: string); override;
+    procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     procedure AddMLString(Value: TBAMLString);
     function GetMLString(Representation: integer): TBAMLString;
   public
@@ -47,7 +50,7 @@ type
   TBAMLValueSetValueList = class(TBADerivedValueSetValueList)
   protected
     function FindByStringAndLanguage(Representation: integer; Value, Language: String): TBAValueSetValue;
-    procedure AddMembers(Int: Integer; Members: Array of TBoldMember); override;
+    procedure Addmembers(Int: Integer; Members: Array of TBoldMember); override;
   public
   end;
 
@@ -57,8 +60,9 @@ type
     function GetStringRepresentationByLanguage(Representation: integer; Languagename: String): String;
     procedure SetStringRepresentationByLanguage(Representation: integer; Languagename: String; NewValue: String);
     function GetStringBylanguage(representation: integer; LanguageName: String): TBAString;
-    procedure InitializeMember(OwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo); override;
+    procedure Initialize; override;
   public
+//    class function Getvalues: TBAValueSetValueList; override;  
     procedure DefaultSubscribe(Subscriber: TBoldSubscriber; requestedEvent: TBoldEvent = breReEvaluate); override;
     procedure SubscribeToStringRepresentation(Representation: TBoldRepresentation; Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate); override;
     procedure SubscribeToLanguage(representation: integer; Language: String; Subscriber: TBoldSubscriber; requestedEvent: TBoldEvent);
@@ -69,8 +73,8 @@ type
   {--- TBALanguage ---}
   TBALanguage = class(TBAValueSet)
   protected
-    function GetValues: TBAValueSetValueList; override;
-    procedure InitializeMember(OwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo); override;
+    class function Getvalues: TBAValueSetValueList; override;
+    procedure Initialize; override;
   end;
 
   {--- TBAMLString ---}
@@ -78,22 +82,23 @@ type
   private
     fMLStrings: TStringList;
     procedure InternalSetDataValue(Representation:TBoldRepresentation; Value: String);
-    function GetContentAsBlob: String;
-    procedure SetContentAsBlob(const NewValue: String);
+    function GetContentAsBlob: TBoldAnsiString;
+    procedure SetContentAsBlob(const NewValue: TBoldAnsiString);
     function GetStringBylanguage(LanguageName: String): TBAString;
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
-    procedure SetStringRepresentation(Representation: TBoldRepresentation; Value: string); override;
-    procedure ReceiveEventFromOwned(originator: TObject; originalEvent: TBoldEvent); override;
+    procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
+    procedure ReceiveEventFromOwned(originator: TObject; originalEvent: TBoldEvent; const Args: array of const); override;
+{$IFNDEF BOLD_NO_QUERIES}
     function ReceiveQueryFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; override;
+{$ENDIF}    
     function StringClass: TBAStringClass; virtual;
-    procedure InitializeMember(OwningElement: TBoldDomainElement; ElementTypeInfo: TBoldElementTypeInfo); override;
-    function ProxyClass: TBoldMember_ProxyClass; override;
+    procedure Initialize; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetStreamName: string; override;
-    function ValidateString(Value: string; Representation: TBoldRepresentation): Boolean; override;
+    function ValidateString(const Value: string; Representation: TBoldRepresentation): Boolean; override;
     function ValidateCharacter(C: Char; Representation: TBoldRepresentation): Boolean; override;
     procedure Assign(Source: TBoldElement); override;
     procedure DefaultSubscribe(Subscriber: TBoldSubscriber; requestedEvent: TBoldEvent = breReEvaluate); override;
@@ -128,9 +133,9 @@ var
   BoldMLStringSecondaryFallBack: string = '< %s: %s >';
   BoldMLStringUnknownFallback: string = '<< %s: %s >>';
 
-  BoldMLLanguageClassName: String = 'LanguageClass'; // do not localize
-  BoldMLLanguageNameAttributeName: String = 'LanguageName'; // do not localize
-  BoldMLLanguageNumberAttributeName: String = 'LanguageNumber'; // do not localize
+  BoldMLLanguageClassName: String = 'LanguageClass';
+  BoldMLLanguageNameAttributeName: String = 'LanguageName';
+  BoldMLLanguageNumberAttributeName: String = 'LanguageNumber';
 
 implementation
 
@@ -141,8 +146,7 @@ uses
   BoldTaggedValueSupport,
   BoldSystemRT,
   BoldMemberTypeDictionary,
-  BoldDefaultStreamNames,
-  BoldCoreConsts;
+  BoldDefaultStreamNames;
 
 var
   _BoldLanguageList: TBADerivedValueSetValueList;
@@ -160,24 +164,24 @@ var
   MemberRTInfo: TBoldMemberRTInfo;
 begin
   if loadingOfLanguages then
-    raise EBold.create(sBootStrapProblem);
+    raise EBold.create('BootStrap-problem, Probably the Languagename is an MLString... Not allowed, sorry');
 
   if not assigned(_BoldLanguageList) then
   begin
     LoadingOfLanguages := true;
     LanguageTypeInfo := TBoldSystem.DefaultSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[BoldMLLanguageClassName];
     if not assigned(LanguageTypeInfo) then
-      raise EBold.CreateFmt(sNeedClassCalledX, [BoldMLLanguageClassName]);
+      raise EBold.CreateFmt('For MultiLanguage to work, you need a class called "%s"', [BoldMLLanguageClassName]);
     MemberRTinfo := LanguageTypeInfo.MemberRTInfoByExpressionName[BoldMLLanguageNameAttributeName];
     if not assigned(memberRTInfo) then
-      raise EBold.CreateFmt(sNeedMemberCalledX, [BoldMLLanguageClassName, BoldMLLanguageNameAttributeName]);
+      raise EBold.CreateFmt('For MultiLanguage to work, Class %s needs a member (string) called "%s"', [BoldMLLanguageClassName, BoldMLLanguageNameAttributeName]);
     if not memberRTInfo.MemberClass.InheritsFrom(TBAString) then
-      raise EBold.CreateFmt(sMustBeTBAString, [BoldMLLanguageNameAttributeName, memberRTInfo.MemberClass.ClassName]);
+      raise EBold.CreateFmt('For MultiLanguage to work, %s must be a TBAString, now it is a %s', [BoldMLLanguageNameAttributeName, memberRTInfo.MemberClass.ClassName]);
     memberRTInfo := LanguageTypeInfo.MemberRTInfoByExpressionName[BoldMLLanguageNumberAttributeName];
     if not assigned(memberRTInfo) then
-      raise EBold.CreateFmt(sNeedIntegerMemberX, [BoldMLLanguageClassName, BoldMLLanguageNumberAttributeName]);
+      raise EBold.CreateFmt('For MultiLanguage to work, Class %s needs a member (integer) called "%s"', [BoldMLLanguageClassName, BoldMLLanguageNumberAttributeName]);
     if not memberRTInfo.MemberClass.InheritsFrom(TBAInteger) then
-      raise EBold.CreateFmt(sMemberXMustBeInteger, [BoldMLLanguageNumberAttributeName, memberRTInfo.MemberClass.ClassName]);
+      raise EBold.CreateFmt('For MultiLanguage to work, %s must be a TBAInteger, now it is a %s', [BoldMLLanguageNumberAttributeName, memberRTInfo.MemberClass.ClassName]);
 
     _BoldLanguageList := TBADerivedValueSetValueList.Create(TBoldSystem.DefaultSystem, BoldMLLanguageClassName, BoldMLLanguageNumberAttributeName, [BoldMLLanguageNameAttributeName]);
     LoadingOfLanguages := false;
@@ -196,7 +200,7 @@ begin
   if (Languagename <> '') and
      not loadingOfLanguages and
      not assigned(_BoldLanguageList.FindByText(brDefault, LanguageName)) then
-    raise EBold.CreateFmt(sInvalidLanguageName, [Location, languagename])
+    raise EBold.CreateFmt('%s: Invalid languagename %s', [Location, languagename])
 end;
 
 function EnsureValuesForElement(BoldSystem: TBoldSystem): TBoldSystem;
@@ -215,32 +219,32 @@ begin
   if _Systems.IndexOf(Result) = -1 then
   begin
     _Systems.Add(result);
-    _PrimaryLanguages.Add(TBoldMemberfactory.CreateMemberFromBoldType(result.BoldSystemTypeInfo.AttributeTypeInfoByDelphiName['TBALanguage'])); // do not localize
-    _SecondaryLanguages.Add(TBoldMemberfactory.CreateMemberFromBoldType(result.BoldSystemTypeInfo.AttributeTypeInfoByDelphiName['TBALanguage'])); // do not localize
+    _PrimaryLanguages.Add(TBoldMemberfactory.CreateMemberFromBoldType(result.BoldSystemTypeInfo.AttributeTypeInfoByDelphiName['TBALanguage']));
+    _SecondaryLanguages.Add(TBoldMemberfactory.CreateMemberFromBoldType(result.BoldSystemTypeInfo.AttributeTypeInfoByDelphiName['TBALanguage']));
   end;
 end;
 
 function BoldPrimaryLanguage(BoldSystem: tBoldSystem): TBALanguage;
 begin
-  Boldsystem := EnsureValuesForElement(BoldSystem); // a nil-parameter will be translated to DefaultSsytem
+  Boldsystem := EnsureValuesForElement(BoldSystem);
   result := TBALanguage(_PrimaryLanguages[_Systems.IndexOf(BoldSystem)])
 end;
 
 function BoldSecondaryLanguage(BoldSystem: TBoldSystem): TBALanguage;
 begin
-  Boldsystem := EnsureValuesForElement(BoldSystem); // a nil-parameter will be translated to DefaultSsytem
+  Boldsystem := EnsureValuesForElement(BoldSystem);
   result := TBALanguage(_SecondaryLanguages[_Systems.IndexOf(BoldSystem)])
 end;
 
 procedure BoldSetPrimaryLanguageByName(BoldSystem: TBoldSystem; LanguageName: String);
 begin
-  ValidateLanguage(LanguageName, 'BoldSetPrimaryLanguageByName'); // do not localize
+  ValidateLanguage(LanguageName, 'BoldSetPrimaryLanguageByName');
   BoldPrimaryLanguage(BoldSystem).AsString := LanguageName;
 end;
 
 procedure BoldSetSecondaryLanguageByName(BoldSystem: TBoldSystem; LanguageName: String);
 begin
-  ValidateLanguage(LanguageName, 'BoldSetSecondaryLanguageByName'); // do not localize
+  ValidateLanguage(LanguageName, 'BoldSetSecondaryLanguageByName');
   BoldSecondaryLanguage(BoldSystem).AsString := LanguageName;
 end;
 
@@ -269,15 +273,15 @@ begin
   if representation in [1..StringRepresentationCount] then
     result := fStringRepresentations[Representation - 1].AsString
   else
-    raise EBold.CreateFmt(sRepresentationNotSupported, [ClassName, representation]);
+    raise EBold.CreateFmt('%s: representation not supported %d', [ClassName, representation]);
 end;
 
-procedure TBAMLValueSetValue.SetStringRepresentation(Representation: TBoldRepresentation; Value: string);
+procedure TBAMLValueSetValue.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if representation in [1..StringRepresentationCount] then
     fStringRepresentations[Representation - 1].AsString := Value
   else
-    raise EBold.CreateFmt(sRepresentationNotSupported, [ClassName, representation]);
+    raise EBold.CreateFmt('%s: Representation not supported %d', [ClassName, representation]);
 end;
 
 function TBAMLValueSetValue.GetMLString(Representation: integer): TBAMLString;
@@ -285,7 +289,7 @@ begin
   if representation in [1..StringRepresentationCount] then
     result := FStringRepresentations[Representation - 1] as TBAMLString
   else
-    raise EBold.CreateFmt(sRepresentationNotSupported, [ClassName, representation]);
+    raise EBold.CreateFmt('%s: Representation not supported %d', [ClassName, representation]);
 end;
 
 procedure TBAMLValueSetValue.AddMLString(Value: TBAMLString);
@@ -305,7 +309,7 @@ begin
     for i := 0 to High(Members) do
     begin
       if not (members[i] is TBAMLString) then
-        raise EBold.CreateFmt(sMLValueSetsRequireMLStrings, [Members[i].Classname]);
+        raise EBold.CreateFmt('TBAMLValueSets can only use TBAMLStrings, not %s', [Members[i].Classname]);
       AddMLString(Members[i] as TBAMLString);
     end;
   end;
@@ -336,7 +340,7 @@ end;
 
 procedure TBAMLValueSet.SubscribeToLanguage(representation: integer; Language: String; Subscriber: TBoldSubscriber; requestedEvent: TBoldEvent);
 begin
-  ValidateLanguage(Language, ClassName + '.SubscribeToLanguage'); // do not localize
+  ValidateLanguage(Language, ClassName + '.SubscribeToLanguage');
   GetStringBylanguage(Representation, Language).DefaultSubscribe(Subscriber, requestedEvent);
 end;
 
@@ -346,7 +350,7 @@ var
   TempML: TBAMLString;
 begin
   Result := nil;
-  ValidateLanguage(LanguageName, ClassName + '.GetStringByLanguage'); // do not localize
+  ValidateLanguage(LanguageName, ClassName + '.GetStringByLanguage');
 
   temp := Values.FindByInteger(AsInteger);
   if temp is TBAMLValueSetValue then
@@ -356,8 +360,7 @@ begin
   end;
 end;
 
-procedure TBAMLValueSet.InitializeMember(OwningElement: TBoldDomainElement;
-  ElementTypeInfo: TBoldElementTypeInfo);
+procedure TBAMLValueSet.Initialize;
 var
   x: TBAvalueSetValue;
 begin
@@ -378,7 +381,7 @@ end;
 function TBAMLValueSet.GetStringRepresentationByLanguage(Representation: integer; LAnguagename: String): String;
 begin
   if IsNull then {IsNull ensures current}
-    Result := '' //FIXME: raise Exception?
+    Result := ''
   else
     Result := GetStringbylanguage(Representation, LanguageName).AsString;
 end;
@@ -393,19 +396,23 @@ begin
   if assigned(MLValue) then
     AsInteger := MLValue.AsInteger
   else
-    raise EBold.Create(sInvalidValue);
+    raise EBold.CreateFmt('%s: Invalid value %s', [ClassName, NewValue]);
 end;
 
 {--- TBALanguage ---}
 
-function TBALanguage.GetValues: TBAValueSetValueList;
+class function TBALanguage.GetValues: TBAValueSetValueList;
 begin
-  EnsureLanguageList;
-  result := _BoldLanguageList;
+  result := nil;
+  if TBoldSystem.DefaultSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[BoldMLLanguageClassName] <> nil then
+  begin
+    EnsureLanguageList;
+    result := _BoldLanguageList;
+  end;
 end;
 {--- TBAMLString ---}
 
-destructor  TBAMLString.Destroy;
+destructor TBAMLString.destroy;
 begin
   PrepareToDestroy;
   inherited;
@@ -425,17 +432,18 @@ begin
     AsString := Source.AsString;
 end;
 
-function TBAMLString.GetContentAsBlob: String;
+function TBAMLString.GetContentAsBlob: TBoldAnsiString;
 begin
-  result := StringRepresentation[brMLString];
+  result := TBoldAnsiString(StringRepresentation[brMLString]);
 end;
 
-procedure TBAMLString.SetContentAsBlob(const NewValue: String);
+procedure TBAMLString.SetContentAsBlob(const NewValue: TBoldAnsiString);
 begin
-  StringRepresentation[brMLString] := NewValue;
+  StringRepresentation[brMLString] := String(NewValue);
 end;
 
-procedure TBAMLString.ReceiveEventFromOwned(originator: TObject; originalEvent: TBoldEvent);
+
+procedure TBAMLString.ReceiveEventFromOwned(originator: TObject; originalEvent: TBoldEvent; const Args: array of const);
 begin
   if originalEvent in beValueEvents then
     SendEvent(OriginalEvent);
@@ -455,13 +463,13 @@ var
   StrPos: integer;
   BoldString: TBAString;
 begin
-  ValidateLanguage(LanguageName, ClassName + '.GetStringByLanguage'); // do not localize
+  ValidateLanguage(LanguageName, ClassName + '.GetStringByLanguage');
   if LanguageName = '' then
     LanguageName := BoldPrimaryLanguage(BoldSystem).AsString;
   StrPos := fMLStrings.IndexOf(LanguageName);
   if StrPos = -1 then
   begin
-    BoldString := TBoldDomainElementClass(StringClass).Create(self) as TBAString;
+    BoldString := TBoldDomainElementClass(StringClass).CreateWithOwner(self) as TBAString;
     StrPos := fMLStrings.AddObject(languagename, BoldString);
   end;
   Result := TBAString(fMLStrings.Objects[StrPos])
@@ -484,19 +492,16 @@ begin
         result := ''
       else
       begin
-        // check the current language
         DisplayLanguage := BoldPrimaryLanguage(BoldSystem);
         result := GetStringByLanguage(DisplayLanguage.AsString).AsString;
         if result = '' then
         begin
-          // check the default language
           DisplayLanguage := BoldSecondaryLanguage(BoldSystem);
           result := GetStringByLanguage(DisplayLanguage.AsString).AsString;
           if result <> '' then
             result := format(BoldMLStringSecondaryFallBack, [DisplayLanguage.AsString, Result])
           else
           begin
-            // check any language
             for i := 0 to BoldLanguageList.count - 1 do
             begin
               result := GetStringByLAnguage(BoldLanguageList[i].AsString).AsString;
@@ -539,7 +544,6 @@ begin
         Delete(Value, 1, Pos(#255, Value));
         LangValue := copy(Value, 1, pos(#255, Value) - 1);
         Delete(Value, 1, Pos(#255, Value));
-        // make sure not to send any events
         GetStringBylanguage(Lang).ProxyInterface(IBoldStringContent, bdepContents, StringContent);
         StringContent.asString := LangValue;
       end;
@@ -550,7 +554,7 @@ begin
   end;
 end;
 
-procedure TBAMLString.SetStringRepresentation(Representation: TBoldRepresentation; Value: string);
+procedure TBAMLString.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if representation in [brMLString, brDefault] then
     InternalSetDataValue(representation, Value)
@@ -567,7 +571,7 @@ end;
 
 procedure TBAMLString.SubscribeToLanguage(Language: String; Subscriber: TBoldSubscriber; requestedEvent: TBoldEvent);
 begin
-  ValidateLanguage(Language, ClassName + '.SubscribeToLanguage'); // do not localize
+  ValidateLanguage(Language, ClassName + '.SubscribeToLanguage');
   GetStringBylanguage(Language).DefaultSubscribe(Subscriber, requestedEvent);
 end;
 
@@ -603,7 +607,6 @@ begin
       begin
         Language := BoldSecondaryLanguage(self.BoldSystem);
         SubscribeAndTestEmpty;
-        // if empty, stringrep will fall back to a constant string, no need to subscribe
       end;
     end
     else
@@ -624,7 +627,7 @@ begin
     result := inherited ValidateCharacter(c, representation);
 end;
 
-function TBAMLString.ValidateString(Value: string;
+function TBAMLString.ValidateString(const Value: string;
   Representation: TBoldRepresentation): Boolean;
 begin
   if fMLStrings.count > 0 then
@@ -633,8 +636,7 @@ begin
     result := inherited ValidateString(value, representation);
 end;
 
-procedure TBALanguage.InitializeMember(OwningElement: TBoldDomainElement;
-  ElementTypeInfo: TBoldElementTypeInfo);
+procedure TBALanguage.Initialize;
 var
   y: TBAvalueSetValueList;
   x: TBAvalueSetValue;
@@ -644,9 +646,7 @@ begin
 
   if assigned(y) then
   begin
-    // first, check if there is a language with the value 0
     x := y.FindByInteger(0);
-    // if not, try any language
     if not assigned(x) then
       x := y.GetFirstvalue;
     if assigned(x) then
@@ -657,8 +657,7 @@ begin
     SetContentToNull;
 end;
 
-procedure TBAMLString.InitializeMember(OwningElement: TBoldDomainElement;
-  ElementTypeInfo: TBoldElementTypeInfo);
+procedure TBAMLString.Initialize;
 begin
   inherited;
   fMlStrings := TStringList.create;
@@ -671,7 +670,7 @@ begin
   if representation in [1..StringRepresentationCount] then
     fStringRepresentations[Representation - 1].SubscribeToStringRepresentation(brDefault, subscriber, requestedEvent)
   else
-    raise EBold.CreateFmt(sRepresentationNotSupported, [ClassName]);
+    raise EBold.CreateFmt('%s: Representation not supported %d', [ClassName]);
 end;
 
 procedure TBAMLValueSet.SubscribeToStringRepresentation(
@@ -680,7 +679,7 @@ procedure TBAMLValueSet.SubscribeToStringRepresentation(
 begin
   Values[AsInteger].SubscribeToStringRepresentation(Representation, subscriber, requestedEvent);
 end;
-
+{$IFNDEF BOLD_NO_QUERIES}
 function TBAMLString.ReceiveQueryFromOwned(Originator: TObject;
   OriginalEvent: TBoldEvent; const Args: array of const;
   Subscriber: TBoldSubscriber): Boolean;
@@ -689,8 +688,8 @@ begin
   if OriginalEvent = bqMayModify then
     result := CanModify;
 end;
-
-procedure TBAMLString.AssignContentValue(Source: IBoldValue);
+{$ENDIF}
+procedure TBAMLString.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBlobContent;
 begin
@@ -699,31 +698,26 @@ begin
     if s.IsNull then
       SetContentToNull
     else
-      StringRepresentation[brMLString] := s.asBlob;
+      StringRepresentation[brMLString] := String(s.asBlob);
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
 { TBoldMLString_Proxy }
 
 function TBAMLString_Proxy.GetProxedMLString: TBAMLString;
 begin
-  result := ProxedElement as TBAMLString;
-end;
-
-function TBAMLString.ProxyClass: TBoldMember_ProxyClass;
-begin
-  result := TBAMLString_Proxy;
+  result := ProxedMember as TBAMLString;
 end;
 
 function TBAMLString.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
 begin
   if IsEqualGuid(IID, IBoldBlobContent) then
   begin
-    result := ProxyClass.create(self, Mode).GetInterface(IID, obj);
+    result := TBAString_Proxy.MakeProxy(self, Mode).GetInterface(IID, obj);
     if not result then
-      raise EBoldInternal.CreateFmt(sProxyClassDidntImplementInterface, [ClassName]);
+      raise EBoldInternal.CreateFmt('ProxyClass for %s did not implement IBoldBlobContent', [ClassName]);
   end
   else
     result := inherited ProxyInterface(IID, Mode, Obj);
@@ -738,7 +732,7 @@ begin
   if (OwningElement is TBoldMember) then
   begin
     if not (BoldPersistenceState in [bvpsCurrent, bvpsModified, bvpsTransient, bvpsInvalid]) then
-      StateError('StartModify'); // do not localize
+      StateError('StartModify');
     result := CanModify;
     OwningMember := (OwningElement as TBoldMember);
     if result and assigned(OwningMember.BoldSystem) and assigned(OwningMember.OwningObject) and
@@ -747,7 +741,7 @@ begin
       result := OwningMember.BoldSystem.PessimisticLockHandler.LockElement(OwningMember);
     if result then
     begin
-      if assigned(OwningMember.OwningObject) and not OwningMember.BoldSystem.InTransaction and StoreInUndo then  // Object always has system
+      if assigned(OwningMember.OwningObject) and not OwningMember.BoldSystem.InTransaction and StoreInUndo then
         OwningMember.BoldSystem.UndoHandler.HandleMember(OwningMember.OwningObject.AsIBoldObjectContents[bdepContents],
                                                                         OwningMember.BoldMemberRTInfo.Index, OwningMember.AsIBoldValue[bdepContents]);
       DoStartModify;
@@ -755,6 +749,7 @@ begin
   end
   else
     result := inherited StartModify;
+
 end;
 
 function TBAMLValueSet.CompareToEnumLiteral(const str: String): Boolean;

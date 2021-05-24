@@ -1,45 +1,41 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit RationalRose2000_TLB;
+{$INCLUDE Bold.inc}
 
 {$WARNINGS OFF}
 {$WARN SYMBOL_PLATFORM OFF}
 
 
-// ************************************************************************ //
-// WARNING
-// -------
-// The types declared in this file were generated from data read from a
-// Type Library. If this type library is explicitly or indirectly (via
-// another type library referring to this type library) re-imported, or the
-// 'Refresh' command of the Type Library Editor activated while editing the
-// Type Library, the contents of this file will be regenerated and all
-// manual modifications will be lost.
-// ************************************************************************ //
 
-// PASTLWTR: 1.1
-// File generated on 2000-03-16 14:06:15 from Type Library described below.
 
-// ************************************************************************ //
-// Type Lib: C:\Program Files\Rational\Rose 2000\rationalrose.tlb (1)
-// IID\LCID: {860CC660-1C2B-11D0-B1B1-444553540000}\0
-// Helpfile:
-// DepndLst:
-//   (1) v1.0 stdole, (C:\WINNT\System32\stdole32.tlb)
-//   (2) v1.0 StdVCL, (C:\WINNT\System32\STDVCL32.DLL)
-// ************************************************************************ //
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{$TYPEDADDRESS OFF}
 interface
 
 uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL;
 
-// *********************************************************************//
-// GUIDS declared in the TypeLibrary. Following prefixes are used:
-//   Type Libraries    : LIBID_xxxx
-//   CoClasses         : CLASS_xxxx
-//   DISPInterfaces    : DIID_xxxx
-//   Non-DISP interfaces: IID_xxxx
-// *********************************************************************//
+
+
+
+
+
 const
-  // TypeLibrary Major and minor versions
   RationalRoseMajorVersion = 4;
   RationalRoseMinorVersion = 2;
 
@@ -318,16 +314,12 @@ const
   DIID_IRoseExternalDocument: TGUID = '{906FF583-276B-11D0-8980-00A024774419}';
   CLASS_RoseExternalDocument: TGUID = '{86652277-EBF7-11D0-BC10-00A024C67143}';
 
-// *********************************************************************//
-// Declaration of Enumerations defined in Type Library
-// *********************************************************************//
-// Constants for enum RoseAddinEventTypes
+
+
 type
   RoseAddinEventTypes = TOleEnum;
 const
   rsOnNewModel = $00000002;
-
-// Constants for enum RoseContextMenuItemType
 type
   RoseContextMenuItemType = TOleEnum;
 const
@@ -350,30 +342,22 @@ const
   rsSynchronization = $00000010;
   rsDecision = $00000011;
   rsSwimlane = $00000012;
-
-// Constants for enum RoseNotationTypes
 type
   RoseNotationTypes = TOleEnum;
 const
   BoochNotation = $00000000;
   OMTNotation = $00000001;
   UMLNotation = $00000002;
-
-// Constants for enum RoseClientRelKind
 type
   RoseClientRelKind = TOleEnum;
 const
   rsAnyKind = $00000000;
   rsFriend = $00000001;
-
-// Constants for enum RosePersistence
 type
   RosePersistence = TOleEnum;
 const
   rsPersistent = $00000000;
   rsTransient = $00000001;
-
-// Constants for enum RoseSynchronization
 type
   RoseSynchronization = TOleEnum;
 const
@@ -382,15 +366,11 @@ const
   rsBalking = $00000002;
   rsTimeout = $00000003;
   rsAsynchronous = $00000004;
-
-// Constants for enum RoseFrequency
 type
   RoseFrequency = TOleEnum;
 const
   rsAperiodic = $00000000;
   rsPeriodic = $00000001;
-
-// Constants for enum RoseClientRelType
 type
   RoseClientRelType = TOleEnum;
 const
@@ -401,8 +381,6 @@ const
   rsTypeAssociation = $00000004;
   rsTypeDependency = $00000005;
   rsTypeRealizes = $00000006;
-
-// Constants for enum RoseMenuState
 type
   RoseMenuState = TOleEnum;
 const
@@ -415,9 +393,7 @@ const
 
 type
 
-// *********************************************************************//
-// Forward declaration of types defined in TypeLibrary
-// *********************************************************************//
+
   IRoseActivityViewCollection = dispinterface;
   IRoseProcessorCollection = dispinterface;
   IRoseCategoryCollection = dispinterface;
@@ -555,10 +531,8 @@ type
   IRosePackageCollection = dispinterface;
   IRoseExternalDocument = dispinterface;
 
-// *********************************************************************//
-// Declaration of CoClasses defined in Type Library
-// (NOTE: Here we map each CoClass to its Default Interface)
-// *********************************************************************//
+
+
   RoseActivityViewCollection = IRoseActivityViewCollection;
   RoseProcessorCollection = IRoseProcessorCollection;
   RoseCategoryCollection = IRoseCategoryCollection;
@@ -697,11 +671,8 @@ type
   RoseExternalDocument = IRoseExternalDocument;
 
 
-// *********************************************************************//
-// DispIntf:  IRoseActivityViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5FE-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
   IRoseActivityViewCollection = dispinterface
     ['{BEAED5FE-578D-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -718,11 +689,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseActivityView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseProcessorCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3835C-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseProcessorCollection = dispinterface
     ['{97B3835C-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -739,11 +708,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseProcessor; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseCategoryCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3835B-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseCategoryCollection = dispinterface
     ['{97B3835B-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -760,11 +727,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseCategory; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDeploymentUnit
-// Flags:     (4096) Dispatchable
-// GUID:      {4335FBE3-F0A0-11D1-9FAD-0060975306FE}
-// *********************************************************************//
+
+
+
   IRoseDeploymentUnit = dispinterface
     ['{4335FBE3-F0A0-11D1-9FAD-0060975306FE}']
     property Name: WideString dispid 100;
@@ -777,7 +742,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -788,7 +753,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -825,11 +790,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseItem
-// Flags:     (4096) Dispatchable
-// GUID:      {BC57D1C2-863E-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseItem = dispinterface
     ['{BC57D1C2-863E-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -842,7 +805,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -853,7 +816,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -871,11 +834,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseContextMenuItemCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {EE0B16E2-FF91-11D1-9FAD-0060975306FE}
-// *********************************************************************//
+
+
+
   IRoseContextMenuItemCollection = dispinterface
     ['{EE0B16E2-FF91-11D1-9FAD-0060975306FE}']
     property Count: Smallint dispid 202;
@@ -892,11 +853,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseContextMenuItem; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAddIn
-// Flags:     (4096) Dispatchable
-// GUID:      {D5352FC0-346C-11D1-883B-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseAddIn = dispinterface
     ['{D5352FC0-346C-11D1-883B-3C8B00C10000}']
     property EventHandler: IDispatch dispid 12528;
@@ -917,23 +876,21 @@ type
     procedure Activate; dispid 12543;
     function  IsActive: WordBool; dispid 12553;
     procedure ExecuteScript(const FileName: WideString); dispid 12595;
-    function  ReadSetting(const Section: WideString; const Entry: WideString;
+    function  ReadSetting(const Section: WideString; const Entry: WideString; 
                           const Default: WideString): WideString; dispid 12596;
-    function  WriteSetting(const Section: WideString; const Entry: WideString;
+    function  WriteSetting(const Section: WideString; const Entry: WideString; 
                            const Value: WideString): WordBool; dispid 12597;
     function  IdentifyClass: WideString; dispid 12668;
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
-    function  AddContextMenuItem(itemType: Smallint; const fullCaption: WideString;
+    function  AddContextMenuItem(itemType: Smallint; const fullCaption: WideString; 
                                  const internalName: WideString): IRoseContextMenuItem; dispid 12684;
     function  GetContextMenuItems(itemType: Smallint): IRoseContextMenuItemCollection; dispid 12685;
     function  GetDisplayName: WideString; dispid 12689;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDecisionViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED601-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseDecisionViewCollection = dispinterface
     ['{BEAED601-578D-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -950,11 +907,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseDecisionView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateVertex
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5E2-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseStateVertex = dispinterface
     ['{BEAED5E2-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -970,7 +925,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -981,7 +936,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1003,11 +958,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseUseCaseCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38356-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseUseCaseCollection = dispinterface
     ['{97B38356-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -1024,11 +977,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseUseCase; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseConnectionRelation
-// Flags:     (4096) Dispatchable
-// GUID:      {4467F442-F24E-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseConnectionRelation = dispinterface
     ['{4467F442-F24E-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -1044,7 +995,7 @@ type
     property SupplierIsDevice: WordBool dispid 12816;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1055,7 +1006,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1077,11 +1028,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRelation
-// Flags:     (4096) Dispatchable
-// GUID:      {BA242E02-8961-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseRelation = dispinterface
     ['{BA242E02-8961-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -1095,7 +1044,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1106,7 +1055,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1128,11 +1077,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseApplication
-// Flags:     (4096) Dispatchable
-// GUID:      {D7BC1B40-8618-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseApplication = dispinterface
     ['{D7BC1B40-8618-11CF-B3D4-00A0241DB1D0}']
     property Visible: WordBool dispid 202;
@@ -1154,7 +1101,7 @@ type
     procedure WriteErrorLog(const theMsg: WideString); dispid 213;
     procedure Save(bSaveUnits: WordBool); dispid 214;
     procedure SaveAs(const theFile: WideString; bSaveUnits: WordBool); dispid 215;
-    procedure CompileScriptFile(const FileName: WideString; const BinaryName: WideString;
+    procedure CompileScriptFile(const FileName: WideString; const BinaryName: WideString; 
                                 bDebug: WordBool); dispid 218;
     function  OpenModelAsTemplate(const szFileName: WideString): IRoseModel; dispid 223;
     procedure OpenScript(const FileName: WideString); dispid 225;
@@ -1163,9 +1110,9 @@ type
     procedure ExecuteScript(const pFileName: WideString); dispid 236;
     function  OpenURL(const theURL: WideString): WordBool; dispid 12587;
     function  OpenExternalDocument(const FileName: WideString): WordBool; dispid 12588;
-    function  GetProfileString(const Section: WideString; const Entry: WideString;
+    function  GetProfileString(const Section: WideString; const Entry: WideString; 
                                const Default: WideString): WideString; dispid 12589;
-    function  WriteProfileString(const Section: WideString; const Entry: WideString;
+    function  WriteProfileString(const Section: WideString; const Entry: WideString; 
                                  const Value: WideString): WordBool; dispid 12590;
     function  UpdateBrowserOverlayImage(const theItem: IRoseItem): WordBool; dispid 12679;
     function  UpdateBrowserDocOverlayImage(const theDocument: IRoseExternalDocument): WordBool; dispid 12688;
@@ -1173,11 +1120,9 @@ type
     function  GetRoseIniPath: WideString; dispid 12698;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDecisionCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5F2-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseDecisionCollection = dispinterface
     ['{BEAED5F2-578D-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -1194,11 +1139,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseDecision; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDecision
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5E3-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseDecision = dispinterface
     ['{BEAED5E3-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -1214,7 +1157,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1225,7 +1168,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1247,11 +1190,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseLineVertexCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {11A235B2-3095-11D2-8153-00104B97EBD5}
-// *********************************************************************//
+
+
+
   IRoseLineVertexCollection = dispinterface
     ['{11A235B2-3095-11D2-8153-00104B97EBD5}']
     property Count: Smallint dispid 202;
@@ -1268,11 +1209,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseLineVertex; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseInstantiateRelationCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {B91D8F06-DDBB-11D1-9FAD-0060975306FE}
-// *********************************************************************//
+
+
+
   IRoseInstantiateRelationCollection = dispinterface
     ['{B91D8F06-DDBB-11D1-9FAD-0060975306FE}']
     property Count: Smallint dispid 202;
@@ -1289,11 +1228,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseInstantiateRelation; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseMessageCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38359-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseMessageCollection = dispinterface
     ['{97B38359-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -1310,11 +1247,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseMessage; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassDiagramCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38343-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseClassDiagramCollection = dispinterface
     ['{97B38343-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -1331,11 +1266,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseClassDiagram; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseScenarioDiagram
-// Flags:     (4096) Dispatchable
-// GUID:      {F819833A-FC55-11CF-BBD3-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseScenarioDiagram = dispinterface
     ['{F819833A-FC55-11CF-BBD3-00A024C67143}']
     property Name: WideString dispid 100;
@@ -1350,7 +1283,7 @@ type
     property ZoomFactor: Smallint dispid 12690;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1361,7 +1294,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1387,7 +1320,7 @@ type
     function  GetSelectedObjects: IRoseObjectInstanceCollection; dispid 412;
     function  GetMessages: IRoseMessageCollection; dispid 413;
     function  GetSelectedMessages: IRoseMessageCollection; dispid 414;
-    function  CreateMessage(const theName: WideString; const theSender: IRoseObjectInstance;
+    function  CreateMessage(const theName: WideString; const theSender: IRoseObjectInstance; 
                             const theReceiver: IRoseObjectInstance; theSequence: Smallint): IRoseMessage; dispid 416;
     function  GetSelectedLinks: IRoseLinkCollection; dispid 417;
     function  GetDiagramType: Smallint; dispid 418;
@@ -1405,11 +1338,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRealizeRelation
-// Flags:     (4096) Dispatchable
-// GUID:      {6AC2BA81-454D-11D1-883B-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseRealizeRelation = dispinterface
     ['{6AC2BA81-454D-11D1-883B-3C8B00C10000}']
     property Name: WideString dispid 100;
@@ -1423,7 +1354,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1434,7 +1365,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1460,11 +1391,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseHasRelationship
-// Flags:     (4096) Dispatchable
-// GUID:      {BA242E04-8961-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseHasRelationship = dispinterface
     ['{BA242E04-8961-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -1483,7 +1412,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1494,7 +1423,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1518,11 +1447,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassView
-// Flags:     (4096) Dispatchable
-// GUID:      {5F735F36-F9EA-11CF-BBD3-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseClassView = dispinterface
     ['{5F735F36-F9EA-11CF-BBD3-00A024C67143}']
     property Name: WideString dispid 100;
@@ -1548,7 +1475,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1559,7 +1486,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1586,11 +1513,9 @@ type
     function  GetDisplayedOperations: IRoseItemCollection; dispid 12827;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseView_FillColor
-// Flags:     (4096) Dispatchable
-// GUID:      {CE5BE563-0380-11D1-BC11-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseView_FillColor = dispinterface
     ['{CE5BE563-0380-11D1-BC11-00A024C67143}']
     property Red: Smallint dispid 12493;
@@ -1601,11 +1526,9 @@ type
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseActionCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3835F-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseActionCollection = dispinterface
     ['{97B3835F-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -1622,11 +1545,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseAction; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSyncItemCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {94CA188F-5D13-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSyncItemCollection = dispinterface
     ['{94CA188F-5D13-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -1643,11 +1564,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseSyncItem; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseActivityCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5F0-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseActivityCollection = dispinterface
     ['{BEAED5F0-578D-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -1664,11 +1583,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseActivity; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseActivity
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5E7-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseActivity = dispinterface
     ['{BEAED5E7-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -1688,7 +1605,7 @@ type
     property SubSynchronizations: IRoseSyncItemCollection dispid 12804;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1699,7 +1616,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1739,11 +1656,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseProcess
-// Flags:     (4096) Dispatchable
-// GUID:      {62C43884-DB5A-11CF-B091-00A0241E3F73}
-// *********************************************************************//
+
+
+
   IRoseProcess = dispinterface
     ['{62C43884-DB5A-11CF-B091-00A0241E3F73}']
     property Name: WideString dispid 100;
@@ -1758,7 +1673,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1769,7 +1684,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1787,11 +1702,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAddInCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {C87D2BC1-352A-11D1-883B-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseAddInCollection = dispinterface
     ['{C87D2BC1-352A-11D1-883B-3C8B00C10000}']
     property Count: Smallint dispid 202;
@@ -1808,11 +1721,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseAddIn; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSwimLaneView
-// Flags:     (4096) Dispatchable
-// GUID:      {68F63C21-B047-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSwimLaneView = dispinterface
     ['{68F63C21-B047-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -1832,7 +1743,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1843,7 +1754,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1868,11 +1779,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseControllableUnitCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38360-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseControllableUnitCollection = dispinterface
     ['{97B38360-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -1889,11 +1798,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseControllableUnit; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModuleCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3834B-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseModuleCollection = dispinterface
     ['{97B3834B-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -1910,11 +1817,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseModule; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseLinkCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {9DE9A9C1-F2D0-11D0-883A-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseLinkCollection = dispinterface
     ['{9DE9A9C1-F2D0-11D0-883A-3C8B00C10000}']
     property Count: Smallint dispid 202;
@@ -1931,11 +1836,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseLink; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAction
-// Flags:     (4096) Dispatchable
-// GUID:      {13881143-93C1-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseAction = dispinterface
     ['{13881143-93C1-11D0-A214-00A024FFFE40}']
     property Name: WideString dispid 100;
@@ -1950,7 +1853,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -1961,7 +1864,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -1979,11 +1882,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseParameterCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38352-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseParameterCollection = dispinterface
     ['{97B38352-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -2000,11 +1901,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseParameter; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAttributeCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3834C-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseAttributeCollection = dispinterface
     ['{97B3834C-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -2021,11 +1920,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseAttribute; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDevice
-// Flags:     (4096) Dispatchable
-// GUID:      {62C43882-DB5A-11CF-B091-00A0241E3F73}
-// *********************************************************************//
+
+
+
   IRoseDevice = dispinterface
     ['{62C43882-DB5A-11CF-B091-00A0241E3F73}']
     property Name: WideString dispid 100;
@@ -2040,7 +1937,7 @@ type
     property Connections: IRoseConnectionRelationCollection dispid 12818;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2051,7 +1948,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2075,11 +1972,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassDependency
-// Flags:     (4096) Dispatchable
-// GUID:      {4ACE1899-6CD3-11D1-BC1E-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseClassDependency = dispinterface
     ['{4ACE1899-6CD3-11D1-BC1E-00A024C67143}']
     property Name: WideString dispid 100;
@@ -2097,7 +1992,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2108,7 +2003,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2132,11 +2027,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRole
-// Flags:     (4096) Dispatchable
-// GUID:      {BA242E00-8961-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseRole = dispinterface
     ['{BA242E00-8961-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -2163,7 +2056,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2174,7 +2067,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2200,11 +2093,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClass
-// Flags:     (4096) Dispatchable
-// GUID:      {BC57D1C0-863E-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseClass = dispinterface
     ['{BC57D1C0-863E-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -2231,7 +2122,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2242,7 +2133,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2257,9 +2148,9 @@ type
     function  GetSuperclasses: IRoseClassCollection; dispid 424;
     function  GetAssociations: IRoseAssociationCollection; dispid 425;
     function  AddOperation(const theName: WideString; const retType: WideString): IRoseOperation; dispid 427;
-    function  AddAttribute(const theName: WideString; const theType: WideString;
+    function  AddAttribute(const theName: WideString; const theType: WideString; 
                            const initVal: WideString): IRoseAttribute; dispid 428;
-    function  AddAssociation(const theSupplierRoleName: WideString;
+    function  AddAssociation(const theSupplierRoleName: WideString; 
                              const theSupplierRoleType: WideString): IRoseAssociation; dispid 429;
     function  AddHas(const theSupplierName: WideString; const theSupplierType: WideString): IRoseHasRelationship; dispid 430;
     function  DeleteHas(const theHas: IRoseHasRelationship): WordBool; dispid 432;
@@ -2290,7 +2181,7 @@ type
     function  GetClassDependencies: IRoseClassDependencyCollection; dispid 12662;
     function  AddClassDependency(const theSupplerName: WideString; const theSupplierType: WideString): IRoseClassDependency; dispid 12663;
     function  DeleteClassDependency(const theClassDependency: IRoseClassDependency): WordBool; dispid 12664;
-    function  AddParameter(const theName: WideString; const theType: WideString;
+    function  AddParameter(const theName: WideString; const theType: WideString; 
                            const theDef: WideString; position: Smallint): IRoseParameter; dispid 12667;
     function  IdentifyClass: WideString; dispid 12668;
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
@@ -2305,11 +2196,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseElement
-// Flags:     (4096) Dispatchable
-// GUID:      {D067F15F-6987-11D0-BBF0-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseElement = dispinterface
     ['{D067F15F-6987-11D0-BBF0-00A024C67143}']
     property Name: WideString dispid 100;
@@ -2317,7 +2206,7 @@ type
     property Model: IRoseModel dispid 12524;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2328,7 +2217,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2341,11 +2230,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseControllableUnit
-// Flags:     (4096) Dispatchable
-// GUID:      {32C862A7-8AA9-11D0-A70B-0000F803584A}
-// *********************************************************************//
+
+
+
   IRoseControllableUnit = dispinterface
     ['{32C862A7-8AA9-11D0-A70B-0000F803584A}']
     property Name: WideString dispid 100;
@@ -2358,7 +2245,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2369,7 +2256,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2406,11 +2293,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModel
-// Flags:     (4096) Dispatchable
-// GUID:      {E38942A0-8621-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseModel = dispinterface
     ['{E38942A0-8621-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -2432,7 +2317,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2443,7 +2328,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2509,11 +2394,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseTransition
-// Flags:     (4096) Dispatchable
-// GUID:      {574130A1-93B8-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseTransition = dispinterface
     ['{574130A1-93B8-11D0-A214-00A024FFFE40}']
     property Name: WideString dispid 100;
@@ -2527,7 +2410,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2538,7 +2421,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2568,11 +2451,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSubsystemCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3834A-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseSubsystemCollection = dispinterface
     ['{97B3834A-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -2589,11 +2470,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseSubsystem; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseProcessor
-// Flags:     (4096) Dispatchable
-// GUID:      {62C43886-DB5A-11CF-B091-00A0241E3F73}
-// *********************************************************************//
+
+
+
   IRoseProcessor = dispinterface
     ['{62C43886-DB5A-11CF-B091-00A0241E3F73}']
     property Name: WideString dispid 100;
@@ -2610,7 +2489,7 @@ type
     property Connections: IRoseConnectionRelationCollection dispid 12819;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2621,7 +2500,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2647,11 +2526,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseCategoryDependencyCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {4ACE189D-6CD3-11D1-BC1E-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseCategoryDependencyCollection = dispinterface
     ['{4ACE189D-6CD3-11D1-BC1E-00A024C67143}']
     property Count: Smallint dispid 202;
@@ -2668,11 +2545,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseCategoryDependency; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseProperty
-// Flags:     (4096) Dispatchable
-// GUID:      {93461A23-8811-11CF-B1B0-D227D5210B2C}
-// *********************************************************************//
+
+
+
   IRoseProperty = dispinterface
     ['{93461A23-8811-11CF-B1B0-D227D5210B2C}']
     property Name: WideString dispid 202;
@@ -2681,11 +2556,9 @@ type
     property Type_: WideString dispid 206;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateDiagram
-// Flags:     (4096) Dispatchable
-// GUID:      {7ADDA701-9B06-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseStateDiagram = dispinterface
     ['{7ADDA701-9B06-11D0-A214-00A024FFFE40}']
     property Name: WideString dispid 100;
@@ -2701,7 +2574,7 @@ type
     property IsActivityDiagram: WordBool dispid 12761;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2712,7 +2585,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2772,11 +2645,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseEvent
-// Flags:     (4096) Dispatchable
-// GUID:      {A69CAB22-9179-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseEvent = dispinterface
     ['{A69CAB22-9179-11D0-A214-00A024FFFE40}']
     property Arguments: WideString dispid 215;
@@ -2786,7 +2657,7 @@ type
     property GuardCondition: WideString dispid 12622;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2797,7 +2668,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2811,11 +2682,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRichType
-// Flags:     (4096) Dispatchable
-// GUID:      {EB7AAB60-939C-11CF-B091-00A0241E3F73}
-// *********************************************************************//
+
+
+
   IRoseRichType = dispinterface
     ['{EB7AAB60-939C-11CF-B091-00A0241E3F73}']
     property Value: Smallint dispid 202;
@@ -2825,11 +2694,9 @@ type
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseScenarioDiagramCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3835E-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseScenarioDiagramCollection = dispinterface
     ['{97B3835E-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -2846,11 +2713,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseScenarioDiagram; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseParameter
-// Flags:     (4096) Dispatchable
-// GUID:      {C78E7028-86E4-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseParameter = dispinterface
     ['{C78E7028-86E4-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -2866,7 +2731,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2877,7 +2742,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2895,11 +2760,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseOperation
-// Flags:     (4096) Dispatchable
-// GUID:      {C78E7020-86E4-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseOperation = dispinterface
     ['{C78E7020-86E4-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -2926,7 +2789,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -2937,7 +2800,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -2947,7 +2810,7 @@ type
     function  AddExternalDocument(const szName: WideString; iType: Smallint): IRoseExternalDocument; dispid 214;
     function  DeleteExternalDocument(const pIDispatch: IRoseExternalDocument): WordBool; dispid 215;
     function  OpenSpecification: WordBool; dispid 216;
-    function  AddParameter(const theName: WideString; const theType: WideString;
+    function  AddParameter(const theName: WideString; const theType: WideString; 
                            const theDef: WideString; position: Smallint): IRoseParameter; dispid 416;
     procedure RemoveAllParameters; dispid 417;
     function  DeleteParameter(const theParameter: IRoseParameter): WordBool; dispid 426;
@@ -2959,11 +2822,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseView_LineColor
-// Flags:     (4096) Dispatchable
-// GUID:      {CE5BE565-0380-11D1-BC11-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseView_LineColor = dispinterface
     ['{CE5BE565-0380-11D1-BC11-00A024C67143}']
     property Blue: Smallint dispid 12502;
@@ -2973,11 +2834,9 @@ type
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAddInManager
-// Flags:     (4096) Dispatchable
-// GUID:      {D5352FC2-346C-11D1-883B-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseAddInManager = dispinterface
     ['{D5352FC2-346C-11D1-883B-3C8B00C10000}']
     property AddIns: IRoseAddInCollection dispid 12529;
@@ -2987,11 +2846,9 @@ type
     function  EnableEvents(theEvents: Integer): Integer; dispid 12693;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateDiagramCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38368-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseStateDiagramCollection = dispinterface
     ['{97B38368-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3008,11 +2865,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseStateDiagram; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSwimLaneViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {7FFC5F46-C0C2-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSwimLaneViewCollection = dispinterface
     ['{7FFC5F46-C0C2-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -3029,11 +2884,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseSwimLaneView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSwimLane
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5EA-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSwimLane = dispinterface
     ['{BEAED5EA-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -3050,7 +2903,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3061,7 +2914,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3083,11 +2936,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseItemViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38362-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseItemViewCollection = dispinterface
     ['{97B38362-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3104,11 +2955,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseItemView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRosePropertyCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3835D-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRosePropertyCollection = dispinterface
     ['{97B3835D-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3125,11 +2974,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseProperty; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseOperationCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3834D-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseOperationCollection = dispinterface
     ['{97B3834D-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3146,11 +2993,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseOperation; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDeviceCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38342-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseDeviceCollection = dispinterface
     ['{97B38342-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3167,11 +3012,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseDevice; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseInstantiateRelation
-// Flags:     (4096) Dispatchable
-// GUID:      {B91D8F03-DDBB-11D1-9FAD-0060975306FE}
-// *********************************************************************//
+
+
+
   IRoseInstantiateRelation = dispinterface
     ['{B91D8F03-DDBB-11D1-9FAD-0060975306FE}']
     property Name: WideString dispid 100;
@@ -3185,7 +3028,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3196,7 +3039,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3220,11 +3063,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseContextMenuItem
-// Flags:     (4096) Dispatchable
-// GUID:      {EE0B16E0-FF91-11D1-9FAD-0060975306FE}
-// *********************************************************************//
+
+
+
   IRoseContextMenuItem = dispinterface
     ['{EE0B16E0-FF91-11D1-9FAD-0060975306FE}']
     property Caption: WideString dispid 12682;
@@ -3235,11 +3076,9 @@ type
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseLineVertex
-// Flags:     (4096) Dispatchable
-// GUID:      {B53888D2-3094-11D2-8153-00104B97EBD5}
-// *********************************************************************//
+
+
+
   IRoseLineVertex = dispinterface
     ['{B53888D2-3094-11D2-8153-00104B97EBD5}']
     function  IdentifyClass: WideString; dispid 12668;
@@ -3248,22 +3087,18 @@ type
     function  GetYPosition: Smallint; dispid 12695;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseObject
-// Flags:     (4096) Dispatchable
-// GUID:      {7D8474B2-2C33-11D0-BBDA-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseObject = dispinterface
     ['{7D8474B2-2C33-11D0-BBDA-00A024C67143}']
     function  IdentifyClass: WideString; dispid 12668;
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSwimLaneCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {7FFC5F42-C0C2-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSwimLaneCollection = dispinterface
     ['{7FFC5F42-C0C2-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -3280,11 +3115,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseSwimLane; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModuleVisibilityRelationship
-// Flags:     (4096) Dispatchable
-// GUID:      {9EF8DDD6-E697-11CF-BBD1-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseModuleVisibilityRelationship = dispinterface
     ['{9EF8DDD6-E697-11CF-BBD1-00A024C67143}']
     property Name: WideString dispid 100;
@@ -3304,7 +3137,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3315,7 +3148,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3337,11 +3170,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseComponentViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {C640C861-F2D3-11D0-883A-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseComponentViewCollection = dispinterface
     ['{C640C861-F2D3-11D0-883A-3C8B00C10000}']
     property Count: Smallint dispid 202;
@@ -3358,11 +3189,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseComponentView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseHasRelationshipCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38351-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseHasRelationshipCollection = dispinterface
     ['{97B38351-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3379,11 +3208,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseHasRelationship; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38341-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseClassViewCollection = dispinterface
     ['{97B38341-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -3400,11 +3227,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseClassView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDeploymentDiagram
-// Flags:     (4096) Dispatchable
-// GUID:      {C2C15EC4-E028-11CF-B091-00A0241E3F73}
-// *********************************************************************//
+
+
+
   IRoseDeploymentDiagram = dispinterface
     ['{C2C15EC4-E028-11CF-B091-00A0241E3F73}']
     property Name: WideString dispid 100;
@@ -3418,7 +3243,7 @@ type
     property ZoomFactor: Smallint dispid 12690;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3429,7 +3254,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3467,11 +3292,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseInstanceView
-// Flags:     (4096) Dispatchable
-// GUID:      {348B1AD4-D5C4-11D0-89F8-0020AFD6C181}
-// *********************************************************************//
+
+
+
   IRoseInstanceView = dispinterface
     ['{348B1AD4-D5C4-11D0-89F8-0020AFD6C181}']
     property Name: WideString dispid 100;
@@ -3491,7 +3314,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3502,7 +3325,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3528,11 +3351,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseLink
-// Flags:     (4096) Dispatchable
-// GUID:      {195D7852-D5B6-11D0-89F8-0020AFD6C181}
-// *********************************************************************//
+
+
+
   IRoseLink = dispinterface
     ['{195D7852-D5B6-11D0-89F8-0020AFD6C181}']
     property Name: WideString dispid 100;
@@ -3551,7 +3372,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3562,7 +3383,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3576,7 +3397,7 @@ type
     function  DeleteMessage(const TheMessage: IRoseMessage): WordBool; dispid 419;
     function  AssignAssociation(const TheAssoc: IRoseAssociation): WordBool; dispid 420;
     function  UnassignAssociation: WordBool; dispid 421;
-    function  AddMessageTo(const Name: WideString; const ToInstance: IRoseObjectInstance;
+    function  AddMessageTo(const Name: WideString; const ToInstance: IRoseObjectInstance; 
                            SequenceNumber: Smallint): IRoseMessage; dispid 422;
     function  GetQualifiedName: WideString; dispid 12555;
     function  IdentifyClass: WideString; dispid 12668;
@@ -3587,11 +3408,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseObjectInstance
-// Flags:     (4096) Dispatchable
-// GUID:      {F8198337-FC55-11CF-BBD3-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseObjectInstance = dispinterface
     ['{F8198337-FC55-11CF-BBD3-00A024C67143}']
     property Name: WideString dispid 100;
@@ -3608,7 +3427,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3619,7 +3438,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3640,11 +3459,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseCategoryDependency
-// Flags:     (4096) Dispatchable
-// GUID:      {4ACE189B-6CD3-11D1-BC1E-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseCategoryDependency = dispinterface
     ['{4ACE189B-6CD3-11D1-BC1E-00A024C67143}']
     property Name: WideString dispid 100;
@@ -3658,7 +3475,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3669,7 +3486,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3693,11 +3510,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseInheritRelation
-// Flags:     (4096) Dispatchable
-// GUID:      {00C99560-9200-11CF-B1B0-D227D5210B2C}
-// *********************************************************************//
+
+
+
   IRoseInheritRelation = dispinterface
     ['{00C99560-9200-11CF-B1B0-D227D5210B2C}']
     property Name: WideString dispid 100;
@@ -3714,7 +3529,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3725,7 +3540,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3749,11 +3564,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseView_Font
-// Flags:     (4096) Dispatchable
-// GUID:      {CE5BE567-0380-11D1-BC11-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseView_Font = dispinterface
     ['{CE5BE567-0380-11D1-BC11-00A024C67143}']
     property Size: Smallint dispid 12497;
@@ -3769,11 +3582,9 @@ type
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateMachine
-// Flags:     (4096) Dispatchable
-// GUID:      {A69CAB21-9179-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseStateMachine = dispinterface
     ['{A69CAB21-9179-11D0-A214-00A024FFFE40}']
     property Name: WideString dispid 100;
@@ -3795,7 +3606,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3806,7 +3617,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3843,11 +3654,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModule
-// Flags:     (4096) Dispatchable
-// GUID:      {C78E702A-86E4-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseModule = dispinterface
     ['{C78E702A-86E4-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -3867,7 +3676,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3878,7 +3687,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3906,11 +3715,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseUseCase
-// Flags:     (4096) Dispatchable
-// GUID:      {7E7F6EE0-16DE-11D0-8976-00A024774419}
-// *********************************************************************//
+
+
+
   IRoseUseCase = dispinterface
     ['{7E7F6EE0-16DE-11D0-8976-00A024774419}']
     property Name: WideString dispid 100;
@@ -3929,7 +3736,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -3940,7 +3747,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -3957,7 +3764,7 @@ type
     function  AddInheritRel(const szName: WideString; const szParentName: WideString): IRoseInheritRelation; dispid 421;
     function  DeleteInheritRel(const pIDispatchRelation: IRoseInheritRelation): WordBool; dispid 422;
     function  GetAssociations: IRoseAssociationCollection; dispid 426;
-    function  AddAssociation(const szSupplierRoleName: WideString;
+    function  AddAssociation(const szSupplierRoleName: WideString; 
                              const szSupplierRoleType: WideString): IRoseAssociation; dispid 430;
     function  DeleteAssociation(const pDispatchAssociation: IRoseAssociation): WordBool; dispid 431;
     function  GetSuperUseCases: IRoseUseCaseCollection; dispid 432;
@@ -3973,11 +3780,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseItemCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {0DD9ACF8-D06E-11D0-BC0B-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseItemCollection = dispinterface
     ['{0DD9ACF8-D06E-11D0-BC0B-00A024C67143}']
     property Count: Smallint dispid 202;
@@ -3994,11 +3799,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseItem; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseNoteViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38358-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseNoteViewCollection = dispinterface
     ['{97B38358-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4015,11 +3818,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseNoteView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseInheritRelationCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38354-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseInheritRelationCollection = dispinterface
     ['{97B38354-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4036,11 +3837,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseInheritRelation; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDeploymentDiagramCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B383A1-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseDeploymentDiagramCollection = dispinterface
     ['{97B383A1-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4057,22 +3856,18 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseDeploymentDiagram; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStringCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {6A7FC311-C893-11D0-BC0B-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseStringCollection = dispinterface
     ['{6A7FC311-C893-11D0-BC0B-00A024C67143}']
     property Count: Smallint dispid 50;
     function  GetAt(id: Smallint): WideString; dispid 51;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3836A-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseStateViewCollection = dispinterface
     ['{97B3836A-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4089,11 +3884,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseStateView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDecisionView
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5F9-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseDecisionView = dispinterface
     ['{BEAED5F9-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -4113,7 +3906,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4124,7 +3917,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4150,11 +3943,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateMachineOwner
-// Flags:     (4096) Dispatchable
-// GUID:      {94CA1882-5D13-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseStateMachineOwner = dispinterface
     ['{94CA1882-5D13-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -4163,7 +3954,7 @@ type
     property StateMachines: IRoseStateMachineCollection dispid 12744;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4174,7 +3965,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4189,11 +3980,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseProcessCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38366-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseProcessCollection = dispinterface
     ['{97B38366-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4210,11 +3999,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseProcess; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAssociationCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3834E-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseAssociationCollection = dispinterface
     ['{97B3834E-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4231,11 +4018,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseAssociation; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModuleDiagramCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38348-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseModuleDiagramCollection = dispinterface
     ['{97B38348-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4252,11 +4037,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseModuleDiagram; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDiagram
-// Flags:     (4096) Dispatchable
-// GUID:      {3FD9D000-93B0-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseDiagram = dispinterface
     ['{3FD9D000-93B0-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -4270,7 +4053,7 @@ type
     property ZoomFactor: Smallint dispid 12690;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4281,7 +4064,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4313,11 +4096,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAbstractStateCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5EE-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseAbstractStateCollection = dispinterface
     ['{BEAED5EE-578D-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -4334,11 +4115,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseAbstractState; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRichTypeValuesCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BF8C1040-96DD-11CF-B091-00A0241E3F73}
-// *********************************************************************//
+
+
+
   IRoseRichTypeValuesCollection = dispinterface
     ['{BF8C1040-96DD-11CF-B091-00A0241E3F73}']
     property Count: Smallint dispid 202;
@@ -4347,11 +4126,9 @@ type
     function  IsClass(const theClassName: WideString): WordBool; dispid 12669;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSubsystemView
-// Flags:     (4096) Dispatchable
-// GUID:      {14028C92-C06C-11D0-89F5-0020AFD6C181}
-// *********************************************************************//
+
+
+
   IRoseSubsystemView = dispinterface
     ['{14028C92-C06C-11D0-89F5-0020AFD6C181}']
     property Name: WideString dispid 100;
@@ -4371,7 +4148,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4382,7 +4159,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4408,11 +4185,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseComponentView
-// Flags:     (4096) Dispatchable
-// GUID:      {14028C94-C06C-11D0-89F5-0020AFD6C181}
-// *********************************************************************//
+
+
+
   IRoseComponentView = dispinterface
     ['{14028C94-C06C-11D0-89F5-0020AFD6C181}']
     property Name: WideString dispid 100;
@@ -4432,7 +4207,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4443,7 +4218,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4469,11 +4244,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAttribute
-// Flags:     (4096) Dispatchable
-// GUID:      {C78E7024-86E4-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseAttribute = dispinterface
     ['{C78E7024-86E4-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -4493,7 +4266,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4504,7 +4277,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4522,11 +4295,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassDiagram
-// Flags:     (4096) Dispatchable
-// GUID:      {3FD9D002-93B0-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseClassDiagram = dispinterface
     ['{3FD9D002-93B0-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -4541,7 +4312,7 @@ type
     property ZoomFactor: Smallint dispid 12690;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4552,7 +4323,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4600,11 +4371,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseNoteView
-// Flags:     (4096) Dispatchable
-// GUID:      {015655CA-72DF-11D0-95EB-0000F803584A}
-// *********************************************************************//
+
+
+
   IRoseNoteView = dispinterface
     ['{015655CA-72DF-11D0-95EB-0000F803584A}']
     property Name: WideString dispid 100;
@@ -4625,7 +4394,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4636,7 +4405,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4664,11 +4433,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRosePackage
-// Flags:     (4096) Dispatchable
-// GUID:      {47D975C1-8A8D-11D0-A214-444553540000}
-// *********************************************************************//
+
+
+
   IRosePackage = dispinterface
     ['{47D975C1-8A8D-11D0-A214-444553540000}']
     property Name: WideString dispid 100;
@@ -4681,7 +4448,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4692,7 +4459,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4730,11 +4497,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRosePathMap
-// Flags:     (4096) Dispatchable
-// GUID:      {4C9E2241-84C5-11D0-A214-444553540000}
-// *********************************************************************//
+
+
+
   IRosePathMap = dispinterface
     ['{4C9E2241-84C5-11D0-A214-444553540000}']
     function  DeleteEntry(const Symbol: WideString): WordBool; dispid 50;
@@ -4746,11 +4511,9 @@ type
     function  GetVirtualPathWithContext(const ActualPath: WideString; const Context: WideString): WideString; dispid 12675;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSyncItemViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {94CA1891-5D13-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSyncItemViewCollection = dispinterface
     ['{94CA1891-5D13-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -4767,11 +4530,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseSyncItemView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAbstractState
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5EC-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseAbstractState = dispinterface
     ['{BEAED5EC-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -4791,7 +4552,7 @@ type
     property SubSynchronizations: IRoseSyncItemCollection dispid 12804;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4802,7 +4563,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4842,11 +4603,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModuleVisibilityRelationshipCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38363-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseModuleVisibilityRelationshipCollection = dispinterface
     ['{97B38363-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4863,11 +4622,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseModuleVisibilityRelationship; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38349-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseClassCollection = dispinterface
     ['{97B38349-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -4884,11 +4641,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseClass; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseMessage
-// Flags:     (4096) Dispatchable
-// GUID:      {F819833C-FC55-11CF-BBD3-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseMessage = dispinterface
     ['{F819833C-FC55-11CF-BBD3-00A024C67143}']
     property Name: WideString dispid 100;
@@ -4903,7 +4658,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -4914,7 +4669,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -4939,11 +4694,9 @@ type
     function  GetSequenceInformation: WideString; dispid 12825;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseConnectionRelationCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {4467F446-F24E-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseConnectionRelationCollection = dispinterface
     ['{4467F446-F24E-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -4960,11 +4713,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseConnectionRelation; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassDependencyCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {ED042E4F-6CDE-11D1-BC1E-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseClassDependencyCollection = dispinterface
     ['{ED042E4F-6CDE-11D1-BC1E-00A024C67143}']
     property Count: Smallint dispid 202;
@@ -4981,11 +4732,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseClassDependency; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseAssociation
-// Flags:     (4096) Dispatchable
-// GUID:      {C78E7026-86E4-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseAssociation = dispinterface
     ['{C78E7026-86E4-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -5005,7 +4754,7 @@ type
     property ParentCategory: IRoseCategory dispid 12798;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5016,7 +4765,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5041,11 +4790,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseEventCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38361-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseEventCollection = dispinterface
     ['{97B38361-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5062,11 +4809,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseEvent; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38367-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseStateCollection = dispinterface
     ['{97B38367-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5083,11 +4828,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseState; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSyncItemView
-// Flags:     (4096) Dispatchable
-// GUID:      {94CA1888-5D13-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSyncItemView = dispinterface
     ['{94CA1888-5D13-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -5108,7 +4851,7 @@ type
     property Horizontal: WordBool dispid 12789;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5119,7 +4862,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5145,11 +4888,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseActivityView
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5FC-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseActivityView = dispinterface
     ['{BEAED5FC-578D-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -5169,7 +4910,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5180,7 +4921,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5206,11 +4947,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateView
-// Flags:     (4096) Dispatchable
-// GUID:      {7BD909E1-9AF9-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseStateView = dispinterface
     ['{7BD909E1-9AF9-11D0-A214-00A024FFFE40}']
     property Name: WideString dispid 100;
@@ -5230,7 +4969,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5241,7 +4980,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5267,11 +5006,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateVertexCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {BEAED5F7-578D-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseStateVertexCollection = dispinterface
     ['{BEAED5F7-578D-11D2-92AA-004005141253}']
     property Count: Smallint dispid 202;
@@ -5288,11 +5025,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseStateVertex; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSubsystemViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {CA3AD902-BFCE-11D0-89F5-0020AFD6C181}
-// *********************************************************************//
+
+
+
   IRoseSubsystemViewCollection = dispinterface
     ['{CA3AD902-BFCE-11D0-89F5-0020AFD6C181}']
     property Count: Smallint dispid 202;
@@ -5309,11 +5044,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseSubsystemView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseModuleDiagram
-// Flags:     (4096) Dispatchable
-// GUID:      {3FD9D004-93B0-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseModuleDiagram = dispinterface
     ['{3FD9D004-93B0-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -5330,7 +5063,7 @@ type
     property ZoomFactor: Smallint dispid 12690;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5341,7 +5074,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5381,11 +5114,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSubsystem
-// Flags:     (4096) Dispatchable
-// GUID:      {C78E702C-86E4-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseSubsystem = dispinterface
     ['{C78E702C-86E4-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -5402,7 +5133,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5413,7 +5144,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5470,11 +5201,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseExternalDocumentCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38357-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseExternalDocumentCollection = dispinterface
     ['{97B38357-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5491,11 +5220,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseExternalDocument; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseInstanceViewCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {C640C864-F2D3-11D0-883A-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseInstanceViewCollection = dispinterface
     ['{C640C864-F2D3-11D0-883A-3C8B00C10000}']
     property Count: Smallint dispid 202;
@@ -5512,11 +5239,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseInstanceView; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseItemView
-// Flags:     (4096) Dispatchable
-// GUID:      {7DFAFE40-A29D-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseItemView = dispinterface
     ['{7DFAFE40-A29D-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -5536,7 +5261,7 @@ type
     property LineVertices: IRoseLineVertexCollection dispid 12696;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5547,7 +5272,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5572,11 +5297,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseTransitionCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3836B-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseTransitionCollection = dispinterface
     ['{97B3836B-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5593,11 +5316,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseTransition; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseState
-// Flags:     (4096) Dispatchable
-// GUID:      {A69CAB23-9179-11D0-A214-00A024FFFE40}
-// *********************************************************************//
+
+
+
   IRoseState = dispinterface
     ['{A69CAB23-9179-11D0-A214-00A024FFFE40}']
     property Name: WideString dispid 100;
@@ -5619,7 +5340,7 @@ type
     property SubSynchronizations: IRoseSyncItemCollection dispid 12804;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5630,7 +5351,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5674,11 +5395,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseObjectInstanceCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B3835A-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseObjectInstanceCollection = dispinterface
     ['{97B3835A-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5695,11 +5414,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseObjectInstance; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRoleCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38353-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseRoleCollection = dispinterface
     ['{97B38353-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5716,11 +5433,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseRole; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseClassRelation
-// Flags:     (4096) Dispatchable
-// GUID:      {00C99564-9200-11CF-B1B0-D227D5210B2C}
-// *********************************************************************//
+
+
+
   IRoseClassRelation = dispinterface
     ['{00C99564-9200-11CF-B1B0-D227D5210B2C}']
     property Name: WideString dispid 100;
@@ -5734,7 +5449,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5745,7 +5460,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5769,11 +5484,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseCategory
-// Flags:     (4096) Dispatchable
-// GUID:      {D7BC1B45-8618-11CF-B3D4-00A0241DB1D0}
-// *********************************************************************//
+
+
+
   IRoseCategory = dispinterface
     ['{D7BC1B45-8618-11CF-B3D4-00A0241DB1D0}']
     property Name: WideString dispid 100;
@@ -5794,7 +5507,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5805,7 +5518,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -5850,7 +5563,7 @@ type
     function  GetQualifiedName: WideString; dispid 12555;
     function  IsModified: WordBool; dispid 12654;
     function  Uncontrol: WordBool; dispid 12655;
-    function  AddCategoryDependency(const theName: WideString;
+    function  AddCategoryDependency(const theName: WideString; 
                                     const theSupplierCategoryName: WideString): IRoseCategoryDependency; dispid 12659;
     function  GetCategoryDependencies: IRoseCategoryDependencyCollection; dispid 12660;
     function  DeleteCategoryDependency(const theDependency: IRoseCategoryDependency): WordBool; dispid 12661;
@@ -5869,11 +5582,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseDefaultModelProperties
-// Flags:     (4096) Dispatchable
-// GUID:      {76ACC49D-FA18-11D0-BC11-00A024C67143}
-// *********************************************************************//
+
+
+
   IRoseDefaultModelProperties = dispinterface
     ['{76ACC49D-FA18-11D0-BC11-00A024C67143}']
     property Name: WideString dispid 100;
@@ -5886,7 +5597,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -5896,7 +5607,7 @@ type
     function  GetToolProperties(const theToolName: WideString): IRosePropertyCollection; dispid 123;
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetToolNames: IRoseStringCollection; dispid 130;
@@ -5905,22 +5616,22 @@ type
     function  AddExternalDocument(const szName: WideString; iType: Smallint): IRoseExternalDocument; dispid 214;
     function  DeleteExternalDocument(const pIDispatch: IRoseExternalDocument): WordBool; dispid 215;
     function  OpenSpecification: WordBool; dispid 216;
-    function  AddDefaultProperty(const ClassName: WideString; const ToolName: WideString;
-                                 const SetName: WideString; const PropName: WideString;
+    function  AddDefaultProperty(const ClassName: WideString; const ToolName: WideString; 
+                                 const SetName: WideString; const PropName: WideString; 
                                  const PropType: WideString; const Value: WideString): WordBool; dispid 440;
-    function  CloneDefaultPropertySet(const ClassName: WideString; const ToolName: WideString;
-                                      const ExistingSetName: WideString;
+    function  CloneDefaultPropertySet(const ClassName: WideString; const ToolName: WideString; 
+                                      const ExistingSetName: WideString; 
                                       const NewSetName: WideString): WordBool; dispid 441;
-    function  CreateDefaultPropertySet(const ClassName: WideString; const ToolName: WideString;
+    function  CreateDefaultPropertySet(const ClassName: WideString; const ToolName: WideString; 
                                        const NewSetName: WideString): WordBool; dispid 442;
-    function  DeleteDefaultPropertySet(const ClassName: WideString; const ToolName: WideString;
+    function  DeleteDefaultPropertySet(const ClassName: WideString; const ToolName: WideString; 
                                        const SetName: WideString): WordBool; dispid 443;
-    function  GetDefaultPropertySet(const ClassName: WideString; const ToolName: WideString;
+    function  GetDefaultPropertySet(const ClassName: WideString; const ToolName: WideString; 
                                     const SetName: WideString): IRosePropertyCollection; dispid 444;
-    function  FindDefaultProperty(const ClassName: WideString; const ToolName: WideString;
+    function  FindDefaultProperty(const ClassName: WideString; const ToolName: WideString; 
                                   const SetName: WideString; const PropName: WideString): IRoseProperty; dispid 445;
     function  GetDefaultSetNames(const ClassName: WideString; const ToolName: WideString): IRoseStringCollection; dispid 447;
-    function  DeleteDefaultProperty(const ClassName: WideString; const ToolName: WideString;
+    function  DeleteDefaultProperty(const ClassName: WideString; const ToolName: WideString; 
                                     const SetName: WideString; const PropName: WideString): WordBool; dispid 449;
     function  IsControlled: WordBool; dispid 12433;
     function  Control(const Path: WideString): WordBool; dispid 12434;
@@ -5951,11 +5662,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseStateMachineCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38369-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRoseStateMachineCollection = dispinterface
     ['{97B38369-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -5972,11 +5681,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseStateMachine; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseSyncItem
-// Flags:     (4096) Dispatchable
-// GUID:      {94CA188B-5D13-11D2-92AA-004005141253}
-// *********************************************************************//
+
+
+
   IRoseSyncItem = dispinterface
     ['{94CA188B-5D13-11D2-92AA-004005141253}']
     property Name: WideString dispid 100;
@@ -5992,7 +5699,7 @@ type
     property StateMachineOwner: IRoseStateMachineOwner dispid 12790;
     function  GetUniqueID: WideString; dispid 102;
     function  GetCurrentPropertySetName(const ToolName: WideString): WideString; dispid 109;
-    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString;
+    function  OverrideProperty(const theToolName: WideString; const thePropName: WideString; 
                                const theValue: WideString): WordBool; dispid 110;
     function  InheritProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 111;
     function  GetPropertyValue(const theToolName: WideString; const thePropName: WideString): WideString; dispid 119;
@@ -6003,7 +5710,7 @@ type
     function  IsOverriddenProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 124;
     function  IsDefaultProperty(const theToolName: WideString; const thePropName: WideString): WordBool; dispid 125;
     function  FindDefaultProperty(const theToolName: WideString; const thePropName: WideString): IRoseProperty; dispid 126;
-    function  CreateProperty(const theToolName: WideString; const thePropName: WideString;
+    function  CreateProperty(const theToolName: WideString; const thePropName: WideString; 
                              const theValue: WideString; const theType: WideString): WordBool; dispid 127;
     function  GetPropertyClassName: WideString; dispid 128;
     function  GetDefaultSetNames(const ToolName: WideString): IRoseStringCollection; dispid 129;
@@ -6025,11 +5732,9 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseRealizeRelationCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {67448181-4553-11D1-883B-3C8B00C10000}
-// *********************************************************************//
+
+
+
   IRoseRealizeRelationCollection = dispinterface
     ['{67448181-4553-11D1-883B-3C8B00C10000}']
     property Count: Smallint dispid 202;
@@ -6046,11 +5751,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRoseRealizeRelation; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRosePackageCollection
-// Flags:     (4096) Dispatchable
-// GUID:      {97B38364-A4E3-11D0-BFF0-00AA003DEF5B}
-// *********************************************************************//
+
+
+
   IRosePackageCollection = dispinterface
     ['{97B38364-A4E3-11D0-BFF0-00AA003DEF5B}']
     property Count: Smallint dispid 202;
@@ -6067,11 +5770,9 @@ type
     function  GetWithUniqueID(const UniqueID: WideString): IRosePackage; dispid 213;
   end;
 
-// *********************************************************************//
-// DispIntf:  IRoseExternalDocument
-// Flags:     (4096) Dispatchable
-// GUID:      {906FF583-276B-11D0-8980-00A024774419}
-// *********************************************************************//
+
+
+
   IRoseExternalDocument = dispinterface
     ['{906FF583-276B-11D0-8980-00A024774419}']
     property Path: WideString dispid 1;
@@ -6087,1633 +5788,1361 @@ type
     function  GetIconIndex: Smallint; dispid 12824;
   end;
 
-// *********************************************************************//
-// The Class CoRoseActivityViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseActivityViewCollection exposed by
-// the CoClass RoseActivityViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseActivityViewCollection = class
     class function Create: IRoseActivityViewCollection;
     class function CreateRemote(const MachineName: string): IRoseActivityViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseProcessorCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseProcessorCollection exposed by
-// the CoClass RoseProcessorCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseProcessorCollection = class
     class function Create: IRoseProcessorCollection;
     class function CreateRemote(const MachineName: string): IRoseProcessorCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseCategoryCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseCategoryCollection exposed by
-// the CoClass RoseCategoryCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseCategoryCollection = class
     class function Create: IRoseCategoryCollection;
     class function CreateRemote(const MachineName: string): IRoseCategoryCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDeploymentUnit provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDeploymentUnit exposed by
-// the CoClass RoseDeploymentUnit. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDeploymentUnit = class
     class function Create: IRoseDeploymentUnit;
     class function CreateRemote(const MachineName: string): IRoseDeploymentUnit;
   end;
 
-// *********************************************************************//
-// The Class CoRoseItem provides a Create and CreateRemote method to
-// create instances of the default interface IRoseItem exposed by
-// the CoClass RoseItem. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseItem = class
     class function Create: IRoseItem;
     class function CreateRemote(const MachineName: string): IRoseItem;
   end;
 
-// *********************************************************************//
-// The Class CoRoseContextMenuItemCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseContextMenuItemCollection exposed by
-// the CoClass RoseContextMenuItemCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseContextMenuItemCollection = class
     class function Create: IRoseContextMenuItemCollection;
     class function CreateRemote(const MachineName: string): IRoseContextMenuItemCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAddIn provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAddIn exposed by
-// the CoClass RoseAddIn. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAddIn = class
     class function Create: IRoseAddIn;
     class function CreateRemote(const MachineName: string): IRoseAddIn;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDecisionViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDecisionViewCollection exposed by
-// the CoClass RoseDecisionViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDecisionViewCollection = class
     class function Create: IRoseDecisionViewCollection;
     class function CreateRemote(const MachineName: string): IRoseDecisionViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateVertex provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateVertex exposed by
-// the CoClass RoseStateVertex. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateVertex = class
     class function Create: IRoseStateVertex;
     class function CreateRemote(const MachineName: string): IRoseStateVertex;
   end;
 
-// *********************************************************************//
-// The Class CoRoseUseCaseCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseUseCaseCollection exposed by
-// the CoClass RoseUseCaseCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseUseCaseCollection = class
     class function Create: IRoseUseCaseCollection;
     class function CreateRemote(const MachineName: string): IRoseUseCaseCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseConnectionRelation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseConnectionRelation exposed by
-// the CoClass RoseConnectionRelation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseConnectionRelation = class
     class function Create: IRoseConnectionRelation;
     class function CreateRemote(const MachineName: string): IRoseConnectionRelation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRelation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRelation exposed by
-// the CoClass RoseRelation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRelation = class
     class function Create: IRoseRelation;
     class function CreateRemote(const MachineName: string): IRoseRelation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseApplication provides a Create and CreateRemote method to
-// create instances of the default interface IRoseApplication exposed by
-// the CoClass RoseApplication. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseApplication = class
     class function Create: IRoseApplication;
     class function CreateRemote(const MachineName: string): IRoseApplication;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDecisionCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDecisionCollection exposed by
-// the CoClass RoseDecisionCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDecisionCollection = class
     class function Create: IRoseDecisionCollection;
     class function CreateRemote(const MachineName: string): IRoseDecisionCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDecision provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDecision exposed by
-// the CoClass RoseDecision. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDecision = class
     class function Create: IRoseDecision;
     class function CreateRemote(const MachineName: string): IRoseDecision;
   end;
 
-// *********************************************************************//
-// The Class CoRoseLineVertexCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseLineVertexCollection exposed by
-// the CoClass RoseLineVertexCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseLineVertexCollection = class
     class function Create: IRoseLineVertexCollection;
     class function CreateRemote(const MachineName: string): IRoseLineVertexCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseInstantiateRelationCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseInstantiateRelationCollection exposed by
-// the CoClass RoseInstantiateRelationCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseInstantiateRelationCollection = class
     class function Create: IRoseInstantiateRelationCollection;
     class function CreateRemote(const MachineName: string): IRoseInstantiateRelationCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseMessageCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseMessageCollection exposed by
-// the CoClass RoseMessageCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseMessageCollection = class
     class function Create: IRoseMessageCollection;
     class function CreateRemote(const MachineName: string): IRoseMessageCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassDiagramCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassDiagramCollection exposed by
-// the CoClass RoseClassDiagramCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassDiagramCollection = class
     class function Create: IRoseClassDiagramCollection;
     class function CreateRemote(const MachineName: string): IRoseClassDiagramCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseScenarioDiagram provides a Create and CreateRemote method to
-// create instances of the default interface IRoseScenarioDiagram exposed by
-// the CoClass RoseScenarioDiagram. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseScenarioDiagram = class
     class function Create: IRoseScenarioDiagram;
     class function CreateRemote(const MachineName: string): IRoseScenarioDiagram;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRealizeRelation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRealizeRelation exposed by
-// the CoClass RoseRealizeRelation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRealizeRelation = class
     class function Create: IRoseRealizeRelation;
     class function CreateRemote(const MachineName: string): IRoseRealizeRelation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseHasRelationship provides a Create and CreateRemote method to
-// create instances of the default interface IRoseHasRelationship exposed by
-// the CoClass RoseHasRelationship. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseHasRelationship = class
     class function Create: IRoseHasRelationship;
     class function CreateRemote(const MachineName: string): IRoseHasRelationship;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassView exposed by
-// the CoClass RoseClassView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassView = class
     class function Create: IRoseClassView;
     class function CreateRemote(const MachineName: string): IRoseClassView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseView_FillColor provides a Create and CreateRemote method to
-// create instances of the default interface IRoseView_FillColor exposed by
-// the CoClass RoseView_FillColor. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseView_FillColor = class
     class function Create: IRoseView_FillColor;
     class function CreateRemote(const MachineName: string): IRoseView_FillColor;
   end;
 
-// *********************************************************************//
-// The Class CoRoseActionCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseActionCollection exposed by
-// the CoClass RoseActionCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseActionCollection = class
     class function Create: IRoseActionCollection;
     class function CreateRemote(const MachineName: string): IRoseActionCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSyncItemCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSyncItemCollection exposed by
-// the CoClass RoseSyncItemCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSyncItemCollection = class
     class function Create: IRoseSyncItemCollection;
     class function CreateRemote(const MachineName: string): IRoseSyncItemCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseActivityCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseActivityCollection exposed by
-// the CoClass RoseActivityCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseActivityCollection = class
     class function Create: IRoseActivityCollection;
     class function CreateRemote(const MachineName: string): IRoseActivityCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseActivity provides a Create and CreateRemote method to
-// create instances of the default interface IRoseActivity exposed by
-// the CoClass RoseActivity. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseActivity = class
     class function Create: IRoseActivity;
     class function CreateRemote(const MachineName: string): IRoseActivity;
   end;
 
-// *********************************************************************//
-// The Class CoRoseProcess provides a Create and CreateRemote method to
-// create instances of the default interface IRoseProcess exposed by
-// the CoClass RoseProcess. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseProcess = class
     class function Create: IRoseProcess;
     class function CreateRemote(const MachineName: string): IRoseProcess;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAddInCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAddInCollection exposed by
-// the CoClass RoseAddInCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAddInCollection = class
     class function Create: IRoseAddInCollection;
     class function CreateRemote(const MachineName: string): IRoseAddInCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSwimLaneView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSwimLaneView exposed by
-// the CoClass RoseSwimLaneView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSwimLaneView = class
     class function Create: IRoseSwimLaneView;
     class function CreateRemote(const MachineName: string): IRoseSwimLaneView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseControllableUnitCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseControllableUnitCollection exposed by
-// the CoClass RoseControllableUnitCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseControllableUnitCollection = class
     class function Create: IRoseControllableUnitCollection;
     class function CreateRemote(const MachineName: string): IRoseControllableUnitCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModuleCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModuleCollection exposed by
-// the CoClass RoseModuleCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModuleCollection = class
     class function Create: IRoseModuleCollection;
     class function CreateRemote(const MachineName: string): IRoseModuleCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseLinkCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseLinkCollection exposed by
-// the CoClass RoseLinkCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseLinkCollection = class
     class function Create: IRoseLinkCollection;
     class function CreateRemote(const MachineName: string): IRoseLinkCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAction provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAction exposed by
-// the CoClass RoseAction. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAction = class
     class function Create: IRoseAction;
     class function CreateRemote(const MachineName: string): IRoseAction;
   end;
 
-// *********************************************************************//
-// The Class CoRoseParameterCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseParameterCollection exposed by
-// the CoClass RoseParameterCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseParameterCollection = class
     class function Create: IRoseParameterCollection;
     class function CreateRemote(const MachineName: string): IRoseParameterCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAttributeCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAttributeCollection exposed by
-// the CoClass RoseAttributeCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAttributeCollection = class
     class function Create: IRoseAttributeCollection;
     class function CreateRemote(const MachineName: string): IRoseAttributeCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDevice provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDevice exposed by
-// the CoClass RoseDevice. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDevice = class
     class function Create: IRoseDevice;
     class function CreateRemote(const MachineName: string): IRoseDevice;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassDependency provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassDependency exposed by
-// the CoClass RoseClassDependency. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassDependency = class
     class function Create: IRoseClassDependency;
     class function CreateRemote(const MachineName: string): IRoseClassDependency;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRole provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRole exposed by
-// the CoClass RoseRole. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRole = class
     class function Create: IRoseRole;
     class function CreateRemote(const MachineName: string): IRoseRole;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClass provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClass exposed by
-// the CoClass RoseClass. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClass = class
     class function Create: IRoseClass;
     class function CreateRemote(const MachineName: string): IRoseClass;
   end;
 
-// *********************************************************************//
-// The Class CoRoseElement provides a Create and CreateRemote method to
-// create instances of the default interface IRoseElement exposed by
-// the CoClass RoseElement. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseElement = class
     class function Create: IRoseElement;
     class function CreateRemote(const MachineName: string): IRoseElement;
   end;
 
-// *********************************************************************//
-// The Class CoRoseControllableUnit provides a Create and CreateRemote method to
-// create instances of the default interface IRoseControllableUnit exposed by
-// the CoClass RoseControllableUnit. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseControllableUnit = class
     class function Create: IRoseControllableUnit;
     class function CreateRemote(const MachineName: string): IRoseControllableUnit;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModel provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModel exposed by
-// the CoClass RoseModel. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModel = class
     class function Create: IRoseModel;
     class function CreateRemote(const MachineName: string): IRoseModel;
   end;
 
-// *********************************************************************//
-// The Class CoRoseTransition provides a Create and CreateRemote method to
-// create instances of the default interface IRoseTransition exposed by
-// the CoClass RoseTransition. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseTransition = class
     class function Create: IRoseTransition;
     class function CreateRemote(const MachineName: string): IRoseTransition;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSubsystemCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSubsystemCollection exposed by
-// the CoClass RoseSubsystemCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSubsystemCollection = class
     class function Create: IRoseSubsystemCollection;
     class function CreateRemote(const MachineName: string): IRoseSubsystemCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseProcessor provides a Create and CreateRemote method to
-// create instances of the default interface IRoseProcessor exposed by
-// the CoClass RoseProcessor. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseProcessor = class
     class function Create: IRoseProcessor;
     class function CreateRemote(const MachineName: string): IRoseProcessor;
   end;
 
-// *********************************************************************//
-// The Class CoRoseCategoryDependencyCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseCategoryDependencyCollection exposed by
-// the CoClass RoseCategoryDependencyCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseCategoryDependencyCollection = class
     class function Create: IRoseCategoryDependencyCollection;
     class function CreateRemote(const MachineName: string): IRoseCategoryDependencyCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseProperty provides a Create and CreateRemote method to
-// create instances of the default interface IRoseProperty exposed by
-// the CoClass RoseProperty. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseProperty = class
     class function Create: IRoseProperty;
     class function CreateRemote(const MachineName: string): IRoseProperty;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateDiagram provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateDiagram exposed by
-// the CoClass RoseStateDiagram. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateDiagram = class
     class function Create: IRoseStateDiagram;
     class function CreateRemote(const MachineName: string): IRoseStateDiagram;
   end;
 
-// *********************************************************************//
-// The Class CoRoseEvent provides a Create and CreateRemote method to
-// create instances of the default interface IRoseEvent exposed by
-// the CoClass RoseEvent. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseEvent = class
     class function Create: IRoseEvent;
     class function CreateRemote(const MachineName: string): IRoseEvent;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRichType provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRichType exposed by
-// the CoClass RoseRichType. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRichType = class
     class function Create: IRoseRichType;
     class function CreateRemote(const MachineName: string): IRoseRichType;
   end;
 
-// *********************************************************************//
-// The Class CoRoseScenarioDiagramCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseScenarioDiagramCollection exposed by
-// the CoClass RoseScenarioDiagramCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseScenarioDiagramCollection = class
     class function Create: IRoseScenarioDiagramCollection;
     class function CreateRemote(const MachineName: string): IRoseScenarioDiagramCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseParameter provides a Create and CreateRemote method to
-// create instances of the default interface IRoseParameter exposed by
-// the CoClass RoseParameter. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseParameter = class
     class function Create: IRoseParameter;
     class function CreateRemote(const MachineName: string): IRoseParameter;
   end;
 
-// *********************************************************************//
-// The Class CoRoseOperation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseOperation exposed by
-// the CoClass RoseOperation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseOperation = class
     class function Create: IRoseOperation;
     class function CreateRemote(const MachineName: string): IRoseOperation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseView_LineColor provides a Create and CreateRemote method to
-// create instances of the default interface IRoseView_LineColor exposed by
-// the CoClass RoseView_LineColor. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseView_LineColor = class
     class function Create: IRoseView_LineColor;
     class function CreateRemote(const MachineName: string): IRoseView_LineColor;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAddInManager provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAddInManager exposed by
-// the CoClass RoseAddInManager. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAddInManager = class
     class function Create: IRoseAddInManager;
     class function CreateRemote(const MachineName: string): IRoseAddInManager;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateDiagramCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateDiagramCollection exposed by
-// the CoClass RoseStateDiagramCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateDiagramCollection = class
     class function Create: IRoseStateDiagramCollection;
     class function CreateRemote(const MachineName: string): IRoseStateDiagramCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSwimLaneViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSwimLaneViewCollection exposed by
-// the CoClass RoseSwimLaneViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSwimLaneViewCollection = class
     class function Create: IRoseSwimLaneViewCollection;
     class function CreateRemote(const MachineName: string): IRoseSwimLaneViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSwimLane provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSwimLane exposed by
-// the CoClass RoseSwimLane. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSwimLane = class
     class function Create: IRoseSwimLane;
     class function CreateRemote(const MachineName: string): IRoseSwimLane;
   end;
 
-// *********************************************************************//
-// The Class CoRoseItemViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseItemViewCollection exposed by
-// the CoClass RoseItemViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseItemViewCollection = class
     class function Create: IRoseItemViewCollection;
     class function CreateRemote(const MachineName: string): IRoseItemViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRosePropertyCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRosePropertyCollection exposed by
-// the CoClass RosePropertyCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRosePropertyCollection = class
     class function Create: IRosePropertyCollection;
     class function CreateRemote(const MachineName: string): IRosePropertyCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseOperationCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseOperationCollection exposed by
-// the CoClass RoseOperationCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseOperationCollection = class
     class function Create: IRoseOperationCollection;
     class function CreateRemote(const MachineName: string): IRoseOperationCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDeviceCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDeviceCollection exposed by
-// the CoClass RoseDeviceCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDeviceCollection = class
     class function Create: IRoseDeviceCollection;
     class function CreateRemote(const MachineName: string): IRoseDeviceCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseInstantiateRelation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseInstantiateRelation exposed by
-// the CoClass RoseInstantiateRelation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseInstantiateRelation = class
     class function Create: IRoseInstantiateRelation;
     class function CreateRemote(const MachineName: string): IRoseInstantiateRelation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseContextMenuItem provides a Create and CreateRemote method to
-// create instances of the default interface IRoseContextMenuItem exposed by
-// the CoClass RoseContextMenuItem. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseContextMenuItem = class
     class function Create: IRoseContextMenuItem;
     class function CreateRemote(const MachineName: string): IRoseContextMenuItem;
   end;
 
-// *********************************************************************//
-// The Class CoRoseLineVertex provides a Create and CreateRemote method to
-// create instances of the default interface IRoseLineVertex exposed by
-// the CoClass RoseLineVertex. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseLineVertex = class
     class function Create: IRoseLineVertex;
     class function CreateRemote(const MachineName: string): IRoseLineVertex;
   end;
 
-// *********************************************************************//
-// The Class CoRoseObject provides a Create and CreateRemote method to
-// create instances of the default interface IRoseObject exposed by
-// the CoClass RoseObject. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseObject = class
     class function Create: IRoseObject;
     class function CreateRemote(const MachineName: string): IRoseObject;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSwimLaneCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSwimLaneCollection exposed by
-// the CoClass RoseSwimLaneCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSwimLaneCollection = class
     class function Create: IRoseSwimLaneCollection;
     class function CreateRemote(const MachineName: string): IRoseSwimLaneCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModuleVisibilityRelationship provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModuleVisibilityRelationship exposed by
-// the CoClass RoseModuleVisibilityRelationship. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModuleVisibilityRelationship = class
     class function Create: IRoseModuleVisibilityRelationship;
     class function CreateRemote(const MachineName: string): IRoseModuleVisibilityRelationship;
   end;
 
-// *********************************************************************//
-// The Class CoRoseComponentViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseComponentViewCollection exposed by
-// the CoClass RoseComponentViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseComponentViewCollection = class
     class function Create: IRoseComponentViewCollection;
     class function CreateRemote(const MachineName: string): IRoseComponentViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseHasRelationshipCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseHasRelationshipCollection exposed by
-// the CoClass RoseHasRelationshipCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseHasRelationshipCollection = class
     class function Create: IRoseHasRelationshipCollection;
     class function CreateRemote(const MachineName: string): IRoseHasRelationshipCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassViewCollection exposed by
-// the CoClass RoseClassViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassViewCollection = class
     class function Create: IRoseClassViewCollection;
     class function CreateRemote(const MachineName: string): IRoseClassViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDeploymentDiagram provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDeploymentDiagram exposed by
-// the CoClass RoseDeploymentDiagram. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDeploymentDiagram = class
     class function Create: IRoseDeploymentDiagram;
     class function CreateRemote(const MachineName: string): IRoseDeploymentDiagram;
   end;
 
-// *********************************************************************//
-// The Class CoRoseInstanceView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseInstanceView exposed by
-// the CoClass RoseInstanceView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseInstanceView = class
     class function Create: IRoseInstanceView;
     class function CreateRemote(const MachineName: string): IRoseInstanceView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseLink provides a Create and CreateRemote method to
-// create instances of the default interface IRoseLink exposed by
-// the CoClass RoseLink. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseLink = class
     class function Create: IRoseLink;
     class function CreateRemote(const MachineName: string): IRoseLink;
   end;
 
-// *********************************************************************//
-// The Class CoRoseObjectInstance provides a Create and CreateRemote method to
-// create instances of the default interface IRoseObjectInstance exposed by
-// the CoClass RoseObjectInstance. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseObjectInstance = class
     class function Create: IRoseObjectInstance;
     class function CreateRemote(const MachineName: string): IRoseObjectInstance;
   end;
 
-// *********************************************************************//
-// The Class CoRoseCategoryDependency provides a Create and CreateRemote method to
-// create instances of the default interface IRoseCategoryDependency exposed by
-// the CoClass RoseCategoryDependency. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseCategoryDependency = class
     class function Create: IRoseCategoryDependency;
     class function CreateRemote(const MachineName: string): IRoseCategoryDependency;
   end;
 
-// *********************************************************************//
-// The Class CoRoseInheritRelation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseInheritRelation exposed by
-// the CoClass RoseInheritRelation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseInheritRelation = class
     class function Create: IRoseInheritRelation;
     class function CreateRemote(const MachineName: string): IRoseInheritRelation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseView_Font provides a Create and CreateRemote method to
-// create instances of the default interface IRoseView_Font exposed by
-// the CoClass RoseView_Font. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseView_Font = class
     class function Create: IRoseView_Font;
     class function CreateRemote(const MachineName: string): IRoseView_Font;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateMachine provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateMachine exposed by
-// the CoClass RoseStateMachine. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateMachine = class
     class function Create: IRoseStateMachine;
     class function CreateRemote(const MachineName: string): IRoseStateMachine;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModule provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModule exposed by
-// the CoClass RoseModule. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModule = class
     class function Create: IRoseModule;
     class function CreateRemote(const MachineName: string): IRoseModule;
   end;
 
-// *********************************************************************//
-// The Class CoRoseUseCase provides a Create and CreateRemote method to
-// create instances of the default interface IRoseUseCase exposed by
-// the CoClass RoseUseCase. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseUseCase = class
     class function Create: IRoseUseCase;
     class function CreateRemote(const MachineName: string): IRoseUseCase;
   end;
 
-// *********************************************************************//
-// The Class CoRoseItemCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseItemCollection exposed by
-// the CoClass RoseItemCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseItemCollection = class
     class function Create: IRoseItemCollection;
     class function CreateRemote(const MachineName: string): IRoseItemCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseNoteViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseNoteViewCollection exposed by
-// the CoClass RoseNoteViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseNoteViewCollection = class
     class function Create: IRoseNoteViewCollection;
     class function CreateRemote(const MachineName: string): IRoseNoteViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseInheritRelationCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseInheritRelationCollection exposed by
-// the CoClass RoseInheritRelationCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseInheritRelationCollection = class
     class function Create: IRoseInheritRelationCollection;
     class function CreateRemote(const MachineName: string): IRoseInheritRelationCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDeploymentDiagramCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDeploymentDiagramCollection exposed by
-// the CoClass RoseDeploymentDiagramCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDeploymentDiagramCollection = class
     class function Create: IRoseDeploymentDiagramCollection;
     class function CreateRemote(const MachineName: string): IRoseDeploymentDiagramCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStringCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStringCollection exposed by
-// the CoClass RoseStringCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStringCollection = class
     class function Create: IRoseStringCollection;
     class function CreateRemote(const MachineName: string): IRoseStringCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateViewCollection exposed by
-// the CoClass RoseStateViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateViewCollection = class
     class function Create: IRoseStateViewCollection;
     class function CreateRemote(const MachineName: string): IRoseStateViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDecisionView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDecisionView exposed by
-// the CoClass RoseDecisionView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDecisionView = class
     class function Create: IRoseDecisionView;
     class function CreateRemote(const MachineName: string): IRoseDecisionView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateMachineOwner provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateMachineOwner exposed by
-// the CoClass RoseStateMachineOwner. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateMachineOwner = class
     class function Create: IRoseStateMachineOwner;
     class function CreateRemote(const MachineName: string): IRoseStateMachineOwner;
   end;
 
-// *********************************************************************//
-// The Class CoRoseProcessCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseProcessCollection exposed by
-// the CoClass RoseProcessCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseProcessCollection = class
     class function Create: IRoseProcessCollection;
     class function CreateRemote(const MachineName: string): IRoseProcessCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAssociationCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAssociationCollection exposed by
-// the CoClass RoseAssociationCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAssociationCollection = class
     class function Create: IRoseAssociationCollection;
     class function CreateRemote(const MachineName: string): IRoseAssociationCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModuleDiagramCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModuleDiagramCollection exposed by
-// the CoClass RoseModuleDiagramCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModuleDiagramCollection = class
     class function Create: IRoseModuleDiagramCollection;
     class function CreateRemote(const MachineName: string): IRoseModuleDiagramCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDiagram provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDiagram exposed by
-// the CoClass RoseDiagram. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDiagram = class
     class function Create: IRoseDiagram;
     class function CreateRemote(const MachineName: string): IRoseDiagram;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAbstractStateCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAbstractStateCollection exposed by
-// the CoClass RoseAbstractStateCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAbstractStateCollection = class
     class function Create: IRoseAbstractStateCollection;
     class function CreateRemote(const MachineName: string): IRoseAbstractStateCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRichTypeValuesCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRichTypeValuesCollection exposed by
-// the CoClass RoseRichTypeValuesCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRichTypeValuesCollection = class
     class function Create: IRoseRichTypeValuesCollection;
     class function CreateRemote(const MachineName: string): IRoseRichTypeValuesCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSubsystemView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSubsystemView exposed by
-// the CoClass RoseSubsystemView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSubsystemView = class
     class function Create: IRoseSubsystemView;
     class function CreateRemote(const MachineName: string): IRoseSubsystemView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseComponentView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseComponentView exposed by
-// the CoClass RoseComponentView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseComponentView = class
     class function Create: IRoseComponentView;
     class function CreateRemote(const MachineName: string): IRoseComponentView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAttribute provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAttribute exposed by
-// the CoClass RoseAttribute. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAttribute = class
     class function Create: IRoseAttribute;
     class function CreateRemote(const MachineName: string): IRoseAttribute;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassDiagram provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassDiagram exposed by
-// the CoClass RoseClassDiagram. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassDiagram = class
     class function Create: IRoseClassDiagram;
     class function CreateRemote(const MachineName: string): IRoseClassDiagram;
   end;
 
-// *********************************************************************//
-// The Class CoRoseNoteView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseNoteView exposed by
-// the CoClass RoseNoteView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseNoteView = class
     class function Create: IRoseNoteView;
     class function CreateRemote(const MachineName: string): IRoseNoteView;
   end;
 
-// *********************************************************************//
-// The Class CoRosePackage provides a Create and CreateRemote method to
-// create instances of the default interface IRosePackage exposed by
-// the CoClass RosePackage. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRosePackage = class
     class function Create: IRosePackage;
     class function CreateRemote(const MachineName: string): IRosePackage;
   end;
 
-// *********************************************************************//
-// The Class CoRosePathMap provides a Create and CreateRemote method to
-// create instances of the default interface IRosePathMap exposed by
-// the CoClass RosePathMap. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRosePathMap = class
     class function Create: IRosePathMap;
     class function CreateRemote(const MachineName: string): IRosePathMap;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSyncItemViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSyncItemViewCollection exposed by
-// the CoClass RoseSyncItemViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSyncItemViewCollection = class
     class function Create: IRoseSyncItemViewCollection;
     class function CreateRemote(const MachineName: string): IRoseSyncItemViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAbstractState provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAbstractState exposed by
-// the CoClass RoseAbstractState. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAbstractState = class
     class function Create: IRoseAbstractState;
     class function CreateRemote(const MachineName: string): IRoseAbstractState;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModuleVisibilityRelationshipCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModuleVisibilityRelationshipCollection exposed by
-// the CoClass RoseModuleVisibilityRelationshipCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModuleVisibilityRelationshipCollection = class
     class function Create: IRoseModuleVisibilityRelationshipCollection;
     class function CreateRemote(const MachineName: string): IRoseModuleVisibilityRelationshipCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassCollection exposed by
-// the CoClass RoseClassCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassCollection = class
     class function Create: IRoseClassCollection;
     class function CreateRemote(const MachineName: string): IRoseClassCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseMessage provides a Create and CreateRemote method to
-// create instances of the default interface IRoseMessage exposed by
-// the CoClass RoseMessage. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseMessage = class
     class function Create: IRoseMessage;
     class function CreateRemote(const MachineName: string): IRoseMessage;
   end;
 
-// *********************************************************************//
-// The Class CoRoseConnectionRelationCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseConnectionRelationCollection exposed by
-// the CoClass RoseConnectionRelationCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseConnectionRelationCollection = class
     class function Create: IRoseConnectionRelationCollection;
     class function CreateRemote(const MachineName: string): IRoseConnectionRelationCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassDependencyCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassDependencyCollection exposed by
-// the CoClass RoseClassDependencyCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassDependencyCollection = class
     class function Create: IRoseClassDependencyCollection;
     class function CreateRemote(const MachineName: string): IRoseClassDependencyCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseAssociation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseAssociation exposed by
-// the CoClass RoseAssociation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseAssociation = class
     class function Create: IRoseAssociation;
     class function CreateRemote(const MachineName: string): IRoseAssociation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseEventCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseEventCollection exposed by
-// the CoClass RoseEventCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseEventCollection = class
     class function Create: IRoseEventCollection;
     class function CreateRemote(const MachineName: string): IRoseEventCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateCollection exposed by
-// the CoClass RoseStateCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateCollection = class
     class function Create: IRoseStateCollection;
     class function CreateRemote(const MachineName: string): IRoseStateCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSyncItemView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSyncItemView exposed by
-// the CoClass RoseSyncItemView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSyncItemView = class
     class function Create: IRoseSyncItemView;
     class function CreateRemote(const MachineName: string): IRoseSyncItemView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseActivityView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseActivityView exposed by
-// the CoClass RoseActivityView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseActivityView = class
     class function Create: IRoseActivityView;
     class function CreateRemote(const MachineName: string): IRoseActivityView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateView exposed by
-// the CoClass RoseStateView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateView = class
     class function Create: IRoseStateView;
     class function CreateRemote(const MachineName: string): IRoseStateView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateVertexCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateVertexCollection exposed by
-// the CoClass RoseStateVertexCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateVertexCollection = class
     class function Create: IRoseStateVertexCollection;
     class function CreateRemote(const MachineName: string): IRoseStateVertexCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSubsystemViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSubsystemViewCollection exposed by
-// the CoClass RoseSubsystemViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSubsystemViewCollection = class
     class function Create: IRoseSubsystemViewCollection;
     class function CreateRemote(const MachineName: string): IRoseSubsystemViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseModuleDiagram provides a Create and CreateRemote method to
-// create instances of the default interface IRoseModuleDiagram exposed by
-// the CoClass RoseModuleDiagram. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseModuleDiagram = class
     class function Create: IRoseModuleDiagram;
     class function CreateRemote(const MachineName: string): IRoseModuleDiagram;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSubsystem provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSubsystem exposed by
-// the CoClass RoseSubsystem. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSubsystem = class
     class function Create: IRoseSubsystem;
     class function CreateRemote(const MachineName: string): IRoseSubsystem;
   end;
 
-// *********************************************************************//
-// The Class CoRoseExternalDocumentCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseExternalDocumentCollection exposed by
-// the CoClass RoseExternalDocumentCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseExternalDocumentCollection = class
     class function Create: IRoseExternalDocumentCollection;
     class function CreateRemote(const MachineName: string): IRoseExternalDocumentCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseInstanceViewCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseInstanceViewCollection exposed by
-// the CoClass RoseInstanceViewCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseInstanceViewCollection = class
     class function Create: IRoseInstanceViewCollection;
     class function CreateRemote(const MachineName: string): IRoseInstanceViewCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseItemView provides a Create and CreateRemote method to
-// create instances of the default interface IRoseItemView exposed by
-// the CoClass RoseItemView. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseItemView = class
     class function Create: IRoseItemView;
     class function CreateRemote(const MachineName: string): IRoseItemView;
   end;
 
-// *********************************************************************//
-// The Class CoRoseTransitionCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseTransitionCollection exposed by
-// the CoClass RoseTransitionCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseTransitionCollection = class
     class function Create: IRoseTransitionCollection;
     class function CreateRemote(const MachineName: string): IRoseTransitionCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseState provides a Create and CreateRemote method to
-// create instances of the default interface IRoseState exposed by
-// the CoClass RoseState. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseState = class
     class function Create: IRoseState;
     class function CreateRemote(const MachineName: string): IRoseState;
   end;
 
-// *********************************************************************//
-// The Class CoRoseObjectInstanceCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseObjectInstanceCollection exposed by
-// the CoClass RoseObjectInstanceCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseObjectInstanceCollection = class
     class function Create: IRoseObjectInstanceCollection;
     class function CreateRemote(const MachineName: string): IRoseObjectInstanceCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRoleCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRoleCollection exposed by
-// the CoClass RoseRoleCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRoleCollection = class
     class function Create: IRoseRoleCollection;
     class function CreateRemote(const MachineName: string): IRoseRoleCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseClassRelation provides a Create and CreateRemote method to
-// create instances of the default interface IRoseClassRelation exposed by
-// the CoClass RoseClassRelation. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseClassRelation = class
     class function Create: IRoseClassRelation;
     class function CreateRemote(const MachineName: string): IRoseClassRelation;
   end;
 
-// *********************************************************************//
-// The Class CoRoseCategory provides a Create and CreateRemote method to
-// create instances of the default interface IRoseCategory exposed by
-// the CoClass RoseCategory. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseCategory = class
     class function Create: IRoseCategory;
     class function CreateRemote(const MachineName: string): IRoseCategory;
   end;
 
-// *********************************************************************//
-// The Class CoRoseDefaultModelProperties provides a Create and CreateRemote method to
-// create instances of the default interface IRoseDefaultModelProperties exposed by
-// the CoClass RoseDefaultModelProperties. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseDefaultModelProperties = class
     class function Create: IRoseDefaultModelProperties;
     class function CreateRemote(const MachineName: string): IRoseDefaultModelProperties;
   end;
 
-// *********************************************************************//
-// The Class CoRoseStateMachineCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseStateMachineCollection exposed by
-// the CoClass RoseStateMachineCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseStateMachineCollection = class
     class function Create: IRoseStateMachineCollection;
     class function CreateRemote(const MachineName: string): IRoseStateMachineCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseSyncItem provides a Create and CreateRemote method to
-// create instances of the default interface IRoseSyncItem exposed by
-// the CoClass RoseSyncItem. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseSyncItem = class
     class function Create: IRoseSyncItem;
     class function CreateRemote(const MachineName: string): IRoseSyncItem;
   end;
 
-// *********************************************************************//
-// The Class CoRoseRealizeRelationCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRoseRealizeRelationCollection exposed by
-// the CoClass RoseRealizeRelationCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseRealizeRelationCollection = class
     class function Create: IRoseRealizeRelationCollection;
     class function CreateRemote(const MachineName: string): IRoseRealizeRelationCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRosePackageCollection provides a Create and CreateRemote method to
-// create instances of the default interface IRosePackageCollection exposed by
-// the CoClass RosePackageCollection. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRosePackageCollection = class
     class function Create: IRosePackageCollection;
     class function CreateRemote(const MachineName: string): IRosePackageCollection;
   end;
 
-// *********************************************************************//
-// The Class CoRoseExternalDocument provides a Create and CreateRemote method to
-// create instances of the default interface IRoseExternalDocument exposed by
-// the CoClass RoseExternalDocument. The functions are intended to be used by
-// clients wishing to automate the CoClass objects exposed by the
-// server of this typelibrary.
-// *********************************************************************//
+
+
+
+
+
   CoRoseExternalDocument = class
     class function Create: IRoseExternalDocument;
     class function CreateRemote(const MachineName: string): IRoseExternalDocument;
@@ -9084,5 +8513,3 @@ begin
 end;
 
 end.
-
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldProgressBarCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 14:59:57}
@@ -5,16 +8,19 @@ unit BoldProgressBarCom;
 interface
 
 uses
+  // VCL
   Classes,
-  Controls,
   ComCtrls,
+  Controls,
   Menus,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  BoldHandlesCom,
+
+  // Bold
+  BoldClientElementSupport,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
-  BoldNumericControlPackCom,
-  BoldElementHandleFollowerCom;
+  BoldElementHandleFollowerCom,
+  BoldHandlesCom,
+  BoldNumericControlPackCom;
 
 type
   { forward declarations }
@@ -63,9 +69,7 @@ uses
   BoldControlPackDefs,
   BoldDefs,
   SysUtils,
-  BoldRev,
-  BoldGuiResourceStringsCom,
-  BoldControlsDefs;
+  BoldGuiResourceStringsCom;
 
 { TBoldProgressBarCom }
 constructor TBoldProgressBarCom.Create(AOwner: TComponent);

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGeneratorTemplatesDelphi;
 
 interface
@@ -6,7 +9,8 @@ uses
   Classes,
   BoldMeta,
   BoldGeneratorTemplates,
-  BoldTemplateExpander;
+  BoldTemplateExpander
+  ;
 
 
 type
@@ -50,7 +54,7 @@ type
     function GetDefaultIncFileExtension: string; override;
     property DataModule: TBoldGeneratorTemplatesDelphiDM read GetDataModule;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function MethodToCOMHeader(OwningClass: TMoldClass; Method: TMoldMethod; InterfaceCode: Boolean; ParametersToCoerce: TStringList; ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel; GenerateMIDLCode: Boolean): String; override;
     function MethodToCOMCall(OwningClass: TMoldClass; Method: TMoldMethod; ParametersToCoerce, ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel): String; override;
     function ReadMethodSignature(ClassName, AttributeName, AttributeType: string): string; override;
@@ -73,20 +77,21 @@ type
     class procedure InstallTemplates;
   end;
 
+
 implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUMLTypes,
   BoldTaggedValueSupport,
   BoldMetaSupport;
 
 {$R *.dfm}
 
+
 { TBoldDelphiTemplateManager }
 
-destructor TBoldDelphiTemplateManager.Destroy;
+destructor TBoldDelphiTemplateManager.destroy;
 begin
   FreeAndNil(fDataModule);
   inherited;
@@ -165,11 +170,11 @@ var
 begin
   s := '';
   if Method.HasReturnValue then
-    s := s + 'function ' // do not localize
+    s := s + 'function '
   else
-    s := s + 'procedure '; // do not localize
+    s := s + 'procedure ';
   if not InterfaceCode then
-    s := s + OwningClass.ExpandedDelphiName + 'Adapter.'; // do not localize
+    s := s + OwningClass.ExpandedDelphiName + 'Adapter.';
 
   s := s + Method.ExpandedDelphiName;
 
@@ -188,8 +193,8 @@ begin
     if param.ParameterKind in [pdOut, pdInout] then
     begin
       case param.ParameterKind of
-        pdOut: params := params + 'out '; // do not localize
-        pdInOut: params := params + 'var '; // do not localize
+        pdOut: params := params + 'out ';
+        pdInOut: params := params + 'var ';
       end;
       if assigned(ParametersToCoerce) and
         ((ParamType = BoldWideStringTypeName) or
@@ -206,7 +211,7 @@ begin
 
     end
     else if IsConst then
-      Params := Params + 'const '; // do not localize
+      Params := Params + 'const ';
     Params := Params + Param.ParameterName + ': ' + ParamType;
   end;
   if Params <> '' then
@@ -223,7 +228,7 @@ begin
 
   s := s + ';';
   if InterfaceCode then
-    s := s + ' safecall;'; // do not localize
+    s := s + ' safecall;';
 
   result := s;
 end;
@@ -243,7 +248,7 @@ var
   end;
 
 begin
-  s := 'As' + OwningClass.ExpandedExpressionName + '.' + Method.ExpandedDelphiName; // do not localize
+  s := 'As' + OwningClass.ExpandedExpressionName + '.' + Method.ExpandedDelphiName;
 
   params := '';
   for i := 0 to Method.Parameters.Count - 1 do
@@ -252,11 +257,11 @@ begin
       params := params + ', ';
     Param := tMoldParameter(Method.Parameters[i]);
     if ParametersToInterfaceCoerce.IndexOfName(Param.ParameterName)  <> -1 then
-      params := params + param.ParameterName + '_temp' // do not localize
+      params := params + param.ParameterName + '_temp'
     else if ParameterNeedsMarshalling(Param.ParameterType, InterfaceName) then
-      Params := Params + 'BoldComInterfaceToObject(' + Param.ParameterName + ') as ' + Param.DelphiParameterType // do not localize
+      Params := Params + 'BoldComInterfaceToObject(' + Param.ParameterName + ') as ' + Param.DelphiParameterType
     else if parametersToCoerce.IndexOfName(param.ParameterName) <> -1 then
-      params := params + param.ParameterName + '_temp' // do not localize
+      params := params + param.ParameterName + '_temp'
     else
       Params := params + Param.ParameterName;
   end;
@@ -267,9 +272,9 @@ begin
   if Method.HasReturnValue then
   begin
     if ParameterNeedsMarshalling(Trim(method.ReturnType), InterfaceName) then
-      s :='BoldComCreateAdapter(' + s + ', False, ' + Interfacename + ', Result)' // do not localize
+      s :='BoldComCreateAdapter(' + s + ', False, ' + Interfacename + ', Result)'
     else
-      s := 'result := ' + s; // do not localize
+      s := 'result := ' + s;
   end;
   result := s + ';';
 end;
@@ -286,14 +291,14 @@ const
 begin
   s := '';
   if Method.IsClassMethod then
-    s := s + 'class '; // do not localize
+    s := s + 'class ';
 
-  if AnsiCompareText(Method.Name, 'Destroy') = 0 then // do not localize
-    s := s + 'destructor ' // do not localize
+  if AnsiCompareText(Method.Name, 'Destroy') = 0 then
+    s := s + 'destructor '
   else if Method.HasReturnValue then
-    s := s + 'function ' // do not localize
+    s := s + 'function '
   else
-    s := s + 'procedure '; // do not localize
+    s := s + 'procedure ';
 
   if TagValue = ImplementationTag then
     s := s + OwningClass.ExpandedDelphiName + '.';
@@ -347,20 +352,20 @@ begin
       result := result + '; ';
 
     if Parameter.IsConst then
-      Result := Result + 'const ' // do not localize
+      Result := Result + 'const '
     else if Parameter.ParameterKind = pdInOut then
-      Result := Result + 'var ' // do not localize
+      Result := Result + 'var '
     else if Parameter.ParameterKind = pdOut then
-      Result := Result + 'out ';   // do not localize
+      Result := Result + 'out ';  
 
-    result := result + format('%s: %s', [Parameter.ParameterName, // do not localize
+    result := result + format('%s: %s', [Parameter.ParameterName,
                                          Parameter.DelphiParameterType]);
   end;
 end;
 
 function TBoldDelphiTemplateManager.GetDefaultIncFileExtension: string;
 begin
-  result := '.inc'; // do not localize
+  result := '.inc';
 end;
 
 function TBoldDelphiTemplateManager.StringContainsMethodHeader(s: String): Boolean;
@@ -368,16 +373,16 @@ var
   temp: String;
 begin
   temp := UpperCase(s);
-  result := (pos('PROCEDURE', temp) <> 0) or // do not localize
-            (pos('FUNCTION', temp) <> 0) or // do not localize
-            (pos('DESTRUCTOR', temp) <> 0); // do not localize
+  result := (pos('PROCEDURE', temp) <> 0) or
+            (pos('FUNCTION', temp) <> 0) or
+            (pos('DESTRUCTOR', temp) <> 0);
 end;
 
 procedure TBoldDelphiTemplateManager.AddQualifierParam(var Params: String; ParamName, ParamType: String);
 begin
   if Params <> '' then
     Params := Params + '; ';
-  Params := Params + ParamName+': '+ParamType; // do not localize
+  Params := Params + ParamName+': '+ParamType;
 end;
 
 procedure TBoldDelphiTemplateManager.AddQualifierFunctionParam(var Params: String; ParamName, ParamType: String);
@@ -404,19 +409,20 @@ end;
 function TBoldDelphiTemplateManager.GenerateInheritedCall(MoldClass: TMoldClass; MoldMethod: TMoldMethod): String;
 begin
   if not MoldMethod.HasReturnValue then
-    result := 'inherited' // do not localize
+    result := 'inherited'
   else
-    result := format('result := inherited %s(%s)', [Moldmethod.Name, MoldMethod.CallSignature]); // do not localize
+    result := format('result := inherited %s(%s)', [Moldmethod.Name, MoldMethod.CallSignature]);
 end;
+
 
 function TBoldDelphiTemplateManager.ReadMethodSignature(ClassName, AttributeName, AttributeType: string): string;
 begin
-  result := format('function %s.Get%s: %s;', [ClassName, AttributeName, AttributeType]); // do not localize
+  result := format('function %s.Get%s: %s;', [ClassName, AttributeName, AttributeType]);
 end;
 
 function TBoldDelphiTemplateManager.WriteMethodSignature(ClassName, AttributeName, AttributeType: string): string;
 begin
-  result := format('procedure %s.Set%s(NewValue: %s);', [ClassName, AttributeName, AttributeType]); // do not localize
+  result := format('procedure %s.Set%s(NewValue: %s);', [ClassName, AttributeName, AttributeType]);
 end;
 
 function TBoldDelphiTemplateManager.GetPersistenceInterfaceTemplate: TBoldTemplateHolder;
@@ -433,8 +439,8 @@ begin
   if TemplateList.Count = 0 then
   begin
     template := DataModule.UnitTemplate.Template.Text;
-    Template := StringReplace(template, 'BoldMembers[$(MEMBERINDEX)]', 'BoldMemberByExpressionName[''$(MEMBERNAME)'']', [rfReplaceAll]); // do not localize
-    Template := StringReplace(template, '$(MEMBERINDEX)', '-1', [rfReplaceAll]); // do not localize
+    Template := StringReplace(template, 'BoldMembers[$(MEMBERINDEX)]', 'BoldMemberByExpressionName[''$(MEMBERNAME)'']', [rfReplaceAll]);
+    Template := StringReplace(template, '$(MEMBERINDEX)', '-1', [rfReplaceAll]);
     DataModule.UnitTemplate.Template.Text := Template;
   end;
   inherited;

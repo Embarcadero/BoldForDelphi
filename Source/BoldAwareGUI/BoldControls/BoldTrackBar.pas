@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTrackBar;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -13,7 +16,7 @@ uses
   CommCtrl,
   Menus,
   BoldDefs,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldControlPackDefs,
   BoldHandles,
   BoldElements,
@@ -33,8 +36,8 @@ type
     fHandleFollower: TBoldElementHandleFollower;
     FReadOnly: Boolean;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
     procedure AfterMakeUptoDate(Follower: TBoldFollower);
     procedure CMExit(var Message: TCMExit); message CM_EXIT;
@@ -239,14 +242,14 @@ begin
     result := nil;
 end;
 
-function TBoldTrackBar.GetExpression: String;
+function TBoldTrackBar.GetExpression: TBoldExpression;
 begin
   result := BoldProperties.Expression;
 end;
 
-procedure TBoldTrackBar.SetExpression(Expression: String);
+procedure TBoldTrackBar.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldTrackBar.GetVariableList: TBoldExternalVariableList;
@@ -254,4 +257,5 @@ begin
   result := BoldProperties.VariableList;
 end;
 
+initialization
 end.

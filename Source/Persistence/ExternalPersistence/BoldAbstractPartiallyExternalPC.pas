@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractPartiallyExternalPC;
 
 interface
@@ -18,6 +21,7 @@ type
     fDeletedExternalObjects: TBoldObjectIdList;
     fNewExternalObjects: TBoldObjectIdList;
   protected
+    function FetchAllMembersWhenFetchingKey(MoldClass: TMoldClass): boolean; virtual;
     function ExternalKeyExistsInExternalStorage(MoldClass: TMoldClass; ExternalKey: TBoldObjectId): Boolean; virtual;
     procedure PrepareFetchExternal(ExternalKeys: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList; var FetchContext: TObject); virtual;
     procedure PrepareFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList; var FetchContext: TObject); override;
@@ -30,10 +34,11 @@ type
     procedure TranslateInternalIdsToExternal(InternalIds, ExternalKeys: TBoldObjectIdList; ValueSpace: IBoldValueSpace);
     function ExternalKeysToInternalSQL(MoldClass: TMoldClass; ExternalKeys: TBoldObjectIdList): String; virtual;
     procedure CreateInternalObject(MoldClass: TMoldClass; ExternalKey: TBoldObjectid; ValueSpace: IBoldValueSpace; Ids: TBoldObjectidList);
+    procedure CreateInternalObjects(MoldClass: TMoldClass; ExternalIDlist: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; Ids: TBoldObjectidList);
     procedure FindMoldRoleByName(ObjectContents: IBoldObjectContents; ExpressionName: String; var MoldRole: TMoldRole; var Index: integer);
   public
-    constructor Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent);
-    destructor Destroy; override;
+    constructor Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AUpdateBoldDatabaseFirst: boolean);
+    destructor destroy; override;
     procedure SetMultiLink(MultiLink: IBoldObjectIdListref; ExternalKeys: TBoldObjectIdList; MoldClassOfOtherEnd: TMoldClass);
     procedure SetSingleLink(SingleLink: IBoldObjectIdRef; ExternalKey: TBoldObjectId; MoldClassOfOtherEnd: TMoldClass);
     procedure TranslateExternalKeysToInternalIds(MoldClass: TMoldClass; ExternalKeys, InternalIds: TBoldObjectIdList);
@@ -42,7 +47,6 @@ type
   end;
 
 implementation
-
 uses
   BoldGuard,
   SysUtils,
@@ -51,12 +55,11 @@ uses
   BoldDefs,
   BoldTaggedValueSupport,
   BoldFreeStandingValues,
-  BoldUtils,
-  ExPeConsts;
-
+  BoldUtils;
+  
 { TBoldAbstractPartiallyExternalPC }
 
-constructor TBoldAbstractPartiallyExternalPC.Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent);
+constructor TBoldAbstractPartiallyExternalPC.Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AUpdateBoldDatabaseFirst: boolean);
 begin
   inherited;
   fDeletedExternalObjects := TBoldObjectIdList.Create;
@@ -76,14 +79,13 @@ var
   Guard: IBoldGuard;
   UpdateIdList: TBoldObjectIdList;
   TimeStamp: Integer;
+  TimeOfTimeStamp: TDateTime;
 begin
   Guard := TBoldguard.Create(TranslationList, NewId, UpdateIdlist);
   TranslationList := TBoldIDTranslationList.Create;
   UpdateIdList := TBoldObjectIdList.Create;
 
   TopSortedIndex := MoldClass.TopSortedIndex;
-
-  // FIXME: how can we be sure that the object is actually of the type MoldClass?
   NewId := TBoldInternalObjectId.CreateWithClassID(TopSortedIndex, MoldClass.SubClasses.Count = 0);
 
   NewObject := ValueSpace.GetEnsuredObjectContentsByObjectId(NewId);
@@ -97,20 +99,64 @@ begin
   end;
   NewObject.BoldPersistenceState := bvpsModified;
   NewObject.BoldExistenceState := besExisting;
-
-  // insert the external key to the new object so that it can be saved to the internal database
   AssignKeyToObject(MoldClass, NewObject, ExternalKey, ValueSpace);
   NewObject := nil;
 
   UpdateIdList.Add(NewId);
-  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, -1);
-
-  // return the translated ID!
+  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfTimeStamp, -1);
   Id := TranslationList.TranslateToNewId[NewId].Clone;
   Ids.Add(Id);
-
-  // indicate that this is a newly created object if anyone wants to initialize any internal-attributes.
   NewExternalObjects.Add(Id);
+end;
+
+procedure TBoldAbstractPartiallyExternalPC.CreateInternalObjects(
+  MoldClass: TMoldClass; ExternalIDlist: TBoldObjectIdList;
+  const ValueSpace: IBoldValueSpace; Ids: TBoldObjectidList);
+var
+  i: integer;
+  j: integer;
+  TopSortedIndex: integer;
+  NewId: TBoldObjectId;
+  TranslationList: TBoldIDTranslationList;
+  NewObject: IBoldObjectContents;
+  Id: TBoldObjectId;
+  Guard: IBoldGuard;
+  UpdateIdList: TBoldObjectIdList;
+  TimeStamp: Integer;
+  TimeOfTimeStamp: TDateTime;
+begin
+  Guard := TBoldguard.Create(TranslationList, NewId, UpdateIdlist);
+  TranslationList := TBoldIDTranslationList.Create;
+  UpdateIdList := TBoldObjectIdList.Create;
+
+  TopSortedIndex := MoldClass.TopSortedIndex;
+  for i := 0 to ExternalIDlist.Count - 1 do
+  begin
+    NewId := TBoldInternalObjectId.CreateWithClassID(TopSortedIndex, MoldClass.SubClasses.Count = 0);
+    NewObject := ValueSpace.GetEnsuredObjectContentsByObjectId(NewId);
+    for j := 0 to MoldClass.AllBoldMembers.Count-1 do
+    begin
+      if MoldClass.AllBoldMembers[j].Storage in [bsInternal, bsExternalKey] then
+      begin
+        EnsureMember(NewObject, MoldClass.AllBoldMembers[j], j);
+        NewObject.ValueByIndex[j].BoldPersistenceState := bvpsModified;
+      end;
+    end;
+    NewObject.BoldPersistenceState := bvpsModified;
+    NewObject.BoldExistenceState := besExisting;
+    AssignKeyToObject(MoldClass, NewObject, ExternalIDlist[i], ValueSpace);
+    NewObject := nil;
+    UpdateIdList.Add(NewId);
+  end;
+
+  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfTimeStamp, -1);
+
+  for i := 0 to ExternalIDlist.Count - 1 do
+  begin
+    Id := TranslationList.TranslateToNewId[NewId].Clone;
+    Ids.Add(Id);
+    NewExternalObjects.Add(Id);
+  end;
 end;
 
 destructor TBoldAbstractPartiallyExternalPC.destroy;
@@ -133,14 +179,14 @@ begin
     if (MoldClass.AllBoldMembers[i] is TMoldAttribute) and (MoldClass.AllBoldMembers[i].Storage = bsExternalKey) then
     begin
       if assigned(ExternalKey) then
-        raise EBold.CreateFmt(sNotSupportedWithMultipleKeys, [classname, MoldClass.ExpandedExpressionName])
+        raise EBold.CreateFmt('%s.ExternalKeysToInternalSQL: Automatic SQL-generation only supported for classes with 1 (one) external key (class %s has multiple)', [classname, MoldClass.ExpandedExpressionName])
       else
         ExternalKey := MoldClass.AllBoldMembers[i] as TMoldAttribute;
     end;
   if not assigned(ExternalKey) then
-    raise EBold.CreateFmt(sNotSupportedWithNoKeys, [classname, MoldClass.ExpandedExpressionName]);
+    raise EBold.CreateFmt('%s.ExternalKeysToInternalSQL: Automatic SQL-generation only supported for classes with 1 (one) external key (class %s has none!)', [classname, MoldClass.ExpandedExpressionName]);
 
-  result := format('%s.%s in (', [ // do not localize
+  result := format('%s.%s in (', [
     BoldExpandName(ExternalKey.MoldClass.Tablename, ExternalKey.MoldClass.Name, xtSQL, -1, nccFalse),
     BoldExpandName(ExternalKey.ColumnName, ExternalKey.name, xtSQL, -1, nccFalse)]);
   Mapping := TypeNameDictionary.MappingForModelName[ExternalKey.BoldType];
@@ -157,6 +203,11 @@ begin
   result := result + ')';
 end;
 
+function TBoldAbstractPartiallyExternalPC.FetchAllMembersWhenFetchingKey(MoldClass: TMoldClass): boolean;
+begin
+  result := false;
+end;
+
 procedure TBoldAbstractPartiallyExternalPC.FetchExternalKeysForIDs(
   InternalObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
   MoldClass: TMoldClass);
@@ -166,11 +217,19 @@ var
   guard: IBoldGuard;
 begin
   Guard := TBoldGuard.Create(MemberIdList);
-  MemberIdList := tBoldMemberIdList.Create;
-  for i := 0 to MoldClass.AllBoldMembers.count-1 do
-    if MoldClass.AllBoldMembers[i].Storage = bsExternalKey then
-      MemberIdList.Add(TBoldMemberId.Create(i));
-  NextPersistenceController.PMFetch(InternalObjectIdList, ValueSpace, MemberIdList, fmNormal, -1);
+  if FetchAllMembersWhenFetchingKey(MoldClass) then
+  begin
+    NextPersistenceController.PMFetch(InternalObjectIdList, ValueSpace, nil, fmNormal, -1);
+  end
+  else
+  begin
+    MemberIdList := TBoldMemberIdList.Create;
+    for i := 0 to MoldClass.AllBoldMembers.count-1 do
+      if MoldClass.AllBoldMembers[i].Storage = bsExternalKey then
+        MemberIdList.Add(TBoldMemberId.Create(i));
+    if MemberIdList.count > 0 then
+      NextPersistenceController.PMFetch(InternalObjectIdList, ValueSpace, MemberIdList, fmNormal, -1);
+  end;
 end;
 
 procedure TBoldAbstractPartiallyExternalPC.FindMoldRoleByName(ObjectContents: IBoldObjectContents;
@@ -191,7 +250,7 @@ begin
     end;
   end;
   if index = -1 then
-    raise EBold.CreateFmt(sNoSuchRole, [ClassNAme, ExpressionName, MoldClass.ExpandedExpressionName]);
+    raise EBold.CreateFmt('%s.FindMoldRoleByName: There is no role called %s in class %s', [ClassNAme, ExpressionName, MoldClass.ExpandedExpressionName]);
 end;
 
 procedure TBoldAbstractPartiallyExternalPC.HandleAllInstances(
@@ -209,13 +268,8 @@ begin
   TempvalueSpace := TBoldFreeStandingvalueSpace.Create;
   InternalObjectIdList := TBoldObjectidList.create;
   ExternalKeys := TBoldObjectIdList.create;
-
-  // send the condition query to the internal database and fetch the objects to a local valuespace
   NextPersistenceController.PMFetchIDListWithCondition(InternalObjectIdList, TempValueSpace, fmNormal, Condition, -1);
-  // Get the external keys
   GetExternalKeys(MoldClass, ExternalKeys);
-
-  // match the external keys and the internal objects.
   MatchObjectsByKeys(MoldClass, TempValueSpace, InternalObjectIdList, ExternalKeys, ObjectIdList);
 end;
 
@@ -227,19 +281,18 @@ var
   TranslationList: TBoldIdTranslationList;
   ObjectContents: IBoldObjectContents;
   Guard: IBoldGuard;
+  lNotFoundObjects: TBoldObjectIdList;
 begin
-  // The Internal ids and External keys should be expected to contain references to the same objects.
-
-  Guard := TBoldguard.Create(TranslationList);
+  Guard := TBoldguard.Create(TranslationList, lNotFoundObjects);
+  lNotFoundObjects:= TBoldObjectIdList.Create;
   FetchExternalKeysForIDs(InternalIds, ValueSpace, MoldClass);
 
   TranslationList := TBoldIdTranslationList.Create;
   for i := 0 to InternalIds.Count-1 do
   begin
-    ObjectContents := ValueSpace.ObjectContentsByObjectId[InternalIds[i]];
+    ObjectContents := ValueSpace.EnsuredObjectContentsByObjectId[InternalIds[i]];
     ExternalKey := GetExternalKeyFromObject(ObjectContents, ValueSpace);
     TranslationList.AddTranslation(ExternalKey, InternalIds[i]);
-    // Objects that have been deleted in external database are just logged...
     if not ExternalKeys.IdInList[ExternalKey] then
       DeletedExternalObjects.Add(InternalIds[i]);
     ExternalKey.Free;
@@ -250,15 +303,15 @@ begin
     InternalId := TranslationList.TranslateToNewId[ExternalKeys[i]];
     if assigned(InternalId) and (ExternalKeys[i] <> InternalId) then
     begin
-      // the objects that already exist in the internal database can be returned directly
       FoundObjects.Add(InternalId)
     end
     else
     begin
-      // the missing objects has to be created in the internal database
-      CreateInternalObject(MoldClass, ExternalKeys[i], ValueSpace, FoundObjects)
+      lNotFoundObjects.Add(ExternalKeys[i]);
     end;
   end;
+  if lNotFoundObjects.count > 0 then
+    CreateInternalObjects(MoldClass, lNotFoundObjects, ValueSpace, FoundObjects)
 end;
 
 function TBoldAbstractPartiallyExternalPC.ExternalKeyExistsInExternalStorage(MoldClass: TMoldClass; ExternalKey: TBoldObjectId): Boolean;
@@ -281,12 +334,12 @@ begin
   begin
     ObjectContents := ValueSpace.ObjectContentsByObjectId[ObjectIdList[i]];
     ExternalKey := GetExternalKeyFromObject(ObjectContents, ValueSpace);
-    // only perform the existencetest if this is the default-fetch of an object
-    // when fetching custommembers we assume this test has already been performed
+
     if not assigned(MemberIdList) or ExternalKeyExistsInExternalStorage(MoldClass, ExternalKey) then
       ExternalKeys.Add(ExternalKey)
     else
       DeletedExternalObjects.Add(ObjectIdList[i]);
+    ExternalKey.free;
   end;
   PrepareFetchExternal(ExternalKeys, ValueSpace, MoldClass, MemberIdList, FetchContext);
 end;
@@ -296,7 +349,6 @@ procedure TBoldAbstractPartiallyExternalPC.PrepareFetchExternal(
   MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList;
   var FetchContext: TObject);
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldAbstractPartiallyExternalPC.SetMultiLink(
@@ -316,7 +368,6 @@ var
   ExternalKeys: TBoldObjectIdList;
   InternalIds: TBoldObjectIdList;
 begin
-  // set the member to point to the ID
   if assigned(ExternalKey) then
   begin
     ExternalKeys := TBoldObjectIdList.Create;
@@ -324,12 +375,12 @@ begin
     InternalIds := TBoldObjectidList.Create;
     TranslateExternalKeysToInternalIds(MoldClassOfOtherEnd, ExternalKeys, InternalIds);
     if InternalIds.Count = 1 then
-      SingleLink.SetFromId(InternalIds[0]);
+      SingleLink.SetFromId(InternalIds[0], false);
     InternalIds.Free;
     ExternalKeys.Free;
   end
   else
-    SingleLink.SetFromId(nil);
+    SingleLink.SetFromId(nil, false);
 end;
 
 procedure TBoldAbstractPartiallyExternalPC.TranslateExternalKeysToInternalIds(
@@ -385,5 +436,5 @@ begin
   end;
 end;
 
+initialization
 end.
-

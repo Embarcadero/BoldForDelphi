@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldElementHandleFollower;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -18,27 +21,23 @@ type
   TBoldElementHandleFollower = class;
 
   { TBoldElementHandleFollower }
-  TBoldElementHandleFollower = class(TBoldQueueable)
+  TBoldElementHandleFollower = class(TBoldAbstractHandleFollower)
   private
     fBoldHandle: TBoldElementHandle;
-    fFollower: TBoldFollower;
     fFollowerValueCurrent: Boolean;
-    fSubscriber: TBoldSubscriber;
     procedure SetFollowerValueCurrent(value: Boolean);
     procedure SetBoldHandle(value: TBoldElementHandle);
     property FollowerValueCurrent: Boolean read fFollowerValueCurrent write SetFollowerValueCurrent;
   protected
-    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetBoldHandle: TBoldElementHandle; override;
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); override;
     procedure Display; override;
-    property Subscriber: TBoldSubscriber read fSubscriber;
   public
-    constructor Create(MatchObject: TObject; Controller: TBoldFollowerController);
-    destructor Destroy; override;
+    constructor Create(AMatchObject: TObject; Controller: TBoldFollowerController);
     procedure Apply; override;
     procedure DiscardChange; override;
-  published
+//  published
     property BoldHandle: TBoldElementHandle read FBoldHandle write SetBoldHandle;
-    property Follower: TBoldFollower read fFollower;
   end;
 
 implementation
@@ -60,21 +59,11 @@ begin
     FollowerValueCurrent := false;
 end;
 
-constructor TBoldElementHandleFollower.Create(MatchObject: TObject;
+constructor TBoldElementHandleFollower.Create(AMatchObject: TObject;
   Controller: TBoldFollowerController);
 begin
-  inherited Create(nil);
-  fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
-  fFollower := TBoldFollower.Create(MatchObject, Controller);
-  fFollower.PrioritizedQueuable := Self;
+  inherited Create(AMatchObject, Controller);
   fFollowerValueCurrent := true;
-end;
-
-destructor TBoldElementHandleFollower.Destroy;
-begin
-  FreeAndNil(fFollower);
-  FreeAndNil(fSubscriber);
-  inherited;
 end;
 
 procedure TBoldElementHandleFollower.SetBoldHandle(value: TBoldElementHandle);
@@ -82,7 +71,6 @@ begin
   if (value <> BoldHandle) then
   begin
     fBoldHandle := Value;
-    // will force subscription on Handle
     FollowerValueCurrent := false;
   end;
 end;
@@ -129,12 +117,14 @@ begin
   begin
     if Value then
     begin
-      RemoveFromDisplayList;
+      RemoveFromDisplayList(false);
       PropagateValue;
       Subscribe;
     end
     else
     begin
+      if Follower.IsDirty then
+        Follower.DiscardChange;
       Follower.element := nil;
       Subscriber.CancelAllSubscriptions;
       AddToDisplayList;
@@ -144,5 +134,10 @@ begin
   SubscribeToHandleReference;
 end;
 
-end.
+function TBoldElementHandleFollower.GetBoldHandle: TBoldElementHandle;
+begin
+  result := fBoldHandle;
+end;
 
+initialization
+end.

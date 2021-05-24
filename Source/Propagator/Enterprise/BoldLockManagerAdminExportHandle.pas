@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerAdminExportHandle;
 
 interface
@@ -14,7 +17,7 @@ type
   TBoldLockManagerAdminComExportHandle = class(TBoldComExportHandle)
   protected
     function GetComObject: IUnknown; override;
-    function GetHandledObject: TObject; override;
+    function GetHandledObject: TObject; override;    
   public
     constructor Create(Active: Boolean; ServerHandle: TBoldComServerHandle; ServerClass: string); reintroduce;
   end;
@@ -42,11 +45,13 @@ end;
 function TBoldLockManagerAdminComExportHandle.GetComObject: IUnknown;
 begin
   Result := CreateComObject(TBoldPropagatorServer.Instance.LockManagerAdminCLSID);
-end;
+end;                   
 
 function TBoldLockManagerAdminComExportHandle.GetHandledObject: TObject;
 begin
   Result := nil;
 end;
+
+initialization
 
 end.

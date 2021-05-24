@@ -1,9 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldManipulators;
 
 interface
 
 uses
-  BoldSystem,
   BoldDefs,
   BoldElements,
   BoldHandles,
@@ -28,18 +30,14 @@ type
     fOnEncrypt: TBoldStringStringFunction;
     fOnDecrypt: TBoldStringStringFunction;
     FMappers: TBoldManipulatorMapperCollection;
-    fBoldSystem: TBoldSystem;
-    function RawIdStringForElement(Element: TBoldElement): string;  // unencrypted
-    function ElementForRawIdString(IdString: string): TBoldElement; // unencrypted
+    function RawIdStringForElement(Element: TBoldElement): string;
+    function ElementForRawIdString(IdString: string): TBoldElement;
     function AddMapping(const RawIdString: string; const Mapping: string): string;
     function GetMapping(const IdString: string): string;
     function StripMapping(const IdString: string): string;
     procedure SetMappers(const Value: TBoldManipulatorMapperCollection);
     procedure SetBoldSystemHandle(const Value: TBoldAbstractSystemhandle);
-    function GetAttachedSystem: TBoldSystem;
-    procedure SetBoldSystem(const Value: TBoldSystem);
   protected
-    property AttachedSystem: TBoldSystem read GetAttachedSystem;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -51,10 +49,9 @@ type
     function IdStringForElement(Element: TBoldElement; const Mapping: string = ''): string;
     procedure DeleteObject(IdString: string);
     function CreateObject(Classname: string): string;
-    procedure SetFromList(IdValuePairs: TStrings);
+    procedure SetFromList(IdValuePairs: TStrings);     
   published
     property IdStringRepresentation:TBoldIdStringRepresentation read fIdStringRepresentation write fIdStringRepresentation;
-    property BoldSystem: TBoldSystem read fBoldSystem write SetBoldSystem;
     property BoldSystemHandle: TBoldAbstractSystemhandle read fBoldSystemHandle write SetBoldSystemHandle;
     property OnEncrypt: TBoldStringStringFunction read fOnEncrypt write fOnEncrypt;
     property OnDecrypt: TBoldStringStringFunction read fOnDecrypt write fOnDecrypt;
@@ -95,21 +92,19 @@ type
 
 implementation
 
-{.$R *.res}
-
 uses
   SysUtils,
   BoldUtils,
   BoldId,
   BoldDefaultId,
-  HandlesConst;
+  BoldSystem;
 
 { TBoldManipulator }
 
 function TBoldManipulator.AddMapping(const RawIdString, Mapping: string): string;
 begin
   if Mapping <> '' then
-    Result := Format('%s[%s]', [RawIdString, Mapping]) // do not localize
+    Result := Format('%s[%s]', [RawIdString, Mapping])
   else
     Result := RawIdString;
 end;
@@ -129,6 +124,11 @@ var
   ColonPos: integer;
   ObjectId: TBoldObjectID;
 begin
+  if Trim(IdString) = '' then
+  begin
+    Result := nil;
+    exit;
+  end;
   if IdStringRepresentation = isrVerbose then
     IdString := Copy(IdString, Pos('.', IdString) + 1, MAXINT);
   ColonPos := Pos(':', IdString);
@@ -145,7 +145,7 @@ begin
       ObjectID := TBoldDefaultId.CreateWithClassID(0, false);
       (ObjectID as TBoldDefaultId).AsInteger := StrToInt(ObjectIdStr);
     end;
-    BoldObject := AttachedSystem.EnsuredLocatorByID[ObjectID].EnsuredBoldObject;   // FIXME error handling if object has been deleted
+    BoldObject := BoldSystemHandle.System.EnsuredLocatorByID[ObjectID].EnsuredBoldObject;
     if ColonPos = 0 then
       result := BoldObject
     else if IdStringRepresentation = isrVerbose then
@@ -181,7 +181,7 @@ begin
   else
   begin
     IdString := AddMapping(IdString, Mapping);
-    Result := Mappers.ItemByname[Mapping].GetAsString(Element);  // FIXME error handling
+    Result := Mappers.ItemByname[Mapping].GetAsString(Element);
   end;
   if Assigned(fOnEncrypt) and (IdString <> '') then
     IdString := OnEncrypt(IdString);
@@ -189,7 +189,6 @@ end;
 
 function TBoldManipulator.RawIdStringForElement(Element: TBoldElement): string;
 begin
-  Result := '';
   if Element is TBoldObject then
   begin
     if IdStringRepresentation = isrVerbose then
@@ -236,7 +235,7 @@ procedure TBoldManipulator.SetValue(IdString: string; const  NewValue: string);
       NewId := OnDecrypt(NewId);
     NewElement := ElementForRawIdString(StripMapping(NewId));
     if (NewElement is TBoldObject) then
-      r.BoldObject := TBoldObject(NewElement);  // FIXME error handling
+      r.BoldObject := TBoldObject(NewElement);
   end;
 
 var
@@ -256,13 +255,13 @@ begin
       else if (Element is TBoldObjectReference) then
         SetObjectReference(TBoldObjectReference(Element), NewValue)
       else if (Element is TBoldObjectList) then
-        raise EBold.Create(sCannotSetMultiLinkFromValue)
+        raise EBold.Create('Can''t set Multilink from value')
       else if (Element is TBoldObject) then
-        raise EBold.Create(sCannotSetObjectFromValue);
+        raise EBold.Create('Can''t set Object from value');
     end;
   end
   else
-    Mappers.ItemByname[Mapping].SetFromString(Element, NewValue);  // FIXME error handling
+    Mappers.ItemByname[Mapping].SetFromString(Element, NewValue);
 end;
 
 function TBoldManipulator.StripMapping(const IdString: string): string;
@@ -297,10 +296,10 @@ end;
 
 function TBoldManipulator.CreateObject(Classname: string): string;
 begin
-  if Assigned(AttachedSystem) then
-    Result := IdStringForElement(AttachedSystem.CreateNewObjectByExpressionName(ClassName))
+  if Assigned(BoldSystemhandle) then
+    Result := IdStringForElement(BoldSystemHandle.System.CreateNewObjectByExpressionName(ClassName))
   else
-    raise EBold.CreateFmt(sNoSystemHandle, [classname, 'CreateObject', Name]); // do not localize
+    raise EBold.CreateFmt('%s.CreateObject: The manipulator is not connected to a systemhandle', [classname]);
 end;
 
 procedure TBoldManipulator.DeleteObject(IdString: string);
@@ -337,21 +336,7 @@ begin
   else if Assigned(Element.BoldType) then
     Result := Element.BoldType.ExpressionName
   else
-    raise EBold.CreateFmt(sElementLacksTypeInfo, [ClassName]);
-end;
-
-function TBoldManipulator.GetAttachedSystem: TBoldSystem;
-begin
-  if BoldSystemHandle <> nil then
-    Result := BoldSystemHandle.System
-  else
-    Result := fBoldSystem;
-end;
-
-procedure TBoldManipulator.SetBoldSystem(const Value: TBoldSystem);
-begin
-  fBoldSystem := Value;
-  { TODO : Get OnDestroy notification for system}
+    raise EBold.CreateFmt('%s.DefaultTagForElement: Element lacks type information', [ClassName]);
 end;
 
 { TBoldManipulatorMapper }
@@ -393,7 +378,7 @@ begin
       result := Items[i];
       Exit;
     end;
-  raise EBold.CreateFmt(sUnknownMapping, [Name]);
+  raise EBold.CreateFmt('Unknown mapping: %s', [Name]);
 end;
 
 function TBoldManipulatorMapperCollection.GetItems(Index: integer): TBoldManipulatorMapper;
@@ -406,4 +391,5 @@ begin
   result := fOwner;
 end;
 
+initialization
 end.

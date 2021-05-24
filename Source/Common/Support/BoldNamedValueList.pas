@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNamedValueList;
 
 interface
@@ -6,7 +9,8 @@ uses
   Classes,
   BoldBase,
   BoldIndexableList,
-  BoldIndex;
+  BoldIndex,
+  BoldHashIndexes;
 
 type
   TBoldNamedValueListEntry = class(TBoldMemoryManagedObject)
@@ -23,8 +27,9 @@ type
 
   TBoldNamedValueList = class(TBoldIndexableList)
   private
+    class var IX_Name: integer;
     function GetItem(index: Integer): TBoldNamedValueListEntry;
-    function GetItemByName(const Name: string): TBoldNamedValueListEntry;
+    function GetItemByName(const Name: string): TBoldNamedValueListEntry;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetCommaText(const CommaText: string);
     function GetCommaText: string;
     function GetValueByname(const Name: string): string;
@@ -35,7 +40,7 @@ type
     constructor Create;
     procedure AddFromStrings(strings: TStrings);
     procedure AddToStrings(strings: TStrings);
-    procedure AddEntry(Name, Value: string; aObject: TObject = nil);
+    function AddEntry(const Name, Value: string; aObject: TObject = nil): TBoldNamedValueListEntry;
     procedure RemoveName(const Name: String);
     property Items[index: Integer]: TBoldNamedValueListEntry read GetItem; default;
     property ItemByName[const Name: string]: TBoldNamedValueListEntry read GetItemByName;
@@ -49,14 +54,8 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldUtils,
-  BoldHashIndexes;
+  BoldRev;
 
-var
-  IX_Name: integer = -1;
-
-  {---TNameIndex---}
 type
   TNameIndex = class(TBoldCaseSensitiveStringHashIndex)
   protected
@@ -70,10 +69,10 @@ end;
 
 { TBoldStringDictionary }
 
-procedure TBoldNamedValueList.AddEntry(Name, Value: string;
-  aObject: TObject);
+function TBoldNamedValueList.AddEntry(const Name, Value: string; aObject: TObject): TBoldNamedValueListEntry;
 begin
-  Add(TBoldNamedValueListEntry.Create(Name, Value, aObject));
+  result := TBoldNamedValueListEntry.Create(Name, Value, aObject);
+  Add(result);
 end;
 
 procedure TBoldNamedValueList.AddFromStrings(strings: TStrings);
@@ -109,7 +108,7 @@ begin
   try
     AddToStrings(StringList);
     Result := StringList.CommaText;
-  finally
+  finally  
     Stringlist.Free;
   end;
 end;
@@ -123,7 +122,7 @@ end;
 function TBoldNamedValueList.GetItemByName(
   const Name: string): TBoldNamedValueListEntry;
 begin
-  Result := TBoldNamedValueListEntry(TNameIndex(Indexes[IX_Name]).FindByString(Name));
+  Result := TBoldNamedValueListEntry(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(Name));
 end;
 
 
@@ -204,5 +203,8 @@ begin
   else
     AddEntry(Name, NewValue);
 end;
+
+initialization
+  TBoldNamedValueList.IX_Name := -1;
 
 end.

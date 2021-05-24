@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGeneratorTemplates;
 
 interface
@@ -5,7 +8,7 @@ interface
 uses
   Classes,
   BoldMeta,
-   BoldTemplateExpander;
+  BoldTemplateExpander;
 
 const
   publicTag = 0;
@@ -31,10 +34,11 @@ type
     procedure InitializeTemplateList(TemplateList: TBoldTemplateList); virtual;
     procedure InitializeCOMTemplateList(TemplateList: TBoldTemplateList); virtual;
     function GetDefaultIncFileExtension: string; virtual; abstract;
-    function GetPersistenceInterfaceTemplate: TBoldTemplateHolder; virtual;
+    function GetPersistenceInterfaceTemplate: TBoldTemplateHolder; virtual; 
     function GetTemplateList: TBoldTemplateList;
     function GetCOMTemplateList: TBoldTemplateList;
   public
+    destructor Destroy; override;
     function MethodToCOMHeader(OwningClass: TMoldClass; Method: TMoldMethod; InterfaceCode: Boolean; ParametersToCoerce: TStringList; ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel; GenerateMIDLCode: Boolean): String; virtual; abstract;
     function MethodToCOMCall(OwningClass: TMoldClass; Method: TMoldMethod; ParametersToCoerce, ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel): String; virtual; abstract;
     function ReadMethodSignature(ClassName, AttributeName, AttributeType: string): string; virtual; abstract;
@@ -66,7 +70,8 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldRev;
 
 var
   G_BoldGeneratorTemplateManager: TBoldGeneratorTemplateManager;
@@ -84,6 +89,13 @@ end;
 
 { TBoldGeneratorTemplateManager }
 
+
+destructor TBoldGeneratorTemplateManager.Destroy;
+begin
+  FreeAndNil(fTemplateList);
+  FreeAndNil(fComTemplateList);
+  inherited;
+end;
 
 function TBoldGeneratorTemplateManager.GetCOMTemplateList: TBoldTemplateList;
 begin
@@ -119,5 +131,11 @@ end;
 procedure TBoldGeneratorTemplateManager.InitializeTemplateList(TemplateList: TBoldTemplateList);
 begin
 end;
+
+initialization
+
+finalization
+  FreeAndNil(G_BoldGeneratorTemplateManager);  
+
 
 end.

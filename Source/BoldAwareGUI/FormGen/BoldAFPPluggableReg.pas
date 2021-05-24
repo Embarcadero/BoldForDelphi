@@ -6,12 +6,12 @@ procedure Register;
 
 implementation
 
+{$R BoldAFPPluggableReg.res}
+
 uses
   Classes,
   BoldAFPPluggable,
   BoldIDEConsts;
-
-{$R *.res}
 
 procedure Register;
 begin

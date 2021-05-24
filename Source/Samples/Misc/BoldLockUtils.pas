@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockUtils;
 
 interface
@@ -79,11 +82,8 @@ class procedure TBoldLockUtils.GetLockInfo(System: TBoldSystem; LockHolder: TBol
     Traverser: TBoldIndexTraverser;
   begin
     Traverser := List.CreateTraverser;
-    while not Traverser.EndOfList do
-    begin
+    while Traverser.MoveNext do
       AddLockInfo(Traverser.item as TBoldLock, Exclusive);
-      Traverser.Next;
-    end;
     Traverser.Free;
   end;
 
@@ -127,11 +127,12 @@ begin
   InitCol(1,  60, 'Type');
   InitCol(2, 120, 'Class');
   InitCol(3, 200, 'Object');
-  StringGrid.Rows[1].Text := ''; // Clear GhostRow
+  StringGrid.Rows[1].Text := '';
 
   for i := 0 to LockInfo.Count-1 do
     StringGrid.Rows[i+1].CommaText := LockInfo[i];
   LockInfo.Free;
 end;
 
+initialization
 end.

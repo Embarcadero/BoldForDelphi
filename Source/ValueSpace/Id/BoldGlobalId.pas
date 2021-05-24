@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGlobalId;
 
 interface
@@ -5,7 +8,7 @@ interface
 uses
   BoldId,
   BoldStreams;
-
+    
 const
   BOLDGLOBALIDNAME = 'BoldGlobalId';
 
@@ -28,6 +31,7 @@ type
     property ClassExpressionName: string read fClassExpressionName;
     property AsString: String read GetAsString;
   end;
+
 
 implementation
 

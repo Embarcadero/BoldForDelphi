@@ -205,7 +205,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 { TBoldComboButton }

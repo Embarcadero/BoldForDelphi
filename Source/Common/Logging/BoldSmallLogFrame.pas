@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSmallLogFrame;
 
 interface
@@ -43,15 +46,15 @@ type
     procedure Log(const s: string; LogType: TBoldLogType = ltInfo);
     procedure ProgressStep;
     procedure Show;
-    procedure Sync;
+    procedure Sync; 
     procedure StartLog(const SessionName: String);
     procedure EndLog;
     procedure WarningIndicatorClick(Sender: TObject);
     procedure CalculateTimeLeft;
     procedure ProcessInterruption;
   public
-    constructor Create(Owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(Owner: TComponent); override;
+    destructor destroy; override;
     class function CreateSmallLogForm(Caption: string): TForm;
     { Public declarations }
   end;
@@ -60,8 +63,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldCommonConst;
+  BoldUtils;
 
 type
   TExposedShape = class(TShape)
@@ -81,8 +83,8 @@ begin
     DonePart := pgLog.Position / pgLog.Max;
     PartLeft := 1 - DonePart;
     TimeLeft := (PartLeft * usedTime) / DonePart;
-    lblTimeLeft.Caption := Format(sLogTimeLeft, [FormatDateTime('hh:mm:ss', timeLeft)]); // do not localize
-    lblTotTime.Caption := Format(sLogTotalTime, [FormatDateTime('hh:mm:ss', TimeLeft + UsedTime)]); // do not localize
+    lblTimeLeft.Caption := 'Time left: ' + FormatDateTime('hh:mm:ss', timeLeft);
+    lblTotTime.Caption := 'Tot time: ' + FormatDateTime('hh:mm:ss', TimeLeft + UsedTime);
     Refresh;
   end;
 end;
@@ -103,12 +105,12 @@ begin
   lblLogText.Caption := '';
   lblLogMainHeader.Caption := '';
   lblLogHeader.Caption := '';
-  lblTimeLeft.Caption := '';
+  lblTimeLeft.Caption := ''; 
   BoldLog.RegisterLogReceiver(self);
   TExposedShape(WarningIndicator).OnClick := WarningIndicatorClick;
 end;
 
-destructor TBoldLogFrame.Destroy;
+destructor TBoldLogFrame.destroy;
 begin
   BoldLog.UnRegisterLogReceiver(self);
   inherited;
@@ -116,17 +118,16 @@ end;
 
 procedure TBoldLogFrame.EndLog;
 begin
-//  SetLogHeader(fSessionName);
-  lblLogText.Caption := sLogSmallDone;
+  lblLogText.Caption := 'Done...';
   pgLog.Position := pgLog.Max + 1;
   if not WarningPanel.Visible then
     Timer1.Enabled := true;
   btnStop.Enabled := false;
 
   if fHighestSeverity = ltWarning then
-    lblLogText.Caption := Format(sLogSmallWarnings, [sLogSmallDone])
+    lblLogText.Caption := lblLogText.Caption + '  there were warnings, click the yellow icon for details...'
   else if fHighestSeverity = ltError then
-    lblLogText.Caption := Format(sLogSmallErrors, [sLogSmallDone]);
+    lblLogText.Caption := lblLogText.Caption + '  there were errors, click the red icon for details...';
 end;
 
 
@@ -192,7 +193,7 @@ begin
   Refresh;
   Show;
   fStartTime := now;
-  Timer1.Enabled := false;
+  Timer1.Enabled := false; 
   btnStop.Enabled := true;
   fHighestSeverity := ltInfo;
 end;
@@ -239,4 +240,5 @@ begin
   result.Show;
 end;
 
+initialization
 end.
