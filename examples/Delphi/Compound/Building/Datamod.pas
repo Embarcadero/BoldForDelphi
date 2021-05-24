@@ -3,7 +3,6 @@ unit datamod;
 interface
 
 uses
-//  dbLogDlg,
   SysUtils,
   Classes,
   Controls,

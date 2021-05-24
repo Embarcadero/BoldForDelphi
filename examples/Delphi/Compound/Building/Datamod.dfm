@@ -399,6 +399,13 @@ object DataModule1: TDataModule1
   object BoldDatabaseAdapterPostgres: TBoldDatabaseAdapterFireDAC
     SQLDatabaseConfig.DefaultSystemMapper = '<Default>'
     SQLDatabaseConfig.DefaultObjectMapper = '<Default>'
+    SQLDatabaseConfig.ColumnExistsTemplate = 
+      'SELECT column_name FROM information_schema.columns WHERE upper(t' +
+      'able_name)=upper('#39'<TableName>'#39') and upper(column_name)=upper('#39'<C' +
+      'olumnName>'#39')'
+    SQLDatabaseConfig.IndexColumnExistsTemplate = 
+      'select indexname from pg_indexes where upper(tablename) = upper(' +
+      #39'<TableName>'#39')'
     SQLDatabaseConfig.ColumnTypeForDate = 'DATE'
     SQLDatabaseConfig.ColumnTypeForTime = 'TIME'
     SQLDatabaseConfig.ColumnTypeForDateTime = 'TIMESTAMP'
@@ -420,14 +427,6 @@ object DataModule1: TDataModule1
       'ower(datname) = lower('#39'<DatabaseName>'#39'));'
     SQLDatabaseConfig.DropColumnTemplate = 'ALTER TABLE <TableName> DROP <ColumnName>'
     SQLDatabaseConfig.DropTableTemplate = 'DROP TABLE <TableName>'
-    SQLDatabaseConfig.IndexInfoTemplate = 
-      'SELECT IND.NAME INDEXNAME, IND.IS_PRIMARY_KEY ISPRIMARY, IND.IS_' +
-      'UNIQUE ISUNIQUE, COL.NAME COLUMNNAME FROM SYS.INDEXES IND INNER ' +
-      'JOIN SYS.INDEX_COLUMNS IC ON IND.OBJECT_ID = IC.OBJECT_ID AND IN' +
-      'D.INDEX_ID = IC.INDEX_ID INNER JOIN SYS.COLUMNS COL ON IC.OBJECT' +
-      '_ID = COL.OBJECT_ID AND IC.COLUMN_ID = COL.COLUMN_ID WHERE UPPER' +
-      '(OBJECT_NAME(IND.OBJECT_ID))=UPPER('#39'<TableName>'#39') ORDER BY INDEX' +
-      'NAME, INDEX_COLUMN_ID'
     SQLDatabaseConfig.DropIndexTemplate = 'DROP INDEX <IndexName>'
     SQLDatabaseConfig.EvolveDropsUnknownIndexes = True
     SQLDatabaseConfig.MaxDbIdentifierLength = 63

@@ -170,6 +170,13 @@ type
     UndoSubscriber: TBoldPlaceableSubscriber;
     BoldLogOSSAction1: TBoldLogOSSAction;
     oggleOSStrafficlogs1: TMenuItem;
+    BoldGenerateSchemaAction1: TBoldGenerateSchemaAction;
+    BoldValidateDBStructureAction1: TBoldValidateDBStructureAction;
+    BoldValidateDBDataAction1: TBoldValidateDBDataAction;
+    BoldEvolveDBAction1: TBoldEvolveDBAction;
+    EvolveDB1: TMenuItem;
+    ValidateDBData1: TMenuItem;
+    ValidateDBStructure1: TMenuItem;
     procedure newBuildingClick(Sender: TObject);
     procedure DeleteCurrentObject(Sender: TObject);
     procedure NewPersonClick(Sender: TObject);
@@ -490,10 +497,10 @@ begin
   with datamodule1.BoldSystemHandle1.System.UndoHandlerInterface do
   try
     for I := 0 to UndoList.Count-1 do
-      lbUndo.Items.Add(TimeToStr(UndoList[i].Created) + ':'+ UndoList[i].Name + ' ' + UndoList[i].Content);
+      lbUndo.Items.Add(TimeToStr(UndoList[i].Created) + ':'+ UndoList[i].Name {+ ' ' + UndoList[i].Content});
     lbUndo.ItemIndex := i;
     for I := 0 to RedoList.Count-1 do
-      lbRedo.Items.Add(TimeToStr(RedoList[i].Created) + ':'+ RedoList[i].Name + ' ' + RedoList[i].Content);
+      lbRedo.Items.Add(TimeToStr(RedoList[i].Created) + ':'+ RedoList[i].Name {+ ' ' + RedoList[i].Content});
   finally
     lbUndo.Items.EndUpdate;
     lbRedo.Items.EndUpdate;

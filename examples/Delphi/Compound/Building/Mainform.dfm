@@ -699,8 +699,8 @@ object allform: Tallform
     end
     object pbdbNotification: TProgressBar
       Left = 4
-      Top = 75
-      Width = 96
+      Top = 65
+      Width = 98
       Height = 16
       Step = 1
       TabOrder = 2
@@ -940,6 +940,22 @@ object allform: Tallform
       IgnoreUnknownTables = True
       DropExisting = True
     end
+    object BoldGenerateSchemaAction1: TBoldGenerateSchemaAction
+      Category = 'Bold Actions'
+      Caption = 'Generate Schema'
+      IgnoreUnknownTables = False
+      BoldPersistenceHandleDB = DataModule1.BoldPersistenceHandleDB1
+    end
+    object BoldValidateDBStructureAction1: TBoldValidateDBStructureAction
+      Category = 'Bold Actions'
+      Caption = 'Validate DB Structure'
+      BoldPersistenceHandleDB = DataModule1.BoldPersistenceHandleDB1
+    end
+    object BoldValidateDBDataAction1: TBoldValidateDBDataAction
+      Category = 'Bold Actions'
+      Caption = 'Validate DB Data'
+      BoldPersistenceHandleDB = DataModule1.BoldPersistenceHandleDB1
+    end
     object BoldFailureDetectionAction1: TBoldFailureDetectionAction
       Category = 'Bold Actions'
       Caption = 'BoldFailureDetectionAction1'
@@ -1002,11 +1018,18 @@ object allform: Tallform
     object BoldLogFormAction1: TBoldLogFormAction
       Category = 'Bold Actions'
       Caption = 'Log view'
+      ShortCut = 16460
     end
     object BoldDiscardChangesAction1: TBoldDiscardChangesAction
       Category = 'Bold Actions'
       Caption = 'Discard changes'
       BoldSystemHandle = DataModule1.BoldSystemHandle1
+    end
+    object BoldEvolveDBAction1: TBoldEvolveDBAction
+      Category = 'Bold Actions'
+      Caption = 'Evolve DB'
+      BoldPersistenceHandleDB = DataModule1.BoldPersistenceHandleDB1
+      GenerateGenericScript = False
     end
   end
   object HighRentRenderer: TBoldAsStringRenderer
@@ -1023,6 +1046,9 @@ object allform: Tallform
       object CreateDB1: TMenuItem
         Action = BoldCreateDatabaseAction1
       end
+      object EvolveDB1: TMenuItem
+        Action = BoldEvolveDBAction1
+      end
       object Opensystem2: TMenuItem
         Action = BoldActivateSystemAction1
       end
@@ -1037,6 +1063,12 @@ object allform: Tallform
       end
       object BoldModelEditorAction1: TMenuItem
         Action = BoldModelEditorAction
+      end
+      object ValidateDBData1: TMenuItem
+        Action = BoldValidateDBDataAction1
+      end
+      object ValidateDBStructure1: TMenuItem
+        Action = BoldValidateDBStructureAction1
       end
     end
     object Edit1: TMenuItem
