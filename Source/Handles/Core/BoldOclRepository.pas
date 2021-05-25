@@ -30,6 +30,7 @@ type
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
   public
+    procedure AfterConstruction; override;
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     function LookUpOclDefinition(Name: string): string;
@@ -90,6 +91,14 @@ uses
 
 { TBoldOclRepository }
 
+procedure TBoldOclRepository.AfterConstruction;
+begin
+  inherited;
+  if (TBoldSystemHandle.DefaultBoldSystemHandle <> nil) and not (csLoading in ComponentState) and (csDesigning in ComponentState) then
+  {connect to default system at design time}
+    SystemHandle := TBoldSystemHandle.DefaultBoldSystemHandle as TBoldSystemHandle;
+end;
+
 constructor TBoldOclRepository.Create(owner: TComponent);
 begin
   inherited;
@@ -125,11 +134,12 @@ procedure TBoldOclRepository.SetSystemHandle(Value: TBoldSystemHandle);
 begin
   if fSystemHandle = Value then
    exit;
-  if assigned(Value) then
+  if assigned(Value) and Assigned(fSystemHandle) then
   begin
     fSystemHandle.InstallOclDefinitionLookUp(nil);
     fSystemHandle.RemoveFreeNotification(self);
   end;
+  fSystemHandle := Value;
   if assigned(Value) then
   begin
     Value.InstallOclDefinitionLookUp(LookUpOclDefinition);
