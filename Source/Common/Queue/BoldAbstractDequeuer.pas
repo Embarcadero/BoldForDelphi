@@ -47,8 +47,7 @@ implementation
 
 uses
   Classes,
-  BoldQueue,
-  BoldRev;
+  BoldQueue;
 
 { TBoldDequeuerHandle }
 

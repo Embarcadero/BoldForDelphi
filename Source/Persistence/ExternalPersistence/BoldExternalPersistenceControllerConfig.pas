@@ -83,8 +83,6 @@ type
 
 implementation
 
-uses
-  Boldrev;
 
 { TBoldExternalPersistenceConfigItem }
 

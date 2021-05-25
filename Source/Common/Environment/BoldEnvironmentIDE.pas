@@ -14,8 +14,7 @@ uses
   {$IFDEF BOLD_IDECLX}
   BoldEnvironmentCLX,
   {$ENDIF}
-  BoldEnvironment,
-  BoldRev;
+  BoldEnvironment;
 
 initialization
   BoldInternalRunningInIDE := true;

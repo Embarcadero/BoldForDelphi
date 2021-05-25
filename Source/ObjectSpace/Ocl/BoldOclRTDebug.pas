@@ -19,7 +19,5 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 end.

@@ -41,7 +41,5 @@ const
 
 implementation
 
-uses
-  BoldRev;
 
 end.

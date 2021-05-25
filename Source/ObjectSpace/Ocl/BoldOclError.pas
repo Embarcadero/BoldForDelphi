@@ -105,8 +105,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 procedure EBoldOClAbort.FixError;
 begin

@@ -14,8 +14,6 @@ type
   end;
 
 implementation
-uses
-  BoldRev;
 
 initialization
 

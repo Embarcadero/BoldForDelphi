@@ -285,8 +285,6 @@ const
   BoldDefaultSortMode = smMergeSort; // smQuickSort;
 implementation
 
-uses
-  BoldRev;
 
 { EBoldDatabaseError }
 

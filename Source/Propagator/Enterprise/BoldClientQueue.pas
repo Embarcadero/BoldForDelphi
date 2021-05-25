@@ -27,8 +27,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 { TBoldClientQueue }
 

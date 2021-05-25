@@ -36,8 +36,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 {-- TBoldComServerPersistenceHandle -------------------------------------------}
 

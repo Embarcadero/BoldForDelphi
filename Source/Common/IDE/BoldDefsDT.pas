@@ -62,8 +62,6 @@ const
 
 implementation
 
-uses
-  BoldRev;
 
 initialization
 

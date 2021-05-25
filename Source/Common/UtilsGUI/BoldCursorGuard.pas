@@ -24,8 +24,7 @@ type
 implementation
 
 uses
-  Forms,
-  BoldRev;
+  Forms;
 
 { TBoldGuardCursorChange }
 

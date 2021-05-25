@@ -30,8 +30,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 {---TBoldPSDescriptionElement---}
 constructor TBoldPSDescriptionElement.Create(aOwner: TBoldPSDescriptionElement);

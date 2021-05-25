@@ -14,8 +14,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 constructor TBoldPSParams.Create;
 begin

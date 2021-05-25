@@ -14,8 +14,6 @@ uses
   ;
 
 implementation
-uses
-  BoldRev;
 
 initialization
   try

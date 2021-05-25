@@ -14,8 +14,6 @@ procedure BoldSort(FirstIndex, LastIndex: Integer; Compare:TBoldSortCompare ; Ex
 
 implementation
 
-uses
-  BoldRev;
 
 procedure BoldSort(FirstIndex, LastIndex: Integer; Compare:TBoldSortCompare ; Exchange : TBoldSortExchange);
 var

@@ -39,8 +39,7 @@ type
 implementation
 
 uses
-  Classes,
-  Boldrev;
+  Classes;
 
 var
   G_RegisteredPersistenceAdapters: TStringList;

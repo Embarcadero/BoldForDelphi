@@ -12,8 +12,7 @@ implementation
 uses
   Classes,
   BoldIDEConsts,
-  BoldCheckListBox,
-  BoldRev;
+  BoldCheckListBox;
 
 procedure Register;
 begin

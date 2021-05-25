@@ -37,8 +37,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 { TBoldDatabaseAdapterDOA }      
 

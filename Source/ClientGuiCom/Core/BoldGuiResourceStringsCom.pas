@@ -33,8 +33,6 @@ resourcestring
 
 implementation
 
-uses
-  BoldRev;
 
 initialization
 

@@ -20,8 +20,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 {---TBoldPersistenceMapper---}
 procedure TBoldPersistenceMapper.CreatePersistentStorage;

@@ -27,8 +27,7 @@ implementation
 uses
   TypInfo,
   SysUtils,
-  BoldElements,
-  BoldRev;
+  BoldElements;
 
 { TBoldOCLComponentEditor }
 

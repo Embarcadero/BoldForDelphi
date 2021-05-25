@@ -34,8 +34,7 @@ implementation
 
 uses
   sysutils,
-  BoldComUtils,
-  BoldRev;
+  BoldComUtils;
 
 { TBoldSOAPPersistenceControllerAdapter }
 

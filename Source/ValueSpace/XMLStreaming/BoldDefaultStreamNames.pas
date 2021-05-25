@@ -38,8 +38,7 @@ var
 implementation
 
 uses
-  BoldSharedStrings,
-  BoldRev;
+  BoldSharedStrings;
 
 initialization
   BoldContentName_ObjectIdRef := BoldSharedStringManager.GetSharedString('ObjectIdRef');

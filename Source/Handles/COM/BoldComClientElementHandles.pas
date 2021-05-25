@@ -7,8 +7,6 @@ interface
 
 implementation
 
-uses
-  BoldRev;
 
 initialization
 

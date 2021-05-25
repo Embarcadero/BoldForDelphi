@@ -32,8 +32,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 initialization
 

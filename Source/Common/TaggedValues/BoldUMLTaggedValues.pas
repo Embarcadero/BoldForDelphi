@@ -24,8 +24,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefaultTaggedValues,
-  BoldRev;
+  BoldDefaultTaggedValues;
 
 var
  G_UMLTaggedValues: TBoldTaggedValuePerClassList = nil;

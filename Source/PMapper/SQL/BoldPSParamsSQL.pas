@@ -23,8 +23,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 { TBoldPSSQLParams }
 

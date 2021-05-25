@@ -49,8 +49,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 { TBoldExternalPersistenceHandleSQL }
 

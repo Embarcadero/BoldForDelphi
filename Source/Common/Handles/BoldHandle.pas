@@ -31,8 +31,7 @@ var
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldHandle }
 

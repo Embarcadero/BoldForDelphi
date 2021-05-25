@@ -12,8 +12,6 @@ const
   BOLD_DBLOCK_NAME = 'DBLock';
 
 implementation
-uses
-  BoldRev;
 
 initialization
 

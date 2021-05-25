@@ -29,8 +29,7 @@ type
 implementation      
 
 uses
-  DBTables,
-  BoldRev;
+  DBTables;
 
 { TBoldDatabaseNameProperty }
 

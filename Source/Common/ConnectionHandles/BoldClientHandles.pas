@@ -38,8 +38,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 {-- TBoldClientHandle ---------------------------------------------------------}
 

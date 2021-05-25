@@ -25,8 +25,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 { TBoldCheckListBox }
 initialization

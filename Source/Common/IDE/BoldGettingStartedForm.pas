@@ -39,8 +39,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 {$R *.DFM}
 

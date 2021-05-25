@@ -37,8 +37,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 
 procedure TfrmLicenseText.FormCloseQuery(Sender: TObject; var CanClose: Boolean);

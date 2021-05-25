@@ -10,8 +10,7 @@ implementation
 uses
   BoldEnvironmentVCL,
   BoldEnvironmentCLX,
-  BoldEnvironment,
-  BoldRev;
+  BoldEnvironment;
 
 initialization
   BoldInternalAllowBothUseCLX := true;

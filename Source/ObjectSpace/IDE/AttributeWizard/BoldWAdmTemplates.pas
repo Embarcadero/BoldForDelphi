@@ -28,8 +28,6 @@ var
 
 implementation
 
-uses
-  BoldRev;
 
 {$R *.dfm}
 

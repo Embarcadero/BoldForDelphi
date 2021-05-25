@@ -37,8 +37,7 @@ procedure EnsureModelEditDataModule;
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 var
   DataModuleEnsured: Boolean = false;
