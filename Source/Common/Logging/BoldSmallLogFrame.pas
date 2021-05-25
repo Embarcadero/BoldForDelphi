@@ -240,5 +240,4 @@ begin
   result.Show;
 end;
 
-initialization
 end.

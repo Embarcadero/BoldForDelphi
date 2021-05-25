@@ -251,5 +251,4 @@ begin
   InBatch := true;
 end;
 
-initialization
 end.

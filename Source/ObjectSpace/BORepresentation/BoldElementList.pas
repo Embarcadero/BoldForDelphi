@@ -281,5 +281,4 @@ begin
   result := TBoldElementList.CreateWithTypeInfo(aSystem.BoldSystemTypeInfo.ListTypeInfoByElement[nil]);
 end;
 
-initialization
 end.

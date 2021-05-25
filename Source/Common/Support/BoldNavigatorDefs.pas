@@ -232,5 +232,4 @@ end;
 
 
 
-initialization
 end.

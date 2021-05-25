@@ -88,5 +88,4 @@ begin
     Result := '';
 end;
 
-initialization
 end.

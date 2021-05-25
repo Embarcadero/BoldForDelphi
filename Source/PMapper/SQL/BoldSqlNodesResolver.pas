@@ -184,5 +184,4 @@ begin
   n.VariableBinding.AddRef;
 end;
 
-initialization
 end.

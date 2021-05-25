@@ -105,5 +105,4 @@ begin
 end;
 
 
-initialization
 end.

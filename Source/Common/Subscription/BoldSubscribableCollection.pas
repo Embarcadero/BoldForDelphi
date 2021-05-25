@@ -187,5 +187,4 @@ end;
 
 
 
-initialization
 end.

@@ -531,5 +531,4 @@ procedure TBoldAbstractSnooper.ReleaseDataBaseLock(const ClientID: TBoldClientID
 begin
 end;
 
-initialization
 end.

@@ -659,5 +659,4 @@ begin
     result.AddObjectStorageMapping(ObjectStorageMappingInfo[i].ClassExpressionName, ObjectStorageMappingInfo[i].TableName);
 end;
 
-initialization
 end.

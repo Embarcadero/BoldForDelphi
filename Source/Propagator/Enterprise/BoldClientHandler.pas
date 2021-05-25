@@ -1155,5 +1155,4 @@ begin
   fFreeClientIds.Add(Pointer(ClientId));
 end;
 
-initialization
 end.

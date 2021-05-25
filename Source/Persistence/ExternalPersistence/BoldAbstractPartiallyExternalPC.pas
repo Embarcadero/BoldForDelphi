@@ -436,5 +436,4 @@ begin
   end;
 end;
 
-initialization
 end.

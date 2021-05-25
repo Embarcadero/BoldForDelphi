@@ -139,5 +139,4 @@ begin
   result := fBoldHandle;
 end;
 
-initialization
 end.

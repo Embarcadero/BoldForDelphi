@@ -846,5 +846,4 @@ begin
   CheckListBoxOverride.SetFocus;
 end;
 
-initialization
 end.

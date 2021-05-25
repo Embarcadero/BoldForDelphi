@@ -88,5 +88,4 @@ begin
 end;
 
 
-initialization
 end.

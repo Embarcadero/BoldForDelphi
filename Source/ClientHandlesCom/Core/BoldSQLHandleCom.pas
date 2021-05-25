@@ -221,5 +221,4 @@ begin
   ServerElementHandle.SetData(DataFlags,nil,NamedValues);
 end;
 
-initialization
 end.

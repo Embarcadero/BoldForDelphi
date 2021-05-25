@@ -407,5 +407,4 @@ begin
     result := Component = variables;
 end;
 
-initialization
 end.

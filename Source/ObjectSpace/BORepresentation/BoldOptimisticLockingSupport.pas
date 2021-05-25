@@ -460,5 +460,4 @@ begin
   result := System.RegionFactory as TBoldRegionFactory;
 end;
 
-initialization
 end.

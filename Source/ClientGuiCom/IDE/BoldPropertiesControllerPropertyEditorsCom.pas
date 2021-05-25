@@ -155,5 +155,4 @@ begin
   Result := 1;
 end;
 
-initialization
 end.

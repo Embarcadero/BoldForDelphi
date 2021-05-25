@@ -925,5 +925,4 @@ begin
     Query.Variables.list.Clear;
 end;
 
-initialization
 end.

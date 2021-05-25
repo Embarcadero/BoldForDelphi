@@ -1121,5 +1121,4 @@ begin
   result := ClassName + ':' + IndexDescription.IndexedFields;
 end;
 
-initialization
 end.

@@ -845,5 +845,4 @@ begin
     ExceptionHandler.HandleApplyException(E, self, Elem, Discard, Result);
 end;
 
-initialization
 end.

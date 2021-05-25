@@ -86,5 +86,4 @@ begin
   G_RegisteredPersistenceAdapters.AddObject(ExpressionName, TObject(Adapter));
 end;
 
-initialization
 end.

@@ -183,5 +183,4 @@ begin
   Result := TBoldPropagatorServer.Instance.AdvancedPropagator.ClientHandler;
 end;
 
-initialization
 end.

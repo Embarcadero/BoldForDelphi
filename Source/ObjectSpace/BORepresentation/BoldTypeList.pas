@@ -278,5 +278,4 @@ begin
     result := TBoldTypeList.CreateWithTypeInfo(ListTypeInfoByElement[TypeTypeInfo]);
 end;
 
-initialization
 end.

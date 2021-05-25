@@ -368,5 +368,4 @@ begin
   (RendererData as TBoldFollowerListCom).PurgeEnd(self, 0);
 end;
 
-initialization
 end.

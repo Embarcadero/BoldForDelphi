@@ -22,5 +22,4 @@ uses
   BoldUtils;
 
 
-initialization
 end.

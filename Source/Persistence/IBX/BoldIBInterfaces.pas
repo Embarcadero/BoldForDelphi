@@ -735,5 +735,4 @@ begin
   result := true;
 end;
 
-initialization
 end.

@@ -206,5 +206,4 @@ begin
   result := BoldProperties.VariableList;
 end;
 
-initialization
 end.

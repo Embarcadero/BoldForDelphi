@@ -77,5 +77,4 @@ begin
     fConfig.add.Assign(Value[i]);
 end;
 
-initialization
 end.

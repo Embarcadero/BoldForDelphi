@@ -347,5 +347,4 @@ begin
     Producer := nil;
 end;
 
-initialization
 end.

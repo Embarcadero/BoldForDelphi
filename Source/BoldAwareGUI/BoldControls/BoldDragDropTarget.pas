@@ -317,5 +317,4 @@ begin
   FRepresentations.Assign(Value);
 end;
 
-initialization
 end.

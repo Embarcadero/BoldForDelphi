@@ -220,5 +220,4 @@ procedure TBoldVariableDefinitionCom.VariablesChanged;
 begin 
 end;
 
-initialization
 end.

@@ -195,5 +195,4 @@ begin
     fPTSubscriber.CancelAllSubscriptions;
 end;
 
-initialization
 end.

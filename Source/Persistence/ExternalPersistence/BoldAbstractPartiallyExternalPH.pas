@@ -127,5 +127,4 @@ begin
   PersistenceController.SetSingleLink(SingleLink, ExternalKey, MoldClassOfOtherEnd);
 end;
 
-initialization
 end.

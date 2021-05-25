@@ -125,5 +125,4 @@ begin
   Result := inherited GetItem(Index) as TBoldExternalPersistenceConfigItem;
 end;
 
-initialization
 end.

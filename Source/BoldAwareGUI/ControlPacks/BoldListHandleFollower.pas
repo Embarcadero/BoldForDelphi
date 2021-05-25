@@ -170,5 +170,4 @@ begin
 end;
 
 
-initialization
 end.

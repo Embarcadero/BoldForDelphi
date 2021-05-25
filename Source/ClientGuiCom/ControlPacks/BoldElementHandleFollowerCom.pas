@@ -146,5 +146,4 @@ begin
 end;
 
 
-initialization
 end.

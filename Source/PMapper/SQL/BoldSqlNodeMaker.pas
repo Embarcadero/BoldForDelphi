@@ -260,5 +260,4 @@ begin
   fRootNode := TBoldSqlTimeLiteral.Create(n.Position, n.TimeValue);
 end;
 
-initialization
 end.

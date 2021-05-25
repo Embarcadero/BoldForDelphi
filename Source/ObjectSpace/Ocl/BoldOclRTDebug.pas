@@ -22,5 +22,4 @@ implementation
 uses
   BoldRev;
 
-initialization
 end.

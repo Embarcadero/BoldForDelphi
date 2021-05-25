@@ -579,5 +579,4 @@ begin
   result := self.Parameter;
 end;
 
-initialization
 end.

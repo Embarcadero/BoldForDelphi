@@ -391,5 +391,4 @@ begin
   result := fOwner;
 end;
 
-initialization
 end.

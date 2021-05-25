@@ -932,5 +932,4 @@ begin
   N.IsConstant := True;
 end;
 
-initialization
 end.

@@ -128,5 +128,4 @@ begin
   Result := 2;
 end;
 
-initialization
 end.

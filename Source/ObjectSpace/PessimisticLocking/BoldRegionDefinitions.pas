@@ -520,5 +520,4 @@ begin
 end;
 
 
-initialization
 end.

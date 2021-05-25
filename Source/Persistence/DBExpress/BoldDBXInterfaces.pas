@@ -744,5 +744,4 @@ begin
   Parameter.AsSQLTimeStamp := DateTimetoSQLTimeStamp(value);
 end;
 
-initialization
 end.

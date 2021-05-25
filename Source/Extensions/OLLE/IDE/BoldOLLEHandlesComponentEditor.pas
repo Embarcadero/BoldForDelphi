@@ -49,5 +49,4 @@ begin
   result := 1;
 end;
 
-initialization
 end.

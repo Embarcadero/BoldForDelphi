@@ -45,5 +45,4 @@ begin
   BoldLogThread('U=' + fName);
 end;
 
-initialization
 end.

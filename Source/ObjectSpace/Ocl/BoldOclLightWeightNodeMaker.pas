@@ -389,5 +389,4 @@ begin
   fRootNode := TBoldOLWTimeLiteral.Create(n.Position, n.TimeValue);
 end;
 
-initialization
 end.

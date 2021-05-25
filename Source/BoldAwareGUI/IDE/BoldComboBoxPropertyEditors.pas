@@ -37,5 +37,4 @@ begin
     raise EBold.CreateFmt('%s.GetContextType: Incoming component is not a BoldComboBox', [ClassName]);
 end;
 
-initialization
 end.

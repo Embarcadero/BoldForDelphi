@@ -355,5 +355,4 @@ begin
     result := inherited ExternalKeysToInternalSQL(MoldClass, ExternalKeys);
 end;
 
-initialization
 end.

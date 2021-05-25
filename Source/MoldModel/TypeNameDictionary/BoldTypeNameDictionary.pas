@@ -358,5 +358,4 @@ begin
 end;
 
 
-initialization
 end.

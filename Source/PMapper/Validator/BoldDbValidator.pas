@@ -264,5 +264,4 @@ begin
   result := BoldExpandPrefix(TYPETABLE_NAME, '', PersistenceHandle.SQLDataBaseConfig.SystemTablePrefix, SystemSQLMapper.SQLDatabaseConfig.MaxDBIdentifierLength, SystemSQLMapper.NationalCharConversion);
 end;
 
-initialization
 end.

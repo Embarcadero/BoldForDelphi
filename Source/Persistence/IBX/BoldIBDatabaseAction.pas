@@ -210,5 +210,4 @@ begin
   fUserName := trim(Value);
 end;
 
-initialization
 end.

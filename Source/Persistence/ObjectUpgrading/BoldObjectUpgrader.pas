@@ -299,5 +299,4 @@ begin
   result := Config.ConfigOwner.GetNamePath +'._'+ExpressionName+'_';
 end;
 
-initialization
 end.

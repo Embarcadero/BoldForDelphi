@@ -188,5 +188,4 @@ begin
   Params.Assign(Value);
 end;
 
-initialization
 end.

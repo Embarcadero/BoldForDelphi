@@ -997,5 +997,4 @@ begin
   result := TimeToStr(TimeValue);
 end;
 
-initialization
 end.

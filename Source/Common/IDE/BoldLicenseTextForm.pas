@@ -72,5 +72,4 @@ begin
 end;
 
 
-initialization
 end.

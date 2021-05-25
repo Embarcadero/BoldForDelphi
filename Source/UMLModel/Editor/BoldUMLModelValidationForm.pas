@@ -226,5 +226,4 @@ begin
     fBoldModel := nil;
 end;
 
-initialization
 end.

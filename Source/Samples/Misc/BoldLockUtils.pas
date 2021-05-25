@@ -134,5 +134,4 @@ begin
   LockInfo.Free;
 end;
 
-initialization
 end.

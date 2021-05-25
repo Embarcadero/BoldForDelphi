@@ -328,5 +328,4 @@ begin
     BoldProperties.DragDrop(Follower, follower.Element, 0);
 end;
 
-initialization
 end.

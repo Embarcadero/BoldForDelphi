@@ -2058,6 +2058,5 @@ begin
   fIdList.Add(Id);
 end;
 
-initialization
 end.
 

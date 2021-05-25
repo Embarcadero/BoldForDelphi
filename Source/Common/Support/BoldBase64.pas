@@ -343,5 +343,4 @@ begin
   result := BASE64_OK;
 end;
 
-initialization
 end.

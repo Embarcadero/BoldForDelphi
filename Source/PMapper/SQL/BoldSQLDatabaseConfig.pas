@@ -1575,5 +1575,4 @@ begin
   Change;
 end;
 
-initialization
 end.

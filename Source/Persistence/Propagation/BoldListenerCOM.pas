@@ -371,5 +371,4 @@ begin
   inherited Create(ComServer, TBoldListenerCOM, CLASS_BoldListener, 'TBoldListenerCOM', 'BoldListenerCOM', ciInternal);
 end;
 
-initialization
 end.

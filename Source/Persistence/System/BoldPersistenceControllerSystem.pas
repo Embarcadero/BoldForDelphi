@@ -668,5 +668,4 @@ begin
   TBoldIdLocatorMapping(fMapping).RemoveByLocator((Args[0].VObject as TBoldObject).BoldObjectLocator);
 end;
 
-initialization
 end.

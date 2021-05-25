@@ -107,5 +107,4 @@ begin
   AddSubscription(Subscriber, bpeEndFetchId, bpeEndFetchId);
 end;
 
-initialization
 end.

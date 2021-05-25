@@ -140,5 +140,4 @@ begin
   BoldLog.Show;
 end;
 
-initialization
 end.

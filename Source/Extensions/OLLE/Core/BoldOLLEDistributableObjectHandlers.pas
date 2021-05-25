@@ -1174,5 +1174,4 @@ begin
   TheMapping.M_ObjectInfo.Add(anObj);
 end;
 
-initialization
 end.

@@ -133,5 +133,4 @@ begin
   PriorityListEnlister.FlushQueue(OutputQueues[ClientID]);
 end;
 
-initialization
 end.

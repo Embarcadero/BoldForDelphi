@@ -612,5 +612,4 @@ begin
   result := false;
 end;
 
-initialization
 end.

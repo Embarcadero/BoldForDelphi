@@ -169,5 +169,4 @@ begin
   fUniqueName := Value;
 end;
 
-initialization
 end.

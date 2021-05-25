@@ -149,5 +149,4 @@ begin
   result := StringOfChar(' ', Position) + '^';
 end;
 
-initialization
 end.

@@ -131,5 +131,4 @@ begin
     result := '<no context>.' + Ocl;
 end;
 
-initialization
 end.
