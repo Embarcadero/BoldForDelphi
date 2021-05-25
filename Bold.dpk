@@ -34,6 +34,7 @@ requires
   vcl,
   vcldb,
   vclx,
+  vclimg,
   FireDac,
   FireDACCommonDriver,
   FireDACCommon,
@@ -363,7 +364,6 @@ contains
   BoldDateTimeControlPack in 'Source\BoldAwareGUI\ControlPacks\BoldDateTimeControlPack.pas',
   BoldDragDropTarget in 'Source\BoldAwareGUI\BoldControls\BoldDragDropTarget.pas',
   BoldEdit in 'Source\BoldAwareGUI\BoldControls\BoldEdit.pas',
-  BoldEnvironmentIDE in 'Source\Common\Environment\BoldEnvironmentIDE.pas',
   BoldExceptionHandlers in 'Source\BoldAwareGUI\Core\BoldExceptionHandlers.pas',
   BoldFireDACConsts in 'Source\Persistence\FireDAC\BoldFireDACConsts.pas',
   BoldFireDACInterfaces in 'Source\Persistence\FireDAC\BoldFireDACInterfaces.pas',
@@ -448,6 +448,7 @@ contains
   BoldExternalPersistenceHandleSQL in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQL.pas',
   BoldExternalPersistenceHandleSQLPropEditor in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQLPropEditor.pas',
   BoldExternalPersistenceSupport in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceSupport.pas',
-  ExPeConsts in 'Source\Persistence\ExternalPersistence\ExPeConsts.pas';
+  ExPeConsts in 'Source\Persistence\ExternalPersistence\ExPeConsts.pas',
+  BoldClientElementSupport in 'Source\ClientHandlesCom\Core\BoldClientElementSupport.pas';
 
 end.

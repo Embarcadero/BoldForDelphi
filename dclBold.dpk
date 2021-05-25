@@ -143,6 +143,7 @@ contains
   BoldOLLEHandlesReg in 'Source\Extensions\OLLE\IDE\BoldOLLEHandlesReg.pas',
   BoldAbstractModificationPropagator in 'Source\Persistence\UDPPropagator\BoldAbstractModificationPropagator.pas',
   BoldUDPModificationBroadcaster in 'Source\Persistence\UDPPropagator\BoldUDPModificationBroadcaster.pas',
+  BoldEnvironmentIDE in 'Source\Common\Environment\BoldEnvironmentIDE.pas',
   BoldUDPBroadcasterReg in 'Source\Persistence\IDEUDP\BoldUDPBroadcasterReg.pas';
 
 end.
