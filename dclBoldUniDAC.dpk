@@ -34,7 +34,9 @@ requires
   rtl,
   vcldb,
   DesignIDE,
-  dclBold;
+  dclBold,
+  dac270,
+  unidac270;
 
 contains
   BoldPersistenceHandleUniDACReg in 'Source\Persistence\UniDAC\BoldPersistenceHandleUniDACReg.pas',

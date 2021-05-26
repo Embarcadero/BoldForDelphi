@@ -118,6 +118,7 @@
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="vclx.dcp"/>
+        <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="FireDac.dcp"/>
         <DCCReference Include="FireDACCommonDriver.dcp"/>
         <DCCReference Include="FireDACCommon.dcp"/>
@@ -445,7 +446,6 @@
         <DCCReference Include="Source\BoldAwareGUI\ControlPacks\BoldDateTimeControlPack.pas"/>
         <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldDragDropTarget.pas"/>
         <DCCReference Include="Source\BoldAwareGUI\BoldControls\BoldEdit.pas"/>
-        <DCCReference Include="Source\Common\Environment\BoldEnvironmentIDE.pas"/>
         <DCCReference Include="Source\BoldAwareGUI\Core\BoldExceptionHandlers.pas"/>
         <DCCReference Include="Source\Persistence\FireDAC\BoldFireDACConsts.pas"/>
         <DCCReference Include="Source\Persistence\FireDAC\BoldFireDACInterfaces.pas"/>
@@ -531,6 +531,7 @@
         <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQLPropEditor.pas"/>
         <DCCReference Include="Source\Persistence\ExternalPersistence\BoldExternalPersistenceSupport.pas"/>
         <DCCReference Include="Source\Persistence\ExternalPersistence\ExPeConsts.pas"/>
+        <DCCReference Include="Source\ClientHandlesCom\Core\BoldClientElementSupport.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -552,8 +553,6 @@
                     <Source Name="MainSource">Bold.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\BoldCore.27.bpl">Bold For Delphi - Core</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Attracs\Bin\BPL\AttracsComponentsXE10Sydney.bpl">Attracs Components for Delphi 10.4 Sydney</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
@@ -571,12 +570,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Bold.27.bpl" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>Bold.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

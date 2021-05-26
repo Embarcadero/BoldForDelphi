@@ -25,7 +25,7 @@ package dclBold;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Bold for Delphi - Design package'}
+{$DESCRIPTION 'Bold for Delphi'}
 {$LIBVERSION '27'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}

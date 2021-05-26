@@ -240,8 +240,6 @@
                     <Source Name="MainSource">dclBold.dpk</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\BoldCore.27.bpl">Bold For Delphi - Core</Excluded_Packages>
-                    <Excluded_Packages Name="C:\Attracs\Bin\BPL\AttracsComponentsXE10Sydney.bpl">Attracs Components for Delphi 10.4 Sydney</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
