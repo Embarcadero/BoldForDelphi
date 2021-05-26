@@ -14,6 +14,7 @@ uses
   BoldAbstractDataBaseAdapter;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPersistenceHandleDB = class(TBoldAbstractPersistenceHandleDB)
   private
     fDatabaseAdapter: TBoldAbstractDatabaseAdapter;

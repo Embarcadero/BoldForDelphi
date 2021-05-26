@@ -21,6 +21,7 @@ type
   TBoldElementFilter = function (Element: TBoldElement): Boolean of object;
 
   { TBoldFilter }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldFilter = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnFilter: TBoldElementFilter;

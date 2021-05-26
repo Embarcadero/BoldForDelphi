@@ -13,6 +13,7 @@ type
   TBoldCheckListBox = class;
 
   { TBoldCheckListBox }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldCheckListBox = class(TBoldCustomCheckListBox)
   published
     property BoldListProperties;

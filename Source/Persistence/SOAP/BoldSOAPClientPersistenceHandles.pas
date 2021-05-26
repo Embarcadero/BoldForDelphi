@@ -11,6 +11,7 @@ uses
   BoldPersistenceController;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSOAPClientPersistenceHandle = class(TBoldAbstractComClientPersistenceHandle)
   private
     fModel: TBoldAbstractModel;

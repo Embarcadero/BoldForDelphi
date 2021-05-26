@@ -17,6 +17,7 @@ uses
   BoldAbstractObjectUpgraderHandle;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldObjectUpgraderHandle = class(TBoldAbstractObjectUpgraderHandle)
   private
     FPersistenceHandle: TBoldAbstractPersistenceHandleDB;

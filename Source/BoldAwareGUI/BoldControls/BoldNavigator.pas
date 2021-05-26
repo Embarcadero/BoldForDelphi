@@ -106,6 +106,7 @@ type
   end;
 
   { TBoldNavigator }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldNavigator = class(TBoldCustomNavigator)
   published
     {$IFNDEF T2H}

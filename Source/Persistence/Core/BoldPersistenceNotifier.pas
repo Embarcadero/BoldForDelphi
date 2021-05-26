@@ -80,6 +80,7 @@ type
   end;
 
   { TBoldPersistenceNotifier }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPersistenceNotifier = class(TBoldAbstractPersistenceNotifier)
   published
     property PersistenceHandle;
@@ -101,6 +102,7 @@ type
   end;
 
   { TBoldPersistenceProgressNotifier }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPersistenceProgressNotifier = class(TBoldAbstractPersistenceNotifier)
   private
     { Private declarations }

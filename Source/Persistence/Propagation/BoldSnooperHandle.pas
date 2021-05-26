@@ -17,6 +17,7 @@ uses
 type
   {forward declarations}
   TBoldSnooperHandle = class;
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSnooperHandle = class(TBoldPersistenceHandlePassthroughWithModel)
   private
     fPTSubscriber: TBoldPassThroughSubscriber;

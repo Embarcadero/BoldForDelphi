@@ -17,6 +17,7 @@ type
   TBoldExternalPersistenceHandleEventDriven = class;
 
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExternalPersistenceHandleEventDriven = class(TBoldAbstractpartiallyExternalPH)
   private
     FConfig: TBoldExternalPersistenceConfigItems;

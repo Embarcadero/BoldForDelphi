@@ -26,6 +26,7 @@ const
 
 type
   TBoldAbstractXMLProducer = class;
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXMLProducer = class;
 
   TBoldProduceEvent = procedure (const paramList: TBoldStringList; const DomDoc: IXMLDomDocument) of object;
@@ -54,6 +55,7 @@ type
       const XMLAttributes: TBoldStringList = nil): IXMLDomElement;
   end;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXMLProducer = class(TBoldAbstractXMLProducer)
   private
     FOnProduce: TBoldProduceEvent;

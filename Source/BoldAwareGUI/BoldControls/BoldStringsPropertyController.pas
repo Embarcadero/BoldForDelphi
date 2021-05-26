@@ -26,6 +26,7 @@ type
   TBoldControlSubFollowerEvent = procedure (Sender: TObject; Index: Integer; OwningFollower: TBoldFollower) of object;
 
   { TBoldStringsPropertyController }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldStringsPropertyController = class(TComponent)
   private
     fHandleFollower: TBoldListHandleFollower;

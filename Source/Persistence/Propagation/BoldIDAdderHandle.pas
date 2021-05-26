@@ -21,6 +21,7 @@ type
   TBoldIdAdderHandle = class;
 
   { TBoldIDAdderHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldIDAdderHandle = class(TBoldPersistenceHandlePassthrough)
   private
     fBoldListenerHandle: TBoldListenerHandle;

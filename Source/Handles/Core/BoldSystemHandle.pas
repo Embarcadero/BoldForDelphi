@@ -20,6 +20,7 @@ type
   TBoldSystemHandle = class;
 
   { TBoldSystemHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSystemHandle = class(TBoldAbstractSystemHandle)
   private
     fBoldSystem: TBoldSystem;

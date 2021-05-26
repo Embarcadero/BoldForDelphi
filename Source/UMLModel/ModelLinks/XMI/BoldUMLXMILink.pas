@@ -15,6 +15,7 @@ type
   TBoldUMLXMILink = class;
 
   { TBoldUMLXMILink }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldUMLXMILink = class(TBoldUMLModelLink)
   private
     fFilename: String;

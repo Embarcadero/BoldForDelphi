@@ -12,6 +12,7 @@ uses
   BoldHandles;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldVariableHandle = class(TBoldNonSystemHandle)
   private
     fValueTypeName: String;

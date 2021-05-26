@@ -132,6 +132,7 @@ type
   end;
 
   {---TBoldEdit---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldEdit = class(TBoldCustomEdit)
   public
     {$IFNDEF T2H}

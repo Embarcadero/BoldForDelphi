@@ -71,6 +71,7 @@ type
   end;
 
   { TBoldPropertiesController }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPropertiesController = class(TComponent)
   private
     FHandleFollower: TBoldElementHandleFollower;

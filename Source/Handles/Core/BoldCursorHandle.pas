@@ -17,6 +17,7 @@ type
   TBoldCursorHandle = class;
 
   { TBoldCursorHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldCursorHandle = class(TBoldAbstractListHandle)
   private
     fAutoFirst: Boolean;

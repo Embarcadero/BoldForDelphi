@@ -35,6 +35,7 @@ type
   end;
 
   { TBoldAsFloatRenderer }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldAsFloatRenderer = class(TBoldSingleRenderer)
   private
     FOnGetAsFloat: TBoldGetAsFloatEvent;

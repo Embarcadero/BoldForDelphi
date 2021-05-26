@@ -93,6 +93,7 @@ type
   end;
 
   {---TBoldMemo---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldMemo = class(TBoldCustomMemo)
   public
     {$IFNDEF T2H}

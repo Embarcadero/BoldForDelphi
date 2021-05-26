@@ -38,6 +38,7 @@ type
   end;
 
   { TBoldAsIntegerRenderer }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldAsIntegerRenderer = class(TBoldsingleRenderer)
   private
     FOnGetAsInteger: TBoldGetAsIntegerEvent;

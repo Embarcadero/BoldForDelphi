@@ -16,6 +16,7 @@ type
   {forward declarations}
   TBoldLockManagerAdminHandleCom = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldLockManagerAdminHandleCom = class(TBoldAbstractLockManagerAdminHandle)
   private
     FComObject: IUnknown;

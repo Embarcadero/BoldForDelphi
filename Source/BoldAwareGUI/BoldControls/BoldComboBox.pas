@@ -165,6 +165,7 @@ type
     property SelectedElement: TBoldElement read GetSelectedElement;
   end;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldComboBox = class(TBoldCustomCombobox)
   {$IFNDEF T2H}
   public

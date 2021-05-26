@@ -53,6 +53,7 @@ type
   end;
 
   { TBoldAsViewerRenderer }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldAsViewerRenderer = class(TBoldSingleRenderer)
   private
     FOnGetAsViewer: TBoldGetAsViewer;

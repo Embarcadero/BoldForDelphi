@@ -24,6 +24,7 @@ type
   { Forward declaration of classes }
   TBoldUnloaderHandle = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldUnloaderHandle = class(TComponent)
   private
     fActive: Boolean;

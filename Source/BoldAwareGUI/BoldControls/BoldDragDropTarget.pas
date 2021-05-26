@@ -22,6 +22,7 @@ uses
   BoldDefs;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldDropTarget = class(TImage, IBoldOclComponent)
   private
     FIsDropTarget: Boolean;

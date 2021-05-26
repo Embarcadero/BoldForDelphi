@@ -19,6 +19,7 @@ uses
   ComCtrls;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPageControl = class(TPageControl)
   private
     { Private declarations }

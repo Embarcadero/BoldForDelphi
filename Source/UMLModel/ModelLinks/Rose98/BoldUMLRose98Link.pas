@@ -28,6 +28,7 @@ type
   TRoseLinkPass = (Pass1, Pass2);
 
   { TBoldRoseLink }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldUMLRoseLink = class(TBoldUMLModelLink)
   private
     fFileName: string;
@@ -106,9 +107,10 @@ type
     property GetToolIdOnExport: Boolean read fGetToolIdOnExport write fGetToolIdOnExport default true;
   end;
 
- { TBoldUMLRose98Link }
- TBoldUMLRose98Link = class(TBoldUMLRoseLink)
- end;
+  { TBoldUMLRose98Link }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
+  TBoldUMLRose98Link = class(TBoldUMLRoseLink)
+  end;
 
 const
   ROSE_LINKEXTENSION: string = '.mdl';

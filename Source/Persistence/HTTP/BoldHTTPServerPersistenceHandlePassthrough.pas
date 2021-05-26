@@ -19,6 +19,7 @@ type
   TBoldHTTPServerPersistenceHandlePassthrough = class;
 
   { TBoldHTTPServerPersistenceHandlePassthrough }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldHTTPServerPersistenceHandlePassthrough = class(TBoldSubscribableComponent)
   private
     FPersistenceHandle: TBoldPersistenceHandle;

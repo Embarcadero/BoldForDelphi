@@ -15,6 +15,7 @@ type
   TBoldPersistenceControllerFileXML = class;
 
   { TBoldPersistenceHandleFileXML }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPersistenceHandleFileXML = class(TBoldAbstractPersistenceHandleFile)
   protected
     function CreatePersistenceController: TBoldPersistenceController; override;

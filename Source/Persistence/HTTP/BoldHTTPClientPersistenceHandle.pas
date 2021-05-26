@@ -19,6 +19,7 @@ type
   TBoldHTTPClientPersistenceHandle = class;
 
   { TBoldHTTPClientPersistenceHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldHTTPClientPersistenceHandle = class(TBoldPersistenceHandle)
   private
     FModel: TBoldAbstractModel;

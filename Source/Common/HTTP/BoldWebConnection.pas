@@ -18,6 +18,7 @@ type
   {forward declarations}
   TBoldWebConnection = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldWebConnection = class(TComponent)
   private
     FUserName: string;

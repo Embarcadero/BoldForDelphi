@@ -110,6 +110,7 @@ type
   end;
 
   {---TBoldListBox---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldListBox = class(TBoldCustomListBox)
   public
     {$IFNDEF T2H}

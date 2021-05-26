@@ -15,6 +15,7 @@ uses
 type
   TBoldOLLEHandle = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldOLLEHandle = class(TBoldHandle)
   private
     fOLLEController: TBoldOLLEController;

@@ -16,6 +16,7 @@ type
   TBoldReferenceHandle = class;
 
   { TBoldReferenceHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldReferenceHandle = class(TBoldNonSystemHandle)
   private
     fStaticValueTypeName: String;

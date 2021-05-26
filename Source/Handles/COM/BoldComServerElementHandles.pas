@@ -17,6 +17,7 @@ type
   TBoldComServerElementHandle = class;
 
   {-- TBoldComServerElementHandle --}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldComServerElementHandle = class(TBoldComExportHandle)
   private
     FBoldHandle: TBoldElementHandle;

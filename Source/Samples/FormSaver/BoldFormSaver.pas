@@ -61,6 +61,7 @@ type
   TCallBackFunction = reference to function(Code: Integer; WParam: WPARAM;
       var Msg: TMsg): LRESULT;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldFormSaver = class(TBoldElementHandle)
   private
     FSaveToDBOnOk: Boolean;

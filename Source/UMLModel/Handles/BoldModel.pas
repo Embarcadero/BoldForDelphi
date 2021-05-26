@@ -24,6 +24,7 @@ type
   TUMLModelMode = (ummNone, ummDesignTime, ummRunTime);
 
   { TBoldModel }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldModel = class(TBoldAbstractModel)
   private
     FUMLModelExposed: Boolean;

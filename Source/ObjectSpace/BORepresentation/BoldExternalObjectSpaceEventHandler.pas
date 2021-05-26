@@ -44,6 +44,7 @@ type
 
   TIdListArray = array of TBoldObjectIdList;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExternalObjectSpaceEventHandler = class(TBoldStringDequeuer)
   private
     fBoldSystemHandle: TBoldSystemHandle;

@@ -60,6 +60,7 @@ type
   end;
 
   { TBoldTemplateHolder }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldTemplateHolder = class(TComponent)
   private
     fTemplate: TStringList;

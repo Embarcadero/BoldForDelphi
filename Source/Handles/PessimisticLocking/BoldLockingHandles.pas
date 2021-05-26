@@ -19,6 +19,7 @@ uses
 
 type
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldLockingHandle = class(TBoldSubscribableComponent)
   private
     fActive: Boolean;

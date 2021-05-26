@@ -65,6 +65,7 @@ type
   end;
 
   {---TBoldCheckBox---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldCheckBox = class(TBoldCustomCheckBox)
   public
     {$IFNDEF T2H}

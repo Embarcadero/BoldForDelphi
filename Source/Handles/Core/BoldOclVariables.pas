@@ -40,6 +40,7 @@ type
   end;
 
   { TBoldOclVariables }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldOclVariables = class(TBoldSubscribableComponent)
   private
     fVariableTupleList: TBoldVariableTupleList;

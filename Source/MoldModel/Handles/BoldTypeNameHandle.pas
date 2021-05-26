@@ -14,6 +14,7 @@ type
   TBoldTypeNameHandle = class;
 
   { TBoldTypeNameHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldTypeNameHandle = class(TComponent)
   private
     FDictionary: TBoldTypeNameDictionary;

@@ -19,6 +19,7 @@ type
   {forward declarations}
   TBoldPropagatorHandleCOM = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPropagatorHandleCOM = class(TBoldAbstractPropagatorHandle)
   private
     FActive: Boolean;

@@ -57,6 +57,7 @@ type
   end;
 
   { TBoldSystemTypeInfoHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSystemTypeInfoHandle = class(TBoldElementHandle)
   private
     fBoldModel: TBoldAbstractModel;

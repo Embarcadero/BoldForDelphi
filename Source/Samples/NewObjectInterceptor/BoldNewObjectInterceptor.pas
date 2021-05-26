@@ -14,6 +14,7 @@ uses
   BoldPlaceableSubscriber;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldNewObjectInterceptor = class(TBoldPlaceableSubscriber)
   private
     fActive: boolean;

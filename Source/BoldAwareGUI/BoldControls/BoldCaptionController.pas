@@ -57,6 +57,7 @@ type
   end;
 
   {---TBoldCaptionController---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldCaptionController = class(TBoldCustomCaptionController)
   published
     property BoldHandle;

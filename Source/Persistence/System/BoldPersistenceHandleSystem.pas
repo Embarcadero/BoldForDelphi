@@ -13,6 +13,7 @@ uses
   BoldSubscription;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPersistenceHandleSystem = class(TBoldPersistenceHandle)
   private
     fSystemHandle: TBoldSystemHandle;

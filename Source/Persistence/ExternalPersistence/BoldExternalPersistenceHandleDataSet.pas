@@ -13,6 +13,7 @@ uses
   BoldExternalPersistenceControllerDataSet;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExternalPersistenceHandleDataSet = class(TBoldAbstractPartiallyExternalPH)
   private
     FConfig: TBoldExternalPersistenceConfigDataSetItems;

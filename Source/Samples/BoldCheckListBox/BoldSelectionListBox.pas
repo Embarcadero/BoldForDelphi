@@ -23,6 +23,7 @@ type
   {TBoldSelectionListBox}
   TBoldSelectionListBox = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSelectionListBox = class(TBoldCustomCheckListBox)
   private
     fCheckBoxRenderer: TBoldAsCheckBoxStateRenderer;

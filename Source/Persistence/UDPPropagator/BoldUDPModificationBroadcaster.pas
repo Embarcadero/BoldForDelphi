@@ -28,6 +28,7 @@ type
   TActivationErrorEvent = procedure(Sender: TObject; E: Exception) of object;
 
   { TBoldUDPModificationBroadcaster }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldUDPModificationBroadcaster = class(TBoldAbstractNotificationPropagator)
   private
     fUDPClient: TIdUDPClient;

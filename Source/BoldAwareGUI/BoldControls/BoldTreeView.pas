@@ -178,6 +178,7 @@ type
   end;
 
   {---TBoldTreeView---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldTreeView = class(TBoldCustomTreeView)
   public
     {$IFNDEF T2H}

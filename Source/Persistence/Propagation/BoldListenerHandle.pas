@@ -21,6 +21,7 @@ type
   {forward declarations}
   TBoldListenerHandle= class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldListenerHandle = class(TBoldHandle)
   private
     fActive: Boolean;

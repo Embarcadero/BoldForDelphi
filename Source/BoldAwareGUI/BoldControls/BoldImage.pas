@@ -28,6 +28,7 @@ type
   TBoldImage = class;
 
   {-- TBoldImage --}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldImage = class(TCustomControl, IBoldOCLComponent)
   private
     fBoldProperties: TBoldViewerFollowerController;

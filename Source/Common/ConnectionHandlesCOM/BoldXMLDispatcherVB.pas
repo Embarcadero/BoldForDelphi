@@ -24,6 +24,7 @@ type
     constructor Create(Owner: TObject);
     property Owner: TObject read FOwner;
   end;
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXMLDispatcherVB = class(TBoldXMLDispatcher)
   protected
     function GetComObject: IUnknown; override;

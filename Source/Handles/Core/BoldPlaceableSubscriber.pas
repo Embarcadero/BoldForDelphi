@@ -21,6 +21,7 @@ type
       RequestedEvent: TBoldRequestedEvent) of object;
 
   {---TBoldPlaceableSubscriber---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPlaceableSubscriber = class(TBoldSubscribableComponentViaBoldElem)
   private
     FBoldHandle: TBoldElementHandle;

@@ -41,6 +41,7 @@ type
   TBoldXMLDispatchErrorEvent = procedure (const E: Exception; out response: string) of object;
   
   TBoldGetXMLRequestEvent = procedure (const XML: string; out Request: TBoldXMLRequest) of object;
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXMLDispatcher = class(TBoldComExportHandle)
   private
     FActions: TBoldXMLActions;

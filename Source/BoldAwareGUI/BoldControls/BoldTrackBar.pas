@@ -29,6 +29,7 @@ type
   TBoldTrackBar = class;
 
   { TBoldTrackBar }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldTrackBar = class(TTrackBar, IBoldOCLComponent)
   private
     FBoldProperties: TBoldIntegerFollowerController;

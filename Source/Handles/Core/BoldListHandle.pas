@@ -23,6 +23,7 @@ type
   TBoldListHandle = class;       
 
   {---TBoldListHandle---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldListHandle = class(TBoldCursorHandle, IBoldOCLComponent)
   private
     fExpressionHandle: TBoldExpressionHandle;
