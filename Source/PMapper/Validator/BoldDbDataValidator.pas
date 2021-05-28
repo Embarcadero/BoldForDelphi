@@ -62,6 +62,7 @@ uses
   BoldDefs,
   SysUtils,
   BoldUtils,
+  BoldPMConsts,
   BoldMath;
 
 const
@@ -72,6 +73,7 @@ const
     '  SELECT PARENT.BOLD_ID ' + BOLDCRLF +
     '  FROM %s PARENT ' + BOLDCRLF +
     '  WHERE PARENT.BOLD_ID = OWN.BOLD_ID)';
+// [Own, Parent]
 
   ExistenceInChildTest: string =
     'SELECT PARENT.BOLD_ID, PARENT.BOLD_TYPE ' + BOLDCRLF +
@@ -81,13 +83,17 @@ const
     '          SELECT BOLD_ID' + BOLDCRLF +
     '          FROM %s OWN ' + BOLDCRLF +
     '          WHERE OWN.BOLD_ID = PARENT.BOLD_ID)';
+// [parent, types, Own]
+
 
   TypeTest: String =
     'SELECT PARENT.BOLD_ID, PARENT.BOLD_TYPE, OWN.BOLD_TYPE' + BOLDCRLF +
     'FROM %s PARENT, %s OWN' + BOLDCRLF +
     'WHERE (PARENT.BOLD_ID = OWN.BOLD_ID) AND' + BOLDCRLF +
     '      (PARENT.BOLD_TYPE <> OWN.BOLD_TYPE)';
+// [Parent, Own]
 
+// find all objects that are related, but the other end does not exist.
 
   RelationTest: String =
     'SELECT OWN.%s, OWN.BOLD_ID' + BOLDCRLF +
@@ -96,6 +102,7 @@ const
     '  SELECT RELATED.BOLD_ID' + BOLDCRLF +
     '  FROM %2:s RELATED' + BOLDCRLF +
     '  WHERE RELATED.BOLD_ID = OWN.%0:s)';
+// [Link, OwnTable, RelatedTable]
 
   DuplicateSingleLinkTest: String =
     'SELECT %0:s' + BOLDCRLF +
@@ -110,16 +117,20 @@ const
     'GROUP BY LINKTABLE.%0:s, LINKTABLE.%1:s' + BOLDCRLF +
     'HAVING COUNT(*) >= 2' + BOLDCRLF +
     'ORDER BY %0:s, %1:s';
+// [Link1, link2, linktable]
 
+// linkobjects with empty ends
   LinkObjectTest: String =
     'SELECT BOLD_ID' + BOLDCRLF +
     'FROM %s' + BOLDCRLF +
     'WHERE %s = -1 or %s = -1';
+
+// Linkobjects pointing to nonexisting objects
   LinkObjectTest2: String =
     'SELECT LT.BOLD_ID' + BOLDCRLF +
     'FROM %s LT' + BOLDCRLF +
     'WHERE NOT EXISTS (SELECT T.BOLD_ID FROM %s T WHERE LT.%s = T.BOLD_ID)';
-
+//[LinkTable, OtherTable, LinkColumn]
 
   StrayObjectsTest: string =
     'SELECT BOLD_ID, BOLD_TYPE ' + BOLDCRLF +
@@ -130,6 +141,7 @@ const
     'SELECT T1.BOLD_ID, T1.BOLD_TYPE ' + BOLDCRLF +
     'FROM %s T1, %s T2 ' + BOLDCRLF +
     'WHERE (T1.%s = T2.BOLD_ID) and (T2.%s <> T1.BOLD_ID)';
+// [Table1, table2, link1, link2Own, Parent]
 
 { TBoldDbDataValidator }
 
@@ -152,7 +164,7 @@ end;
 
 procedure TBoldDbDataValidator.OpenQuery;
 begin
-  Sleep(PauseBetweenQueries);
+  Sleep(1000*PauseBetweenQueries);
   Query.Open;
 end;
 
@@ -171,8 +183,8 @@ begin
     Query.Close;
     Query.AssignSQLText(format(SQLTemplate, args));
     OpenQuery;
-    BoldIdField := Query.FieldByName('BOLD_ID');
-    BoldTypeField := Query.FieldByName('BOLD_TYPE');
+    BoldIdField := Query.FieldByName(Field_BOLD_ID);
+    BoldTypeField := Query.FieldByName(Field_BOLD_TYPE);
     while not query.eof do
     begin
       IdList.Add(BoldIdField.AsString);
@@ -210,7 +222,7 @@ begin
       BoldLog.LogHeader := Format('Processing class %d %s', [i, ObjectPMapper.ExpressionName]);
       ValidateExistence(ObjectPMapper);
       ValidateRelations(ObjectPMapper);
-//      ValidateNotNullColumns(ObjectPMapper);
+      ValidateNotNullColumns(ObjectPMapper);
       if ObjectPmapper is TBoldObjectDefaultMapper then
         ValidateStrayObjects(ObjectPMapper as TBoldObjectDefaultMapper);
       if ObjectPMapper.IsLinkClass then
@@ -356,6 +368,22 @@ begin
         end;
       end;
     end;
+
+    for i:= Tables.Count-1 downto 1 do
+    begin
+      SuperTable := Tables[i].SQLName;
+      SubTable := Tables[i-1].SQLName;
+      if Prepare2TableTest(ExistenceInChildTest, nil, [
+          SuperTable,
+          (ObjectSQLMapper as TBoldObjectDefaultMapper).SubClassesID,
+          SubTable], SubTable, SuperTable, IdList, TypeList) then
+      begin
+        BoldLog.LogFmt('The following objects exists in %s, but not in child table %s', [SuperTable, SubTable], ltWarning);
+        Boldlog.Log(IdList.CommaText, ltDetail);
+        SuggesttableInsert(ObjectSQLMapper.MainTable, IdList, TypeList);
+      end;
+    end;
+
   finally
     tables.free;
     IdList.Free;
@@ -752,8 +780,8 @@ begin
       Query.Close;
       Query.AssignSQLText(format(StrayObjectsTest, [ObjectDefaultMapper.MainTable.SQLName, ObjectDefaultMapper.SubClassesID]));
       OpenQuery;
-      BoldIdField := Query.FieldByName('BOLD_ID');
-      BoldTypeField := Query.FieldByName('BOLD_TYPE');
+      BoldIdField := Query.FieldByName(Field_BOLD_ID);
+      BoldTypeField := Query.FieldByName(Field_BOLD_TYPE);
       while not query.eof do
       begin
         IdList.Add(BoldIdField.AsString);
@@ -841,7 +869,5 @@ begin
       end;
     end;
 end;
-
-initialization
 
 end.
