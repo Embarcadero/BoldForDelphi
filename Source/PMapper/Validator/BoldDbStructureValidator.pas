@@ -127,7 +127,7 @@ const
   sColumnSizeMismatch = 'Column %s in table %s has wrong size %d, should be %d';
   sColumnAllowsNull = 'Column %s in table %s allows null but the model does not';
   sColumnNotAllows = 'Column %s in table %s does not allow null but the model does';
-  BlobFieldTypes = [{$IFDEF BOLD_DELPHI15_OR_LATER}ftStream,{$ENDIF} ftBlob..ftTypedBinary, ftOraBlob, ftOraClob];
+  BlobFieldTypes = [{$IFDEF BOLD_DELPHI15_OR_LATER}ftStream,{$ENDIF} ftBlob..ftTypedBinary, ftWideMemo, ftOraBlob, ftOraClob];
 begin
   TableName := BoldSQLColumnDescription.tableDescription.SQLName;
   ColumnName := BoldSQLColumnDescription.SQLName;
