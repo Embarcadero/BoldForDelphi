@@ -66,6 +66,9 @@ uses
   BoldMath;
 
 const
+  Field_BOLD_ID = 'BOLD_ID';
+  Field_BOLD_TYPE = 'BOLD_TYPE';
+
   ExistenceInParentTest: String =
     'SELECT OWN.BOLD_ID, OWN.BOLD_TYPE ' + BOLDCRLF +
     'FROM %s OWN ' + BOLDCRLF +
