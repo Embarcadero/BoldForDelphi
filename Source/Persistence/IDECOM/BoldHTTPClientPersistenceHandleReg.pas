@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHTTPClientPersistenceHandleReg;
 
 interface
@@ -6,10 +9,11 @@ procedure Register;
 
 implementation
 
-{$R *.res}
+{$R BoldHTTPClientPersistenceHandleReg.res}
 
 uses
   BoldIDEConsts,
+  BoldGuard,
   BoldHTTPClientPersistenceHandle,
   Classes;
 

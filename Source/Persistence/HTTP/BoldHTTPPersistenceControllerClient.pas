@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHTTPPersistenceControllerClient;
 
 interface
@@ -8,7 +11,8 @@ uses
   BoldMeta,
   BoldSOAP_TLB,
   ComObj,
-  ActiveX;
+  ActiveX
+  ;
 
 type
   {forward declarations}
@@ -46,8 +50,8 @@ uses
   BoldDataBlock,
   BoldDefs,
   Classes,
-  windows,
-  BoldComConst;
+  windows
+  ;
 
 { TBoldHTTPSOAPService }
 
@@ -58,7 +62,7 @@ begin
   if (LoadRegTypeLib(LIBID_BoldSOAP, 1, 0, 0, typelib) = S_OK) then
     inherited Create(typelib, IBoldSOAPService)
   else
-    raise EBold.CreateFmt(sUnableToLoadTypeLibBoldSoap, [ClassName]);
+    raise EBold.CreateFmt('%s.Create: Unable to load type library LIBID_BoldSOAP', [ClassName]);
 end;
 
 procedure TBoldHTTPSOAPService.Get(const request: WideString;
@@ -92,6 +96,7 @@ begin
   end;
 end;
 
+
 { TBoldHTTPPersistenceControllerClient }
 
 constructor TBoldHTTPPersistenceControllerClient.Create(Model: TMoldModel);
@@ -109,7 +114,6 @@ end;
 
 procedure TBoldHTTPPersistenceControllerClient.Disconnect;
 begin
-  //do nothing
 end;
 
 function TBoldHTTPPersistenceControllerClient.getWebConnection: TBoldWebConnection;
@@ -122,5 +126,7 @@ procedure TBoldHTTPPersistenceControllerClient.setWebConnection(
 begin
   fhttpSoapService.WebConnection := Value;
 end;
+
+initialization
 
 end.

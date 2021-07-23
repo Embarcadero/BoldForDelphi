@@ -48,6 +48,7 @@ type
   end;
 
   { TBoldAsStringRenderer }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldAsStringRenderer = class(TBoldSingleRenderer)
   private
     FOnGetAsString: TBoldGetAsString;
@@ -122,7 +123,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 var

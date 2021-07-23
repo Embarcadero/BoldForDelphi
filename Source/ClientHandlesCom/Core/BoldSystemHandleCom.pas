@@ -1,10 +1,11 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSystemHandleCom;
 
 interface
 
 uses
-  BoldComObjectSpace,
-  BoldComObjectSpace_TLB,
   BoldHandlesCom;
 
 type
@@ -18,6 +19,7 @@ type
     function GetPersistent: Boolean;
   protected
     function ServerHandleClassName: string; override;
+
     procedure ClearAllValues; override;
     procedure ValuesFromServer; override;
     procedure ValuesToServer; override;
@@ -31,11 +33,10 @@ implementation
 
 uses
   SysUtils,
-  ComHandlesConst,
-  BoldComHandlesConst,
-  BoldUtils,
+  BoldComObjectSpace_TLB,
+  BoldComUtils,
   BoldDefs,
-  BoldComUtils;
+  BoldRev;
 
 {-- TBoldSystemHandleCom ------------------------------------------------------}
 
@@ -47,18 +48,16 @@ end;
 
 procedure TBoldSystemHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldAbstractSystemHandleCom
   FBoldSystem := nil;
   FSystemActive := False;
-  // from TBoldSystemHandleCom
   FPersistent := False;
 end;
+
 
 function TBoldSystemHandleCom.GetPersistent: Boolean;
 begin
@@ -72,7 +71,7 @@ begin
   if Assigned(System) then
     System.UpdateDatabase
   else
-    raise EBold.Create(sNotConnected);
+    raise EBold.Create('UpdateDatabase: Not connected');
 end;
 
 procedure TBoldSystemHandleCom.ValuesFromServer;
@@ -94,19 +93,21 @@ begin
     DummyList,
     DummyListType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
-  FSystemActive := BoldGetNamedValue(NamedValues, nv_Active);
-  FPersistent := BoldGetNamedValue(NamedValues, nv_Persistent);
+  FHandleId := BoldGetNamedValue(NamedValues,'HandleId');
+  FSystemActive := BoldGetNamedValue(NamedValues,'Active');
+  FPersistent := BoldGetNamedValue(NamedValues,'Persistent');
 end;
 
 procedure TBoldSystemHandleCom.ValuesToServer;
 begin
-  // Nothing to set, the SystemHandle is always read-only.
 end;
+
 
 function TBoldSystemHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_SystemHandle;
+  result := 'TBoldServerHandle';
 end;
+
+initialization
 
 end.

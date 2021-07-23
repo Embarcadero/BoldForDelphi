@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDTDParser;
 
 interface
@@ -73,9 +76,11 @@ type
 implementation
 
 uses
-  classes,
+  Classes,
+  SysUtils,
   BoldDefs,
-  BoldStringList;
+  BoldStringList,
+  BoldUtils;
 
 const
   SpaceChars = [#$20, #$9, #$D, #$A];
@@ -127,19 +132,15 @@ end;
 
 function TBoldDTDParser.ParseAttListDecl: Boolean;
 begin
-// AttlistDecl    ::=    '<!ATTLIST' S Name AttDef* S? '>'
   if ParseToken(dtAttlistDecl) then
   begin
-// Cheat! I don't really care, so just skip everything...
     while fScanner.LastToken <> dtEndDecl do
       fScanner.NextToken;
     fScanner.NextToken;
 
-//    AssertToken(dtSpace);
-//    AssertToken(dtName);
-//    while ParseAttDef do;
-//    OptionalToken(dtSpace);
-//    AssertToken(dtEndDecl);
+
+
+
     result := true;
   end else
     result := false;
@@ -152,25 +153,21 @@ end;
 
 function TBoldDTDParser.ParseChildren2: Boolean;
 begin
-//    children    ::=    (choice | seq) ('?' | '*' | '+')?
-//    cp          ::=    (Name | choice | seq) ('?' | '*' | '+')?
-//    choice      ::=    '(' S? cp S? ( '|' S? cp S? )+ ')' /* */
-//    seq         ::=    '(' S? cp S? ( ',' S? cp S? )* ')'
 
-// note! '(' S? already parsed
+
+
+
 
   result := ParseChoiceOrSeq;
   if result then
     if ParseToken(dtOptional) or ParseToken(dtZeroOrMore) or ParseToken(dtOneOrMore) then
-      ;//nothing
+      ;
 end;
 
 function TBoldDTDParser.ParseChoiceOrSeq: Boolean;
 begin
-//    choice      ::=    '(' S? cp S? ( '|' S? cp S? )+ ')' /* */
-//    seq         ::=    '(' S? cp S? ( ',' S? cp S? )* ')'
 
-// note! '(' S? already parsed
+
 
   AssertNonterminal(ParseCp);
   OptionalToken(dtSpace);
@@ -196,7 +193,7 @@ begin
     end;
     AssertToken(dtCloseParen);
   end
-  else // seq without comma
+  else
   begin
     AssertToken(dtCloseParen);
   end;
@@ -205,7 +202,6 @@ end;
 
 function TBoldDTDParser.ParseContentSpec: Boolean;
 begin
-//    contentspec    ::=    'EMPTY' | 'ANY' | Mixed | children
    result := ParseToken(dtEmptyContent) or
              ParseToken(dtAnyContent) or
              ParseMixedOrChildren;
@@ -213,7 +209,6 @@ end;
 
 function TBoldDTDParser.ParseCp: Boolean;
 begin
-//    cp          ::=    (Name | choice | seq) ('?' | '*' | '+')?
   if fScanner.LastToken = dtName then
   begin
     FoundCpName(fScanner.LastTokenText);
@@ -231,12 +226,11 @@ begin
 
   if result then
     if ParseToken(dtOptional) or ParseToken(dtZeroOrMore) or ParseToken(dtOneOrMore) then
-      ;//nothing...
+      ;
 end;
 
 function TBoldDTDParser.ParseElementDecl: Boolean;
 begin
-//  elementDecl ::= '<!ELEMENT' S Name S contentspec S? '>'
   if ParseToken(dtElementDecl) then
   begin
     AssertToken(dtSpace);
@@ -257,13 +251,11 @@ end;
 
 function TBoldDTDParser.ParseEntityDecl: Boolean;
 begin
-//    EntityDecl    ::=    GEDecl | PEDecl
-//    GEDecl    ::=    '<!ENTITY' S Name S EntityDef S? '>'
-//    PEDecl    ::=    '<!ENTITY' S '%' S Name S PEDef S? '>'
+
+
 
   if ParseToken(dtEntityDecl) then
   begin
-// Cheat! I don't really care, so just skip everything...
     while fScanner.LastToken <> dtEndDecl do
       fScanner.NextToken;
     fScanner.NextToken;
@@ -276,13 +268,11 @@ end;
 
 procedure TBoldDTDParser.ParseExtSubsetDecl;
 begin
-// extSubsetDecl    ::=    ( markupdecl | conditionalSect | DeclSep)*
   while (ParseMarkupDecl or ParseToken(dtSpace)) do;
 end;
 
 function TBoldDTDParser.ParseMarkupDecl: Boolean;
 begin
-// markupdecl    ::=    elementdecl | AttlistDecl | EntityDecl | NotationDecl | PI | Comment
   result := ParseElementDecl or
             ParseAttListDecl or
             ParseEntityDecl or
@@ -291,15 +281,13 @@ end;
 
 function TBoldDTDParser.ParseMixed: Boolean;
 begin
-//Mixed    ::=    '(' S? '#PCDATA' (S? '|' S? Name)* S? ')*'
-//   | '(' S? '#PCDATA' S? ')'
+
   raise EBold.Create('Not implemented');
 end;
 
 function TBoldDTDParser.ParseMixed2: Boolean;
 begin
-//Mixed    ::=    '#PCDATA' S? ( '|' S? Name S? )* ')*'
-//              | '#PCDATA' S? ')'
+
 
   result := ParseToken(dtPCDataDecl);
   if result then
@@ -384,13 +372,12 @@ begin
   PETable.Sort;
   DTDStrings := TStringList.Create;
   DTDStrings.Text := DTD;
-//  BoldAppendToStrings(DTDStrings, DTD, True);
   for i := 0 to DTDStrings.Count-1 do
   begin
     j := 1;
     while j <= length(DTDStrings[i]) do
     begin
-      if (DTDStrings[i][j] = '%') and not (DTDStrings[i][j+1] in SpaceChars) then
+      if (DTDStrings[i][j] = '%') and not CharInSet(DTDStrings[i][j+1], SpaceChars) then
       begin
         k := j+1;
         while DTDStrings[i][k] <> ';' do
@@ -423,9 +410,9 @@ end;
 
 procedure TBoldDTDScanner.DeclarationToken;
 begin
-  if not (TryToken('<!ELEMENT', dtElementDecl) or // do not localize
-          TryToken('<!ATTLIST', dtAttlistDecl) or // do not localize
-          TryToken('<!ENTITY', dtEntityDecl)) then // do not localize
+  if not (TryToken('<!ELEMENT', dtElementDecl) or
+          TryToken('<!ATTLIST', dtAttlistDecl) or
+          TryToken('<!ENTITY', dtEntityDecl)) then
     raise EBold.CreateFmt('%s.NextToken: Not a valid token, pos %d', [classname, fPos]);
 end;
 
@@ -443,7 +430,7 @@ var
   newpos: integer;
 begin
   newpos := fPos;
-  while fDTD[newpos] in NameChars do
+  while CharInSet(fDTD[newpos], NameChars) do
     inc(newpos);
   if newpos = fPos then
     raise EBold.CreateFmt('%s: Unknown character: ', [classname, fDTD[newpos]]);
@@ -488,8 +475,8 @@ begin
       StringLiteralToken;
     else
     begin
-      if not (TryToken('ANY', dtAnyContent) or // do not localize
-              TryToken('EMPTY', dtEmptyContent)) then // do not localize
+      if not (TryToken('ANY', dtAnyContent) or
+              TryToken('EMPTY', dtEmptyContent)) then
         NameToken;
     end;
   end;
@@ -504,10 +491,10 @@ end;
 
 procedure TBoldDTDScanner.HashDeclToken;
 begin
-  if not (TryToken('#PCDATA', dtPCDataDecl) or // do not localize
-          TryToken('#FIXED', dtFixedDecl) or // do not localize
-          TryToken('#IMPLIED', dtImpliedDecl) or // do not localize
-          TryToken('#REQUIRED', dtRequiredDecl)) then // do not localize
+  if not (TryToken('#PCDATA', dtPCDataDecl) or
+          TryToken('#FIXED', dtFixedDecl) or
+          TryToken('#IMPLIED', dtImpliedDecl) or
+          TryToken('#REQUIRED', dtRequiredDecl)) then
     raise EBold.CreateFmt('%s.HashDeclToken: Scanner error', [classname]);
 end;
 
@@ -516,7 +503,7 @@ var
   newpos: integer;
 begin
   newpos := fPos;
-  while fDTD[newpos] in SpaceChars do
+  while CharInSet(fDTD[newpos], SpaceChars) do
     inc(newpos);
   fLastTokenText := copy(fDTD, fPos, newpos-fPos);
   fPos := newpos;

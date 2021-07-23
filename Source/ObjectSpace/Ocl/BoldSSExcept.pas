@@ -1,5 +1,6 @@
-{$DEFINE SANDSTONEREDISTRIBUTABLE}
 
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSSExcept;
 
 interface
@@ -35,17 +36,11 @@ type
                      SSExceptionYaccBadResource
                     );
 
-
 type
-  { forward declarations }
-  SSException = class;
-
-  { SSException }
   SSException = class(EAbort)
   public
     Position: integer;
     Id: SSExceptionError;
-
     constructor Create(TheId: SSExceptionError; FmtStr: string);
     constructor CreateName(TheId: SSExceptionError; FmtStr: string; Name: PChar);
     constructor CreateLong(TheId: SSExceptionError; TheFmtStr: string; TheLong: Longint);
@@ -63,26 +58,26 @@ end;
 
 constructor SSException.CreateName(TheId: SSExceptionError; FmtStr: string; Name: PChar);
 begin
-  inherited Create(Format(FmtStr, [String(Name)]));
+  inherited Create(Format(FmtStr, [string(Name)]));
   Id := TheId;
   Position := 0;
 end;
 
-constructor SSException.CreateLong(TheId: SSExceptionError; TheFmtStr: string; TheLong: Longint);
+constructor SSException.CreateLong(TheId: SSExceptionError; TheFmtStr: string; TheLong: Integer);
 begin
-  inherited Create(Format(StringReplace(TheFmtStr, '%ld', '%d', []), [TheLong])); // do not localize
+  inherited Create(Format(StringReplace(TheFmtStr, '%ld', '%d', [rfReplaceAll]), [TheLong]));
   Id := TheId;
   Position := 0;
 end;
 
-constructor SSException.CreateLongLongNameLen(TheId: SSExceptionError; FmtStr: string;
-              Long0, Long1: Longint; TheName: PChar; TheLen: Word);
+constructor SSException.CreateLongLongNameLen(TheId: SSExceptionError;
+  FmtStr: string; Long0, Long1: Integer; TheName: PChar; TheLen: Word);
 var
   Name: PChar;
 begin
   GetMem(Name, TheLen + 1);
   StrMove(Name, TheName, TheLen);
-  inherited Create(Format(StringReplace(FmtStr, '%ld', '%d', [rfReplaceAll]), [Long0, Long1, string(Name)])); // do not localize
+  inherited Create(Format(StringReplace(FmtStr, '%ld', '%d', [rfReplaceAll]), [Long0, Long1, string(Name)]));
   FreeMem(Name, TheLen + 1);
   Id := TheId;
   Position := Long1;

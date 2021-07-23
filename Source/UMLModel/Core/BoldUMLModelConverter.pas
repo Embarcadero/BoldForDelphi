@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelConverter;
 
 interface
@@ -49,8 +52,7 @@ uses
   BoldMetaSupport,
   BoldDefaultTaggedValues,
   BoldUMLModelSupport,
-  BoldUMLTypes,
-  UMLConsts;
+  BoldUMLTypes;
 
 class function TBoldModelConverter.UMLModelToMold(UMLModel: TUMLModel): TMoldModel;
 var
@@ -62,7 +64,7 @@ var
 begin
   MoldModel := TMoldModel.Create(nil, UMLModel.Name);
   UMLElementToMoldElement(UMLModel, MoldModel);
-  BoldLog.StartLog(sConvertingModelToMold);
+  BoldLog.StartLog('Converting UMLModel to Mold');
   BoldLog.ProgressMax := UMLModel.Classes.Count + UMLModel.Associations.Count;
 
   UMLRootClass := UMLModelGetUniqueRootClass(UMLModel);
@@ -191,7 +193,6 @@ begin
   with MoldQualifier do
   begin
     BoldType := UMLAttribute.typeName;
-    // FIXME more properties
   end;
 end;
 
@@ -289,7 +290,7 @@ var
   UMLAssociation: TUMLAssociation;
 begin
   MoldElementToUMLElement(MoldModel, UMLModel);
-  BoldLog.StartLog(sConvertingModelToUML);
+  BoldLog.StartLog('Converting MoldModel to UML');
   BoldLog.ProgressMax := MoldModel.Classes.Count + MoldModel.Associations.Count;
   BoldInstalledQueue.DeactivateDisplayQueue;
   TBoldUMLBoldify.SetRootClassName(UMLModel, MoldModel.RootClass.Name);
@@ -304,7 +305,6 @@ begin
 
     for i := 0 to MoldModel.Associations.Count-1 do
     begin
-      // ska alltd skapa ny!!!!!
       UMLAssociation := GetUMLAssociationByName(MoldModel.Associations[i].name, UMLModel);
       MoldAssociationToUMLAssociation(MoldModel.Associations[i], UMLAssociation);
       BoldLog.ProgressStep;
@@ -426,7 +426,7 @@ begin
     begin
       ReturnUMLParameter := TUMLParameter.Create(UMLOperation.BoldSystem);
       Parameter.Add(ReturnUMLParameter);
-      ReturnUMLParameter.Name := 'return'; // do not localize
+      ReturnUMLParameter.Name := 'return';
       ReturnUMLParameter.kind := pdReturn;
       ReturnUMLParameter.typeName := MoldMethod.ReturnType;
       ReturnUMLParameter.SetBoldTV(TAG_DELPHINAME, TV_NAME);
@@ -443,7 +443,6 @@ begin
   MoldElementToUMLElement(MoldRole, UMLAssociationEnd);
   with UMLAssociationEnd do
   begin
-    // Fixa här
     if Assigned(MoldRole.OtherEnd.MoldClass) then
       Type_ := GetUMLClassByName(MoldRole.OtherEnd.MoldClass.name, Association.model)
     else
@@ -469,7 +468,6 @@ begin
   with UMLAttribute do
   begin
     typeName := MoldQualifier.BoldType;
-    // FIXME set more properties
   end;
 end;
 
@@ -523,5 +521,7 @@ begin
   Result.Name := name;
   UMLModel.OwnedElement.Add(Result);
 end;
+
+initialization
 
 end.

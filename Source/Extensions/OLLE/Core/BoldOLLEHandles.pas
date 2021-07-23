@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEHandles;
 
 interface
@@ -12,6 +15,7 @@ uses
 type
   TBoldOLLEHandle = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldOLLEHandle = class(TBoldHandle)
   private
     fOLLEController: TBoldOLLEController;
@@ -35,6 +39,8 @@ type
   published
     property ApplicationPersistenceHandle: TBoldAbstractPersistenceHandleDB read fAppPHandle write fAppPHandle;
   end;
+
+
 
 implementation
 
@@ -98,5 +104,6 @@ procedure TBoldOLLEHandle.SetPersistent(const Value: Boolean);
 begin
   GetOLLEController.Persistent := Value;
 end;
+
 
 end.

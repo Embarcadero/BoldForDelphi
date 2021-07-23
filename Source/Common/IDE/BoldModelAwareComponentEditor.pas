@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldModelAwareComponentEditor;
 
 interface
@@ -29,8 +32,7 @@ uses
   SysUtils,
   TypInfo,
   BoldDefs,
-  BoldDefsDT,
-  BoldCommonConst;
+  BoldDefsDT;
 
 const
   PropNames: array[0..5] of string =
@@ -47,11 +49,10 @@ var
 begin
   Model := FollowUplinkToModel(Component);
   if Assigned(Model) then
-    // create and show the model editor
     GetComponentEditor(Model, Designer).Edit
   else
-    raise EBold.CreateFmt(sNoModel, [Component.Name]);
-end;
+    raise EBold.CreateFmt('%s does not seem to be connected to a model', [Component.Name]);
+end; 
 
 function TBoldModelAwareComponentEditor.GetEditModelMenuCaption: string;
 begin
@@ -107,5 +108,7 @@ begin
   else
     Result := nil;
 end;
+
+initialization
 
 end.

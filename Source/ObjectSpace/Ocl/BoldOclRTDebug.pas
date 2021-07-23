@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclRTDebug;
 
 interface
@@ -15,5 +18,6 @@ type
   end;
 
 implementation
+
 
 end.

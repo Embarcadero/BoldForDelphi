@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRose98Support;
 
 interface
@@ -12,7 +15,7 @@ type
   TBoldRose98Support = class;
   TBoldRose98Properties = class;
   TBoldRose98AddIns = class;
-
+                                     
   { TBoldRose98Support }
   TBoldRose98Support = class
   public
@@ -63,8 +66,7 @@ uses
   BoldUtils,
   BoldDefaultTaggedValues,
   ActiveX,
-  BoldLogHandler,
-  BoldCommonConst;
+  BoldLogHandler;
 
 class function TBoldRose98Support.FindClassByName(RoseModel: IRoseModel; const Name: string): IRoseClass;
 var
@@ -77,7 +79,7 @@ begin
   begin
     Result := ClsCol.GetAt(1);
     if ClsCol.Count > 1 then
-      raise EBoldImport.CreateFmt(sClassNameNotUnique, [Name]);
+      raise EBoldImport.CreateFmt('Found multiple classes with name %s, don''t know which one to use', [Name]);
   end;
 end;
 
@@ -120,7 +122,7 @@ begin
     Result := DefaultValue
   else
   begin
-    if AnsiCompareText(Value, 'True') = 0 then // do not localize
+    if AnsiCompareText(Value, 'True') = 0 then
       Result := TV_TRUE
     else
       Result := TV_FALSE;
@@ -138,7 +140,7 @@ begin
   if Value = '' then
     Result := DefaultValue
   else
-    Result := (AnsiCompareText(Value, 'True') = 0); // do not localize
+    Result := (AnsiCompareText(Value, 'True') = 0);
 end;
 
 function TBoldRose98Properties.GetDefaultPropertyBoolean(RoseModel: IRoseModel; PropName: String): Boolean;
@@ -148,7 +150,7 @@ var DefaultProps: IRoseDefaultModelProperties;
     Prop: IRoseProperty;
 begin
   DefaultProps := RoseModel.DefaultProperties;
-  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, DEFAULTVALUE);
+  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, 'default');
 
   Index := PropCollection.FindFirst(PropName);
   if Index > 0 then
@@ -168,14 +170,13 @@ var DefaultProps: IRoseDefaultModelProperties;
     Prop: IRoseProperty;
 begin
   DefaultProps := RoseModel.DefaultProperties;
-  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, DEFAULTVALUE);
+  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, 'default');
 
   Index := PropCollection.FindFirst(PropName);
   if Index > 0 then
     Prop := PropCollection.GetAt(Index)
   else
     Exit;
-    //ShowMessage('Fel');
 
   Result :=  Prop.Value;
 end;
@@ -187,14 +188,13 @@ var DefaultProps: IRoseDefaultModelProperties;
     Prop: IRoseProperty;
 begin
   DefaultProps := RoseModel.DefaultProperties;
-  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, DEFAULTVALUE);
+  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, 'default');
 
   Index := PropCollection.FindFirst(PropName);
   if Index > 0 then
     Prop := PropCollection.GetAt(Index)
   else
     Exit;
-    //ShowMessage('Fel');
 
   Prop.Value := BooleanToString(PropValue);
 end;
@@ -207,14 +207,13 @@ var
   Prop: IRoseProperty;
 begin
   DefaultProps := RoseModel.DefaultProperties;
-  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, DEFAULTVALUE);
+  PropCollection := DefaultProps.GetDefaultPropertySet(RoseModel.GetPropertyClassName, ToolName, 'default');
 
   Index := PropCollection.FindFirst(PropName);
   if Index > 0 then
     Prop := PropCollection.GetAt(Index)
   else
     Exit;
-    //ShowMessage('Fel');
 
   Prop.Value := PropValue;
 end;
@@ -255,7 +254,7 @@ procedure TBoldRose98Properties.SetBooleanString(RoseItem: IRoseItem; const Name
 begin
   if GetBooleanString(RoseItem, Name, DefaultValue) <> Value then
   begin
-    BoldLog.LogFmt(sSettingValue, [LoggString, Name, Value]);
+    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, Value]);
     RoseItem.OverrideProperty(ToolName, Name, Value);
   end;
 end;
@@ -265,7 +264,7 @@ procedure TBoldRose98Properties.SetBoolean(RoseItem: IRoseItem; const Name: stri
 begin
   if GetBoolean(RoseItem, Name, DefaultValue) <> Value then
   begin
-    BoldLog.LogFmt(sSettingValue, [LoggString, Name, BooleanToString(Value)]);
+    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, BooleanToString(Value)]);
     RoseItem.OverrideProperty(ToolName, Name, BooleanToString(Value));
   end;
 end;
@@ -275,7 +274,7 @@ procedure TBoldRose98Properties.SetInteger(RoseItem: IRoseItem; const Name: stri
 begin
   if GetInteger(RoseItem, Name, DefaultValue) <> Value then
   begin
-    BoldLog.LogFmt(sSettingValue, [LoggString, Name, IntToStr(Value)]);
+    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, IntToStr(Value)]);
     RoseItem.OverrideProperty(ToolName, Name, IntToStr(Value));
   end
 end;
@@ -285,7 +284,7 @@ procedure TBoldRose98Properties.SetString(RoseItem: IRoseItem; const Name, Defau
 begin
   if AnsiCompareText(GetString(RoseItem, Name, DefaultValue),Value) <> 0 then
   begin
-    BoldLog.LogFmt(sSettingValue, [LoggString, Name, Value]);
+    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, Value]);
     RoseItem.OverrideProperty(ToolName, Name, Value);
   end;
 end;
@@ -295,7 +294,7 @@ procedure TBoldRose98Properties.SetText(RoseItem: IRoseItem; const Name, Default
 begin
   if AnsiCompareText(GetString(RoseItem, Name, DefaultValue),Value) <> 0 then
   begin
-    BoldLog.LogFmt(sSettingValue, [LoggString, Name, Value]);
+    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, Value]);
     RoseItem.OverrideProperty(ToolName, Name, Value);
   end;
 end;
@@ -323,7 +322,7 @@ begin
       2: Result := akAggregate;
     end
   else if RoseRole.Containment.Value = 2 then
-    BoldLog.Log(sContainmentByValueButNotAggregate);
+    BoldLog.Log('Warning: containment by value, but not aggregate');
 end;
 
 class procedure TBoldRose98Support.SetContainment(Aggregation: TAggregationKind; RoseRole, OtherRole: IRoseRole; const LoggString: string);
@@ -337,23 +336,23 @@ begin
       begin
         OtherRole.Aggregate := false;
         RoseRole.Containment.Value := 0;
-        ContainmentName := 'None'; // do not localize
+        ContainmentName := 'None';
       end;
       akComposite:
       begin
         OtherRole.Aggregate := true;
         RoseRole.Containment.Value := 1;
-        ContainmentName := 'Composite'; // do not localize
+        ContainmentName := 'Composite';
       end;
       akAggregate:
       begin
         OtherRole.Aggregate := true;
         RoseRole.Containment.Value := 2;
-        ContainmentName := 'Aggregate'; // do not localize
+        ContainmentName := 'Aggregate';
       end;
     end;
-    BoldLog.LogFmt(sSettingValue, [LoggString, 'containment', ContainmentName]); // do not localize
-    BoldLog.LogFmt(sSettingValue, [LoggString, 'Aggregate', BooleanToString(aggregation <> aknone)]); // do not localize
+    BoldLog.LogFmt('Setting %s.containment to %s', [LoggString, ContainmentName]);
+    BoldLog.LogFmt('Setting %s.Aggregate to %s', [LoggString, BooleanToString(aggregation <> aknone)]);
   end;
 end;
 
@@ -365,7 +364,7 @@ begin
     1: Result := vkProtected;
     2: Result := vkPrivate;
     else
-      BoldLog.Log(sUnknownVisibility);
+      BoldLog.Log('Unknown visibility, public is set.');
   end;
 end;
 
@@ -379,22 +378,22 @@ begin
       vkPublic:
       begin
         ExportControl.Value := 0;
-        VisibilityName := 'public'; // do not localize
+        VisibilityName := 'public';
       end;
       vkProtected:
       begin
         ExportControl.Value := 1;
-        VisibilityName := 'protected'; // do not localize
+        VisibilityName := 'protected';
       end;
       vkPrivate:
       begin
        ExportControl.Value := 2;
-       VisibilityName := 'private'; // do not localize
+       VisibilityName := 'private';
       end;
     end;
-    BoldLog.LogFmt(sSettingValue, [LoggString, 'Visibility', VisibilityName]); // do not localize
+    BoldLog.LogFmt('Setting %s.Visibility to %s', [LoggString, VisibilityName]);
   end;
-end;
+end; 
 
 class function TBoldRose98Support.GetVersion: Double;
 var
@@ -410,14 +409,14 @@ begin
   for i := 1 to length(VersionStr) do
   begin
     case VersionStr[i] of
-      '0'..'9': if Start = -1 then // The first digit starts the number
+      '0'..'9': if Start = -1 then
         Start := i;
       '.': begin
         inc(DotCount);
-        if (start <> -1) and (DotCount = 2) then // The second dot terminates the number
+        if (start <> -1) and (DotCount = 2) then
           stop := i;
       end
-      else if (start <> -1) and (stop = -1) then // any non-digit/non-dot after the first digit terminates the number
+      else if (start <> -1) and (stop = -1) then
         stop := i;
     end;
   end;
@@ -427,10 +426,13 @@ begin
   begin
     if stop = -1 then
       stop := length(VersionStr);
-    OldDecimalSeparator := FormatSettings.DecimalSeparator;
-    FormatSettings.DecimalSeparator := '.';
-    result := StrtoFloat(copy(VersionStr, start, stop-start));
-    FormatSettings.DecimalSeparator := OldDecimalSeparator;
+    OldDecimalSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator;
+    {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator := '.';
+    try
+      result := StrToFloat(copy(VersionStr, start, stop-start));
+    finally
+      {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator := OldDecimalSeparator;
+   end;
   end;
 end;
 
@@ -438,5 +440,7 @@ class function TBoldRose98Support.GetVersionString: String;
 begin
   result := GetApplication.Version;
 end;
+
+initialization
 
 end.

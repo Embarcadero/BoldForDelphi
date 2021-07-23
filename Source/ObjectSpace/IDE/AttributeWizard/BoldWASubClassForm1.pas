@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWASubClassForm1;
 
 interface
@@ -61,7 +64,7 @@ type
     procedure EnableNextBtn(const Enable: Boolean);
   public
     { Public declarations }
-    constructor Create(AOwner: TComponent); override;
+    constructor create(AOwner: TComponent); override;
     procedure AssignParent(aParent: TWinControl);
     procedure ClearParent;
     procedure Initialize;
@@ -75,7 +78,7 @@ type
     property MethodCount: Integer read getMethodCount;
     property UnitGenerator: IUnitGenerator read getUnitGeneratorIntf write setUnitGeneratorIntf;
     property SteppedBack: Boolean read GetSteppedBack default false;
-    property EnableNext: TEnableNextEvent write setEnableNext; //CallBack function
+    property EnableNext: TEnableNextEvent write setEnableNext;
   end;
 
 var
@@ -109,11 +112,9 @@ begin
   Align := alClient;
   fBoldClassParser := TClassParser.Create(TStringStream.Create(MemoBoldClasses.Lines.Text));
   fBoldClassParser.Start;
-  // display class names in combo box
   i:= 0;
   while fBoldClassParser.getClasses(Item, i) do
     if Assigned(Item) then cbParent.Items.Add(Item.DelphiName);
-  //set proper view
   PageControl1.ActivePage := tsClassDef;
 end;
 
@@ -169,7 +170,6 @@ var
   Item: TMethodInfo;
   ListItem: TListItem;
 begin
-  // display class methods in CheckListBox
   EnableNextBtn(IsValidClassDef);
   ClassName := cbParent.Text;
   if IsEmptyStr(Trim(ClassName)) then Exit;
@@ -214,7 +214,6 @@ begin
   if PageControl1.ActivePage = tsClassDef then
   begin
     Result := wfaNext;
-    //check the class definition
     if IsValidClassDef then
     begin
       PageControl1.ActivePage := tsOverride;
@@ -236,17 +235,15 @@ begin
   NewAttribute := TCustomAttribute.Create;
   try
     getNewAttribute(NewAttribute);
-    // set template variables
     with attrdatamodule.SubClassedAttrTemplate do
     begin
-      Variables.Add('UNITNAME', NewAttribute.UnitName, []); // do not localize
-      Variables.Add('EXPRESSIONNAME', NewAttribute.ExpressionName, []); // do not localize
-      Variables.Add('DELPHINAME', NewAttribute.DelphiName, []); // do not localize
-      Variables.Add('SUPERCLASS', NewAttribute.Parent, []); // do not localize
-      Variables.Add('METHODCOUNT', InttoStr(NewAttribute.Methods.Count), []); // do not localize
+      Variables.Add('UNITNAME', NewAttribute.UnitName, []);
+      Variables.Add('EXPRESSIONNAME', NewAttribute.ExpressionName, []);
+      Variables.Add('DELPHINAME', NewAttribute.DelphiName, []);
+      Variables.Add('SUPERCLASS', NewAttribute.Parent, []);
+      Variables.Add('METHODCOUNT', InttoStr(NewAttribute.Methods.Count), []);
     end;
     NewAttribute.AssignMethodsToTemplate(attrdatamodule.SubClassedAttrTemplate);
-    // generate code
     UnitGenerator.GenerateUnit(NewAttribute.UnitName, attrdatamodule.SubClassedAttrTemplate);
   finally
     FreeAndNil(NewAttribute);
@@ -288,13 +285,11 @@ var
 begin
   with NewAttribute do
   begin
-    //get class definition
     ExpressionName := Trim(edExpressionName.Text);
     UnitName := trim(edUnitname.Text);
     DelphiName := Trim(edDelphiName.Text);
     Parent := Trim(cbParent.Text);
     Methods.Clear;
-    // get override methods
     CurrentClass := fBoldClassParser.getClassbyName(Parent);
     for i:= 0 to ListViewOverride.Items.Count - 1 do
       if ListViewOverride.Items[i].Checked then
@@ -307,8 +302,8 @@ begin
         NewMethod.Visibility := CurrentClass.Methods[i].Visibility ;
         NewMethod.mDirectives := [mdOverride];
         Methods.Add(NewMethod);
-      end; //if checked
-  end; //with
+      end;
+  end;
 end;
 
 procedure TSubClassForm1.edDelphiNameChange(Sender: TObject);
@@ -327,5 +322,7 @@ procedure TSubClassForm1.edUnitnameChange(Sender: TObject);
 begin
   fUnitName_Locked := (Trim(edExpressionName.text) = Trim(edUnitName.Text));
 end;
+
+initialization
 
 end.

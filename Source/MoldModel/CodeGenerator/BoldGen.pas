@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGen;
 
 interface
@@ -8,13 +11,13 @@ uses
   BoldTypeNameDictionary,
   BoldFileHandler,
   BoldTemplateExpander,
-  BoldDefs,
-  BoldMoldConsts;
+  BoldDefs;
 
 const
   INDENTSIZE = 2;
   DEBUGGERWORKAROUNDINTERVAL = 50;
   AddVisitorSupport = true;
+
 
 type
   TBoldGenerator = class;
@@ -45,6 +48,7 @@ type
     fGenerateMIDLCode: boolean;
     fGenerateIDLVariables: Boolean;
     procedure EnsureMethod(Strings: TStrings);
+    procedure InitializeTemplateForComponent(Template: TBoldTemplateHolder; Model: TMoldModel; Component: TMoldComponent; InitializeClasses: Boolean); virtual;
     function MethodToDelphiHeader(OwningClass: TMoldClass; Method: TMoldMethod; TagValue: Integer; AddSignature: Boolean; AutoOverride: Boolean): String;
     function MethodToCOMHeader(OwningClass: TMoldClass; Method: TMoldMethod; InterfaceCode: Boolean; ParametersToCoerce, ParametersToInterfaceCoerce: TStringList): String;
     function MethodToIDLHeader(OwningClass: TMoldClass; Method: TMoldMethod): String;
@@ -63,7 +67,6 @@ type
     property MethodIndex: TStringList read fMethodIndex;
     function FindInCurrentFile(s: String): Boolean;
     procedure InitializeMethodIndex;
-    procedure InitializeTemplateForComponent(Template: TBoldTemplateHolder; Model: TMoldModel; Component: TMoldComponent; InitializeClasses: Boolean); virtual;
     property CurrentClass: TMoldClass read fCurrentClass write fCurrentClass;
     property GenerateIDLVariables: Boolean read fGenerateIDLVariables write fGenerateIDLVariables;
   public
@@ -168,7 +171,7 @@ begin
 
   BoldLog.ProgressMax := MoldModel.Classes.Count * 3;
 
-  BoldLog.LogFmt(sLogGeneratingInPath, [BaseFilePath]);
+  BoldLog.LogFmt('Generating in path: %s', [BaseFilePath]);
   for ComponentIx := 0 to MoldModel.Components.Count - 1 do
   begin
     for TemplateIx := 0 to TemplateList.Count - 1 do
@@ -178,30 +181,30 @@ begin
 
       with TemplateList[TemplateIx] do
       begin
-        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name); // do not localize
-        BoldLog.LogFmt(sLogGeneratingFile, [ExpandedFileName]);
+        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name);
+        BoldLog.LogFmt('Generating file: %s', [ExpandedFileName]);
 
         SetCurrentFileHandler(BaseFilePath, ExpandedFileName, ModuleTypeForFile(ExpandedFileName), true, false);
         BoldFilehandler.Clear;
-        BoldLog.LogHeader := sLogInitializingVars;
+        BoldLog.LogHeader := 'Initializing variables';
         InitializeTemplateForComponent(TemplateList[TemplateIx],
                                        MoldModel,
                                        MoldModel.Components[ComponentIx],
                                        true);
         if BoldLog.ProcessInterruption then
           exit;
-
-        BoldLog.LogHeader := sLogExpandingTemplate;
+                                       
+        BoldLog.LogHeader := 'Expanding template';
         BoldFilehandler.AddStrings(ExpandedTemplate);
       end;
     end;
   end;
 
-  if MoldModel.MainComponent.Name = BoldDefaultTaggedValueList.DefaultForClassAndTag['Model', TAG_UNITNAME] then // do not localize
+  if MoldModel.MainComponent.Name = BoldDefaultTaggedValueList.DefaultForClassAndTag['Model', TAG_UNITNAME] then
   begin
     BoldLog.Separator;
-    BoldLog.Log(sLogConsiderNameChange1, ltWarning);
-    BoldLog.Log(sLogConsiderNameChange2, ltWarning);
+    BoldLog.Log('You should consider naming your model and base unit', ltWarning);
+    BoldLog.Log('to avoid filename conflicts with other projects', ltWarning);
     BoldLog.Separator;
   end;
 end;
@@ -231,12 +234,12 @@ var
 
   procedure internalInitialize;
   begin
-    AddVariable('MEMBERHASNATIVE' + PostFix, '1'); // do not localize
+    AddVariable('MEMBERHASNATIVE' + PostFix, '1');
     if not MoldAttribute.Derived or MoldAttribute.ReverseDerived then
-      AddVariable('MEMBERISSETABLE' + PostFix, '1') // do not localize
+      AddVariable('MEMBERISSETABLE' + PostFix, '1')
     else
-      AddVariable('MEMBERISSETABLE' + PostFix, '0'); // do not localize
-  end;
+      AddVariable('MEMBERISSETABLE' + PostFix, '0');
+    end;
 
   begin
     Mapping := TypeNameDictionary.MappingForModelName[MoldAttribute.BoldType];
@@ -244,11 +247,11 @@ var
     begin
       if UnmappedTypes.IndexOf(MoldAttribute.BoldType) = -1 then
       begin
-        BoldLog.LogFmt(sLogNoDelphiMappingForType, [MoldAttribute.BoldType], ltWarning);
+        BoldLog.LogFmt('No Delphimapping for type %s', [MoldAttribute.BoldType], ltWarning);
         UnmappedTypes.Add(MoldAttribute.BoldType);
       end;
-      Typename := 'TBoldAttribute'; // do not localize
-      ValueInterfacename := 'IBoldNullableValue'; // do not localize
+      Typename := 'TBoldAttribute';
+      ValueInterfacename := 'IBoldNullableValue';
     end else
     begin
       TypeName := Mapping.ExpandedDelphiName;
@@ -259,16 +262,16 @@ var
            (Mapping.IDLType <> '') then
         begin
           internalInitialize;
-          AddVariable('MEMBERNATIVECOMTYPE' + PostFix, Mapping.ExpandedCOMType); // do not localize
-          AddVariable('MEMBERNATIVEIDLTYPE' + PostFix, Mapping.IDLType); // do not localize
-          AddVariable('DISPID' + PostFix, IntToHex(MoldAttribute.DispId, 8)); // do not localize
+          AddVariable('MEMBERNATIVECOMTYPE' + PostFix, Mapping.ExpandedCOMType);
+          AddVariable('MEMBERNATIVEIDLTYPE' + PostFix, Mapping.IDLType);
+          AddVariable('DISPID' + PostFix, IntToHex(MoldAttribute.DispId, 8));
           if CompareText(Mapping.ExpandedCOMType, BoldWideStringTypeName) = 0 then
-            AddVariable('SETMEMBERASCONST' + PostFix, 'const '); // do not localize
+            AddVariable('SETMEMBERASCONST' + PostFix, 'const ');
         end
         else
           if typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1 then
           begin
-            BoldLog.LogFmt(sLogNoCOMMappingForType, [MoldAttribute.BoldType, MoldAttribute.MoldClass.Name, MoldAttribute.Name], ltWarning);
+            BoldLog.LogFmt('No COM/IDL mapping for type %s, No attribute generated for %s.%s', [MoldAttribute.BoldType, MoldAttribute.MoldClass.Name, MoldAttribute.Name], ltWarning);
             typesWithoutNative.Add(MoldAttribute.BoldType);
           end;
       end
@@ -278,40 +281,39 @@ var
           (Mapping.ExpandedNativeType <> '') then
         begin
           internalInitialize;
-          AddVariable('MEMBERNATIVEACCESSOR' + PostFix, Mapping.ExpandedAccessor); // do not localize
-          AddVariable('MEMBERNATIVETYPE' + PostFix, Mapping.ExpandedNativeType); // do not localize
+          AddVariable('MEMBERNATIVEACCESSOR' + PostFix, Mapping.ExpandedAccessor);
+          AddVariable('MEMBERNATIVETYPE' + PostFix, Mapping.ExpandedNativeType);
         end
         else begin
-          if typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1 then
+          if GenerateIDLVariables and (typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1) then
           begin
-            BoldLog.LogFmt(sLogNoNativeMappingForType, [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
+            BoldLog.LogFmt('No native mapping for type %s used in attribute %s.%s, only Bold attribute generated', [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
             typesWithoutNative.Add(MoldAttribute.BoldType);
           end;
         end;
 
-        if MoldAttribute.EffectivePersistent then
+        if MoldAttribute.EffectivePersistent and
+          (Mapping.ValueInterfaceAccessor <> '') and
+          (Mapping.ValueInterfaceNativeType <> '') then
         begin
-          if (Mapping.ValueInterfaceAccessor <> '') and
-            (Mapping.ValueInterfaceNativeType <> '') then
+          AddVariable('MEMBERHASVALUEINTERFACENATIVE' + PostFix, '1');
+          AddVariable('MEMBERVALUEINTERFACENATIVEACCESSOR' + PostFix, Mapping.ValueInterfaceAccessor);
+          AddVariable('MEMBERVALUEINTERFACENATIVETYPE' + PostFix, Mapping.ValueInterfaceNativeType);
+        end
+        else begin
+          if GenerateIDLVariables and (typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1) then
           begin
-            AddVariable('MEMBERHASVALUEINTERFACENATIVE' + PostFix, '1'); // do not localize
-            AddVariable('MEMBERVALUEINTERFACENATIVEACCESSOR' + PostFix, Mapping.ValueInterfaceAccessor); // do not localize
-            AddVariable('MEMBERVALUEINTERFACENATIVETYPE' + PostFix, Mapping.ValueInterfaceNativeType); // do not localize
-          end
-          else begin
-            if typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1 then
-            begin
-              BoldLog.LogFmt(sNoValueTypeMappingForType, [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
-              typesWithoutNative.Add(MoldAttribute.BoldType);
-            end;
+            BoldLog.LogFmt('No native mapping for type %s used in attribute %s.%s, only Bold attribute generated', [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
+            typesWithoutNative.Add(MoldAttribute.BoldType);
           end;
         end;
+
       end;
     end;
-    AddVariable('MEMBERTYPE' + PostFix, TypeName); // do not localize
-    addVariable('MEMBERVALUEINTERFACE'+PostFix, ValueInterfaceName); // do not localize
-    AddVariable('MEMBERKIND' + PostFix, 'Attribute'); // do not localize
-    AddVariable('MEMBERVISIBILITY' + PostFix, VisibilityTOString[MoldAttribute.Visibility]); // do not localize
+    AddVariable('MEMBERTYPE' + PostFix, TypeName);
+    addVariable('MEMBERVALUEINTERFACE'+PostFix, ValueInterfaceName);
+    AddVariable('MEMBERKIND' + PostFix, 'Attribute');
+    AddVariable('MEMBERVISIBILITY' + PostFix, VisibilityTOString[MoldAttribute.Visibility]);
   end;
 
   procedure InitializeNativeAttribute(MoldAttribute: TMoldAttribute; const PostFix: String);
@@ -322,13 +324,13 @@ var
      ('None', 'Field', 'PrivateMethod', 'ProtectedVirtualMethod');
   begin
     TypeName := GetNativeDelphiTypeForModelNameNoDefaults(MoldAttribute);
-    AddVariable('DelphiAttributeType' + PostFix, TypeName); // do not localize
-    AddVariable('DelphiAttributeKind' + PostFix, 'Attribute'); // do not localize
-    AddVariable('DelphiAttributeHasField' + PostFix, BoldBooleanToTemplateVar[MoldAttribute.HasDelphiField]); // do not localize
+    AddVariable('DelphiAttributeType' + PostFix, TypeName);
+    AddVariable('DelphiAttributeKind' + PostFix, 'Attribute');
+    AddVariable('DelphiAttributeHasField' + PostFix, BoldBooleanToTemplateVar[MoldAttribute.HasDelphiField]);
 
-    AddVariable('DelphiAttributeVisibility' + PostFix, VisibilityToString[MoldAttribute.Visibility]); // do not localize
-    AddVariable('DelphiAttributePropertyRead' + PostFix, PropertyAccessKindToStr[MoldAttribute.DelphiPropertyRead]); // do not localize
-    AddVariable('DelphiAttributePropertyWrite' + PostFix, PropertyAccessKindToStr[MoldAttribute.DelphiPropertyWrite]); // do not localize
+    AddVariable('DelphiAttributeVisibility' + PostFix, VisibilityToString[MoldAttribute.Visibility]);
+    AddVariable('DelphiAttributePropertyRead' + PostFix, PropertyAccessKindToStr[MoldAttribute.DelphiPropertyRead]);
+    AddVariable('DelphiAttributePropertyWrite' + PostFix, PropertyAccessKindToStr[MoldAttribute.DelphiPropertyWrite]);
   end;
 
   procedure InitializeQualifier(MoldRole: TMoldRole; const PostFix: String);
@@ -353,9 +355,9 @@ var
         Mapping := TypeNameDictionary.MappingForModelName[AttrOfOtherEnd.BoldType];
         if assigned(Mapping) then
         begin
-          AddVariable('QUALIFIERNAME' + PostFix + '.' + IntToStr(i), AttrOfOtherEnd.ExpandedDelphiName); // do not localize
-          AddVariable('QUALIFIERBOLDTYPE' + PostFix + '.' + IntToStr(i),  Mapping.ExpandedDelphiName); // do not localize
-          AddVariable('QUALIFIERACCESSOR' + PostFix + '.' + IntToStr(i),  Mapping.ExpandedAccessor); // do not localize
+          AddVariable('QUALIFIERNAME' + PostFix + '.' + IntToStr(i), AttrOfOtherEnd.ExpandedDelphiName);
+          AddVariable('QUALIFIERBOLDTYPE' + PostFix + '.' + IntToStr(i),  Mapping.ExpandedDelphiName);
+          AddVariable('QUALIFIERACCESSOR' + PostFix + '.' + IntToStr(i),  Mapping.ExpandedAccessor);
           BoldGeneratorTemplatesManager.AddQualifierPropertyParam(QualifierPropertyParams, AttrOfOtherEnd.ExpandedDelphiName, Mapping.ExpandedNativeType);
           BoldGeneratorTemplatesManager.AddQualifierFunctionParam(QualifierFunctionParams, AttrOfOtherEnd.ExpandedDelphiName, Mapping.ExpandedNativeType);
         end
@@ -365,10 +367,10 @@ var
       else
         AllOK := false;
     end;
-    AddVariable('QUALIFIERPROPERTYPARAMS' + PostFix, QualifierPropertyParams); // do not localize
-    AddVariable('QUALIFIERFUNCTIONPARAMS' + PostFix, QualifierFunctionParams); // do not localize
-    AddVariable('ROLEQUALIFIED' + PostFix, BoldBooleanToTemplateVar[AllOK and (MoldRole.Qualifiers.Count > 0)]); // do not localize
-    AddVariable('QUALIFIERCOUNT' + PostFix, IntToStr(MoldRole.Qualifiers.Count)); // do not localize
+    AddVariable('QUALIFIERPROPERTYPARAMS' + PostFix, QualifierPropertyParams);
+    AddVariable('QUALIFIERFUNCTIONPARAMS' + PostFix, QualifierFunctionParams);
+    AddVariable('ROLEQUALIFIED' + PostFix, BoldBooleanToTemplateVar[AllOK and (MoldRole.Qualifiers.Count > 0)]);
+    AddVariable('QUALIFIERCOUNT' + PostFix, IntToStr(MoldRole.Qualifiers.Count));
   end;
 
   procedure InitializeRole(MoldRole: TMoldRole; const PostFix: String);
@@ -379,50 +381,48 @@ var
     OtherEnd := MoldRole.MoldClass.LowestVisibleAncestor(MoldRole.OtherEnd.MoldClass);
     if (not MoldRole.Multi or UseTypedLists) and assigned(OtherEnd) then
     begin
-      AddVariable('MEMBERTYPE' + PostFix, OtherEnd.ExpandedDelphiName); // do not localize
-      AddVariable('MEMBERPERSISTENCEINTERFACE'+PostFix, MakePersistenceInterfaceName(OtherEnd)); // do not localize
+      AddVariable('MEMBERTYPE' + PostFix, OtherEnd.ExpandedDelphiName);
+      AddVariable('MEMBERPERSISTENCEINTERFACE'+PostFix, MakePersistenceInterfaceName(OtherEnd));
 
       if GenerateIDLVariables then
       begin
         if GenerateMIDLCode then
-          AddVariable('MEMBERCOMTYPE' + PostFix, OtherEnd.ExpandedInterfaceName) // do not localize
+          AddVariable('MEMBERCOMTYPE' + PostFix, OtherEnd.ExpandedInterfaceName)
         else
         begin
           IDLTypeOfOtherEnd := MoldRole.MoldClass.LowestCommonSuperClass(OtherEnd);
-
-          // stupid DelphiIDL-parser will not allow a list to know its own list-class since it is declared below itself
           if MoldRole.Multi and (MoldRole.MoldClass = IDLTypeOfOtherEnd) then
             IDLTypeOfOtherEnd := MoldRole.MoldClass.SuperClass;
 
           if assigned(IDLTypeOfOtherEnd) then
-            AddVariable('MEMBERCOMTYPE' + PostFix, IDLTypeOfOtherEnd.ExpandedInterfaceName) // do not localize
+            AddVariable('MEMBERCOMTYPE' + PostFix, IDLTypeOfOtherEnd.ExpandedInterfaceName)
           else
-            AddVariable('MEMBERCOMTYPE' + PostFix, 'IBoldObjectList') // do not localize
+            AddVariable('MEMBERCOMTYPE' + PostFix, 'IBoldObjectList')
         end;
 
-        AddVariable('MEMBERREALCOMTYPE' + PostFix, OtherEnd.ExpandedInterfaceName); // do not localize
+        AddVariable('MEMBERREALCOMTYPE' + PostFix, OtherEnd.ExpandedInterfaceName);
       end;
     end
     else
     begin
-      AddVariable('MEMBERTYPE' + PostFix, 'TBoldObject'); // do not localize
+      AddVariable('MEMBERTYPE' + PostFix, 'TBoldObject');
       if GenerateIDLVariables then
       begin
-        AddVariable('MEMBERCOMTYPE' + PostFix, 'IBoldObject'); // do not localize
-        AddVariable('MEMBERREALCOMTYPE' + PostFix, 'IBoldObject'); // do not localize
+        AddVariable('MEMBERCOMTYPE' + PostFix, 'IBoldObject');
+        AddVariable('MEMBERREALCOMTYPE' + PostFix, 'IBoldObject');
       end;
     end;
 
-    AddVariable('DISPID' + PostFix, IntToHex(MoldRole.Dispid, 8)); // do not localize
+    AddVariable('DISPID' + PostFix, IntToHex(MoldRole.Dispid, 8));
 
     if MoldRole.Multi then
-      AddVariable('MEMBERKIND' + PostFix, 'MultiRole') // do not localize
+      AddVariable('MEMBERKIND' + PostFix, 'MultiRole')
     else
-      AddVariable('MEMBERKIND' + PostFix, 'SingleRole'); // do not localize
+      AddVariable('MEMBERKIND' + PostFix, 'SingleRole');
 
-    AddVariable('ISTRUEROLE' + PostFix, BoldBooleanToTemplateVar[MoldRole.RoleType = rtRole]); // do not localize
-    AddVariable('MEMBERVISIBILITY' + PostFix, VisibilityTOString[MoldRole.Visibility]); // do not localize
-    AddVariable('ROLENAVIGABLE' + PostFix, BoldBooleanToTemplateVar[MoldRole.Navigable]); // do not localize
+    AddVariable('ISTRUEROLE' + PostFix, BoldBooleanToTemplateVar[MoldRole.RoleType = rtRole]);
+    AddVariable('MEMBERVISIBILITY' + PostFix, VisibilityTOString[MoldRole.Visibility]);
+    AddVariable('ROLENAVIGABLE' + PostFix, BoldBooleanToTemplateVar[MoldRole.Navigable]);
 
     InitializeQualifier(MoldRole, PostFix);
   end;
@@ -437,32 +437,31 @@ var
 
     if assigned(MoldClass) then
       case kind of
-        0: result := 'object'; // do not localize
+        0: result := 'object';
         1: result := ParameterDelphiType;
         2: result := '';
       end
-    else if SameText(ParameterType, 'STRING') then // do not localize
+    else if SameText(ParameterType, 'STRING') then
       case kind of
-        0: result := 'attribute'; // do not localize
-        1: result := 'TBAString'; // do not localize
-        2: result := '.AsString'; // do not localize
+        0: result := 'attribute';
+        1: result := 'TBAString';
+        2: result := '.AsString';
       end
-    else if SameText(ParameterType, 'INTEGER') then // do not localize
+    else if SameText(ParameterType, 'INTEGER') then
       case kind of
-        0: result := 'attribute'; // do not localize
-        1: result := 'TBAInteger'; // do not localize
-        2: result := '.AsInteger'; // do not localize
+        0: result := 'attribute';
+        1: result := 'TBAInteger';
+        2: result := '.AsInteger';
       end
-    else if SameText(ParameterType, 'DOUBLE') then // do not localize
+    else if SameText(ParameterType, 'DOUBLE') then
       case kind of
-        0: result := 'attribute'; // do not localize
-        1: result := 'TBAFloat'; // do not localize
-        2: result := '.AsFloat'; // do not localize
+        0: result := 'attribute';
+        1: result := 'TBAFloat';
+        2: result := '.AsFloat';
       end
     else
-      Template.Variables.SetVariable('CASEMETHODISOCLCOMPATIBLE', '0'); // do not localize
+      Template.Variables.SetVariable('CASEMETHODISOCLCOMPATIBLE', '0');
   end;
-
   procedure InitializeDispIdMethod(MoldMethod: TMoldMethod; const postfix: String; DispIdOffset: integer);
   var
     i: integer;
@@ -478,21 +477,19 @@ var
     ParametersToCoerce := TStringList.Create;
     ParametersToInterfaceCoerce := TStringList.create;
     try
-      AddVariable('COMMETHODHEADERINTERFACE' + PostFix, MethodToCOMHeader(MoldMethod.MoldClass, MoldMethod, true, ParametersToCoerce, ParametersToInterfaceCoerce)); // do not localize
+      AddVariable('COMMETHODHEADERINTERFACE' + PostFix, MethodToCOMHeader(MoldMethod.MoldClass, MoldMethod, true, ParametersToCoerce, ParametersToInterfaceCoerce));
       if (ParametersToInterfaceCoerce.Count + ParametersTocoerce.Count) <> 0 then
       begin
-        // Com-adapter declares strings as WideString, but delphiclass as string... we must convert them if they are var-declared
-        VarDeclString := 'var' + BOLDCRLF; // do not localize
+        VarDeclString := 'var' + BOLDCRLF;
         ConvertString := '';
         ConvertBackString := '';
 
         for i := 0 to ParametersToCoerce.Count - 1 do
         begin
-          VarDeclString := VarDeclString + '  ' + ParametersToCoerce.Names[i] + '_temp: '+ ParametersToCoerce.values[ParametersToCoerce.Names[i]] + ';' + BOLDCRLF; // do not localize
-          ConvertString := ConvertString + '  ' + ParametersToCoerce.Names[i] + '_temp := ' + ParametersToCoerce.Names[i] + ';' + BOLDCRLF; // do not localize
-          ConvertBackString := ConvertBackString + '  ' + ParametersToCoerce.names[i] +' := ' + ParametersToCoerce.Names[i] + '_temp;' + BOLDCRLF; // do not localize
+          VarDeclString := VarDeclString + '  ' + ParametersToCoerce.Names[i] + '_temp: '+ ParametersToCoerce.values[ParametersToCoerce.Names[i]] + ';' + BOLDCRLF;
+          ConvertString := ConvertString + '  ' + ParametersToCoerce.Names[i] + '_temp := ' + ParametersToCoerce.Names[i] + ';' + BOLDCRLF;
+          ConvertBackString := ConvertBackString + '  ' + ParametersToCoerce.names[i] +' := ' + ParametersToCoerce.Names[i] + '_temp;' + BOLDCRLF;
         end;
-
         for i := 0 to ParametersToInterfaceCoerce.Count - 1 do
         begin
           ParamName := ParametersToInterfaceCoerce.Names[i];
@@ -501,21 +498,21 @@ var
           ParamType := Copy(ParamType, 1, pos('=', ParamType) - 1);
 
           varDeclString := VarDeclString +
-            format('  %s_temp: %s;' + BOLDCRLF, [ParamName, ParamType]); // do not localize
+            format('  %s_temp: %s;' + BOLDCRLF, [ParamName, ParamType]);
           ConvertString := ConvertString +
-            format('  %s_temp := BoldComInterfaceToObject(%s) as %s;' + BOLDCRLF, [ParamName, ParamName, ParamType]); // do not localize
+            format('  %s_temp := BoldComInterfaceToObject(%s) as %s;' + BOLDCRLF, [ParamName, ParamName, ParamType]);
           ConvertBackString := ConvertBackString +
-            format('  BoldComCreateAdapter(%s_temp, False, %s, %s);' + BOLDCRLF, [ParamName, ParamInterfaceType, ParamName]); // do not localize
+            format('  BoldComCreateAdapter(%s_temp, False, %s, %s);' + BOLDCRLF, [ParamName, ParamInterfaceType, ParamName]);
         end;
 
-        AddVariable('COMMETHOD_TEMPVARS' + PostFix, VarDeclString); // do not localize
-        AddVariable('COMMETHOD_TEMPVARSCONVERT' + PostFix, ConvertString); // do not localize
-        AddVariable('COMMETHOD_TEMPVARSCONVERTBACK' + PostFix, ConvertBackString); // do not localize
+        AddVariable('COMMETHOD_TEMPVARS' + PostFix, VarDeclString);
+        AddVariable('COMMETHOD_TEMPVARSCONVERT' + PostFix, ConvertString);
+        AddVariable('COMMETHOD_TEMPVARSCONVERTBACK' + PostFix, ConvertBackString);
       end;
-      AddVariable('COMMETHODHEADERIMPLEMENTATION' + PostFix, MethodToCOMHeader(MoldMethod.MoldClass, MoldMethod, false, nil, nil)); // do not localize
-      AddVariable('METHODWRAPPERCALL' + PostFix, MethodToComCall(MoldMethod.MoldClass, MoldMethod, parametersToCoerce, ParametersToInterfaceCoerce)); // do not localize
-      AddVariable('IDLMETHODHEADER' + PostFix, MethodToIDLHeader(MoldMethod.MoldClass, MoldMethod)); // do not localize
-      AddVariable('METHODDISPID' + PostFix, IntToHex(DispIdOffset, 8)); // do not localize
+      AddVariable('COMMETHODHEADERIMPLEMENTATION' + PostFix, MethodToCOMHeader(MoldMethod.MoldClass, MoldMethod, false, nil, nil));
+      AddVariable('METHODWRAPPERCALL' + PostFix, MethodToComCall(MoldMethod.MoldClass, MoldMethod, parametersToCoerce, ParametersToInterfaceCoerce));
+      AddVariable('IDLMETHODHEADER' + PostFix, MethodToIDLHeader(MoldMethod.MoldClass, MoldMethod));
+      AddVariable('METHODDISPID' + PostFix, IntToHex(DispIdOffset, 8));
     finally
       ParametersToCoerce.Free;
     end;
@@ -526,45 +523,43 @@ var
     i: integer;
     MethodType: String;
   begin
-    AddVariable('INTERFACEMETHODHEADER' + PostFix, MethodToDelphiHeader(MoldMethod.MoldClass, MoldMethod, Publictag, true, AutoOverride)); // do not localize
-    AddVariable('METHODNAME' + PostFix, MoldMethod.ExpandedDelphiName); // do not localize
-    AddVariable('METHODVISIBILITY' + PostFix, visibilityToString[MoldMethod.Visibility]); // do not localize
+    AddVariable('INTERFACEMETHODHEADER' + PostFix, MethodToDelphiHeader(MoldMethod.MoldClass, MoldMethod, Publictag, true, AutoOverride));
+    AddVariable('METHODNAME' + PostFix, MoldMethod.ExpandedDelphiName);
+    AddVariable('METHODVISIBILITY' + PostFix, visibilityToString[MoldMethod.Visibility]);
     if MoldMethod.IsClassMethod then
-      MethodType := 'class ' // do not localize
+      MethodType := 'class '
     else
       MethodType := '';
 
     if MoldMethod.HasReturnValue then
-      MethodType := methodType + 'function' // do not localize
+      MethodType := methodType + 'function'
     else
-      MethodType := methodType + 'procedure'; // do not localize
+      MethodType := methodType + 'procedure';
 
-    AddVariable('METHODKIND' + PostFix, MethodType); // do not localize
+    AddVariable('METHODKIND' + PostFix, MethodType);
 
-    AddVariable('METHODISOCLCOMPATIBLE' + PostFix, '1'); // do not localize
+    AddVariable('METHODISOCLCOMPATIBLE' + PostFix, '1');
 
     if MoldMethod.HasReturnValue then
     begin
-      AddVariable('METHODRESULTBOLDTYPE' + PostFix, ParameterInfo(MoldMethod, MoldMethod.ReturnType, MoldMethod.DelphiReturnType, 1)); // do not localize
-      AddVariable('METHODRESULTACCESSOR' + PostFix, ParameterInfo(MoldMethod, MoldMethod.ReturnType, MoldMethod.DelphiReturnType, 2)); // do not localize
-    end
-    else
-    begin
-      AddVariable('METHODRESULTBOLDTYPE' + PostFix, 'TBAInteger'); // do not localize
-      AddVariable('METHODRESULTACCESSOR' + PostFix, '.AsInteger'); // do not localize
+      AddVariable('METHODRESULTBOLDTYPE' + PostFix, ParameterInfo(MoldMethod, MoldMethod.ReturnType, MoldMethod.DelphiReturnType, 1));
+      AddVariable('METHODRESULTACCESSOR' + PostFix, ParameterInfo(MoldMethod, MoldMethod.ReturnType, MoldMethod.DelphiReturnType, 2));
+    end else begin
+      AddVariable('METHODRESULTBOLDTYPE' + PostFix, 'TBAInteger');
+      AddVariable('METHODRESULTACCESSOR' + PostFix, '.AsInteger');
     end;
 
     for i := 0 to MoldMethod.Parameters.count - 1 do
     begin
       with TMoldParameter(MoldMethod.Parameters[i]) do
       begin
-        AddVariable('METHODPARAMETERKIND' + PostFix + '.' + IntToStr(i), ParameterInfo(MoldMethod, ParameterType, DelphiParameterType, 0)); // do not localize
-        AddVariable('METHODPARAMETERBOLDTYPE' + PostFix + '.' + IntToStr(i), ParameterInfo(MoldMethod, ParameterType, DelphiParameterType, 1)); // do not localize
-        AddVariable('METHODPARAMETERACCESSOR' + PostFix + '.' + IntToStr(i), ParameterInfo(MoldMethod, ParameterType, DelphiParameterType, 2)); // do not localize
+        AddVariable('METHODPARAMETERKIND' + PostFix + '.' + IntToStr(i), ParameterInfo(MoldMethod, ParameterType, DelphiParameterType, 0));
+        AddVariable('METHODPARAMETERBOLDTYPE' + PostFix + '.' + IntToStr(i), ParameterInfo(MoldMethod, ParameterType, DelphiParameterType, 1));
+        AddVariable('METHODPARAMETERACCESSOR' + PostFix + '.' + IntToStr(i), ParameterInfo(MoldMethod, ParameterType, DelphiParameterType, 2));
       end;
     end;
 
-    AddVariable('METHODPARAMETERCOUNT' + PostFix, IntToStr(MoldMethod.Parameters.count)); // do not localize
+    AddVariable('METHODPARAMETERCOUNT' + PostFix, IntToStr(MoldMethod.Parameters.count));
   end;
 
   procedure InitializeClass(MoldClass: TMoldClass; const PostFix: String);
@@ -573,55 +568,59 @@ var
     Attribute: TMoldAttribute;
     Member: TMoldMember;
     MemberPostFix: String;
+    MethodCount : Integer;
   begin
-    AddVariable('CLASSNAME' + PostFix, MoldClass.ExpandedDelphiName); // do not localize
+    AddVariable('CLASSNAME' + PostFix, MoldClass.ExpandedDelphiName);
     if MoldClass.GUID <> '' then
-      AddVariable('CLASSGUID' + PostFix, MoldClass.GUID) // do not localize
+      AddVariable('CLASSGUID' + PostFix, MoldClass.GUID)
     else
-      AddVariable('CLASSGUID' + PostFix, BoldCreateGUIDAsString(true)); // do not localize
+      AddVariable('CLASSGUID' + PostFix, BoldCreateGUIDAsString(true));
 
     if MoldClass.ListGUID <> '' then
-      AddVariable('LISTGUID' + PostFix, MoldClass.ListGUID) // do not localize
+      AddVariable('LISTGUID' + PostFix, MoldClass.ListGUID)
     else
-      AddVariable('LISTGUID' + PostFix, BoldCreateGUIDAsString(true)); // do not localize
+      AddVariable('LISTGUID' + PostFix, BoldCreateGUIDAsString(true));
 
-    AddVariable('INTERFACENAME' + PostFix, MoldClass.ExpandedInterfaceName); // do not localize
-    AddVariable('PERSISTENCEINTERFACENAME' + PostFix, MakePersistenceInterfaceName(MoldClass)); // do not localize
-    AddVariable('PERSISTENCEINTERFACEGUID' + PostFix, BoldCreateGUIDWithBracketsAsString); // do not localize
+    AddVariable('INTERFACENAME' + PostFix, MoldClass.ExpandedInterfaceName);
+    AddVariable('PERSISTENCEINTERFACENAME' + PostFix, MakePersistenceInterfaceName(MoldClass));
+    AddVariable('PERSISTENCEINTERFACEGUID' + PostFix, BoldCreateGUIDWithBracketsAsString);
 
-    AddVariable('ISVERSIONED' + PostFix, BoldBooleanToTemplateVar[MoldClass.Versioned]); // do not localize
+    AddVariable('ISVERSIONED' + PostFix, BoldBooleanToTemplateVar[MoldClass.Versioned]);
 
 
-    AddVariable('ISLINKCLASS' + PostFix, BoldBooleanToTemplateVar[Assigned(MoldClass.Association)]); // do not localize
-    AddVariable('CLASSEXPRESSIONNAME' + PostFix, MoldClass.ExpandedExpressionName); // do not localize
+    AddVariable('ISLINKCLASS' + PostFix, BoldBooleanToTemplateVar[Assigned(MoldClass.Association)]);
+    AddVariable('CLASSEXPRESSIONNAME' + PostFix, MoldClass.ExpandedExpressionName);
     if Assigned(MoldClass.SuperClass) then
     begin
-      AddVariable('SUPERCLASSNAME' + PostFix, MoldClass.SuperClass.ExpandedDelphiName); // do not localize
-      AddVariable('SUPERPERSISTENCEINTERFACENAME' + PostFix, MakePersistenceInterfaceName(MoldClass.SuperClass)); // do not localize
+      AddVariable('SUPERCLASSNAME' + PostFix, MoldClass.SuperClass.ExpandedDelphiName);
+      AddVariable('SUPERPERSISTENCEINTERFACENAME' + PostFix, MakePersistenceInterfaceName(MoldClass.SuperClass));
     end
     else
     begin
-      AddVariable('SUPERCLASSNAME' + PostFix, 'TBoldObject'); // do not localize
-      AddVariable('SUPERCLASSNAMESPACEPREFIX' + PostFix, 'Boldsystem::'); // do not localize
-      AddVariable('CONSTRUCTORPARAMETER' + PostFix, ', true'); // do not localize
-      AddVariable('SUPERPERSISTENCEINTERFACENAME' + PostFix, 'IPersistentBoldObject'); // do not localize
+      AddVariable('SUPERCLASSNAME' + PostFix, 'TBoldObject');
+      AddVariable('SUPERCLASSNAMESPACEPREFIX' + PostFix, 'Boldsystem::');
+      AddVariable('CONSTRUCTORPARAMETER' + PostFix, ', true');
+      AddVariable('SUPERPERSISTENCEINTERFACENAME' + PostFix, 'IPersistentBoldObject');
     end;
 
     if GenerateIDLVariables then
     begin
       if assigned(MoldClass.SuperClass) then
-        AddVariable('SUPERINTERFACE' + PostFix, MoldClass.SuperClass.ExpandedInterfaceName) // do not localize
+        AddVariable('SUPERINTERFACE' + PostFix, MoldClass.SuperClass.ExpandedInterfaceName)
       else
-        AddVariable('SUPERINTERFACE' + PostFix, 'IBoldObject'); // do not localize
+        AddVariable('SUPERINTERFACE' + PostFix, 'IBoldObject');
 
       if Assigned(MoldClass.SuperClass) then
-        AddVariable('SUPERADAPTERNAME' + PostFix, MoldClass.SuperClass.ExpandedDelphiName) // do not localize
+        AddVariable('SUPERADAPTERNAME' + PostFix, MoldClass.SuperClass.ExpandedDelphiName)
       else
-        AddVariable('SUPERADAPTERNAME' + PostFix, 'TBoldComObject'); // do not localize
+        AddVariable('SUPERADAPTERNAME' + PostFix, 'TBoldComObject');
     end;
 
     if MoldClass.IntroducesManuallyDerivedMembers then
-      AddVariable('CLASSINTRODUCESMANUALLYDERIVEDMEMBERS' + PostFix, 'true'); // do not localize
+      AddVariable('CLASSINTRODUCESMANUALLYDERIVEDMEMBERS' + PostFix, 'true');
+
+    if MoldClass.IntroducesManuallyReverseDerivedMembers then
+      AddVariable('CLASSINTRODUCESMANUALLYREVERSEDERIVEDMEMBERS' + PostFix, 'true');
 
     membercounter := 0;
 
@@ -629,10 +628,10 @@ var
     begin
       Member := MoldClass.AllBoldMembers[i];
       MemberpostFix := PostFix + '.' + IntTostr(i - MoldClass.FirstOwnBoldMemberIndex);
-      AddVariable('MEMBERNAME' + MemberPostFix, Member.ExpandedDelphiName); // do not localize
-      AddVariable('MEMBERINDEX' + MemberPostFix, IntToStr(i)); // do not localize
+      AddVariable('MEMBERNAME' + MemberPostFix, Member.ExpandedDelphiName);
+      AddVariable('MEMBERINDEX' + MemberPostFix, IntToStr(i));
 
-      AddVariable('MEMBERPERSISTENT' + MemberPostFix, BoldBooleanToTemplateVar[Member.EffectivePersistent]); // do not localize
+      AddVariable('MEMBERPERSISTENT' + MemberPostFix, BoldBooleanToTemplateVar[Member.EffectivePersistent]);
 
       if Member is TMoldAttribute then
         InitializeAttribute(Member as TMoldAttribute, MemberPostFix)
@@ -641,9 +640,28 @@ var
 
       Inc(MemberCounter);
     end;
-    AddVariable('MEMBERCOUNT' + Postfix, IntToStr(MemberCounter)); // do not localize
-
+    AddVariable('MEMBERCOUNT' + Postfix, IntToStr(MemberCounter));
     membercounter := 0;
+
+    for i := 0 to MoldClass.AllBoldMembers.Count - 1 do
+    begin
+      Member := MoldClass.AllBoldMembers[i];
+      MemberpostFix := '-ALL' + PostFix + '.' + IntTostr(i);
+      AddVariable('MEMBERNAME' + MemberPostFix, Member.ExpandedDelphiName);
+      AddVariable('MEMBERINDEX' + MemberPostFix, IntToStr(i));
+
+      AddVariable('MEMBERPERSISTENT' + MemberPostFix, BoldBooleanToTemplateVar[Member.EffectivePersistent]);
+
+      if Member is TMoldAttribute then
+        InitializeAttribute(Member as TMoldAttribute, MemberPostFix)
+      else if Member is TMoldRole then
+        InitializeRole(Member as TMoldRole, MemberPostFix);
+
+      Inc(MemberCounter);
+    end;
+    AddVariable('MEMBERCOUNT-ALL' + Postfix , IntToStr(MemberCounter));
+    membercounter := 0;
+
     for i := MoldClass.FirstOwnNativeAttributeIndex to MoldClass.AllNativeAttributes.Count - 1 do
     begin
       Attribute := MoldClass.AllNativeAttributes[i];
@@ -651,12 +669,12 @@ var
       if (Attribute.DelphiPropertyRead <> pkNone) or (Attribute.DelphiPropertyWrite <> pkNone) then
       begin
         MemberpostFix := PostFix + '.' + IntTostr(i - MoldClass.FirstOwnNativeAttributeIndex);
-        AddVariable('DelphiAttributeName' + MemberPostFix, Attribute.ExpandedDelphiName); // do not localize
+        AddVariable('DelphiAttributeName' + MemberPostFix, Attribute.ExpandedDelphiName);
         InitializeNativeAttribute(Attribute, MemberPostFix);
         Inc(MemberCounter);
       end;
     end;
-    AddVariable('DelphiAttributeCount' + Postfix, IntToStr(MemberCounter)); // do not localize
+    AddVariable('DelphiAttributeCount' + Postfix, IntToStr(MemberCounter));
 
     for i := 0 to MoldClass.Methods.Count - 1 do
       InitializeMethod(MoldClass.Methods[i], PostFix + '.' + IntToStr(i), false);
@@ -664,7 +682,7 @@ var
     for i := 0 to MoldClass.AllAutoOverrideMethods.Count - 1 do
       InitializeMethod(MoldClass.AllAutoOverrideMethods[i], PostFix + '.' + IntToStr(MoldClass.Methods.Count + i), true);
 
-    AddVariable('METHODCOUNT' + PostFix, IntToStr(MoldClass.Methods.Count + MoldClass.AllAutoOverrideMethods.Count)); // do not localize
+    AddVariable('METHODCOUNT' + PostFix, IntToStr(MoldClass.Methods.Count + MoldClass.AllAutoOverrideMethods.Count));
 
     if GenerateIDLVariables then
     begin
@@ -675,25 +693,27 @@ var
           InitializeDispIDMethod(MoldClass.Methods[i], PostFix + '.' + IntToStr(MemberCounter), MoldClass.Methods[i].DispId);
           Inc(MemberCounter);
         end;
-      AddVariable('DISPIDMETHODCOUNT' + PostFix, IntToStr(MemberCounter)); // do not localize
+      AddVariable('DISPIDMETHODCOUNT' + PostFix, IntToStr(MemberCounter));
     end;
 
     Derivedcounter := 0;
     for i := 0 to MoldClass.AllBoldMembers.Count - 1 do
     begin
-      if MoldClass.AllBoldMembers[i].ManuallyDerived and
+      if (MoldClass.AllBoldMembers[i].Derived and((MoldClass.AllBoldMembers[i].Derivationocl = '')  or MoldClass.AllBoldMembers[i].ReverseDerived)) and
         ((MoldClass.AllBoldMembers[i].MoldClass = MoldClass) or
         (TVIsTrue(MoldClass.AllBoldMembers[i].BoldTVByName[TAG_VIRTUALDERIVE]))) then
       begin
 
-        AddVariable('DERIVEDMEMBERINTRODUCEDHERE' + Postfix + '.' + IntToStr(DerivedCounter), BoldBooleanToTemplateVar[MoldClass.AllBoldMembers[i].MoldClass = MoldClass]); // do not localize
-        AddVariable('DERIVEDMEMBERREVERSEDERIVED' + Postfix + '.' + IntToStr(DerivedCounter), BoldBooleanToTemplateVar[MoldClass.AllBoldMembers[i].ReverseDerived]); // do not localize
+        AddVariable('DERIVEDMEMBERINTRODUCEDHERE' + Postfix + '.' + IntToStr(DerivedCounter), BoldBooleanToTemplateVar[MoldClass.AllBoldMembers[i].MoldClass = MoldClass]);
+        AddVariable('DERIVEDMEMBERREVERSEDERIVED' + Postfix + '.' + IntToStr(DerivedCounter), BoldBooleanToTemplateVar[MoldClass.AllBoldMembers[i].ReverseDerived]);
+        AddVariable('DERIVEDMEMBERFORWARDCODEDERVIED' + Postfix + '.' + IntToStr(DerivedCounter), BoldBooleanToTemplateVar[MoldClass.AllBoldMembers[i].ManuallyDerived]);
 
-        AddVariable('DERIVEDMEMBERNAME' + Postfix + '.' + IntToStr(DerivedCounter), MoldClass.AllBoldMembers[i].ExpandedDelphiName); // do not localize
+        AddVariable('DERIVEDMEMBERNAME' + Postfix + '.' + IntToStr(DerivedCounter), MoldClass.AllBoldMembers[i].ExpandedDelphiName);
+        AddVariable('DERIVEDMEMBERINDEX' + Postfix + '.' + IntToStr(DerivedCounter), IntToStr(i));        
         Inc(DerivedCounter);
       end;
     end;
-    AddVariable('DERIVEDMEMBERCOUNT' + Postfix, IntToStr(DerivedCounter)); // do not localize
+    AddVariable('DERIVEDMEMBERCOUNT' + Postfix, IntToStr(DerivedCounter));
   end;
 
   procedure BuildListOfAllUsedUnits(StringList: TStringList);
@@ -711,10 +731,10 @@ var
       begin
         Mapping := TypenameDictionary.MappingForModelName[Model.Classes[c].Attributes[a].BoldType];
         if Assigned(Mapping) then
-          if (Mapping.UnitNameText = '') then
-            StringList.Add('BoldAttributes') // do not localize
+          if (Mapping.UnitName = '') then
+            StringList.Add('BoldAttributes')
           else
-            StringList.Add(Mapping.UnitNameText);
+            StringList.Add(Mapping.UnitName);
        end;
     end;
   end;
@@ -722,39 +742,39 @@ var
 begin
   Template.Variables.Clear;
   if GenerateMIDLCode then
-    AddVariable('FORWARDDECLAREINTERFACES', '1'); // do not localize
-  AddVariable('USETYPEDLISTS', BoldBooleanToTemplateVar[useTypedLIsts]); // do not localize
-  AddVariable('UNITNAME', Component.Name); // do not localize
+    AddVariable('FORWARDDECLAREINTERFACES', '1');
+  AddVariable('USETYPEDLISTS', BoldBooleanToTemplateVar[useTypedLIsts]);
+  AddVariable('UNITNAME', Component.Name);
 
   if MoldModel.GUID <> '' then
-    AddVariable('UNITGUID', MoldModel.GUID) // do not localize
+    AddVariable('UNITGUID', MoldModel.GUID)
   else
-    AddVariable('UNITGUID', BoldCreateGUIDAsString(true)); // do not localize
+    AddVariable('UNITGUID', BoldCreateGUIDAsString(true));
 
-  AddVariable('CRC', MoldModel.CRC); // do not localize
+  AddVariable('CRC', MoldModel.CRC);
 
-  AddVariable('COPYRIGHTNOTICE', Model.BoldTVByName['CopyrightNotice']); // do not localize
+  AddVariable('COPYRIGHTNOTICE', Model.BoldTVByName['CopyrightNotice']);
   Dependencies := TStringList.Create;
   Component.GetInterfaceDependencies(Dependencies);
   for i := 0 to Dependencies.Count - 1 do
   begin
-    AddVariable('INTERFACEADAPTERDEPENDENCY.' + IntToStr(i), Dependencies[i] + 'Adapters'); // do not localize
-    AddVariable('INTERFACEDEPENDENCY.' + IntToStr(i), Dependencies[i]); // do not localize
+    AddVariable('INTERFACEADAPTERDEPENDENCY.' + IntToStr(i), Dependencies[i] + 'Adapters');
+    AddVariable('INTERFACEDEPENDENCY.' + IntToStr(i), Dependencies[i]);
   end;
-  AddVariable('INTERFACEDEPENDENCIESCOUNT', IntToStr(Dependencies.Count)); // do not localize
+  AddVariable('INTERFACEDEPENDENCIESCOUNT', IntToStr(Dependencies.Count));
 
   Component.GetImplementationDependencies(Dependencies);
   for i := 0 to Dependencies.Count - 1 do
   begin
-    AddVariable('IMPLEMENTATIONADAPTERDEPENDENCY.' + IntToStr(i), Dependencies[i] + 'Adapters'); // do not localize
-    AddVariable('IMPLEMENTATIONDEPENDENCY.' + IntToStr(i), Dependencies[i]); // do not localize
+    AddVariable('IMPLEMENTATIONADAPTERDEPENDENCY.' + IntToStr(i), Dependencies[i] + 'Adapters');
+    AddVariable('IMPLEMENTATIONDEPENDENCY.' + IntToStr(i), Dependencies[i]);
   end;
-  AddVariable('IMPLEMENTATIONDEPENDENCIESCOUNT', IntToStr(Dependencies.Count)); // do not localize
+  AddVariable('IMPLEMENTATIONDEPENDENCIESCOUNT', IntToStr(Dependencies.Count));
 
   BuildListOfAllUsedUnits(Dependencies);
   for i := 0 to Dependencies.Count-1 do
-    AddVariable('ATTRIBUTECLASSDEPENDENCY.'+IntToStr(i), Dependencies[i]); // do not localize
-  AddVariable('ATTRIBUTECLASSDEPENDENCIESCOUNT', IntToStr(Dependencies.Count)); // do not localize
+    AddVariable('ATTRIBUTECLASSDEPENDENCY.'+IntToStr(i), Dependencies[i]);
+  AddVariable('ATTRIBUTECLASSDEPENDENCIESCOUNT', IntToStr(Dependencies.Count));
 
   Dependencies.Free;
 
@@ -765,17 +785,17 @@ begin
     temp := temp + Model.Components[i].Name
   end;
 
-  AddVariable('ALLCOMPONENTS', temp); // do not localize
+  AddVariable('ALLCOMPONENTS', temp);
 
   ClassCount := 0;
 
-  AddVariable('MODELNAME', MoldModel.ExpandedExpressionName); // do not localize
+  AddVariable('MODELNAME', MoldModel.ExpandedExpressionName);
 
   if MoldModel.Interfaceuses <> '' then
-    AddVarList(Template, 'INTERFACEUSES', MoldModel.InterfaceUses + ','); // do not localize
+    AddVarList(Template, 'INTERFACEUSES', MoldModel.InterfaceUses + ',');
 
   if MoldModel.ImplementationUses <> '' then
-    AddVarList(Template, 'IMPLEMENTATIONUSES', MoldModel.ImplementationUses + ','); // do not localize
+    AddVarList(Template, 'IMPLEMENTATIONUSES', MoldModel.ImplementationUses + ',');
 
   IncludeFiles := TStringList.Create;
 
@@ -793,7 +813,7 @@ begin
         end;
 
         if (ClassCount + 1) mod DEBUGGERWORKAROUNDINTERVAL = 0 then
-          AddVariable('DEBUGGERWORKAROUND.' + IntTostr(ClassCount), '1'); // do not localize
+          AddVariable('DEBUGGERWORKAROUND.' + IntTostr(ClassCount), '1');
 
         InitializeClass(MoldModel.Classes[i], '.' + IntTostr(ClassCount));
         inc(ClassCount);
@@ -805,19 +825,17 @@ begin
     end;
   end;
 
-  AddVariable('CLASSCOUNT', IntToStr(ClassCount)); // do not localize
+  AddVariable('CLASSCOUNT', IntToStr(ClassCount));
   for i := 0 to IncludeFiles.Count - 1 do
-    AddVariable('INCLUDEFILE.' + IntToStr(i), IncludeFiles[i]); // do not localize
-  AddVariable('INCLUDEFILECOUNT', IntToStr(includeFiles.Count)); // do not localize
+    AddVariable('INCLUDEFILE.' + IntToStr(i), IncludeFiles[i]);
+  AddVariable('INCLUDEFILECOUNT', IntToStr(includeFiles.Count));
 
   if GenerateBold1CompatibleCode then
-    AddVariable('DELPHIATTRIBUTEPOSTFIX', '_') // do not localize
+    AddVariable('DELPHIATTRIBUTEPOSTFIX', '_')
   else
-    AddVariable('BOLDATTRIBUTEPOSTFIX', 'Attribute'); // do not localize
+    AddVariable('BOLDATTRIBUTEPOSTFIX', 'Attribute');
 
   IncludeFiles.Free;
-
-//  Template.Variables.finalize;
 end;
 
 procedure TBoldGenerator.SetCurrentFileHandler(const path, Filename: string; ModuleType: TBoldModuleType; Show: boolean; IsIncFile: Boolean);
@@ -856,8 +874,8 @@ var
 begin
   inheritedCall := BoldGeneratorTemplatesManager.GenerateInheritedCall(MoldClass, MoldMethod);
 
-  Variables.SetVariable('INHERITEDCALL', InheritedCall); // do not localize
-  Variables.SetVariable('CLASSNAME', MoldClass.ExpandedDelphiName); // do not localize
+  Variables.SetVariable('INHERITEDCALL', InheritedCall);
+  Variables.SetVariable('CLASSNAME', MoldClass.ExpandedDelphiName);
   AddSuperClassName(Variables, MoldClass);
 end;
 
@@ -880,14 +898,12 @@ begin
           LastIncFileName := CurrentIncFileName;
           CurrentIncFileName := CurrentClass.EffectiveIncFileName(BoldGeneratorTemplatesManager.DefaultIncFileExtension);
 
-          if AnsiCompareText(LastIncFileName, CurrentIncFileName) <> 0 then
+          if CompareText(LastIncFileName, CurrentIncFileName) <> 0 then
           begin
             SetCurrentFileHandler(BaseFilePath, CurrentIncFileName, mtIncFile, true, true);
             initializeMethodIndex;
           end;
-          BoldLog.LogFmt(sProcessingClassXFileY, [CurrentClass.Name, CurrentIncFileName]);
-
-          // userdefined methods
+          BoldLog.LogFmt('Processing class %s, file %s', [CurrentClass.Name, CurrentIncFileName]);
 
           for i := 0 to CurrentClass.Methods.Count - 1 do
             if CurrentClass.Methods[i].FuncType <> dfAbstractVirtual then
@@ -895,25 +911,21 @@ begin
               with BoldGeneratorTemplatesManager.MethodTemplate do
               begin
                 InitializeMethod(CurrentClass, CurrentClass.Methods[i], Variables);
-                Variables.Setvariable('METHODHEADER', MethodToDelphiHeader(CurrentClass, CurrentClass.Methods[i], ImplementationTag, true, false)); // do not localize
-                Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[CurrentClass.Methods[i].CanCallInherited]); // do not localize
+                Variables.Setvariable('METHODHEADER', MethodToDelphiHeader(CurrentClass, CurrentClass.Methods[i], ImplementationTag, true, false));
+                Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[CurrentClass.Methods[i].CanCallInherited]);
                 EnsureMethod(ExpandedTemplate);
               end;
             end;
-
-          // autooverride methods
           for i := 0 to CurrentClass.AllAutoOverrideMethods.Count - 1 do
             with BoldGeneratorTemplatesManager.MethodTemplate do
             begin
               MoldMethod := CurrentClass.AllAutoOverrideMethods[i];
               InitializeMethod(CurrentClass, MoldMethod, Variables);
-              Variables.Setvariable('METHODHEADER', MethodToDelphiHeader(CurrentClass, CurrentClass.AllAutoOverrideMethods[i], ImplementationTag, true, true)); // do not localize
+              Variables.Setvariable('METHODHEADER', MethodToDelphiHeader(CurrentClass, CurrentClass.AllAutoOverrideMethods[i], ImplementationTag, true, true));
               SuperMethodIsAbstract := (MoldMethod.funcType = dfAbstractVirtual) and (CurrentClass.SuperClass = MoldMethod.Moldclass);
-              Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[not SuperMethodIsAbstract]); // do not localize
+              Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[not SuperMethodIsAbstract]);
               EnsureMethod(ExpandedTemplate);
             end;
-
-          // native attributes get-method
 
           for i := CurrentClass.FirstOwnNativeAttributeIndex to CurrentClass.AllNativeAttributes.Count - 1 do
           begin
@@ -923,16 +935,14 @@ begin
               TypeName := GetNativeDelphiTypeForModelNameNoDefaults(Attr);
               with BoldGeneratorTemplatesManager.MethodTemplate do
               begin
-                Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName); // do not localize
-                Variables.Setvariable('METHODHEADER', BoldGeneratorTemplatesManager.readMethodSignature( // do not localize
+                Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName);
+                Variables.Setvariable('METHODHEADER', BoldGeneratorTemplatesManager.readMethodSignature(
                     CurrentClass.ExpandedDelphiName, Attr.ExpandedDelphiName, TypeName));
-                Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[False]); // do not localize
+                Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[False]);
                 EnsureMethod(ExpandedTemplate);
               end;
             end;
           end;
-
-          // native attributes set-method
 
           for i := CurrentClass.FirstOwnNativeAttributeIndex to CurrentClass.AllNativeAttributes.Count - 1 do
           begin
@@ -942,57 +952,56 @@ begin
               TypeName := GetNativeDelphiTypeForModelNameNoDefaults(Attr);
               with BoldGeneratorTemplatesManager.MethodTemplate do
               begin
-                Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName); // do not localize
-                Variables.Setvariable('METHODHEADER', BoldGeneratorTemplatesManager.WriteMethodSignature( // do not localize
+                Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName);
+                Variables.Setvariable('METHODHEADER', BoldGeneratorTemplatesManager.WriteMethodSignature(
                     CurrentClass.ExpandedDelphiName, Attr.ExpandedDelphiName, TypeName));
-                Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[false]); // do not localize
+                Variables.SetVariable('CALLINHERITED', BoldBooleanToTemplateVar[false]);
                 EnsureMethod(ExpandedTemplate);
               end;
             end;
           end;
 
-          // derived Members (always procedures)
-
           for i := 0 to CurrentClass.AllBoldMembers.Count - 1 do
-            if CurrentClass.AllBoldMembers[i].ManuallyDerived and (
-              (i >= CurrentClass.FirstOwnBoldMemberIndex) or
-               (TVIsTrue(CurrentClass.AllBoldMembers[i].BoldTVByName[TAG_VIRTUALDERIVE]))) then
+            if (CurrentClass.AllBoldMembers[i].Derived and((CurrentClass.AllBoldMembers[i].DerivationOcl = '')  or CurrentClass.AllBoldMembers[i].ReverseDerived))  and
+              (
+               (i >= CurrentClass.FirstOwnBoldMemberIndex) or
+               (TVIsTrue(CurrentClass.AllBoldMembers[i].BoldTVByName[TAG_VIRTUALDERIVE]))
+              ) then
             begin
-
-              with BoldGeneratorTemplatesManager.DerivedMethodTemplate do
-              begin
-                if (CurrentClass.AllBoldMembers[i] is TMoldAttribute) then
-                  Mapping := TypeNameDictionary.MappingForModelName[(CurrentClass.AllBoldMembers[i] as TMoldAttribute).BoldType]
-                else
-                  Mapping := nil;
-                if assigned(Mapping) and
-                  (Mapping.ExpandedAccessor <> '') and
-                  (Mapping.ExpandedNativeType <> '') then
+              if CurrentClass.AllBoldMembers[i].ManuallyDerived then
+                with BoldGeneratorTemplatesManager.DerivedMethodTemplate do
                 begin
-                  Variables.SetVariable('MEMBERHASNATIVE', '1'); // do not localize
-                  Variables.SetVariable('MEMBERNATIVEACCESSOR', Mapping.ExpandedAccessor); // do not localize
-                  Variables.SetVariable('MEMBERNATIVETYPE', Mapping.ExpandedNativeType); // do not localize
-                end
-                else
-                  Variables.SetVariable('MEMBERHASNATIVE', '0'); // do not localize
+                  if (CurrentClass.AllBoldMembers[i] is TMoldAttribute) then
+                    Mapping := TypeNameDictionary.MappingForModelName[(CurrentClass.AllBoldMembers[i] as TMoldAttribute).BoldType]
+                  else
+                    Mapping := nil;
+                  if assigned(Mapping) and
+                    (Mapping.ExpandedAccessor <> '') and
+                    (Mapping.ExpandedNativeType <> '') then
+                  begin
+                    Variables.SetVariable('MEMBERHASNATIVE', '1');
+                    Variables.SetVariable('MEMBERNATIVEACCESSOR', Mapping.ExpandedAccessor);
+                    Variables.SetVariable('MEMBERNATIVETYPE', Mapping.ExpandedNativeType);
+                  end else
+                    Variables.SetVariable('MEMBERHASNATIVE', '0');
 
-                Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName); // do not localize
-                Variables.SetVariable('INHERITEDCALL', 'inherited'); // do not localize
-                Variables.SetVariable('INTRODUCEDHERE', BoldBooleanToTemplateVar [i >= CurrentClass.FirstOwnBoldMemberIndex]); // do not localize
-                Variables.SetVariable('MEMBERNAME', CurrentClass.AllBoldMembers[i].ExpandedDelphiName); // do not localize
-                AddSuperClassName(variables, CurrentClass);
-                EnsureMethod(ExpandedTemplate);
-              end;
-              if CurrentClass.AllBoldMembers[i].ReverseDerived then
-                with BoldGeneratorTemplatesManager.ReverseDeriveMethodTemplate do
-                begin
-                  Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName); // do not localize
-                  Variables.SetVariable('INHERITEDCALL', 'inherited'); // do not localize
-                  Variables.SetVariable('INTRODUCEDHERE', BoldBooleanToTemplateVar[i >= CurrentClass.FirstOwnBoldMemberIndex]); // do not localize
-                  Variables.SetVariable('MEMBERNAME', CurrentClass.AllBoldMembers[i].ExpandedDelphiName); // do not localize
+                  Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName);
+                  Variables.SetVariable('INHERITEDCALL', 'inherited');
+                  Variables.SetVariable('INTRODUCEDHERE', BoldBooleanToTemplateVar [i >= CurrentClass.FirstOwnBoldMemberIndex]);
+                  Variables.SetVariable('MEMBERNAME', CurrentClass.AllBoldMembers[i].ExpandedDelphiName);
                   AddSuperClassName(variables, CurrentClass);
                   EnsureMethod(ExpandedTemplate);
                 end;
+              if CurrentClass.AllBoldMembers[i].Derived and CurrentClass.AllBoldMembers[i].ReverseDerived then
+                with BoldGeneratorTemplatesManager.ReverseDeriveMethodTemplate do
+                  begin
+                    Variables.SetVariable('CLASSNAME', CurrentClass.ExpandedDelphiName);
+                    Variables.SetVariable('INHERITEDCALL', 'inherited');
+                    Variables.SetVariable('INTRODUCEDHERE', BoldBooleanToTemplateVar[i >= CurrentClass.FirstOwnBoldMemberIndex]);
+                    Variables.SetVariable('MEMBERNAME', CurrentClass.AllBoldMembers[i].ExpandedDelphiName);
+                    AddSuperClassName(variables, CurrentClass);
+                    EnsureMethod(ExpandedTemplate);
+                  end;
             end;
         end;
         BoldLog.progressStep;
@@ -1001,7 +1010,6 @@ begin
     end;
   end;
 end;
-
 
 function TBoldGenerator.MethodToCOMHeader(OwningClass: TMoldClass; Method: TMoldMethod; InterfaceCode: Boolean; ParametersToCoerce, ParametersToInterfaceCoerce: TStringList): String;
 begin
@@ -1024,10 +1032,10 @@ begin
       params := params + ', ';
     Param := TMoldParameter(Method.Parameters[i]);
     case param.ParameterKind of
-      pdIn: P := '[in]'; // do not localize
-      pdOut: P := '[out]'; // do not localize
-      pdInout: P := '[in, out]'; // do not localize
-      pdReturn: P := '[out, retval]'; // do not localize
+      pdIn: P := '[in]';
+      pdOut: P := '[out]';
+      pdInout: P := '[in, out]';
+      pdReturn: P := '[out, retval]';
     end;
     paramType := TBoldMetaSupport.ParameterTypeToIDLType(Param.ParameterType, MoldModel, IsPtr);
     if not GenerateMIDLCode then
@@ -1051,15 +1059,15 @@ begin
     if not GenerateMIDLCode then
       P := EnsureSafeIDLType(P, Method.MoldClass);
 
-    p := p + '*'; // retval
+    p := p + '*';
     if IsPtr then
       p := p + '*';
 
-    Params := Params + '[out, retval] ' + p +  ' ReturnParam'; // do not localize
+    Params := Params + '[out, retval] ' + p +  ' ReturnParam';
   end;
 
   if params = '' then
-    params := 'void'; // do not localize
+    params := 'void';
 
   result := Method.ExpandedDelphiName + '(' + Params + ')';
 end;
@@ -1086,7 +1094,6 @@ var
 begin
   result := false;
   s := Uppercase(s);
-  // This code only searches for the name, not the signature.
 
   for i := 0 to MethodIndex.count - 1 do
   begin
@@ -1096,6 +1103,7 @@ begin
       exit;
     end;
   end;
+
 end;
 
 procedure TBoldGenerator.InitializeMethodIndex;
@@ -1186,10 +1194,10 @@ var
 begin
   TargetComponent := nil;
   if not assigned(SuperClass) then
-    raise Exception.Create(sMoveToComponent_NoSuperClass);
+    raise Exception.Create('MoveClassTreeToComponent: No SuperClass');
 
   if not assigned(MoldModel) then
-    raise Exception.Create(sMoveToComponent_NoMoldModel);
+    raise Exception.Create('MoveClassTreeToComponent: No MoldModel');
 
   for i := 0 to MoldModel.Classes.count - 1 do
   begin
@@ -1210,7 +1218,7 @@ var
   SubComponent: TMoldComponent;
   SuperComponent: TMoldComponent;
 begin
-  if AnsiCompareText(SubComponentName, SuperComponentName) = 0 then
+  if CompareText(SubComponentName, SuperComponentName) = 0 then
     exit;
   SubComponent := FindComponent(SubComponentName);
   SuperComponent := FindComponent(SuperComponentname);
@@ -1242,9 +1250,9 @@ begin
     for j := 0 to MoldModel.Components.count - 1 do
     begin
       if (MoldModel.Classes[i].Component <> MoldModel.Components[j]) and
-        (ansiCompareText(MoldModel.Classes[i].EffectiveIncFileName(BoldGeneratorTemplatesManager.DefaultIncFileExtension), MoldModel.Components[j].Name + '.'+BoldGeneratorTemplatesManager.DefaultIncFileExtension) = 0) then
+        (CompareText(MoldModel.Classes[i].EffectiveIncFileName(BoldGeneratorTemplatesManager.DefaultIncFileExtension), MoldModel.Components[j].Name + '.'+BoldGeneratorTemplatesManager.DefaultIncFileExtension) = 0) then
       begin
-        BoldLog.LogFmt(sCollidingFileName, [MoldModel.Classes[i].Name, MoldModel.Components[j].Name]);
+        BoldLog.LogFmt('WARNING! class %s has a file name that collides with another component (%s)!', [MoldModel.Classes[i].Name, MoldModel.Components[j].Name]);
         result := false;
       end;
     end;
@@ -1310,7 +1318,7 @@ begin
 
   BoldLog.ProgressMax := MoldModel.Classes.Count * 2;
 
-  BoldLog.LogFmt(sLogGeneratingInPath, [BaseFilePath]);
+  BoldLog.LogFmt('Generating in path: %s', [BaseFilePath]);
   for ComponentIx := 0 to MoldModel.Components.Count - 1 do
   begin
     for j := 0 to BoldGeneratorTemplatesManager.ComFileTemplates.Count - 1 do
@@ -1320,17 +1328,17 @@ begin
 
       with BoldGeneratorTemplatesManager.COMFileTemplates[j] do
       begin
-        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name); // do not localize
-        BoldLog.LogFmt(sLogGeneratingFile, [ExpandedFileName]);
+        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name);
+        BoldLog.LogFmt('Generating file %s', [ExpandedFileName]);
 
         SetCurrentFileHandler(BaseFilePath, ExpandedFileName, ModuleTypeForFile(ExpandedFileName), true, false);
         BoldFilehandler.Clear;
-        BoldLog.LogHeader := sLogInitializingVars;
+        BoldLog.LogHeader := 'Initializing variables';
         InitializeTemplateForComponent(BoldGeneratorTemplatesManager.COMFileTemplates[j], MoldModel, MoldModel.Components[ComponentIx], true);
         if BoldLog.ProcessInterruption then
           exit;
 
-        BoldLog.LogHeader := sLogExpandingTemplate;
+        BoldLog.LogHeader := 'Expanding template';
         BoldFilehandler.AddStrings(ExpandedTemplate);
       end;
     end;
@@ -1347,8 +1355,8 @@ begin
   while sList[sList.Count-1] = '' do
     sList.Delete(SList.Count-1);
   for i := 0 to sList.Count-1 do
-    Template.Variables.ForceAdd(Variablebasename + '.' + IntToStr(i), SList[i], []);
-  Template.Variables.ForceAdd(Variablebasename + 'COUNT', IntToStr(sList.Count), []); // do not localize
+    Template.Variables.ForceAdd(Variablebasename+'.'+IntToStr(i), SList[i], []);
+  Template.Variables.ForceAdd(Variablebasename+'COUNT', IntToStr(sList.Count), []);
   sList.Free;
 end;
 
@@ -1356,9 +1364,9 @@ procedure TBoldGenerator.AddSuperClassName(variables: TBoldTemplateVariables;
   MoldClass: tMoldClass);
 begin
   if assigned(MoldClass.SuperClass) then
-    variables.SetVariable('SUPERCLASSNAME', MoldClass.SuperClass.ExpandedDelphiName) // do not localize
+    variables.SetVariable('SUPERCLASSNAME', MoldClass.SuperClass.ExpandedDelphiName)
   else
-    variables.SetVariable('SUPERCLASSNAME', 'TBoldObject') // do not localize
+    variables.SetVariable('SUPERCLASSNAME', 'TBoldObject')
 end;
 
 procedure TBoldCodeGenInitializer.MoveImplicitLinkClassesToAssociationEndComponent;
@@ -1381,14 +1389,12 @@ begin
     if assigned(MoldModel.Classes[i].Association) then
     begin
       LinkClass := MoldModel.Classes[i];
-      // Only do this for implicit link-classes...
       if LinkClass.TVByName[BOLDBOLDIFYPREFIX+TAG_AUTOCREATED] = TV_TRUE then
       begin
         Component1 := GetAssociationEndComponent(LinkClass.Association, 0);
         Component2 := GetAssociationEndComponent(LinkClass.Association, 1);
-        // if the two ends belong to the same component, and it differs
-        // from the link class, reassign the link class. if there is
-        // already a dependency between the new and the old component
+
+
         if assigned(Component1) and (Component1 <> LinkClass.Component) and
           (Component1 = Component2) and
           Component1.DependentOf(LinkClass.Component) then
@@ -1408,11 +1414,9 @@ begin
     if assigned(MoldModel.Classes[i].Association) then
     begin
       LinkClass := MoldModel.Classes[i];
-      // check if the link class is an implicit class in the default component
       if (LinkClass.Component = MoldModel.MainComponent) and
         (LinkClass.TVByName[BOLDBOLDIFYPREFIX+TAG_AUTOCREATED] = TV_TRUE) then
       begin
-        // if the linkclass inherits from a class in another component, then move it there.
         if (LinkClass.SuperClass.Component <> MoldModel.MainComponent) then
           LinkClass.Component := LinkClass.SuperClass.Component;
       end;
@@ -1422,7 +1426,7 @@ end;
 
 function TBoldGenerator.MakePersistenceInterfaceName(MoldClass: TMoldClass): string;
 begin
-  result := BoldExpandName('IPersistent<Name>', MoldClass.Name, xtDelphi, -1, nccDefault) // do not localize
+  result := BoldExpandName('IPersistent<Name>', MoldClass.Name, xtDelphi, -1, nccDefault)
 end;
 
 procedure TBoldGenerator.GenerateBusinessObjectCode;
@@ -1442,25 +1446,22 @@ begin
     TemplateList.free;
   end
   else
-    raise EBold.create(sNoTemplateForPersistenceInterfaces);
+    raise EBold.create('No template defined for PersistenceInterfaces');
 end;
 
 function TBoldGenerator.ModuleTypeForFile(const FileName: string): TBoldModuleType;
-const
-  PASExtension = '.PAS';
-  INCExtension = '.INC';
 var
   Extension: string;
 begin
   Extension := UpperCase(ExtractFileExt(FileName));
-  if Extension = PASExtension then
+  if Extension = '.PAS' then
     Result := mtUnit
-  else if Extension = INCExtension then
+  else if Extension = '.INC' then
     Result := mtIncFile
   else
     Result := mtText;
 end;
 
+initialization
+
 end.
-
-

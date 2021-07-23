@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAdmTemplates;
 
 interface
@@ -25,8 +28,6 @@ var
 
 implementation
 
-uses
-  BoldRev;
 
 {$R *.dfm}
 

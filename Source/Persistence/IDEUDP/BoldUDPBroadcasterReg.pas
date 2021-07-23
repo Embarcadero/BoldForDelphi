@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUDPBroadcasterReg;
 
 interface
@@ -11,12 +14,9 @@ uses
   BoldIDEConsts,
   BoldUDPModificationBroadCaster;
 
-{$R BoldUDPBroadCaster.res}
-
 procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_OSS_CMS, [TBoldUDPModificationBroadcaster]);
 end;
 
 end.
-

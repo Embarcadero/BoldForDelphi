@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockHandler;
 
 interface
@@ -14,8 +17,8 @@ uses
   BoldLockHolder;
 
 resourcestring
-  BOLD_GET_LOCKS_FAILED_ERROR = 'Failed to get locks';
-
+  BOLD_GET_LOCKS_FAILED_ERROR = '%s locked by %s';
+  
 type
   TBoldFailureGetLocksFailed = class;
 
@@ -59,7 +62,7 @@ type
     function EnsureLocks: Boolean; override;
     procedure GetPropagationEvents(EventList: TStringList); override;
   end;
-
+ {$IFNDEF BOLD_NO_QUERIES}
   TBoldPessimisticLockHandler = class(TBoldAbstractPessimisticLockHandler)
   private
     fRequiredShared: TBoldRegionList;
@@ -70,7 +73,7 @@ type
     fParentsChangedRegions: TBoldRegionList;
     fSubregionsChangedRegions: TBoldRegionList;
     fLockHolder: TBoldAbstractLockHolder;
-    fSubscriber: TBoldPassthroughSubscriber;
+    fSubscriber: TBoldExtendedPassthroughSubscriber;
     fOnActivityPropgress: TBoldLockManagerProgressEvent;
     fOnActivityStart: TNotifyEvent;
     fOnActivityEnd: TNotifyEvent;
@@ -102,7 +105,7 @@ type
     destructor Destroy; override;
     function LockElement(Element: TBoldDomainElement): Boolean; override;
     function EnsureLocks: Boolean; override;
-    procedure ReleaseUnneededRegions; override;
+    procedure ReleaseUnNeededRegions; override;
     property RequiredShared: TBoldRegionList read GetRequiredShared;
     property RequiredExclusive: TBoldRegionList read GetRequiredExclusive;
     property OnActivityStart: TNotifyEvent read fOnActivityStart write fOnActivityStart;
@@ -110,6 +113,7 @@ type
     property OnProgress: TBoldLockManagerProgressEvent read fOnActivityPropgress write fOnActivityPropgress;
   end;
 
+ {$ENDIF}
 implementation
 
 uses
@@ -119,7 +123,6 @@ uses
   BoldObjectSpaceExternalEvents,
   BoldDefaultID,
   BoldIndex,
-  HandlesConst,
   BoldElements;
 
 function NewRegionListFromStrings(Locks: TStrings; Factory: TBoldRegionFactory): TBoldRegionList;
@@ -142,6 +145,7 @@ end;
 
 { TBoldPessimisticLockHandler }
 
+{$IFNDEF BOLD_NO_QUERIES}
 constructor TBoldPessimisticLockHandler.CreateWithLockHolder(System: TBoldSystem; LockHolder: TBoldAbstractLockHolder);
 begin
   inherited Create(System);
@@ -154,13 +158,12 @@ begin
 
   fParentsChangedRegions := TBoldRegionList.Create;
   fSubregionsChangedRegions := TBoldRegionList.Create;
-  fSubscriber := TBoldPassthroughSubscriber.CreateWithReceiveAndAnswer(_ReceiveRolledBack, _AnswerMayCommit);
+  fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithReceiveAndAnswer(_ReceiveRolledBack, _AnswerMayCommit);
   System.AddSubscription(fSubscriber, bqMayCommit, bqMayCommit);
   System.AddSubscription(fSubscriber, beRolledBack, beRolledBack);
   System.PessimisticLockHandler := self;
 
   fLockHolder := LockHolder;
-  // this should be replaced with a subscription-mechanism
   Factory.OnRegionChanged := _RegionChanged;
 end;
 
@@ -209,11 +212,9 @@ begin
 
 
     KnownRequiredOrHeldParentRegions.AddRegionLookup(fKnownRequiredParents);
-    // we know that the Explicit regions are ParentRegions...
     AddHeldLocksToRegionLookup(KnownRequiredOrHeldParentRegions, false);
 
     KnownRequiredOrHeldSubregions.AddRegionLookup(fKnownRequiredSubregions);
-    // we know that all held regions are atleast subregions...
     AddHeldLocksToRegionLookup(KnownRequiredOrHeldSubregions, true);
 
     Expander.ExpandParentRegions(RegionsToExpand, KnownRequiredOrHeldParentRegions, KnownRequiredOrHeldSubregions);
@@ -252,12 +253,14 @@ var
   SharedLocks, ExclusiveLocks: TBoldLockList;
   HeldLocks, ClientsHoldingRequestedLocks: TStringList;
   ConflictingRegions: TBoldRegionList;
+  Clients: string;
+  Guard: IBoldGuard;
 begin
+  Guard := TBoldGuard.Create(SharedLocks, ExclusiveLocks, HeldLocks, ClientsHoldingRequestedLocks, ConflictingRegions);
   SharedLocks := TBoldLockList.Create;
   ExclusiveLocks := TBoldLockList.Create;
   HeldLocks := TStringList.Create;
   ClientsHoldingRequestedLocks := TStringList.Create;
-  try
     EnsureAllRequiredRegions;
     RegionListToLockList(fRequiredShared, SharedLocks);
     RegionListToLockList(fRequiredExclusive, ExclusiveLocks);
@@ -279,14 +282,12 @@ begin
     if not result then
     begin
       ConflictingRegions := NewRegionListFromStrings(HeldLocks, Factory);
-      SetBoldLastFailureReason(TBoldFailureGetLocksFailed.Create(BOLD_GET_LOCKS_FAILED_ERROR, nil, ConflictingRegions, ClientsHoldingRequestedLocks));
-      ConflictingRegions.Free;
-    end;
-  finally
-    SharedLocks.Free;
-    ExclusiveLocks.Free;
-    FreeAndNil(HeldLocks);
-    FreeAndNil(ClientsHoldingRequestedLocks);
+    clients := '';
+    if ClientsHoldingRequestedLocks.Count > 0 then
+      Clients := ClientsHoldingRequestedLocks.ValueFromIndex[0];
+    SetBoldLastFailureReason(TBoldFailureGetLocksFailed.Create(
+      Format(BOLD_GET_LOCKS_FAILED_ERROR, [ConflictingRegions.AsString, clients])
+      , nil, ConflictingRegions, ClientsHoldingRequestedLocks));
   end;
 end;
 
@@ -309,6 +310,7 @@ begin
   for i := 0 to Regions.Count - 1 do
     RequireRegionExplicit(Regions[i]);
 
+//  REMOVED FOR TESTING
   if System.InTransaction then
     result := true
   else
@@ -360,26 +362,28 @@ var
   EventList: TStringList;
   i, j: integer;
   ClassName, MemberName, LockName: string;
-  ObjectID: TBoldDefaultID;
+  ObjectID, ExactId: TBoldDefaultID;
   EventType: TBoldObjectSpaceSubscriptionType;
   CurrObj: TBoldObject;
   CurrMember: TBoldMember;
   RegionList: TBoldRegionList;
+  Guard: IBoldGuard;
 begin
+  Guard := TBoldGuard.Create(EventList,ObjectId,ExactId,RegionList);
   Result := false;
   EventList := TStringList.Create;
   ObjectID:= TBoldDefaultID.CreateWithClassID(0, False);
   RegionList := TBoldRegionList.Create;
-  try
     fLockHolder.GetPropagationEvents(EventList);
     for i:= 0 to EventList.Count - 1 do
     begin
       EventType := TBoldObjectSpaceExternalEvent.DecodeExternalEvent(EventList[i], ClassName, MemberName, LockName, ObjectID);
+      ExactId := ObjectID.CloneWithClassId(System.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassName].TopSortedIndex, true) as TBoldDefaultID;
       case EventType of
         bsClassChanged:;
         bsEmbeddedStateOfObjectChanged:
         begin
-          CurrObj := System.EnsuredLocatorByID[ObjectID].EnsuredBoldObject;
+          CurrObj := System.EnsuredLocatorByID[ExactId].EnsuredBoldObject;
           for j:= 0 to CurrObj.BoldMemberCount - 1 do
           begin
             CurrMember := CurrObj.BoldMembers[j];
@@ -390,18 +394,13 @@ begin
         end;
         bsNonEmbeddedStateOfObjectChanged:
         begin
-          CurrObj := System.EnsuredLocatorByID[ObjectID].EnsuredBoldObject;
+          CurrObj := System.EnsuredLocatorByID[ExactId].EnsuredBoldObject;
           CurrMember := CurrObj.BoldMemberByExpressionName[MemberName];
           result := IsElementInAnyRequiredRegion(CurrMember);
         end;
       end;
       if result then Break;
     end;
-  finally
-    FreeAndNil(EventList);
-    FreeAndNil(ObjectID);
-    FreeAndNil(RegionList);
-  end;
 end;
 
 function TBoldPessimisticLockHandler.IsElementInAnyRequiredRegion(
@@ -432,16 +431,19 @@ var
   UnRequiredLocks, RequiredExclusiveLocks, RequiredSharedLocks: TBoldLockList;
   LockName: string;
   TrueLockHolder: TBoldAbstractLockHolder;
+  Guard: IBoldGuard;
 begin
-  Elements := TList.Create;
+  Guard := TBoldGuard.Create(Elements, UnRequiredLocks, RequiredExclusiveLocks, RequiredSharedLocks, aTraverser);
   UnRequiredLocks := TBoldLockList.Create;
   RequiredSharedLocks := TBoldLockList.Create;
   RequiredExclusiveLocks := TBoldLockList.Create;
   TrueLockHolder := fLockHolder;
   try
-    aTraverser := fLockHolder.HeldExclusive.CreateTraverser;
-    try
-      while not aTraverser.EndOfList do
+    if fLockHolder.HeldExclusive.Count > 0 then
+    begin
+      Elements := TList.Create;
+      aTraverser := fLockHolder.HeldExclusive.CreateTraverser;
+      while aTraverser.MoveNext do
       begin
         LockName := (aTraverser.Item as TBoldLock).Name;
         if LockName <> BOLD_DBLOCK_NAME then
@@ -452,16 +454,11 @@ begin
           if ElementListContainsDirtyElements(Elements) then
             RequireRegionExplicit(CurrentRegion);
         end;
-        aTraverser.Next;
       end;
-    finally
-      aTraverser.Free;
     end;
 
-    // since the regionExpander will cut the expansion tree with the held locks, we need to fake
-    // an empty lockholder for this excersise. The expansion will occur in the getmethod of RequiredExclusive and RequiredShared...
     fLockHolder := TBoldEmptyLockHolder.Create;
-
+    
     RegionListToLockList(RequiredExclusive, RequiredExclusiveLocks);
     RegionListToLockList(RequiredShared, RequiredSharedLocks);
 
@@ -475,11 +472,7 @@ begin
 
     fLockHolder.Release(UnRequiredLocks);
   finally
-    FreeAndNil(Elements);
-    FreeAndNil(UnRequiredLocks);
-    FreeAndNil(RequiredSharedLocks);
-    FreeAndNil(RequiredExclusiveLocks);
-    fLockHolder := TrueLockHolder; // Just in case
+    fLockHolder := TrueLockHolder;
   end;
 end;
 
@@ -590,14 +583,12 @@ procedure TBoldPessimisticLockHandler.AddHeldLocksToRegionLookup(RegionLookup: T
   begin
     Guard := TBoldGuard.CReate(Traverser);
     Traverser := List.CreateTraverser;
-    while not Traverser.EndOfList do
+    while Traverser.MoveNext do
     begin
       RegionId := (Traverser.Item as TBoldLock).Name;
-      // Only check locks that are region-locks
       if (pos('.', RegionId) <> 0) then
         if not assigned(RegionLookup.FindByID(RegionId)) then
           RegionLookup.Add(Factory.GetRegionByName(RegionId));
-      Traverser.Next;
     end;
   end;
 
@@ -606,7 +597,7 @@ begin
   if AddSharedRegions then
     Add(fLockHolder.HeldShared);
 end;
-
+  {$ENDIF}
 
 { TBoldFailureGetLocksFailed }
 
@@ -656,7 +647,7 @@ begin
 end;
 
 
-{ TBoldEmptyLockHolder }
+ { BoldEmptyLockHolder }
 
 constructor TBoldEmptyLockHolder.Create;
 begin

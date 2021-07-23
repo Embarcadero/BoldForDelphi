@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSOAPPersistenceControllerProxy;
 
 interface
@@ -14,7 +17,8 @@ uses
   BoldUpdatePrecondition,
   BoldPersistenceOperationXMLStreaming,
   BoldMeta,
-  BoldDefs;
+  BoldDefs,
+  BoldElements;
 
 type
   { forward declarations }
@@ -35,7 +39,6 @@ type
   protected
     fStub: IBoldSOAPService;
     function GetIsConnected: Boolean; override;
-    procedure CheckConnect(const Caller: string);
     property FetchIdListOp: TBoldPMFetchIdListOperation read GetFetchIdListOp;
     property FetchOp: TBoldPMFetchOperation read GetFetchOp;
     property ExactifyOp: TBoldPMExactifyIdsOperation read GetExactifyOp;
@@ -45,8 +48,7 @@ type
     destructor Destroy; override;
     procedure Connect(const Provider: IBoldProvider; const ObjectName: string); override;
     procedure Disconnect; override;
-    procedure PMExactifyIds(ObjectIdList: TBoldObjectidList;
-      TranslationList: TBoldIDTranslationList); override;
+    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
       MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList;
@@ -54,18 +56,19 @@ type
     procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
       Old_Values: IBoldValueSpace;
       Precondition: TBoldUpdatePrecondition;
-      TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType;
+      TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime;
       BoldClientID: TBoldClientID); override;
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList;
       TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList;
       TranslationList: TBoldIdTranslationList); override;
-    procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
+    procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                   TranslationList: TBoldIdTranslationList); override;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
     procedure PMTimeForTimestamp(Timestamp: TBoldTimestampType; var ClockTime: TDateTime); override;
     procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    function CanEvaluateInPS(sOCL: string; aSystem: TBoldElement; aContext: TBoldElementTypeInfo = nil; const aVariableList: TBoldExternalVariableList = nil): Boolean; override;
   end;
 
 implementation
@@ -73,16 +76,17 @@ implementation
 uses
   BoldComUtils,
   SysUtils,
-  BoldCursorGuard,
-  BoldComConst;
+  BoldCursorGuard;
 
 { TBoldSOAPPersistenceControllerProxy }
 
-procedure TBoldSOAPPersistenceControllerProxy.CheckConnect(
-  const Caller: string);
+function TBoldSOAPPersistenceControllerProxy.CanEvaluateInPS(sOCL: string;
+  aSystem: TBoldElement; aContext: TBoldElementTypeInfo;
+  const aVariableList: TBoldExternalVariableList): Boolean;
+const
+  sMethodNotImplemented = '%s.%s: not supported/implemented';  
 begin
-  if not Connected then
-    raise EBoldCom.CreateFmt(sNotConnected, [ClassName, Caller]);
+  raise EBold.CreateFmt(sMethodNotImplemented, [ClassName, 'CanEvaluateInPS']); // do not localize
 end;
 
 procedure TBoldSOAPPersistenceControllerProxy.Connect(
@@ -94,9 +98,9 @@ begin
   ObjectNamews := Objectname;
   Unk := Provider.GetObject(ObjectNameWS);
   if not Assigned(Unk) then
-    raise EBoldCom.CreateFmt(sFailedToConnect, [ObjectName]);
+    raise EBoldCom.CreateFmt('Failed connecting to COM object ''%s''.', [ObjectName]);
   if Unk.QueryInterface(IBoldSOAPService, fStub) <> 0 then
-    raise EBoldCom.CreateFmt(sCOMObjectNotPController, [ObjectName]);
+    raise EBoldCom.CreateFmt('COM object ''%s'' is not a persistence controller.', [ObjectName]);
 end;
 
 constructor TBoldSOAPPersistenceControllerProxy.Create(Model: TMoldModel);
@@ -158,10 +162,11 @@ end;
 
 procedure TBoldSOAPPersistenceControllerProxy.PMExactifyIds(
   ObjectIdList: TBoldObjectidList;
-  TranslationList: TBoldIDTranslationList);
+  TranslationList: TBoldIDTranslationList;
+  HandleNonExisting: Boolean);
 begin
-  CheckConnect('PMFetch'); // do not localize
-
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.PMFetch: Not connected.', [ClassName]);
   ExactifyOp.ObjectIdList := ObjectIdList;
   ExactifyOp.TranslationList := TranslationList;
   ExactifyOp.RemoteExecute(fStub);
@@ -174,7 +179,8 @@ procedure TBoldSOAPPersistenceControllerProxy.PMFetch(
 var
   CursorGuard: IBoldCursorGuard;
 begin
-  CheckConnect('PMFetch'); // do not localize
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.PMFetch: Not connected.', [ClassName]);
 
   try
     CursorGuard := TBoldCursorGuard.Create;
@@ -200,7 +206,8 @@ procedure TBoldSOAPPersistenceControllerProxy.PMFetchIDListWithCondition(
 var
   CursorGuard: IBoldCursorGuard;
 begin
-  CheckConnect('PMFetchIDListWithCondition'); // do not localize
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.PMFetchIDListWithCondition: Not connected.', [ClassName]);
 
   CursorGuard := TBoldCursorGuard.Create;
   SendExtendedEvent(bpeStartFetchId, [Condition]);
@@ -224,7 +231,8 @@ procedure TBoldSOAPPersistenceControllerProxy.PMTimeForTimestamp(
 var
   Op: TBoldPMTimeForTimestampOperation;
 begin
-  CheckConnect('PMUpdate'); // do not localize
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.PMUpdate: Not connected.', [ClassName]);
 
   Op := TBoldPMTimeForTimestampOperation.Create(fStreamManager);
   try
@@ -242,7 +250,8 @@ procedure TBoldSOAPPersistenceControllerProxy.PMTimestampForTime(
 var
   Op: TBoldPMTimestampForTimeOperation;
 begin
-  CheckConnect('PMUpdate'); // do not localize
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.PMUpdate: Not connected.', [ClassName]);
 
   Op := TBoldPMTimestampForTimeOperation.Create(fStreamManager);
   try
@@ -271,13 +280,14 @@ end;
 
 procedure TBoldSOAPPersistenceControllerProxy.PMUpdate(
   ObjectIdList: TBoldObjectIdList; ValueSpace, Old_Values: IBoldValueSpace;
-  Precondition: TBoldUpdatePrecondition;
+  Precondition: TBoldUpdatePrecondition; 
   TranslationList: TBoldIdTranslationList;
-  var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID);
+  var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID);
 var
   CursorGuard: IBoldCursorGuard;
 begin
-  CheckConnect('PMUpdate'); // do not localize
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.PMUpdate: Not connected.', [ClassName]);
 
   try
     CursorGuard := TBoldCursorGuard.Create;
@@ -295,16 +305,16 @@ begin
     UpdateOp.RemoteExecute(fStub);
 
     if assigned(Precondition) and Precondition.failed then
-    // update failed. don't get out params.
     else
     begin
       TimeStamp := UpdateOp.Timestamp;
+      TimeOfLatestUpdate := now; // TODO implement
       ValueSpace.ApplytranslationList(UpdateOp.TranslationList);
     end;
   finally
     if not Assigned(TranslationList) then
       UpdateOp.FreeTranslationList;
-    SendEvent(bpeEndUpdate);
+    SendEvent(bpeEndUpdate);  
   end;
 end;
 
@@ -314,7 +324,8 @@ procedure TBoldSOAPPersistenceControllerProxy.ReserveNewIds(
 var
   ReserveOp: TBoldPMReserveNewIdsOperation;
 begin
-  CheckConnect('ReserveNewIds'); // do not localize
+  if not Connected then
+    raise EBoldCom.CreateFmt('%s.ReserveNewIds: Not connected.', [ClassName]);
 
   ReserveOp := TBoldPMReserveNewIdsOperation.Create(fStreamManager);
   try
@@ -344,5 +355,7 @@ begin
   AddSubscription(Subscriber, bpeCreateObject, bpeCreateObject);
   AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
 end;
+
+initialization
 
 end.

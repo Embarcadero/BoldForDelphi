@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEHandlesReg;
 
 interface
@@ -31,7 +34,6 @@ end;
 
 procedure Register;
 begin
-  RemovePackageFromDisabledPackagesRegistry(Format('BoldOLLE%s', [LIBSUFFIX])); // do not localize
   RegisterComponentsOnPalette;
   RegisterComponentEditors;
 end;

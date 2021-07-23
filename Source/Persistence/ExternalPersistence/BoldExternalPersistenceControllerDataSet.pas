@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceControllerDataSet;
 
 interface
@@ -20,6 +23,10 @@ type
     fMaxFetchBlockSize: integer;
   protected
     function LocateInDB(MoldClass: TMoldClass; ObjectContents: IBoldObjectContents): TDataSet;
+    procedure PrepareFetchExternal(ExternalKeys: TBoldObjectIdList;
+      ValueSpace: IBoldValueSpace; MoldClass: TMoldClass;
+      MemberIdList: TBoldMemberIdList; var FetchContext: TObject); override;
+    procedure PostFetch(FetchContext: TObject; MoldClass: TMoldClass); override;
     function ConfigItemByObjectContents(ObjectContents: IBoldObjectContents): TBoldExternalPersistenceConfigDataSetItem;
     procedure FetchObject(ObjectContents: IBoldObjectContents;
       MemberIdList: TBoldMemberIdList; FetchContext: TObject;
@@ -48,8 +55,10 @@ type
       Config: TBoldExternalPersistenceConfigDataSetItems;
       TypeNameDictionary: TBoldTypeNameDictionary;
       OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer);
+    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
     property Config: TBoldExternalPersistenceConfigDataSetItems read fConfig;
   end;
+
 
 implementation
 
@@ -60,8 +69,7 @@ uses
   BoldNameExpander,
   BoldValueInterfaces,
   BoldStringId,
-  BoldDefaultId,
-  ExPeConsts;
+  BoldDefaultId;
 
 function MemberIndexByName(MoldClass: TMoldClass; MemberName: String): Integer;
 begin
@@ -195,7 +203,7 @@ begin
     Result := DT.asDateTime
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     Result := BL.asBlob
-  else raise Exception.Create(sUnknownDataType);
+  else raise Exception.Create('Unknown data type');
 end;
 
 procedure VariantToBoldValue(B: IBoldValue; Value: Variant);
@@ -232,7 +240,7 @@ begin
     DT.asDateTime := Value
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     BL.asBlob := Value
-  else raise Exception.Create(sUnknownDataType);
+  else raise Exception.Create('Unknown data type');
 end;
 
 procedure SetBoldValueToNull(B: IBoldValue);
@@ -268,7 +276,7 @@ begin
     DT.asDateTime := 0
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     BL.asBlob := ''
-  else raise Exception.Create(sUnknownDataType);
+  else raise Exception.Create('Unknown data type');
 end;
 
 function GetKeyCount(MoldClass: TMoldClass): Integer;
@@ -315,7 +323,7 @@ end;
 
 constructor TBoldExternalPersistenceControllerDataSet.Create(MoldModel: TMoldModel; Config: TBoldExternalPersistenceConfigDataSetItems; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer);
 begin
-  inherited Create(MoldModel, TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates);
+  inherited Create(MoldModel, TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates, UpdateBoldDatabaseFirst);
   FConfig := Config;
   FMaxFetchBlockSize := MaxFetchBlockSize;
 end;
@@ -421,7 +429,7 @@ procedure TBoldExternalPersistenceControllerDataSet.FetchObject(
 
         MultiLinkConfigItem := Config.FindExpressionName(MultiLinkClass.ExpandedExpressionName);
         if not Assigned(MultiLinkConfigItem) then
-          raise Exception.CreateFmt(sLinkToUnconfiguredTable, [MultiLinkClass.ExpandedExpressionName]);
+          raise Exception.CreateFmt('External link to unconfigured table %s', [MultiLinkClass.ExpandedExpressionName]);
 
         MultiLinkDataSet := MultiLinkConfigItem.DataSet;
         MultiLinkKeyName := RemovePreAt(MoldRole.OtherEnd);
@@ -433,7 +441,7 @@ procedure TBoldExternalPersistenceControllerDataSet.FetchObject(
         for i := 0 to GetCharCount(';', MultiLinkKeyName) do
         begin
           if S <> '' then
-            S := S + ' and '; // do not localize
+            S := S + ' and ';
           S := S + '(' + GetNextWord(B, ';') + ' = ' + ConfigItem.DataSet.FieldByName(GetNextWord(A, ';')).AsString + ')';
         end;
 
@@ -451,7 +459,6 @@ procedure TBoldExternalPersistenceControllerDataSet.FetchObject(
               if not VarIsNull(DBValue) then
               begin
                 ExternalKey := nil;
-                 // the type of the field MUST match the type of the internal ID
                 if VarType(DBValue) in [varInteger, varSmallint, varSingle, varDouble] then
                 begin
                   ExternalKey := TBoldDefaultId.Create;
@@ -463,7 +470,7 @@ procedure TBoldExternalPersistenceControllerDataSet.FetchObject(
                   TBoldStringId(ExternalKey).AsString := DBValue;
                 end
                 else
-                  raise Exception.CreateFmt(sUnknownVarTypeLoadingID, [MoldClass.name, MoldRole.name]);
+                  raise Exception.CreateFmt('Unknown vartype when loading an external ID for multilink %s.%s', [MoldClass.name, MoldRole.name]);
 
                 MultiLinkList.Add(ExternalKey);
                 ExternalKey.Free;
@@ -496,7 +503,7 @@ procedure TBoldExternalPersistenceControllerDataSet.FetchObject(
             TBoldStringId(ExternalKey).AsString := DBValue;
           end
           else
-            raise Exception.CreateFmt(sUnknownVarTypeLoadingSingleID, [MoldClass.name, MoldRole.name]);
+            raise Exception.CreateFmt('Unknown vartype when loading an external ID for Singlelink %s.%s', [MoldClass.name, MoldRole.name]);
 
           if Value.QueryInterface(IBoldObjectIdRef, IDRef) = S_OK then
             SetSingleLink(IDRef, ExternalKey, MoldRole.OtherEnd.MoldClass);
@@ -578,7 +585,7 @@ begin
       TBoldStringId(ExternalId).AsString := DBValue;
     end
     else
-      raise Exception.CreateFmt(sUnknownVarTypeLoadingObject, [MoldClass.name]);
+      raise Exception.CreateFmt('Unknown vartype when loading an external ID for %s', [MoldClass.name]);
     ExternalKeys.Add(ExternalId);
     ExternalId.Free;
     ConfigItem.DataSet.Next;
@@ -606,6 +613,11 @@ var
 begin
   MoldClass := MoldModel.Classes[ObjectContents.ObjectId.TopSortedIndex];
   result := Config.FindExpressionName(MoldClass.ExpandedExpressionName);
+end;
+
+procedure TBoldExternalPersistenceControllerDataSet.SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber);
+begin
+  inherited;
 end;
 
 procedure TBoldExternalPersistenceControllerDataSet.UpdateObjects(
@@ -672,7 +684,19 @@ begin
     TBoldStringId(Result).AsString := DBValue;
   end
   else
-    raise Exception.CreateFmt(sUnknownVarTypeLoadingObject, [MoldClass.name]);
+    raise Exception.CreateFmt('Unknown vartype when loading an external ID for %s', [MoldClass.name]);
+end;
+
+
+procedure TBoldExternalPersistenceControllerDataSet.PostFetch(
+  FetchContext: TObject; MoldClass: TMoldClass);
+begin
+  inherited;
+end;
+
+procedure TBoldExternalPersistenceControllerDataSet.PrepareFetchExternal(ExternalKeys: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MoldClass: TMoldClass; MemberIdList: TBoldMemberIdList; var FetchContext: TObject);
+begin
+  inherited;
 end;
 
 function TBoldExternalPersistenceControllerDataSet.GetMaxFetchBlockSize: integer;
@@ -712,13 +736,13 @@ begin
       Val(T, v, c);
       if c <> 0 then
         T := '''' + T + '''';
-      SQL := SQL + '(' + GetNextWord(S, ';') + ' = ' + T + ') AND '; // do not localize
+      SQL := SQL + '(' + GetNextWord(S, ';') + ' = ' + T + ') AND ';
     end;
     if Length(SQL) > 1 then
       SetLength(SQL, Length(SQL)-5);
     SQL := SQL + ')';
 
-    Result := Result + SQL + ' OR '; // do not localize
+    Result := Result + SQL + ' OR ';
   end;
 
   if Length(Result) > 0 then
@@ -748,7 +772,7 @@ begin
         else if KeyValue.QueryInterface(IBoldIntegerContent, IntContent) = S_OK then
           IntContent.AsInteger := StrToInt(GetNextWord(S, ';'))
         else
-          raise EBold.createFmt(sKeyTypeNotAutoHandled, [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
+          raise EBold.createFmt('Keytype not handled automatically: %s.%s', [MoldClass.Name, MoldClass.AllBoldMembers[i].Name]);
       end;
     end;
   end;
@@ -771,5 +795,7 @@ begin
         Result := ConfigItem.DataSet;
   end;
 end;
+
+initialization
 
 end.

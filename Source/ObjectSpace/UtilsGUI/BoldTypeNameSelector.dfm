@@ -56,8 +56,6 @@ object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
     TabOrder = 0
     OnChange = tvMetaTypesChange
     OnDblClick = tvMetaTypesDblClick
-    ExplicitWidth = 344
-    ExplicitHeight = 288
   end
   object pnButtons: TPanel
     Left = 0
@@ -67,8 +65,6 @@ object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 288
-    ExplicitWidth = 344
     DesignSize = (
       336
       40)
@@ -100,7 +96,7 @@ object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
     Left = 228
     Top = 164
     Bitmap = {
-      494C010101000400080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

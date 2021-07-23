@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldThreadSafeLog;
 
 interface
@@ -69,7 +72,8 @@ uses
   SysUtils,
   BoldUtils,
   Windows,
-  BoldDefs;
+  BoldDefs,
+  BoldIsoDateTime;
 
 var
   LogThreadActivities: Boolean;
@@ -196,7 +200,7 @@ begin
     CloseStream;
   finally
     fLocker.Release;
-  end;
+  end;      
   FreeAndNil(fLocker);
   inherited;
 end;
@@ -215,7 +219,6 @@ begin
     OpenMode := fmOpenWrite or fmShareDenyWrite;
     fFileStream := TFileStream.Create(fFileName, OpenMode);
     FFileStream.Seek(0, soFromEnd);
-//    fFileStream.Seek(fFileStream.Size, soFromBeginning);   // go to end of file
     Result := true
   except
     Result := false;
@@ -225,6 +228,7 @@ end;
 procedure TFileLogging.Trace(const Entry: string);
 var
   line: string;
+  Bytes: TBytes;
 begin
   fLocker.Acquire;
   try
@@ -233,22 +237,23 @@ begin
       if (fMaxSize > 0) and (fFileStream.Size > fMaxSize) then
         FlushStream;
       if IncludeDate then
-        Line := DateTimeToStr(now)
+        Line := AsISODateTimeMS(now)
       else
-        Line := TimeToStr(now);
+        Line := AsISOTimeMS(now);
 
       Line := Line + ' ' + Entry;
 
       if IncludeThreadId then
       begin
         if ShortThreadId then
-          line := line + Format(':TID=%d', [GetCurrentThreadID]) // do not localize
+          line := line + Format(':TID=%d', [GetCurrentThreadID])
         else
-          line := line + Format(' (ThreadID=%d)', [GetCurrentThreadID]); // do not localize
+          line := line + Format(' (ThreadID=%d)', [GetCurrentThreadID]);
       end;
 
       Line := Line + BOLDCRLF;
-      fFileStream.Write(Pointer(line)^, Length(line));
+      Bytes := TEncoding.UTF8.GetBytes(line);
+      fFileStream.write(Bytes, Length(Bytes));
     end;
   finally
     fLocker.Release;
@@ -262,7 +267,7 @@ end;
 
 procedure TFileLogging.FlushStream;
 begin
-  fFileStream.Size := 0;   // go to end of file
+  fFileStream.Size := 0;
 end;
 
 procedure TFileLogging.SetOpen(const Value: Boolean);

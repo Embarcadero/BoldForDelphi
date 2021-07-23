@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldGeneratorTemplatesCPP;
 
 interface
@@ -6,7 +9,8 @@ uses
   Classes,
   BoldMeta,
   BoldGeneratorTemplates,
-  BoldTemplateExpander;
+  BoldTemplateExpander
+  ;
 
 type
   { TBoldGeneratorTemplateCPPDM }
@@ -26,6 +30,7 @@ type
     { Public declarations }
   end;
 
+
   { TBoldCPPTemplateManager }
   TBoldCPPTemplateManager = class(TBoldGeneratorTemplateManager)
   private
@@ -43,7 +48,7 @@ type
     function GetDefaultIncFileExtension: string; override;
     property DataModule: TBoldGeneratorTemplateCPPDM read GetDataModule;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function MethodToCOMHeader(OwningClass: TMoldClass; Method: TMoldMethod; InterfaceCode: Boolean; ParametersToCoerce: TStringList; ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel; GenerateMIDLCode: Boolean): String; override;
     function MethodToCOMCall(OwningClass: TMoldClass; Method: TMoldMethod; ParametersToCoerce, ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel): String; override;
     function ReadMethodSignature(ClassName, AttributeName, AttributeType: string): string; override;
@@ -62,7 +67,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUMLTypes,
   BoldTaggedValueSupport,
   BoldMetaSupport;
@@ -71,7 +75,7 @@ uses
 
 { TBoldCPPTemplateManager }
 
-destructor TBoldCPPTemplateManager.Destroy;
+destructor TBoldCPPTemplateManager.destroy;
 begin
   FreeAndNil(fDataModule);
   inherited;
@@ -166,15 +170,12 @@ begin
     s := s + ParamType + ' ';
   end
   else
-    s := s + 'void '; // do not localize
+    s := s + 'void ';
+    s := s + '__safecall ';
 
-//  if InterfaceCode then
-    s := s + '__safecall '; // do not localize
-//  else
-//    s := s + '__fastcall '; // do not localize
 
   if not InterfaceCode then
-    s := s + OwningClass.ExpandedDelphiName + 'Adapter::'; // do not localize
+    s := s + OwningClass.ExpandedDelphiName + 'Adapter::';
 
   s := s + Method.ExpandedDelphiName;
 
@@ -195,7 +196,6 @@ begin
 
     if param.ParameterKind in [pdOut, pdInout] then
     begin
-      // ISJE params := params + 'var ';
       if assigned(ParametersToCoerce) and
         ((ParamType = BoldWideStringTypeName) or
          (ParamType = BoldWordBoolTypeName)) then
@@ -211,7 +211,7 @@ begin
 
     end
     else if IsConst then
-      Params := Params + 'const '; // do not localize
+      Params := Params + 'const ';
     Params := Params + ParamType + ' ' + Param.ParameterName;
   end;
 
@@ -238,7 +238,7 @@ var
   end;
 
 begin
-  s := 'As' + OwningClass.ExpandedExpressionName + '->' + Method.ExpandedDelphiName; // do not localize
+  s := 'As' + OwningClass.ExpandedExpressionName + '->' + Method.ExpandedDelphiName;
 
   params := '';
   for i := 0 to Method.Parameters.Count - 1 do
@@ -247,11 +247,11 @@ begin
       params := params + ', ';
     Param := tMoldParameter(Method.Parameters[i]);
     if ParametersToInterfaceCoerce.IndexOfName(Param.ParameterName)  <> -1 then
-      params := params + param.ParameterName + '_temp' // do not localize
+      params := params + param.ParameterName + '_temp'
     else if ParameterNeedsMarshalling(Param.ParameterType, InterfaceName) then
-      Params := Params + '((' + Param.DelphiParameterType + '*)' + '(BoldComInterfaceToObject(' + Param.ParameterName + ')))' // do not localize
+      Params := Params + '((' + Param.DelphiParameterType + '*)' + '(BoldComInterfaceToObject(' + Param.ParameterName + ')))'
     else if parametersToCoerce.IndexOfName(param.ParameterName) <> -1 then
-      params := params + param.ParameterName + '_temp' // do not localize
+      params := params + param.ParameterName + '_temp'
     else
       Params := params + Param.ParameterName;
   end;
@@ -261,12 +261,14 @@ begin
   if Method.HasReturnValue then
   begin
     if ParameterNeedsMarshalling(Trim(method.ReturnType), InterfaceName) then
-      s := 'BoldComCreateAdapter(' + s + ', False, ' + '__uuidof(' + Interfacename + '), Result)' // do not localize
+      s := 'BoldComCreateAdapter(' + s + ', False, ' + '__uuidof(' + Interfacename + '), Result)'
     else
-      s := 'result := ' + s; // do not localize
+      s := 'result := ' + s;
   end;
   result := s + ';';
+
 end;
+
 
 function TBoldCPPTemplateManager.MethodToCodeHeader(
   OwningClass: TMoldClass; Method: TMoldMethod; TagValue: Integer;
@@ -278,22 +280,22 @@ begin
   s := '';
 
   if (TagValue in [publicTag..PrivateTag]) and Method.IsClassMethod then
-    s := s + 'static '; // do not localize
+    s := s + 'static ';
 
   if (TagValue in [publicTag..PrivateTag]) and
       (Autooverride or
        (Method.FuncType in [dfvirtual]) or
        method.OverrideInAllSubclasses) then
   begin
-    s := s + 'virtual '; // do not localize
+    s := s + 'virtual ';
   end;
 
   if Method.HasReturnValue then
     s := s + Method.DelphiReturnType+' '
   else
-    s := s + 'void '; // do not localize
+    s := s + 'void ';
 
-  s := s + '__fastcall '; // do not localize
+  s := s + '__fastcall ';
 
   if TagValue = ImplementationTag then
     s := s + OwningClass.ExpandedDelphiName + '::';
@@ -305,11 +307,11 @@ begin
     if Signature <> '' then
       s := s + '(' + Signature + ')'
     else
-      s := s + '(void)'; // do not localize
+      s := s + '(void)';
   end;
 
   if Method.FuncType = dfAbstractVirtual then
-    s := s + ' = 0'; // do not localize
+    s := s + ' = 0';
 
   result := s;
 end;
@@ -335,22 +337,23 @@ begin
       result := result + ', ';
 
 {    if Parameter.IsConst then
-      Result := Result + 'const ' // do not localize
+      Result := Result + 'const '
     else if Parameter.ParameterKind = pdInOut then
-      Result := Result + 'var ' // do not localize
+      Result := Result + 'var '
     else if Parameter.ParameterKind = pdOut then
-      Result := Result + 'out '; // do not localize
+      Result := Result + 'out ';
 }
 
-    result := result + format('%s %s', [ // do not localize
+    result := result + format('%s %s', [
       AdaptCPPParameterType(Parameter.DelphiParameterType),
       Parameter.ParameterName]);
   end;
+
 end;
 
 function TBoldCPPTemplateManager.GetDefaultIncFileExtension: string;
 begin
-  result := '_impl.cpp'; // do not localize
+  result := '_impl.cpp';
 end;
 
 function TBoldCPPTemplateManager.StringContainsMethodHeader(s: String): Boolean;
@@ -372,6 +375,7 @@ begin
   Params := Params + ParamType + ' ' + ParamName;
 end;
 
+
 function TBoldCPPTemplateManager.GetSearchStringfromMethodHeader(header: String; SearchParameterList: Boolean): String;
 begin
   result := header;
@@ -384,23 +388,24 @@ function TBoldCPPTemplateManager.GenerateInheritedCall(
 begin
   result := '';
   if MoldMethod.HasReturnValue then
-    result := 'return '; // do not localize
+    result := 'return ';
   if assigned(MoldClass.SuperClass) then
     result := result + MoldClass.SuperClass.ExpandedDelphiName
   else
-    result := result + 'TBoldObject'; // do not localize
+    result := result + 'TBoldObject';
 
-  result := result + format('::%s(%s)', [Moldmethod.Name, MoldMethod.CallSignature]); // do not localize
+  result := result + format('::%s(%s)', [Moldmethod.Name, MoldMethod.CallSignature]);
+
 end;
 
 function TBoldCPPTemplateManager.ReadMethodSignature(ClassName, AttributeName, AttributeType: string): string;
 begin
-  result := format('%s __fastcall %s::Get%s()', [AttributeType, ClassName, AttributeName]); // do not localize
+  result := format('%s __fastcall %s::Get%s()', [AttributeType, ClassName, AttributeName]);
 end;
 
 function TBoldCPPTemplateManager.WriteMethodSignature(ClassName, AttributeName, AttributeType: string): string;
 begin
-  result := format('void __fastcall %s::Set%s(%s NewValue)', [ClassName, AttributeName, AttributeType]); // do not localize
+  result := format('void __fastcall %s::Set%s(%s NewValue)', [ClassName, AttributeName, AttributeType]);
 end;
 
 initialization

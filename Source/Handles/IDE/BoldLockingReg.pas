@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockingReg;
 
 interface
@@ -5,6 +8,8 @@ interface
 procedure Register;
 
 implementation
+
+{$R BoldLockingReg.res}
 
 uses
   SysUtils,
@@ -14,7 +19,6 @@ uses
   BoldIDEConsts,
   BoldLockingHandles;
 
-{.$R *.res}
 
 procedure RegisterComponentsOnPalette;
 begin
@@ -27,3 +31,4 @@ begin
 end;
 
 end.
+

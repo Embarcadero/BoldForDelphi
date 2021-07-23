@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSQLQuery;
 
 interface
@@ -5,6 +8,7 @@ interface
 uses
   Db,
   Classes,
+  BoldBase,
   BoldSQLDataBaseConfig,
   BoldId,
   BoldContainers,
@@ -43,7 +47,7 @@ type
   TBoldSQLQueryMode = (qmSelect, qmInsert, qmUpdate, qmDelete);
 
   { TBoldSQLJoin }
-  TBoldSQLJoin = class
+  TBoldSQLJoin = class(TBoldMemoryManagedObject)
   private
     fColumnRef1: TBoldSQLColumnReference;
     fColumnRef2: TBoldSQLColumnReference;
@@ -56,26 +60,26 @@ type
   end;
 
   { TBoldSQLTableReference }
-  TBoldSQLTableReference = class
+  TBoldSQLTableReference = class(TBoldMemoryManagedObject)
   private
     fTableDescription: TBoldSQLTableDescription;
     fColumnReferences: TBoldObjectArray;
     fQuery: TBoldSQLQuery;
     fAliasName: String;
-    function GetAliasName: String;
-    function GetTableAliasDeclaration: String;
-    procedure EnsureColumnExists(ColumnName, Operation: String);
+    function GetAliasName: String;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTableAliasDeclaration: String;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure EnsureColumnExists(const ColumnName, Operation: String);
   public
     constructor Create(Query: TBoldSQLQuery);
     destructor Destroy; override;
-    function GetColumnReference(ColumnName: String): TBoldSQLColumnReference;
+    function GetColumnReference(const ColumnName: String): TBoldSQLColumnReference;
     property TableDescription: TBoldSQLTableDescription read fTableDescription;
     property AliasName: String read GetAliasName;
     property TableAliasDeclaration: String read GetTableAliasDeclaration;
   end;
 
   { TBoldSQLColumnReference }
-  TBoldSQLColumnReference = class
+  TBoldSQLColumnReference = class(TBoldMemoryManagedObject)
   private
     fColumnDescription: TBoldSQLColumnDescription;
     fTableReference: TBoldSQLTableReference;
@@ -87,8 +91,19 @@ type
     property PrefixedColumnName: String read GetPrefixedColumnName;
   end;
 
+  { TBoldSQLOrderByInfo }
+  TBoldSQLOrderByInfo = class(TBoldMemoryManagedObject)
+  private
+    FColumn: TBoldSQLColumnReference;
+    FDescending: Boolean;
+  public
+    constructor Create(Column: TBoldSQLColumnReference; const Descending: Boolean);
+    property Column: TBoldSQLColumnReference read FColumn;
+    property Descending: Boolean read FDescending;
+  end;
+
   { TBoldSqlWCF }
-  TBoldSqlWCF = class
+  TBoldSqlWCF = class(TBoldMemoryManagedObject)
   public
     function GetAsString(Query: TBoldSQlQuery): String; virtual; abstract;
   end;
@@ -100,7 +115,7 @@ type
     fArg2: TBoldSqlWCF;
     fSymbol: string;
   public
-    constructor Create(arg1, arg2: TBoldSqlWCF; Symbol: String);
+    constructor Create(arg1, arg2: TBoldSqlWCF; const Symbol: String);
     destructor Destroy; override;
   end;
 
@@ -114,6 +129,16 @@ type
   { TBoldSQLWCFBinaryPrefix }
   TBoldSQLWCFBinaryPrefix = class(TBoldSqlWCFBinary)
   public
+    function GetAsString(Query: TBoldSQlQuery): String; override;
+  end;
+
+  { TBoldSQLWCFXOR }
+  TBoldSQLWCFXOR = class(TBoldSqlWCF)
+  private
+    fArg1: TBoldSqlWCF;
+    fArg2: TBoldSqlWCF;
+  public
+    constructor Create(arg1, arg2: TBoldSqlWCF);
     function GetAsString(Query: TBoldSQlQuery): String; override;
   end;
 
@@ -133,6 +158,12 @@ type
     function GetAsString(Query: TBoldSQlQuery): String; override;
   end;
 
+  { TBoldSQLWCFUnaryTransforLikeString }
+  TBoldSQLWCFUnaryTransformLikeString = class(TBoldSqlWCFUnary)
+  public
+    function GetAsString(Query: TBoldSQlQuery): String; override;
+  end;
+
   { TBoldSQLWCFUnaryPostfix }
   TBoldSQLWCFUnaryPostfix = class(TBoldSqlWCFUnary)
   public
@@ -144,7 +175,7 @@ type
   private
     fStr: String;
   public
-    constructor Create(Value: String);
+    constructor Create(const Value: String);
     function GetAsString(Query: TBoldSQlQuery): String; override;
   end;
 
@@ -161,7 +192,7 @@ type
   TBoldSQLWCFFloat = class(TBoldSqlWCF)
   private
     fFloat: Double;
-    fParam:TParam;     //<- Add param variable to avoid multiple create (HK)
+    fParam:TParam;
   public
     constructor Create(Value: Double);
     function GetAsString(Query: TBoldSQlQuery): String; override;
@@ -171,7 +202,7 @@ type
   TBoldSQLWCFDate = class(TBoldSqlWCF)
   private
     fDate: TDateTime;
-    fParam:TParam;     //<- Add param variable to avoid multiple create (HK)
+    fParam:TParam;
   public
     constructor Create(Value: TDateTime);
     function GetAsString(Query: TBoldSQlQuery): String; override;
@@ -181,7 +212,7 @@ type
   TBoldSQLWCFTime = class(TBoldSqlWCF)
   private
     fTime: TDateTime;
-    fParam:TParam;     //<- Add param variable to avoid multiple create (HK)
+    fParam:TParam;
   public
     constructor Create(Value: TDateTime);
     function GetAsString(Query: TBoldSQlQuery): String; override;
@@ -215,8 +246,7 @@ type
     fQuery: TBoldSQLQuery;
   protected
     function QueryAsString: String;
-    procedure CopyParams(Query: TBoldSQlQuery);//<- Provide a way to copy parameters (HK)
-
+    procedure CopyParams(Query: TBoldSQlQuery);
   public
     constructor Create(query: TBoldSQLQuery);
     destructor Destroy; override;
@@ -268,25 +298,25 @@ type
   private
     fExpr: String;
   public
-    constructor Create(Expr: String);
+    constructor Create(const Expr: String);
     function GetAsString(Query: TBoldSQlQuery): String; override;
   end;
 
   { TBoldSQLNameSpace }
-  TBoldSQLNameSpace = class
+  TBoldSQLNameSpace = class(TBoldMemoryManagedObject)
   private
     fUsedNames: TStringList;
     fUsedParams: integer;
   public
     constructor Create;
     destructor Destroy; override;
-    function GetUnusedParamNumber: integer;
+    function GetUnusedParamNumber: integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 
-    function GetUniqueAlias(TableName: String): String;
+    function GetUniqueAlias(const TableName: String): String;
   end;
 
   { TBoldSQLQuery }
-  TBoldSQLQuery = class
+  TBoldSQLQuery = class(TBoldMemoryManagedObject)
   private
     fMode: TBoldSQLQueryMode;
     fJoins: TBoldObjectArray;
@@ -294,6 +324,9 @@ type
     fSystemDescription: TBoldSQLSystemDescription;
     fColumnsToRetrieve: TBoldObjectArray;
     fColumnsToOrderBy: TBoldObjectArray;
+    fDistinct: Boolean;
+    fLimit: Integer;
+    fLimitTop: Boolean;
     fWhereClauseFragments: TBoldObjectArray;
     fParams: TParams;
     fRetrieveCountStar: Boolean;
@@ -302,15 +335,14 @@ type
     fMainTable: TBoldSqlTableReference;
     fIgnoreHistoricObjects: Boolean;
     fSQLDatabaseConfig: TBoldSQLDatabaseConfig;
-    function GetColumnToRetrieve(Index: Integer): TBoldSQLColumnReference;
-    function GetJoin(index: integer): TBoldSQLJoin;
-    function GetUniqueAlias(TableName: String): String;
-    function GetWCF(index: integer): TBoldSqlWCF;
+    function GetColumnToRetrieve(Index: Integer): TBoldSQLColumnReference;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetJoin(index: integer): TBoldSQLJoin;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetUniqueAlias(const TableName: String): String;
+    function GetWCF(index: integer): TBoldSqlWCF;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure GenerateSelect(Strings: TStrings);
     procedure EnsureTableExists(tableName, Operation: String);
     function GetAsString: string;
   protected
-    property TableReferences: TBoldSQLTableReferenceList read fTableReferences;
     property ColumnToRetrieve[Index: Integer]: TBoldSQLColumnReference read GetColumnToRetrieve;
     property Join[Index: integer]: TBoldSQLJoin read GetJoin;
     property WCF[index: integer]: TBoldSqlWCF read GetWCF;
@@ -318,32 +350,36 @@ type
     constructor Create(Mode: TBoldSQLQueryMode; SystemDescription: TBoldSQLSystemDescription; SQLDatabaseConfig: TBoldSQLDatabaseConfig; NameSpace: TBoldSqlNameSpace);
     destructor Destroy; override;
     function AddJoin(ColumnRef1, ColumnRef2: TBoldSQLColumnReference): TBoldSQLJoin;
-    function AddTableReference(TableName: String): TBoldSQLTableReference;
+    function AddTableReference(const TableName: String): TBoldSQLTableReference;
     procedure AddColumnToRetrieve(ColumnReference: TBoldSQLColumnReference);
-    procedure AddColumnToOrderBy(Columnreference: TBoldSQlColumnReference);
+    procedure AddColumnToOrderBy(Columnreference: TBoldSQlColumnReference; const
+        Descending: Boolean);
     procedure GenerateSQL(Strings: TStrings);
-    function AddParam(name: string=''): TParam;
+    function AddParam(const name: string=''): TParam;
     function HastableReferenceInList(TableReference: TBoldSQLTablereference): boolean;
-    procedure RetrieveCountStar;
-    procedure AddWCF(WCF: TBoldSqlWCF);
-    procedure ClearColumnsToRetrieve;
+    procedure RetrieveCountStar;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddWCF(WCF: TBoldSqlWCF);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ClearColumnsToRetrieve;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetLimit(const Top: Boolean = True; const Limit: Integer = 1);
     property Mode: TBoldSQLQueryMode read fMode;
     property SystemDescription: TBoldSQLSystemDescription read fSystemDescription;
     property MainTable: TBoldSQLTableReference read fMaintable;
     property AsString: string read GetAsString;
+    property Distinct: Boolean read fDistinct write fDistinct;
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read fSQLDatabaseConfig;
-    property Params: TParams read fParams; //<- Expose params so we may Copy them to real Query (HK)
+    property Params: TParams read fParams;
     property IgnoreHistoricObjects: Boolean read fIgnoreHistoricObjects write fIgnoreHistoricObjects;
+    property TableReferences: TBoldSQLTableReferenceList read fTableReferences;
   end;
 
   { TBoldSqlTableReferenceList }
   TBoldSqlTableReferenceList = class(TBoldObjectArray)
   private
-    function Get(Index: Integer): TBoldSqlTableReference;
-    procedure Put(Index: Integer; const Value: TBoldSqlTableReference);
+    function Get(Index: Integer): TBoldSqlTableReference;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Put(Index: Integer; const Value: TBoldSqlTableReference);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
-    function Add(Item: TBoldSqlTableReference): Integer;
-    procedure Insert(Index: Integer; Item: TBoldSqlTableReference);
+    function Add(Item: TBoldSqlTableReference): Integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Insert(Index: Integer; Item: TBoldSqlTableReference);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property Items[Index: Integer]: TBoldSqlTableReference read Get write Put; default;
   end;
 
@@ -353,13 +389,18 @@ uses
   BoldDefs,
   BoldPSDescriptionsDefault,
   SysUtils,
-  BoldUtils;
+  BoldIndex,
+{$IFNDEF BOLD_UNICODE}
+  StringBuilder,
+{$ENDIF}
+  BoldUtils,
+  BoldIndexableList;
 
 
 { TBoldSQLQuery }
 
 
-function TBoldSQLQuery.AddTableReference(TableName: String): TBoldSQLTableReference;
+function TBoldSQLQuery.AddTableReference(const TableName: String): TBoldSQLTableReference;
 var
   RootTable: TBoldSQLTableDescription;
   RootTableRef: TBoldSQLTableReference;
@@ -368,7 +409,7 @@ var
   MyIdCol, RootIdCol,
   MyStartCol, RootStartCol: TBoldSQLColumnReference;
 begin
-  EnsureTableExists(TableName, 'AddTableReference'); // do not localize
+  EnsureTableExists(TableName, 'AddTableReference');
 
   result := TBoldSQLTableReference.Create(self);
   Result.fTableDescription := SystemDescription.SQLTablesList.ItemsBySQLName[TableName];
@@ -404,13 +445,16 @@ begin
   fJoins := TBoldObjectArray.Create(0, [bcoDataOwner]);
   fTableReferences := TBoldSqlTableReferenceList.Create(0, [bcoDataOwner]);
   fColumnsToRetrieve := TBoldObjectArray.Create(0, []);
-  fColumnsToOrderBy := TBoldObjectArray.Create(0, []);
+  fColumnsToOrderBy := TBoldObjectArray.Create(0, [bcoDataOwner]);
   fSQLDatabaseConfig := SQLDatabaseConfig;
   fWhereClauseFragments := TBoldObjectArray.Create(0, [bcoDataOwner]);
   fSystemDescription := SystemDescription;
   fParams := TParams.Create;
   fNameSpace := nameSpace;
   fIgnoreHistoricObjects := true;
+  fDistinct := False;
+  fLimit := 0;
+  fLimitTop := True;
 end;
 
 destructor TBoldSQLQuery.Destroy;
@@ -438,9 +482,49 @@ end;
 {$HINTS ON}
 
 procedure TBoldSQLQuery.GenerateSelect(Strings: TStrings);
+
+  procedure AddOrderByClause(const LimitTop: Boolean);
+  var
+    temp: string;
+    i: Integer;
+    OrderByInfo: TBoldSQLOrderByInfo;
+  begin
+    temp := '';
+    if (fColumnsToOrderBy.Count = 0) and (fLimit > 0) then begin
+      // Use default sort on BOLD_ID column for limit, when no sort was spezified
+      if Assigned(MainTable) then begin
+        temp := MainTable.GetColumnReference(IDCOLUMN_NAME).PrefixedColumnName;
+      end else begin
+        temp := TableReferences[TableReferences.Count - 1].GetColumnReference(IDCOLUMN_NAME).PrefixedColumnName;
+      end;
+      if not LimitTop then begin
+        temp := temp + ' DESC'; // do not localize
+      end;
+    end;
+
+    if (fColumnsToOrderBy.Count > 0) then begin
+      for i := 0 to fColumnsToOrderBy.Count - 1 do
+      begin
+        OrderByInfo := TBoldSQLOrderByInfo(fColumnsToOrderBy[i]);
+        if temp <> '' then
+          temp := temp + ', ';
+        temp := temp + OrderByInfo.Column.PrefixedColumnName;
+        // If last records are fetched (not LimitTop) then sorting must be reversed.
+        if not (OrderByInfo.Descending xor LimitTop) then begin
+          temp := temp + ' DESC'; // do not localize
+        end;
+      end;
+    end;
+
+    if temp <> '' then begin
+      Strings.Add('ORDER BY ' + temp); // do not localize
+    end;
+  end;
+
+
 var
-  i, j: integer;
   temp: String;
+  i, j: integer;
   TempStringList: TStringList;
   PrefixOfNextWCF: string;
   PrevTable: String;
@@ -453,9 +537,24 @@ begin
     TempStringlist.Add(ColumnToRetrieve[i].PrefixedColumnName);
   if fGroupOperation <> '' then
     TempStringList[0] := fGroupOperation + '(' + TempStringList[0] + ')';
-  if fRetrieveCountStar then
-    TempStringList.Add('COUNT(*)'); // do not localize
-  Strings.Add('SELECT ' + BoldSeparateStringList(tempStringList, ', ', '', '')); // do not localize
+  if fRetrieveCountStar then begin
+    if fDistinct and (TableReferences.Count > 0) then begin
+      // Use ID column of last added table als distinct column.
+      TempStringList.Add('COUNT(DISTINCT ' +
+          TableReferences[TableReferences.Count - 1].GetColumnReference(
+              IDCOLUMN_NAME).PrefixedColumnName + ')'); // do not localize
+    end else begin
+      TempStringList.Add('COUNT(*)'); // do not localize
+    end;
+  end;
+  temp := 'SELECT '; // do not localize
+  if fDistinct and (not fRetrieveCountStar) then begin
+    temp := temp + 'DISTINCT '; // do not localize
+  end;
+  if fLimit > 0 then begin
+    temp := temp + 'TOP ' + IntToStr(fLimit) + ' '; // do not localize
+  end;
+  Strings.Add(temp + BoldSeparateStringList(tempStringList, ', ', '', ''));
 
   PrefixOfNextWCF := 'WHERE'; // do not localize
 
@@ -497,7 +596,7 @@ begin
       end
       else
         temp := temp + format(' JOIN %s ON (%s)', [TableReferences[i].TableAliasDeclaration, cond]); // do not localize
-   end;
+    end;
     Strings.Add(temp);
     for i := 0 to UnprocessedJoins.Count - 1 do
     begin
@@ -524,17 +623,22 @@ begin
     Strings.Add(PrefixOfNextWCF + ' ' + TBoldSqlWCF(fWhereClauseFragments[i]).GetAsString(self));
     PrefixOfNextWCF := '  AND'; // do not localize
   end;
-  temp := '';
-  if fColumnsToOrderBy.Count > 0 then
-  begin
-    for i := 0 to fColumnsToOrderBy.Count - 1 do
-    begin
-      if temp <> '' then
-        temp := temp + ', ';
-      temp := temp + TBoldSQlColumnReference(fColumnsToOrderBy[i]).PrefixedColumnName;
-    end;
-    Strings.Add('ORDER BY ' + temp); // do not localize
+
+  AddOrderByClause(fLimitTop);
+
+  // The following must be done last!
+  // Special case, when multiple last records are to be selected:
+  // Through the reversed sort the result set has the wanted records,
+  // but in reverse order. (Theoretcal problem, because Limit is 1 on ->first/last)
+  // Therefore original order must be restored:
+  if (not fLimitTop) and (fLimit > 1) then begin
+    Strings.Insert(0, 'SELECT * FROM (');
+    // SubSelect must be provided with Alias,
+    // otherwise its not possible to resort the outer select.
+    Strings.Add(') AS ReverseOrderSelect');
+    AddOrderByClause(True);
   end;
+
   TempStringList.Free;
 end;
 
@@ -554,7 +658,7 @@ begin
   result := TBoldSQLColumnReference(fColumnsToRetrieve[index]);
 end;
 
-function TBoldSQLQuery.GetUniqueAlias(TableName: String): String;
+function TBoldSQLQuery.GetUniqueAlias(const TableName: String): String;
 var
   i, Counter: Integer;
   OK: Boolean;
@@ -613,7 +717,7 @@ begin
   result := TBoldSqlWCF(fWhereClauseFragments[index]);
 end;
 
-function TBoldSQLQuery.AddParam(name: string=''): TParam;
+function TBoldSQLQuery.AddParam(const name: string=''): TParam;
 begin
   result := fParams.Add as tParam;
   if Name = '' then
@@ -650,9 +754,16 @@ begin
   result := fTableReferences.IndexOf(TableReference) <> -1;
 end;
 
+procedure TBoldSQLQuery.SetLimit(const Top: Boolean = True; const Limit:
+    Integer = 1);
+begin
+  fLimit := Limit;
+  fLimitTop := Top;
+end;
+
 { TBoldSQLTableReference }
 
-function TBoldSQLTableReference.GetColumnReference(ColumnName: String): TBoldSQLColumnReference;
+function TBoldSQLTableReference.GetColumnReference(const ColumnName: String): TBoldSQLColumnReference;
 var
   i: integer;
 begin
@@ -680,7 +791,7 @@ begin
   inherited;
 end;
 
-procedure TBoldSQLTableReference.EnsureColumnExists(ColumnName,
+procedure TBoldSQLTableReference.EnsureColumnExists(const ColumnName,
   Operation: String);
 begin
   if not assigned(TableDescription.ColumnsList.ItemsBySQLName[ColumnName]) then
@@ -711,6 +822,15 @@ end;
 function TBoldSQLColumnReference.GetPrefixedColumnName: String;
 begin
   result := format('%s.%s', [TableReference.AliasName, ColumnDescription.SQLName]) // do not localize
+end;
+
+{ TBoldSQLOrderByInfo }
+
+constructor TBoldSQLOrderByInfo.Create(Column: TBoldSQLColumnReference;
+  const Descending: Boolean);
+begin
+  FColumn := Column;
+  FDescending := Descending;
 end;
 
 { TBoldSQLJoin }
@@ -772,7 +892,7 @@ end;
 
 { TBoldSQLWCFBinary }
 
-constructor TBoldSQLWCFBinary.Create(arg1, arg2: TBoldSqlWCF; Symbol: String);
+constructor TBoldSQLWCFBinary.Create(arg1, arg2: TBoldSqlWCF; const Symbol: String);
 begin
   inherited Create;
   fArg1 := Arg1;
@@ -791,7 +911,21 @@ end;
 
 function TBoldSQLWCFBinaryInfix.GetAsString(Query: TBoldSQlQuery): String;
 begin
-  result := '(' + fArg1.GetAsString(Query) + ' ' + fSymbol + ' ' + fArg2.GetAsString(Query) + ')';
+  Result := '(';
+  if Assigned(fArg1) then begin
+    Result := Result + fArg1.GetAsString(Query) + ' ';
+  end;
+  if Assigned(fArg1) and Assigned(fArg2) then begin
+    Result := Result + fSymbol;
+  end;
+  if Assigned(fArg2) then begin
+    Result := Result + ' ' + fArg2.GetAsString(Query);
+  end;
+  // Add the escape character to use % and _ ( and [ ) within a search.
+  if SameStr(fSymbol, 'LIKE') then begin
+    Result := Result + ' ESCAPE ''\''';
+  end;
+  Result := Result + ')';
 end;
 
 class function TBoldSQLWCFBinaryInfix.CreateWCFForIdList(
@@ -825,9 +959,31 @@ begin
   result := '(' + fSymbol + '(' + fArg1.GetAsString(Query) + ', ' + fArg2.GetAsString(Query) + '))';
 end;
 
+{ TBoldSQLWCFXOR }
+
+constructor TBoldSQLWCFXOR.Create(arg1, arg2: TBoldSqlWCF);
+begin
+  inherited Create;
+  fArg1 := Arg1;
+  fArg2 := Arg2;
+end;
+
+function TBoldSQLWCFXOR.GetAsString(Query: TBoldSQlQuery): String;
+begin
+  Result := '(';
+  if Assigned(fArg1) and Assigned(fArg2) then begin
+    Result := Result + Format('(%s AND NOT %s) or (%1:s AND NOT %0:s)',
+                              [fArg1.GetAsString(Query),
+                               fArg2.GetAsString(Query)]);
+  end else begin
+    Result := Result + 'FALSE'; // This case does not exist
+  end;
+  Result := Result + ')';
+end;
+
 { TBoldSQLWCFString }
 
-constructor TBoldSQLWCFString.Create(Value: String);
+constructor TBoldSQLWCFString.Create(const Value: String);
 begin
   fStr := Value;
 end;
@@ -962,8 +1118,11 @@ end;
 destructor TBoldSQLWCFInQuery.destroy;
 begin
   // a workaround, the In-condition does not really own its query
-  fQuery := nil;
+  // -> No, not a workaroung, but a memory leak!
+  // -> TBoldSQLWCFInQuery is used only in 2 places, and there the query is not freed.
+//  fQuery := nil;
 
+  freeAndNil(fArg1);
   inherited;
   freeAndNil(fArg1);
 end;
@@ -976,7 +1135,7 @@ end;
 
 { TBoldSQLWCFGenericExpression }
 
-constructor TBoldSQLWCFGenericExpression.Create(Expr: String);
+constructor TBoldSQLWCFGenericExpression.Create(const Expr: String);
 begin
   fExpr := Expr;
 end;
@@ -1085,7 +1244,7 @@ begin
   inherited;
 end;
 
-function TBoldSQLNameSpace.GetUniqueAlias(TableName: String): String;
+function TBoldSQLNameSpace.GetUniqueAlias(const TableName: String): String;
 var
   i: integer;
 begin
@@ -1097,9 +1256,10 @@ begin
   fUsedNames.Add(result);
 end;
 
-procedure TBoldSQLQuery.AddColumnToOrderBy(Columnreference: TBoldSQlColumnReference);
+procedure TBoldSQLQuery.AddColumnToOrderBy(Columnreference:
+    TBoldSQlColumnReference; const Descending: Boolean);
 begin
-  fColumnsToOrderBy.Add(ColumnReference);
+  fColumnsToOrderBy.Add(TBoldSQLOrderByInfo.Create(ColumnReference, Descending));
 end;
 
 function TBoldSQLNameSpace.GetUnusedParamNumber: integer;
@@ -1140,5 +1300,33 @@ begin
   result := ':' + fParam.Name;
 end;
 
-end.
 
+
+{ TBoldSQLWCFUnaryTransforLikeString }
+
+function TBoldSQLWCFUnaryTransformLikeString.GetAsString(
+  Query: TBoldSQlQuery): String;
+var
+  SB: TStringBuilder;
+  Ch: Char;
+begin
+  Result := fArg1.GetAsString(Query);
+  if true or Query.SQLDatabaseConfig.QuoteLeftBracketInLike then
+  begin
+    Sb := TStringBuilder.Create(Length(Result)+10);
+    try
+      for Ch in Result do
+      if Ch = '[' then
+        SB.Append('[[]')
+      else
+        SB.Append(Ch);
+      Result := SB.ToString;
+    finally
+      sb.free;
+    end;
+  end;
+end;
+
+initialization
+
+end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldImage;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -10,20 +13,22 @@ uses
   Classes,
   Graphics,
   Controls,
-  Forms,  // TBorderStyle
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  Forms,
+  BoldEnvironmentVCL,
   BoldControlsDefs,
   BoldHandles,
   BoldElementHandleFollower,
   BoldControlPack,
   BoldViewerControlPack,
-  BoldElements;
+  BoldElements,
+  BoldDefs;
 
 type
   {forward declarations}
   TBoldImage = class;
 
   {-- TBoldImage --}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldImage = class(TCustomControl, IBoldOCLComponent)
   private
     fBoldProperties: TBoldViewerFollowerController;
@@ -38,16 +43,16 @@ type
     fQuickDraw: Boolean;
     fScale: Double;
     fDisplayRect: TRect;
-    FOnResize: TNotifyEvent;
+    FOnResize: TNotifyEvent;   
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
 
     function GetBoldHandle: TBoldElementHandle;
     function GetFollower: TBoldFOllower;
     procedure SetBorderStyle(Value: TBorderStyle);
-    procedure SetAutoSize(Value: Boolean);
+    procedure SetAutoSize(Value: Boolean); reintroduce;
     procedure SetDrawFocus(Value: Boolean);
     procedure SetBoldProperties(Value: TBoldViewerFollowerController);
     procedure SetBoldHandle(value: TBoldElementHandle);
@@ -95,7 +100,6 @@ type
     property Scale: Integer read GetScale write SetScale default 100;
     property Center: Boolean read fCenter write fCenter;
     property QuickDraw: Boolean read fQuickDraw write fQuickDraw;
-//    property ContentType: string //Use this property to specify
     property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsSingle;
     property OnResize: TNotifyEvent read FOnResize write FOnResize;
     {Standard properties}
@@ -138,8 +142,6 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
-  BoldDefs,
   BoldControlPackDefs;
 
 {-- TBoldImage --}
@@ -205,7 +207,6 @@ end;
 procedure TBoldImage.SetViewer(Value: TBoldAbstractViewAdapter);
 begin
   fBoldProperties.MayHaveChanged(Value, Follower);
-//  Invalidate;
 end;
 
 procedure TBoldImage.SetBorderStyle(Value: TBorderStyle);
@@ -314,12 +315,10 @@ end;
 procedure TBoldImage.CMTextChanged(var Message: TMessage);
 begin
   inherited;
-// FIXME Invalidate to redraw Caption  when there is no picture
 end;
 
 procedure TBoldImage.WMEraseBkgnd(var Message: TWMEraseBkgnd);
 begin
-//Ignore erase background to prevent flicker
 end;
 
 {}
@@ -447,7 +446,7 @@ begin
       if (csDesigning in ComponentState) then
         S := '(' + Name + ')'
       else
-        S := ''; //FIXME Some text in runtime?
+        S := '';
       Size := TextExtent(S);
       R := ClientRect;
       TextRect(R, (R.Right - Size.cx) div 2, (R.Bottom - Size.cy) div 2, S);
@@ -536,8 +535,7 @@ var
   aViewer: TBoldAbstractViewAdapter;
 
   function GetViewer: TBoldAbstractViewAdapter;
-  // FixMe: Could be a classmethod on TBoldAbstractViewAdapter
-  // reuse in method above aswell /JoHo
+
   var
     I: Integer;
   begin
@@ -564,7 +562,7 @@ begin
         Follower.Apply;
     end
     else
-      raise EBold.CreateFmt(sUnknownFileFormat, [ClassName, FileName]);
+      raise EBold.CreateFmt('%s.LoadFromFile: File format unknown: File: ''%s''', [ClassName, FileName]);
   end;
 end;
 
@@ -586,14 +584,14 @@ begin
     Result := nil;
 end;
 
-function TBoldImage.GetExpression: String;
+function TBoldImage.GetExpression: TBoldExpression;
 begin
   Result := BoldProperties.Expression;
 end;
 
-procedure TBoldImage.SetExpression(Expression: String);
+procedure TBoldImage.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldImage.GetVariableList: TBoldExternalVariableList;

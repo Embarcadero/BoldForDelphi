@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUtils;
 
 interface
@@ -7,7 +10,9 @@ uses
   SysUtils,
   Classes,
   TypInfo,
-  BoldDefs;
+  Windows,
+  BoldDefs,
+  WideStrings;
 
 type
   TBoldNotificationEvent = procedure(AComponent: TComponent; Operation: TOperation) of object;
@@ -24,14 +29,14 @@ type
 function CharCount(c: char; const s: string): integer;
 function BoldNamesEqual(const name1, name2: string): Boolean;
 procedure BoldAppendToStrings(strings: TStrings; const aString: string; const ForceNewLine: Boolean);
-function BoldSeparateStringList(strings: TStringList; const Separator, PreString, PostString: String): String;
+function BoldSeparateStringList(strings: TStringList; const Separator, PreString, PostString: String; AIndex: integer = -1): String;
 function BoldSeparatedAppend(const S1, S2: string;const Separator: string = ','): string;
 function BoldTrim(const S: string): string;
 function BoldIsPrefix(const S, Prefix: string): Boolean;
 function BoldStrEqual(P1, P2: PChar; Len: integer): Boolean;
-function BoldStrAnsiEqual(P1, P2: PChar; Len: integer): Boolean;
-function BoldAnsiEqual(const S1, S2: string): Boolean;
-function BoldStrStringEqual(const S1: string; P2: PChar; Len: integer): Boolean;
+function BoldStrAnsiEqual(P1, P2: PChar; Len: integer): Boolean;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+function BoldAnsiEqual(const S1, S2: string): Boolean;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+function BoldStrStringEqual(const S1: string; P2: PChar; Len: integer): Boolean;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 function BoldCaseIndependentPos(const Substr, S: string): Integer;
 procedure EnumToStrings(aTypeInfo: pTypeInfo; Strings: TStrings);
 function CapitalisedToSpaced(Capitalised: String): String;
@@ -48,7 +53,11 @@ function StrToDateFmt(const S: string; const DateFormat: string; const DateSepar
 function DateToStrFmt(const aDate: TDateTime; DateFormat: string; const DateSeparatorChar: char = '/'): String;
 function BoldParseFormattedDateList(const value: String; const formats: TStrings; var Date: TDateTime): Boolean;
 function BoldParseFormattedDate(const value: String; const formats: array of string; var Date: TDateTime): Boolean;
-
+{$IFDEF MSWINDOWS}
+function FileTimeToDateTime(const FileTime: TFileTime): TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+{$ENDIF}
+function UserTimeInTicks: Int64;
+function TicksToDateTime(Ticks: Int64): TDateTime;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 procedure EnsureTrailing(var Str: String; ch: char);
 { Taken from FileCtrl to remove unit dependency }
 function DirectoryExists(const Name: string): Boolean;
@@ -60,22 +69,89 @@ function GetModuleFileNameAsString(IncludePath: Boolean): string;
 {variant support}
 function BoldVariantToStrings(V: OleVariant; Strings: TStrings): Integer;
 
-const
-  BoldProductNameShort = 'BfD';
-  BoldProductVersion = '4.0';
+{$IFNDEF BOLD_DELPHI13_OR_LATER}
+function CharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean; overload; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+function CharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean; overload; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+{$ENDIF}
 
-var
-  BoldRunningAsDesignTimePackage: boolean = false;
+var BoldRunningAsDesignTimePackage: boolean = false;
 
 implementation
 
 uses
-  BoldCommonConst,
-  Windows;
+  BoldRev
+  {$IFDEF RIL}
+  {$IFNDEF BOLD_UNICODE}
+  ,StringBuilder
+  {$ENDIF}
+  {$ENDIF}
+;
 
 {$IFDEF LINUX}
 const
   MAX_COMPUTERNAME_LENGTH = 128;
+{$ENDIF}
+
+{$IFDEF MSWINDOWS}
+
+type
+  TFileTimeAligner = record
+  case integer of
+  0: (asFileTime: TFileTime);
+  1: (asInt64: Int64);
+  end;
+var
+  CurrentProcess: THANDLE = 0;
+
+function FileTimeToDateTime(const FileTime: TFileTime): TDateTime;
+const
+  Nr100nsPerDay = 3600.0*24*10000000;
+var
+  FileTimeAsInt64: Int64;
+begin
+  Move(FileTime, FileTimeAsInt64, 8);
+  Result := FileTimeAsInt64/Nr100nsPerDay;
+
+end;
+{$ENDIF}
+
+function UserTimeInTicks: Int64;
+var
+  UserTime, CreationTime, ExitTime, KernelTime: TFileTimeAligner;
+begin
+{$IFDEF MSWINDOWS}
+  if CurrentProcess <> 0 then
+    CloseHandle(CurrentProcess);
+  CurrentProcess := OpenProcess(PROCESS_QUERY_INFORMATION, False, GetCurrentProcessId);
+  if GetProcessTimes(CurrentProcess, CreationTime.asFileTime, ExitTime.asFileTime, KernelTime.asFileTime, UserTime.asFileTime) then
+    Result := UserTime.asInt64
+  else
+    Result := 0;  
+{$ELSE}
+  FIXME
+{$ENDIF}
+end;
+function TicksToDateTime(Ticks: Int64): TDateTime;
+const
+  Nr100nsPerDay = 3600.0*24.0*10000000.0;
+begin
+{$IFDEF MSWINDOWS}
+  Result := Ticks/Nr100nsPerDay;
+{$ELSE}
+  FIXME
+{$ENDIF}
+end;
+
+{$IFNDEF BOLD_DELPHI13_OR_LATER}
+function CharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean;
+begin
+  Result := C in CharSet;
+end;
+
+function CharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean;
+begin
+  Result := C in CharSet;
+end;
 {$ENDIF}
 
 { Taken from FileCtrl to remove unit dependency }
@@ -91,33 +167,37 @@ function ForceDirectories(Dir: string): Boolean;
 begin
   Result := True;
   if Length(Dir) = 0 then
-    raise Exception.Create(sCannotCreateDirectory);
+    raise Exception.Create('Cannot create directory');
   Dir := ExcludeTrailingPathDelimiter(Dir);
   if (Length(Dir) < 3) or DirectoryExists(Dir)
-    or (ExtractFilePath(Dir) = Dir) then Exit; // avoid 'xyz:\' problem.
+    or (ExtractFilePath(Dir) = Dir) then Exit;
   Result := ForceDirectories(ExtractFilePath(Dir)) and CreateDir(Dir);
 end;
 
 function BoldIsPrefix(const S, Prefix: string): Boolean;
+{ril - resusing length by variable }
+var
+  PrefixLen: Integer;
 begin
-  Result := (Length(s) >= Length(Prefix)) and CompareMem(@s[1], @Prefix[1], Length(Prefix));
+  PrefixLen := Length(Prefix);
+  Result := (Length(s) >= PrefixLen) and CompareMem(@s[1], @Prefix[1], PrefixLen * SizeOf(Char));
 end;
 
 function BoldStrEqual(P1, P2: PChar; Len: integer): Boolean;
 begin
- Result := CompareMem(P1, P2, Len);
+ Result := CompareMem(P1, P2, Len * SizeOf(Char));
 end;
 
 function BoldStrAnsiEqual(P1, P2: PChar; Len: integer): Boolean;
 begin
-  Result := CompareMem(P1, P2, Len) or (AnsiStrLIComp(P1, P2, Len) = 0);
+  Result := CompareMem(P1, P2, Len * SizeOf(Char)) or (AnsiStrLIComp(P1, P2, Len) = 0);
 end;
 
 function BoldStrCaseIndpendentEqual(P1, P2: PChar; Len: integer): Boolean;
 var
   ch1, ch2: Char;
 begin
-  if  not CompareMem(P1, P2, Len) then
+  if not CompareMem(P1, P2, Len * SizeOf(Char)) then
     while Len <> 0 do
     begin
       ch1 := P1^;
@@ -158,7 +238,7 @@ begin
   if Len <> Length(S1) then
     Result := False
   else
-    Result := CompareMem(PChar(S1), P2, Len);
+    Result := CompareMem(PChar(S1), P2, Len * SizeOf(Char));
 end;
 
 function BoldCaseIndependentPos(const Substr, S: string): Integer;
@@ -172,7 +252,7 @@ begin
   begin
     Result := Pos(Substr, S);
     if (Result = 0) or (Result > SubStrLen) then
-      Result := Pos(UpperCase(Substr), UpperCase(S));
+      Result := Pos(AnsiUpperCase(Substr), AnsiUpperCase(S));
   end;
 end;
 
@@ -185,21 +265,20 @@ end;
 
 function BooleanToString(BoolValue: Boolean): String;
 begin
-  if BoolValue then Result := 'True' else Result := 'False'; // do not localize
+  if BoolValue then Result := 'True' else Result := 'False';
 end;
 
 function StringToBoolean(StrValue: String): Boolean;
 begin
   Result := False;
-  if (UpperCase(StrValue)= 'Y') or (UpperCase(StrValue) = 'T') or (UpperCase(StrValue) = 'TRUE') then // do not localize
+  if (UpperCase(StrValue)= 'Y') or (UpperCase(StrValue) = 'T') or (UpperCase(StrValue) = 'TRUE') then
     Result := True;
 end;
 
 function BoldRootRegistryKey: string;
 begin
-  // Returns something like this: Software\BoldSoft\BfD20D5Pro\2.0
-  Result := Format('Software\BoldSoft\%s\%s', // do not localize
-    [BoldProductNameShort, BoldProductVersion]);
+  Result := Format('Software\BoldSoft\%s\%s',
+    [BoldProductNameShort,BoldProductVersion]);
 end;
 
 function GetModuleFileNameAsString(IncludePath: Boolean): string;
@@ -212,7 +291,7 @@ begin
   if IncludePath then
     Result := ModuleName
   else
-    Result := ExtractFileName(ModuleName);
+    Result := ExtractFileName(ModuleName);  
 end;
 
 procedure EnumToStrings(aTypeInfo: pTypeInfo; Strings: TStrings);
@@ -227,30 +306,119 @@ end;
 
 function BoldNamesEqual(const name1, name2: string): Boolean;
 begin
-  Result := (AnsiCompareText(name1, name2) = 0);
+  Result := (CompareText(name1, name2) = 0);
 end;
 
-function BoldSeparateStringList(strings: TStringList; const Separator, PreString, PostString: String): String;
+function BoldSeparateStringList(strings: TStringList; const Separator, PreString, PostString: String; AIndex: integer): String;
+{$IFDEF RIL}
+var
+  i, Cnt, Size: integer;
+  SB: TStringBuilder;
+begin
+  Cnt := strings.Count;
+  case Cnt of
+    0: Result := '';
+    1: Result := PreString + Strings[0] + PostString;
+  else
+  begin
+    Size := length(PreString) + length(PostString);
+    for I := 0 to Cnt - 1 do
+      Inc(Size, Length(Strings[I]));
+    Inc(Size, Length(Separator) * Cnt);
+    SB := TStringBuilder.Create(Size);
+    SB.Append(PreString);
+    for i := 0 to Cnt-2 do
+    begin
+      //result := result + Strings[i] + Separator;
+      SB.Append(Strings[i]);
+      if AIndex <> -1 then
+        SB.Append(IntToStr(AIndex));
+      SB.Append(Separator);
+    end;
+    // result := result + Strings[Strings.Count - 1]
+    SB.Append(Strings[Cnt-1]);
+    if AIndex <> -1 then
+      SB.Append(IntToStr(AIndex));
+    { no need to check Cnt again it IS > 0 so: }
+    // result := PreString + result +PostString;
+    SB.Append(PostString);
+    Result := SB.ToString;
+    FreeAndNil(SB);
+  end;
+  end;
+{$ELSE}
 var
   i: integer;
-
 begin
   result := '';
-
   if strings.Count > 0 then
   begin
     for i := 0 to strings.Count-2 do
-      result := result + Strings[i] + Separator;
-    result := result + Strings[Strings.Count - 1]
+    begin
+      result := result + Strings[i];
+      if AIndex <> -1 then
+        result := result + IntToStr(AIndex);
+      result := result + Separator;
+    end;
+    result := result + Strings[Strings.Count - 1];
+    if AIndex <> -1 then
+      result := result + IntToStr(AIndex);
   end
   else
     result := '';
-
   if strings.Count > 0 then
     result := PreString + result +PostString;
+{$ENDIF}
 end;
 
-procedure BoldAppendTostrings(Strings: TStrings; const aString: string; const ForceNewLine: Boolean);
+procedure BoldAppendToStrings(Strings: TStrings; const aString: string; const ForceNewLine: Boolean);
+{$IFDEF RIL}
+var
+  StrCount, SplitterPos: Integer;
+  SB: TStringBuilder;
+  TempStr: string;
+begin
+
+  { replace all LFs and CRs in string with space chars. This is "Superfast" : }
+  if (Pos(BOLDLF, aString)>0) or (Pos(BOLDCR, aString)>0) then
+  begin
+    SB := TStringBuilder.Create(aString);
+    SB.Replace(BOLDCR, ' ');
+    SB.Replace(BOLDLF, ' ');
+    TempStr := SB.ToSTring;
+    FreeAndNil(SB);
+  end
+  else
+    TempStr := aString;
+
+  Strings.BeginUpdate;
+  try
+    StrCount := Strings.Count-1;
+    if (StrCount = -1) or ForceNewLine then
+    begin
+      Strings.Add(TempStr);
+      Inc(StrCount);
+    end
+    else
+      Strings[StrCount] := Strings[StrCount] + TempStr;
+
+    { break lines into max 80 chars per line }
+    while Length(Strings[StrCount]) > 80 do
+    begin
+      SplitterPos := 80;
+
+      while (Pos(Strings[StrCount][SplitterPos],' ,=')=0) and (SplitterPos > 1)  do
+        Dec(SplitterPos);
+
+      Strings.Append(Copy(Strings[StrCount], SplitterPos + 1, 65536));
+      Strings[StrCount] := Copy(Strings[StrCount], 1, SplitterPos);
+
+      Inc(StrCount);
+    end;
+  finally
+    Strings.EndUpdate;
+  end;
+{$ELSE}
 var
   StrCount: integer;
   i: integer;
@@ -261,7 +429,7 @@ begin
   try
     TempStr := aString;
     for i := 1 to length(TempStr) do
-      if TempStr[i] in [BOLDLF, BOLDCR] then
+      if CharInSet(TempStr[i], [BOLDLF, BOLDCR]) then
         TempStr[i] := ' ';
     StrCount := Pred(Strings.Count);
     if (StrCount = -1) or ForceNewLine then
@@ -282,6 +450,7 @@ begin
   finally
     Strings.EndUpdate;
   end;
+{$ENDIF}
 end;
 
 function BoldSeparatedAppend(const S1, S2: string; const Separator: string = ','): string;
@@ -337,7 +506,6 @@ var
   Start: Integer;
 begin
   Result := '';
-  //if Pos('Neo',Capitalised)= 1 then Start := 4 else Start := 1;
   Start := 1;
   for I := Start to Length(Capitalised) do
     if (I>1) and (Capitalised[I] >= 'A') and (Capitalised[I] <= 'Z')
@@ -371,7 +539,6 @@ function GetUpperLimitForMultiplicity(const Multiplicity: String): Integer;
 var
   p: Integer;
 begin
-  // unspecified multilicity is 0..1
 
   if (Multiplicity = '') or (BoldTrim(Multiplicity) = '') then
     result := 1
@@ -411,7 +578,7 @@ begin
   MachName:= BoldTrim(MachineName);
   Result := (MachName = '') or (AnsiCompareText(GetComputerNameStr, MachName) = 0);
 end;
-
+{$IFDEF MSWINDOWS}
 function GetComputerNameStr: string;
 var
   Size: DWORD;
@@ -421,6 +588,14 @@ begin
   GetComputerName(LocalMachine, Size);
   Result := LocalMachine;
 end;
+{$ENDIF}
+
+{$IFDEF LINUX}
+function GetComputerNameStr: string;
+begin
+  Result := 'MyMachine';
+end;
+{$ENDIF}
 
 function TimeStampComp(const Time1, Time2: TTimeStamp): Integer;
 var
@@ -441,13 +616,13 @@ var
   PreviousShortDateFormat: string;
   PreviousDateSeparator: char;
 begin
-  PreviousShortDateFormat := FormatSettings.ShortDateFormat;
-  FormatSettings.ShortDateFormat := DateFormat;
-  PreviousDateSeparator := FormatSettings.DateSeparator;
-  FormatSettings.DateSeparator := DateSeparatorChar;
+  PreviousShortDateFormat := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := DateFormat;
+  PreviousDateSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := DateSeparatorChar;
   Result := StrToDateTime(S);
-  FormatSettings.ShortDateFormat := PreviousShortDateFormat;
-  FormatSettings.DateSeparator := PreviousDateSeparator;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := PreviousShortDateFormat;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := PreviousDateSeparator;
 end;
 
 function DateToStrFmt(const aDate: TDateTime; DateFormat: string; const DateSeparatorChar: char = '/'): String;
@@ -455,13 +630,13 @@ var
   PreviousShortDateFormat: string;
   PreviousDateSeparator: char;
 begin
-  PreviousShortDateFormat := FormatSettings.ShortDateFormat;
-  FormatSettings.ShortDateFormat := DateFormat;
-  PreviousDateSeparator := FormatSettings.DateSeparator;
-  FormatSettings.DateSeparator := DateSeparatorChar;
+  PreviousShortDateFormat := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := DateFormat;
+  PreviousDateSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := DateSeparatorChar;
   Result := DateToStr(aDate);
-  FormatSettings.ShortDateFormat := PreviousShortDateFormat;
-  FormatSettings.DateSeparator := PreviousDateSeparator;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := PreviousShortDateFormat;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := PreviousDateSeparator;
 end;
 
 function BoldVariantToStrings(V: OleVariant; Strings: TStrings): Integer;
@@ -518,8 +693,11 @@ function BoldParseFormattedDateList(const Value: String; const formats: TStrings
           else if not (value[i] = format[i]) then
             exit;
         end;
-        if (format[i] in ['y', 'm', 'd']) and not (value[i] in ['0'..'9']) then
+        if CharInSet(format[i], ['y', 'm', 'd']) and
+           (not CharInSet(value[i], ['0'..'9'])) then
+        begin
           exit;
+        end;
       end;
       if length(y) = 0 then
         year := CurrentYear
@@ -528,7 +706,7 @@ function BoldParseFormattedDateList(const Value: String; const formats: TStrings
         year := StrToInt(y);
         if length(y) = 2 then
         begin
-          if year < ((CurrentYear + FormatSettings.TwoDigitYearCenturyWindow) mod 100) then
+          if year < ((CurrentYear + {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}TwoDigitYearCenturyWindow) mod 100) then
             year := year + (CurrentYear div 100)*100
           else
             year := year + ((CurrentYear div 100)+1)*100;

@@ -1,6 +1,6 @@
-// as long as the distribution question of sandstone libs is not solved,
-// this unit is used as an include file by BoldOCL
 
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldORed;
 
 interface
@@ -23,6 +23,7 @@ uses
 
 type
   TBoldOclCollectionType = (tboNoCollection, tboBag, tboSet, tboSequence, tboCollection, tboCopyArg1, tboMinCollection);
+
 
 {$I BoldOclConstructors.inc}
 
@@ -96,31 +97,31 @@ begin
 
     AYaccexpressionAnd:
     { expression -> expression AND expression }
-    result := Make2Operation('and', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('and', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionOr:
     { expression -> expression OR expression }
-    result := Make2Operation('or', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('or', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionXor:
     { expression -> expression XOR expression }
-    result := Make2Operation('xor', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('xor', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionImp:
     { expression -> expression IMPLIES expression }
-    result := Make2Operation('implies', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('implies', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionEQ:
     { expression -> expression = expression }
-    result := Make2Operation('=', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('=', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionLT:
     { expression -> expression < expression }
-    result := Make2Operation('<', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('<', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionGT:
     { expression -> expression > expression }
-    result := Make2Operation('>', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('>', stack(0), stack(2), stack(1).lexeme.offset);
 
 
     AYaccexpressionLE:
@@ -158,11 +159,11 @@ begin
 
     AYaccexpressionNOT:
     { expression -> NOT expression }
-    result := Make1Operation('not', stack(1), stack(0).lexeme.offset); // do not localize
+    result := Make1Operation('not', stack(1), stack(0).lexeme.offset);
 
     AYaccifExpression:
     { ifExpression -> if expression then expression else expression endif }
-    result := Make3Operation('if', stack(1), stack(3), stack(5), stack(0).lexeme.offset); // do not localize
+    result := Make3Operation('if', stack(1), stack(3), stack(5), stack(0).lexeme.offset);
 
     AYaccpostFixFirst:
     { postFixExpression -> primaryExpression }
@@ -318,7 +319,6 @@ begin
 
     AYacccollectionKind_Collection:
     { collectionKind -> Collection }
-//    Result := MakeCollectionKind(tboCollection, stack(0).lexeme.offset);
     raise EBoldOCLAbort.CreateFmt(boeCollectionNotValidLiteral, [stack(0).lexeme.offset]);
 
 
@@ -332,11 +332,11 @@ begin
 
     AYaccexpressionDivI:
     { expression -> expression IntDIV expression  }
-    result := Make2Operation('div', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+    result := Make2Operation('div', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccexpressionMod:
     { expression -> expression MOD expression  }
-     result := Make2Operation('mod', stack(0), stack(2), stack(1).lexeme.offset); // do not localize
+     result := Make2Operation('mod', stack(0), stack(2), stack(1).lexeme.offset);
 
     AYaccfeatureCallParameters1:
     { featureCallParameters -> (actualParameterList)  }
@@ -384,5 +384,7 @@ begin
     assert(true, 'Bad production in OCL-parser');
   end;
 end;
+
+initialization
 
 end.

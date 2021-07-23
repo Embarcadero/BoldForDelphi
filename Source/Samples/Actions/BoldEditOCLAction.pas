@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEditOCLAction;
 
 interface
@@ -42,7 +45,6 @@ implementation
 
 uses
   SysUtils,
-  BoldIDEConsts,
   BoldOclPropEditor,
   BoldDefs;
 
@@ -133,5 +135,7 @@ begin
   else
     raise Exception.CreateFmt('%s is not connected to an OCL Component', [Name]);
 end;
+
+initialization
 
 end.

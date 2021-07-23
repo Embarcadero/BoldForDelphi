@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLMMLink;
 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -41,7 +44,7 @@ uses
   SysUtils,
   Classes,
   BoldModelmaker_TLB,
-  BoldMMPlugin_TLB,
+  BoldMMPlugin_TLB,  
   BoldDefs,
   BoldUtils,
   BoldGuard,
@@ -50,9 +53,6 @@ uses
   BoldMeta,
   BoldBld,
   BoldUMLModelConverter;
-
-const
-  BoldExpertName = 'BoldSoft.BoldExpert';
 
 { TBoldUMLMMLink }
 
@@ -70,11 +70,11 @@ begin
   App := CoApp.Create;
   if not Assigned(App) then
      raise EBold.Create('Failed to Launch ModelMaker');
-  Expert := App.GetExpert(BoldExpertName) as IBoldExpertDisp;
+  Expert := App.GetExpert('BoldSoft.BoldExpert') as IBoldExpertDisp;
   if not Assigned(Expert) then
   begin
     Sleep(10);
-    Expert := App.GetExpert(BoldExpertName) as IBoldExpertDisp;
+    Expert := App.GetExpert('BoldSoft.BoldExpert') as IBoldExpertDisp;
   end;
   if not Assigned(Expert) then
      raise EBold.Create('Bold Expert not installed in ModelMaker. Make sure the file BoldMMPlugin.dll is in the ModelMaker\Experts directory, and register the DLL using RegSvr32.exe');
@@ -96,7 +96,7 @@ begin
   if ResultString <> '' then
     raise EBold.Createfmt(' Error during export: %s', [ResultString])
   else
-    Expert.SaveProject(False);
+    Expert.SaveProject(False);  
 end;
 
 function TBoldUMLMMLink.GetCanExport: Boolean;
@@ -126,11 +126,11 @@ begin
   App := CoApp.Create;
   if not Assigned(App) then
      raise EBoldImport.Create('Failed to Launch ModelMaker');
-  Expert := App.GetExpert(BoldExpertName) as IBoldExpertDisp;
+  Expert := App.GetExpert('BoldSoft.BoldExpert') as IBoldExpertDisp;
   if not Assigned(Expert) then
   begin
-    Sleep(10);
-    Expert := App.GetExpert(BoldExpertName) as IBoldExpertDisp;
+    Sleep(10);         
+    Expert := App.GetExpert('BoldSoft.BoldExpert') as IBoldExpertDisp;
   end;
   if not Assigned(Expert) then
      raise EBoldImport.Create('Bold Expert not installed in ModelMaker. Make sure the file BoldMMPlugin.dll is in the ModelMaker\Experts directory, and register the DLL using RegSvr32.exe');

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSOAPServerPersistenceHandles;
 
 interface
@@ -15,6 +18,7 @@ type
   TBoldSOAPServerPersistenceHandle = class;
 
   {-- TBoldComServerElementHandle --}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSOAPServerPersistenceHandle = class(TBoldComExportHandle)
   private
     FBoldHandle: TBoldPersistenceHandle;
@@ -32,6 +36,7 @@ type
   end;
 
 implementation
+
 
 {-- TBoldComServerPersistenceHandle -------------------------------------------}
 
@@ -67,5 +72,7 @@ begin
       FBoldHandle.FreeNotification(Self);
   end;
 end;
+
+initialization
 
 end.

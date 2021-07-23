@@ -1,10 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSqlSymbols;
 
 interface
 
 uses
-  BoldPMappersSql,
-  BoldSQLQuery,
+  BoldIndexableList,
   BoldSqlNodes;
 
 type
@@ -13,6 +15,80 @@ type
     function GetName: String; override;
   end;
 
+  {---TBoldSymbolDictionary---}
+  TBoldSqlSymbolDictionary = class(TBoldIndexableList)
+  private
+    function GetSymbol(const Name: string): TBSS_Symbol; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSymbolByIndex(index: Integer): TBSS_Symbol;
+    class var IX_SymbolName: integer;
+  public
+    constructor Create();
+    property SymbolByName[const name: string]: TBSS_Symbol read GetSymbol;
+    property Symbols[i: Integer]: TBSS_Symbol read GetSymbolByIndex; default;
+  end;
+
+function SqlSymbolDictionary: TBoldSqlSymbolDictionary;
+
+implementation
+
+uses
+  BoldPMappersSql,
+  BoldSQLQuery,
+  BoldHashIndexes,
+  BoldPMappersDefault,
+  SysUtils,
+  BoldDefs,
+  BoldContainers,
+  BoldPSDescriptionsSQL, BoldPMappersLinkDefault;
+
+var
+  SqlSymbols: TBoldSqlSymbolDictionary;
+
+type
+  {---TSymbolNameIndex---}
+  TSymbolNameIndex = class(TBoldStringHashIndex)
+  protected
+    function ItemAsKeyString(Item: TObject): string; override;
+  end;
+
+function SqlSymbolDictionary: TBoldSqlSymbolDictionary;
+begin
+  result := SqlSymbols;
+end;
+  
+  {---TSymbolNameIndex---}
+function TSymbolNameIndex.ItemAsKeyString(Item: TObject): string;
+begin
+  Result := TBSS_Symbol(Item).Name;
+end;
+
+{ TBSS_Symbol }
+
+function TBSS_Symbol.GetName: String;
+begin
+  result := copy(ClassName, 6, maxint);
+end;
+
+{ TBoldSqlSymbolDictionary }
+
+constructor TBoldSqlSymbolDictionary.Create();
+begin
+  inherited create;
+  SetIndexCapacity(1);
+  SetIndexVariable(IX_SymbolName, AddIndex(TSymbolNameIndex.Create));
+end;
+
+function TBoldSqlSymbolDictionary.GetSymbol(const Name: string): TBSS_Symbol;
+begin
+  Result := TBSS_Symbol(TBoldStringHashIndex(indexes[IX_SymbolName]).FindByString(Name));
+end;
+
+function TBoldSqlSymbolDictionary.GetSymbolByIndex(index: Integer): TBSS_Symbol;
+begin
+  Result := TBSS_Symbol(Items[index]);
+end;
+
+type
   TBSS_BinarySymbol = class(TBSS_Symbol)
   protected
     procedure ConvertQueryToWCF(SourceNode, DestNode: TBoldSqlNode);
@@ -51,12 +127,14 @@ type
   end;
 
   TBSS_GreaterEQ = class(TBSS_BinaryBooleanSymbol)
-  protected    function GetName: String; override;
+  protected
+    function GetName: String; override;
   end;
 
   TBSS_SQLLike = class(TBSS_BinarySymbol)
   protected
     function GetSQLName: String; override;
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
   end;
 
   TBSS_SQLLikeCaseInsensitive = class(TBSS_SQLLike)
@@ -126,14 +204,14 @@ type
   TBSS_Round = class(TBSS_UnarySymbol)
   end;
 
-  TBSS_ToUpper = class(TBSS_Symbol)
+  TBSS_ToUpper = class(TBSS_UnarySymbol)
   protected
     function GetSQLName: String; override;
   public
     procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
   end;
 
-  TBSS_toLower = class(TBSS_Symbol)
+  TBSS_toLower = class(TBSS_UnarySymbol)
   protected
     function GetSQLName: String; override;
   public
@@ -235,6 +313,8 @@ type
   end;
 
   TBSS_Length = class(TBSS_UnarySymbol)
+  protected
+    function GetSQLName: String; override;
   end;
 
   TBSS_ListOperations = class(TBSS_Symbol)
@@ -280,9 +360,49 @@ type
     procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
   end;
 
+  TBSS_SafeCast = class(TBSS_OclAsType);
+
   TBSS_FilterOnType = class(TBSS_Symbol)
   public
     function ResolveObjectMapper(OperationNode: TBoldSqlOperation): TBoldObjectSqlMapper; override;
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
+  end;
+
+  TBSS_AsSet = class(TBSS_Symbol)
+  public
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace:
+        TBoldSqlNameSpace); override;
+    function ResolveObjectMapper(OperationNode: TBoldSqlOperation):
+        TBoldObjectSqlMapper; override;
+  end;
+
+  TBSS_First = class(TBSS_Symbol)
+  protected
+    function IsTopLimit: Boolean; virtual;
+  public
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace:
+        TBoldSqlNameSpace); override;
+  end;
+
+  TBSS_Last = class(TBSS_First)
+  protected
+    function IsTopLimit: Boolean; override;
+  end;
+
+  TBSS_BoldId = class(TBSS_Symbol)
+  public
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
+  end;
+
+type
+  TBSS_BoldIDIs = class(TBSS_BinarySymbol)
+  public
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
+  end;
+
+type
+  TBSS_BoldIDIn = class(TBSS_BinarySymbol)
+  public
     procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
   end;
 
@@ -376,43 +496,6 @@ type
   TBSS_Existing = class(TBSS_Symbol)
   end;
 }
-
-function FindSymbolByName(Name: String): TBSS_Symbol;
-
-implementation
-
-uses
-  BoldPMappersDefault,
-  SysUtils,
-  BoldDefs,
-  BoldContainers,
-  BoldPSDescriptionsSQL,
-  BoldPMConsts;
-
-var
-  SqlSymbols: TBoldObjectArray;
-
-function FindSymbolByName(Name: String): TBSS_Symbol;
-var
-  i: integer;
-begin
-  for i := 0 to sqlSymbols.Count-1 do
-  begin
-    if CompareText(TBSS_Symbol(sqlSymbols[i]).name, Name) = 0 then
-    begin
-      result := TBSS_Symbol(sqlSymbols[i]);
-      exit;
-    end;
-  end;
-  raise EBold.CreateFmt(sUnableToFindSymbolForX, [Name]);
-end;
-
-{ TBSS_Symbol }
-
-function TBSS_Symbol.GetName: String;
-begin
-  result := copy(ClassName, 6, maxint);
-end;
 
 { TBSS_Select }
 
@@ -548,7 +631,7 @@ end;
 
 function TBSS_UnaryMinus.GetName: String;
 begin
-  result := 'unary-'; // do not localize
+  result := 'unary-';
 end;
 
 function TBSS_UnaryMinus.GetSQLName: String;
@@ -556,13 +639,27 @@ begin
   result := '-';
 end;
 
+{ TBSS_Length }
+
+function TBSS_Length.GetSQLName: String;
+begin
+  result := 'LEN'; // do not localize
+end;
+
 { TBSS_UnarySymbol }
 
 procedure TBSS_UnarySymbol.BuildWCFOrQuery(
   OperationNode: TBoldSQlOperation; NameSpace: TBoldSqlNameSpace);
+var
+  WCF: TBoldSQLWCF;
 begin
-  OperationNode.WCF := TBoldSQLWCFUnaryPrefix.Create(
-    OperationNode.Args[0].RelinquishWCF, sqlName);
+  WCF := TBoldSQLWCFUnaryPrefix.Create(
+      OperationNode.Args[0].RelinquishWCF, SQLName);
+
+  if OperationNode.Args[0].HasQuery then
+    OperationNode.Query := OperationNode.Args[0].RelinquishQuery;
+
+  OperationNode.WCF := WCF;
 end;
 
 { TBSS_Size }
@@ -574,9 +671,19 @@ end;
 
 { TBSS_SQLLike }
 
+procedure TBSS_SQLLike.BuildWCFOrQuery(OperationNode: TBoldSQLOperation;
+  NameSpace: TBoldSqlNameSpace);
+begin
+ OperationNode.WCF := TBoldSQLWCFBinaryInfix.Create(
+    OperationNode.Args[0].RelinquishWCF,
+    TBoldSQLWCFUnaryTransformLikeString.Create(OperationNode.Args[1].RelinquishWCF, ''), SQLname);
+
+  CollectArgWCFs(OperationNode);
+end;
+
 function TBSS_SQLLike.GetSQLName: String;
 begin
-  result := 'LIKE'; // do not localize
+  result := 'LIKE';
 end;
 
 { TBSS_SQLLikeCaseInsensitive }
@@ -619,7 +726,7 @@ end;
 
 function TBSS_ToUpper.GetSQLName: String;
 begin
-  result := 'UPPER'; // do not localize
+  result := 'UPPER';
 end;
 
 { TBSS_toLower }
@@ -633,7 +740,7 @@ end;
 
 function TBSS_toLower.GetSQLName: String;
 begin
-  result := 'LOWER'; // do not localize
+  result := 'LOWER';
 end;
 
 { TBSS_reject }
@@ -644,7 +751,7 @@ var
 begin
   Sel := OperationNode as TBoldSQLIteration;
   Sel.Query := Sel.LoopVar.RelinquishQuery;
-  Sel.Query.AddWCF(TBoldSQLWCFUnaryPrefix.Create(OperationNode.Args[1].RelinquishWCF, 'NOT')); // do not localize
+  Sel.Query.AddWCF(TBoldSQLWCFUnaryPrefix.Create(OperationNode.Args[1].RelinquishWCF, 'NOT'));
 end;
 
 { TBSS_isNull }
@@ -654,7 +761,7 @@ var
   WCF: TBoldSQLWCF;
   Query: TBoldSQLQuery;
 begin
-  WCF := TBoldSQLWCFUnaryPostfix.Create(OperationNode.Args[0].RelinquishWCF, 'IS NULL'); // do not localize
+  WCF := TBoldSQLWCFUnaryPostfix.Create(OperationNode.Args[0].RelinquishWCF, 'IS NULL');
 
   if OperationNode.args[0].HasQuery then
   begin
@@ -681,11 +788,11 @@ begin
           (WCF as TBoldSQLWCFColumnRef).Columnref, SQLName);
     end
     else
-      raise EBoldInternal.CreateFmt('Argument to %s has has no ColumnRef WCF', [Name]) // do not localize
+      raise EBoldInternal.CreateFmt('Argument to %s has has no ColumnRef WCF', [Name])
 
   end
   else
-    raise EBoldInternal.CreateFmt('Argument to %s has no Query', [Name]) // do not localize
+    raise EBoldInternal.CreateFmt('Argument to %s has no Query', [Name])
 end;
 
 { TBSS_includes }
@@ -698,7 +805,7 @@ var
   VarReference: TBoldSQlVariableReference;
 begin
   if not OperationNode.args[0].HasQuery then
-    raise EBoldInternal.Create('Arg 0 for Includes has no Query'); // do not localize
+    raise EBoldInternal.Create('Arg 0 for Includes has no Query');
 
   Q1IdColumnRef := OperationNode.Args[0].MainTableRef.GetColumnReference(IDCOLUMN_NAME);
 
@@ -708,14 +815,12 @@ begin
     if VarReference.IsExternalVariable then
       WCF := TBoldSQLWCFBinaryInfix.CreateWCFForIdList(Q1IDColumnRef, VarReference.VariableBinding.Context)
     else
-      // BoldId = VariabelReference.BoldId
       WCF := TBoldSQLWCFBinaryInfix.create(
         TBoldSQLWCFColumnRef.Create(Q1IDColumnRef),
         TBoldSQLWCFColumnRef.Create(OperationNode.Args[1].MainTableRef.GetColumnReference(IDCOLUMN_NAME)) ,'=')
   end
   else
   begin
-    // BoldID in (Arg1.Query)
     Query := OperationNode.Args[1].RelinquishQuery;
     WCF := TBoldSQLWCFInQuery.Create(TBoldSQLWCFColumnRef.Create(Q1IdColumnRef), Query, OperationNode.Args[1].MainTableRef(Query));
   end;
@@ -729,21 +834,21 @@ end;
 
 function TBSS_Average.GetSQLName: String;
 begin
-  result := 'AVG'; // do not localize
+  result := 'AVG';
 end;
 
 { TBSS_MinValue }
 
 function TBSS_MinValue.GetSQLName: String;
 begin
-  result := 'MIN'; // do not localize
+  result := 'MIN';
 end;
 
 { TBSS_Maxvalue }
 
 function TBSS_Maxvalue.GetSQLName: String;
 begin
-  result := 'MAX'; // do not localize
+  result := 'MAX';
 end;
 
 { TBSS_Exists }
@@ -763,13 +868,12 @@ procedure TBSS_ForAll.BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpac
 var
   Query: TBoldSqlQuery;
   TempWCF: TBoldSqlWCF;
-  // ForAll(x) -> not Exists(not x)
 begin
   Query := (OperationNode as TBoldSqlIteration).LoopVar.RelinquishQuery;
-  tempWcf := TBoldSQLWCFUnaryPrefix.Create(OperationNode.Args[1].RelinquishWCF, 'NOT'); // do not localize
+  tempWcf := TBoldSQLWCFUnaryPrefix.Create(OperationNode.Args[1].RelinquishWCF, 'NOT');
   Query.AddWCF(TempWcf);
   TempWCF := TBoldSQLWCFExists.Create(Query, OperationNode.Args[0].MaintableRef(Query));
-  OperationNode.WCF := TBoldSQLWCFUnaryPrefix.Create(TempWCF, 'NOT') // do not localize
+  OperationNode.WCF := TBoldSQLWCFUnaryPrefix.Create(TempWCF, 'NOT')
 end;
 
 { TBSS_orderby }
@@ -783,6 +887,46 @@ var
   TableRef: TBoldSQlTableReference;
   ColRef: TBoldSqlColumnReference;
   Loopvar: TBoldSqlVariableBinding;
+begin
+  if not (OperationNode.args[1] is TBoldSqlMember) then
+    raise EBold.Create('Argument to OrderBy must be a Member');
+
+  OrderByMember := OperationNode.args[1] as TBoldSqlMember;
+
+  if OrderByMember.MemberMapper.ColumnCount <> 1 then
+    raise EBold.Create('Argument to OrderBy must have exactly 1 column');
+
+  Loopvar := (OperationNode as TBoldSQlIteration).Loopvar;
+
+  Query := Loopvar.RelinquishQuery;
+
+  TableDescription := (OrderByMember.MemberMapper.ColumnDescriptions[0].Owner as TBoldSQLTableDescription);
+  TableRef := OperationNode.TableReferenceForTable(TableDescription, Query, false);
+
+  OrderByColumnName := OrderByMember.MemberMapper.ColumnDescriptions[0].SQLName;
+  ColRef := TableRef.GetColumnReference(OrderByColumnName);
+
+  Query.AddColumnToOrderBy(ColRef, False);
+
+  OperationNode.WCF := Loopvar.RelinquishWCF;
+
+  OperationNode.Query := Query;
+end;
+
+{ TBSS_orderDescending }
+
+procedure TBSS_orderDescending.BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace);
+var
+  Query: TBoldSqlQuery;
+  OrderByMember: TBoldSqlMember;
+  OrderByColumnName: String;
+  tableDescription: TBoldSQLTableDescription;
+  TableRef: TBoldSQlTableReference;
+  ColRef: TBoldSqlColumnReference;
+  Loopvar: TBoldSqlVariableBinding;
+const
+  sArgToOrderByMustBeMember = 'Argument to OrderBy must be a Member';
+  sArgToOrderByMustHaveExactlyOneColumn = 'Argument to OrderBy must have exactly 1 column';
 begin
   if not (OperationNode.args[1] is TBoldSqlMember) then
     raise EBold.Create(sArgToOrderByMustBeMember);
@@ -802,18 +946,11 @@ begin
   OrderByColumnName := OrderByMember.MemberMapper.ColumnDescriptions[0].SQLName;
   ColRef := TableRef.GetColumnReference(OrderByColumnName);
 
-  Query.AddColumnToOrderBy(ColRef);
+  Query.AddColumnToOrderBy(ColRef, True);
 
   OperationNode.WCF := Loopvar.RelinquishWCF;
 
   OperationNode.Query := Query;
-end;
-
-{ TBSS_orderDescending }
-
-procedure TBSS_orderDescending.BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace);
-begin
-  Raise EBold.Create(sOrderByDescendingNotImplemented);
 end;
 
 { TBSS_isEmpty }
@@ -873,13 +1010,39 @@ end;
 procedure TBSS_SymmetricDifference.BuildWCFOrQuery(
   OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace);
 // a->symmetricDifference(b) >> ((id in a) xor (id in b))
+// SQL does not support XOR, so we have to use inline version:
+// a->symmetricDifference(b) >> (id in a) and (not (id in b)) or
+//                              (id in b) and (not (id in a))
 begin
   OperationNode.NewQuery(nameSpace);
+//  OperationNode.Query.AddWCF(
+//    TBoldSQLWCFBinaryInfix.Create(
+//      CreateBoldIdMatchWCF(OperationNode, OperationNode.args[0]),
+//      CreateBoldIdMatchWCF(OperationNode, OperationNode.args[1]),
+//      'XOR')); // do not localize
+
+{ Doesnt work, because queries of the args are relinquished for the first part
   OperationNode.Query.AddWCF(
     TBoldSQLWCFBinaryInfix.Create(
+      TBoldSQLWCFBinaryInfix.Create(
+        CreateBoldIdMatchWCF(OperationNode, OperationNode.args[0]),
+        TBoldSQLWCFUnaryPrefix.Create(
+          CreateBoldIdMatchWCF(OperationNode, OperationNode.args[1]),
+          'NOT'), // do not localize
+        'AND'), // do not localize
+      TBoldSQLWCFBinaryInfix.Create(
+        CreateBoldIdMatchWCF(OperationNode, OperationNode.args[1]),
+        TBoldSQLWCFUnaryPrefix.Create(
+          CreateBoldIdMatchWCF(OperationNode, OperationNode.args[0]),
+          'NOT'), // do not localize
+        'AND'), // do not localize
+      'OR')); // do not localize
+}
+  // Solution: custom WCF for XOR
+  OperationNode.Query.AddWCF(
+    TBoldSQLWCFXOR.Create(
       CreateBoldIdMatchWCF(OperationNode, OperationNode.args[0]),
-      CreateBoldIdMatchWCF(OperationNode, OperationNode.args[1]),
-      'XOR')); // do not localize
+      CreateBoldIdMatchWCF(OperationNode, OperationNode.args[1])));
 end;
 
 { TBSS_Difference }
@@ -997,7 +1160,10 @@ begin
       OperationNode.Args[0].MainTableRef.GetColumnReference(IDCOLUMN_NAME));
   end
   else
+  begin
     OperationNode.Query := OperationNode.Args[0].RelinquishQuery;
+    OperationNode.CopyTableReferences(OperationNode.Args[0]);
+  end;
 end;
 
 function TBSS_OclAsType.ResolveObjectMapper(
@@ -1018,8 +1184,8 @@ var
 begin
   ObjectMapper := OperationNode.Args[1].ObjectMapper as TBoldObjectDefaultMapper;
   TypeColRef := TBoldSQLWCFColumnRef.Create(OperationNode.Args[0].MainTableRef.GetColumnReference(TYPECOLUMN_NAME));
-  TypeValue := TBoldSQLWCFGenericExpression.Create('(' + ObjectMapper.SubClassesID + ')');
-  WCF := TBoldSQLWCFBinaryInfix.Create(TypeColRef, TypeValue, 'IN'); // do not localize
+  TypeValue := TBoldSQLWCFGenericExpression.Create('('+ObjectMapper.SubClassesID+')');
+  WCF := TBoldSQLWCFBinaryInfix.Create(TypeColRef, TypeValue, 'IN');
 
   if OperationNode.Args[0].HasQuery then
     OperationNode.Query := OperationNode.Args[0].RelinquishQuery;
@@ -1029,7 +1195,7 @@ begin
   else
   begin
     if assigned(OperationNode.Args[0].WCF) then
-      WCF := TBoldSQLWCFBinaryInfix.Create(WCF, OperationNode.Args[0].RelinquishWCF, 'AND'); // do not localize
+      WCF := TBoldSQLWCFBinaryInfix.Create(WCF, OperationNode.Args[0].RelinquishWCF, 'AND');
     OperationNode.WCF := WCF;
   end;
 
@@ -1042,8 +1208,137 @@ begin
   result := OperationNode.Args[1].ObjectMapper;
 end;
 
+{ TBSS_AsSet }
+
+procedure TBSS_AsSet.BuildWCFOrQuery(OperationNode: TBoldSQLOperation;
+    NameSpace: TBoldSqlNameSpace);
+var
+  Query: TBoldSqlQuery;
+begin
+  Query := OperationNode.Args[0].RelinquishQuery;
+
+  // Distinct is usually not necessary because inPS evaluation returns no
+  // duplicate objects. But if asSet is used in a (Sub-)Select, this is indeed needed.
+  Query.Distinct := True;
+
+  // Further simply pass Result without doing anything more
+  OperationNode.WCF := operationNode.Args[0].RelinquishWCF;
+  OperationNode.Query := Query;
+end;
+
+function TBSS_AsSet.ResolveObjectMapper(OperationNode: TBoldSqlOperation):
+    TBoldObjectSqlMapper;
+begin
+  result := OperationNode.Args[0].ObjectMapper;
+end;
+
+{ TBSS_First }
+
+procedure TBSS_First.BuildWCFOrQuery(OperationNode: TBoldSQLOperation;
+    NameSpace: TBoldSqlNameSpace);
+var
+  Query: TBoldSqlQuery;
+begin
+  Query := OperationNode.Args[0].RelinquishQuery;
+
+  // Limit in Query einstellen
+  Query.SetLimit(IsTopLimit);
+
+  // Ansonsten simple Weitergabe des Ergebnisses ohne etwas zu machen
+  OperationNode.WCF := operationNode.Args[0].RelinquishWCF;
+  OperationNode.Query := Query;
+end;
+
+function TBSS_First.IsTopLimit: Boolean;
+begin
+  Result := True;
+end;
+
+{ TBSS_Last }
+
+function TBSS_Last.IsTopLimit: Boolean;
+begin
+  Result := False;
+end;
+
+{ TBSS_BoldIDIs }
+
+procedure TBSS_BoldIDIs.BuildWCFOrQuery(
+  OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace);
+var
+  TypeColRef: TBoldSQLWCFColumnRef;
+begin
+  TypeColRef := TBoldSQLWCFColumnRef.Create(OperationNode.Args[0].MainTableRef.GetColumnReference(IDCOLUMN_NAME));
+  OperationNode.WCF := TBoldSQLWCFBinaryInfix.Create(TypeColRef, OperationNode.Args[1].RelinquishWCF, '=');
+  CollectArgWCFs(OperationNode);
+end;
+
+{ TBSS_BoldIDIn }
+
+procedure TBSS_BoldIDIn.BuildWCFOrQuery(
+  OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace);
+var
+  TypeColRef: TBoldSQLWCFColumnRef;
+  TypeValue: TBoldSQLWCFGenericExpression;
+  aWCF: TBoldSqlWCF;
+  sIDs: string;
+begin
+  TypeColRef := TBoldSQLWCFColumnRef.Create(OperationNode.Args[0].MainTableRef.GetColumnReference(IDCOLUMN_NAME));
+  aWCF := OperationNode.Args[1].RelinquishWCF;
+  sIDs := aWCF.GetAsString(OperationNode.Args[0].Query);
+  aWCF.Free;
+  // Übergebenen String in ID-Liste umwandeln -> "" entfernen
+  // Außer es ist Paramter (:Param)
+  if (Length(sIDs) > 0) then begin
+    if (sIDs[1] = '''') then begin
+      sIDs := Copy(sIDs, 2, Length(sIDs) - 2);
+    end else if (sIDs[1] = ':') then begin
+      sIDs := OperationNode.Args[0].Query.Params.ParamValues[Copy(sIDs, 2, MaxInt)];
+    end;
+  end;
+  TypeValue := TBoldSQLWCFGenericExpression.Create('(' + sIDs + ')');
+  OperationNode.WCF := TBoldSQLWCFBinaryInfix.Create(TypeColRef, TypeValue, 'in'); // do not localize
+  CollectArgWCFs(OperationNode);
+end;
+
+{ TBSS_BoldId }
+
+procedure TBSS_BoldId.BuildWCFOrQuery(OperationNode: TBoldSQLOperation;
+  NameSpace: TBoldSqlNameSpace);
+var
+  SQLNode: TBoldSQLNode;
+  Query: TBoldSqlQuery;
+  SqlMember: TBoldSqlMember;
+  TableRefs: TBoldSQLTableReferenceList;
+  ColumnName: string;
+begin
+  Query := nil;
+  SQLNode := OperationNode.Args[0];
+  if SQLNode is TBoldSqlVariableReference then
+  begin
+    Query := TBoldSqlVariableReference(SQLNode).Query;
+    ColumnName := IDCOLUMN_NAME;
+  end
+  else
+  if (SQLNode is TBoldSqlMember) then
+  begin
+    SqlMember := TBoldSqlMember(SQLNode);
+    if SqlMember.MemberMapper.IsStoredInObject and
+      (SqlMember.memberOf is TBoldSqlVariableReference) then
+    begin
+      ColumnName := SqlMember.MemberMapper.ColumnDescriptions[0].sqlName;
+      Query := TBoldSqlVariableReference(SqlMember.memberOf).VariableBinding.Query;
+    end;
+  end;
+  if not Assigned(Query) then
+    raise EBoldInternal.Create(className + ': No Query found.');
+  TableRefs := Query.TableReferences;
+  OperationNode.WCF := TBoldSQLWCFColumnRef.Create(TableRefs[TableRefs.Count-1].GetColumnReference(ColumnName));
+end;
+
 initialization
-  sqlSymbols := TBoldObjectArray.Create(0, [bcoDataOwner]);
+  TBoldSqlSymbolDictionary.IX_SymbolName := -1;
+  sqlSymbols := TBoldSqlSymbolDictionary.Create;
   sqlSymbols.Add(TBSS_Add.Create);
   sqlSymbols.Add(TBSS_Equal.Create);
   sqlSymbols.Add(TBSS_NotEqual.Create);
@@ -1064,6 +1359,9 @@ initialization
   sqlSymbols.Add(TBSS_not.Create);
   sqlSymbols.Add(TBSS_UnaryMinus.Create);
   sqlSymbols.Add(TBSS_isNull.Create);
+  sqlSymbols.Add(TBSS_Abs.Create);
+  sqlSymbols.Add(TBSS_Floor.Create);
+  sqlSymbols.Add(TBSS_Round.Create);
   sqlSymbols.Add(TBSS_Size.Create);
   sqlSymbols.Add(TBSS_Select.Create);
   sqlSymbols.Add(TBSS_Reject.Create);
@@ -1086,14 +1384,19 @@ initialization
   sqlSymbols.Add(TBSS_ToLower.Create);
   sqlSymbols.Add(TBSS_Union.Create);
   sqlSymbols.Add(TBSS_Intersection.Create);
+  sqlSymbols.Add(TBSS_SymmetricDifference.Create);
   sqlSymbols.Add(TBSS_Difference.Create);
   sqlSymbols.Add(TBSS_oclIsTypeOf.Create);
   sqlSymbols.Add(TBSS_oclIsKindOf.Create);
   sqlSymbols.Add(TBSS_oclAsType.Create);
+  sqlSymbols.Add(TBSS_SafeCast.Create);
   sqlSymbols.Add(TBSS_FilterOnType.Create);
-
-  // SymmetricDiffernece is not supported since SQL does not support XOR
-//  sqlSymbols.Add(TBSS_SymmetricDifference.Create);
+  sqlSymbols.Add(TBSS_AsSet.Create);
+  sqlSymbols.Add(TBSS_First.Create);
+  sqlSymbols.Add(TBSS_Last.Create);
+  sqlSymbols.Add(TBSS_BoldId.Create);
+  sqlSymbols.Add(TBSS_BoldIDIs.Create);
+  sqlSymbols.Add(TBSS_BoldIDIn.Create);
 
 finalization
   FreeAndNil(sqlSymbols);

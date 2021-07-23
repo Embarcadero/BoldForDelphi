@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTemplate;
 
 interface
@@ -13,5 +16,10 @@ type
   end;
 
 implementation
+
+uses
+  SysUtils,
+  BoldUtils;
+
 
 end.

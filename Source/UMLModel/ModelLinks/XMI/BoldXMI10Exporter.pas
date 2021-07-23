@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXMI10Exporter;
 
 interface
@@ -5,16 +8,12 @@ interface
 uses
   Variants,
   BoldContainers,
-//  BoldUMLModel,
   BoldLogForm,
-//  BoldSystem,
-//  BoldAttributes,
+
   BoldUMLXMILink,
-//  BoldSystemRT,
   BoldMOFInterfaces,
-//  BoldUMLXMILinkSupport,
-  MSXML_TLB,
-  Sysutils, // for TFileName
+  Bold_MSXML_TLB,
+  Sysutils,
   BoldStringList,
   BoldUMLDTDData,
   Classes;
@@ -90,9 +89,9 @@ function TBoldXMI10Exporter.BooleanAsString(Value: IBoldMOFAttribute): string;
 begin
   assert(Value.IsBoolean);
   if Value.AsBoolean then
-    result := 'true' // do not localize
+    result := 'true'
   else
-    result := 'false'; // do not localize
+    result := 'false';
 end;
 
 procedure TBoldXMI10Exporter.CompositeAsElement(Composite: IBoldMOFReference;
@@ -290,7 +289,7 @@ end;
 function TBoldXMI10Exporter.QualifiedAttributeName(
   Attribute: IBoldMOFAttribute): string;
 begin
-  result := Attribute.QualifiedName;
+  result := Attribute.QualifiedName; 
 end;
 
 procedure TBoldXMI10Exporter.RawExport(RootObj: IBoldMOFObject);
@@ -300,14 +299,14 @@ var
 begin
   aDom := TDOMDocument.Create(nil);
   aDom.documentElement := aDom.createElement(XMI_NODENAME_ROOT);
-  aDom.documentElement.setAttribute(XMI_ATTRIBUTENAME_VERSION, '1.0'); // do not localize
+  aDom.documentElement.setAttribute(XMI_ATTRIBUTENAME_VERSION, '1.0');
 
   ProduceHeader(aDom.documentElement);
   ContentsFromRoot(RootObj, aDom.documentElement);
 
   aStringList := TStringList.Create;
-  aStringList.Add('<?xml version = "1.0"?>'); // do not localize
-  aStringList.Add('<!DOCTYPE XMI SYSTEM "uml13.dtd">'); // do not localize
+  aStringList.Add('<?xml version = "1.0"?>');
+  aStringList.Add('<!DOCTYPE XMI SYSTEM "uml13.dtd">');
   aStringList.Add(aDom.DefaultInterface.xml);
   aStringList.SaveToFile(OwningLink.FileName);
 
@@ -380,7 +379,7 @@ end;
 function TBoldXMI10Exporter.QualifiedReferenceName(
   Reference: IBoldMOFReference): string;
 begin
-  result := Reference.QualifiedName;
+  result := Reference.QualifiedName; 
 end;
 
 procedure TBoldXMI10Exporter.EmbeddedObject(Attribute: IBoldMOFAttribute;
@@ -401,5 +400,7 @@ begin
   FreeAndNil(fProcessedDTD);
   inherited;
 end;
+
+initialization
 
 end.

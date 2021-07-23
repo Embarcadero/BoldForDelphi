@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnvironmentAllowBothUseVCL;
 
 interface
@@ -12,4 +15,3 @@ uses
 initialization
   BoldInternalAllowBothUseVCL := true;
 end.
-

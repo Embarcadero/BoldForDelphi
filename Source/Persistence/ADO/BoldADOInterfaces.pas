@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldADOInterfaces;
 
 interface
@@ -6,6 +9,7 @@ uses
   Classes,
   Db,
   ADODB,
+  BoldDefs,
   BoldSQLDatabaseConfig,
   BoldDBInterfaces;
 
@@ -13,7 +17,8 @@ type
   { forward declarations }
   TBoldADOParameter = class;
   TBoldADOQuery = class;
-  TBoldADOTable = class;  TBoldADOConnection = class;
+  TBoldADOTable = class;
+  TBoldADOConnection = class;
   TBoldADOQueryClass = class of TBoldADOQuery;
 
   { TBoldADOParameter }
@@ -27,6 +32,7 @@ type
     function GetDataType: TFieldType;
     procedure SetDataType(Value: TFieldType);
     function GetAsBCD: Currency;
+    function GetAsblob: TBoldBlobData;
     function GetAsBoolean: Boolean;
     function GetAsDateTime: TDateTime;
     function GetAsCurrency: Currency;
@@ -34,9 +40,10 @@ type
     function GetAsInteger: Longint;
     function GetAsMemo: string;
     function GetAsString: string;
+    function GetAsInt64: Int64;
     function GetIsNull: Boolean;
     procedure SetAsBCD(const Value: Currency);
-    procedure SetAsBlob(const Value: TBlobData);
+    procedure SetAsBlob(const Value: TBoldBlobData);
     procedure SetAsBoolean(Value: Boolean);
     procedure SetAsCurrency(const Value: Currency);
     procedure SetAsDate(const Value: TDateTime);
@@ -48,9 +55,14 @@ type
     procedure SetAsSmallInt(Value: LongInt);
     procedure SetAsTime(const Value: TDateTime);
     procedure SetAsWord(Value: LongInt);
+    procedure SetAsInt64(const Value: Int64);
     procedure SetText(const Value: string);
     function GetParameter: TParameter;
     procedure AssignFieldValue(source: IBoldField);
+    function GetAsAnsiString: TBoldAnsiString;
+    function GetAsWideString: WideString;
+    procedure SetAsAnsiString(const Value: TBoldAnsiString);
+    procedure SetAsWideString(const Value: Widestring);
     property Parameter: TParameter read GetParameter;
   public
     constructor create(AdoParameter: TParameter; DatasetWrapper: TBoldDatasetWrapper);
@@ -70,9 +82,13 @@ type
     procedure SetRequestLiveQuery(NewValue: Boolean);
     function GetSQLText: String;
     procedure AssignSQL(SQL: TStrings); virtual;
-    procedure AssignSQLText(SQL: String);
+    procedure AssignSQLText(const SQL: String);
     function GetRowsAffected: integer;
     function GetRecordCount: integer;
+    function GetParamCheck: Boolean;
+    procedure SetParamCheck(value: Boolean);
+    function GetUseReadTransactions: boolean;
+    procedure SetUseReadTransactions(value: boolean);
   protected
     procedure StartSQLBatch; virtual;
     procedure EndSQLBatch; virtual;
@@ -96,7 +112,7 @@ type
     procedure CreateTable;
     procedure DeleteTable;
     function GetIndexDefs: TIndexDefs;
-    procedure SetTableName(NewName: String);
+    procedure SetTableName(const NewName: String);
     function GetTableName: String;
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
@@ -126,18 +142,20 @@ type
     procedure RollBack;
     procedure Open;
     procedure Close;
+    procedure Reconnect;
 
-    function GetTable: IBoldTable;
-    procedure ReleaseTable(var Table: IBoldTable);
+    function GetIsExecutingQuery: Boolean;
     function SupportsTableCreation: Boolean;
     procedure ReleaseCachedObjects;
   protected
     procedure AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetQuery: IBoldQuery; override;
     procedure ReleaseQuery(var Query: IBoldQuery); override;
+    function GetTable: IBoldTable; override;
+    procedure ReleaseTable(var Table: IBoldTable); override;
   public
-    constructor Create(DataBase: TADOConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor Destroy; override;
+    constructor create(DataBase: TADOConnection; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor destroy; override;
   end;
 
 var
@@ -146,13 +164,11 @@ var
 implementation
 
 uses
-  BoldDefs,
   BoldUtils,
   SysUtils,
   Variants,
   Masks,
-  BoldGuard,
-  BoldCoreConsts;
+  BoldGuard;
 
 { TBoldADOQuery }
 
@@ -175,7 +191,6 @@ var
   Guard: IBoldGuard;
 begin
   Guard := TBoldGuard.Create(BackupQuery);
-  // ADO sometimes tries to bind the params at this point, unless we disconnect the connection first
   OldConnection := Query.Connection;
   if Query.Parameters.count > 0 then
   begin
@@ -183,7 +198,6 @@ begin
     BackupQuery.Parameters.Assign(Query.Parameters);
   end;
 
-  Query.Close; // safe operation even if the query is closed. Open queries will cause "invalid operation" on next line
   Query.Connection := nil;
   Query.SQL.BeginUpdate;
   Query.SQL.Assign(SQL);
@@ -194,15 +208,16 @@ begin
   Query.Connection := OldConnection;
 end;
 
-procedure TBoldADOQuery.AssignSQLText(SQL: String);
-var
-  StringList: TStringList;
-  Guard: IBoldguard;
+procedure TBoldADOQuery.AssignSQLText(const SQL: String);
 begin
-  Guard := tBoldGuard.Create(StringList);
-  StringList := TStringList.create;
-  BoldAppendToStrings(StringList, SQL, true);
-  AssignSQL(StringList);
+  Query.SQL.BeginUpdate;
+  Query.SQL.Clear;
+{$IFDEF BOLD_DELPHI10_OR_LATER}
+  Query.SQL.Append(SQL);  // FIXME, this gives one long line.
+{$ELSE}
+  BoldAppendToStrings(Query.SQL, SQL, true);
+{$ENDIF}
+  Query.SQL.EndUpdate;
 end;
 
 procedure TBoldADOQuery.ClearParams;
@@ -214,6 +229,7 @@ constructor TBoldADOQuery.Create(Query: TADOQuery; DatabaseWrapper: TBoldDatabas
 begin
   inherited create(DatabaseWrapper);
   fQuery := Query;
+  SetParamCheck(true);
 end;
 
 function TBoldADOQuery.Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter;
@@ -225,18 +241,21 @@ end;
 
 procedure TBoldADOQuery.EndSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldADOQuery.ExecSQL;
 begin
+{$IFDEF BOLD_DELPHI10_OR_LATER}
+  BoldLogSQLWide(Query.SQL, self);
+{$ELSE}
   BoldLogSQL(Query.SQL);
+{$ENDIF}
   try
     Query.ExecSQL;
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end;
@@ -244,12 +263,16 @@ end;
 
 procedure TBoldADOQuery.FailSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 function TBoldADOQuery.GetDataSet: TDataSet;
 begin
   result := Query;
+end;
+
+function TBoldADOQuery.GetParamCheck: Boolean;
+begin
+  Result := Query.ParamCheck;
 end;
 
 function TBoldADOQuery.GetParamCount: integer;
@@ -287,18 +310,24 @@ begin
   result := Query.SQL.Text;
 end;
 
+function TBoldADOQuery.GetUseReadTransactions: boolean;
+begin
+  result := false;
+end;
+
 procedure TBoldADOQuery.Open;
 begin
+{$IFDEF BOLD_DELPHI10_OR_LATER}
+  BoldLogSQLWide(Query.SQL, self);
+{$ELSE}
   BoldLogSQL(Query.SQL);
+{$ENDIF}
   try
-    Query.CacheSize := 10000;
-    Query.CursorType := ctOpenForwardOnly;
-    Query.LockType := ltReadOnly;
     inherited;
   except
     on e: Exception do
     begin
-      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text; // do not localize
+      e.Message := e.Message + BOLDCRLF + 'SQL: ' + Query.SQL.text;
       raise;
     end;
   end;
@@ -315,14 +344,22 @@ begin
     result := nil;
 end;
 
+procedure TBoldADOQuery.SetParamCheck(value: Boolean);
+begin
+  Query.ParamCheck := Value;
+end;
+
 procedure TBoldADOQuery.SetRequestLiveQuery(NewValue: Boolean);
 begin
-  // ignore
+end;
+
+procedure TBoldADOQuery.SetUseReadTransactions(value: boolean);
+begin
+
 end;
 
 procedure TBoldADOQuery.StartSQLBatch;
 begin
-  // intentionally left blank
 end;
 
 { TBoldADOTable }
@@ -330,7 +367,7 @@ end;
 procedure TBoldADOTable.AddIndex(const Name, Fields: string;
   Options: TIndexOptions; const DescFields: string);
 begin
-  raise EBold.CreateFmt(sMethodNotImplemented, [ClassName, 'AddIndex']); // do not localize
+  raise EBold.CreateFmt('%s.AddIndex: not implemented', [ClassName]);
 end;
 
 constructor TBoldADOTable.Create(Table: TADOTable; DatabaseWrapper: TBoldDatabaseWrapper);
@@ -341,12 +378,12 @@ end;
 
 procedure TBoldADOTable.CreateTable;
 begin
-  raise EBold.CreateFmt(sMethodNotImplemented, [ClassName, 'CreateTable']); // do not localize
+  raise EBold.CreateFmt('%s.CreateTable: not implemented', [ClassName]);
 end;
 
 procedure TBoldADOTable.DeleteTable;
 begin
-  raise EBold.CreateFmt(sMethodNotImplemented, [ClassName, 'DeleteTable']); // do not localize
+  raise EBold.CreateFmt('%s.DeleteTable: not implemented', [ClassName]);
 end;
 
 function TBoldADOTable.GetDataSet: TDataSet;
@@ -366,11 +403,8 @@ var
 begin
   Guard := TBoldGuard.Create(AllTables);
   Result := False;
-
-  // First we make sure we have a table component and that it is connected to a database
   if Assigned(Table) and Assigned(Table.Connection) then
   begin
-    // We now create a list that will hold all the table names in the database
     Alltables := TStringList.Create;
     Table.Connection.GetTableNames(AllTables);
     Result := AllTables.IndexOf(GetTableName) <> -1;
@@ -400,14 +434,12 @@ begin
     Table.LockType := ltOptimistic;
 end;
 
-procedure TBoldADOTable.SetTableName(NewName: String);
+procedure TBoldADOTable.SetTableName(const NewName: String);
 begin
   Table.TableName := NewName;
 end;
 
 { TBoldADOConnection }
-
-// Populate the "TableNameList" with tablenames from the database that maches "pattern"
 procedure TBoldADOConnection.AllTableNames(Pattern: String; ShowSystemTables: Boolean; TableNameList: TStrings);
 var
   TempList: TStringList;
@@ -422,18 +454,16 @@ begin
   else
     TempPattern := Pattern;
 
-  // Retrieve the list of table names
-  // Note: This does not include views or procedures, there is a specific
-  //       method in TADOConnection for that
+
   GetDataBase.GetTableNames(TempList, ShowSystemTables);
 
-  // MatchesMask is used to compare filenames with wildcards, suits us here
-  // but there should be some care taken, when using tablenames with period
-  // signes, as that might be interpreted as filename extensions
+
   for i := 0 to TempList.Count-1 do
     if MatchesMask(TempList[i], tempPattern) then
       TableNameList.Add(TempList[i]);
 end;
+
+
 
 procedure TBoldADOConnection.Commit;
 begin
@@ -445,6 +475,11 @@ begin
   result := DataBase.InTransaction;
 end;
 
+function TBoldADOConnection.GetIsExecutingQuery: Boolean;
+begin
+  result := false; // TODO: implement
+end;
+
 function TBoldADOConnection.GetIsSQLBased: Boolean;
 begin
   result := true;
@@ -452,7 +487,6 @@ end;
 
 function TBoldADOConnection.GetKeepConnection: Boolean;
 begin
-  //CheckMe;
   result := true;
 end;
 
@@ -468,7 +502,6 @@ end;
 
 procedure TBoldADOConnection.SetKeepConnection(NewValue: Boolean);
 begin
-  //CheckMe;
 end;
 
 procedure TBoldADOConnection.SetlogInPrompt(NewValue: Boolean);
@@ -481,9 +514,8 @@ begin
   DataBase.BeginTrans;
 end;
 
-destructor TBoldADOConnection.Destroy;
+destructor TBoldADOConnection.destroy;
 begin
-//  FreeAndNil(fParameters);
   FreeAndNil(fCachedQuery);
   FreeAndNil(fCachedTable);
   inherited;
@@ -493,7 +525,7 @@ constructor TBoldADOConnection.create(DataBase: TADOConnection; SQLDataBaseConfi
 begin
   inherited create(SQLDataBaseConfig);
   fDatabase := DataBase;
-end;
+end;  
 
 procedure TBoldADOConnection.Close;
 begin
@@ -597,7 +629,6 @@ end;
 
 procedure TBoldADOParameter.Clear;
 begin
-  // FIXME
 end;
 
 constructor TBoldADOParameter.create(AdoParameter: TParameter; DatasetWrapper: TBoldDatasetWrapper);
@@ -606,9 +637,21 @@ begin
   fParameter := AdoParameter;
 end;
 
+function TBoldADOParameter.GetAsAnsiString: TBoldAnsiString;
+begin
+  result := TBoldAnsiString(Parameter.Value);
+  if string(result) = DatasetWrapper.DatabaseWrapper.SQLDatabaseConfig.EmptyStringMarker then
+    result := '';
+end;
+
 function TBoldADOParameter.GetAsBCD: Currency;
 begin
   result := parameter.Value;
+end;
+
+function TBoldADOParameter.GetAsblob: TBoldBlobData;
+begin
+  result := TBoldAnsiString(parameter.Value);
 end;
 
 function TBoldADOParameter.GetAsBoolean: Boolean;
@@ -631,6 +674,11 @@ begin
   result := parameter.Value;
 end;
 
+function TBoldADOParameter.GetAsInt64: Int64;
+begin
+  result := parameter.Value;
+end;
+
 function TBoldADOParameter.GetAsInteger: Longint;
 begin
   result := parameter.Value;
@@ -645,12 +693,19 @@ function TBoldADOParameter.GetAsString: string;
 begin
   result := parameter.Value;
   if result = DatasetWrapper.DatabaseWrapper.SQLDatabaseConfig.EmptyStringMarker then
-    result := '';
+    result := ''; 
 end;
 
 function TBoldADOParameter.GetAsVariant: Variant;
 begin
   result := parameter.Value;
+end;
+
+function TBoldADOParameter.GetAsWideString: WideString;
+begin
+  result := Parameter.Value;
+  if string(result) = DatasetWrapper.DatabaseWrapper.SQLDatabaseConfig.EmptyStringMarker then
+    result := '';
 end;
 
 function TBoldADOParameter.GetDataType: TFieldType;
@@ -671,6 +726,14 @@ end;
 function TBoldADOParameter.GetParameter: TParameter;
 begin
   result := fParameter;
+end;
+
+procedure TBoldADOParameter.SetAsAnsiString(const Value: TBoldAnsiString);
+begin
+  if value = '' then
+    Parameter.Value := DatasetWrapper.DatabaseWrapper.SQLDatabaseConfig.EmptyStringMarker
+  else
+    Parameter.Value := Value
 end;
 
 procedure TBoldADOParameter.SetAsBCD(const Value: Currency);
@@ -713,6 +776,11 @@ begin
   Parameter.Value := Value;
 end;
 
+procedure TBoldADOParameter.SetAsInt64(const Value: Int64);
+begin
+  Parameter.Value := Value;
+end;
+
 procedure TBoldADOParameter.SetAsInteger(Value: Integer);
 begin
   Parameter.Value := Value;
@@ -746,6 +814,14 @@ begin
   Parameter.Value := NewValue;
 end;
 
+procedure TBoldADOParameter.SetAsWideString(const Value: Widestring);
+begin
+  if value = '' then
+    Parameter.Value := DatasetWrapper.DatabaseWrapper.SQLDatabaseConfig.EmptyStringMarker
+  else
+    Parameter.Value := Value
+end;
+
 procedure TBoldADOParameter.SetAsWord(Value: Integer);
 begin
   Parameter.Value := Value;
@@ -766,14 +842,21 @@ begin
   Parameter.Assign(Source.Field);
 end;
 
+procedure TBoldADOConnection.Reconnect;
+begin
+  if Assigned(fDataBase) then begin
+    fDataBase.Connected := False;
+    fDataBase.Connected := True;
+  end;
+end;
+
 procedure TBoldADOConnection.ReleaseCachedObjects;
 begin
   FreeAndNil(fCachedTable);
   FreeAndNil(fCachedQuery);
 end;
 
+
+initialization
+
 end.
-
-
-
-

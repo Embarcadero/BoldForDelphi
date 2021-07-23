@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelUpdater;
 
 interface
@@ -32,9 +35,9 @@ class procedure TBoldUMLModelUpdater.UpdateModel(ModelToUpdate: TUMLModel);
 var
   aList: TUMLModelElementList;
 begin
-  aList := ModelToUpdate.BoldSystem.ClassByExpressionName['UMLAssociation'] as TUMLModelElementList; // do not localize
+  aList := ModelToUpdate.BoldSystem.ClassByExpressionName['UMLAssociation'] as TUMLModelElementList;
   UpdatePersistentTVs(aList);
-  aList := ModelToUpdate.BoldSystem.ClassByExpressionName['UMLAttribute'] as TUMLModelElementList; // do not localize
+  aList := ModelToUpdate.BoldSystem.ClassByExpressionName['UMLAttribute'] as TUMLModelElementList;
   UpdatePersistentTVs(aList);
 end;
 
@@ -58,5 +61,7 @@ begin
     end;
   end;
 end;
+
+initialization
 
 end.

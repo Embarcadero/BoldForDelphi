@@ -1,7 +1,10 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLXMIImporter;
 
 interface
-
+                                                                   
 uses
   Variants,
   BoldContainers,
@@ -11,8 +14,8 @@ uses
   BoldUMLXMILink,
   BoldSystemRT,
   BoldUMLXMILinkSupport,
-  MSXML_TLB,
-  Sysutils, // for TFileName
+  Bold_MSXML_TLB,
+  Sysutils,
   Classes;
 
 type
@@ -28,7 +31,7 @@ type
     fTheUMLModel: TUMLModel;
     fTheUMLModelFound: Boolean;
     fDOMDocument: TDOMDocument;
-//    fDebugLog: TBoldLogForm;
+    fDebugLog: TBoldLogForm;
     fBoldSystem: TBoldSystem;
     fSkipMetaClassList: TStringList;
     fTraverseOnlyMetaClassList: TStringList;
@@ -46,7 +49,6 @@ type
     procedure ImportMetaAssociationEndFromElement(BoldMember: TBoldMember; XMLElement: IXMLDOMElement; Multi: Boolean);
     property DOMDocument: TDOMDocument read GetDOMDocument;
     class function GetUMLName(const aText: String): String;
-//    class function UnqualifiedName(const aText: String): String;
     procedure ImportMetaAttributeFromElement(BoldAttribute: TBoldAttribute; XMLElement: IXMLDOMElement);
     function CreateUMLObjectsForMetaObject(XMLElement: IXMLDOMElement): TBoldUMLElementArray;
     function MetaClassAction(XMLElement: IXMLDOMElement): TClassAction;
@@ -93,7 +95,7 @@ begin
   fOwningLink := OwningLink;
   fTheUMLModel := UMLModel;
   fBoldSystem := UMLModel.BoldSystem;
-//  fDebugLog := TBoldLogForm.Create(nil);
+  fDebugLog := TBoldLogForm.Create(nil);
   fImportedElementList := TBoldXMIIObjectList.Create;
   InitializeLists;
 end;
@@ -101,7 +103,7 @@ end;
 destructor TBoldUMLXMIImporter.Destroy;
 begin
   FreeAndNil(fDOMDocument);
-//  FreeAndNil(fDebugLog);
+  FreeAndNil(fDebugLog);
   FreeAndNil(fSkipMetaClassList);
   FreeAndNil(fTraverseOnlyMetaClassList);
   FreeAndNil(fImportedElementList);
@@ -160,7 +162,6 @@ begin
          TBoldObjectReference(BoldMember).BoldObject := nil
         else
           TBoldObjectReference(BoldMember).BoldObject := ObjectsToAdd[0];
-   //       raise EBold.Create('Multiple elements to single reference');
       end
       else
         raise Exception.Create('Wrong association type, expected single.');
@@ -182,7 +183,7 @@ begin
   childElement := FirstElementFromNodeList(nodeList);
   while Assigned(ChildElement) do
   begin
-    if (IsNonBlank(GetXMIIdref(ChildElement))) then // Object Reference
+    if (IsNonBlank(GetXMIIdref(ChildElement))) then
       ObjectsToAdd := (fImportedElementList.UMLElementsById[GetXMIIdref(ChildElement)])
     else
       ObjectsToAdd := ImportMetaObject(childElement);
@@ -201,7 +202,7 @@ end;
 }
 class function TBoldUMLXMIImporter.GetUMLName(const aText: String): String;
 begin
-  Result := 'UML' + UnqualifiedName(aText); //do not localize
+  Result := 'UML' + UnqualifiedName(aText);
 end;
 
 function TBoldUMLXMIImporter.ImportMetaObject(XMLElement: IXMLDOMElement): TBoldUMLElementArray;
@@ -232,7 +233,7 @@ var
       else
         Result := nil
     end
-    else  // PASS2, objects refered in previous pass must exist, the rest created now
+    else
     begin
       if IsNonBlank(Id) then
       begin
@@ -255,26 +256,25 @@ begin
        ;
     caSkip:
       begin
-//        fDebugLog.AddLog(Format('Skipping metaobject: %s', [XMLElement.NodeName]));
+        fDebugLog.AddLog(Format('Skipping metaobject: %s', [XMLElement.NodeName]));
         Exit;
       end;
     caUNKNOWN:
       begin
-//        fDebugLog.AddLog(Format('Skipping Unknown metaobject: (%s),(%s)', [XMLElement.ParentNode.Nodename, XMLElement.NodeName]));
+        fDebugLog.AddLog(Format('Skipping Unknown metaobject: (%s),(%s)', [XMLElement.ParentNode.Nodename, XMLElement.NodeName]));
         Exit;
       end;
   end;
-  // Very hardcoded for max two types, and only AssociationClass having two
   if Assigned(Result) then
   begin
     for i := 0 to Result.Count-1 do
       ClassTypeInfo[i] := Result[i].BoldClassTypeInfo;
     ClassTypeInfoCount := Result.Count;
   end
-  else if GetUMLName(XMLElement.tagName) = 'AssociationClass' then //do not localize
+  else if GetUMLName(XMLElement.tagName) = 'AssociationClass' then
   begin
-    ClassTypeInfo[0] := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[GetUMLName('Class')]; //do not localize
-    ClassTypeInfo[1] := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[GetUMLName('Association')]; //do not localize
+    ClassTypeInfo[0] := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[GetUMLName('Class')];
+    ClassTypeInfo[1] := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[GetUMLName('Association')];
     ClassTypeInfoCount := 2;
   end
   else
@@ -336,7 +336,6 @@ begin
         if rtInfo.IsAttribute then
           ImportMetaAttributeFromElement(Boldmember as TBoldAttribute, Element)
         else
-        // don't import associations twice
         if (i = 0) or not assigned(ClassTypeInfo[0].MemberRTInfoByExpressionName[UnqualifiedName(Element.nodeName)]) then
           ImportMetaAssociationEndFromElement(Boldmember, Element, rtinfo.IsMultiRole)
       end
@@ -350,13 +349,12 @@ end;
 procedure TBoldUMLXMIImporter.ImportMetaAttributeFromElement(BoldAttribute: TBoldAttribute; XMLElement: IXMLDOMElement);
   function ValueIsMultiplicity(DOMElement: IXMLDOMElement): Boolean;
   begin
-    Result := UnqualifiedName(DOMElement.nodeName) = 'multiplicity'; //do not localize
+    Result := UnqualifiedName(DOMElement.nodeName) = 'multiplicity';
   end;
 
   function ValueIsXmiValue(DOMElement: IXMLDOMElement): Boolean;
   begin
-    Result := assigned(DOMElement.getAttributeNode('xmi.value')); //do not localize
-//not (ValueIsMultiplicity(DOMElement) or ValueISCData(DOMElement));
+    Result := assigned(DOMElement.getAttributeNode('xmi.value'));
   end;
 
   function ValueIsExpression(DOMElement: IXMLDOMElement): Boolean;
@@ -369,17 +367,16 @@ procedure TBoldUMLXMIImporter.ImportMetaAttributeFromElement(BoldAttribute: TBol
   begin
     Result := not (ValueIsXmiValue(DOMElement) or ValueIsMultiplicity(DOMElement) or
                    ValueIsExpression(DOMElement));
-// DOMElement.nodeName = XMI_CORE_MODELELEMENT_NAME;
   end;
 
 var
   anAttribValue: String;
 begin
   if (pass = PASS1) then
-    Exit; // only set attributes on pass 2
+    Exit;
   if ValueIsXmiValue(XMLElement) then
   begin
-    anAttribValue := BoldSharedStringManager.GetSharedString(VarToStr(XMLElement.getAttribute('xmi.value'))); //do not localize
+    anAttribValue := BoldSharedStringManager.GetSharedString(VarToStr(XMLElement.getAttribute('xmi.value')));
     if anAttribValue <> '' then
       ImportAttributeFromString(BoldAttribute, anAttribValue);
   end
@@ -393,8 +390,7 @@ begin
   else if ValueIsExpression(XMLElement) then
     BoldAttribute.AsString := BoldSharedStringManager.GetSharedString(ImportExpressionAsString(XMLElement.firstChild as IXMLDOMElement))
   else
-  begin
-  { TODO : Further types }
+  begin 
   end;
 end;
 
@@ -402,7 +398,7 @@ function TBoldUMLXMIImporter.MetaClassAction(XMLElement: IXMLDOMElement): TClass
 begin
   if Assigned(BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[GetUMLName(XMLElement.nodeName)]) then
     Result := caIMPORT
-  else if GetUMLName(XMLElement.nodeName) = 'UMLAssociationClass' then //do not localize
+  else if GetUMLName(XMLElement.nodeName) = 'UMLAssociationClass' then
     Result := caIMPORT
   else if SkipMetaClassList.IndexOf(XMLElement.nodeName) <> -1 then
     Result := caSkip
@@ -424,8 +420,6 @@ begin
     Result := TBoldAttribute(OwningObject.BoldMembers[aMemberRTInfo.Index]);
   end;
 end;
-
-// Due to implementation of multiple inheritance more than one UMLObject may be created
 function TBoldUMLXMIImporter.CreateUMLObjectsForMetaObject(XMLElement: IXMLDOMElement): TBoldUMLElementArray;
 var
   UMLClassName: String;
@@ -434,43 +428,41 @@ var
   Element1, Element2: TUMLModelElement;
 begin
   XMIId := GetXMIId(XMLElement);
-//  fDebugLog.AddLog(Format('Creating model part: %s(%s)', [XMLElement.nodeName, FormatId(XMIId)]));
+  fDebugLog.AddLog(Format('Creating model part: %s(%s)', [XMLElement.nodeName, FormatId(XMIId)]));
   if Assigned(fImportedElementList.ItemsById[XMIId]) then
   begin
     raise EBoldInternal.Create('Modelpart already exists');
   end
   else
   begin
-    // Handle Model and AssociationClass separately
     UMLClassName := GetUMLName(XMLElement.nodeName);
-    if UMLClassName = 'UMLModel' then //do not localize
+    if UMLClassName = 'UMLModel' then
     begin
       if not fTheUMLModelFound then
       begin
-        // We already have a model, just associate it with ID.
         Result := fImportedElementList.Add(XMIId, fTheUMLModel);
         fTheUMLModelFound := True;
       end
       else
       begin
         Element1 := BoldSystem.CreateNewObjectByExpressionName(UMLClassName, False) as TUMLModelElement;
-//        TBoldUMLSupport.EnsureBoldTaggedValues(Element1);
+        TBoldUMLSupport.EnsureBoldTaggedValues(Element1);
         Result := fImportedElementList.Add(XMIId, Element1);
       end;
     end
-    else if UMLClassName = 'UMLAssociationClass' then //do not localize
+    else if UMLClassName = 'UMLAssociationClass' then
     begin
-      Element1 := BoldSystem.CreateNewObjectByExpressionName('UMLClass', False) as TUMLModelElement; //do not localize
-//      TBoldUMLSupport.EnsureBoldTaggedValues(Element1);
-      Element2 := BoldSystem.CreateNewObjectByExpressionName('UMLAssociation', False) as TUMLModelElement; //do not localize
-//      TBoldUMLSupport.EnsureBoldTaggedValues(Element2);
+      Element1 := BoldSystem.CreateNewObjectByExpressionName('UMLClass', False) as TUMLModelElement;
+      TBoldUMLSupport.EnsureBoldTaggedValues(Element1);
+      Element2 := BoldSystem.CreateNewObjectByExpressionName('UMLAssociation', False) as TUMLModelElement;
+      TBoldUMLSupport.EnsureBoldTaggedValues(Element2);
       Result := fImportedElementList.Add(XMIId, Element1, Element2);
       (Result[1] as TUMLAssociation).Class_ := (Result[0] as TUMLClass);
     end
     else
     begin
       Element1 := BoldSystem.CreateNewObjectByExpressionName(UMLClassName, False) as TUMLModelElement;
-//      TBoldUMLSupport.EnsureBoldTaggedValues(Element1);
+      TBoldUMLSupport.EnsureBoldTaggedValues(Element1);
       Result := fImportedElementList.Add(XMIId, Element1);
     end;
   end;
@@ -483,12 +475,10 @@ end;
 
 procedure TBoldUMLXMIImporter.InitializeLists;
 begin
-  //  Initialize skip list
   fSkipMetaClassList := TStringList.Create;
   fTraverseOnlyMetaClassList := TStringList.Create;
-//  if XMIExporter = UNISYS_TCR_2 then
-//    SkipMetaClassList.Add('Diagramming.Diagram');
-  // Initialize travsrse list
+
+
   SkipMetaClassList.Sorted := True;
   TraverseOnlyMetaClassList.Sorted := True;
 end;
@@ -499,18 +489,18 @@ var
   nodeList: IXMLDOMNodeList;
   Ranges: TStringList;
 begin
-  if UnqualifiedName(XMLElement.nodeName) <> 'Multiplicity' then //do not localize
+  if UnqualifiedName(XMLElement.nodeName) <> 'Multiplicity' then
     raise EBold.CreateFmt('Wrong nodename: %s', [XMLElement.nodeName]);
 
   if (XMLElement.childNodes.length = 0) or (XMLElement.firstChild.childNodes.length = 0) then
   begin
     Result := ImportCdataValue(XMLElement);
     if result = '' then
-      result := '0..*'; //do not localize
+      result := '0..*';
   end
   else
   begin
-    if UnqualifiedName(XMLElement.firstChild.nodeName) <> 'range' then //do not localize
+    if UnqualifiedName(XMLElement.firstChild.nodeName) <> 'range' then
       raise EBold.CreateFmt('Wrong nodename: %s', [XMLElement.nodeName]);
 
     nodeList := XMLElement.firstChild.childNodes;
@@ -536,14 +526,14 @@ var
   nodeList: IXMLDOMNodeList;
   attr: IXMLDOMAttribute;
 begin
-  if UnqualifiedName(XMLElement.nodeName) <> 'MultiplicityRange' then //do not localize
+  if UnqualifiedName(XMLElement.nodeName) <> 'MultiplicityRange' then
     raise EBold.CreateFmt('Wrong nodename: %s', [XMLElement.nodeName]);
 
-  attr := XMLElement.getAttributeNode('lower'); //do not localize
+  attr := XMLElement.getAttributeNode('lower');
   if assigned(attr) then
     Lower := attr.value;
 
-  attr := XMLElement.getAttributeNode('upper'); //do not localize
+  attr := XMLElement.getAttributeNode('upper');
   if assigned(attr) then
     Upper := attr.value;
 
@@ -551,9 +541,9 @@ begin
   childElement := FirstElementFromNodeList(nodeList);
   while Assigned(ChildElement) do
   begin
-    if UnqualifiedName(childElement.nodeName) = 'lower' then //do not localize
+    if UnqualifiedName(childElement.nodeName) = 'lower' then
       Lower := ImportCdataValue(childElement)
-    else if UnqualifiedName(childElement.nodeName) = 'upper' then //do not localize
+    else if UnqualifiedName(childElement.nodeName) = 'upper' then
       Upper := ImportCdataValue(childElement)
     else
       raise EBoldInternal.Create('Import error');
@@ -589,8 +579,6 @@ end;
 procedure TBoldUMLXMIImporter.RawImport;
 var
   RootElement, ContentElement: IXMLDOMElement;
-  AllElements: TUMLModelElementList;
-  i: integer;
 
   function FindContent(XMLElement: IXMLDOMElement): IXMLDOMElement;
   var
@@ -615,7 +603,7 @@ var
 
 begin
   LoadAndCheck(OwningLink.Filename);
-//  fDebugLog.Show;
+  fDebugLog.Show;
   fImportedElementList.Clear;
 
   DOMDocument.preserveWhiteSpace := True;
@@ -627,18 +615,13 @@ begin
   if not Assigned(ContentElement) then
     raise EBold.Create('Content missing');
 
-//  fDebugLog.AddLog('PASS 1');
+  fDebugLog.AddLog('PASS 1');
   fPass := PASS1;
   ImportXMIObjectList(nil, ContentElement, nil);
-//  fDebugLog.AddLog('PASS 2');
+  fDebugLog.AddLog('PASS 2');
   fPass := PASS2;
   ImportXMIObjectList(nil, ContentElement, nil);
-
-  AllElements := fBoldSystem.ClassByExpressionName['UMLModelElement'] as TUMLModelElementList; //do not localize
-  for i := AllElements.Count-1 downto 0 do
-    TBoldUMLSupport.EnsureBoldTaggedValues(AllElements[i]);
-
-//  fDebugLog.AddLog('DONE');
+  fDebugLog.AddLog('DONE');
 end;
 
 function TBoldUMLXMIImporter.FindMemberRt(
@@ -667,7 +650,7 @@ var
   nodeList: IXMLDOMNodeList;
   childElement: IXMLDOMElement;
 begin
-  attr := XMLElement.getAttributeNode('body'); //do not localize
+  attr := XMLElement.getAttributeNode('body');
   if assigned(attr) then
     result := attr.value
   else
@@ -677,7 +660,7 @@ begin
     childElement := FirstElementFromNodeList(nodeList);
     while assigned(childElement) do
     begin
-      if UnqualifiedName(childElement.nodeName) = 'body' then //do not localize
+      if UnqualifiedName(childElement.nodeName) = 'body' then
         result := ImportCdataValue(childElement);
       childElement := NextElementFromNodeList(nodeList);
     end;
@@ -690,11 +673,11 @@ var
   colonpos: integer;
 begin
   if OwningLink.TranslateRoseTaggedValues and
-    (BoldAttribute.DisplayName = 'UMLTaggedValue.tag') and //do not localize
-    (pos('RationalRose$', AttributeValue) = 1) and //do not localize
+    (BoldAttribute.DisplayName = 'UMLTaggedValue.tag') and
+    (pos('RationalRose$', AttributeValue) = 1) and
     (pos(':', AttributeValue) <> 0) then
   begin
-    AttributeValue := Copy(AttributeValue, length('RationalRose$')+1, MAXINT); //do not localize
+    AttributeValue := Copy(AttributeValue, length('RationalRose$')+1, MAXINT);
     colonpos := pos(':', AttributeValue);
     BoldAttribute.AsString := Copy(AttributeValue, 1, colonpos-1) + '.' +
       Copy(AttributeValue, colonpos+1, MAXINT);
@@ -702,12 +685,9 @@ begin
   else if BoldAttribute is TBABoolean then
     BoldAttribute.StringRepresentation[3] := AttributeValue
   else
-  begin
-     if (BoldAttribute is TBAVisibilityKind) and
-        (AttributeValue = 'package') then //do not localize
-      AttributeValue := 'public'; //do not localize
     BoldAttribute.AsString := AttributeValue;
-  end
 end;
+
+initialization
 
 end.

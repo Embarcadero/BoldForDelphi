@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSqlQueryGenerator;
 
 interface
@@ -44,7 +47,8 @@ uses
   BoldPMappersSQL,
   BoldPmappersDefault,
   BoldPMappersLinkDefault,
-  BoldPMappersAttributeDefault;
+  BoldPMappersAttributeDefault,
+  BoldRev;
 
 { TBoldSqlQueryGenerator }
 
@@ -120,7 +124,6 @@ begin
 
   if (n.MemberMapper is TBoldEmbeddedSingleLinkDefaultMapper) then
   begin
-    // embedded Singlelinks
     LastJoinLeftColumn := n.MemberMapper.ColumnDescriptions[0] as TBoldSQLColumnDescription;
     TableForLastJoinLeft := n.MemberOf.TableReferenceForTable(LastJoinLeftColumn.TableDescription, n.Query, true);
     n.Query.AddJoin(n.MainTableRef.GetColumnReference(IDCOLUMN_NAME), TableForLastJoinLeft.GetColumnReference(LastJoinLeftColumn.SQLName));
@@ -130,7 +133,6 @@ begin
     LinkMapper := n.MemberMapper as TBoldNonEmbeddedLinkDefaultMapper;
     if LinkMapper.IsIndirect then
     begin
-      // Nonembedded Indirect links
       TableRefForLink := n.Query.AddTableReference(LinkMapper.LinkClassTableName);
 
       n.Query.AddJoin(TablerefForlink.GetColumnReference(LInkMapper.ClosestColumnName),
@@ -141,7 +143,6 @@ begin
     end
     else
     begin
-      // Nonembedded Direct links
       n.Query.AddJoin(
         n.MainTableRef.GetColumnReference(LinkMapper.ClosestColumnName),
         n.MemberOf.MainTableRef(n.Query).GetColumnReference(IDCOLUMN_NAME));
@@ -162,11 +163,10 @@ begin
   ColumnRef   := TableRef.GetColumnReference(MainColumn.SQlName);
   if n.isBoolean and (n.MemberMapper is TBoldPMInteger) then
   begin
-    // "boolattr = 1"
     WCF := TBoldSQLWCFBinaryInfix.Create(
       TBoldSQLWCFColumnRef.Create(ColumnRef),
       TBoldSQLWCFInteger.Create(1), '=');
-
+      
     if not n.QueryOfMemberOfIsEnclosing then
     begin
       Query := n.MemberOf.RelinquishQuery;
@@ -239,6 +239,6 @@ begin
   n.WCF := TBoldSQLWCFTime.Create(n.TimeValue);
 end;
 
+initialization
+
 end.
-
-

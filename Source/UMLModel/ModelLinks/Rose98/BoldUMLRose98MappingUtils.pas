@@ -1,8 +1,9 @@
-{$WARN SYMBOL_PLATFORM OFF}  // This is WINDOWS only
 
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLRose98MappingUtils;
 
-interface
+interface 
 
 uses
   Classes,
@@ -31,8 +32,8 @@ type
     fCachedAssociations: TStringList;
     fCachedElements: TSTringList;
     fUMLModelreadOnly: Boolean;
-    procedure SetLogicalPackages(Value: TStrings);
-    procedure SetUMLModel(const Value: TUMLModel);
+    procedure SetLogicalPackages(Value: TStrings); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetUMLModel(const Value: TUMLModel); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     destructor Destroy; override;
@@ -85,7 +86,6 @@ var
   I: Integer;
 begin
   Result := nil;
-  // If UMLClassifier has toolid then only accept that, else search for name match
   if TBoldUMLSupport.GetToolId(UMLClassifier) <> '' then
     Result := RoseModel.FindClassWithID(TBoldUMLSupport.GetToolId(UMLClassifier))
   else
@@ -110,14 +110,13 @@ begin
   result := nil;
   if assigned(RoseClass) then
   begin
-    // Class is in UMLModel if toolid mathces, or if name matches class that lacks toolid
     Result := FindClass(RoseClass.GetUniqueID);
     if not Assigned(Result) then
     begin
       Result :=
        UMLModel.EvaluateExpressionAsDirectElement
       (
-      Format('UMLClassifier.allInstances->select(model=self)->select(name=''%s'')->first', //do not localize
+      Format('UMLClassifier.allInstances->select(model=self)->select(name=''%s'')->first',
         [RoseClass.Name])
       ) as TUMLClassifier;
       if Assigned(Result) and (TBoldUMLSupport.GetToolId(Result) <> '') then
@@ -131,18 +130,15 @@ var
   UMLClassifier1: TUMLClassifier;
   i: integer;
 begin
-   // Association is in UMLModel if toolid matches, or if role names and classes match
   Result := FindAssocation(RoseAssociation.GetUniqueID);
   if not Assigned(Result) then
   begin
-    // first try name
     Result :=
      UMLModel.EvaluateExpressionAsDirectElement
     (
-    Format('UMLAssociation.allInstances->select(model=self)->select(name=''%s'')->first', //do not localize
+    Format('UMLAssociation.allInstances->select(model=self)->select(name=''%s'')->first',
       [RoseAssociation.Name])
     ) as TUMLAssociation;
-    // else match on classes and role names
     if not Assigned(Result) then
     begin
       UMLClassifier1 := UMLClassifierForRoseClass(UMLModel, RoseAssociation.Role1.Class_);
@@ -176,7 +172,6 @@ var
   I: Integer;
 begin
   Result := nil;
-  // If UMLAssociation has toolid then only accept that, else search for match
   if TBoldUMLSupport.GetToolId(UMLAssociation) <> '' then
     Result := RoseModel.GetAllAssociations.GetWithUniqueID(TBoldUMLSupport.GetToolId(UMLAssociation))
   else
@@ -202,14 +197,13 @@ end;
 function TBoldUMLRose98MappingUtils.UMLAttributeForRoseAttribute(
   UMLClass: TUMLClass; RoseAttribute: IRoseAttribute): TUMLAttribute;
 begin
-   // Try Toolid first, then name match
   Result := FindElement(RoseAttribute.GetUniqueID) as TUMLAttribute;
   if not Assigned(Result) or (Result.Owner <> UMLClass) then
   begin
     Result :=
      UMLClass.EvaluateExpressionAsDirectElement
     (
-    Format('feature->select((name=''%s'') and oclIsKindOf(UMLAttribute))->first', //do not localize
+    Format('feature->select((name=''%s'') and oclIsKindOf(UMLAttribute))->first',
       [RoseAttribute.Name])
     ) as TUMLAttribute;
     if Assigned(Result) and (TBoldUMLSupport.GetToolId(Result) <> '') then
@@ -221,7 +215,6 @@ function TBoldUMLRose98MappingUtils.RoseAttributeForUMLAttribute(
   RoseClass: IRoseClass; UMLAttribute: TUMLAttribute): IRoseAttribute;
 begin
   Result := nil;
-  // If UMLClassifier has toolid then only accept that, else search for name match
   if TBoldUMLSupport.GetToolId(UMLAttribute) <> '' then
     Result := RoseClass.Attributes.GetWithUniqueID(TBoldUMLSupport.GetToolId(UMLAttribute))
   else
@@ -232,7 +225,6 @@ function TBoldUMLRose98MappingUtils.RoseOperationForUMLOperation(
   RoseClass: IRoseClass; UMLOperation: TUMLOperation): IRoseOperation;
 begin
   Result := nil;
-  // If UMLClassifier has toolid then only accept that, else search for name match
   if TBoldUMLSupport.GetToolId(UMLOperation) <> '' then
     Result := RoseClass.Operations.GetWithUniqueID(TBoldUMLSupport.GetToolId(UMLOperation))
   else
@@ -242,14 +234,13 @@ end;
 function TBoldUMLRose98MappingUtils.UMLOperationForRoseOperation(
   UMLClass: TUMLClass; RoseOperation: IRoseOperation): TUMLOperation;
 begin
-   // Try Toolid first, then name match
   Result := FindElement(RoseOperation.GetUniqueID) as TUMLOperation;
   if not Assigned(Result) or (Result.Owner <> UMLClass) then
   begin
     Result :=
      UMLClass.EvaluateExpressionAsDirectElement
     (
-    Format('feature->select((name=''%s'') and oclIsKindOf(UMLOperation))->first', //do not localize
+    Format('feature->select((name=''%s'') and oclIsKindOf(UMLOperation))->first',
       [RoseOperation.Name])
     ) as TUMLOperation;
     if Assigned(Result) and (TBoldUMLSupport.GetToolId(Result) <> '') then
@@ -267,7 +258,7 @@ end;
 destructor TBoldUMLRose98MappingUtils.Destroy;
 begin
   FreeAndNil(fLogicalPackages);
-  ClearCaches; // this will free the cache-lists.
+  ClearCaches;
   inherited;
 end;
 
@@ -322,14 +313,13 @@ begin
     cat := RoseClass.ParentCategory;
     while assigned(cat) and not Cat.TopLevel do
       Cat := cat.ParentCategory;
-    // only include classes that are in the Rootcategory or subcategories.
     Result := assigned(Cat) and (Cat = RoseClass.Model.RootCategory);
   end
   else
   begin
     Cat := RoseClass.ParentCategory;
     if Cat.TopLevel then
-      Result := LogicalPackages.IndexOf('<Root Package>') <> -1 //do not localize
+      Result := LogicalPackages.IndexOf('<Root Package>') <> -1
     else
     begin
       Result := LogicalPackages.IndexOf(Cat.Name) <> -1;
@@ -394,7 +384,7 @@ begin
   Result := FindInCache(fCachedClasses, UniqueId) as TUMLClass;
   if not Assigned(Result) then
   begin
-    RefreshCache(fCachedClasses, 'Class'); //do not localize
+    RefreshCache(fCachedClasses, 'Class');
     Result := FindInCache(fCachedClasses, UniqueId) as TUMLClass;
   end;
 end;
@@ -425,7 +415,7 @@ begin
   FreeAndNil(Cache);
   Cache := TStringList.Create;
   Elementlist := UMLModel.EvaluateExpressionAsNewElement(
-    Format('UML%s.allInstances->reject(oclIsKindOf(UMLTaggedValue))->select(model=self)', [FilterType])) as TUMLModelElementList; //do not localize
+    Format('UML%s.allInstances->reject(oclIsKindOf(UMLTaggedValue))->select(model=self)', [FilterType])) as TUMLModelElementList;
   try
     for i := 0 to Elementlist.Count-1 do
     begin
@@ -450,7 +440,7 @@ begin
     result := nil;
   if not Assigned(Result) then
   begin
-    RefreshCache(fCachedAssociations, 'Association'); //do not localize
+    RefreshCache(fCachedAssociations, 'Association');
     Result := FindInCache(fCachedAssociations, UniqueId) as TUMLASsociation;
   end;
 end;
@@ -460,9 +450,11 @@ begin
   Result := FindInCache(fCachedElements , UniqueId) as TUMLElement;
   if not Assigned(Result) then
   begin
-    RefreshCache(fCachedElements, 'ModelElement'); //do not localize
+    RefreshCache(fCachedElements, 'ModelElement');
     Result := FindInCache(fCachedElements, UniqueId) as TUMLElement;
   end;
 end;
+
+initialization
 
 end.

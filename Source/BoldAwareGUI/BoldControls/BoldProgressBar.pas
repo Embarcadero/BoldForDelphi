@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldProgressBar;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -9,18 +12,20 @@ uses
   Controls,
   ComCtrls,
   Menus,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldElements,
   BoldHandles,
   BoldControlPack,
   BoldNumericControlPack,
-  BoldElementHandleFollower;
+  BoldElementHandleFollower,
+  BoldDefs;
 
 type
   { forward declarations }
   TBoldProgressBar = class;
 
   { TBoldProgressBar }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldProgressBar = class(TProgressBar, IBoldOCLComponent)
   private
     FEffectiveReadOnly: Boolean;
@@ -28,8 +33,8 @@ type
     FBoldProperties: TBoldIntegerFollowerController;
     fHandleFollower: TBoldElementHandleFollower;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
     procedure AfterMakeUptoDate(Follower: TBoldFollower);
     function GetBoldHandle: TBoldElementHandle;
@@ -61,7 +66,6 @@ implementation
 
 uses
   BoldControlPackDefs,
-  BoldDefs,
   SysUtils,
   BoldGuiResourceStrings,
   BoldControlsDefs;
@@ -163,14 +167,14 @@ begin
     result := nil;
 end;
 
-function TBoldProgressBar.GetExpression: String;
+function TBoldProgressBar.GetExpression: TBoldExpression;
 begin
   result := BoldProperties.Expression;
 end;
 
-procedure TBoldProgressBar.SetExpression(Expression: String);
+procedure TBoldProgressBar.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldProgressBar.GetPosition: integer;

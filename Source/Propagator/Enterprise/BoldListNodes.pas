@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListNodes;
 
 interface
@@ -99,7 +102,6 @@ var
 begin
   for Index := 0 to NumberOfIndices - 1 do
   begin
-    // unlink next
     if Assigned(Next[Index]) then
       (Next[Index] as TBoldAbstractLinkNode).Previous[Index] := Previous[Index];
     Prev := Previous[Index];
@@ -112,5 +114,7 @@ begin
     Previous[Index] := nil;
   end;
 end;
+
+initialization
 
 end.

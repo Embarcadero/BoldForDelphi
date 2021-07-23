@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWCodeInformer;
 
 interface
@@ -110,13 +113,13 @@ end;
 function TClassParser.IsProcedure(Scanner: TScanner): Boolean;
 begin
   Result := True;
-  if Scanner.IsIdentifier('procedure') then // do not localize
+  if Scanner.IsIdentifier('procedure') then
     fMethodType := mtProcedure
-  else if Scanner.IsIdentifier('function') then // do not localize
+  else if Scanner.IsIdentifier('function') then
     fMethodType := mtFunction
-  else if Scanner.IsIdentifier('constructor') then // do not localize
+  else if Scanner.IsIdentifier('constructor') then
     fMethodType := mtConstructor
-  else if Scanner.IsIdentifier('destructor') then // do not localize
+  else if Scanner.IsIdentifier('destructor') then
     fMethodType := mtDestructor
   else
     Result := false;
@@ -137,7 +140,6 @@ var
 
   procedure AddMethod;
   begin
-    //Add Method
     with Sender as TScanner do
     begin
       if Trim(fParam) = COLUMN then fParam := '';
@@ -151,20 +153,20 @@ var
         fCurrentClass.addMethod(TMethodInfo.Create(fMethodType,fProcName, fParam, fReturnType, fVisibility, Pointer(fCurrentClass))) ;
         fCodeType := ctNone;
       end
-    end;
+    end;  
   end;
 
 begin
   with Sender as TScanner do
   begin
     str := token;
-    if IsIdentifier('implementation') then // do not localize
+    if IsIdentifier('implementation') then
     begin
       fInImplementation := true;
       fInInterface := false;
       fCodeType := ctNone;
     end
-    else if IsIdentifier('interface') then // do not localize
+    else if IsIdentifier('interface') then
     begin
       fInImplementation := false;
       fInInterface := true;
@@ -172,15 +174,15 @@ begin
     end
     else if fInInterface then
     begin
-      if IsIdentifier('public') then // do not localize
+      if IsIdentifier('public') then
         fVisibility := stPublic
-      else if IsIdentifier('protected') then // do not localize
+      else if IsIdentifier('protected') then
         fVisibility := stProtected
-      else if IsIdentifier('published') then // do not localize
+      else if IsIdentifier('published') then
         fVisibility := stPublished
-      else if IsIdentifier('private') then // do not localize
+      else if IsIdentifier('private') then
         fVisibility := stPrivate
-      else if IsIdentifier('end') then // do not localize
+      else if IsIdentifier('end') then
         fCodeType := ctIdentifier
       else if {NewLine and }IsProcedure(TScanner(Sender)) then
       begin
@@ -223,15 +225,14 @@ begin
       end
       else if (fCodeType = ctReturnType) then
         AddMethod
-      else if (fCodeType = ctClass) and IsIdentifier('of') then // do not localize
+      else if (fCodeType = ctClass) and IsIdentifier('of') then
         fCodeType := ctNone
       else if (fCodeType = ctIdentifier) and (TokenType = '=') then
         fCodeType := ctEqual
-      else if (fCodeType = ctEqual) and IsIdentifier('class') then // do not localize
+      else if (fCodeType = ctEqual) and IsIdentifier('class') then
         fCodeType := ctClass
       else if (fCodeType = ctClass) and (TokenType <> ';') then
       begin
-        //Add Class
         fClasses.Add(TClassInfo.Create(fClassToken));
         fCodeType := ctNone;
       end
@@ -259,5 +260,7 @@ begin
     Scanner.Free;
   end;
 end;
+
+initialization
 
 end.

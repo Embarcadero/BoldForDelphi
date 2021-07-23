@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEditOCLActionPropEditor;
 
 interface
@@ -39,5 +42,7 @@ begin
   fProc := Proc;
   Designer.GetComponentNames(GetTypeData(GetPropType), FilterOnInterface);
 end;
+
+initialization
 
 end.

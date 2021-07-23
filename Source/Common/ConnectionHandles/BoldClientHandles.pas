@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldClientHandles;
 
 interface
@@ -35,6 +38,7 @@ type
 
 implementation
 
+
 {-- TBoldClientHandle ---------------------------------------------------------}
 
 constructor TBoldClientHandle.Create(AOwner: TComponent);
@@ -68,5 +72,7 @@ begin
     FObjectName := Value;
   end;
 end;
+
+initialization
 
 end.

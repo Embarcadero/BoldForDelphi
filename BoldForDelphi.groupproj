@@ -1,0 +1,96 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{DFD5A34D-3F28-461E-9001-16DFEADD40A9}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Bold.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclBold.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclBoldUniDAC.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclBoldDevEx.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\Delphi\Compound\Building\BldOwn.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="BoldTestCases\Framework\UnitTest\AutoTestProj.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Bold">
+        <MSBuild Projects="Bold.dproj"/>
+    </Target>
+    <Target Name="Bold:Clean">
+        <MSBuild Projects="Bold.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Bold:Make">
+        <MSBuild Projects="Bold.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclBold">
+        <MSBuild Projects="dclBold.dproj"/>
+    </Target>
+    <Target Name="dclBold:Clean">
+        <MSBuild Projects="dclBold.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclBold:Make">
+        <MSBuild Projects="dclBold.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclBoldUniDAC">
+        <MSBuild Projects="dclBoldUniDAC.dproj"/>
+    </Target>
+    <Target Name="dclBoldUniDAC:Clean">
+        <MSBuild Projects="dclBoldUniDAC.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclBoldUniDAC:Make">
+        <MSBuild Projects="dclBoldUniDAC.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclBoldDevEx">
+        <MSBuild Projects="dclBoldDevEx.dproj"/>
+    </Target>
+    <Target Name="dclBoldDevEx:Clean">
+        <MSBuild Projects="dclBoldDevEx.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclBoldDevEx:Make">
+        <MSBuild Projects="dclBoldDevEx.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="BldOwn">
+        <MSBuild Projects="examples\Delphi\Compound\Building\BldOwn.dproj"/>
+    </Target>
+    <Target Name="BldOwn:Clean">
+        <MSBuild Projects="examples\Delphi\Compound\Building\BldOwn.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="BldOwn:Make">
+        <MSBuild Projects="examples\Delphi\Compound\Building\BldOwn.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="AutoTestProj">
+        <MSBuild Projects="BoldTestCases\Framework\UnitTest\AutoTestProj.dproj"/>
+    </Target>
+    <Target Name="AutoTestProj:Clean">
+        <MSBuild Projects="BoldTestCases\Framework\UnitTest\AutoTestProj.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="AutoTestProj:Make">
+        <MSBuild Projects="BoldTestCases\Framework\UnitTest\AutoTestProj.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Bold;dclBold;dclBoldUniDAC;dclBoldDevEx;BldOwn;AutoTestProj"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Bold:Clean;dclBold:Clean;dclBoldUniDAC:Clean;dclBoldDevEx:Clean;BldOwn:Clean;AutoTestProj:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Bold:Make;dclBold:Make;dclBoldUniDAC:Make;dclBoldDevEx:Make;BldOwn:Make;AutoTestProj:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

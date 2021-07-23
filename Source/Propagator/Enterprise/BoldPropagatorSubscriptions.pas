@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorSubscriptions;
 
 interface
@@ -7,7 +10,8 @@ uses
   classes,
   BoldDefs,
   BoldIndexList,
-  BoldIndexedList;
+  BoldIndexedList
+  ;
 
 type
   {forward declarations}
@@ -65,8 +69,7 @@ implementation
 
 uses
   Sysutils,
-  BoldUtils,
-  PropagatorConsts;
+  BoldUtils;
 
 { TBoldSortedIntegerList }
 
@@ -206,7 +209,7 @@ var
   aEvent: TBoldEventNameIndexNode;
 begin
   if not Assigned(ClientIds) then
-    raise EBold.CreateFmt(sClientIDsNotAssigned, [ClassName, 'GetAllSubscribedClientsExcept']); // do not localize
+    raise EBold.CreateFmt('%s.GetAllSubscribedClientsExcept: ClientIds not assigned', [ClassName]);
   aEvent := getEvent(EventName);
   if Assigned(aEvent) then
   begin
@@ -296,5 +299,7 @@ begin
     aNode := aNode.Next[ClientIdIndexOrder] as TBoldSubscriptionNode;
   end;
 end;
+
+initialization
 
 end.

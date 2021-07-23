@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStringsPropertyControllerCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -6,7 +9,7 @@ interface
 
 uses
   Classes,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
   BoldAbstractListHandleCom,
   BoldControlPackCom,
@@ -82,7 +85,6 @@ uses
   SysUtils,
   BoldListControlPackCom,
   BoldDefs,
-  BoldRev,
   TypInfo;
 
   {-- TBoldStringsPropertyControllerCom ----------------------------------------------------------}
@@ -92,7 +94,7 @@ begin
   inherited;
   fBoldRowProperties := TBoldStringFollowerControllerCom.Create(Self);
   fBoldRowProperties.AfterMakeUptoDate := _ItemAfterMakeUptoDate;
-  fBoldRowProperties.BeforeMakeUptoDate := _ItemBeforeMakeUptoDate;
+  fBoldRowProperties.BeforeMakeUptoDate := _ItemBeforeMakeUptoDate;  
   fBoldRowProperties.OnGetContextType := GetContextType;
   fBoldProperties := TBoldListAsFollowerListControllerCom.Create(Self, fBoldRowProperties);
   with fBoldProperties do
@@ -136,7 +138,7 @@ begin
   if Assigned(VCLComponent) and (not (csDestroying in ComponentState)) then
     if (AComponent = VCLComponent) and (Operation = opRemove) then
       VCLComponent := nil;
-end;
+end;             
 
 procedure TBoldStringsPropertyControllerCom._ListAfterMakeUptoDate(Follower: TBoldFollowerCom);
 var
@@ -222,7 +224,6 @@ end;
 
 function TBoldStringsPropertyControllerCom.GetStringsProperty: TStrings;
 begin
-  // fixme code for properties not at top level
   Result := nil;
   if Assigned(VCLComponent) and (PropertyName <> '') then
   begin
@@ -251,7 +252,6 @@ end;
 
 procedure TBoldStringsPropertyControllerCom.SetVCLComponent(const Value: TComponent);
 begin
-  //FIXME: Add code to validate PropertyName in new component
   fVCLComponent := Value;
   if Assigned(fVCLComponent) then
     FreeNotification(fVCLComponent);

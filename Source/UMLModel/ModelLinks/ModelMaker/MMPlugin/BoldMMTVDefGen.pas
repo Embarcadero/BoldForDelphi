@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMMTVDefGen;
 
 interface
@@ -5,7 +8,7 @@ interface
 uses
   BoldDefaultTaggedValues,
   BoldUMLTaggedValues,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldTaggedValueList;
 
 type
@@ -54,7 +57,7 @@ var
   ModelDefElement: IXMLDOMElement;
 begin
   fDoc := TDOMDocument.Create(nil);
-  fDoc.documentElement := fDoc.createElement('TagDefinitions'); // do not localize
+  fDoc.documentElement := fDoc.createElement('TagDefinitions');
   RootElement := fDoc.documentElement;
 
   fEnumDefElement := AddElement(NODENAME_ENUMS, RootElement);
@@ -64,40 +67,39 @@ begin
   MethodDefElement := AddElement(NODENAME_METHODTAGS, RootElement);
   ModelDefElement := AddElement(NODENAME_MODELTAGS, RootElement);
 
-  AddEnumDef('Boolean', 'True, False'); // do not localize
-  AddEnumDef('AttributeKindSet', TV_ATTRIBUTEKIND_BOLD + ', ' + TV_ATTRIBUTEKIND_DELPHI); // do not localize
-  AddEnumDef('BoldOperationKindSet', TV_DELPHIOPERATIONKIND_NORMAL + ', ' + // do not localize
+  AddEnumDef('Boolean', 'True, False');
+  AddEnumDef('AttributeKindSet', TV_ATTRIBUTEKIND_BOLD + ', ' + TV_ATTRIBUTEKIND_DELPHI);
+  AddEnumDef('BoldOperationKindSet', TV_DELPHIOPERATIONKIND_NORMAL + ', ' +
                                      TV_DELPHIOPERATIONKIND_VIRTUAL + ', ' +
                                      TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL + ', ' +
                                      TV_DELPHIOPERATIONKIND_DYNAMIC + ', ' +
                                      TV_DELPHIOPERATIONKIND_OVERRIDE);
-//  AddEnumDef('ChangeabilityKind', TV_CHANGEABILITY_ADDONLY + ', ' +
-//                                     TV_CHANGEABILITY_CHANGEABLE + ', ' +
-//                                     TV_CHANGEABILITY_FROZEN);
-  AddEnumDef('DeleteActions', TV_DELETEACTION_DEFAULT + ', ' + // do not localize
+
+
+  AddEnumDef('DeleteActions', TV_DELETEACTION_DEFAULT + ', ' +
                                      TV_DELETEACTION_ALLOW + ', ' +
                                      TV_DELETEACTION_PROHIBIT + ', ' +
                                      TV_DELETEACTION_CASCADE);
-  AddEnumDef('DelphiPropertySet', TV_DPNONE + ', ' + // do not localize
+  AddEnumDef('DelphiPropertySet', TV_DPNONE + ', ' +
                                      TV_DPFIELD + ', ' +
                                      TV_DPPRIVATEMETHOD + ', ' +
                                      TV_DPPROTECTEDVIRTUALMETHOD);
-  AddEnumDef('EvolutionStateEnum', TV_EVOLUTIONSTATE_NORMAL + ', ' + // do not localize
+  AddEnumDef('EvolutionStateEnum', TV_EVOLUTIONSTATE_NORMAL + ', ' +
                                      TV_EVOLUTIONSTATE_TOBEREMOVED + ', ' +
                                      TV_EVOLUTIONSTATE_REMOVED);
-  AddEnumDef('NationalCharConversionEnum', TV_NATIONALCHARCONVERSION_DEFAULT + ', ' + // do not localize
+  AddEnumDef('NationalCharConversionEnum', TV_NATIONALCHARCONVERSION_DEFAULT + ', ' +
                                      TV_NATIONALCHARCONVERSION_TRUE + ', ' +
                                      TV_NATIONALCHARCONVERSION_FALSE);
-  AddEnumDef('OptimisticLockingSet', TV_OPTIMISTICLOCKING_DEFAULT + ', ' + // do not localize
+  AddEnumDef('OptimisticLockingSet', TV_OPTIMISTICLOCKING_DEFAULT + ', ' +
                                      TV_OPTIMISTICLOCKING_OFF + ', ' +
                                      TV_OPTIMISTICLOCKING_MODIFIEDMEMBERS + ', ' +
                                      TV_OPTIMISTICLOCKING_ALLMEMBERS + ', ' +
                                      TV_OPTIMISTICLOCKING_TIMESTAMP);
-  AddEnumDef('TableMappingSet', TV_TABLEMAPPING_OWN + ', ' + // do not localize
+  AddEnumDef('TableMappingSet', TV_TABLEMAPPING_OWN + ', ' +
                                      TV_TABLEMAPPING_PARENT + ', ' +
                                      TV_TABLEMAPPING_CHILDREN + ', ' +
                                      TV_TABLEMAPPING_IMPORTED);
-  AddEnumDef('DefaultRegionModeAssociationEnum', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_DEFAULT + ', ' + // do not localize
+  AddEnumDef('DefaultRegionModeAssociationEnum', TV_DEFAULTREGIONMODE_ASSOCIATIONEND_DEFAULT + ', ' +
                                      TV_DEFAULTREGIONMODE_ASSOCIATIONEND_NONE + ', ' +
                                      TV_DEFAULTREGIONMODE_ASSOCIATIONEND_EXISTENCE + ', ' +
                                      TV_DEFAULTREGIONMODE_ASSOCIATIONEND_CASCADE + ', ' +
@@ -113,23 +115,23 @@ begin
   AddEnumDef(ENUM_TAG_PERSISTENCE, TV_PERSISTENCE_PERSISTENT + ', ' +
                                      TV_PERSISTENCE_TRANSIENT);
 
-  GenTVList(ClassDefElement, BoldDefaultTaggedValueList.ListForClassName['Class'], BOLDTVPREFIX); // do not localize
-  GenTVList(AttrDefElement, BoldDefaultTaggedValueList.ListForClassName['Attribute'], BOLDTVPREFIX); // do not localize
-  GenTVList(AssocDefElement, BoldDefaultTaggedValueList.ListForClassName['Association'], BOLDTVPREFIX); // do not localize
-  GenTVList(AssocDefElement, BoldDefaultTaggedValueList.ListForClassName['AssociationEnd'], PREFIX_SOURCE_ASSOC_END + BOLDTVPREFIX); // do not localize
-  GenTVList(AssocDefElement, BoldDefaultTaggedValueList.ListForClassName['AssociationEnd'], PREFIX_TARGET_ASSOC_END + BOLDTVPREFIX); // do not localize
-  GenTVList(MethodDefElement, BoldDefaultTaggedValueList.ListForClassName['Operation'], BOLDTVPREFIX); // do not localize
-  GenTVList(ModelDefElement, BoldDefaultTaggedValueList.ListForClassName['Model'], PREFIX_MODEL + BOLDTVPREFIX); // do not localize
+  GenTVList(ClassDefElement, BoldDefaultTaggedValueList.ListForClassName['Class'], BOLDTVPREFIX);
+  GenTVList(AttrDefElement, BoldDefaultTaggedValueList.ListForClassName['Attribute'], BOLDTVPREFIX);
+  GenTVList(AssocDefElement, BoldDefaultTaggedValueList.ListForClassName['Association'], BOLDTVPREFIX);
+  GenTVList(AssocDefElement, BoldDefaultTaggedValueList.ListForClassName['AssociationEnd'], PREFIX_SOURCE_ASSOC_END + BOLDTVPREFIX);
+  GenTVList(AssocDefElement, BoldDefaultTaggedValueList.ListForClassName['AssociationEnd'], PREFIX_TARGET_ASSOC_END + BOLDTVPREFIX);
+  GenTVList(MethodDefElement, BoldDefaultTaggedValueList.ListForClassName['Operation'], BOLDTVPREFIX);
+  GenTVList(ModelDefElement, BoldDefaultTaggedValueList.ListForClassName['Model'], PREFIX_MODEL + BOLDTVPREFIX);
 
-  GenTVList(ClassDefElement, UMLTaggedValueList.ListForClassName['Class'], ''); // do not localize
-  GenTVList(AttrDefElement, UMLTaggedValueList.ListForClassName['Attribute'], ''); // do not localize
-  GenTVList(AssocDefElement, UMLTaggedValueList.ListForClassName['Association'], ''); // do not localize
+  GenTVList(ClassDefElement, UMLTaggedValueList.ListForClassName['Class'], '');
+  GenTVList(AttrDefElement, UMLTaggedValueList.ListForClassName['Attribute'], '');
+  GenTVList(AssocDefElement, UMLTaggedValueList.ListForClassName['Association'], '');
 
-  GenTV(ClassDefElement, BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', ''); // do not localize
-  GenTV(AttrDefElement, BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', ''); // do not localize
-  GenTV(MethodDefElement, BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', ''); // do not localize
-  GenTV(AssocDefElement, PREFIX_SOURCE_ASSOC_END + BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', ''); // do not localize
-  GenTV(AssocDefElement, PREFIX_TARGET_ASSOC_END + BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', ''); // do not localize
+  GenTV(ClassDefElement, BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', '');
+  GenTV(AttrDefElement, BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', '');
+  GenTV(MethodDefElement, BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', '');
+  GenTV(AssocDefElement, PREFIX_SOURCE_ASSOC_END + BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', '');
+  GenTV(AssocDefElement, PREFIX_TARGET_ASSOC_END + BOLDTVPREFIX + TAG_CONSTRAINTS, 'Text', '');
 
   fDoc.save(FileName);
 end;

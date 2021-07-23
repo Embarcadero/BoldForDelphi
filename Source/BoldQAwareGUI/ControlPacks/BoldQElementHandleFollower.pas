@@ -46,7 +46,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
   BoldDefs;
 
@@ -146,6 +145,5 @@ begin
 end;
 
 
-initialization
 end.
 

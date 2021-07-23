@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldThreadedComObjectFactory;
 
 interface
@@ -10,11 +13,10 @@ uses
   BoldDefs;
 
 type
-  { forward declarations }
+
   TBoldThreadedComObjectFactory = class;
   TBoldComObject = class;
 
-  { TBoldThreadedComObjectFactory }
   TBoldThreadedComObjectFactory = class(TComObjectFactory, IClassFactory)
   private
     FApartmentType: TBoldApartmentType;
@@ -32,7 +34,6 @@ type
     property ApartmentType: TBoldApartmentType read FApartmentType write FApartmentType;
   end;
 
-  { TBoldComObject }
   TBoldComObject = class(TComObject)
   public
     procedure Disconnect; virtual;
@@ -46,8 +47,7 @@ uses
   BoldUtils,
   Windows,
   BoldPropagatorConstants,
-  Messages,
-  BoldComConst;
+  Messages;
 
 { TBoldThreadedComObjectFactory }
 
@@ -74,7 +74,7 @@ begin
       FApartmentThread := TBoldApartmentThread.Create(ApartmentType, DoCreateInstance, UnkOuter, IID);
       FApartmentThread.Resume;
       if not FApartmentThread.WaitUntilReady(TIMEOUT*10) then
-        raise EBold.Create(sApartmentThreadTimedOut);
+        raise EBold.Create('Appartment thread timed out');
     end
     else
       FApartmentThread.Init(UnkOuter, IID);
@@ -116,5 +116,7 @@ procedure TBoldComObject.Disconnect;
 begin
   CoDisconnectObject(self, 0);
 end;
+
+initialization
 
 end.

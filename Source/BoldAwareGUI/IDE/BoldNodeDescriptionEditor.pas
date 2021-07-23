@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNodeDescriptionEditor;
 
 interface
@@ -14,13 +17,11 @@ uses
   DesignEditors,
   DesignIntf,
   BoldNodeControlPack,
-//  BoldTreeView,
   Menus,
   BoldSubscription, ImgList;
 
 type
-//  TBoldCustomTreeViewHack = class(TBoldCustomTreeView)
-//  end;
+
 
   TFormNodeEditor = class(TForm)
     TreeView: TTreeView;
@@ -74,7 +75,6 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings,
   BoldDefs,
   BoldControlPack,
   BoldGenericListControlPack;
@@ -225,7 +225,6 @@ var
   end;
 
 begin
-  //Init list pointer to first node
   CurrentNode := TreeView.items.GetFirstNode;
 
   Inc(FUpdateCount);
@@ -256,7 +255,7 @@ begin
       end;
     end;
     PurgeEnd;
-    RootNode.Expand(False); //CHANGED
+    RootNode.Expand(False);
   finally
     Dec(FUpdateCount);
   end;
@@ -284,7 +283,7 @@ begin
     {Add subscrption}
     if TObject(Node.Data) is TBoldFollowerController then
     begin
-      TBoldFollowerController(Node.Data).AddSmallSubscription(FSubscriber, [beDestroying, beValueChanged], breReEvaluate); //CHANGED
+      TBoldFollowerController(Node.Data).AddSmallSubscription(FSubscriber, [beDestroying, beValueChanged], breReEvaluate);
     end;
     {Update caption and icon}
     if TObject(Node.Data) is TComponent then
@@ -294,7 +293,7 @@ begin
     else if TObject(Node.Data) is TBoldTreeFollowerController then
     begin
       TBoldTreeFollowerController(Node.Data).AddSmallSubscription(FSubscriber, [beDestroying, beValueChanged], breReEvaluate);
-      SetTextAndImage( 'Root', 8);  // do not localize
+      SetTextAndImage( 'Root', 8);
     end
     else if TObject(Node.Data) is TBoldNodeDescription then
     begin
@@ -313,7 +312,7 @@ begin
           ImageIndex := 2
         else
           ImageIndex := 4;
-        SetTextAndImage(Format('Parts[%d] Element: ''%s'' Controller: ''%s''', [Index, ElementExpression, ControllerExpression]), ImageIndex); // do not localize
+        SetTextAndImage(Format('Parts[%d] Element: ''%s'' Controller: ''%s''', [Index, ElementExpression, ControllerExpression]), ImageIndex);
       end;
     end
     else
@@ -487,5 +486,7 @@ begin
         fTreeProperties.NodeDescriptions[j].Index := fTreeProperties.NodeDescriptions[i].Index;
   UpdateTree;
 end;
+
+initialization
 
 end.

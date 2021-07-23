@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerCOM;
 
 interface
@@ -32,7 +35,7 @@ type
 
   TBoldLockManagerCOMFactory = class(TBoldThreadedComObjectFactory)
   public
-    constructor Create(ComServer: TComServerObject;
+    constructor Create(ComServer: TComServerObject; 
       const ClassID: TGUID; const ClassName, Description: string);
   end;
 
@@ -73,7 +76,6 @@ end;
 
 function TBoldLockManagerCOM.getLockManager: TBoldLockManager;
 begin
-  // get the LockManager from the global application object
   if not Assigned(fLockManager) then
     fLockManager := TBoldPropagatorServer.Instance.LockManager;
   Result := fLockManager;
@@ -85,7 +87,6 @@ function TBoldLockManagerCOM.GetLocks(ClientId, TimeOut: Integer;
 var
   SharedLocks, ExclusiveLocks: TStringList;
 begin
-  // delegate call to lockmanager
   SharedLocks := TStringList.Create;
   ExclusiveLocks := TStringList.Create;
   try
@@ -121,5 +122,7 @@ constructor TBoldLockManagerCOMFactory.Create(ComServer: TComServerObject;
 begin
   inherited Create(ComServer, TBoldLockManagerCOM, ClassID, ClassName, Description, ciMultiInstance, batSTA);
 end;
+
+initialization
 
 end.

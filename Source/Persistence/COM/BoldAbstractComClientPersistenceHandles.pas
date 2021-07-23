@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractComClientPersistenceHandles;
 
 interface
@@ -139,5 +142,7 @@ begin
   end;
 end;
 
-end.
 
+initialization
+
+end.

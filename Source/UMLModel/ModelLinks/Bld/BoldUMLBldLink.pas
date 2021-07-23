@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLBldLink;
 
 interface
@@ -19,9 +22,13 @@ type
     function GetDisplayName: string; override;
     function GetFileName: string; override;
     procedure SetFileName(const Value: string); override;
+    function SortCompare(Index1, Index2: integer): integer;
+    procedure SortExchange(Index1, Index2: integer);
   public
     function ExportModel(UMLModel: TUMLModel): Boolean; override;
     function ImportModel(UMLModel: TUMLModel): Boolean; override;
+    class function getSortStatus: Boolean;
+    class procedure setSortStatus(sortStatus: Boolean);
   published
     property FileName;
     property BoldModel;
@@ -42,22 +49,78 @@ uses
   BoldLogHandler,
   BoldMeta,
   BoldBld,
-  BoldUMLModelConverter;
+  BoldUMLModelConverter,
+  BoldSorter;
+
+var
+  msort: Boolean;
+  MoldModel: TMoldModel;
 
 { TBoldUMLBldLink }
 
 function TBoldUMLBldLink.ExportModel(UMLModel: TUMLModel): Boolean;
 var
   ModelAsStrings: TStringList;
-  MoldModel: TMoldModel;
+  vToolId1, vToolID2:String;
   G: IBoldGuard;
+  i,j: integer;
 begin
   Result := True;
   G := TBoldGuard.Create(MoldModel, ModelAsStrings);
   MoldModel :=  TBoldModelConverter.UMLModelToMold(UMLModel);
+  if getSortStatus then
+    BoldSort(0, MoldModel.Classes.Count-1, SortCompare, SortExchange);
   ModelAsStrings := TStringList.Create;
   TMoldBLDrw.ModelToStrings(MoldModel, ModelAsStrings);
   ModelAsStrings.SaveToFile(FileName);
+end;
+
+{ 25-10-05 Bero
+  Tried to implement BoldSort()
+  It works but it don't sort the same way as bubblesort above
+  Also experimenting with BoldElement.CompareTo() without success...
+  }
+function TBoldUMLBldLink.SortCompare(Index1, Index2: integer): integer;
+var
+  vToolId1, vToolId2: string;
+begin
+  Result := 0;
+  vToolId1 := MoldModel.Classes[Index1].NonDefaultTaggedValuesCommaText;
+  vToolId1:=copy(vToolId1,1,Ansipos(',',vToolId1)-1);
+  if (Length(vToolId1)>0) and (Ansipos('persistent',vToolId1)=0)
+    and (Ansipos('transient',vToolId1)=0) then
+  begin
+    vToolId1:=copy(vToolId1,AnsiPos('=',vToolId1)+1,Length(vToolId1));
+    vToolId2 := MoldModel.Classes[Index2].NonDefaultTaggedValuesCommaText;
+    vToolId2:=copy(vToolId2,1,Ansipos(',',vToolId2)-1);
+
+    if (Length(vToolId2)>0) and (Ansipos('persistent',vToolId2)=0)
+      and (Ansipos('transient',vToolId2)=0) then
+    begin
+      vToolId2:=copy(vToolId2,AnsiPos('=',vToolId2)+1,Length(vToolId2));
+      if (Length(vToolId1) >= Length(vToolId2)) and (('$' + vToolId1)<('$' + vToolId2)) then
+        Result := 1;
+    end;
+  end;
+end;
+
+procedure TBoldUMLBldLink.SortExchange(Index1, Index2: integer);
+begin
+  MoldModel.Classes.Exchange(Index1,Index2);
+end;
+
+{:Static method, no need for a classinstance. Get the status of the sort flag
+@return true-sorted false-unsorted}
+class function TBoldUMLBldLink.getSortStatus: Boolean;
+begin
+  Result := msort;
+end;
+
+{:Static method, no need for a classinstance. Set the status of the sort flag
+@param sortstatus true-sorted false-unsorted}
+class procedure TBoldUMLBldLink.setSortStatus(sortStatus: Boolean);
+begin
+  msort := sortStatus;
 end;
 
 function TBoldUMLBldLink.GetCanExport: Boolean;

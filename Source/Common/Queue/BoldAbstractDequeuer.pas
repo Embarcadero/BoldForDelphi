@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractDequeuer;
 
 interface
@@ -12,21 +15,38 @@ type
 
   { TBoldAbstractDequeuer }
   TBoldAbstractDequeuer = class(TBoldSubscribableComponent)
-  private
-    fQueue: TBoldThreadSafeStringQueue;
   protected
-    procedure HandleMessage(aMsg: String); virtual; abstract;
     procedure DequeueMessages(Sender: TObject);
   public
     destructor Destroy; override;
     procedure QueueNotEmpty;
-    procedure DequeueAll;
+    procedure DequeueAll; virtual; abstract;
+  end;
+
+  TBoldObjectDequeuer = class(TBoldAbstractDequeuer)
+  private
+    fQueue: TBoldThreadSafeObjectQueue;
+  protected
+    procedure HandleMessage(const AOSSMessage: TObject); virtual; abstract;
+  public
+    procedure DequeueAll; override;
+    property Queue: TBoldThreadSafeObjectQueue read fQueue write fQueue;
+  end;
+
+  TBoldStringDequeuer = class(TBoldAbstractDequeuer)
+  private
+    fQueue: TBoldThreadSafeStringQueue;
+  protected
+    procedure HandleMessage(const aMsg: String); virtual; abstract;
+  public
+    procedure DequeueAll; override;
     property Queue: TBoldThreadSafeStringQueue read fQueue write fQueue;
   end;
 
 implementation
 
 uses
+  Classes,
   BoldQueue;
 
 { TBoldDequeuerHandle }
@@ -47,19 +67,25 @@ begin
   TBoldQueueable.AddToPreDisplayQueue(DequeueMessages, nil, Self);
 end;
 
-procedure TBoldAbstractDequeuer.DequeueAll;
-var
-  aMsg: String;
+{ TBoldObjectDequeuer }
+
+procedure TBoldObjectDequeuer.DequeueAll;
 begin
-  if Assigned(Queue) then
-  begin
-    aMsg := Queue.Dequeue;
-    while aMsg <> '' do
-    begin
-      HandleMessage(aMsg);
-      aMsg := Queue.Dequeue;
-    end;
-  end;
+  if not Assigned(Queue) or Queue.Empty then
+    exit;
+  while not Queue.Empty do
+    HandleMessage(Queue.Dequeue);
 end;
+
+{ TBoldStringDequeuer }
+
+procedure TBoldStringDequeuer.DequeueAll;
+begin
+  if not Assigned(Queue) or Queue.Empty then
+    exit;
+  while not Queue.Empty do
+    HandleMessage(Queue.Dequeue);
+end;
+
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMapper;
 
 interface
@@ -17,10 +20,12 @@ type
 
 implementation
 
+
 {---TBoldPersistenceMapper---}
 procedure TBoldPersistenceMapper.CreatePersistentStorage;
 begin
 end;
 
-end.
+initialization
 
+end.

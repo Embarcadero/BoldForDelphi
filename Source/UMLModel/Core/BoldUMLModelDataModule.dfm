@@ -1,7 +1,5 @@
 object dmModelEdit: TdmModelEdit
   OldCreateOrder = True
-  Left = 186
-  Top = 140
   Height = 479
   Width = 741
   object bmlUMLModel: TBoldModel
@@ -83,50 +81,6 @@ object dmModelEdit: TdmModelEdit
         'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
         'ld.TableName=UML_<Name>"'
       #9#9#9'(Attributes'
-      #9#9#9')'
-      #9#9#9'(Methods'
-      #9#9#9')'
-      #9#9')'
-      #9#9'(Class'
-      #9#9#9'"Include"'
-      #9#9#9'"Relationship"'
-      #9#9#9'TRUE'
-      #9#9#9'FALSE'
-      #9#9#9'""'
-      #9#9#9'""'
-      
-        #9#9#9'"_BoldInternal.toolId=35FDD6900154,persistence=persistent,_Bo' +
-        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
-        'Elements.Use_Cases,Bold.DelphiName=TUML<Name>,Bold.ExpressionNam' +
-        'e=UML<Name>,Bold.TableName=UML_<Name>"'
-      #9#9#9'(Attributes'
-      #9#9#9')'
-      #9#9#9'(Methods'
-      #9#9#9')'
-      #9#9')'
-      #9#9'(Class'
-      #9#9#9'"ExtensionPoint"'
-      #9#9#9'"ModelElement"'
-      #9#9#9'TRUE'
-      #9#9#9'FALSE'
-      #9#9#9'""'
-      #9#9#9'""'
-      
-        #9#9#9'"_BoldInternal.toolId=362661700208,persistence=persistent,_Bo' +
-        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
-        'Elements.Use_Cases,Bold.DelphiName=TUML<Name>,Bold.ExpressionNam' +
-        'e=UML<Name>,Bold.TableName=UML_<Name>"'
-      #9#9#9'(Attributes'
-      #9#9#9#9'(Attribute'
-      #9#9#9#9#9'"location"'
-      #9#9#9#9#9'"LocationReference"'
-      #9#9#9#9#9'FALSE'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'2'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'"_BoldInternal.toolId=3634E53A00DC,persistence=Persistent"'
-      #9#9#9#9')'
       #9#9#9')'
       #9#9#9'(Methods'
       #9#9#9')'
@@ -311,6 +265,67 @@ object dmModelEdit: TdmModelEdit
       #9#9#9')'
       #9#9')'
       #9#9'(Class'
+      #9#9#9'"Element"'
+      #9#9#9'"UMLModelRoot"'
+      #9#9#9'TRUE'
+      #9#9#9'FALSE'
+      #9#9#9'""'
+      #9#9#9'""'
+      
+        #9#9#9'"_BoldInternal.toolId=3C5A96DE0300,persistence=persistent,_Bo' +
+        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
+        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
+        'ld.TableName=UML_<Name>"'
+      #9#9#9'(Attributes'
+      #9#9#9')'
+      #9#9#9'(Methods'
+      #9#9#9')'
+      #9#9')'
+      #9#9'(Class'
+      #9#9#9'"Include"'
+      #9#9#9'"Relationship"'
+      #9#9#9'TRUE'
+      #9#9#9'FALSE'
+      #9#9#9'""'
+      #9#9#9'""'
+      
+        #9#9#9'"_BoldInternal.toolId=35FDD6900154,persistence=persistent,_Bo' +
+        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
+        'Elements.Use_Cases,Bold.DelphiName=TUML<Name>,Bold.ExpressionNam' +
+        'e=UML<Name>,Bold.TableName=UML_<Name>"'
+      #9#9#9'(Attributes'
+      #9#9#9')'
+      #9#9#9'(Methods'
+      #9#9#9')'
+      #9#9')'
+      #9#9'(Class'
+      #9#9#9'"ExtensionPoint"'
+      #9#9#9'"ModelElement"'
+      #9#9#9'TRUE'
+      #9#9#9'FALSE'
+      #9#9#9'""'
+      #9#9#9'""'
+      
+        #9#9#9'"_BoldInternal.toolId=362661700208,persistence=persistent,_Bo' +
+        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
+        'Elements.Use_Cases,Bold.DelphiName=TUML<Name>,Bold.ExpressionNam' +
+        'e=UML<Name>,Bold.TableName=UML_<Name>"'
+      #9#9#9'(Attributes'
+      #9#9#9#9'(Attribute'
+      #9#9#9#9#9'"location"'
+      #9#9#9#9#9'"LocationReference"'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'"_BoldInternal.toolId=3634E53A00DC,persistence=Persistent"'
+      #9#9#9#9')'
+      #9#9#9')'
+      #9#9#9'(Methods'
+      #9#9#9')'
+      #9#9')'
+      #9#9'(Class'
       #9#9#9'"UseCase"'
       #9#9#9'"Classifier"'
       #9#9#9'TRUE'
@@ -374,6 +389,70 @@ object dmModelEdit: TdmModelEdit
       #9#9#9#9#9'""'
       #9#9#9#9#9'"_BoldInternal.toolId=3C161B56012C"'
       #9#9#9#9')'
+      #9#9#9')'
+      #9#9')'
+      #9#9'(Class'
+      #9#9#9'"GeneralizableElement"'
+      #9#9#9'"Namespace"'
+      #9#9#9'TRUE'
+      #9#9#9'TRUE'
+      #9#9#9'""'
+      #9#9#9'""'
+      
+        #9#9#9'"_BoldInternal.toolId=327A810D03C0,persistence=persistent,_Bo' +
+        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
+        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
+        'ld.TableName=UML_<Name>"'
+      #9#9#9'(Attributes'
+      #9#9#9#9'(Attribute'
+      #9#9#9#9#9'"isRoot"'
+      #9#9#9#9#9'"Boolean"'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'"_BoldInternal.toolId=327A877801CC,persistence=Persistent"'
+      #9#9#9#9')'
+      #9#9#9#9'(Attribute'
+      #9#9#9#9#9'"isLeaf"'
+      #9#9#9#9#9'"Boolean"'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'"_BoldInternal.toolId=327A877E006E,persistence=Persistent"'
+      #9#9#9#9')'
+      #9#9#9#9'(Attribute'
+      #9#9#9#9#9'"isAbstract"'
+      #9#9#9#9#9'"Boolean"'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'"_BoldInternal.toolId=327A878400D2,persistence=Persistent"'
+      #9#9#9#9')'
+      #9#9#9')'
+      #9#9#9'(Methods'
+      #9#9#9')'
+      #9#9')'
+      #9#9'(Class'
+      #9#9#9'"Namespace"'
+      #9#9#9'"ModelElement"'
+      #9#9#9'TRUE'
+      #9#9#9'TRUE'
+      #9#9#9'""'
+      #9#9#9'""'
+      
+        #9#9#9'"_BoldInternal.toolId=32B69F3A0118,persistence=persistent,_Bo' +
+        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
+        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
+        'ld.TableName=UML_<Name>"'
+      #9#9#9'(Attributes'
+      #9#9#9')'
+      #9#9#9'(Methods'
       #9#9#9')'
       #9#9')'
       #9#9'(Class'
@@ -1140,6 +1219,46 @@ object dmModelEdit: TdmModelEdit
       #9#9#9')'
       #9#9')'
       #9#9'(Class'
+      #9#9#9'"Feature"'
+      #9#9#9'"ModelElement"'
+      #9#9#9'TRUE'
+      #9#9#9'TRUE'
+      #9#9#9'""'
+      #9#9#9'""'
+      
+        #9#9#9'"_BoldInternal.toolId=32989F9700FE,persistence=persistent,_Bo' +
+        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
+        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
+        'ld.TableName=UML_<Name>,\"Bold.DerivationExpressions=qualifyingO' +
+        'wner=if owner->notEmpty then owner else namespace endif\""'
+      #9#9#9'(Attributes'
+      #9#9#9#9'(Attribute'
+      #9#9#9#9#9'"ownerScope"'
+      #9#9#9#9#9'"ScopeKind"'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'"instance"'
+      #9#9#9#9#9'"_BoldInternal.toolId=31653E23032A,persistence=Persistent"'
+      #9#9#9#9')'
+      #9#9#9')'
+      #9#9#9'(Methods'
+      #9#9#9#9'(Method'
+      #9#9#9#9#9'"ExpandedExpressionName"'
+      #9#9#9#9#9'""'
+      #9#9#9#9#9'FALSE'
+      #9#9#9#9#9'"String"'
+      #9#9#9#9#9'"Bold"'
+      #9#9#9#9#9'2'
+      #9#9#9#9#9'""'
+      
+        #9#9#9#9#9'"_BoldInternal.toolId=3C16140103C2,Bold.OperationKind=Overr' +
+        'ide"'
+      #9#9#9#9')'
+      #9#9#9')'
+      #9#9')'
+      #9#9'(Class'
       #9#9#9'"Argument"'
       #9#9#9'"ModelElement"'
       #9#9#9'TRUE'
@@ -1327,53 +1446,6 @@ object dmModelEdit: TdmModelEdit
         'Elements.Collaborations,Bold.DelphiName=TUML<Name>,Bold.Expressi' +
         'onName=UML<Name>,Bold.TableName=UML_<Name>"'
       #9#9#9'(Attributes'
-      #9#9#9')'
-      #9#9#9'(Methods'
-      #9#9#9')'
-      #9#9')'
-      #9#9'(Class'
-      #9#9#9'"GeneralizableElement"'
-      #9#9#9'"Namespace"'
-      #9#9#9'TRUE'
-      #9#9#9'TRUE'
-      #9#9#9'""'
-      #9#9#9'""'
-      
-        #9#9#9'"_BoldInternal.toolId=327A810D03C0,persistence=persistent,_Bo' +
-        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
-        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
-        'ld.TableName=UML_<Name>"'
-      #9#9#9'(Attributes'
-      #9#9#9#9'(Attribute'
-      #9#9#9#9#9'"isRoot"'
-      #9#9#9#9#9'"Boolean"'
-      #9#9#9#9#9'FALSE'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'2'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'"_BoldInternal.toolId=327A877801CC,persistence=Persistent"'
-      #9#9#9#9')'
-      #9#9#9#9'(Attribute'
-      #9#9#9#9#9'"isLeaf"'
-      #9#9#9#9#9'"Boolean"'
-      #9#9#9#9#9'FALSE'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'2'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'"_BoldInternal.toolId=327A877E006E,persistence=Persistent"'
-      #9#9#9#9')'
-      #9#9#9#9'(Attribute'
-      #9#9#9#9#9'"isAbstract"'
-      #9#9#9#9#9'"Boolean"'
-      #9#9#9#9#9'FALSE'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'2'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'"_BoldInternal.toolId=327A878400D2,persistence=Persistent"'
-      #9#9#9#9')'
       #9#9#9')'
       #9#9#9'(Methods'
       #9#9#9')'
@@ -1953,23 +2025,6 @@ object dmModelEdit: TdmModelEdit
       #9#9#9')'
       #9#9')'
       #9#9'(Class'
-      #9#9#9'"Namespace"'
-      #9#9#9'"ModelElement"'
-      #9#9#9'TRUE'
-      #9#9#9'TRUE'
-      #9#9#9'""'
-      #9#9#9'""'
-      
-        #9#9#9'"_BoldInternal.toolId=32B69F3A0118,persistence=persistent,_Bo' +
-        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
-        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
-        'ld.TableName=UML_<Name>"'
-      #9#9#9'(Attributes'
-      #9#9#9')'
-      #9#9#9'(Methods'
-      #9#9#9')'
-      #9#9')'
-      #9#9'(Class'
       #9#9#9'"Attribute"'
       #9#9#9'"StructuralFeature"'
       #9#9#9'TRUE'
@@ -2116,63 +2171,6 @@ object dmModelEdit: TdmModelEdit
         #9#9#9#9#9'"_BoldInternal.toolId=327BBD2A02D0,persistence=Persistent,B' +
         'old.Length=-1"'
       #9#9#9#9')'
-      #9#9#9')'
-      #9#9#9'(Methods'
-      #9#9#9')'
-      #9#9')'
-      #9#9'(Class'
-      #9#9#9'"Feature"'
-      #9#9#9'"ModelElement"'
-      #9#9#9'TRUE'
-      #9#9#9'TRUE'
-      #9#9#9'""'
-      #9#9#9'""'
-      
-        #9#9#9'"_BoldInternal.toolId=32989F9700FE,persistence=persistent,_Bo' +
-        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
-        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
-        'ld.TableName=UML_<Name>,\"Bold.DerivationExpressions=qualifyingO' +
-        'wner=if owner->notEmpty then owner else namespace endif\""'
-      #9#9#9'(Attributes'
-      #9#9#9#9'(Attribute'
-      #9#9#9#9#9'"ownerScope"'
-      #9#9#9#9#9'"ScopeKind"'
-      #9#9#9#9#9'FALSE'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'2'
-      #9#9#9#9#9'"instance"'
-      #9#9#9#9#9'"_BoldInternal.toolId=31653E23032A,persistence=Persistent"'
-      #9#9#9#9')'
-      #9#9#9')'
-      #9#9#9'(Methods'
-      #9#9#9#9'(Method'
-      #9#9#9#9#9'"ExpandedExpressionName"'
-      #9#9#9#9#9'""'
-      #9#9#9#9#9'FALSE'
-      #9#9#9#9#9'"String"'
-      #9#9#9#9#9'"Bold"'
-      #9#9#9#9#9'2'
-      #9#9#9#9#9'""'
-      
-        #9#9#9#9#9'"_BoldInternal.toolId=3C16140103C2,Bold.OperationKind=Overr' +
-        'ide"'
-      #9#9#9#9')'
-      #9#9#9')'
-      #9#9')'
-      #9#9'(Class'
-      #9#9#9'"Element"'
-      #9#9#9'"UMLModelRoot"'
-      #9#9#9'TRUE'
-      #9#9#9'FALSE'
-      #9#9#9'""'
-      #9#9#9'""'
-      
-        #9#9#9'"_BoldInternal.toolId=3C5A96DE0300,persistence=persistent,_Bo' +
-        'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
-        'Core,Bold.DelphiName=TUML<Name>,Bold.ExpressionName=UML<Name>,Bo' +
-        'ld.TableName=UML_<Name>"'
-      #9#9#9'(Attributes'
       #9#9#9')'
       #9#9#9'(Methods'
       #9#9#9')'
@@ -3125,7 +3123,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=35FDD9A30168,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=35FDD9A30168,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Use_Cases,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3168,7 +3166,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=362661DA01D6,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=362661DA01D6,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Use_Cases,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3211,7 +3209,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3626B0DA0104,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3626B0DA0104,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Use_Cases,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3254,7 +3252,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=35FDD86301E0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=35FDD86301E0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Use_Cases,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3297,7 +3295,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=35FDD86B006E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=35FDD86B006E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Use_Cases,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3340,7 +3338,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=35FDD992037A,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=35FDD992037A,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Use_Cases,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3383,7 +3381,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33377C0D0208,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33377C0D0208,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3427,7 +3425,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=328902D000D2,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=328902D000D2,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3471,7 +3469,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3288E5390226,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3288E5390226,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3519,7 +3517,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3288D8C4023A,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3288D8C4023A,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3563,7 +3561,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3288E53D029E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3288E53D029E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3607,7 +3605,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3288D725037A,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3288D725037A,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3651,7 +3649,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3403125E0140,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3403125E0140,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3695,7 +3693,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=364987D1017D,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=364987D1017D,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3739,7 +3737,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=32890282014A,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=32890282014A,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3783,7 +3781,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3289028C03D4,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3289028C03D4,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3827,7 +3825,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3369606C0000,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3369606C0000,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -3870,7 +3868,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3369912001A4,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3369912001A4,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3914,7 +3912,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=333784B400AA,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=333784B400AA,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -3960,7 +3958,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3337AF9B02A8,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3337AF9B02A8,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -4003,7 +4001,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=336A39BE0136,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=336A39BE0136,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -4047,7 +4045,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FA3ABF0122,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FA3ABF0122,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -4091,7 +4089,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=32B598420168,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=32B598420168,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -4135,7 +4133,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33CF8BD300A0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33CF8BD300A0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -4181,7 +4179,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33EBFA1C0078,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33EBFA1C0078,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.State_Machines,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -4225,7 +4223,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FA37050118,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FA37050118,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4269,7 +4267,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33DBC1A200B4,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33DBC1A200B4,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4313,7 +4311,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33DBC16D0190,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33DBC16D0190,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4357,7 +4355,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FF4EF7029E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FF4EF7029E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4401,7 +4399,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=328A5BB20280,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=328A5BB20280,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4445,7 +4443,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FFD9830014,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FFD9830014,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4489,7 +4487,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FF558A01AE,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FF558A01AE,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4537,7 +4535,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33CFD0A602F8,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33CFD0A602F8,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -4580,7 +4578,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33CFA4B80334,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33CFA4B80334,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4626,7 +4624,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3650F0CC0262,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3650F0CC0262,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4670,7 +4668,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3650EE68008C,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3650EE68008C,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4716,7 +4714,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3650ECD402C6,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3650ECD402C6,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4760,7 +4758,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3742033C00F0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3742033C00F0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4804,7 +4802,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14A984017C,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14A984017C,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4848,7 +4846,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14A52203C7,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14A52203C7,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4892,7 +4890,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14955602A0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14955602A0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4936,7 +4934,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=34030E1501CC,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=34030E1501CC,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -4980,7 +4978,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=328A5C1F0118,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=328A5C1F0118,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -5024,7 +5022,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=328A598B00F0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=328A598B00F0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -5068,7 +5066,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36266EA903C0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36266EA903C0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -5112,7 +5110,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=364B65E8024E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=364B65E8024E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -5157,7 +5155,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=364B65E4008C,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=364B65E4008C,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -5202,7 +5200,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3635552000DC,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3635552000DC,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Common_Behavior,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -5246,7 +5244,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3388DE7600DC,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3388DE7600DC,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5290,7 +5288,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3388DD5C00E6,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3388DD5C00E6,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5336,7 +5334,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33CD50F90000,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33CD50F90000,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5380,7 +5378,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33CD57D201B8,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33CD57D201B8,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5428,7 +5426,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33CD511600AA,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33CD511600AA,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5472,7 +5470,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33D1394D00F0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33D1394D00F0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5516,7 +5514,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36008FB50168,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36008FB50168,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5564,7 +5562,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=35FEAB5D038E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=35FEAB5D038E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5610,7 +5608,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36265CF80136,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36265CF80136,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5656,7 +5654,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14BC4101E8,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14BC4101E8,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5700,7 +5698,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3650E6BD010E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3650E6BD010E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5748,7 +5746,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FA39D50050,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FA39D50050,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5792,7 +5790,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33D1470D01A4,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33D1470D01A4,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5836,7 +5834,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33D142DC0262,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33D142DC0262,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5880,7 +5878,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33D147100302,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33D147100302,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5924,7 +5922,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33DBBB45035C,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33DBBB45035C,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -5968,7 +5966,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33DBBB2B0000,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33DBBB2B0000,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Collaborations,_Boldify.noName=True,Bold.DelphiName=<Na' +
         'me>"'
@@ -6012,7 +6010,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14CA560322,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14CA560322,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Activity_Graphs,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -6056,7 +6054,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14CBCF01DA,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14CBCF01DA,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Activity_Graphs,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -6100,7 +6098,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14CD10031C,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14CD10031C,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Activity_Graphs,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -6144,7 +6142,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14C8D202A2,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14C8D202A2,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Activity_Graphs,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -6188,7 +6186,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14C9380321,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14C9380321,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Activity_Graphs,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -6232,7 +6230,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14C9FC0387,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14C9FC0387,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Behavioral_' +
         'Elements.Activity_Graphs,_Boldify.noName=True,Bold.DelphiName=<N' +
         'ame>"'
@@ -6276,7 +6274,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36240CA3028A,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36240CA3028A,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6321,7 +6319,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36240BF10028,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36240BF10028,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6368,7 +6366,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=362409A800BE,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=362409A800BE,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6411,7 +6409,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3627D60D03C0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3627D60D03C0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6454,7 +6452,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3627D5E8006E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3627D5E8006E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6497,7 +6495,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36241238028A,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36241238028A,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6542,7 +6540,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=335C0D770302,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=335C0D770302,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6585,7 +6583,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33DBE5050028,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33DBE5050028,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6628,7 +6626,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=335C14690334,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=335C14690334,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6671,7 +6669,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=335C14A102DA,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=335C14A102DA,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6714,7 +6712,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33EA67B702EE,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33EA67B702EE,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6757,7 +6755,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33FFE57902A2,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33FFE57902A2,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6800,7 +6798,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33F0EFAB0050,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33F0EFAB0050,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6843,7 +6841,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C10E44700C4,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C10E44700C4,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6886,7 +6884,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C10E42301C7,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C10E42301C7,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6929,7 +6927,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C10E25D0386,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C10E25D0386,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -6972,7 +6970,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C5A72940135,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C5A72940135,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7015,7 +7013,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C5A68F300AE,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C5A68F300AE,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7058,7 +7056,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14DDB20379,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3C14DDB20379,deri' +
         'ved=True,_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta' +
         '.Foundation.Core,Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -7105,7 +7103,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C10DA8E0219,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C10DA8E0219,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7148,7 +7146,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=370E7E3B0138,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=370E7E3B0138,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7191,7 +7189,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=36E96A860316,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=36E96A860316,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7234,7 +7232,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=365EEE8103D4,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=365EEE8103D4,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7277,7 +7275,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3BCC459C037B,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3BCC459C037B,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7320,7 +7318,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3B9DE749014C,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3B9DE749014C,deri' +
         'ved=True,_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta' +
         '.Foundation.Core,Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -7365,7 +7363,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3B989D050114,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3B989D050114,deri' +
         'ved=True,_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta' +
         '.Foundation.Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -7413,7 +7411,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3359946200F0,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3359946200F0,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7456,7 +7454,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=32B6D9B302FD,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=32B6D9B302FD,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7499,7 +7497,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33598CAA030C,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33598CAA030C,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7542,7 +7540,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=32B5D7EE02FF,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=32B5D7EE02FF,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7585,7 +7583,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=32A2A50C0084,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=32A2A50C0084,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Core,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -7628,7 +7626,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C10E89303D3,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C10E89303D3,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Extension_Mechanisms,_Boldify.noName=True,Bold.DelphiName=<Name>' +
         '"'
@@ -7672,7 +7670,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=33E901DD001E,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=33E901DD001E,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Extension_Mechanisms,_Boldify.noName=True,Bold.DelphiName=<Name>' +
         '"'
@@ -7726,7 +7724,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3AE6CACA0195,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3AE6CACA0195,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Extension_Mechanisms,_Boldify.noName=True,Bold.DelphiName=<Name>' +
         '"'
@@ -7770,7 +7768,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C10E81D0080,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C10E81D0080,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Foundation.' +
         'Extension_Mechanisms,_Boldify.noName=True,Bold.DelphiName=<Name>' +
         '"'
@@ -7814,7 +7812,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C16032D01C9,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3C16032D01C9,deri' +
         'ved=True,\"_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMe' +
         'ta.Bold Specifics\",Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -7862,7 +7860,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C16037401A3,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3C16037401A3,deri' +
         'ved=True,\"_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMe' +
         'ta.Bold Specifics\",Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -7910,7 +7908,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C16030102A2,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3C16030102A2,deri' +
         'ved=True,\"_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMe' +
         'ta.Bold Specifics\",Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -7958,7 +7956,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C160E28029D,persistence=Persistent,\"_' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C160E28029D,\"_' +
         'BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Bold Spec' +
         'ifics\",_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -8005,7 +8003,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C160E2A021E,persistence=Persistent,\"_' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C160E2A021E,\"_' +
         'BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Bold Spec' +
         'ifics\",_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -8050,7 +8048,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C160DEB012D,persistence=Persistent,\"_' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C160DEB012D,\"_' +
         'BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Bold Spec' +
         'ifics\",_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -8098,7 +8096,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C1603D1025B,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3C1603D1025B,deri' +
         'ved=True,\"_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMe' +
         'ta.Bold Specifics\",Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -8146,7 +8144,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'"Bold"'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C16041703C4,persistence=transient,deri' +
+        #9#9#9'"persistence=transient,_BoldInternal.toolId=3C16041703C4,deri' +
         'ved=True,\"_BoldInternal.unflattenedNamespace=BoldUMLModel.UMLMe' +
         'ta.Bold Specifics\",Bold.DelphiName=<Name>"'
       #9#9#9'TRUE'
@@ -8195,7 +8193,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14CE1102B7,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14CE1102B7,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Model_Manag' +
         'ement,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -8240,7 +8238,7 @@ object dmModelEdit: TdmModelEdit
       #9#9#9'""'
       #9#9#9'""'
       
-        #9#9#9'"_BoldInternal.toolId=3C14CE6403A7,persistence=Persistent,_Bo' +
+        #9#9#9'"persistence=Persistent,_BoldInternal.toolId=3C14CE6403A7,_Bo' +
         'ldInternal.unflattenedNamespace=BoldUMLModel.UMLMeta.Model_Manag' +
         'ement,_Boldify.noName=True,Bold.DelphiName=<Name>"'
       #9#9#9'FALSE'
@@ -8501,7 +8499,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsScopeKind'
         NativeType = 'TScopeKind'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'TableMapping'
@@ -8511,7 +8509,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsTableMapping'
         NativeType = 'TTableMapping'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'ParameterDirectionKind'
@@ -8521,7 +8519,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsParameterDirectionKind'
         NativeType = 'TBoldParameterDirectionKind'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'Severity'
@@ -8531,7 +8529,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsSeverity'
         NativeType = 'TSeverity'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'Stereotype'
@@ -8541,7 +8539,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsStereotype'
         NativeType = 'TBoldAttributeStereotype'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'DelphiFunctionType'
@@ -8551,7 +8549,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsDelphiFunctionType'
         NativeType = 'TDelphiFunctionType'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'AggregationKind'
@@ -8561,7 +8559,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsAggregationKind'
         NativeType = 'TAggregationKind'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'VisibilityKind'
@@ -8571,7 +8569,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsVisibilityKind'
         NativeType = 'TVisibilityKind'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'ChangeableKind'
@@ -8581,7 +8579,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsChangeableKind'
         NativeType = 'TChangeableKind'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'Constraint'
@@ -8608,7 +8606,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'AsOrderingKind'
         NativeType = 'TOrderingKind'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'Multiplicity'
@@ -8708,7 +8706,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'as<Name>'
         NativeType = 'T<Name>'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'CallConcurrencyKind'
@@ -8718,7 +8716,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'as<Name>'
         NativeType = 'T<Name>'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = 'MessageDirectionKind'
@@ -8728,7 +8726,7 @@ object dmModelEdit: TdmModelEdit
         MapperName = 'TBoldPMInteger'
         Accessor = 'as<Name>'
         NativeType = 'T<Name>'
-        UnitName = 'BoldUMLAttributes'
+        BoldUnitName = 'BoldUMLAttributes'
       end
       item
         ModelName = '__TBAString'

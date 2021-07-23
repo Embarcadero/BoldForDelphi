@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLogHandlerSimple;
 
 interface
@@ -16,18 +19,18 @@ type
     function GetLogLines: TStringList;
   protected
     procedure SetProgress(const Value: integer);
-    procedure SetLogHeader(const Value: string);
+    procedure SetLogHeader(const Value: string); virtual;
     procedure SetProgressMax(const Value: integer);
     procedure ProcessInterruption;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     procedure Clear;
     procedure Hide;
-    procedure Log(const s: string; LogType: TBoldLogType);
+    procedure Log(const s: string; LogType: TBoldLogType); virtual;
     procedure ProgressStep;
     procedure Show;
     procedure Sync;
-    procedure StartLog(const SessionName: string);
+    procedure StartLog(const SessionName: string); virtual;
     procedure EndLog;
     property LogLines: TStringList read GetLogLines;
   end;
@@ -37,7 +40,7 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldCommonConst;
+  BoldRev;
 
 { TBoldSimpleLogReceiver }
 
@@ -46,7 +49,7 @@ begin
   LogLines.Clear;
 end;
 
-destructor TBoldSimpleLogReceiver.Destroy;
+destructor TBoldSimpleLogReceiver.destroy;
 begin
   FreeAndNil(fLogLines);
   inherited;
@@ -54,7 +57,6 @@ end;
 
 procedure TBoldSimpleLogReceiver.EndLog;
 begin
-  // intentionally left blank
 end;
 
 function TBoldSimpleLogReceiver.GetLogLines: TStringList;
@@ -64,9 +66,9 @@ begin
   Result := fLogLines;
 end;
 
+
 procedure TBoldSimpleLogReceiver.Hide;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldSimpleLogReceiver.Log(const s: string; LogType: TBoldLogType);
@@ -76,12 +78,10 @@ end;
 
 procedure TBoldSimpleLogReceiver.ProgressStep;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldSimpleLogReceiver.SetProgress(const Value: integer);
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldSimpleLogReceiver.SetLogHeader(const Value: string);
@@ -91,28 +91,25 @@ end;
 
 procedure TBoldSimpleLogReceiver.SetProgressMax(const Value: integer);
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldSimpleLogReceiver.Show;
 begin
-  // intentionally left blank
 end;
 
 procedure TBoldSimpleLogReceiver.StartLog(const SessionName: String);
 begin
-  LogLines.Add(Format(sSessionStart, [SessionName]));
+  LogLines.Add('Session: ' + SessionName);
 end;
 
 procedure TBoldSimpleLogReceiver.ProcessInterruption;
 begin
-  // Intentionally left blank
 end;
 
 procedure TBoldSimpleLogReceiver.Sync;
 begin
-  // Intentionally left blank
 end;
 
-end.
+initialization
 
+end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleBDE;
 
 interface
@@ -39,7 +42,7 @@ type
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); override;
     {$ENDIF}
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property DatabaseName: string read GetDataBasename write SetDataBaseName;
@@ -51,16 +54,11 @@ implementation
 
 uses
   SysUtils,
-  BoldDatabaseAdapterBDE,
-  BDEConsts;
-
-const
-  USERNAME = 'USER NAME';
-  PASSWORD = 'PASSWORD';
+  BoldDatabaseAdapterBDE;
 
 { TBoldPersistenceHandleBDE }
 
-destructor TBoldPersistenceHandleBDE.Destroy;
+destructor TBoldPersistenceHandleBDE.destroy;
 begin
   Active := false;
   FreeAndNil(fOwnDataBase);
@@ -111,10 +109,10 @@ begin
       if not fExistingDatabase.Connected then
       begin
         if UserName <> '' then
-          fExistingDataBase.Params.Values[USERNAME] := Username;
+          fExistingDataBase.Params.Values['USER NAME'] := Username;
         if Password <> '' then
         begin
-          fExistingDataBase.Params.Values[PASSWORD] := Password;
+          fExistingDataBase.Params.Values['PASSWORD'] := Password;
           fExistingDataBase.LoginPrompt := false;
         end;
       end;
@@ -124,14 +122,12 @@ begin
     end;
   end;
 
-  // we had no database, and were not able to find any database...
-
   fOwnDataBase := TDataBase.Create(nil);
-  fOwnDataBase.name := name+'_DataBase'; // do not localize
+  fOwnDataBase.name := name+'_DataBase';
   fOwnDataBase.DatabaseName := DatabaseName;
   fOwnDataBase.SessionName := SessionName;
-  fOwnDataBase.Params.Values[USERNAME] := Username;
-  fOwnDataBase.Params.Values[PASSWORD] := Password;
+  fOwnDataBase.Params.Values['USER NAME'] := Username;
+  fOwnDataBase.Params.Values['PASSWORD'] := Password;
   if PassWord <> '' then
     fOwnDataBase.LoginPrompt := false;
   result := fOwnDataBase;
@@ -148,14 +144,14 @@ begin
   if not assigned(Target.DatabaseAdapter) then
   begin
     Target.DatabaseAdapter := TBoldDatabaseAdapterBDE.Create(Target.Owner);
-    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterBDE'); // do not localize
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Target.DatabaseAdapter.Name := GetNewComponentName(Target.DatabaseAdapter, 'BoldDatabaseAdapterBDE');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Target.DatabaseAdapter.DesignInfo          := DesInfo;
-    showmessage(sCreatedNewAdapter);
+    showmessage('Created a new DatabaseAdapterBDE');
   end
   else if not (target.DatabaseAdapter is tBoldDatabaseAdapterBDE) then
-    raise Exception.CreateFmt(sPropertiesCannotBeTransferred, [target.DatabaseAdapter.ClassName] );
+    raise Exception.CreateFmt('The persistencehandle is connected to a %s, properties can only be transfered to a TBoldDatabaseAdapterBDE', [target.DatabaseAdapter.ClassName] );
 
   Adapter := target.DatabaseAdapter as tBoldDatabaseAdapterBDE;
   if assigned(fDatabase) then
@@ -164,15 +160,15 @@ begin
   if not assigned(Adapter.Database) then
   begin
     Adapter.DataBase := TDatabase.Create(Target.owner);
-    Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'Database'); // do not localize
-    showmessage(sCreatedNewDB);
-    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16; //set Left
-    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16; //Set Top;
+    Adapter.DataBase.Name := GetNewComponentName(Adapter.DataBase, 'Database');
+    showmessage('Created a new Database');
+    LongRec(DesInfo).Lo := LongRec(DesInfo).lo+16;
+    LongRec(DesInfo).Hi := LongRec(DesInfo).hi+16;
     Adapter.DataBase.DesignInfo          := DesInfo;
   end;
-  Adapter.Database.Params.Values[PASSWORD] := Password;
-  Adapter.Database.Params.Values[USERNAME] := Username;
-  if Adapter.Database.Params.Values[PASSWORD] <> '' then
+  Adapter.Database.Params.Values['PASSWORD'] := Password;
+  Adapter.Database.Params.Values['USER NAME'] := Username;
+  if Adapter.Database.Params.Values['PASSWORD'] <> '' then
     Adapter.Database.LoginPrompt := false;
   if not assigned(Database) then
     Adapter.DataBase.DatabaseName := DatabaseName;
@@ -204,7 +200,7 @@ procedure TBoldPersistenceHandleBDE.SetDataBase(const Value: TDataBase);
 begin
   if fDataBase <> Value then
   begin
-    CheckInactive('SetDataBase'); // do not localize
+    CheckInactive('SetDataBase');
     if assigned(fOwnDataBase) then
     begin
       FreeAndNil(FOwnDataBase);
@@ -225,7 +221,7 @@ procedure TBoldPersistenceHandleBDE.SetDatabaseName(const Value: string);
 begin
   if FDatabaseName <> Value then
   begin
-    CheckInactive('SetDataBaseName'); // do not localize
+    CheckInactive('SetDataBaseName');
     if assigned(fOwnDataBase) then
       fOwnDataBase.DatabaseName := DatabaseName;
     FDatabaseName := Value;
@@ -238,18 +234,18 @@ begin
   if Value <> PassWord then
   begin
     if assigned(fOwnDataBase) then
-      fOwnDataBase.Params.Values[PASSWORD] := value;
+      fOwnDataBase.Params.Values['PASSWORD'] := value;
     if assigned(fExistingDataBase) then
-      fExistingDataBase.Params.Values[PASSWORD] := Value;
+      fExistingDataBase.Params.Values['PASSWORD'] := Value;
   end;
-  inherited;
+  inherited;    
 end;
 
 procedure TBoldPersistenceHandleBDE.SetSessionName(const Value: String);
 begin
   if FSessionName <> Value then
   begin
-    CheckInactive('SetSessionName'); // do not localize
+    CheckInactive('SetSessionName');
     FSessionName := Value;
     if assigned(fOwnDataBase) then
       fOwnDataBase.SessionName := SessionName;
@@ -262,11 +258,13 @@ begin
   if value <> Username then
   begin
     if assigned(fOwnDataBase) then
-      fOwnDataBase.Params.Values[USERNAME] := UserName;
+      fOwnDataBase.Params.Values['USER NAME'] := UserName;
     if assigned(fExistingDataBase) then
-      fExistingDataBase.Params.Values[USERNAME] := UserName;
+      fExistingDataBase.Params.Values['USER NAME'] := UserName;
   end;
   inherited;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCheckBoxCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,16 +8,19 @@ unit BoldCheckBoxCom;
 interface
 
 uses
-  Messages,
+  // VCL
   Classes,
   Controls,
+  Messages,
   StdCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldHandlesCom,
-  BoldElementHandleFollowerCom,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
+
+  // Bold
+  BoldCheckboxStateControlPackCom,
+  BoldClientElementSupport,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
-  BoldCheckboxStateControlPackCom;
+  BoldElementHandleFollowerCom,
+  BoldHandlesCom;
 
 type
   TBoldCustomCheckBoxCom = class;
@@ -116,7 +122,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldDefs,
   BoldControlPackDefs;
 

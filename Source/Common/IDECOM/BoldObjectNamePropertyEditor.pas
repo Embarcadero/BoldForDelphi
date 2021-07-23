@@ -1,4 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectNamePropertyEditor;
+
+{$Include Bold.inc}
 
 interface
 
@@ -73,6 +78,7 @@ type
     function GetAttributes: TPropertyAttributes; override;
   end;
 
+
 var
   ObjectNamePropEditFrm: TObjectNamePropEditFrm;
 
@@ -81,8 +87,7 @@ implementation
 uses
   BoldComUtils,
   Variants,
-  dialogs,
-  BoldComConst;
+  dialogs;
 
 {$R *.DFM}
 
@@ -122,9 +127,9 @@ begin
   fConnectionHandle := pConnectionHandle as TBoldComConnectionHandle;
   if Assigned(ConnectionHandle) then
   begin
-    Caption := Format(sObjectsInX, [ConnectionHandle.ServerName]);
+    Caption := Format('Objects in %s', [ConnectionHandle.ServerName]);
     if (ObjectServers.IndexOf(ConnectionHandle.ServerCLSID) = -1) and
-    (MessageDlg(Format(sQueryStartServer, [ConnectionHandle.ServerName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    (MessageDlg(Format('Would you like to start the server %s to get the list of exported objects?', [ConnectionHandle.ServerName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
       GetObjectsFromServer;
     CurrentInfo := nil;
     if (ObjectServers.IndexOf(ConnectionHandle.ServerCLSID) <> -1) then
@@ -171,7 +176,7 @@ begin
       FreeAndNil(ObjectNames);
       FreeAndNil(ClassNames);
     end;
-  end; // if connected
+  end;
   ConnectionHandle.Connected := false;
 end;
 
@@ -257,8 +262,7 @@ procedure TObjectNamePropEditFrm.RefreshActionExecute(Sender: TObject);
 var
   CurrentInfo: TBoldProviderObjectInfo;
 begin
-  //refresh list
-  if (MessageDlg(Format(sQueryConnectToServer, [ConnectionHandle.ServerName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if (MessageDlg(Format('Connect to server %s and retrieve exported objects?', [ConnectionHandle.ServerName]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     GetObjectsFromServer;
     CurrentInfo := nil;
@@ -280,7 +284,7 @@ begin
   SelectedPersistent := nil;
   for i := 0 to PropCount - 1 do
     SelectedPersistent := GetComponent(i);
-  obj := GetObjectProp(SelectedPersistent, 'ConnectionHandle'); // do not localize
+  obj := GetObjectProp(SelectedPersistent, 'ConnectionHandle');
   if Assigned(obj) then
   begin
     with TObjectNamePropEditFrm.Create(Application) do
@@ -291,7 +295,7 @@ begin
     end;
   end
   else
-    MessageDlg(sCannotFindConnectionHandle,mtInformation, [mbOk], 0);
+    MessageDlg('Cannot find a ConnectionHandle.',mtInformation, [mbOk], 0);
 end;
 
 function TBoldObjectNameProperty.FileFilter: string;
@@ -304,7 +308,9 @@ begin
   Result := [paDialog, paRevertable];
 end;
 
-initialization //empty
+
+
+initialization
 
 finalization
   FreeObjectServers;

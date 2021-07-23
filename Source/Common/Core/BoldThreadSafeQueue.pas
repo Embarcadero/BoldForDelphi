@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldThreadSafeQueue;
 
 interface
@@ -14,7 +17,6 @@ type
   TBoldThreadSafeQueueEntry = class;
   TBoldThreadSafeStringQueue = class;
 
-  { prototypes }
   TBoldQueueEvent = procedure(Queue:  TBoldThreadSafeQueue) of Object;
 
   {ring queue with marker}
@@ -47,7 +49,7 @@ type
     procedure NotifyQueueNotEmpty;
     function UnsafeIsEmpty: Boolean; {not threadsafe, for internal use only}
   public
-    constructor Create(Name: String);
+    constructor Create(const Name: String);
     destructor Destroy; override;
     procedure Clear;
     property Count: integer read GetCount;
@@ -62,30 +64,32 @@ type
     fCount: integer;
     fMaxCount: integer;
     function GetMaxCount: integer;
+    procedure SetOwnsObjects(const Value: boolean);
   protected
     function GetCount: integer; override;
     procedure UnsafeEnqueue(anObject: TObject);
     function UnsafeDequeue: TObject;
   public
-    constructor Create(Name: String; OwnsObjects: Boolean = true);
+    constructor Create(const Name: String; OwnsObjects: Boolean = true);
     procedure Enqueue(anObject: TObject);
     procedure DequeueList(ResultList: TObjectList; Max: integer);
     function Dequeue: TObject; // returns nil if queue empty
-    property OwnsObjects: boolean read fOwnsObjects;
+    property OwnsObjects: boolean read fOwnsObjects write SetOwnsObjects;
     property MaxCount: integer read GetMaxCount;
   end;
 
   { TBoldThreadSafeInterfaceQueue }
   TBoldThreadSafeInterfaceQueue = class(TBoldThreadSafeQueue)
   public
-    procedure Enqueue(anInterface: IInterface);
+    procedure Enqueue(const anInterface: IInterface);
     function Dequeue: IInterface; // returns nil if queue empty
   end;
 
   { TBoldThreadSafeStringQueue }
   TBoldThreadSafeStringQueue = class(TBoldThreadSafeQueue)
   public
-    procedure Enqueue(aString: string);
+    procedure Enqueue(const aString: string);
+    procedure EnqueueList(aList: TStrings);    
     function Dequeue: string; // returns '' string if queue empty
     procedure AppendToStringList(aList: TStrings);
   end;
@@ -93,7 +97,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 type
   { TBoldThreadSafeQueueObjectEntry }
@@ -113,7 +118,7 @@ type
   private
     faString: string;
   public
-    constructor CreateAfter(aString: string; Entry: TBoldThreadSafeQueueEntry);
+    constructor CreateAfter(const aString: string; Entry: TBoldThreadSafeQueueEntry);
     property aString: string read fAString;
   end;
 
@@ -128,7 +133,7 @@ type
 
   { TBoldThreadSafeQueue }
 
-constructor TBoldThreadSafeQueue.Create(Name: String);
+constructor TBoldThreadSafeQueue.Create(const Name: String);
 begin
   inherited create;
   fLocker := TBoldLoggableCriticalSection.Create(Name);
@@ -253,7 +258,7 @@ end;
 
 { TBoldThreadSafeObjectQueue }
 
-constructor TBoldThreadSafeObjectQueue.Create(Name: String; OwnsObjects: Boolean);
+constructor TBoldThreadSafeObjectQueue.Create(const Name: String; OwnsObjects: Boolean);
 begin
   inherited Create(Name);
   fOwnsObjects := OwnsObjects;
@@ -311,6 +316,16 @@ begin
   end;
 end;
 
+procedure TBoldThreadSafeObjectQueue.SetOwnsObjects(const Value: boolean);
+begin
+  Lock;
+  try
+    fOwnsObjects := Value;
+  finally
+    Unlock;
+  end;
+end;
+
 function TBoldThreadSafeObjectQueue.UnsafeDequeue: TObject;
 var
   Head: TBoldThreadSafeQueueEntry;
@@ -343,7 +358,7 @@ end;
 
 { TBoldThreadSafeQueueStringEntry }
 
-constructor TBoldThreadSafeQueueStringEntry.CreateAfter(aString: string;
+constructor TBoldThreadSafeQueueStringEntry.CreateAfter(const aString: string;
   Entry: TBoldThreadSafeQueueEntry);
 begin
   inherited CreateAfter(Entry);
@@ -391,7 +406,7 @@ begin
   end;
 end;
 
-procedure TBoldThreadSafeStringQueue.Enqueue(aString: string);
+procedure TBoldThreadSafeStringQueue.Enqueue(const aString: string);
 var
   WasEmpty: Boolean;
 begin
@@ -400,6 +415,29 @@ begin
   try
     WasEmpty := UnsafeIsEmpty;
     TBoldThreadSafeQueueStringEntry.CreateAfter(aString, fMarker);
+    if (WasEmpty) then
+      NotifyQueueNotEmpty;
+  finally
+    Unlock;
+  end;
+end;
+
+procedure TBoldThreadSafeStringQueue.EnqueueList(aList: TStrings);
+var
+  WasEmpty: Boolean;
+  i: integer;
+  s: string;
+begin
+  if (aList.Count = 0) then exit;
+  Lock;
+  try
+    WasEmpty := UnsafeIsEmpty;
+    for I := 0 to aList.Count - 1 do
+    begin
+      s := aList[i];
+      assert(s <> '');
+      TBoldThreadSafeQueueStringEntry.CreateAfter(s, fMarker);
+    end;
     if (WasEmpty) then
       NotifyQueueNotEmpty;
   finally
@@ -429,7 +467,7 @@ begin
   end;
 end;
 
-procedure TBoldThreadSafeInterfaceQueue.Enqueue(anInterface: IInterface);
+procedure TBoldThreadSafeInterfaceQueue.Enqueue(const anInterface: IInterface);
 var
   WasEmpty: Boolean;
 begin
@@ -443,7 +481,7 @@ begin
   finally
     Unlock;
   end;
-end;
+end;  
 
 { TBoldThreadSafeQueueInterfaceEntry }
 
@@ -453,5 +491,7 @@ begin
   inherited CreateAfter(Entry);
   fanInterface := anInterface;
 end;
+
+initialization
 
 end.

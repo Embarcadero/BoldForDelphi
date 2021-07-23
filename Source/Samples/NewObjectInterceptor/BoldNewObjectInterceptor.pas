@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNewObjectInterceptor;
 
 interface
@@ -11,6 +14,7 @@ uses
   BoldPlaceableSubscriber;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldNewObjectInterceptor = class(TBoldPlaceableSubscriber)
   private
     fActive: boolean;
@@ -86,7 +90,6 @@ var
 begin
   if Attribute is TBAInteger then
   begin
-    // Note: Might be lengthy if range is narrow!!
     repeat
       i := Random(20000) - 10000;
     until (Attribute as TBAInteger).CheckRange(i);
@@ -128,8 +131,6 @@ begin
       if Args[0].VObject is TBoldObjectLocator then
       begin
         Locator := Args[0].VObject as TBoldObjectLocator;
-
-        // check id the object was loaded from the db...
         if not Locator.BoldObjectID.IsStorable then
           SetRandomAttributes(Locator.BoldObject);
       end;
@@ -166,5 +167,7 @@ begin
   if Element is TBoldSystem then
     (Element as TBoldSystem).Classes[0].DefaultSubscribe(Subscriber, breReEvaluate);
 end;
+
+initialization
 
 end.

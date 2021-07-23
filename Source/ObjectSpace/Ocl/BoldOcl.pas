@@ -1,18 +1,26 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOcl;
 
 interface
 
 uses
   Classes,
+  vcl.ExtCtrls,
   BoldBase,
   BoldSystemRT,
   BoldOclClasses,
   BoldElements,
   BoldSystem,
+  BoldAttributes,
   BoldIndexableList,
   BoldLogHandler,
   BoldOclRTDebug,
   BoldSubscription;
+
+var
+  _BoldOCLPSEvaluationConditionBlockSize: Integer = -1;
 
 type
   { forward declaration }
@@ -32,6 +40,9 @@ type
     OwnedByDictionary: Boolean;
     Ocl: TBoldOclNode;
     UsedByOtherEvaluation: Boolean;
+    Evaluations: Integer;
+    AccumulatedTicks: Int64;
+    LastWarnedTicks: Int64;
     constructor Create(const Str: string; OclNode: TBoldOclNode);
     destructor Destroy; override;
   end;
@@ -39,7 +50,8 @@ type
   { TBoldOClDictionary }
   TBoldOClDictionary = class(TBoldIndexableList)
   private
-    function GetOcl(const Expr: string): TBoldOclEntry;
+    class var IX_OCLEntry: integer;
+    function GetOcl(const Expr: string): TBoldOclEntry; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     procedure AddOcl(ENTRY: TBoldOclEntry);
@@ -49,6 +61,7 @@ type
   { TBoldOcl }
   TBoldOcl = class(TBoldRTEvaluator)
   private
+    fMaxMemberNameArray: array of Integer;
     fOclDictionary: TBoldOClDictionary;
     fSymbolTable: TBoldSymbolDictionary;
     fSystemTypeInfo: TBoldSystemTypeInfo;
@@ -60,23 +73,60 @@ type
     fBooleanType: TBoldAttributeTypeInfo;
     fDateType: TBoldAttributeTypeInfo;
     fTimeType: TBoldAttributeTypeInfo;
+    fDateTimeType: TBoldAttributeTypeInfo;
+    fTrueBool: TBABoolean;
     fCanEvaluate: Boolean;
     fOnLookUpOclDefinition: TBoldLookUpOclDefinition;
-    function SyntacticParse(const Ocl: string; StoreInDictionary: Boolean; var ResultEntry: TBoldOclEntry; Context: TBoldElementTypeInfo): TBoldIndirectElement;
-    function SemanticCheck(Ocl: string; Context: TBoldElementTypeInfo; StoreInDictionary: Boolean; var ResultEntry: TBoldOclEntry; Env: TBoldOclEnvironment): TBoldIndirectElement;
+    fTodayVar: TBADate;
+    fNowVar: TBADateTime;
+    fTodayTimer, fNowTimer: TTimer;
+    fParses: Integer;
+    fDictionaryHits: Integer;
+    fExpresionTypeCount: Integer;
+    fExpressionTypeTicks: Int64;
+    fEvaluationCount: Integer;
+    fEvaluationTicks: Int64;
+    procedure CalculateMaxMemberNameLength;
+    function SyntacticParse(const Ocl: string; StoreInDictionary: Boolean; Context: TBoldElementTypeInfo): TBoldOclEntry;
     function LookupOclDefinition(const name: string):string;
     procedure PSEvaluation(const Expr: string; Root: TBoldElement; ResultEntry: TBoldOclEntry; Env: TBoldOclEnvironment);
     procedure AddVarsToEnv(Env: TBoldOCLEnvironment; const VariableList: TBoldExternalVariableList; Initializevalues: Boolean);
+    function GetGlobalEnv: TBoldOclEnvironment;
+    procedure TodayTimerEvent(Sender: TObject);
+    procedure NowTimerEvent(Sender: TObject);
+  protected
+    function GetVariableCount: integer; override;
+    function GetVariable(index: integer): TBoldIndirectElement; override;
+    function GetVariableByName(const aName: string): TBoldIndirectElement; override;
   public
     constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
     destructor Destroy; override;
+    property GlobalEnv: TBoldOclEnvironment read GetGlobalEnv;
     property SymbolTable: TBoldSymbolDictionary read fsymbolTable;
     property BoldSystem: TBoldSystem read fBoldSystem;
-    procedure DefineVariable(const VariableName: String; VarValue: TBoldElement; VariableType: TBoldElementTypeInfo; OwnValue: Boolean); override;
-    procedure Evaluate(Ocl: string; Root: TBoldElement; Subscriber: TBoldSubscriber; ResubscribeAll: Boolean; resultElement: TBoldIndirectElement; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil); override;
+    property Parses: Integer read fParses;
+    property ExpresionTypeCount: Integer read fExpresionTypeCount;
+    property ExpressionTypeTicks: Int64 read fExpressionTypeTicks;
+    property EvaluationCount: Integer read fEvaluationCount;
+    property EvaluationTicks: Int64 read fEvaluationTicks;
+    property DictionaryHits: Integer read fDictionaryHits;
+    function SemanticCheck(Ocl: string; Context: TBoldElementTypeInfo; const VariableList: TBoldExternalVariableList = nil; StoreInDictionary: Boolean = true; Env: TBoldOclEnvironment = nil): TBoldOclEntry;
+    procedure DoneWithEntry(var oclEntry: TBoldOclEntry);
+    procedure DefineVariable(const VariableName: String; VarValue: TBoldElement;
+        VariableType: TBoldElementTypeInfo; OwnValue, IsConstant: Boolean); override;
+    procedure DefineVariable(const VariableName: string; Variable: TBoldExternalVariable ); override;
+    procedure UndefineVariable(Variable: TBoldExternalVariable); override;
+    procedure Evaluate(Ocl: string; Root: TBoldElement; Subscriber: TBoldSubscriber = nil; ResubscribeAll: Boolean = false; resultElement: TBoldIndirectElement = nil; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil); override;
     function ExpressionType(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean; const VariableList: TBoldExternalVariableList = nil): TBoldElementTypeInfo; override;
-    function RTInfo(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean): TBoldMemberRTInfo; override;
+    function RTInfo(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean; const VariableList: TBoldExternalVariableList = nil): TBoldMemberRTInfo; override;
     procedure SetLookupOclDefinition(value: TBoldLookUpOclDefinition); override;
+    property StringType: TBoldAttributeTypeInfo read fStringType;
+    property IntegerType: TBoldAttributeTypeInfo read fIntegerType;
+    property FloatType: TBoldAttributeTypeInfo read fFloatType;
+    property BooleanType: TBoldAttributeTypeInfo read fBooleanType;
+    property DateType: TBoldAttributeTypeInfo read fDateType;
+    property TimeType: TBoldAttributeTypeInfo read fTimeType;
+    property DateTimeType: TBoldAttributeTypeInfo read fDateTimeType;
   end;
 
 var
@@ -86,51 +136,57 @@ var
   BoldOCLRTDebugger: TBoldOCLRTDebugger = nil;
   BoldOclParserTablePath: String = '';
 
-procedure BoldOCLLog(const s: string);
+procedure BoldOCLLog(aRoot: TBoldElement; const s: string; aResult: TBoldIndirectElement);
 procedure BoldForceNelCompatibility;
+
+{$IFDEF OCLDummyValueBug}
+type
+  TDummyValueDifferentResultEvent = procedure(const Expression: string; Context: TBoldElement; ResultWithDummy, ResultWithoutDummy: TBoldIndirectElement) of object;
+var
+  OnDummyValueDifferentResult: TDummyValueDifferentResultEvent;
+{$ENDIF}
 
 implementation
 
 uses
+  // VCL
   SysUtils,
-  BoldAttributes,
+  DateUtils,
+  Math,
+
+  // Bold
+  BoldUtils,
   BoldCondition,
   BoldDefs,
-  BoldOclSymbolImplementations,
+  BoldHashIndexes,
   BoldOclError,
+  BoldOclEvaluator,
   BoldOclLightWeightNodeMaker,
   BoldOclLightWeightNodes,
-  BoldOclEvaluator,
   BoldOclSemantics,
+  BoldOclSymbolImplementations,
+  BoldORed,
+  BoldMath,
+  BoldSSExcept,
   BoldSSLexU,
   BoldSSYaccU,
-  BoldSSExcept,
-  BoldORed,
-  BoldHashIndexes,
-  BoldCoreConsts;
-
-{.$R *.res}
+  BoldGuard;
 
 var
-  IX_OCLEntry: integer = -1;
   G_OclScannerTable: SSLexTable = nil;
   G_OclParserTable: SSYaccTable = nil;
 
 function OclScannerTable: SSLexTable;
 begin
   if not assigned(G_OclScannerTable) then
-  begin
-    G_OclScannerTable := SSLexTable.CreateResource(HInstance, 'OCLSCANNERTABLE', 'SCANNERTABLE'); // do not localize
-  end;
+    G_OclScannerTable := SSLexTable.Create;
   result := G_OclScannerTable;
 end;
 
 function OclParserTable: SSYaccTable;
 begin
   if not assigned(G_OclParserTable) then
-  begin
-    G_OclParserTable := SSYaccTable.CreateResource(HInstance, 'OCLPARSERTABLE', 'PARSERTABLE'); // do not localize
-  end;
+    G_OclParserTable := SSYaccTable.Create;
   result := G_OclParserTable;
 end;
 
@@ -144,14 +200,35 @@ type
   { TOCLIndex }
 function TOCLIndex.ItemAsKeyString(Item: TObject): string;
 begin
-  Result := TBoldOclEntry(Item).OclString;
+  with TBoldOclEntry(Item) do
+    if Assigned(Context) then
+      Result := Context.ExpressionName + ':' + OclString
+    else
+      Result := OclString
+end;
+
+procedure TBoldOcl.CalculateMaxMemberNameLength;
+var
+  i,j: integer;
+  ClassInfo: TBoldClassTypeInfo;
+  vLength: integer;
+begin
+  SetLength(fMaxMemberNameArray, fSystemTypeInfo.TopSortedClasses.Count);
+  for i := 0 to fSystemTypeInfo.TopSortedClasses.Count - 1 do
+  begin
+    ClassInfo := fSystemTypeInfo.TopSortedClasses[i];
+    vLength := 0;
+    for j := 0 to ClassInfo.AllMembersCount - 1 do
+      vLength := Max(vLength, Length(ClassInfo.AllMembers[j].ExpressionName));
+    fMaxMemberNameArray[i] := vLength;
+  end;
 end;
 
 constructor TBoldOcl.Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
 var
   TrueConst: TBABoolean;
   FalseConst: TBABoolean;
-  MaxTimeStamp: TBAInteger; // this type must mirror the type of TBoldTimeStampType
+  MaxTimeStamp: TBAInteger;
 begin
   fSystemTypeInfo := SystemTypeInfo;
   fBoldSystem := BoldSystem;
@@ -159,26 +236,43 @@ begin
   fCanEvaluate := true;
   fSymbolTable := TBoldSymbolDictionary.Create(SystemTypeInfo, BoldSystem, fCanEvaluate);
   InitializeSymbolTable(fSymbolTable);
-  fStringType := fSystemTYpeInfo.AttributeTypeInfoByExpressionName['String']; // do not localize
-  fIntegerType := fSystemTYpeInfo.AttributeTypeInfoByExpressionName['Integer']; // do not localize
-  fFloatType := fSystemTYpeInfo.AttributeTypeInfoByExpressionName['Float']; // do not localize
-  fBooleanType := fSystemTYpeInfo.AttributeTypeInfoByExpressionName['Boolean']; // do not localize
-  fTimeType := fSystemTYpeInfo.AttributeTypeInfoByExpressionName['Time']; // do not localize
-  fDateType := fSystemTYpeInfo.AttributeTypeInfoByExpressionName['Date']; // do not localize
+  fStringType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['String'];
+  fIntegerType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['Integer'];
+  fFloatType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['Float'];
+  fBooleanType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['Boolean'];
+  fTimeType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['Time'];
+  fDateType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['Date'];
+  fDateTimeType := fSystemTypeInfo.AttributeTypeInfoByExpressionName['DateTime']; // do not localize
 
-  TrueConst := TBoldMemberFactory.CreateMemberFromBoldType(fBooleanType) as TBABoolean;
-  trueConst.AsBoolean := true;
-  DefineVariable('true', TrueConst, fBooleanType, true); // do not localize
+  fTrueBool := TBoldMemberFactory.CreateMemberFromBoldType(fBooleanType) as TBABoolean;
+  fTrueBool.AsBoolean := true;
+  DefineVariable('true', fTrueBool, fBooleanType, True, True); // do not localize
 
   FalseConst := TBoldMemberFactory.CreateMemberFromBoldType(fBooleanType) as TBABoolean;;
   FalseConst.AsBoolean := False;
-  DefineVariable('false', FalseConst, fBooleanType, true); // do not localize
+  DefineVariable('false', FalseConst, fBooleanType, True, True); // do not localize
+
+  DefineVariable('nil', nil, SystemTypeInfo.NilTypeInfo, False, True); // do not localize
 
   MaxTimeStamp := TBoldMemberFactory.CreateMemberFromBoldType(fIntegerType) as TBAInteger;
   MaxTimeStamp.AsInteger := BOLDMAXTIMESTAMP;
-  DefineVariable('timeStampNow', MaxTimeStamp, fIntegerType, true); // do not localize
+  DefineVariable('timeStampNow', MaxTimeStamp, fIntegerType, True, False); // do not localize
 
-  DefineVariable('nil', nil, SystemTypeInfo.NilTypeInfo, false); // do not localize
+  fTodayVar := TBoldMemberFactory.CreateMemberFromBoldType(fDateType) as TBADate;
+  fTodayTimer := TTimer.Create(nil);
+  fTodayTimer.OnTimer := TodayTimerEvent;
+  fTodayTimer.Enabled := True;
+  TodayTimerEvent(nil);
+  DefineVariable('today', fTodayVar, fDateType, True, False); // do not localize
+
+  // Now is rounded to full minutes and is only refreshed once per minute
+  fNowVar := TBoldMemberFactory.CreateMemberFromBoldType(fDateTimeType) as TBADateTime;
+  fNowTimer := TTimer.Create(nil);
+  fNowTimer.OnTimer := NowTimerEvent;
+  fNowTimer.Enabled := True;
+  NowTimerEvent(nil);
+  DefineVariable('now', fNowVar, fDateTimeType, True, False); // do not localize
+  CalculateMaxMemberNameLength;
 end;
 
 destructor TBoldOcl.Destroy;
@@ -186,24 +280,30 @@ begin
   FreeAndNil(fOclDictionary);
   FreeAndNil(fSymbolTable);
   FreeAndNil(fGlobalEnv);
+  FreeAndNil(fTodayTimer);
+  FreeAndNil(fNowTimer);
   inherited;
 end;
 
 { TBoldOCL }
 
-procedure TBoldOcl.DefineVariable(const VariableName: String; VarValue: TBoldElement; VariableType: TBoldElementTypeInfo; OwnValue: Boolean);
+procedure TBoldOcl.DefineVariable(const VariableName: String; VarValue:
+    TBoldElement; VariableType: TBoldElementTypeInfo; OwnValue, IsConstant:
+    Boolean);
 var
   NewVar: TBoldOCLVariableBinding;
 begin
-  if not assigned(fGlobalEnv) then
-    fGlobalEnv := TBoldOclEnvironment.Create(nil);
-
-  NewVar := fGlobalEnv.Lookup(Uppercase(VariableName));
+  NewVar := GlobalEnv.Find(VariableName);
+  if NewVar is TBoldOclVariableBindingExternal then
+  begin
+    GlobalEnv.RemoveBinding(NewVar);
+    FreeAndNil(NewVar);
+  end;
   if not assigned(NewVar) then
   begin
     NewVar := TBoldOclVariableBinding.Create;
-    NewVar.VariableName := VariableName;
-    fGlobalEnv.pushBinding(NewVar);
+    NewVar.VariableName := LowerCase(Copy(VariableName,1,1)) + Copy(VariableName,2,MaxInt);
+    GlobalEnv.pushBinding(NewVar);
   end;
 
   if assigned(VariableType) then
@@ -215,9 +315,56 @@ begin
     NewVar.SetOwnedValue(VarValue)
   else
     NewVar.SetReferenceValue(VarValue);
+
+  // Variables like true, false, nil are always the same
+  if IsConstant then begin
+    NewVar.IsConstant := True;
+    if Assigned(NewVar.Value) then begin
+      NewVar.Value.MakeImmutable;
+    end;
+  end;
 end;
 
-function TBoldOcl.SyntacticParse(const Ocl: string; StoreInDictionary: Boolean; var ResultEntry: TBoldOclEntry; Context: TBoldElementTypeInfo): TBoldIndirectElement;
+procedure TBoldOcl.DefineVariable(const VariableName: string;
+  Variable: TBoldExternalVariable);
+var
+  LookupVar: TBoldOCLVariableBinding;
+  NewVar: TBoldOclVariableBindingExternal;
+  vName: string;
+begin
+  if self = fSystemTypeInfo.Evaluator then
+    raise EBold.CreateFmt('%s: Variable can not be registered with meta evaluator.', [VariableName]);
+  if Assigned(Variable.Evaluator) and (Variable.Evaluator <> self) then
+    raise EBold.CreateFmt('%s: Variable already registered with another evaluator.', [VariableName]);
+  vName := LowerCase(Copy(VariableName,1,1)) + Copy(VariableName,2,MaxInt);
+  LookupVar := GlobalEnv.Find(vName);
+  if not assigned(LookupVar) then
+  begin
+    NewVar := TBoldOclVariableBindingExternal.Create;
+    NewVar.VariableName := vName;
+    GlobalEnv.pushBinding(NewVar);
+  end
+  else
+  if not (LookupVar is TBoldOclVariableBindingExternal) then
+  begin
+    NewVar := TBoldOclVariableBindingExternal.Create;
+    NewVar.VariableName := vName;
+    GlobalEnv.ReplaceBinding(vName, NewVar);
+  end
+  else
+  begin
+    NewVar := LookupVar as TBoldOclVariableBindingExternal;
+  end;
+  NewVar.ExternalVariable := Variable;
+  Variable.Evaluator := self;
+end;
+
+procedure TBoldOcl.UndefineVariable(Variable: TBoldExternalVariable);
+begin
+  GlobalEnv.RemoveVariable(Variable);
+end;
+
+function TBoldOcl.SyntacticParse(const Ocl: string; StoreInDictionary: Boolean; Context: TBoldElementTypeInfo): TBoldOclEntry;
 var
   Lexer: SSLex;
   Parser: AYaccClass;
@@ -228,7 +375,7 @@ var
 begin
   FixedExpr := ocl;
   for i := 1 to length(FixedExpr) do
-    if FixedExpr[i] in [#9, BOLDLF, #12, BOLDCR] then
+    if CharInSet(FixedExpr[i], [#9, BOLDLF, #12, BOLDCR]) then
       FixedExpr[i] := ' ';
   if (pos('«', FixedExpr) <> 0) or (pos('»', FixedExpr) <> 0) then
   begin
@@ -237,39 +384,38 @@ begin
     begin
       case Ocl[i] of
         '''': begin
-          //QuotePos := i; // assignment never read, reset further down.
+          // QuotePos := i;
           InQuote := not InQuote;
         end;
         '«', '»': if not InQuote then
-          raise EBoldOclAbort.CreateFmt(sExpressionNotComplete, [i]);
+          raise EBoldOclAbort.CreateFmt('%d: Expression not complete', [i]);
       end;
     end;
   end;
 
+  if Assigned(Context) then
+    Result := fOclDictionary.OclEntryByExpressionString[Context.ExpressionName + ':' + Ocl]
+  else
+    Result := fOclDictionary.OclEntryByExpressionString[Ocl];
 
-  //  ----------------------            BEGIN MUTEX to make OCLEvaluator threadsafe
-
-  ResultEntry := fOclDictionary.OclEntryByExpressionString[Ocl];
-
-  if assigned(ResultEntry) then
+  if assigned(Result) then
   begin
-    if resultEntry.Ocl.IsConstant or (not ResultEntry.UsedByOtherEvaluation and (ResultEntry.Context = Context)) then
+    if Result.Ocl.IsConstant or (not Result.UsedByOtherEvaluation) then
     begin
-      ResultEntry.UsedByOtherEvaluation := true;
-      Result := ResultEntry.Ocl;
+      Result.UsedByOtherEvaluation := true;
+      inc(fDictionaryHits);
       exit;
-    end
-    else
-    begin
-      ResultEntry := nil;
-      StoreInDictionary := false;
-    end
+    end;
+    StoreInDictionary := false;
   end;
-  // -------------------------          END MUTEX
-
+  inc(fParses);
   Result := nil;
 
+  {$IFDEF BOLD_UNICODE}
+  Consumer := SSLexStringConsumer.Create(PAnsiChar(AnsiString(FixedExpr)));
+  {$ELSE}
   Consumer := SSLexStringConsumer.Create(PChar(FixedExpr));
+  {$ENDIF}
 
   Lexer := ALexClass.Create(Consumer, OclScannerTable);
   Parser := AYaccClass.CreateLex(Lexer, OclParserTable);
@@ -289,16 +435,16 @@ begin
           QuotePos := 0;
           ParenPos := 0;
 
-          if Pos('SSLex0105e: Invalid token,', e.message) <> 0 then // do not localize
+          if Pos('SSLex0105e: Invalid token,', e.message) <> 0 then
             for i := 1 to Length(Ocl) do
             begin
               if Ocl[i] = '''' then
                 InQuote := not InQuote;
-              if not InQuote and not (Ocl[i] in [' ', #9, BOLDCR, '0'..'9', 'a'..'z', 'A'..'Z', '_', '[', ']', '{', '}',
+              if not InQuote and not CharInSet(Ocl[i], [' ', #9, BOLDCR, '0'..'9', 'a'..'z', 'A'..'Z', '_', '[', ']', '{', '}',
                 '(', ')', '+', '-', '*', '/', '=', '>', '<', ',', '.', '@', '|', '''', ':', '#', '«', '»']) then
                 raise EBoldOclAbort.CreateFmt(boeInvalidcharacter,[i - 1]);
             end;
-          if Pos('SSYacc0105e: SyncErr failed, no valid token', e.message) <> 0 then // do not localize
+          if Pos('SSYacc0105e: SyncErr failed, no valid token', e.message) <> 0 then
           begin
             Paren := 0;
             for i := 1 to Length(Ocl) do
@@ -322,7 +468,7 @@ begin
             if InQuote then
               raise EBoldOclAbort.CreateFmt(boeunterminatedQoute, [QuotePos - 1]);
           end;
-          raise EBoldOclAbort.CreateFmt('%d:' + e.message, [e.Position]); // do not localize
+          raise EBoldOclAbort.CreateFmt('%d:' + e.message, [e.Position]);
         end;
       on e: EBoldOclAbort do
       begin
@@ -338,7 +484,7 @@ begin
         end;
       on e: Exception do
       begin
-        raise; // EBoldOclAbort.CreateFmt('%d:' + E.message, [-1]);
+        raise;
       end;
     end;
   finally
@@ -346,83 +492,95 @@ begin
     Lexer.Free;
     if assigned(Parser.finalvalue) then
     begin
-      ResultEntry := TBoldOclEntry.Create(Ocl, Parser.finalvalue.Node);
-      ResultEntry.UsedByOtherEvaluation := true;
-      Result := ResultEntry.Ocl;
+      Result := TBoldOclEntry.Create(Ocl, Parser.finalvalue.Node);
+      Result.UsedByOtherEvaluation := true;
+      Result.Context := Context;
     end;
     Parser.Free;
   end;
   if StoreInDictionary then
   begin
-    fOclDictionary.AddOcl(ResultEntry);
-    ResultEntry.OwnedByDictionary := True;
+    fOclDictionary.AddOcl(Result);
+    Result.OwnedByDictionary := True;
   end;
 end;
 
-function TBoldOcl.SemanticCheck(Ocl: string; Context: TBoldElementTypeInfo; StoreInDictionary: Boolean; var ResultEntry: TBoldOclEntry; Env: TBoldOclEnvironment): TBoldIndirectElement;
+function TBoldOcl.SemanticCheck(Ocl: string; Context: TBoldElementTypeInfo; const VariableList: TBoldExternalVariableList = nil; StoreInDictionary: Boolean = true; Env: TBoldOclEnvironment = nil): TBoldOclEntry;
 var
   Visitor: TBoldOclSemanticsVisitor;
   EnvSize: Integer;
+  HasVariables: boolean;
+  Guard: IBoldGuard;
 begin
+  Result := nil;
+  HasVariables := Assigned(VariableList) and VariableList.RefersToVariable(Ocl);
+  if not Assigned(Env) then
+  begin
+    if HasVariables then
+    begin
+      Guard := TBoldGuard.Create(Env);
+      Env := TBoldOclEnvironment.Create(GlobalEnv)
+    end
+    else
+      Env := GlobalEnv;
+  end;
+  AddVarsToEnv(Env, VariableList, true);
+  StoreInDictionary := StoreInDictionary and not HasVariables; // do not store in dict if there are variables (until subscriptions are implemented)
+
   try
     if ocl[1] = '%' then
       ocl := LookupOclDefinition(copy(ocl, 2, maxint));
 
-    SyntacticParse(Ocl, StoreInDictionary, ResultEntry, Context);
+    Result := SyntacticParse(Ocl, StoreInDictionary, Context);
 
-    // The reason for the last part in this if-statement is that the evaluation of a nil-root to a nil-value is
-    // dependant on the raising of an exception in the semantic check, so therefor we can not skip it through the
-    // shortcut below. If the previous evaluation was made with a nil-context we still need to get the exception
-    // to be caught in the evaluator.
 
-    if (not ResultEntry.firstSemanticPass and
+
+
+    if (not Result.firstSemanticPass and
         assigned(Context) and
-        context.ConformsTo(ResultEntry.Context)) or
-       (assigned(ResultEntry.Ocl) and ResultEntry.ocl.IsConstant) then
+        context.ConformsTo(Result.Context)) or
+       (assigned(Result.Ocl) and Result.ocl.IsConstant) then
     begin
-      Result := ResultEntry.Ocl;
       exit;
     end;
 
-    ResultEntry.Context := Context;
-    ResultEntry.Model := fSystemTYpeInfo;
+    Result.Context := Context;
+    Result.Model := fSystemTYpeInfo;
 
     EnvSize := Env.Count;
 
-    ResultEntry.SelfVar.Free;
-    ResultEntry.SelfVar := TBoldOclVariableBinding.Create;
-    ResultEntry.SelfVar.VariableName := 'Self'; // do not localize
+    Result.SelfVar.Free;
+    Result.SelfVar := TBoldOclVariableBinding.Create;
+    Result.SelfVar.VariableName := 'Self';
 
-    ResultEntry.SelfVar.BoldType := ResultEntry.Context;
+    Result.SelfVar.BoldType := Result.Context;
 
-    Env.pushBinding(ResultEntry.SelfVar);
+    Env.pushBinding(Result.SelfVar);
 
 
-    Visitor := TBoldOclSemanticsVisitor.Create(ResultEntry.Model, self, SymbolTable, Env);
+    Visitor := TBoldOclSemanticsVisitor.Create(Result.Model, self, SymbolTable, Env);
     if BoldNelCompatibility and (pos('(', ocl) <> 0) then
       Visitor.IgnoreNelCompatibility := true;
-
     try
       try
-        Visitor.Traverse(ResultEntry.Ocl);
+        Visitor.Traverse(Result.Ocl);
       except
         on e: EBoldOclAbort do
         begin
-          e.Ocl := ResultEntry.OclString;
-          ResultEntry.Context := nil;
+          e.Ocl := Result.OclString;
+          Result.Context := nil;
           raise;
         end;
         on e: EBoldOclError do
         begin
-          e.Ocl := ResultEntry.OclString;
-          ResultEntry.Context := nil;
+          e.Ocl := Result.OclString;
+          Result.Context := nil;
           raise;
         end;
         on e: Exception do
         begin
-          // Parsträdet behöver inte raderas, det är ju syntaktiskt korrekt.
-          ResultEntry.Context := nil;
-          raise EBoldOclAbort.CreateFmt('%d: %s', [-1, e.message]); // do not localize
+          Result.Context := nil;
+          raise EBoldOclAbort.CreateFmt('%d: %s', [-1, e.message]);
         end;
       end;
     finally
@@ -432,37 +590,44 @@ begin
         raise EBoldOclInternalError.CreateFmt(boeEnvSizeError, [0, EnvSize, Env.Count]);
     end;
 
-    ResultEntry.firstSemanticPass := False;
+    Result.firstSemanticPass := False;
 
-    Result := ResultEntry.Ocl;
   except
     on e: EBoldOclAbort do
     begin
       e.Ocl := Ocl;
       e.FixError;
+      if Assigned(Result) and not result.OwnedByDictionary then
+        FreeAndNil(result);
       raise;
     end;
     on e: EBoldOclError do
     begin
       e.Ocl := Ocl;
       e.FixError;
+      if Assigned(Result) and not result.OwnedByDictionary then
+        FreeAndNil(result);
+      raise;
+    end
+    else
+    begin
+      if Assigned(Result) and not result.OwnedByDictionary then
+        FreeAndNil(result);
       raise;
     end;
   end;
 end;
 
-function TBoldOcl.RTInfo(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean): TBoldMemberRTInfo;
+function TBoldOcl.RTInfo(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean; const VariableList: TBoldExternalVariableList): TBoldMemberRTInfo;
 var
   ResultEntry: TBoldOclEntry;
-  Env: TBoldOclEnvironment;
 begin
   Result := nil;
   ResultEntry := nil;
-  Env := TBoldOclEnvironment.Create(fGlobalEnv);
   try
     try
       if ocl <> '' then
-        SemanticCheck(Ocl, Context, false, ResultEntry, Env);
+        ResultEntry := SemanticCheck(Ocl, Context, VariableList, false);
       if assigned(ResultEntry) and
         (ResultEntry.Ocl is TBoldOclMember) then
           Result := (ResultEntry.Ocl as TBoldOclMember).RTInfo;
@@ -481,25 +646,16 @@ begin
         end;
     end;
   finally
-    if assigned(ResultEntry) then
-    begin
-      if ResultEntry.OwnedByDictionary then
-        ResultEntry.UsedByOtherEvaluation := false
-      else
-      begin
-        ResultEntry.Free;
-        ResultEntry := nil;
-      end;
-    end;
-    Env.Free;
+    DoneWithEntry(ResultEntry);
   end;
 end;
 
 function TBoldOcl.ExpressionType(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean; const VariableList: TBoldExternalVariableList = nil): TBoldElementTypeInfo;
 var
   ResultEntry: TBoldOclEntry;
-  Env: TBoldOclEnvironment;
+  StartTicks, EndTicks: Int64;
 begin
+  StartTicks := UserTimeInTicks;
   Result := nil;
   ResultEntry := nil;
   if trim(ocl) = '' then
@@ -508,11 +664,9 @@ begin
   end
   else
   begin
-    Env := TBoldOclEnvironment.Create(fGlobalEnv);
-    AddVarsToEnv(Env, VariableList, false);
     try
       try
-        SemanticCheck(Ocl, Context, false, ResultEntry, Env);
+        ResultEntry := SemanticCheck(Ocl, Context, VariableList);
         if assigned(ResultEntry) then
           Result := ResultEntry.Ocl.BoldType;
       except
@@ -530,19 +684,34 @@ begin
         end;
       end;
     finally
-      if assigned(ResultEntry) then
-      begin
-        if ResultEntry.OwnedByDictionary then
-          ResultEntry.UsedByOtherEvaluation := false
-        else
-        begin
-          ResultEntry.Free;
-          ResultEntry := nil;
-        end;
-      end;
-      Env.Free;
+      DoneWithEntry(ResultEntry);
+      EndTicks := userTimeInTicks;
+      INC(fExpresionTypeCount);
+      fExpressionTypeTicks := fExpressionTypeTicks  + EndTicks - StartTicks;
     end;
   end;
+end;
+
+function TBoldOcl.GetGlobalEnv: TBoldOclEnvironment;
+begin
+  if not assigned(fGlobalEnv) then
+    fGlobalEnv := TBoldOclEnvironment.Create(nil);
+  result := fGlobalEnv;
+end;
+
+function TBoldOcl.GetVariable(index: integer): TBoldIndirectElement;
+begin
+  result := GlobalEnv.Bindings[Index];
+end;
+
+function TBoldOcl.GetVariableByName(const aName: string): TBoldIndirectElement;
+begin
+  result := GlobalEnv.Lookup(aName);
+end;
+
+function TBoldOcl.GetVariableCount: integer;
+begin
+  result := GlobalEnv.count;
 end;
 
 function MapResubscribe(Resubscribe: Boolean): TBoldRequestedEvent;
@@ -556,16 +725,21 @@ end;
 var
   OclCounter: integer;
 
-procedure TBoldOcl.Evaluate(Ocl: string; ROOT: TBoldElement; Subscriber: TBoldSubscriber; ResubscribeAll: Boolean; resultElement: TBoldIndirectElement; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
+
+procedure TBoldOcl.Evaluate(Ocl: string; Root: TBoldElement; Subscriber: TBoldSubscriber = nil; ResubscribeAll: Boolean = false; resultElement: TBoldIndirectElement = nil; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
+
+procedure _Evaluate(Ocl: string; Root: TBoldElement; Subscriber: TBoldSubscriber = nil; ResubscribeAll: Boolean = false; resultElement: TBoldIndirectElement = nil; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
 var
   LocalContext   : TBoldElementTypeInfo;
   EvaluatorVisitor: TBoldOclEvaluatorVisitor;
   ResultEntry: TBoldOclEntry;
   Env: TBoldOclEnvironment;
   CurrentComponentPath: String;
+  StartTicks, EndTicks, Ticks, Freq: Int64;
 begin
+  StartTicks := UserTimeInTicks;
   if not fCanEvaluate then
-    raise EBoldOclError.Create(sTypesMissingFromEvaluator);
+    raise EBoldOclError.Create('This evaluator can not be used for evaluation, since some types are missing');
   ResultEntry := nil;
   Env := nil;
 
@@ -578,10 +752,8 @@ begin
   else
     CurrentComponentPath := '';
 
-  BoldOCLLog(Ocl);
-  try
-    Inc(OclCounter);
 
+  try
     if assigned(ROOT) then
       LocalContext := ROOT.BoldType
     else
@@ -603,25 +775,32 @@ begin
       exit;
     end;
 
+    if assigned(ResultElement) and (Root is TBoldObject)
+       and (Length(Ocl) <= fMaxMemberNameArray[TBoldObject(Root).BoldClassTypeInfo.TopSortedIndex]) then
+    begin
+      ResultElement.SetReferenceValue(TBoldObject(Root).FindBoldMemberByExpressionName(ocl));
+      if Assigned(ResultElement.Value) then
+      begin
+        if assigned(Subscriber) then
+          ResultElement.Value.DefaultSubscribe(Subscriber, MapResubscribe(ResubscribeAll));
+        exit;
+      end;
+    end;
+
     if assigned(BoldOclRTDebugger) and
       BoldOclRTDebugger.HasFixFor(ocl, LocalContext) then
       ocl := BoldOclRTDebugger.GetFixFor(Ocl, LocalContext);
 
     try
       try
-        Env := TBoldOclEnvironment.Create(fGlobalEnv);
-        AddVarsToEnv(Env, VariableList, true);
-//        try
-          SemanticCheck(Ocl, LocalContext, not assigned(VariableList), resultEntry, Env);
-//        finally
-//          Env.Free;
-//        end;
+        Env := TBoldOclEnvironment.Create(GlobalEnv);
+        resultEntry := SemanticCheck(Ocl, LocalContext, VariableList, true, Env);
+
       except
         on e: EBoldOclAbort do
         begin
           if not assigned(ROOT) and assigned(ResultEntry) then
           begin
-            //     ^no root             ^but syntactically correct, semantically erroneous
             if assigned(ResultElement) then
               resultElement.SetReferenceValue(nil);
             exit;
@@ -633,7 +812,6 @@ begin
         begin
           if not assigned(ROOT) and assigned(ResultEntry) then
           begin
-            //     ^no root             ^but syntactically correct, semantically erroneous
             if assigned(ResultElement) then
               resultElement.SetReferenceValue(nil);
             exit;
@@ -656,7 +834,7 @@ begin
       end
       else
       begin
-        EvaluatorVisitor := TBoldOclEvaluatorVisitor.Create(Subscriber, ResubscribeAll, fSystemtypeInfo, BoldSystem, fStringType, fIntegerType, fFloatType, fDateType, fTimeType);
+        EvaluatorVisitor := TBoldOclEvaluatorVisitor.Create(Subscriber, ResubscribeAll, fSystemtypeInfo, BoldSystem, fTrueBool,fBooleanType,fStringType, fIntegerType, fFloatType, fDateType, fTimeType);
         try
           ResultEntry.Ocl.AcceptVisitor(EvaluatorVisitor);
         finally
@@ -664,12 +842,16 @@ begin
         end;
       end;
       ResultEntry.EvaluatedOnce := True;
-      if assigned(ResultElement) then
-      begin
-        if ResultEntry.Ocl.IsConstant then
-          resultElement.SetReferenceValue(ResultEntry.Ocl.Value)
-        else
+      if assigned(ResultElement) then begin
+        if ResultEntry.Ocl.IsConstant and
+           // see finally below: when ResultEntry is freed, the ResultElement
+           // becomes invalid. In this case Value must be transferred in this place.
+           ResultEntry.OwnedByDictionary then
+        begin
+          resultElement.SetReferenceValue(ResultEntry.Ocl.Value);
+        end else begin
           ResultEntry.Ocl.TransferValue(ResultElement);
+        end;
 
         if BoldNelCompatibility and (ResultElement.Value is TBoldClassTypeInfo) and
           assigned(fBoldSystem) then
@@ -728,18 +910,47 @@ begin
 
     end;
   finally
+    BoldOCLLog(ROOT, Ocl, resultElement);
+    Inc(OclCounter);
     Env.Free;
-    if assigned(ResultEntry) then
+    if Assigned(ResultEntry) then
     begin
-      if ResultEntry.OwnedByDictionary then
-        ResultEntry.UsedByOtherEvaluation := false
-      else
+      INC(ResultEntry.Evaluations);
+      INC(fEvaluationCount);
+
+      EndTicks := UserTimeInTicks;
+      Ticks := EndTicks - StartTicks;
+      if Ticks > 0 then
       begin
-        ResultEntry.Free;
-        ResultEntry := nil;
+        fEvaluationTicks := fEvaluationTicks + Ticks;
+        ResultEntry.AccumulatedTicks:=  ResultEntry.AccumulatedTicks + Ticks;
       end;
     end;
+    DoneWithEntry(ResultEntry);
   end;
+end;
+{$IFDEF OCLDummyValueBug}
+var
+  IE: TBoldIndirectElement;
+{$ENDIF}  
+begin
+  OclUseTemporaryDummyValue := true;
+  _Evaluate(Ocl, ROOT, Subscriber, ResubscribeAll, resultElement, EvaluateInPS, VariableList);
+{$IFDEF OCLDummyValueBug}
+  if Assigned(OnDummyValueDifferentResult) and Assigned(resultElement) then
+  try
+    IE := TBoldIndirectElement.Create;
+    OclUseTemporaryDummyValue := false;
+    _Evaluate(Ocl, ROOT, Subscriber, ResubscribeAll, IE, EvaluateInPS, VariableList);
+    if not (((Assigned(resultElement.Value) and Assigned(Ie.Value)) or (not Assigned(resultElement.Value) and not Assigned(Ie.Value)))) then
+      OnDummyValueDifferentResult(Ocl, Root, resultElement, Ie)
+    else
+    if not resultElement.Value.IsEqual(IE.Value) then
+      OnDummyValueDifferentResult(Ocl, Root, resultElement, Ie);
+  finally
+    ie.free;
+  end;
+{$ENDIF}  
 end;
 
 { TBoldOClDictionary }
@@ -752,7 +963,7 @@ end;
 
 function TBoldOClDictionary.GetOcl(const Expr: string): TBoldOclEntry;
 begin
-  Result := TBoldOclEntry(TOCLIndex(indexes[IX_OCLEntry]).FindByString(Expr));
+  Result := TBoldOclEntry(TBoldCaseSensitiveStringHashIndex(indexes[IX_OCLEntry]).FindByString(Expr));
 end;
 
 procedure TBoldOClDictionary.AddOcl(ENTRY: TBoldOclEntry);
@@ -776,11 +987,24 @@ begin
   inherited;
 end;
 
-procedure BoldOCLLog(const s: string);
+procedure BoldOCLLog(aRoot: TBoldElement; const s: string; aResult: TBoldIndirectElement);
+var
+  vRoot: string;
+  vResult: string;
 begin
   if assigned(BoldOCLLogHandler) then
-    BoldOclLogHandler.Log(formatDateTime('c: ', now)+ // do not localize
-      format('OCL %4d - %s', [OclCounter, trim(s)])); // do not localize
+  begin
+    if Assigned(aRoot) then
+      vRoot := aRoot.BoldType.AsString
+    else
+      vRoot := 'nil';
+    if Assigned(aResult) and Assigned(aResult.Value) then
+      vResult := aResult.value.AsString
+    else
+      vResult := 'nil';
+    BoldOclLogHandler.Log(formatDateTime('c: ', now)+
+      format('OCL %4d - %s:%s:%s', [OclCounter, vRoot, trim(s), vResult]));
+  end;
 end;
 
 function TBoldOcl.LookupOclDefinition(const name: string): string;
@@ -788,7 +1012,7 @@ begin
   if assigned(fOnLookUpOclDefinition) then
     result := fOnLookUpOclDefinition(Name)
   else
-    raise EBoldOCLError.CreateFmt(sCannotFindOCLDefinitionWithoutRepository, ['%'+Name]);
+    raise EBoldOCLError.CreateFmt('0: Can not find OCL definition for %s, no repository installed', ['%'+Name]);
 end;
 
 procedure TBoldOcl.SetLookupOclDefinition(value: TBoldLookUpOclDefinition);
@@ -798,13 +1022,48 @@ end;
 
 procedure TBoldOcl.PSEvaluation(const Expr: string; Root: TBoldElement; ResultEntry: TBoldOclEntry; Env: TBoldOclEnvironment);
 var
-  OclCondition: TBoldOclCondition;
-  i: integer;
-  ClassTypeInfo: TBoldClassTypeInfo;
   LocalBoldSystem: TBoldSystem;
+  ClassTypeInfo: TBoldClassTypeInfo;
   OLWNodeMaker: TBoldOLWNodeMaker;
   resList: TBoldObjectList;
+  aResultType: TBoldElementTypeInfo;
+  bNoBlockPSEvaluation: Boolean;
+
+  function ExecuteOclCondition(CurrentOLCondition: TBoldOclCondition): Boolean;
+  var
+    aResultConList: TBoldObjectList;
+  begin
+    Result := False;
+    if Assigned(CurrentOLCondition) then begin
+      CurrentOLCondition.RootNode := OLWNodeMaker.RootNode;
+      ClassTypeInfo := (aResultType as TBoldListTypeInfo).ListElementTypeInfo as TBoldClassTypeInfo;
+      CurrentOLCondition.TopSortedIndex := ClassTypeInfo.TopSortedIndex;
+      if bNoBlockPSEvaluation then begin
+        CurrentOLCondition.RootNode := OLWNodeMaker.RootNode;
+        ResList := TBoldMemberFactory.CreateMemberFromBoldType(aResultType) as TBoldObjectList;
+        LocalBoldSystem.GetAllWithCondition(resList, CurrentOLCondition);
+        resultEntry.Ocl.SetOwnedValue(ResList);
+      end else begin
+        aResultConList := TBoldMemberFactory.CreateMemberFromBoldType(aResultType) as TBoldObjectList;
+        try
+          LocalBoldSystem.GetAllWithCondition(aResultConList, CurrentOLCondition);
+          ResList.AddList(aResultConList);
+        finally
+          aResultConList.Free;
+        end;
+      end;
+    end;
+  end;
+
+var
+  OclCondition: TBoldOclCondition;
+  i: integer;
   RootAsList: TBoldObjectList;
+  ObjectCount: Integer;
+  Block: Integer;
+  Start, Stop: Integer;
+const
+  sInvalidForSQLEvaluation = 'Root %s: %s is not allowed for SQL-evaluation';
 begin
   LocalBoldSystem := BoldSystem;
   if not assigned(LocalBoldSystem) then
@@ -830,28 +1089,65 @@ begin
         OclCondition.Env.Add(TBoldOLWVariableBinding(OLWNodeMaker.ExternalVarBindings[i]));
       OLWNodeMaker.ExternalVarBindings.Clear;
 
-      if Root is TBoldObject then
-        OclCondition.Context.Add((Root as TBoldObject).BoldObjectLocator.BoldObjectID)
-      else if Root is TBoldObjectList then
-      begin
-        RootAsList := Root as TBoldObjectList;
-        RootAsList.EnsureObjects;
-        for i := 0 to RootAsList.Count - 1 do
-          OclCondition.Context.Add(RootAsList[i].BoldObjectLocator.BoldObjectID)
-      end
-      else if assigned(root) and not (Root is TBoldSystem) then
-        raise EBoldOclError.CreateFmt(sInvalidForSQLEvaluation, [Root.AsString, Root.ClassName]);
+      aResultType := ResultEntry.Ocl.BoldType;
+      if aResultType is TBoldClassTypeInfo then begin
+        aResultType := TBoldClassTypeInfo(aResultType).ListTypeInfo;
+      end;
 
-      OclCondition.RootNode := OLWNodeMaker.RootNode;
-      ResList := TBoldMemberFactory.CreateMemberFromBoldType(ResultEntry.Ocl.BoldType) as TBoldObjectList;
-      ClassTypeInfo := (ResultEntry.Ocl.BoldType as TBoldListTypeInfo).ListElementTypeInfo as TBoldClassTypeInfo;
-      OclCondition.TopSortedIndex := ClassTypeInfo.TopSortedIndex;
-      LocalBoldSystem.GetAllWithCondition(resList, OclCondition);
-      resultEntry.Ocl.SetOwnedValue(ResList);
+      bNoBlockPSEvaluation :=
+        (_BoldOCLPSEvaluationConditionBlockSize = -1)  OR
+          ((Root is TBoldObjectList) and
+           ((Pos(UpperCase('->orderBy'), UpperCase(Expr)) > 0) or
+            (Pos(UpperCase('->orderDescending'), UpperCase(Expr)) > 0) or
+            (Pos(UpperCase('->difference'), UpperCase(Expr)) > 0) or
+            (Pos(UpperCase('->symmetricDifference'), UpperCase(Expr)) > 0)
+           )
+          );
 
-    end
-    else
+      if bNoBlockPSEvaluation then begin
+        if Root is TBoldObject then
+          OclCondition.Context.Add((Root as TBoldObject).BoldObjectLocator.BoldObjectID)
+        else if Root is TBoldObjectList then
+        begin
+          RootAsList := Root as TBoldObjectList;
+          RootAsList.EnsureObjects;
+          for i := 0 to RootAsList.Count - 1 do
+            OclCondition.Context.Add(RootAsList[i].BoldObjectLocator.BoldObjectID)
+        end
+        else if assigned(root) and not (Root is TBoldSystem) then
+          raise EBoldOclError.CreateFmt(sInvalidForSQLEvaluation, [Root.AsString, Root.ClassName]);
+
+        ExecuteOclCondition(OclCondition);
+      end else begin
+        ResList := TBoldMemberFactory.CreateMemberFromBoldType(aResultType) as TBoldObjectList;
+        if Root is TBoldObject then begin
+          OclCondition.Context.Add((Root as TBoldObject).BoldObjectLocator.BoldObjectID);
+          ExecuteOclCondition(OclCondition);
+        end else if Root is TBoldObjectList then begin
+          RootAsList := Root as TBoldObjectList;
+          RootAsList.EnsureObjects;
+          ObjectCount := RootAsList.Count - 1;
+          for Block := 0 to (ObjectCount div _BoldOCLPSEvaluationConditionBlockSize) do
+          begin
+            Start := Block * _BoldOCLPSEvaluationConditionBlockSize;
+            Stop := MinIntValue([Pred(Succ(Block) * _BoldOCLPSEvaluationConditionBlockSize), ObjectCount]);
+            OclCondition.Context.Clear;
+            for i := Start to Stop do begin              
+              OclCondition.Context.Add(RootAsList[i].BoldObjectLocator.BoldObjectID);
+            end;
+            ExecuteOclCondition(OclCondition);
+          end;
+        end else if assigned(root) and not (Root is TBoldSystem) then begin
+          raise EBoldOclError.CreateFmt(sInvalidForSQLEvaluation, [Root.AsString, Root.ClassName]);
+        end else begin
+          ExecuteOclCondition(OclCondition);
+        end;
+        resultEntry.Ocl.SetOwnedValue(ResList);
+      end;
+
+    end else begin
       raise EBoldOclError.CreateFmt('%d:%s', [OLWNodeMaker.FailurePosition, OLWNodeMaker.FailureReason]); // do not localize
+    end;
 
   finally
     OclCondition.Free;
@@ -879,6 +1175,39 @@ begin
   end;
 end;
 
+procedure TBoldOcl.DoneWithEntry(var oclEntry: TBoldOclEntry);
+begin
+  if Assigned(oclEntry) then
+  begin
+    if oclEntry.OwnedByDictionary then
+      oclEntry.UsedByOtherEvaluation := false
+    else
+    begin
+      oclEntry.Free;
+      oclEntry := nil;
+    end;
+  end;
+end;
+
+procedure TBoldOcl.TodayTimerEvent(Sender: TObject);
+begin
+  fTodayTimer.Interval := MilliSecondsBetween( Now, Today+1 );
+  fTodayVar.AsDate := Today;
+end;
+
+procedure TBoldOcl.NowTimerEvent(Sender: TObject);
+var
+  vTime: TDateTime;
+begin
+  vTime := RecodeMilliSecond(now, 0);
+  vTime := RecodeSecond(vTime, 0);
+  fNowVar.AsDateTime := vTime;
+  vTime := IncMinute(vTime);
+  fNowTimer.Interval := MilliSecondsBetween( Now, vTime );
+  if (fNowTimer.Interval = 0) or (fNowTimer.Interval > MSecsPerSec * SecsPerMin) then
+    fNowTimer.Interval := MSecsPerSec * SecsPerMin
+end;
+
 procedure BoldForceNelCompatibility;
 begin
   BoldNelCompatibility := true;
@@ -886,6 +1215,7 @@ begin
 end;
 
 initialization
+  TBoldOClDictionary.IX_OCLEntry := -1;
 
 finalization
   FreeAndNil(G_OclParserTable);

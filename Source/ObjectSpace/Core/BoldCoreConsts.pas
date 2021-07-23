@@ -87,6 +87,7 @@ resourcestring
   sDeleteWithLinks = 'Can''t delete object with links to others';
   sNoMemberNamed = 'Class %s has no member named %s';
   sMemberNotPartofSystem = 'Member not part of system';
+  sIsEqualUnknownType = '%s.IsEqual: Unknown comparetype';
   sNullValueNotAllowed = 'Null Value Not Allowed for Attribute';
   sNullEqualError = 'NullEqual is void of meaning';
   sRelinkBadCall = 'Internal error: Only Callable for TBoldSinglelink and TBoldMultiLink';
@@ -98,6 +99,7 @@ resourcestring
   sTypeError = 'type error';
   sObjectNotInMultiLink = 'Attempt to remove object not in multilink';
   sCallToAbstractMethodOnCustomMapper = '%s.%s: This method is abstract, implement custom method as %s.%s';
+  sStringIsNotAnsiString = 'String contains invalid characters';
 
 //BoldAttributes
   sInvalidValue = 'Invalid value';
@@ -433,3 +435,4 @@ resourcestring
 implementation
 
 end.
+

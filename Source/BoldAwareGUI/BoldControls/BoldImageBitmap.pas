@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldImageBitmap;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -5,7 +8,7 @@ unit BoldImageBitmap;
 interface
 
 uses
-  Windows,         //  Delphi Units
+  Windows,
   Classes,
   Graphics,
   Clipbrd,
@@ -29,7 +32,7 @@ type
     function HasChanged: Boolean; override;
     class function CanReadContent(const ContentType: string): Boolean; override;
     function ContentType: string; override;
-    class function Description: string; override; // How to handle Localizastion?
+    class function Description: string; override;
     {Clipboard}
     procedure CopyToClipboard; override;
     class function CanPasteFromClipboard(const AcceptedContentType: string): Boolean; override;
@@ -39,7 +42,7 @@ type
     procedure SaveToStream(Stream: TStream); override;
     {Files}
     class function DefaultExtension: string; override;
-    class function FileFilter: string; override; // How to handle Localizastion?
+    class function FileFilter: string; override;
     class function CanLoadFromFile(const Filename: string): Boolean; override;
     procedure LoadFromFile(const Filename: string); override;
     procedure SaveToFile(const Filename: string); override;
@@ -54,12 +57,7 @@ implementation
 
 uses
   SysUtils,
-  BoldGuiResourceStrings;
-
-const
-  MIME_image_bmp = 'image/bmp';
-  MIME_image_bitmap = 'image/bitmap';
-
+  BoldRev;
 
 {-- TBoldViewBitmapAdapter --}
 
@@ -105,8 +103,8 @@ var
 begin
   S := AnsiLowerCase(ContentType);
   Result := (S = '') or
-            (S = MIME_image_bitmap) or
-            (S = MIME_image_bmp);
+            (S = 'image/bitmap') or
+            (S = 'image/bmp');
 end;
 
 function TBoldViewBitmapAdapter.ContentType: string;
@@ -114,12 +112,12 @@ begin
   if Empty then
     Result := ''
   else
-    Result := MIME_image_bitmap
+    Result := 'image/bitmap'
 end;
 
 class function TBoldViewBitmapAdapter.Description: string;
 begin
-  Result := sBitMapImage;
+  Result := 'Bitmap image'
 end;
 
 {Clipboard}
@@ -136,8 +134,8 @@ begin
   S := AnsiLowerCase(AcceptedContentType);
   Result := Clipboard.HasFormat(CF_BITMAP) and
             ((S = '') or
-             (S = 'image/*') or // do not localize
-             (S = MIME_image_bitmap));
+             (S = 'image/*') or
+             (S = 'image/bitmap'));
 end;
 
 procedure TBoldViewBitmapAdapter.PasteFromClipboard;
@@ -162,12 +160,12 @@ end;
 {Files}
 class function TBoldViewBitmapAdapter.DefaultExtension: string;
 begin
-  Result := 'bmp'; // do not localize
+  Result := 'bmp';
 end;
 
 class function TBoldViewBitmapAdapter.FileFilter: string;
 begin
-  Result := Format('%s (*.bmp)|*.bmp', [Description]); // do not localize
+  Result := Format('%s (*.bmp)|*.bmp', [Description]);
 end;
 
 class function TBoldViewBitmapAdapter.CanLoadFromFile(const Filename: string): Boolean;
@@ -176,7 +174,7 @@ var
 begin
   Extension := ExtractFileExt(FileName);
   Extension := Copy(Extension, 2, Length(Extension));
-  Result := CompareText(Extension, 'bmp') = 0;  // do not localize
+  Result := CompareText(Extension, 'bmp') = 0;
 end;
 
 procedure TBoldViewBitmapAdapter.LoadFromFile(const Filename: string);
@@ -235,5 +233,5 @@ end;
 
 initialization
   TBoldViewBitmapAdapter.RegisterViewAdapter(TBoldViewBitmapAdapter);
-
+  
 end.

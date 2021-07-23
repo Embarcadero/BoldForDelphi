@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPMapperLists;
 
 interface
@@ -32,13 +35,15 @@ type
   {---TBoldMemberPersistenceMapperList---}
   TBoldMemberPersistenceMapperDescriptorList = class(TBoldIndexableList)
   private
-    function GetDescriptorBydelphiName(name: string): TBoldMemberPersistenceMapperDescriptor;
-    function GetDescriptors(index: Integer): TBoldMemberPersistenceMapperDescriptor;
+    class var IX_MemberPMapperName: integer;
+    class var IX_MemberPMapperClass: integer;
+    function GetDescriptorBydelphiName(name: string): TBoldMemberPersistenceMapperDescriptor; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetDescriptors(index: Integer): TBoldMemberPersistenceMapperDescriptor; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create;
     procedure AddDescriptor(MemberPersistenceMapperClass: TBoldMemberPersistenceMapperClass;
                             const AbstractionLevel: TBoldAbstractionLevel);
-    procedure RemoveDescriptorByClass(aClass: TBoldMemberPersistenceMapperClass);
+    procedure RemoveDescriptorByClass(aClass: TBoldMemberPersistenceMapperClass); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     function DescriptorForModelNameWithDefaultSupport(ModelName, DefaultMapperName: String; TypeNameDictionary: TBoldTypeNameDictionary): TBoldMemberPersistenceMapperDescriptor;
     property DescriptorByDelphiName[name: string]: TBoldMemberPersistenceMapperDescriptor read GetDescriptorByDelphiName;
     property Descriptors[index: integer]: TBoldMemberPersistenceMapperDescriptor read GetDescriptors;
@@ -48,23 +53,24 @@ type
   TBoldMemberPersistenceMapperDescriptor = class(TBoldPersistenceMapperDescriptor)
   private
     fAbstractionLevel: TBoldAbstractionLevel;
-    function GetMemberPersistenceMapperClass: TBoldMemberPersistenceMapperClass;
+    function GetMemberPersistenceMapperClass: TBoldMemberPersistenceMapperClass; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create(MemberPersistenceMapperClass: TBoldMemberPersistenceMapperClass;
                        const AbstractionLevel: TBoldAbstractionLevel);
     property MemberPersistenceMapperClass: TBoldMemberPersistenceMapperClass read GetMemberPersistenceMapperClass;
     property AbstractionLevel: TBoldAbstractionLevel read fAbstractionLevel;
-    function CanStore(ContentName: string):Boolean;
+    function CanStore(const ContentName: string):Boolean; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   end;
 
   {---TBoldSystemPersistenceMapperList---}
   TBoldSystemPersistenceMapperDescriptorList = class(TBoldIndexableList)
   private
-    function GetDescriptorByName(name: string): TBoldSystemPersistenceMapperDescriptor;
-    function GetDescriptors(index: Integer): TBoldSystemPersistenceMapperDescriptor;
+    class var IX_SystemPMapperName: integer;
+    function GetDescriptorByName(name: string): TBoldSystemPersistenceMapperDescriptor; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetDescriptors(index: Integer): TBoldSystemPersistenceMapperDescriptor; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create;
-    procedure RemoveDescriptorByName(const Name: string);
+    procedure RemoveDescriptorByName(const Name: string); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     property DescriptorByName[name: string]: TBoldSystemPersistenceMapperDescriptor read GetDescriptorByName;
     property Descriptors[index: integer]: TBoldSystemPersistenceMapperDescriptor read GetDescriptors;
   end;
@@ -72,7 +78,7 @@ type
   {---TBoldSystemPersistenceMapperDescriptor---}
   TBoldSystemPersistenceMapperDescriptor = class(TBoldPersistenceMapperDescriptor)
   private
-    function GetSystemPersistenceMapperClass: TBoldSystemPersistenceMapperClass;
+    function GetSystemPersistenceMapperClass: TBoldSystemPersistenceMapperClass; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create(const name: string; BoldSystemPersistenceMapperClass: TBoldSystemPersistenceMapperClass);
     property SystemPersistenceMapperClass: TBoldSystemPersistenceMapperClass read GetSystemPersistenceMapperClass;
@@ -81,11 +87,12 @@ type
   {---TBoldObjectPersistenceMapperList---}
   TBoldObjectPersistenceMapperDescriptorList = class(TBoldIndexableList)
   private
-    function GetDescriptorByName(name: string): TBoldObjectPersistenceMapperDescriptor;
-    function GetDescriptors(index: Integer): TBoldObjectPersistenceMapperDescriptor;
+    class var IX_ObjectPMapperName: integer;
+    function GetDescriptorByName(name: string): TBoldObjectPersistenceMapperDescriptor; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetDescriptors(index: Integer): TBoldObjectPersistenceMapperDescriptor; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create;
-    procedure RemoveDescriptorByName(const Name: string);
+    procedure RemoveDescriptorByName(const Name: string); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     property DescriptorByName[name: string]: TBoldObjectPersistenceMapperDescriptor read GetDescriptorByName;
     property Descriptors[index: integer]: TBoldObjectPersistenceMapperDescriptor read GetDescriptors;
   end;
@@ -93,13 +100,12 @@ type
   {---TBoldObjectPersistenceMapperDescriptor---}
   TBoldObjectPersistenceMapperDescriptor = class(TBoldPersistenceMapperDescriptor)
   private
-    function GetObjectPersistenceMapperClass: TBoldObjectPersistenceMapperClass;
+    function GetObjectPersistenceMapperClass: TBoldObjectPersistenceMapperClass; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
   public
     constructor Create(const name: string; BoldObjectPersistenceMapperClass: TBoldObjectPersistenceMapperClass);
     property ObjectPersistenceMapper: TBoldObjectPersistenceMapperClass read GetObjectPersistenceMapperClass;
   end;
 
-   //  Access points to PersistenceMapperDescriptor-lists objects
 function BoldMemberPersistenceMappers: TBoldMemberPersistenceMapperDescriptorList;
 function BoldMemberPersistenceMappersAssigned: Boolean;
 function BoldSystemPersistenceMappers: TBoldSystemPersistenceMapperDescriptorList;
@@ -118,11 +124,6 @@ var
   G_BoldMemberPersistenceMappers: TBoldMemberPersistenceMapperDescriptorList = nil;
   G_BoldSystemPersistenceMappers: TBoldSystemPersistenceMapperDescriptorList = nil;
   G_BoldObjectPersistenceMappers: TBoldObjectPersistenceMapperDescriptorList = nil;
-
-  IX_SystemPMapperName: integer = -1;
-  IX_ObjectPMapperName: integer = -1;
-  IX_MemberPMapperName: integer = -1;
-  IX_MemberPMapperClass: integer = -1;
 
 type
 {---TBoldMemberPMapperNameIndex---}
@@ -231,7 +232,7 @@ end;
 
 function TBoldMemberPersistenceMapperDescriptorList.GetDescriptorByDelphiName(name: string): TBoldMemberPersistenceMapperDescriptor;
 begin
-  Result := TBoldMemberPersistenceMapperDescriptor(TBoldMemberPMapperNameIndex(Indexes[IX_MemberPMapperName]).FindByString(Name))
+  Result := TBoldMemberPersistenceMapperDescriptor(TBoldStringHashIndex(Indexes[IX_MemberPMapperName]).FindByString(Name))
 end;
 
 function TBoldMemberPersistenceMapperDescriptorList.GetDescriptors(index: integer): TBoldMemberPersistenceMapperDescriptor;
@@ -266,7 +267,7 @@ begin
   Result := TBoldMemberPersistenceMapperClass(PersistenceMapperClass);
 end;
 
-function TBoldMemberPersistenceMapperDescriptor.CanStore(ContentName: String): Boolean;
+function TBoldMemberPersistenceMapperDescriptor.CanStore(const ContentName: String): Boolean;
 begin
   Result := MemberPersistenceMapperClass.CanStore(ContentName);
 end;
@@ -281,7 +282,7 @@ end;
 
 function TBoldSystemPersistenceMapperDescriptorList.GetDescriptorByName(name: string): TBoldSystemPersistenceMapperDescriptor;
 begin
-  Result := TBoldSystemPersistenceMapperDescriptor(TBoldSystemPMapperNameIndex(Indexes[IX_SystemPMapperName]).FindByString(Name))
+  Result := TBoldSystemPersistenceMapperDescriptor(TBoldStringHashIndex(Indexes[IX_SystemPMapperName]).FindByString(Name))
 end;
 
 function TBoldSystemPersistenceMapperDescriptorList.GetDescriptors(index: Integer): TBoldSystemPersistenceMapperDescriptor;
@@ -316,7 +317,7 @@ end;
 
 function TBoldObjectPersistenceMapperDescriptorList.GetDescriptorByName(name: string): TBoldObjectPersistenceMapperDescriptor;
 begin
-  Result := TBoldObjectPersistenceMapperDescriptor(TBoldObjectPMapperNameIndex(Indexes[IX_ObjectPMapperName]).FindByString(Name))
+  Result := TBoldObjectPersistenceMapperDescriptor(TBoldStringHashIndex(Indexes[IX_ObjectPMapperName]).FindByString(Name))
 end;
 
 function TBoldObjectPersistenceMapperDescriptorList.GetDescriptors(index: Integer): TBoldObjectPersistenceMapperDescriptor;
@@ -366,6 +367,10 @@ begin
 end;
 
 initialization
+  TBoldMemberPersistenceMapperDescriptorList.IX_MemberPMapperName := -1;
+  TBoldMemberPersistenceMapperDescriptorList.IX_MemberPMapperClass := -1;
+  TBoldSystemPersistenceMapperDescriptorList.IX_SystemPMapperName := -1;
+  TBoldObjectPersistenceMapperDescriptorList.IX_ObjectPMapperName := -1;
 
 finalization
   FreeAndNil(G_BoldMemberPersistenceMappers);

@@ -1,0 +1,195 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{D19FAF40-7E3D-47AA-A13C-E4A727F5CE66}</ProjectGuid>
+        <MainSource>BoldCom.dpk</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Debug</Config>
+        <TargetedPlatforms>1</TargetedPlatforms>
+        <AppType>Package</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <ProjectVersion>19.2</ProjectVersion>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+        <Cfg_2_Win32>true</Cfg_2_Win32>
+        <CfgParent>Cfg_2</CfgParent>
+        <Cfg_2>true</Cfg_2>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_E>false</DCC_E>
+        <DCC_F>false</DCC_F>
+        <DCC_K>false</DCC_K>
+        <DCC_N>false</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <GenDll>true</GenDll>
+        <GenPackage>true</GenPackage>
+        <SanitizedProjectName>BoldCom</SanitizedProjectName>
+        <DCC_DebugInformation>1</DCC_DebugInformation>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <DCC_RangeChecking>true</DCC_RangeChecking>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_WriteableConstants>true</DCC_WriteableConstants>
+        <DesignOnlyPackage>true</DesignOnlyPackage>
+        <DCC_Description>Bold 4.0 for Delphi (COM Support)</DCC_Description>
+        <DllSuffix>90</DllSuffix>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;DUnitX.Loggers.GUI;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_Locale>2077</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
+        <DCC_UnitSearchPath>Source\Common\Include\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_Define>Bold_Delphi;$(DCC_Define)</DCC_Define>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_UsePackage>vcl;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>vcl;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="Bold.dcp"/>
+        <DCCReference Include="DesignIDE.dcp"/>
+        <DCCReference Include="Source\Persistence\Propagation\BoldPropagatorUtils.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldApartmentThread.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComAdapter.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComConst.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComEventQueue.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComObj.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComThreads.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldComUtils.pas"/>
+        <DCCReference Include="Source\Common\COM\BoldThreadedComObjectFactory.pas"/>
+        <DCCReference Include="Source\Common\ConnectionCOM\BoldComClient.pas"/>
+        <DCCReference Include="Source\Common\ConnectionCOM\BoldComConnection.pas"/>
+        <DCCReference Include="Source\Common\ConnectionCOM\BoldComServer.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldComClientHandles.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldComServerHandles.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldXMLDispatcher.pas"/>
+        <DCCReference Include="Source\Common\ConnectionHandlesCOM\BoldXMLDispatcherVB.pas"/>
+        <DCCReference Include="Source\Common\IDECOM\BoldComEditors.pas"/>
+        <DCCReference Include="Source\Common\IDECOM\BoldComReg.pas"/>
+        <DCCReference Include="Source\Common\IDECOM\BoldObjectNamePropertyEditor.pas"/>
+        <DCCReference Include="Source\Common\IDECOM\BoldXMLDispatcherEditor.pas"/>
+        <DCCReference Include="Source\Common\IDECOM\BoldXMLDispatcherReg.pas"/>
+        <DCCReference Include="Source\Common\IDECOM\BoldXMLDispatcherVBReg.pas"/>
+        <DCCReference Include="Source\Handles\COM\BoldComClientElementHandles.pas"/>
+        <DCCReference Include="Source\Handles\COM\BoldComServerElementHandleFactory.pas"/>
+        <DCCReference Include="Source\Handles\COM\BoldComServerElementHandles.pas"/>
+        <DCCReference Include="Source\Handles\IDECOM\BoldComElementHandleReg.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComObjectSpace_TLB.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComObjectSpace.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComObjectSpaceAdapters.pas"/>
+        <DCCReference Include="Source\ObjectSpace\COM\BoldComponentValidatorCom.pas"/>
+        <DCCReference Include="Source\Persistence\COM\BoldAbstractComClientPersistenceHandles.pas"/>
+        <DCCReference Include="Source\Persistence\COM\BoldAbstractComPersistenceControllerProxy.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldPersistenceControllerSOAPAdapterCore.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldPersistenceOperationXMLStreaming.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPClientPersistenceHandles.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPPersistenceControllerProxy.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPPersistenceControllerStub.pas"/>
+        <DCCReference Include="Source\Persistence\SOAP\BoldSOAPServerPersistenceHandles.pas"/>
+        <DCCReference Include="Source\Persistence\HTTP\BoldHTTPClientPersistenceHandle.pas"/>
+        <DCCReference Include="Source\Persistence\HTTP\BoldHTTPPersistenceControllerClient.pas"/>
+        <DCCReference Include="Source\Persistence\HTTP\BoldHTTPServerPersistenceHandlePassthrough.pas"/>
+        <DCCReference Include="Source\Persistence\IDECOM\BoldComPersistenceHandleReg.pas"/>
+        <DCCReference Include="Source\Persistence\IDECOM\BoldHTTPClientPersistenceHandleReg.pas"/>
+        <DCCReference Include="Source\Persistence\IDECOM\BoldHTTPServerPersistenceHandlePassthroughReg.pas"/>
+        <DCCReference Include="Source\ConcurrencyControl\COM\BoldLockManagerAdminHandleCom.pas"/>
+        <DCCReference Include="Source\ConcurrencyControl\COM\BoldLockManagerHandleCom.pas"/>
+        <DCCReference Include="Source\ConcurrencyControl\IDECOM\BoldConcurrencyControlReg.pas"/>
+        <DCCReference Include="Source\Propagator\COM\BoldPropagatorHandleCOM.pas"/>
+        <DCCReference Include="Source\Propagator\IDECOM\BoldPropagatorHandleCOMReg.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>Package</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">BoldCom.dpk</Source>
+                </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>

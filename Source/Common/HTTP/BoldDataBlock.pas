@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDataBlock;
 
 interface
@@ -38,7 +41,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldDataBlock}
 
@@ -95,5 +99,7 @@ function TBoldDataBlock.GetMemory: Pointer;
 begin
   Result := FStream.Memory;
 end;
+
+initialization
 
 end.

@@ -1,25 +1,31 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldModelReg;
 
 interface
+
+uses
+  DesignIntf,
+  Classes;
 
 procedure Register;
 
 implementation
 
+{$R BoldModelReg.res}
+
 uses
   SysUtils,
-  DesignIntf,
-  Classes,
   BoldUtils,
+  BoldGuard,
   BoldTypeNameHandle,
   BoldAbstractModel,
   BoldIDEConsts;
-
-{.$R BoldModelReg.res}
 
 procedure Register;
 begin
   RegisterComponents(BOLDPAGENAME_MISC, [TBoldTypeNameHandle]);
 end;
-end.
 
+end.

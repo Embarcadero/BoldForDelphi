@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComAdapter;
 
 interface
@@ -18,7 +21,7 @@ type
 
   TBoldAdaptableObject = TObject;
   TBoldAdaptableClass = class of TObject;
-
+  
   TBoldComAdapterClass = class of TBoldComAdapter;
 
   {--- IBoldComAdapter ---}
@@ -37,10 +40,10 @@ type
   {--- TBoldComAdapter ---}
   TBoldComAdapter = class(TBoldAutoInterfacedObject, IBoldComAdapter)
   private
-    FAdaptee: TBoldAdaptableObject;
-    FIsOwner: Boolean;
-    FSubscriber: TBoldPassthroughSubscriber;
+    fIsOwner: Boolean;
+    fSubscriber: TBoldPassthroughSubscriber;
   protected
+    fAdaptee: TBoldAdaptableObject;
     function GetEnsuredAdaptee: TBoldAdaptableObject;
     { IBoldComAdapter }
     function GetAdaptee: TBoldAdaptableObject;
@@ -73,24 +76,24 @@ type
       AdaptableClass: TBoldAdaptableClass);
   end;
 
-procedure BoldComRegisterAdapter(AdapterClass: TBoldComAdapterClass;
-  AdaptableClass: TBoldAdaptableClass);
-procedure BoldComCreateAdapter(Adaptee: TBoldAdaptableObject;
-  Owner: Boolean; const IID: TGUID; out Obj);
+procedure BoldComRegisterAdapter(AdapterClass: TBoldComAdapterClass; AdaptableClass: TBoldAdaptableClass);
+{ril}procedure BoldComCreateAdapter(Adaptee: TBoldAdaptableObject; Owner: Boolean; const IID: TGUID; out Obj);
 function BoldComInterfaceToObject(const Unk: IUnknown): TBoldAdaptableObject;
+
+//PATCH
+function GetDebugInfo: string;
 
 implementation
 
 uses
   SysUtils,
+  Classes, //PATCH
   BoldDefs,
   BoldIndexableList,
   BoldHashIndexes,
-  BoldComUtils,
-  BoldComConst;
+  BoldComUtils;
 
 type
-  { TBoldAdapterCache }
   TBoldAdapterCache = class(TBoldUnorderedIndexableList)
   private
     function GetAdapterByAdaptee(Adaptee: TBoldAdaptableObject): TBoldComAdapter;
@@ -102,8 +105,9 @@ type
   {---TBoldObjectHashIndex---}
   TBoldAdapterCacheIndex = class(TBoldObjectHashIndex)
   protected
-    function ItemAsKeyObject(Item: TObject): TObject; override;
+    function ItemASKeyObject(Item: TObject): TObject; override;
   end;
+
 
 var
   G_BoldComAdapterFactory: TBoldComAdapterFactory = nil;
@@ -120,6 +124,57 @@ begin
   result := G_AdapterCache;
 end;
 
+//PATCH
+function GetDebugInfo: string;
+var
+  vAdapterCache: TBoldAdapterCache;
+  vTraverser: TBoldIndexableListTraverser;
+  vAdapter: TBoldComAdapter;
+  vNoAdapteeCnt: Integer;
+  vAdapterRefCount: array [0..255] of Integer;
+  I: Integer;
+  vClasses: TStringList;
+begin
+  vAdapterCache := AdapterCache;
+  vClasses := TStringList.Create;
+  vClasses.Sorted := True;
+
+  Result := 'AdapterCache.Count:'+IntToStr(vAdapterCache.Count);
+  vTraverser := vAdapterCache.CreateTraverser;
+  try
+    vNoAdapteeCnt := 0;
+    FillChar(vAdapterRefCount,SizeOf(vAdapterRefCount),0);
+    while vTraverser.MoveNext do
+    begin
+      vAdapter := vTraverser.Item as TBoldComAdapter;
+      if Assigned(vAdapter.fAdaptee) then
+      begin
+        I := vClasses.Add(vAdapter.fAdaptee.ClassName);
+        vClasses.Objects[I] := TObject(Integer(vClasses.Objects[I])+1);
+      end
+      else
+        Inc(vNoAdapteeCnt);
+
+      Inc(vAdapterRefCount[vAdapter.RefCount]);
+
+      //Annat intressant som kan mätas och användas för klassning:
+      //
+      //vAdapter.RefCount
+    end;
+    Result := Result+' HasNoAdaptee:'+IntToStr(vNoAdapteeCnt)+#13#10;
+    for I:=0 to vClasses.Count-1 do
+        Result := Result+vClasses[I]+'='+IntToStr(Integer(vClasses.Objects[I]))+#13#10;
+    Result := Result+' RefCount=AdapterCount:';
+    for I:=Low(vAdapterRefCount) to High(vAdapterRefCount) do
+      if vAdapterRefCount[I]<>0 then
+        Result := Result+IntToStr(I)+'='+IntToStr(vAdapterRefCount[I])+', ';
+
+  finally
+    FreeAndNil(vTraverser);
+    FreeAndNil(vClasses);
+  end;
+end;
+
 
 procedure BoldComRegisterAdapter(AdapterClass: TBoldComAdapterClass;
   AdaptableClass: TBoldAdaptableClass);
@@ -127,11 +182,13 @@ begin
   TBoldComAdapterFactory.Instance.RegisterAdapterClass(AdapterClass,AdaptableClass);
 end;
 
-procedure BoldComCreateAdapter(Adaptee: TBoldAdaptableObject;
-  Owner: Boolean; const IID: TGUID; out Obj);
+procedure BoldComCreateAdapter(Adaptee: TBoldAdaptableObject; Owner: Boolean; const IID: TGUID; out Obj);
+{ril}
 var
   Adapter: TBoldComAdapter;
+{
   UnknownAdapter: IUnknown;
+}
 begin
   Pointer(Obj) := nil;
   if Assigned(Adaptee) then
@@ -141,13 +198,19 @@ begin
       Adapter := TBoldComAdapterFactory.Instance.CreateAdapterForObject(Adaptee,Owner);
 
     if not Assigned(Adapter) then
-      raise EBoldCom.CreateFmt(sNoAdapterRegistered,[Adaptee.ClassName]);
-    UnknownAdapter := Adapter; // AddRef
+      raise EBoldCom.CreateFmt('No adapter registered for %s',[Adaptee.ClassName]);
+{
+    UnknownAdapter := Adapter;
     if UnknownAdapter.QueryInterface(IID,Obj) <> 0 then
-    begin
-      UnknownAdapter := nil; // Release
-      raise EBoldCom.CreateFmt(sUnsupportedInterface,[Adapter.ClassName]);
+}
+    if Adapter.QueryInterface(IID,Obj) <> 0 then
+{    begin
+       UnknownAdapter := nil;
+}
+      raise EBoldCom.CreateFmt('%s: Unsupported interface',[Adapter.ClassName]);
+{
     end;
+}
   end;
 end;
 
@@ -155,10 +218,8 @@ function BoldComInterfaceToObject(const Unk: IUnknown): TBoldAdaptableObject;
 begin
   Result := nil;
   if Assigned(Unk) then
-  begin
-    with Unk as IBoldComAdapter do
-      Result := GetAdaptee;
-  end;
+//    Result := (Unk as IBoldComAdapter).GetAdaptee;
+    Result := (Unk as IBoldComAdapter).GetAdaptee;
 end;
 
 {-- TBoldComAdapter -----------------------------------------------------------}
@@ -166,7 +227,7 @@ end;
 constructor TBoldComAdapter.Create(AdaptableObject: TBoldAdaptableObject;
   Owner: Boolean; const TypeLib: ITypeLib; const DispIntf: TGUID);
 begin
-  FSubscriber := TBoldPassthroughSubscriber.Create(ReceiveEvent);
+  fSubscriber := TBoldPassthroughSubscriber.Create(ReceiveEvent);
   SetAdaptee(AdaptableObject,Owner);
   inherited Create(TypeLib, DispIntf);
 end;
@@ -175,9 +236,9 @@ destructor TBoldComAdapter.Destroy;
 begin
   if assigned(Adaptee) then
     AdapterCache.remove(self);
-  FreeAndNil(FSubscriber);
-  if FIsOwner and Assigned(FAdaptee) then
-    FreeAndNil(FAdaptee)
+  FreeAndNil(fSubscriber);
+  if fIsOwner and Assigned(fAdaptee) then
+    FreeAndNil(fAdaptee)
   else
     fAdaptee := nil;
   inherited Destroy;
@@ -185,57 +246,57 @@ end;
 
 function TBoldComAdapter.GetAdaptee: TBoldAdaptableObject;
 begin
-  Result := FAdaptee;
+  Result := fAdaptee;
 end;
 
 function TBoldComAdapter.GetIsOwner: Boolean;
 begin
-  Result := FIsOwner;
+  Result := fIsOwner;
 end;
 
 function TBoldComAdapter.GetEnsuredAdaptee: TBoldAdaptableObject;
 begin
-  Result := FAdaptee;
-  if not Assigned(Result) then
-    raise EBoldCom.CreateFmt(sNoAdaptee, [ClassName]);
+  Result := fAdaptee;
+  if Result=nil then
+    raise EBoldCom.CreateFmt('%s: No adaptee',[ClassName]);
 end;
 
 procedure TBoldComAdapter.ReceiveEvent(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  if (Originator = FAdaptee) and (OriginalEvent = beDestroying) then
+  if (Originator = fAdaptee) and (OriginalEvent = beDestroying) then
   begin
     AdapterCache.Remove(self);
-    FAdaptee := nil;
+    fAdaptee := nil;
   end;
 end;
 
 procedure TBoldComAdapter.SetAdaptee(Value: TBoldAdaptableObject; Owner: Boolean);
 begin
-  if FAdaptee <> Value then
+  if fAdaptee <> Value then
   begin
     if assigned(fAdaptee) then
       AdapterCache.remove(self);
-    FSubscriber.CancelAllSubscriptions;
-    if FIsOwner and Assigned(FAdaptee) then
-      FreeAndNil(FAdaptee);
+    fSubscriber.CancelAllSubscriptions;
+    if fIsOwner and Assigned(fAdaptee) then
+      FreeAndNil(fAdaptee);
 
-    FAdaptee := Value;
-
-    if FAdaptee is TBoldSubscribableObject then
-      TBoldSubscribableObject(FAdaptee).AddSubscription(FSubscriber, beDestroying, beDestroying)
-    else if FAdaptee is TBoldSubscribableComponent then
-      TBoldSubscribableComponent(FAdaptee).AddSubscription(FSubscriber, beDestroying, beDestroying)
-    else if FAdaptee is TBoldSubscribablePersistent then
-      TBoldSubscribablePersistent(FAdaptee).AddSubscription(FSubscriber, beDestroying, beDestroying)
+    fAdaptee := Value;
+    
+    if fAdaptee is TBoldSubscribableObject then
+      TBoldSubscribableObject(fAdaptee).AddSubscription(fSubscriber, beDestroying, beDestroying)
+    else if fAdaptee is TBoldSubscribableComponent then
+      TBoldSubscribableComponent(fAdaptee).AddSubscription(fSubscriber, beDestroying, beDestroying)
+    else if fAdaptee is TBoldSubscribablePersistent then
+      TBoldSubscribablePersistent(fAdaptee).AddSubscription(fSubscriber, beDestroying, beDestroying)
     else if assigned(fAdaptee) then
-      raise EBold.CreateFmt(sCannotAdaptNonSubscribables, [className, value.ClassName]);
+      raise EBold.CreateFmt('%s.SetAdaptee: Can not adapt objects that are not subscribable (such as %s)', [className, value.ClassName]);
 
     if assigned(fAdaptee) then
       AdapterCache.Add(self);
   end;
-  if FIsOwner <> Owner then
-    FIsOwner := Owner;
+  if fIsOwner <> Owner then
+    fIsOwner := Owner;
 end;
 
 {-- TBoldComAdapterFactory ----------------------------------------------------}
@@ -333,12 +394,10 @@ begin
   result := (item as TBoldComAdapter).Adaptee;
 end;
 
-initialization // empty
+initialization
 
 finalization
   FreeAndNil(G_BoldComAdapterFactory);
   FreeAndNil(G_AdapterCache);
 
 end.
-
-

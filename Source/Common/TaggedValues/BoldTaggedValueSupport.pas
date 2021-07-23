@@ -1,11 +1,13 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTaggedValueSupport;
 
 interface
 
 uses
-  Classes, // TStrings
+  Classes,
   BoldDefaultTaggedValues,
-  BoldUMLTypes,
   BoldDefs;
 
 type
@@ -27,8 +29,6 @@ type
 
   { TBoldTaggedValueSupport }
   TBoldTaggedValueSupport = class
-  private
-    class procedure UnknownValue(const Invoker: string);
   public
     class procedure AddEvolutionStates(Strings: TStrings);
     class procedure AddNationalCharConversions(Strings: TStrings);
@@ -65,8 +65,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldCommonConst;
+  BoldRev;
 
 class procedure TBoldTaggedValueSupport.AddTableMappings(
   Strings: TStrings);
@@ -149,13 +148,14 @@ begin
     Strings.Add(DefaultRegionModeToString(i));
 end;
 
+
 class function TBoldTaggedValueSupport.AttributeKindToString(Value: TBoldAttributeKind): String;
 begin
   case Value of
     bastBold: Result := TV_ATTRIBUTEKIND_BOLD;
     bastDelphi: Result := TV_ATTRIBUTEKIND_DELPHI;
     else
-      UnknownValue('AttributeKindToString'); // do not localize
+      raise EBold.CreateFmt('%s.AttributeKindToString: Unknown TBoldAttributeKind', [ClassName]);
   end;
 end;
 
@@ -167,7 +167,7 @@ begin
     daProhibit: Result := TV_DELETEACTION_PROHIBIT;
     daCascade: Result := TV_DELETEACTION_CASCADE;
     else
-      UnknownValue('DeleteActionToString'); // do not localize
+      raise EBold.CreateFmt('%s.DeleteActionToString: Unknown TDeleteAction', [ClassName]);
   end;
 end;
 
@@ -180,7 +180,7 @@ begin
     dfDynamic: Result := TV_DELPHIOPERATIONKIND_DYNAMIC;
     dfAbstractVirtual: Result := TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL;
     else
-      UnknownValue('DelphiFunctionTypeToString'); // do not localize
+      raise EBold.CreateFmt('%s.DelphiFunctionTypeToString: Unknown TDelphiFunctionType', [ClassName]);
   end;
 end;
 
@@ -192,7 +192,7 @@ begin
     pkPrivateMethod: Result := TV_DPPRIVATEMETHOD;
     pkProtectedVirtualMethod: Result := TV_DPPROTECTEDVIRTUALMETHOD;
     else
-      UnknownValue('DelphiPropertyAccessKindToString'); // do not localize
+      raise EBold.CreateFmt('%s.DelphiPropertyAccessKindToString: Unknown TDelphiPropertyAccessKind', [ClassName]);
   end;
 end;
 
@@ -208,13 +208,12 @@ end;
 
 class function TBoldTaggedValueSupport.StringToBoolean(const Value: String): Boolean;
 begin
-  Result := False;
   if SameText(Value, TV_TRUE) then
     Result := True
   else if SameText(Value, TV_FALSE) then
     Result := False
   else
-    UnknownValue('StringToBoolean'); // do not localize
+    raise EBold.CreateFmt('%s is not a valid string for a Boolean', [Value]);
 end;
 
 class function TBoldTaggedValueSupport.StringToDefaultRegionMode(const value: String): TBoldAssociationEndDefaultRegionMode;
@@ -259,7 +258,7 @@ begin
     Result := dfDynamic
   else if Value = TV_DELPHIOPERATIONKIND_ABSTRACTVIRTUAL then
     Result := dfAbstractVirtual
-  else if Value = 'AbstractVirtual' then  // legacy // do not localize
+  else if Value = 'AbstractVirtual' then
     Result := dfAbstractVirtual
   else
     result := dfNormal;
@@ -349,7 +348,7 @@ begin
     tmChildren: Result := TV_TABLEMAPPING_CHILDREN;
     tmImported: Result := TV_TABLEMAPPING_IMPORTED;
     else
-      UnknownValue('TableMappingToString'); // do not localize
+      raise EBold.CreateFmt('%s.TableMappingToString: Unknown TTableMapping', [ClassName]);
   end;
 end;
 
@@ -363,7 +362,7 @@ begin
     bolmAllMembers: Result := TV_OPTIMISTICLOCKING_ALLMEMBERS;
     bolmTimeStamp: Result := TV_OPTIMISTICLOCKING_TIMESTAMP;
     else
-      UnknownValue('OptimisticLockingModeToString'); // do not localize
+      raise EBold.CreateFmt('%s.OptimisticLockingModeToString: Unknown TBoldOptimisticLockingMode', [ClassName]);
   end;
 end;
 
@@ -375,7 +374,7 @@ begin
     esToBeRemoved: Result := TV_EVOLUTIONSTATE_TOBEREMOVED;
     esRemoved: Result := TV_EVOLUTIONSTATE_REMOVED;
     else
-      UnknownValue('EvolutionStateToString'); // do not localize
+      raise EBold.CreateFmt('%s.EvolutionStateToString: Unknown TBoldEvolutionState', [ClassName]);
   end;
 end;
 
@@ -400,28 +399,24 @@ begin
     nccTrue: Result := TV_TRUE;
     nccFalse: Result := TV_FALSE;
     else
-      UnknownValue('NationalCharConversionToString'); // do not localize
+      raise EBold.CreateFmt('%s.NationalCharConversionoString: Unknown TBoldNationalCharConversion', [ClassName]);
   end;
 end;
 
 class function TBoldTaggedValueSupport.DefaultRegionModeToString(
   Value: TBoldAssociationEndDefaultRegionMode): String;
 begin
-  case Value of
+case Value of
     aedrmDefault: Result := TV_DEFAULTREGIONMODE_ASSOCIATIONEND_DEFAULT;
     aedrmNone: Result := TV_DEFAULTREGIONMODE_ASSOCIATIONEND_NONE;
     aedrmExistence: Result := TV_DEFAULTREGIONMODE_ASSOCIATIONEND_EXISTENCE;
     aedrmIndependentCascade: Result := TV_DEFAULTREGIONMODE_ASSOCIATIONEND_INDEPENDENTCASCADE;
     aedrmCascade: Result := TV_DEFAULTREGIONMODE_ASSOCIATIONEND_CASCADE;
     else
-      UnknownValue('DefaultRegionModeToString'); // do not localize
+      raise EBold.CreateFmt('%s.DefaultRegionModeToString: Unknown TBoldAssociationEndDefaultRegionMode', [ClassName]);
   end;
 end;
 
-class procedure TBoldTaggedValueSupport.UnknownValue(
-  const Invoker: string);
-begin
-  raise EBold.CreateFmt(sUnknownValue, [ClassName, Invoker]);
-end;
+initialization
 
 end.

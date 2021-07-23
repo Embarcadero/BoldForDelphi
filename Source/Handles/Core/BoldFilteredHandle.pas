@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFilteredHandle;
 
 interface
@@ -18,6 +21,7 @@ type
   TBoldElementFilter = function (Element: TBoldElement): Boolean of object;
 
   { TBoldFilter }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldFilter = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnFilter: TBoldElementFilter;
@@ -27,8 +31,8 @@ type
     procedure SetPreFetchRoles(const Value: TStrings);
     function StorePreFetchRoles: Boolean;
   public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
     procedure Subscribe(boldElement: TBoldElement; Subscriber: TBoldSubscriber); virtual;
     function Filter(Element: TBoldElement): Boolean; virtual;
     procedure FilterList(List: TBoldList);
@@ -54,7 +58,9 @@ implementation
 
 uses
   SysUtils,
+  BoldDefs,
   BoldSystemRT;
+
 
 {---TBoldFilter---}
 
@@ -64,10 +70,10 @@ begin
   fPreFetchRoles := TStringList.Create;
 end;
 
-destructor TBoldFilter.Destroy;
+destructor TBoldFilter.destroy;
 begin
   FreeAndNil(fPreFetchRoles);
-  inherited;
+  inherited;                 
 end;
 
 function TBoldFilter.Filter(Element: TBoldElement): Boolean;
@@ -100,7 +106,7 @@ end;
 
 function TBoldFilter.StorePreFetchRoles: Boolean;
 begin
-  result := PreFetchRoles.Count <> 0;
+  result := PreFetchRoles.Count <> 0; 
 end;
 
 procedure TBoldFilter.Subscribe(boldElement: TBoldElement; Subscriber: TBoldSubscriber);
@@ -121,7 +127,10 @@ var
   ListTypeInfo: TBoldListTypeInfo;
   ClassTypeInfo: TBoldClassTypeInfo;
   MemberRTInfo: TBoldMemberRTInfo;
+
 begin
+  if csDestroying in ComponentState then
+    raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
   if EffectiveRootValue = nil then
     ResultElement.SetOwnedValue(nil)
   else if not Assigned(BoldFilter) then
@@ -185,5 +194,7 @@ begin
     MarkSubscriptionOutOfdate;
   end;
 end;
+
+initialization
 
 end.

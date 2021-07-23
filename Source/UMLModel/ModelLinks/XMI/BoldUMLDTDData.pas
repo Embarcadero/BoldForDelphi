@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLDTDData;
 
 interface
@@ -41,6 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
+  BoldUtils,
   BoldDTDParser;
 
 { TBoldUMLDTDReader }
@@ -101,7 +105,7 @@ end;
 
 function TBoldUMLDTDReader.IsClass(Name: string): Boolean;
 begin
-  Result := Name[LastDelimiter('.', Name)+1] in ['A'..'Z'];
+  Result := CharInSet(Name[LastDelimiter('.', Name)+1], ['A'..'Z']);
 end;
 
 function TBoldUMLDTDReader.MembersOfClass(ClassName: string): string;

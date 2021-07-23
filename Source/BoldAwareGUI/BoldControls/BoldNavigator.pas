@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldNavigator;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -11,9 +14,9 @@ uses
   Controls,
   ExtCtrls,
   Buttons,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldElements,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
   {$ENDIF}
   BoldDefs,
@@ -24,7 +27,7 @@ uses
   BoldControlPack,
   BoldCommonBitmaps,
   BoldListControlPack,
-  BoldListListControlPack;
+  BoldListListControlPack; 
 
 type
   { forward declarations }
@@ -97,12 +100,13 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Assign(Source: TPersistent); override;
+    procedure assign(Source: TPersistent); override;
     procedure BtnClick(index: TBoldNavigateBtn);
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   end;
 
   { TBoldNavigator }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldNavigator = class(TBoldCustomNavigator)
   published
     {$IFNDEF T2H}
@@ -161,7 +165,6 @@ uses
   BoldControlsDefs;
 
 var
-//  BtnTypeName: array[TBoldNavigateBtn] of PChar = ('FIRST', 'PRIOR', 'NEXT', 'LAST', 'INSERT', 'DELETE', 'MOVEUP', 'MOVEDOWN'); //Do not localize
   BtnHintId: array[TBoldNavigateBtn] of Pointer = (@SNavHintFirst, @SNavHintPrior, @SNavHintNext, @SNavHintLast, @SNavHintNew, @SNavHintDelete, @SNavHintMoveUp, @SNavHintMoveDown);
 
 procedure TBoldCustomNavigator.InitHints;
@@ -202,8 +205,7 @@ end;
 
 procedure TBoldCustomNavigator.GetChildren(Proc: TGetChildProc; ROOT: TComponent);
 begin
-  // Implementation is empty to prevent control
-  // from behaving like a TPanel
+
 end;
 
 procedure TBoldCustomNavigator.SetVisible(Value: TBoldButtonSet);
@@ -444,10 +446,10 @@ begin
   fBoldProperties.AfterMakeUptoDate := _AfterMakeUptoDate;
   fBoldProperties.BeforeMakeUptoDate := _BeforeMakeUptoDate;
 
-  fDeleteQuestion := sDeleteQuestion;
+  fDeleteQuestion := 'Delete "%1:s"?';
   {$IFNDEF BOLDCOMCLIENT}
-  fUnlinkQuestion := sUnlinkQuestion;
-  fRemoveQuestion := sRemoveQuestion;
+  fUnlinkQuestion := 'Unlink "%1:s" from "%2:s"?';
+  fRemoveQuestion := 'Remove "%1:s" from the list?';
   {$ENDIF}
 end;
 
@@ -513,7 +515,6 @@ procedure TBoldCustomNavigator.BtnClick(index: TBoldNavigateBtn);
 
     if BoldDeleteMode = dmDefault then
     begin
-      // Delete from classlists, remove from other lists
       if assigned(BoldHandle.ObjectList) and (BoldHandle.ObjectList.OwningElement is TBoldSystem) then
         EffectiveDeleteMode := dmDelete
       else
@@ -526,7 +527,6 @@ procedure TBoldCustomNavigator.BtnClick(index: TBoldNavigateBtn);
     begin
       if assigned(RoleRTInfo) then
       begin
-        // linkobjects will be deleted... other objects will be unlinked
         if RoleRTInfo.RoleType = rtLinkRole then
           EffectiveDeleteMode := dmDelete
         else
@@ -592,7 +592,7 @@ begin
       nbInsert:
         CurrentIndex := List.IndexOf(MutableList.AddNew);
       nbDelete:
-          Delete(fConfirmDelete); //FIXME Localize
+          Delete(fConfirmDelete);
       nbMoveUp:
         List.Move(CurrentIndex, CurrentIndex - 1);
       nbMoveDown:
@@ -685,7 +685,7 @@ begin
     dmUnlinkAllAndDelete:
       Result := True;
     else
-      raise EBold.CreateFmt(sUnknownDeleteMode, [ClassName]);
+      raise EBold.CreateFmt('%s.MapMinus: Unknown delete mode', [ClassName]);
   end;
 end;
 
@@ -750,9 +750,10 @@ end;
 
 procedure TBoldCustomNavigator._BeforeMakeUptoDate(Follower: TBoldFollower);
 begin
-  fBoldProperties.SetActiveRange(Follower, BoldHandle.CurrentIndex, BoldHandle.CurrentIndex);
+  if Assigned(BoldHandle) then  
+    fBoldProperties.SetActiveRange(Follower, BoldHandle.CurrentIndex, BoldHandle.CurrentIndex)
 end;
 
+initialization
+
 end.
-
-

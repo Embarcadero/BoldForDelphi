@@ -1,14 +1,15 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldId;
 
 interface
 
 uses
-  Classes,
   BoldDefs,
   BoldBase,
   BoldStreams,
   BoldIndex,
-  BoldHashIndexes,
   BoldXMLStreaming,
   BoldIndexableList;
 
@@ -29,6 +30,10 @@ type
   TBoldID = class (TBoldNonRefCountedObject, IBoldStreamable)
   protected
     function GetStreamName: string; virtual; abstract;
+    function GetAsString: string; virtual; abstract;
+    function GetDebugInfo: string; override;    
+  public
+    property AsString: string read GetAsString;
   end;
 
   {---TBoldMemberID---}
@@ -37,8 +42,10 @@ type
     fMemberIndex: Integer;
   protected
     function GetStreamName: string; override;
+    function GetAsString: string; override;
   public
-    constructor create(MemberIndex: Integer);
+    constructor Create(MemberIndex: Integer);
+    function Clone: TBoldMemberID;
     property MemberIndex: integer read fMemberIndex;
   end;
 
@@ -48,32 +55,32 @@ type
     fOwnsPartof: Boolean;
     fPartOf: TBoldMemberID;
   public
-    constructor Create(partOf: TBoldMemberID; OwnspartOf: Boolean; IndexInMemberList: integer);
-    destructor Destroy; override;
+    constructor create(partOf: TBoldMemberID; OwnspartOf: Boolean; IndexInMemberList: integer);
+    destructor destroy; override;
   end;
 
   {---TBoldObjectId---}
   TBoldObjectId = class(TBoldID)
   private
     FClassId: integer;
-    function getTopSortedIndex: integer;
-    function GetTopSortedIndexExact: Boolean;
-    procedure SetClassIdData(TopSortedIndex: integer; Exact: boolean);
+    function GetTopSortedIndex: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTopSortedIndexExact: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetClassIdData(TopSortedIndex: integer; Exact: boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    function GetAsString: string; virtual; abstract;
     function GetIsStorable: Boolean; virtual; abstract;
     function GetHash: Cardinal; virtual; abstract;
     Function GetIsEqual(MatchID: TBoldObjectID): Boolean; virtual; abstract;
     function GetTimeStamp: TBoldTimeStampType; virtual;
+    function GetNonExisting: Boolean; virtual;
   public
     constructor CreateWithClassID(TopSortedIndex: integer; Exact: Boolean); virtual;
     function CloneWithClassId(TopSortedIndex: integer; Exact: Boolean): TBoldObjectid; virtual; abstract;
-    function Clone: TBoldObjectId;
+    function Clone: TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property TopSortedIndex: integer read getTopSortedIndex;
     property TopSortedIndexExact: Boolean read GetTopSortedIndexExact;
-    property AsString: string read GetAsString;
     property IsStorable: Boolean read GetIsStorable;
     property IsEqual[MatchId: TBoldObjectId]: Boolean read GetIsEqual;
+    property NonExisting: Boolean read GetNonExisting;
     property Hash: Cardinal read GetHash;
     property TimeStamp: TBoldTimeStampType read GetTimeStamp;
   end;
@@ -88,7 +95,6 @@ type
     function GetIsStorable: Boolean; override;
     function GetIsEqual(MatchID: TBoldObjectID): Boolean; override;
     function GetStreamName: string; override;
-
   public
     constructor CreateWithClassID(TopSortedIndex: integer; Exact: Boolean); override;
     constructor CreateWithClassIDandInternalId(InternalIdentifier: integer; TopSortedIndex: integer; Exact: Boolean);
@@ -101,8 +107,24 @@ type
     function GetIsStorable: Boolean; override;
   end;
 
+  TBoldNonExistingObjectId = class(TBoldObjectId)
+  protected
+    function GetStreamName: string; override;
+    function GetAsString: string; override;
+    function GetNonExisting: Boolean; override;
+    function GetIsStorable: Boolean; override;
+    function GetHash: Cardinal; override;
+    function GetIsEqual(MatchID: TBoldObjectID): Boolean; override;
+  public
+    function CloneWithClassId(TopSortedIndex: integer; Exact: Boolean): TBoldObjectid; override;
+  end;
+
   {---TBoldIdList---}
-  TBoldIdList = class(TBoldIndexableList);
+  TBoldIdList = class(TBoldIndexableList)
+  public
+    function CommaSeparatedIdList: String;
+    property AsString: string read CommaSeparatedIdList;
+  end;
 
   {---TBoldObjectIdHashIndex---}
   TBoldObjectIdHashIndex = class(TBoldHashIndex)
@@ -111,75 +133,88 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function FindById(boldObjectId:TboldObjectId): TObject;
+    function FindById(BoldObjectId: TBoldObjectId): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   {---TBoldObjectIdList---}
   TBoldObjectIdList = class(TBoldIdList, IBoldStreamable)
   private
+    class var IX_ObjectID: integer;
     function GetObjectIDIndex: TBoldObjectIDHashIndex;
+    function GetHasInexactIds: boolean;
+    function GetHasNonExistingIds: boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    function GetCount: integer;
+    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetIDByID(ObjectID: TBoldObjectId): TBoldObjectId;
     function GetIndexByID(ObjectID: TBoldObjectId): Integer;
-    function GetObjectId(index: Integer): TBoldObjectId;
-    function GetIdInList(ObjectID: TBoldObjectId): Boolean;
-    function GetStreamName: string;
+    function GetObjectId(index: Integer): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIdInList(ObjectID: TBoldObjectId): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property ObjectIDIndex: TBoldObjectIDHashIndex read GetObjectIDIndex;
   public
     constructor Create;
-    procedure Add(ObjectID: TBoldObjectId);
-    procedure AddIfNotInList(ObjectID: TBoldObjectId);
-    procedure AddList(ObjectIdList: TBoldObjectIdList);
-    procedure Insert(Index: integer; ObjectID: TBoldObjectId);
+    procedure Add(ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddAndAdopt(ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddIfNotInList(ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddList(ObjectIdList: TBoldObjectIdList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function AddAndGetID(aBoldObjectId: TBoldObjectId): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Insert(Index: integer; ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function ContainsSameIDs(List: TBoldObjectIdList): Boolean;
     function Clone: TBoldObjectIdList;
-    function CommaSeparatedIdList: String;
-    procedure remove(Id: TBoldObjectId);
-    procedure ReplaceID(OldId, NewId: TBoldObjectId);
+    procedure Remove(Id: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ReplaceID(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure ExactifyIds(TranslationList: TBoldIDTranslationList);
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList);
+    procedure RemoveNonExistingIds;
     property IDByID[ObjectID: TBoldObjectId]: TBoldObjectId read GetIdById;
     property IndexByID[ObjectID: TBoldObjectId]: Integer read GetIndexByID;
     property ObjectIds[index: Integer]: TBoldObjectId read GetObjectId; default;
     property IdInList[Objectid: TBoldObjectId]: Boolean read GetIdInList;
+    property HasInexactIds: boolean read GetHasInexactIds;
+    property HasNonExistingIds: boolean read GetHasNonExistingIds;
   end;
 
   {---TBoldMemberIdList---}
   TBoldMemberIdList = class(TBoldIdList, IBoldStreamable)
-    function GetStreamName: string;
+    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    function GetMemberIds(Index: Integer): TBoldMemberId;
+    function GetMemberIds(Index: Integer): TBoldMemberId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
-    Property MemberIds[Index: integer]: TBoldmemberId read GetMemberIds; default;
+    function IsEqual(AList: TBoldMemberIdList): boolean;
+    function HasId(AId: TBoldMemberId): boolean;
+    function Clone: TBoldMemberIdList;
+    property MemberIds[Index: integer]: TBoldMemberId read GetMemberIds; default;
   end;
 
   {---TBoldIDTranslationList---}
   TBoldIDTranslationList = class(TBoldNonRefCountedObject, IBoldStreamable)
-  // Possible Translations:
-  // In Create-phase: ObjectID changed (Internal -> external), ClassID unchanged
-  // In Update-Phase: ObjectID Changed (internal -> external)
-  // In Delete-Phase: Nothing changed
-  // In Fetch-phase: ObjectID unchanged, ClassID changed
   private
     fOldIds: TBoldObjectIdList;
     fNewIds: TBoldObjectIdList;
-    function GetOldId(index: Integer): TBoldObjectId;
-    function GetNewId(index: Integer): TBoldObjectId;
-    function GetCount: Integer;
-    function GetTranslateToOldId(NewID: TBoldObjectId): TBoldObjectId;
-    function GetTranslateToNewId(OldID: TBoldObjectId): TBoldObjectId;
+    function GetOldId(index: Integer): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetNewId(index: Integer): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTranslateToOldId(NewID: TBoldObjectId): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTranslateToNewId(OldID: TBoldObjectId): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+
+    function GetTranslateToOldId(Index: integer): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTranslateToNewId(Index: integer): TBoldObjectId; overload;{$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCapacity: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetCapacity(const Value: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    function GetStreamName: string;
+    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
     destructor Destroy; override;
-    procedure AddTranslation(OldId, NewId: TBoldObjectId);
+    procedure AddTranslation(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddTranslationAdoptNew(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddTranslationAdoptBoth(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     property Count: Integer read GetCount;
     property TranslateToOldId[NewID: TBoldObjectId]: TBoldObjectId read GetTranslateToOldId;
     property TranslateToNewId[OldID: TBoldObjectId]: TBoldObjectId read GetTranslateToNewId;
     property OldIds[Index: integer] :TBoldObjectId read GetOldId;
     property NewIds[Index: integer] :TBoldObjectId read GetNewId;
+    property Capacity: Integer read GetCapacity write SetCapacity;
   end;
 
   { EBoldOperationFailedForIdList }
@@ -187,8 +222,8 @@ type
   private
     fIdList: TBoldObjectIdList;
   public
-    constructor Create(msg: string; args: array of const; IdList: TBoldObjectIdList);
-    destructor Destroy; override;
+    constructor create(msg: string; args: array of const; IdList: TBoldObjectIdList);
+    destructor destroy; override;
     property IdList: TBoldObjectIdList read fIdList;
   end;
 
@@ -202,16 +237,17 @@ type
 implementation
 
 uses
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   SysUtils,
-  BoldUtils,
-  MSXML_TLB,
+  {$IFNDEF BOLD_UNICODE}
+  StringBuilder,
+  {$ENDIF}
   BoldDefaultXMLStreaming,
   BoldDefaultStreamNames,
   BoldMeta;
 
 var
   InternalIdCounter: Integer = 0;
-  IX_ObjectID: integer = -1;
 
 const
   TOPSORTEDINDEXTMASK = $0FFFFFFF;
@@ -269,6 +305,31 @@ type
     function CreateObject: TObject; override;
   end;
 
+{---TBoldObjectId---}
+
+function TBoldObjectId.getTopSortedIndex: integer;
+const
+  TOPSORTEDINDEXTMASK = TOPSORTEDINDEXTMASK; // copied here for inlining
+begin
+  result := fClassId and TOPSORTEDINDEXTMASK;
+end;
+
+function TBoldObjectId.GetTopSortedIndexExact: Boolean;
+const
+  CLASSIDEXACTMASK = CLASSIDEXACTMASK; // copied here for inlining
+begin
+  result := (fClassId and CLASSIDEXACTMASK) = CLASSIDEXACTMASK;
+end;
+
+procedure TBoldObjectId.SetClassIdData(TopSortedIndex: integer; Exact: boolean);
+const
+  CLASSIDEXACTMASK = CLASSIDEXACTMASK; // copied here for inlining
+begin
+  if exact then
+    fClassId := TopSortedIndex or CLASSIDEXACTMASK
+  else
+    fClassId := TopSortedIndex;
+end;
 
 {---TBoldObjectIdHashIndex---}
 
@@ -288,15 +349,26 @@ begin
   Result := TBoldObjectId(Key).IsEqual[ItemAsBoldObjectId(Item)];
 end;
 
-function TBoldObjectIdHashIndex.FindById(boldObjectId:TboldObjectId): TObject;
+function TBoldObjectIdHashIndex.FindById(BoldObjectId: TBoldObjectId): TObject;
 begin
-  Result := Find(boldObjectId);
+  Result := Find(BoldObjectId);
 end;
 
 {---TBoldMemberID---}
-constructor TBoldMemberId.create(MemberIndex: Integer);
+
+function TBoldMemberID.Clone: TBoldMemberID;
+begin
+  result := TBoldMemberID.Create(MemberIndex);
+end;
+
+constructor TBoldMemberId.Create(MemberIndex: Integer);
 begin
   fMemberIndex := MemberIndex;
+end;
+
+function TBoldMemberID.GetAsString: string;
+begin
+  result := IntToStr(fMemberIndex);
 end;
 
 function TBoldMemberId.GetStreamName: string;
@@ -305,6 +377,7 @@ begin
 end;
 
 {---TBoldSubMemberID---}
+
 constructor TBoldSubMemberId.create(partOf: TBoldMemberID; OwnsPartOf: Boolean; IndexInMemberList: integer);
 begin
   Inherited Create(IndexInMemberList);
@@ -323,6 +396,7 @@ begin
 end;
 
 {---TBoldObjectId---}
+
 function TBoldObjectId.Clone: TBoldObjectId;
 begin
   result := CloneWithClassId(TopSortedIndex, TopSortedIndexExact);
@@ -344,8 +418,7 @@ end;
 
 function TBoldInternalObjectID.CloneWithClassId(TopSortedIndex: integer; Exact: Boolean):TBoldObjectid;
 begin
-  result := TBoldInternalObjectId.CreateWithClassId(TopSortedIndex, Exact);
-  (result as TBoldInternalObjectId).fInternalIdentifier := fInternalIdentifier;
+  result := TBoldInternalObjectId.CreateWithClassIDandInternalId(fInternalIdentifier, TopSortedIndex, Exact);
 end;
 
 constructor TBoldInternalObjectId.CreateWithClassID(TopSortedIndex: integer; Exact: Boolean);
@@ -397,6 +470,11 @@ begin
   OwnsEntries := true;
 end;
 
+function TBoldObjectIdList.GetIdInList(ObjectID: TBoldObjectId): Boolean;
+begin
+  Result := Assigned(ObjectId) and Assigned(GetIdByID(ObjectID));
+end;
+
 function TBoldObjectIdList.ContainsSameIDs(List: TBoldObjectIdList): Boolean;
 var
   i: integer;
@@ -407,6 +485,42 @@ begin
     for i := 0 to List.Count-1 do
       result := result and IdInList[LIst[i]];
   end;
+end;
+
+function TBoldObjectIdList.GetObjectIDIndex: TBoldObjectIDHashIndex;
+begin
+  if UnorderedIndexCount = 0 then
+  begin
+    IX_ObjectID := -1;
+    SetIndexVariable(IX_ObjectID, AddIndex(TBoldObjectIDHashIndex.Create));
+  end;
+  result := TBoldObjectIDHashIndex(Indexes[IX_ObjectID]);
+end;
+
+function TBoldObjectIdList.GetHasInexactIds: boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for i := 0 to Count - 1 do
+    if not TBoldObjectId(Items[i]).TopSortedIndexExact then
+    begin
+      result := true;
+      exit;
+    end;
+end;
+
+function TBoldObjectIdList.GetHasNonExistingIds: boolean;
+var
+  i: integer;
+begin
+  result := false;
+  for i := 0 to Count - 1 do
+    if TBoldObjectId(Items[i]).NonExisting then
+    begin
+      result := true;
+      exit;
+    end;
 end;
 
 function TBoldObjectIdList.GetIDByID(ObjectID: TBoldObjectId): TBoldObjectId;
@@ -438,34 +552,35 @@ begin
     result := -1;
 end;
 
-function TBoldObjectIdList.GetIdInList(ObjectID: TBoldObjectId): Boolean;
-begin
-  Result := Assigned(ObjectId) and Assigned(GetIdByID(ObjectID));
-end;
-
-function TBoldObjectIdList.Clone: TBoldObjectIdList;
-var
-  i: Integer;
-begin
-  Result := TBoldObjectIdList.Create;
-  for i := 0 to Count - 1 do
-    Result.Add(ObjectIDs[i]);
-end;
-
 function TBoldObjectIdList.GetObjectId(index: Integer): TBoldObjectId;
 begin
   Result := TBoldObjectId(Items[index]);
 end;
 
 procedure TBoldObjectIdList.Add(ObjectID: TBoldObjectId);
-var
-  newObjectID: TBoldObjectID;
 begin
   if assigned(ObjectID) then
-    NewObjectId := ObjectId.Clone
+    inherited Add(ObjectId.Clone)
   else
-    NewObjectId := nil;
-  inherited Add(NewObjectID);
+    inherited Add(nil);
+end;
+
+procedure TBoldObjectIdList.AddAndAdopt(ObjectID: TBoldObjectId);
+begin
+  inherited Add(ObjectId);
+end;
+
+function TBoldObjectIdList.AddAndGetID(
+  aBoldObjectId: TBoldObjectId): TBoldObjectId;
+begin
+  if assigned(aBoldObjectId) then
+  begin
+    result := aBoldObjectId.Clone
+  end else
+  begin
+    result := nil;
+  end;
+  inherited Add(result);
 end;
 
 procedure TBoldObjectIdList.AddIfNotInList(ObjectID: TBoldObjectId);
@@ -476,14 +591,11 @@ end;
 
 procedure TBoldObjectIdList.Insert(Index: integer;
   ObjectID: TBoldObjectId);
-var
-  newObjectID: TBoldObjectID;
 begin
   if assigned(ObjectID) then
-    NewObjectId := ObjectId.Clone
+    inherited insert(index, ObjectId.Clone)
   else
-    NewObjectId := nil;
-  inherited insert(index, NewObjectID);
+    inherited insert(index, nil);
 end;
 
 procedure TBoldObjectIdList.ReplaceID(OldId, NewId: TBoldObjectId);
@@ -495,8 +607,7 @@ begin
     exit;
   TempID := IDByID[OldId];
   OldIndex := IndexOf(tempId);
-  RemoveByIndex(OldIndex);
-  Insert(OldIndex, NewId);
+  Items[OldIndex] := NewId.Clone;
 end;
 
 function TBoldObjectIdList.GetCount: integer;
@@ -504,11 +615,23 @@ begin
   result := count;
 end;
 
+function TBoldObjectIdList.Clone: TBoldObjectIdList;
+var
+  i: Integer;
+begin
+  Result := TBoldObjectIdList.Create;
+  Result.Capacity := Count;
+  for i := 0 to Count - 1 do
+    Result.Add(ObjectIDs[i]);
+end;
+
 function TBoldObjectIdList.GetStreamName: string;
 begin
   result := BOLDOBJECTIDLISTNAME;
 end;
+
 {---TBoldMemberIdList---}
+
 function TBoldMemberIdList.GetStreamName: string;
 begin
   result := BOLDMEMBERIDLISTNAME;
@@ -516,12 +639,74 @@ end;
 
 function TBoldMemberIdList.GetMemberIds(Index: Integer): TBoldMemberId;
 begin
-  Assert(Items[Index] is TBoldmemberId);
-  result := Items[Index] as TBoldmemberId;
-  assert(Assigned(Result));
+  result := TBoldmemberId(Items[Index]);
+  Assert(result is TBoldmemberId);
+end;
+
+function TBoldMemberIdList.HasId(AId: TBoldMemberId): boolean;
+var
+  i: integer;
+begin
+  for I := 0 to Count - 1 do
+    if MemberIds[i].MemberIndex = AId.MemberIndex then
+    begin
+      result := true;
+      exit;
+    end;
+  result := false;
+end;
+
+function TBoldMemberIdList.IsEqual(AList: TBoldMemberIdList): boolean;
+var
+  i: integer;
+begin
+  result := Assigned(AList) and (AList.Count = Count);
+  if result then
+  for I := 0 to Count - 1 do
+  begin
+    if not AList.HasId(MemberIds[i]) then
+    begin
+      result := false;
+      exit;
+    end;
+  end;
+end;
+
+function TBoldMemberIdList.Clone: TBoldMemberIdList;
+var
+  i: integer;
+begin
+  result := TBoldMemberIdList.Create;
+  for I := 0 to Count - 1 do
+    Result.Add(MemberIds[i].clone);
 end;
 
 {---TBoldIDTranslationList---}
+
+function TBoldIDTranslationList.GetCapacity: Integer;
+begin
+  result := fOldIds.Capacity;
+end;
+
+function TBoldIDTranslationList.GetCount: Integer;
+begin
+  Result := fOldIds.Count;
+end;
+
+procedure TBoldIDTranslationList.AddTranslationAdoptNew(OldId,
+  NewId: TBoldObjectId);
+begin
+  fOldIDs.Add(OldId);
+  fNewIds.AddAndAdopt(NewId)
+end;
+
+procedure TBoldIDTranslationList.AddTranslationAdoptBoth(OldId,
+  NewId: TBoldObjectId);
+begin
+  fOldIDs.AddAndAdopt(OldId);
+  fNewIds.AddAndAdopt(NewId)
+end;
+
 constructor TBoldIDTranslationList.Create;
 begin
   fOldIds := TBoldObjectIdList.Create;
@@ -545,15 +730,54 @@ begin
   Result := fNewIds[index];
 end;
 
-function TBoldIDTranslationList.GetCount: Integer;
-begin
-  Result := fOldIds.Count;
-end;
-
 procedure TBoldIDTranslationList.AddTranslation(OldId, NewId: TBoldObjectId);
+var
+  iIndex: Integer;
 begin
+  // This routine no longer handles multiple translations!
+{
+  if Assigned(OldId) then begin
+    iIndex := fOldIds.IndexByID[OldId];
+    if (iIndex > -1) then begin
+      if ((NewID = nil) and (fNewIds[iIndex] = nil)) or
+         ((fNewIds[iIndex] <> nil) and fNewIds[iIndex].IsEqual[NewId]) then
+      begin
+        Exit;
+      end;
+    end;
+  end;
+  if Assigned(NewId) then begin
+    iIndex := fNewIds.IndexByID[NewId];
+    if (iIndex > -1) then begin
+      if ((OldID = nil) and (fOldIds[iIndex] = nil)) or
+         ((fOldIds[iIndex] <> nil) and fOldIds[iIndex].IsEqual[OldId]) then
+      begin
+        Exit;
+      end;
+    end;
+  end;
+
   fOldIDs.Add(OldId);
-  fNewIds.Add(NewId)
+  fNewIds.Add(NewId);
+}
+  // Translation only makes sense, if both IDs are set
+  if Assigned(OldId) and Assigned(NewId) then begin
+    iIndex := fOldIds.IndexByID[OldId];
+    if (iIndex > -1) then begin
+      if fNewIds[iIndex].IsEqual[NewId] then begin
+        Exit;
+      end;
+    end;
+    iIndex := fNewIds.IndexByID[NewId];
+    if (iIndex > -1) then begin
+      if fOldIds[iIndex].IsEqual[OldId] then begin
+        Exit;
+      end;
+    end;
+
+    fOldIDs.Add(OldId);
+    fNewIds.Add(NewId);
+  end;
 end;
 
 function TBoldIDTranslationList.GetTranslateToOldId(NewID: TBoldObjectId): TBoldObjectId;
@@ -564,12 +788,17 @@ begin
   Pos := fNewIds.IndexByID[Result];
   if pos <> -1 then
     result := GetOldId(Pos);
-  // This routine no longer handles multiple translations!
 {  while Pos <> -1 do
   begin
     result := OriginalId[Pos];
     Pos := fFinalIds.IndexByID[Result];
   end;}
+end;
+
+procedure TBoldIDTranslationList.SetCapacity(const Value: Integer);
+begin
+  fOldIds.Capacity := Value;
+  fNewIds.Capacity := Value;
 end;
 
 function TBoldIDTranslationList.GetTranslateToNewId(OldID: TBoldObjectId): TBoldObjectId;
@@ -580,12 +809,22 @@ begin
   Pos := fOldIds.IndexById[Result];
   if pos <> -1 then
     Result := GetNewId(Pos);
-  // This routine no longer handles multiple translations!
+   
 {  while Pos <> -1 do
   begin
     Result := FinalId[Pos];
     Pos := fOriginalIds.IndexById[Result];
   end;}
+end;
+
+function TBoldIDTranslationList.GetTranslateToOldId(Index: integer): TBoldObjectId;
+begin
+  result := fOldIds[Index];
+end;
+
+function TBoldIDTranslationList.GetTranslateToNewId(Index: integer): TBoldObjectId;
+begin
+  Result := GetNewId(Index);
 end;
 
 function TBoldIDTranslationList.GetStreamName: string;
@@ -600,7 +839,7 @@ var
 begin
   for i := 0 to count - 1 do
     if not ObjectIds[i].TopSortedIndexExact then
-      ReplaceID(ObjectIds[i], TranslationList.TranslateToNewId[ObjectIds[i]]);
+      Items[i] := TranslationList.TranslateToNewId[ObjectIds[i]].Clone;
 end;
 
 procedure TBoldObjectIdList.ApplyTranslationList(
@@ -608,16 +847,32 @@ procedure TBoldObjectIdList.ApplyTranslationList(
 var
   i: Integer;
   anId: TBoldObjectId;
+  SameCount: boolean;
 begin
+  SameCount := TranslationList.Count = count;
   for i := Count - 1 downto 0 do
-  begin
-    anId := TranslationList.TranslateToNewId[ObjectIds[i]];
-    if assigned(anId) then
-      ReplaceId(ObjectIds[i], anId);
-  end;
+    begin
+      Assert(Assigned(ObjectIds[i]));
+      if SameCount and Assigned(TranslationList.OldIds[i]) then
+      begin
+        if TranslationList.OldIds[i].IsEqual[self.ObjectIds[i]] then
+        begin // faster handling for special but most common case, where both lists contain same elements at same places
+          self.Items[i] := TranslationList.NewIds[i].Clone;
+          continue;
+        end;
+      end;
+      anId := TranslationList.TranslateToNewId[ObjectIds[i]];
+      if assigned(anId) then
+        ReplaceId(ObjectIds[i], anId);
+    end;
 end;
 
 { TBoldClassIdWithExpressionName }
+function TBoldObjectId.GetNonExisting: Boolean;
+begin
+  Result := false;
+end;
+
 function TBoldObjectId.GetTimeStamp: TBoldTimeStampType;
 begin
   result := BOLDMAXTIMESTAMP;
@@ -637,7 +892,6 @@ begin
   inherited;
 end;
 
-
 { TBoldXMLObjectIdStreamer }
 
 procedure TBoldXMLObjectIdStreamer.ReadObject(Obj: TObject; Node: TBoldXMLNode);
@@ -652,13 +906,13 @@ begin
   inherited;
   aModel := (Node.Manager as TBoldDefaultXMLStreamManager).Model;
 
-  aSubNode := Node.GetSubNode('ClassName'); // do not localize
+  aSubNode := Node.GetSubNode('ClassName');
   if assigned(aSubNode) then
   begin
     TopSortedIndex := aModel.Classes.ItemsByName[aSubNode.ReadString].TopSortedIndex;;
     aSubNode.Free;
 
-    aSubNode := Node.GetSubNode('Exact');    // do not localize
+    aSubNode := Node.GetSubNode('Exact');
     if assigned(aSubNode) then
       Exact := aSubNode.ReadBoolean
     else
@@ -667,12 +921,11 @@ begin
   end
   else
   begin
-    // BackwardCompatibility
-    ClassIdNode := Node.GetSubNode('classid');   // do not localize
-    aSubNode := ClassIdNode.GetSubNode('name');  // do not localize
+    ClassIdNode := Node.GetSubNode('classid');
+    aSubNode := ClassIdNode.GetSubNode('name');
     TopSortedIndex := aModel.Classes.ItemsByName[aSubNode.ReadString].TopSortedIndex;
     aSubNode.Free;
-    aSubNode := ClassIdNode.GetSubNode('exact');  // do not localize
+    aSubNode := ClassIdNode.GetSubNode('exact');
     Exact := aSubNode.ReadBoolean;
     aSubNode.Free;
   end;
@@ -685,19 +938,19 @@ procedure TBoldXMLObjectIdStreamer.WriteObject(Obj: TBoldInterfacedObject; Node:
 var
   aSubNode: TBoldXMLNode;
   aModel: TMoldModel;
-  ObjectId: TBoldObjectId;
+  ObjectId: TBoldObjectId; 
 begin
   inherited;
   aModel := (Node.Manager as TBoldDefaultXMLStreamManager).Model;
   ObjectId := Obj as TBoldObjectId;
 
-  aSubNode := Node.NewSubNode('ClassName'); // do not localize
+  aSubNode := Node.NewSubNode('ClassName');
   aSubNode.WriteString(aModel.Classes[ObjectId.TopSortedIndex].Name);
   aSubNode.Free;
 
   if not ObjectId.TopSortedIndexExact then
   begin
-    aSubNode := Node.NewSubNode('Exact'); // do not localize
+    aSubNode := Node.NewSubNode('Exact');
     aSubNode.WriteBoolean(ObjectId.TopSortedIndexExact);
     aSubNode.Free;
   end;
@@ -721,7 +974,7 @@ var
   aSubNode: TBoldXMLNode;
 begin
   inherited;
-  aSubNode := Node.GetSubNode('identifier'); // do not localize
+  aSubNode := Node.GetSubNode('identifier');
   (Obj as TBoldInternalObjectId).fInternalIdentifier := aSubNode.ReadInteger;
   aSubNode.Free;
 end;
@@ -732,7 +985,7 @@ var
   aSubNode: TBoldXMLNode;
 begin
   inherited;
-  aSubNode := Node.NewSubNode('identifier'); // do not localize
+  aSubNode := Node.NewSubNode('identifier');
   aSubNode.WriteInteger((Obj as TBoldInternalObjectId).fInternalIdentifier);
   aSubNode.Free;
 end;
@@ -753,13 +1006,36 @@ procedure TBoldXMLObjectIdListStreamer.ReadObject(Obj: TObject;
   Node: TBoldXMLNode);
 var
   anIdList: TBoldObjectIdList;
+  {$IFDEF OXML}
+  aNodeEnumerator: TXMLResNodeListEnumerator;
+  aNodeList: IXMLNodeList;
+  aNode: PXMLNode;
+  {$ELSE}
   aNodeList: IXMLDOMNodeList;
   aNode: IXMLDOMNode;
+  {$ENDIF}
   aSubNode: TBoldXMLNode;
   ObjectId: TBoldObjectId;
 begin
   inherited;
   anIdList := Obj as TBoldObjectIdList;
+  {$IFDEF OXML}
+  if Node.XMLDomElement.GetElementsByTagName('id', aNodeList) then begin
+    aNodeEnumerator := aNodeList.GetEnumerator;
+    try
+      while aNodeEnumerator.MoveNext do begin
+        aNode := aNodeEnumerator.Current;
+        aSubNode := Node.MakeNodeForElement(aNode);
+        ObjectId := aSubNode.ReadObject('') as TBoldObjectId;
+        anIdList.Add(ObjectId);
+        ObjectId.Free;
+        aSubNode.Free;
+      end;
+    finally
+      aNodeEnumerator.Free;
+    end;
+  end;
+  {$ELSE}
   aNodeList := Node.XMLDomElement.getElementsByTagName('id');  // do not localize
   aNode := aNodeList.nextNode;
   while assigned(aNode) do
@@ -771,6 +1047,7 @@ begin
     aSubNode.Free;
     aNode := aNodeList.nextNode;
   end;
+  {$ENDIF}
 end;
 
 procedure TBoldXMLObjectIdListStreamer.WriteObject(Obj: TBoldInterfacedObject;
@@ -784,7 +1061,7 @@ begin
   anIdList := Obj as TBoldObjectIdList;
   for i := 0 to anIdList.Count - 1 do
   begin
-    aSubNode := Node.NewSubNode('id');   // do not localize
+    aSubNode := Node.NewSubNode('id');
     aSubNode.WriteObject('', anIdList[i]);
     aSubNode.Free;
   end;
@@ -811,8 +1088,8 @@ begin
   aTranslationList := Obj as TBoldIDTranslationList;
   aTranslationList.fOldIds.Free;
   aTranslationList.fNewIds.Free;
-  aTranslationList.fOldIds := Node.ReadSubNodeObject('OldIds', BOLDOBJECTIDLISTNAME) as TBoldObjectIdList;  // do not localize
-  aTranslationList.fNewIds := Node.ReadSubNodeObject('NewIds', BOLDOBJECTIDLISTNAME) as TBoldObjectIdList;  // do not localize
+  aTranslationList.fOldIds := Node.ReadSubNodeObject('OldIds', BOLDOBJECTIDLISTNAME) as TBoldObjectIdList;
+  aTranslationList.fNewIds := Node.ReadSubNodeObject('NewIds', BOLDOBJECTIDLISTNAME) as TBoldObjectIdList;
 end;
 
 procedure TBoldXMLTranslationListStreamer.WriteObject(
@@ -822,15 +1099,15 @@ var
 begin
   inherited;
   aTranslationList := Obj as TBoldIDTranslationList;
-  Node.WriteSubNodeObject('OldIds', BOLDOBJECTIDLISTNAME, aTranslationList.fOldIds); // do not localize
-  Node.WriteSubNodeObject('NewIds', BOLDOBJECTIDLISTNAME, aTranslationList.fNewIds);  // do not localize
+  Node.WriteSubNodeObject('OldIds', BOLDOBJECTIDLISTNAME, aTranslationList.fOldIds);
+  Node.WriteSubNodeObject('NewIds', BOLDOBJECTIDLISTNAME, aTranslationList.fNewIds);
 end;
 
 { TBoldXMLMemberIdStreamer }
 
 function TBoldXMLMemberIdStreamer.CreateObject: TObject;
 begin
-  result := TBoldMemberID.create(0); // index param to constructor chosen arbitrarily, will be overwritten anyway
+  result := TBoldMemberID.create(0);
 end;
 
 function TBoldXMLMemberIdStreamer.GetStreamName: string;
@@ -842,14 +1119,14 @@ procedure TBoldXMLMemberIdStreamer.ReadObject(Obj: TObject;
   Node: TBoldXMLNode);
 begin
   inherited;
-  (Obj as TBoldMemberId).fMemberIndex := Node.ReadSubNodeInteger('MemberIndex'); // do not localize
+  (Obj as TBoldMemberId).fMemberIndex := Node.ReadSubNodeInteger('MemberIndex'); 
 end;
 
 procedure TBoldXMLMemberIdStreamer.WriteObject(Obj: TBoldInterfacedObject;
   Node: TBoldXMLNode);
 begin
   inherited;
-  Node.WriteSubNodeInteger('MemberIndex', (Obj as TBoldMemberId).MemberIndex); // do not localize
+  Node.WriteSubNodeInteger('MemberIndex', (Obj as TBoldMemberId).MemberIndex);
 end;
 
 { TBoldXMLMemberIdListStreamer }
@@ -868,12 +1145,33 @@ procedure TBoldXMLMemberIdListStreamer.ReadObject(Obj: TObject;
   Node: TBoldXMLNode);
 var
   aMemberIdList: TBoldMemberIdList;
+  {$IFDEF OXML}
+  aNodeEnumerator: TXMLResNodeListEnumerator;
+  aNodeList: IXMLNodeList;
+  aNode: PXMLNode;
+  {$ELSE}
   aNodeList: IXMLDOMNodeList;
   aNode: IXMLDOMNode;
+  {$ENDIF}
   aSubNode: TBoldXMLNode;
 begin
   inherited;
   aMemberIdList := Obj as TBoldMemberIdList;
+  {$IFDEF OXML}
+  if Node.XMLDomElement.GetElementsByTagName('id', aNodeList) then begin
+    aNodeEnumerator := aNodeList.GetEnumerator;
+    try
+      while aNodeEnumerator.MoveNext do begin
+        aNode := aNodeEnumerator.Current;
+        aSubNode := Node.MakeNodeForElement(aNode);
+        aMemberIdList.Add(aSubNode.ReadObject('') as TBoldMemberId);
+        aSubNode.Free;
+      end;
+    finally
+      aNodeEnumerator.Free;
+    end;
+  end;
+  {$ELSE}
   aNodeList := Node.XMLDomElement.getElementsByTagName('id');  // do not localize
   aNode := aNodeList.nextNode;
   while assigned(aNode) do
@@ -883,6 +1181,7 @@ begin
     aSubNode.Free;
     aNode := aNodeList.nextNode;
   end;
+  {$ENDIF}
 end;
 
 procedure TBoldXMLMemberIdListStreamer.WriteObject(
@@ -896,64 +1195,26 @@ begin
   aMemberIdList := Obj as TBoldMemberIdList;
   for i := 0 to aMemberIdList.Count - 1 do
   begin
-    aSubNode := Node.NewSubNode('id');  // do not localize
+    aSubNode := Node.NewSubNode('id');
     aSubNode.WriteObject('', aMemberIdList[i]);
     aSubNode.Free;
   end;
 end;
 
-
 { TBoldID }
-
-function TBoldObjectIdList.GetObjectIDIndex: TBoldObjectIDHashIndex;
-begin
-  if UnorderedIndexCount = 0 then
-    SetIndexVariable(IX_ObjectID, AddIndex(TBoldObjectIDHashIndex.Create));
-  result := TBoldObjectIDHashIndex(Indexes[IX_ObjectID]);
-end;
 
 procedure TBoldObjectIdList.AddList(ObjectIdList: TBoldObjectIdList);
 var
   i: integer;
 begin
+  Capacity := Count + ObjectidList.Count;
   for i := 0 to ObjectidList.Count - 1 do
     Add(ObjectidList[i]);
-end;
-
-function TBoldObjectId.getTopSortedIndex: integer;
-begin
-  result := fClassId and TOPSORTEDINDEXTMASK;
-end;
-
-function TBoldObjectId.GetTopSortedIndexExact: Boolean;
-begin
-  result := (fClassId and CLASSIDEXACTMASK) = CLASSIDEXACTMASK;
-end;
-
-procedure TBoldObjectId.SetClassIdData(TopSortedIndex: integer; Exact: boolean);
-begin
-  if exact then
-    fClassId := TopSortedIndex or CLASSIDEXACTMASK
-  else
-    fClassId := TopSortedIndex;
 end;
 
 function TBoldObjectIdHashIndex.Hash(const Key): Cardinal;
 begin
   Result := TBoldObjectId(Key).Hash;
-end;
-
-function TBoldObjectIdList.CommaSeparatedIdList: String;
-var
-  i: integer;
-begin
-  result := '';
-  for i := 0 to Count - 1 do
-  begin
-    if i <> 0 then
-      result := result + ', ';
-    result := result + ObjectIds[i].AsString;
-  end;
 end;
 
 procedure TBoldObjectIdList.remove(Id: TBoldObjectId);
@@ -965,6 +1226,87 @@ begin
     removebyIndex(p);
 end;
 
+procedure TBoldObjectIdList.RemoveNonExistingIds;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    if TBoldObjectId(Items[i]).NonExisting then
+      RemoveByIndex(i);
+end;
+
+{ TBoldID }
+
+function TBoldID.GetDebugInfo: string;
+begin
+  result := AsString;
+end;
+
+{ TBoldNonExistingObjectId }
+
+function TBoldNonExistingObjectId.CloneWithClassId(TopSortedIndex: integer; Exact: Boolean): TBoldObjectid;
+begin
+//  raise EBold.CreateFmt('CloneWithClassId not available in %s',[ClassName]);
+  result := TBoldNonExistingObjectId.CreateWithClassID(TopSortedIndex, Exact);
+end;
+
+function TBoldNonExistingObjectId.GetAsString: string;
+begin
+  result := '-1';
+end;
+
+function TBoldNonExistingObjectId.GetHash: Cardinal;
+begin
+  result := 0;
+end;
+
+function TBoldNonExistingObjectId.GetIsEqual(MatchID: TBoldObjectID): Boolean;
+begin
+  result := MatchId is TBoldNonExistingObjectId;
+end;
+
+function TBoldNonExistingObjectId.GetIsStorable: Boolean;
+begin
+  result := false;
+end;
+
+function TBoldNonExistingObjectId.GetNonExisting: Boolean;
+begin
+  Result := true;
+end;
+
+function TBoldNonExistingObjectId.GetStreamName: string;
+begin
+  result := '';
+end;
+
+{ TBoldIdList }
+
+function TBoldIdList.CommaSeparatedIdList: String;
+var
+  i: integer;
+  sb: TStringBuilder;
+begin
+  case count of
+    0 :  result := '';
+    1 :  result := TBoldId(Items[0]).AsString;
+    2..MaxInt:
+      begin
+        sb := TStringBuilder.Create(TBoldId(Items[0]).AsString);
+        try
+          for i := 1 to Count - 1 do
+          begin
+            sb.Append(',');
+            sb.Append(TBoldId(Items[i]).AsString);
+          end;
+          result := sb.ToString;
+        finally
+          sb.free;
+        end;
+      end;
+  end;
+end;
+
 initialization
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLInternalObjectIdStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLObjectIdListStreamer.Create);
@@ -973,4 +1315,3 @@ initialization
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLTranslationListStreamer.Create);
 
 end.
-

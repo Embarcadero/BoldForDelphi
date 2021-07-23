@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceOperationXMLStreaming;
 
 interface
@@ -88,6 +91,7 @@ type
   private
     fObjectIdList: TBoldObjectIdList;
     fTranslationList: TBoldIdTranslationList;
+    fHandleNonExisting: Boolean;
   protected
     function GetName: string; override;
   public
@@ -101,6 +105,7 @@ type
 
     property ObjectIdList: TBoldObjectIdList read fObjectIdList write fObjectIdList;
     property TranslationList: TBoldIdTranslationList read fTranslationList write fTranslationList;
+    property HandleNonExisting: Boolean read fHandleNonExisting write fHandleNonExisting;
   end;
 
   TBoldPMUpdateOperation = class(TBoldPersistenceOperation)
@@ -113,6 +118,7 @@ type
     fFreestanding_old: TBoldFreeStandingValueSpace;
     fTranslationList: TBoldIdTranslationList;
     fTimestamp: TBoldTimestampType;
+    fTimeOfTimeStamp: TDateTIme;
     fBoldClientID: TBoldClientID;
   protected
     function GetName: string; override;
@@ -191,11 +197,9 @@ type
 implementation
 
 uses
-  MSXML_TLB,
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   SysUtils,
-//  BoldUtils,
-  BoldDefaultStreamNames,
-  BoldComConst;
+  BoldDefaultStreamNames;
 
 const
   BoldNodeName_ObjectIdList = 'ObjectIdList';
@@ -209,6 +213,7 @@ const
   BoldNodeName_Old_Values = 'Old_Values';
   BoldNodeName_Timestamp = 'Timestamp';
   BoldNodeName_ClockTime = 'ClockTime';
+  BoldNodeName_HandleNonExisting = 'HandleNonExisting';  
 
 { TBoldPMFetchOperation }
 
@@ -228,7 +233,7 @@ end;
 
 function TBoldPMFetchOperation.GetName: string;
 begin
-  result := 'PMFetch'; // do not localize
+  result := 'PMFetch';
 end;
 
 procedure TBoldPMFetchOperation.InitParams;
@@ -294,13 +299,13 @@ begin
   try
     Execute(PersistenceController);
 
-    OpNode := ReplyBodyNode.NewSubNode(Name + 'Response'); // do not localize
+    OpNode := ReplyBodyNode.NewSubNode(Name + 'Response');
     WriteOutParams(OpNode);
   except on E: Exception do
     begin
-      OpNode := ReplyBodyNode.NewSubNode('SOAP-ENV:Fault'); // do not localize
-      OpNode := OpNode.NewSubNode('SOAP-ENV:faultstring'); // do not localize
-      OpNode.WriteString(E.Message);
+    OpNode := ReplyBodyNode.NewSubNode('SOAP-ENV:Fault');
+    OpNode := OpNode.NewSubNode('SOAP-ENV:faultstring');
+    OpNode.WriteString(E.Message);
     end;
   end;
   OpNode.Free;
@@ -318,14 +323,19 @@ end;
 
 procedure TBoldPersistenceOperation.RemoteExecute(Stub: IBoldSOAPService);
 var
-  RequestDoc: TDOMDocument;
-  ReplyDoc: TDOMDocument;
+  RequestDoc,
+  ReplyDoc: {$IFDEF OXML}TXMLDocument{$ELSE}TDOMDocument{$ENDIF};
   BodyNode: TBoldXMLNode;
   OpNode: TBoldXMLNode;
   replyXML: WideString;
 begin
+  {$IFDEF OXML}
+  RequestDoc := TXMLDocument.Create;
+  ReplyDoc := TXMLDocument.Create;
+  {$ELSE}
   RequestDoc := TDOMDocument.Create(nil);
   ReplyDoc := TDOMDocument.Create(nil);
+  {$ENDIF}
   try
     BodyNode := StreamManager.NewSOAP(RequestDoc);
     OpNode := BodyNode.NewSubNode(Name);
@@ -335,33 +345,37 @@ begin
       BodyNode.Free;
       OpNode.Free;
     end;
-    Stub.Get(RequestDoc.DefaultInterface.xml, replyXML);
+    Stub.Get({$IFDEF OXML}RequestDoc.XML{$ELSE}
+        RequestDoc.DefaultInterface.xml{$ENDIF}, replyXML);
 
-    if not ReplyDoc.loadXML(replyXML) then
-      raise EBoldXMLLoadError.CreateFmt('%s: %s', [Replydoc.parseError.reason, ReplyXML]) ; //Invalid XML data // do not localize
+    if not {$IFDEF OXML}ReplyDoc.LoadFromXML(replyXML){$ELSE}
+      ReplyDoc.loadXML(replyXML){$ENDIF} then
+    begin
+      raise EBoldXMLLoadError.CreateFmt('%s: %s', [Replydoc.parseError.Reason, ReplyXML]) ;
+    end;
 
     try
       BodyNode := StreamManager.GetSOAP(ReplyDoc);
     except
-      raise EBoldInvalidSOAP.CreateFmt(sInvalidSOAPData, [replyXML]);
+      raise EBoldInvalidSOAP.CreateFmt('Invalid SOAP data : %s', [replyXML]);
     end;
 
-    OpNode := BodyNode.GetSubNode(Name + 'Response'); // do not localize
+    OpNode := BodyNode.GetSubNode(Name + 'Response');
     if not Assigned(OpNode) then
     begin
-      OpNode := BodyNode.GetSubNode('SOAP-ENV:Fault'); // do not localize
+      OpNode := BodyNode.GetSubNode('SOAP-ENV:Fault');
       if not Assigned(OpNode) then
-        raise EBold.Create(sEmptySOAPData)
+        raise EBold.Create('Empty SOAP data.')
       else
       begin
-        OpNode := OpNode.GetSubNode('SOAP-ENV:faultstring'); // do not localize
+        OpNode := OpNode.GetSubNode('SOAP-ENV:faultstring');
         if Assigned(OpNode) then
-          raise EBold.CreateFmt(sError, [OpNode.XMLDomElement.text])
+          raise EBold.CreateFmt('Error: %s', [OpNode.XMLDomElement.text])
         else
-          raise EBold.Create(sErrorNoMessage) ;
+          raise EBold.Create('Error: empty error message') ;
       end;
     end;
-
+    
     try
       ReadOutParams(OpNode);
     finally
@@ -397,7 +411,7 @@ end;
 
 function TBoldPMFetchIdListOperation.GetName: string;
 begin
-  result := 'PMFetchIDListWithCondition'; // do not localize
+  result := 'PMFetchIDListWithCondition';
 end;
 
 procedure TBoldPMFetchIdListOperation.InitParams;
@@ -441,7 +455,7 @@ end;
 
 procedure TBoldPMExactifyIdsOperation.Execute(PersistenceController: TBoldPersistenceController);
 begin
-  PersistenceController.PMExactifyIds(ObjectIdList, TranslationList);
+  PersistenceController.PMExactifyIds(ObjectIdList, TranslationList, HandleNonExisting);
 end;
 
 procedure TBoldPMExactifyIdsOperation.FreeParams;
@@ -453,7 +467,7 @@ end;
 
 function TBoldPMExactifyIdsOperation.GetName: string;
 begin
-  result := 'PMExactifyIds'; // do not localize
+  result := 'PMExactifyIds';
 end;
 
 procedure TBoldPMExactifyIdsOperation.InitParams;
@@ -465,6 +479,7 @@ end;
 procedure TBoldPMExactifyIdsOperation.ReadInParams(XMLNode: TBoldXMLNode);
 begin
   ObjectIdList := XMLNode.ReadSubNodeObject(BoldNodeName_ObjectIdList, BOLDOBJECTIDLISTNAME) as TBoldObjectIdList;
+  HandleNonExisting := XMLNode.ReadSubNodeBoolean(BoldNodeName_HandleNonExisting);  
 end;
 
 procedure TBoldPMExactifyIdsOperation.ReadOutParams(XMLNode: TBoldXMLNode);
@@ -472,7 +487,7 @@ var
   aTranslationList: TBoldIDTranslationList;
   i: Integer;
 begin
-  aTranslationList := XMLNode.ReadSubNodeObject(BoldNodeName_TranslationList, BOLDIDTRANSLATIONLISTNAME) as TBoldIDTranslationList; //IMPORTANT: this returns an object(a list) which is up to the caller to free
+  aTranslationList := XMLNode.ReadSubNodeObject(BoldNodeName_TranslationList, BOLDIDTRANSLATIONLISTNAME) as TBoldIDTranslationList;
   try
     for i := 0 to aTranslationList.Count - 1 do
       TranslationList.AddTranslation(aTranslationList.OldIds[i], aTranslationList.NewIds[i]);
@@ -484,6 +499,7 @@ end;
 procedure TBoldPMExactifyIdsOperation.WriteInParams(XMLNode: TBoldXMLNode);
 begin
   XMLNode.WriteSubNodeObject(BoldNodeName_ObjectIdList, BOLDOBJECTIDLISTNAME, ObjectIdList);
+  XMLNode.WriteSubNodeBoolean(BoldNodeName_HandleNonExisting, fHandleNonExisting);
 end;
 
 procedure TBoldPMExactifyIdsOperation.WriteOutParams(XMLNode: TBoldXMLNode);
@@ -495,7 +511,7 @@ end;
 
 procedure TBoldPMUpdateOperation.Execute(PersistenceController: TBoldPersistenceController);
 begin
-  PersistenceController.PMUpdate(ObjectIdList, ValueSpace, Old_Values, Precondition, TranslationList, fTimestamp, BoldClientID);
+  PersistenceController.PMUpdate(ObjectIdList, ValueSpace, Old_Values, Precondition, TranslationList, fTimestamp, fTimeOfTimeStamp, BoldClientID);
 end;
 
 procedure TBoldPMUpdateOperation.FreeParams;
@@ -516,7 +532,7 @@ end;
 
 function TBoldPMUpdateOperation.GetName: string;
 begin
-  result := 'PMUpdate'; // do not localize
+  result := 'PMUpdate';
 end;
 
 procedure TBoldPMUpdateOperation.InitParams;
@@ -612,7 +628,7 @@ end;
 
 function TBoldPMReserveNewIdsOperation.GetName: string;
 begin
-  result := 'ReserveNewIds'; // do not localize
+  result := 'ReserveNewIds';
 end;
 
 procedure TBoldPMReserveNewIdsOperation.InitParams;
@@ -659,7 +675,7 @@ end;
 
 function TBoldPMTimestampForTimeOperation.GetName: string;
 begin
-  result := 'PMTimestampForTime'; // do not localize
+  result := 'PMTimestampForTime';
 end;
 
 procedure TBoldPMTimestampForTimeOperation.ReadInParams(XMLNode: TBoldXMLNode);
@@ -691,7 +707,7 @@ end;
 
 function TBoldPMTimeForTimestampOperation.GetName: string;
 begin
-  result := 'PMTimeForTimestamp'; // do not localize
+  result := 'PMTimeForTimestamp';
 end;
 
 procedure TBoldPMTimeForTimestampOperation.ReadInParams(XMLNode: TBoldXMLNode);
@@ -713,5 +729,7 @@ procedure TBoldPMTimeForTimestampOperation.WriteOutParams(XMLNode: TBoldXMLNode)
 begin
   XMLNode.WriteSubNodeString(BoldNodeName_ClockTime, DateTimeToStr(ClockTime));
 end;
+
+initialization
 
 end.

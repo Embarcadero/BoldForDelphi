@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractObjectUpgrader;
 
 interface
@@ -17,7 +20,7 @@ type
   TBoldObjectUpgraderConfigClass = class of TBoldObjectUpgraderConfiguration;
 
   TBoldObjectUpgraderConfigurationItem = class(TBoldUniquelyNamedCollectionItemWithNameStorage)
-  private
+  private            
     FUpgradeOlderThanVersion: integer;
     procedure SetExpressionName(const Value: String);
     procedure SetUpgradeOlderThanVersion(const Value: integer);
@@ -64,7 +67,6 @@ implementation
 uses
   SysUtils,
   BoldNameExpander,
-  BoldPMConsts,
   BoldTaggedValueSupport;
 
 { TBoldObjectUpgraderConfigurationItem }
@@ -88,9 +90,10 @@ begin
   if ExpressionName <> '' then
     result := ExpressionName
   else
-    result := sDisplayNameUnassigned;
-  result := Format(sUpgradeIfOlderThan, [Result, UpgradeOlderThanVersion]);
+    result := '<unassigned>';
+  result := 'Upgrade ' + result + ' if older than ' + intToStr(UpgradeOlderThanVersion);
 end;
+
 
 procedure TBoldObjectUpgraderConfigurationItem.SetExpressionName(const Value: String);
 begin
@@ -144,5 +147,7 @@ begin
   anItem := Config.ItemByName[ExpressionName];
   result := assigned(anItem) and (anItem.UpgradeOlderThanVersion > Version);
 end;
+
+initialization
 
 end.

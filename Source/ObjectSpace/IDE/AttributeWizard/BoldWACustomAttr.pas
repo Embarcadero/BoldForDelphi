@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWACustomAttr;
 
 interface
@@ -64,13 +67,12 @@ uses
 
 function StrToAccessType(str: string): TAccessType;
 begin
-  if (AnsiCompareText(str,'READONLY') = 0) then // do not localize
+  if (AnsiCompareText(str,'READONLY') = 0) then
     Result := atReadOnly
-  else if (AnsiCompareText(str,'WRITEONLY') = 0) then // do not localize
+  else if (AnsiCompareText(str,'WRITEONLY') = 0) then
     Result := atWriteOnly
-  else if (AnsiCompareText(str,'READ/WRITE') = 0) then // do not localize
+  else if (AnsiCompareText(str,'READ/WRITE') = 0) then
     Result := atReadWrite
-  // default in ReadOnly
   else Result := atReadOnly ;
 
 end;
@@ -112,17 +114,15 @@ var
   function BooleanToStr(value: Boolean): string;
   begin
     if value then
-      Result := 'true' // do not localize
+      Result := 'true'
     else
-      Result := 'false'; // do not localize
+      Result := 'false';
   end;
 
 begin
-  // init count array
   if Methods.Count = 0 then Exit;
     for v:= stPrivate to stPublished do
       aCount[v]:= 0;
-    // get new methods
     for i:= 0 to Methods.Count - 1 do
     begin
       Item := Methods[i];
@@ -130,8 +130,8 @@ begin
       vasString := Item.TVisibilityToStr(Item.Visibility);
       if Item.IsOverriden then
       begin
-        Template.Variables.Add(Format('%s',[Item.Name]), 'true', []); // do not localize
-        Template.Variables.Add(Format('%s',[vasString]), 'true', []); // do not localize
+        Template.Variables.Add(Format('%s',[Item.Name]), 'true', []);
+        Template.Variables.Add(Format('%s',[vasString]), 'true', []);
       end
       else
       begin
@@ -139,18 +139,18 @@ begin
           Signature := Item.Params + ': ' + Item.ReturnType + ';'
         else
           Signature := Item.Params + ';';
-        Template.Variables.Add(format('%sMETHODTYPE.%d',[vAsString,aCount[v]]), Item.methodTypeAsString, []); // do not localize
-        Template.Variables.Add(format('%sMETHODNAME.%d',[vAsString,aCount[v]]), Item.Name, []); // do not localize
-        Template.Variables.Add(format('%sMETHODSIGNATURE.%d',[vAsString,aCount[v]]), Signature , []); // do not localize
+        Template.Variables.Add(format('%sMETHODTYPE.%d',[vAsString,aCount[v]]), Item.methodTypeAsString, []);
+        Template.Variables.Add(format('%sMETHODNAME.%d',[vAsString,aCount[v]]), Item.Name, []);
+        Template.Variables.Add(format('%sMETHODSIGNATURE.%d',[vAsString,aCount[v]]), Signature , []);
         if mdOverride in Methods[i].mDirectives then
-          Template.Variables.Add(format('%sMETHODDIRECTIVES.%d', [vAsString,aCount[v]]), ' override;', []); // do not localize
-        Template.Variables.Add(Format('%s',[vasString]), 'true', []); // do not localize
+          Template.Variables.Add(format('%sMETHODDIRECTIVES.%d', [vAsString,aCount[v]]), ' override;', []);
+        Template.Variables.Add(Format('%s',[vasString]), 'true', []);
         Inc(aCount[v]);
       end;
-    end;// for
+    end;
     for v:= stPrivate to stPublished do
     begin
-      Template.Variables.Add(TMethodInfo.TVisibilityToStr(v)+'METHODCOUNT', IntToStr(aCount[v]), []); // do not localize
+      Template.Variables.Add(TMethodInfo.TVisibilityToStr(v)+'METHODCOUNT', IntToStr(aCount[v]), []);
       Template.Variables.Add(TMethodInfo.TVisibilityToStr(v), BooleanToStr(aCount[v] <> 0), []);
     end;
 end;
@@ -232,5 +232,7 @@ begin
   for index:= 0 to Count - 1 do
     Remove(TPropertyInfo(fList[Index]));
 end;
+
+initialization
 
 end.

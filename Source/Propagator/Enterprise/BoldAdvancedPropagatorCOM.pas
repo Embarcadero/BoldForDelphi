@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAdvancedPropagatorCOM;
 
 interface
@@ -45,7 +48,6 @@ uses
 {TBoldAdvancedPropagatorCOM}
 function TBoldAdvancedPropagatorCOM.GetBoldClientHandler: IBoldClientHandler;
 begin
-//  ClientHandlerCOMFactory.CreateInstance(nil, IID_IBoldClientHandler, Result);
   Result := ClienthandlerCOMFactory.CreateComObject(nil) as IBoldClientHandler;
 end;
 
@@ -81,5 +83,7 @@ constructor TBoldPropagatorFactory.Create(ComServer: TComServerObject; const Cla
 begin
   inherited Create(ComServer, TBoldAdvancedPropagatorCOM, ClassID, ClassName, Description, ciMultiInstance, tmFree);
 end;
+
+initialization
 
 end.

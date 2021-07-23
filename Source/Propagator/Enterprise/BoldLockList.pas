@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockList;
 
 interface
@@ -32,12 +35,10 @@ type
 
   TBoldLockNameHashList = class(TBoldUnorderedIndexableList)
   private
-//    function GetItem(Index: Integer): TBoldLockNameIndexNode;
     function GetItembyLockName(LockName: string): TBoldLockNameIndexNode;
   public
     constructor Create;
     procedure Add(Item: TBoldLockNameIndexNode);
-//    property Items[Index: Integer]: TBoldLockNameIndexNode read GetItem; default;
     property ItemsByLockName[LockName: string]: TBoldLockNameIndexNode read GetItembyLockName;
   end;
 
@@ -78,7 +79,6 @@ type
     procedure setItem(Key: variant; Value: TBoldIndexNode); override;
     function getCount: integer; override;
     function InsertINode(Key: variant): TBoldIndexNode; override;
-//    function getINode(Index: integer): TBoldIndexNode; override;
   public
     constructor Create(const IndexOrder: integer); override;
     destructor Destroy; override;
@@ -112,7 +112,7 @@ type
     procedure EnsureLock(Ensure: Boolean);
     function GetLockDuration(const CurrentTime: TTimeStamp): comp;
     property ClientId: TBoldClientId read fClientId write fClientId;
-    property TimeOut: Integer read fTimeOut write fTimeOut; // duration in milliseconds
+    property TimeOut: Integer read fTimeOut write fTimeOut;
     property LockAcquisitionTime: TTimeStamp read fLockAcquisitionTime write fLockAcquisitionTime;
     property LockType: TBoldLockType read fLockType write setLockType;
     property CanTimeOut: Boolean read fCanTimeOut;
@@ -145,10 +145,13 @@ type
     property Locks[Index: string]: TBoldLockNameIndexNode read getLock;
     property Items[ClientId: TBoldClientID; LockName: string]: TBoldLockNode read getItem; default;
     property ClientIdIndexOrder: integer read fClientIdIndexOrder;
-    property LockNameIndexOrder: integer read fLockNameIndexOrder;
+    property LockNameIndexOrder: integer read fLockNameIndexOrder;    
   end;
 
 implementation
+
+uses
+  BoldRev;
 
 var
   IX_LockName: integer = -1;
@@ -367,11 +370,10 @@ var
 begin
   Guard := TBoldGuard.Create(Traverser);
   Traverser := fLocks.CreateTraverser;
-  while not Traverser.EndOfList do
+  while Traverser.MoveNext do
   begin
     if Traverser.Item is TBoldIndexNode then
       DeleteINode(Traverser.Item as TBoldIndexNode);
-    Traverser.Next;
   end;
 end;
 
@@ -432,19 +434,16 @@ begin
   CurrentNode := iNode.Clients.GetItembyClientId(NewLockNode.ClientId);
   if Assigned(CurrentNode) then
   begin
-    // remove node
     CurrentNode.Remove;
     FreeAndNil(CurrentNode);
   end
   else
   begin
-    // add node
     NewNode.Previous[IndexOrder] := iNode;
     NewNode.Next[IndexOrder] := iNode.Next;
     if Assigned(iNode.Next) then
       iNode.Next.Previous[IndexOrder] := NewNode;
     iNode.Next := NewNode;
-    // add node to ClientIdHashList
     NewLockNode.AddToList(iNode.Clients);
   end;
 end;
@@ -493,7 +492,7 @@ begin
     CurrentTime := DateTimetoTimeStamp(Now);
     LockAcquisitionDuration := TimeStampToMSecs(CurrentTime) - TimeStampToMSecs(LockAcquisitionTime);
     Result := (Int(LockAcquisitionDuration) >= TimeOut);
-  end;
+  end;  
 end;
 
 function TBoldLockNode.GetLockDuration(const CurrentTime: TTimeStamp): comp;
@@ -580,7 +579,7 @@ end;
 
 constructor TBoldClientIdHashList.Create(OwnerIndexNode: TBoldLockNameIndexNode);
 begin
-  OwnsEntries := false;//ToReview
+  OwnsEntries := false;
   SetIndexCapacity(1);
   SetIndexVariable(IX_ClientID, AddIndex(TBoldClientIDIndex.Create));
   fOwnerIndexNode := OwnerIndexNode;
@@ -606,5 +605,7 @@ begin
     fClients := TBoldClientIdHashList.Create(self);
   Result := fClients;
 end;
+
+initialization
 
 end.

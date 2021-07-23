@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectListControllers;
 
 interface
@@ -5,7 +8,7 @@ interface
 uses
   Classes,
   BoldSystem,
-  BoldObjectSpaceLists,
+  BoldObjectSpaceLists,  
   BoldDomainElement,
   BoldValueInterfaces,
   BoldId,
@@ -25,21 +28,23 @@ type
   TBoldObjectListController = class(TBoldAbstractObjectListController)
   private
     FList: TBoldObjectAttributeIndexList;
-    FSubscriber: TBoldPassthroughSubscriber;
+    FSubscriber: TBoldExtendedPassthroughSubscriber;
     procedure _ReceiveObjectDeleted(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
-    function GetLocatorList: TBoldObjectLocatorList;
+    function GetLocatorList: TBoldObjectLocatorList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure InternalRemoveByIndex(index: Integer);
   protected
     function CreateNew: TBoldElement; override;
     function GetStreamName: string; override;
-    function ProxyClass: TBoldMember_ProxyClass; override;
+    function GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
     procedure SubscribeToObjectDeleted(Locator: TBoldObjectLocator); virtual;
+    function GetCapacity: integer; override;
+    procedure SetCapacity(const Value: integer); override;
   public
-    constructor Create(OwningList: TBoldObjectList);
+    constructor Create(OwningList: TBoldObjectList); reintroduce;
     destructor Destroy; override;
     procedure AddLocator(Locator: TBoldObjectLocator); override;
     procedure AssignContentValue(Source: IBoldValue);
-    procedure DropSubscriptions;
+    procedure DropSubscriptions; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure Resubscribe;
     function GetCount: Integer; override;
     function GetLocator(index: Integer): TBoldObjectLocator; override;
@@ -52,76 +57,123 @@ type
     procedure RemoveByIndex(index: Integer); override;
     procedure SetLocator(index: Integer; Locator: TBoldObjectLocator); override;
     procedure FreeContent; override;
+    procedure Clear; override;
     property LocatorList: TBoldObjectLocatorList read GetLocatorList;
   end;
 
+{  BoldPersistenceState:
+    bvpsInvalid: List contains just objcets that have been loaded or allloadedobjects
+    bvpsTransient: Means that all IDs are loaded
+    bvpsCurrent: Means all IDs and all Objects are loaded.
+}
   { TBoldClassListController }
   TBoldClassListController = class(TBoldObjectListController)
   private
     fTimestamp: TBoldTimestampType;
     fAtTimeList: TList;
+    fClassTypeInfo: TBoldClassTypeInfo;
+    fSuperclasslist: TBoldObjectList;
+    fSuperClassController: TBoldClassListController;
+    fLoadedObjectCount: Integer;
     function GetAtTimeList: TList;
     procedure FillFromClassList(ObjectList: TBoldObjectList);
     procedure FillFromSystem;
-    function ClosestLoadedClassList: TBoldObjectList;
     property AtTimeList: TList read GetAtTimeList;
-    function GetIdList(Index: Integer): TBoldObjectID;
+    function GetIdList(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetFromIdList(List: TBoldObjectIdList; Mode: TBoldDomainElementProxyMode);
+    procedure MarkAsAllIDsLoaded;
+    procedure MarkListCurrent;
+    procedure CheckStillCurrent;
+    procedure SetPersistenceState(APersistenceState: TBoldValuePersistenceState);
   protected
     function GetCanCreateNew: Boolean; override;
-    function GetClassTypeInfo: TBoldClassTypeInfo;
     function GetStringrepresentation: String; override;
     procedure SubscribeToObjectDeleted(Locator: TBoldObjectLocator); override;
-    property ClassTypeInfo: TBoldClassTypeInfo read GetClassTypeInfo;
-    function ProxyClass: TBoldMember_ProxyClass; override;
+    property ClassTypeInfo: TBoldClassTypeInfo read fClassTypeInfo;
+    function GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
   public
     constructor Create(OwningList: TBoldObjectList);
     destructor Destroy; override;
-    procedure ReceiveClassEvent(BoldObject: TBoldObject; EVENT: TBoldEvent);
+    procedure ReceiveClassEvent(BoldObject: TBoldObject; Event: TBoldEvent);
     function ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean; override;
     function AtTime(Time: TBoldTimeStampType): TBoldMember; override;
     function HandlesAtTime: Boolean; override;
     procedure MakeDbCurrent; override;
+    procedure AddLocator(Locator: TBoldObjectLocator); override;
     procedure RemoveByIndex(index: Integer); override;
+    property LoadedObjectCount: Integer read fLoadedObjectCount;
+    function HasLoadedSuperClass: boolean;
+    function ClosestLoadedClassList: TBoldObjectList;
+    function IsCurrentOrSuperClassIsCurrent: boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   { TBoldObjectList_Proxy }
   TBoldObjectList_Proxy = class(TBoldMember_Proxy)
   private
-    function GetObjectListController: TBoldObjectListController;
+    function GetObjectListController: TBoldObjectListController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
     property ObjectListController: TBoldObjectListController read GetObjectListController;
   end;
 
   { TBoldClassList_Proxy }
   TBoldClassList_Proxy = class(TBoldMember_Proxy, IBoldObjectIdListRef)
   private
-    function GetClassListController: TBoldClassListController;
-    // IBoldObjectIdListRef
+    function GetClassListController: TBoldClassListController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetFromIdList(IdLIst: TBoldObjectIdList);
-    function GetIdList(Index: Integer): TBoldObjectID;
-    function GetCount: integer;
+    procedure SetList(IdList: TBoldObjectIdList);
+    function GetIdList(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     property ClassListController: TBoldClassListController read GetClassListController;
-    procedure AssignContentValue(Source: IBoldValue); override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
   end;
+
+const
+  beClassListStateChanged = 31; // this is used so that we can subscribe to BoldPersistenceState of a class list
 
 implementation
 
 uses
   SysUtils,
   BoldIndexableList,
-  BoldDefaultStreamNames,
-  BoldValueSpaceInterfaces,
-  BoldCoreConsts;
+  BoldDefaultStreamNames,  
+  BoldValueSpaceInterfaces;
 
 { TBoldObjectListController }
+
+constructor TBoldObjectListController.Create(OwningList: TBoldObjectList);
+begin
+  inherited Create(OwningList);
+  FList := TBoldObjectLocatorList.Create;
+end;
+
+destructor TBoldObjectListController.Destroy;
+begin
+  FreeAndNil(FList);
+  FreeAndNil(FSubscriber);
+  inherited;
+end;
+
+function TBoldObjectListController.GetLocatorList: TBoldObjectLocatorList;
+begin
+  result := TBoldObjectLocatorList(FList);
+end;
 
 procedure TBoldObjectListController.AddLocator(Locator: TBoldObjectLocator);
 begin
   if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'AddLocator', ''); // do not localize
+    BoldRaiseLastFailure(OwningList, 'AddLocator', '');
+
+{$IFNDEF AllowCrossSystemLists}
+  if (BoldSystemCount > 1) and Assigned(BoldSystem) then
+  begin
+    Assert(Assigned(Locator), 'Locator not Assigned');
+    Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
+    if Locator.BoldSystem <> BoldSystem then
+      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.AddLocator: Locator from another system not allowed to be added to %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
+  end;
+{$ENDIF}
 
   LocatorList.Add(Locator);
   SubscribeToObjectDeleted(Locator);
@@ -130,18 +182,9 @@ begin
   EndModify;
 end;
 
-constructor TBoldObjectListController.Create(OwningList: TBoldObjectList);
+function TBoldObjectListController.GetCapacity: integer;
 begin
-  inherited Create(OwningList);
-  FList := TBoldObjectLocatorList.Create;
-  FSubscriber := TBoldPassthroughSubscriber.CreateWithExtendedReceive(_ReceiveObjectDeleted);
-end;
-
-destructor TBoldObjectListController.Destroy;
-begin
-  FreeAndNil(FList);
-  FreeAndNil(FSubscriber);
-  inherited;
+  result := LocatorList.Capacity;
 end;
 
 function TBoldObjectListController.GetCount: Integer;
@@ -163,19 +206,13 @@ begin
   begin
     if assigned(OwningObjectList.BoldRoleRTInfo) and OwningObjectList.BoldRoleRTInfo.IsQualified then
     begin
-      // this handles qualified derived associations
       OwningObjectList.EnsureContentsCurrent;
       LocatorList.InitMembersIndex(OwningObjectList, OwningObjectList.BoldRoleRTInfo.Qualifiers);
     end
     else
-      raise EBold.CreateFmt(sRolenotQualified, [ClassName]);
+      raise EBold.CreateFmt('%s.GetLocatorByQualifiersAndSubscribe: Object list does not have a member index or role is not qualified', [ClassName]);
   end;
   result := List.GetLocatorByAttributesAndSubscribe(MemberList, Subscriber);
-end;
-
-function TBoldObjectListController.GetLocatorList: TBoldObjectLocatorList;
-begin
-  result := TBoldObjectLocatorList(FList);
 end;
 
 function TBoldObjectListController.IncludesLocator(Locator: TBoldObjectLocator): Boolean;
@@ -191,8 +228,16 @@ end;
 procedure TBoldObjectListController.InsertLocator(index: Integer; Locator: TBoldObjectLocator);
 begin
   if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'InsertLocator', ''); // do not localize
-
+    BoldRaiseLastFailure(OwningList, 'InsertLocator', '');
+{$IFNDEF AllowCrossSystemLists}
+  if (BoldSystemCount > 1) and Assigned(BoldSystem) then
+  begin
+    Assert(Assigned(Locator), 'Locator not Assigned');
+    Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
+    if Locator.BoldSystem <> BoldSystem then
+      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.InsertLocator: Locator from another system not allowed to be inserted in %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
+  end;
+{$ENDIF}
   LocatorList.Insert(index, Locator);
   SubscribeToObjectDeleted(Locator);
   Changed(beItemAdded, [Locator]);
@@ -203,7 +248,7 @@ end;
 procedure TBoldObjectListController.Move(CurrentIndex, NewIndex: Integer);
 begin
   if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'Move', ''); // do not localize
+    BoldRaiseLastFailure(OwningList, 'Move', '');
 
   LocatorList.Move(CurrentIndex, NewIndex);
   Changed(beOrderChanged, []);
@@ -223,20 +268,34 @@ end;
 procedure TBoldObjectListController.RemoveByIndex(index: Integer);
 begin
   if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'RemoveByIndex', ''); // do not localize
+    BoldRaiseLastFailure(OwningList, 'RemoveByIndex', '');
   InternalRemoveByIndex(index);
   EndModify;
+end;
+
+procedure TBoldObjectListController.SetCapacity(const Value: integer);
+begin
+  LocatorList.Capacity := Value;
 end;
 
 procedure TBoldObjectListController.SetLocator(index: Integer; Locator: TBoldObjectLocator);
 begin
   if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'SetLocator', ''); // do not localize
+    BoldRaiseLastFailure(OwningList, 'SetLocator', '');
 
   if Locator = nil then
     RemoveByIndex(index)
   else
   begin
+{$IFNDEF AllowCrossSystemLists}
+  if (BoldSystemCount > 1) and Assigned(BoldSystem) then
+    begin
+      Assert(Assigned(Locator), 'Locator not Assigned');
+      Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
+      if Locator.BoldSystem <> BoldSystem then
+        SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.SetLocator: Locator from another system not allowed to be inserted in %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
+    end;
+{$ENDIF}
     LocatorList[index] := Locator;
     SubscribeToObjectDeleted(Locator);
     Changed(beItemReplaced, [Locator, Index]);
@@ -252,7 +311,6 @@ end;
 
 procedure TBoldObjectListController.MakeDbCurrent;
 begin
-  // do nothing. Object lists are not persistent and therefore always current.
 end;
 
 procedure TBoldObjectListController._ReceiveObjectDeleted(
@@ -263,53 +321,82 @@ procedure TBoldObjectListController._ReceiveObjectDeleted(
   var
     i: Integer;
   begin
+  {$IFDEF AllowCrossSystemLists}
     for i := Count - 1 downto 0 do
       if LocatorList[i].BoldSystem = System then
         InternalRemoveByIndex(i);
+  {$ELSE}
+    LocatorList.Clear;
+  {$ENDIF}
+  end;
+
+  procedure RemoveLocator(Locator: TBoldObjectLocator);
+  begin
+    if LocatorList.LocatorInList[Locator] then
+    begin
+      LocatorList.Remove(Locator);
+      Changed(beItemDeleted, [Locator]);
+    end;
   end;
 
 var
   DeletedLocator: TBoldObjectLocator;
 begin
-  assert(originator is TBoldSystem);
-  case RequestedEvent of
+  assert(originator is TBoldObjectList);
+  case OriginalEvent of
     beLocatorDestroying,
     beObjectDeleted:
       begin
         assert(High(Args) = 0);
         assert(Args[0].vType = vtObject);
-        DeletedLocator := TBoldObject(Args[0].VObject).BoldObjectLocator;
-        if LocatorList.LocatorInList[DeletedLocator] then
-        begin
-          LocatorList.Remove(DeletedLocator);
-          Changed(beItemDeleted, [DeletedLocator]);
-        end;
+        Assert(Args[0].VObject is TBoldObjectLocator);
+        DeletedLocator := TBoldObjectLocator(Args[0].VObject);
+//        Assert(not Assigned(OwningList.Boldtype) or DeletedLocator.BoldObject.BoldClassTypeInfo.BoldIsA(TBoldListTypeInfo(OwningList.Boldtype).ListElementTypeInfo));
+        RemoveLocator(DeletedLocator);
       end;
     beDestroying:
       begin
-        RemoveAllObjectsFromSystem(TBoldSystem(Originator));
+        RemoveAllObjectsFromSystem(TBoldSystem(TBoldObjectList(Originator).OwningElement));
       end;
   else
-    raise EBoldInternal.CreateFmt(sUnknownEvent, [classname]);
+    raise EBoldInternal.CreateFmt('%s._ReceiveObjectDeleted: Unknown event', [classname]);
   end;
 end;
 
 procedure TBoldObjectListController.SubscribeToObjectDeleted(Locator: TBoldObjectLocator);
+var
+  ClassList: TBoldObjectList;
 begin
-  if OwningObjectList.SubscribeToObjectsInList then
+  with OwningObjectList do
   begin
-    // Object deleted
-    Locator.BoldSystem.AddSmallSubscription(FSubscriber, [beObjectDeleted], beObjectDeleted);
-    // System Destroyed
-    Locator.BoldSystem.AddSmallSubscription(FSubscriber, [beDestroying], beDestroying);
+    if not (SubscribeToLocatorsInList or SubscribeToObjectsInList) then
+      exit;
+    if Assigned(FSubscriber) then
+      exit
+    else
+      FSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(_ReceiveObjectDeleted);
+
+    if Assigned(OwningObjectList.BoldType) then
+      ClassList := Locator.BoldSystem.Classes[TBoldClassTypeInfo(TBoldListTypeInfo(OwningObjectList.BoldType).ListElementTypeInfo).TopSortedIndex]
+    else
+      ClassList := Locator.BoldSystem.Classes[0];
+
+    if SubscribeToLocatorsInList then
+    begin
+      if SubscribeToObjectsInList then
+        ClassList.AddSmallSubscription(FSubscriber, [beLocatorDestroying, beDestroying, beObjectDeleted], beLocatorDestroying)
+      else
+        ClassList.AddSmallSubscription(fSubscriber, [beLocatorDestroying], beLocatorDestroying);
+    end
+    else
+      if SubscribeToObjectsInList then
+        ClassList.AddSmallSubscription(FSubscriber, [beDestroying, beObjectDeleted], beLocatorDestroying);
   end;
-  if OwningObjectList.SubscribeToLocatorsInList then
-    Locator.BoldSystem.AddSmallSubscription(fSubscriber, [beLocatorDestroying], beLocatorDestroying);
 end;
 
 procedure TBoldObjectListController.DropSubscriptions;
 begin
-  FSubscriber.CancelAllSubscriptions;
+  FreeAndNil(FSubscriber);
 end;
 
 procedure TBoldObjectListController.Resubscribe;
@@ -318,17 +405,36 @@ var
   LastSystem: TBoldSystem;
   Locator: TBoldObjectLocator;
 begin
-  LastSystem := nil;
-  for i := 0 to Count - 1 do
+  Locator := (LocatorList.Any) as TBoldObjectLocator;
+  if Assigned(Locator) then
   begin
-    // only add subscriptions once per system for performance.
-    Locator := Locatorlist[i];
-    if Locator.BoldSystem <> LastSystem then
+    SubscribeToObjectDeleted(Locator);
+    if BoldSystemCount > 1 then
     begin
-      SubscribeToObjectDeleted(LocatorList[i]);
       LastSystem := Locator.BoldSystem;
+      for i := 0 to Count - 1 do
+      begin
+        Locator := Locatorlist[i];
+        if Locator.BoldSystem <> LastSystem then
+        begin
+          SubscribeToObjectDeleted(LocatorList[i]);
+          LastSystem := Locator.BoldSystem;
+        end;
+      end;
     end;
-  end;
+  end
+end;
+
+procedure TBoldObjectListController.Clear;
+var
+  i: integer;
+begin
+  with OwningObjectList do
+    if MemberHasSubscribers or IsPartOfSystem then
+      inherited
+    else
+      LocatorList.Clear;
+  DropSubscriptions;
 end;
 
 procedure TBoldObjectListController.AssignContentValue(Source: IBoldValue);
@@ -347,7 +453,7 @@ begin
     Changed(beValueChanged, []);
   end
   else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
+    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
 end;
 
 procedure TBoldObjectListController.FreeContent;
@@ -355,29 +461,19 @@ begin
   Locatorlist.Clear;
 end;
 
-function TBoldObjectListController.ProxyClass: TBoldMember_ProxyClass;
+function TBoldObjectListController.GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
 begin
-  Result := TBoldObjectList_Proxy;
+  Result := TBoldObjectList_Proxy.Create(Member, Mode);
 end;
 
 { TBoldClassListController }
 
 function TBoldObjectListController.CreateNew: TBoldElement;
 var
-  ListtypeInfo: TBoldListTypeInfo;
   ClassTypeInfo: TBoldClassTypeInfo;
 begin
-  ListTypeInfo := TBoldListTypeInfo(OwningList.Boldtype);
-  ClassTypeInfo := TBoldClassTypeInfo(ListTypeInfo.ListElementTypeInfo);
-  result := TBoldObjectClass(ClassTypeInfo.ObjectClass).InternalCreateNewWithClassAndSystem(ClassTypeInfo, owningList.BoldSystem, True);
-end;
-
-function TBoldClassListController.GetClassTypeInfo: TBoldClassTypeInfo;
-var
-  listtypeInfo: TBoldLIstTypeInfo;
-begin
-  ListTypeInfo := TBoldListTypeInfo(OwningList.Boldtype);
-  result := TBoldClassTypeInfo(ListTypeInfo.ListElementTypeInfo);
+  ClassTypeInfo :=  TBoldClassTypeInfo(TBoldListTypeInfo(OwningList.Boldtype).ListElementTypeInfo);
+  result := TBoldObjectClass(ClassTypeInfo.ObjectClass).InternalCreateNewWithClassAndSystem(ClassTypeInfo, BoldSystem, True);
 end;
 
 function TBoldClassListController.GetCanCreateNew: Boolean;
@@ -385,12 +481,12 @@ begin
   result := true;
   if result and ClassTypeInfo.IsAbstract then
   begin
-    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sClassIsAbstract, [ClassTypeInfo.ExpressionName], OwningList));
+    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('%s is an abstract class', [ClassTypeInfo.ExpressionName], OwningList));
     result := false;
   end;
   if result and ClassTypeInfo.IsLinkClass then
   begin
-    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sClassIsLinkClass, [ClassTypeInfo.ExpressionName], OwningList));
+    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('%s is a LinkClass', [ClassTypeInfo.ExpressionName], OwningList));
     result := false;
   end;
 end;
@@ -402,11 +498,33 @@ end;
 
 procedure TBoldClassListController.FillFromClassList(ObjectList: TBoldObjectList);
 var
-  i: integer;
+  I: Integer;
+  iTopSortedIndex: Integer;
+  DestinationList: TBoldObjectList;
+  Locator: TBoldObjectLocator;
 begin
-  for i := 0 to ObjectList.Count - 1 do
-    if ObjectList[i].BoldClassTypeInfo.BoldIsA(ClassTypeinfo) then
-      OwningList.Add(ObjectList[i]);
+  iTopSortedIndex := ClassTypeinfo.TopSortedIndex;
+  DestinationList := OwningObjectList;
+  for I := 0 to ObjectList.Count - 1 do
+  begin
+    Locator := ObjectList.Locators[I];
+    if Assigned(Locator.BoldObject) then
+    begin
+      if Locator.BoldObject.BoldClassTypeInfo.BoldIsA(ClassTypeInfo) then
+        DestinationList.AddLocator(Locator);
+    end
+    else
+    if Locator.BoldObjectID.TopSortedIndexExact and
+      ((Locator.BoldObjectID.TopSortedIndex = iTopSortedIndex) or
+      (Locator.BoldClassTypeInfo.BoldIsA(ClassTypeinfo))) then
+    begin
+      DestinationList.AddLocator(Locator);
+      iTopSortedIndex := Locator.BoldObjectID.TopSortedIndex;
+    end
+    else
+    if Locator.EnsuredBoldObject.BoldClassTypeInfo.BoldIsA(ClassTypeInfo) then
+      DestinationList.AddLocator(Locator);
+  end;
 end;
 
 procedure TBoldClassListController.FillFromSystem;
@@ -414,8 +532,8 @@ var
   Traverser: TBoldLocatorListTraverser;
   Locator: TBoldObjectLocator;
 begin
-  Traverser := OwningList.BoldSystem.Locators.CreateTraverser;
-  while not Traverser.EndOfList do
+  Traverser := BoldSystem.Locators.CreateTraverser;
+  while Traverser.MoveNext do
   begin
     Locator := Traverser.Locator;
     if assigned(Locator.BoldObject) and not Locator.BoldObject.BoldPersistent
@@ -424,7 +542,6 @@ begin
     begin
       LocatorList.Add(Locator);
     end;
-    Traverser.Next;
   end;
   Traverser.Free;
 end;
@@ -432,6 +549,7 @@ end;
 function TBoldClassListController.ClosestLoadedClassList: TBoldObjectList;
 var
   SuperClass: TBoldClassTypeInfo;
+  SuperClassList: TBoldObjectList;
 begin
   if fTimestamp <> BOLDMAXTIMESTAMP then
   begin
@@ -440,11 +558,12 @@ begin
   end;
 
   SuperClass := ClassTypeInfo.SuperClassTypeInfo;
-  while assigned(SuperClass) and (OwningList.BoldSystem.Classes[SuperClass.TopSortedIndex].BoldPersistenceState <> bvpsCurrent) do
-    SuperClass := SuperClass.SuperClassTypeInfo;
+  with BoldSystem do
+    while assigned(SuperClass) and (Classes[SuperClass.TopSortedIndex].BoldPersistenceState <> bvpsCurrent) do
+      SuperClass := SuperClass.SuperClassTypeInfo;
 
   if assigned(SuperClass) then
-    result := OwningList.BoldSystem.Classes[SuperClass.TopSortedIndex]
+    result := BoldSystem.Classes[SuperClass.TopSortedIndex]
   else
     result := nil;
 end;
@@ -453,7 +572,7 @@ procedure TBoldClassListController.MakeDbCurrent;
 var
   SourceList: TBoldObjectList;
 begin
-  if ClassTypeinfo.Persistent and OwningList.BoldSystem.BoldPersistent then
+  if ClassTypeinfo.Persistent and BoldSystem.BoldPersistent then
   begin
     SourceList := ClosestLoadedClassList;
 
@@ -464,65 +583,130 @@ begin
   end
   else
     FillFromSystem;
-  OwningList.BoldPersistenceState := bvpsTransient;
+  MarkAsAllIDsLoaded;
+end;
+
+procedure TBoldClassListController.MarkAsAllIDsLoaded;
+begin
+  if fLoadedObjectCount = Count then
+    MarkListCurrent
+  else
+    SetPersistenceState(bvpsTransient);
+end;
+
+procedure TBoldClassListController.MarkListCurrent;
+begin
+  if (OwningList.BoldPersistenceState <> bvpsCurrent) and (fLoadedObjectCount = Count) then
+  begin
+    SetPersistenceState(bvpsCurrent);
+  end;
 end;
 
 procedure TBoldClassListController.ReceiveClassEvent(BoldObject: TBoldObject; Event: TBoldEvent);
-var
-  SuperClassTypeInfo: TBoldClassTypeInfo;
-  Superclasslist: TBoldObjectList;
 begin
-  SuperClassTypeInfo := ClassTypeInfo.SuperClassTypeInfo;
-  if Assigned(SuperClassTypeInfo) then
-  begin
-    SuperClassList := BoldSystem.Classes[SuperClassTypeInfo.TopSortedIndex];
-    TBoldClassListController(GetControllerForMember(SuperClassList)).ReceiveClassEvent(BoldObject, EVENT);
-  end;
-  if Owninglist.BoldPersistenceState <> bvpsInvalid then
-  begin
-    case Event of
-      beObjectCreated: AddLocator(BoldObject.BoldObjectLocator);
-      beObjectDeleted:
+  if Assigned(fSuperClassController) then
+    fSuperClassController.ReceiveClassEvent(BoldObject, Event);
+  case Event of
+    beObjectCreated:
       begin
-        // it is a linear operation to delete objects in the classlist
-        // invalidating it is also linear, but hopefully it does not have to be done as often.
-        // In the persistent case, invalidating has a different effect, since the classlist must be reloaded from db.
-        if ClassTypeInfo.Persistent and OwningList.BoldSystem.BoldPersistent then
-          LocatorList.Remove(BoldObject.BoldObjectLocator)
+        inc(fLoadedObjectCount);
+        if Owninglist.BoldPersistenceState <> bvpsInvalid then
+        begin
+//          Assert(not LocatorList.Includes(BoldObject.BoldObjectLocator), 'Locator already in list on beObjectCreated.');
+          AddLocator(BoldObject.BoldObjectLocator)
+        end;
+        Owninglist.Invalidate;
+      end;
+    beObjectDeleted:
+    begin
+      if Owninglist.BoldPersistenceState <> bvpsInvalid then
+      begin
+        if ClassTypeInfo.Persistent and BoldSystem.BoldPersistent then
+          LocatorList.Remove(BoldObject.BoldObjectLocator);
+      end;
+      Dec(fLoadedObjectCount);
+      Owninglist.Invalidate;
+      OwningList.SendExtendedEvent(Event, [BoldObject.BoldObjectLocator]);
+    end;
+    beObjectFetched:
+    begin
+      inc(fLoadedObjectCount);
+      if Owninglist.IsCurrent then
+      begin
+//        Assert(not LocatorList.Includes(BoldObject.BoldObjectLocator), 'Locator already in list on beObjectFetched.');
+        AddLocator(BoldObject.BoldObjectLocator);
+        OwningList.SendExtendedEvent(beValueInvalid, [BoldObject.BoldObjectLocator]);
+      end
+      else
+      if (Owninglist.BoldPersistenceState = bvpsTransient) and (fLoadedObjectCount = count) then
+      begin
+//        Assert(LocatorList.Includes(BoldObject.BoldObjectLocator), 'Locator not already in list on beObjectFetched.');
+        MarkListCurrent;
+        OwningList.SendExtendedEvent(beValueInvalid, [BoldObject.BoldObjectLocator]);
+      end
+      else
+        Owninglist.Invalidate;
+    end;
+    beObjectUnloaded:
+    begin
+      if not BoldObject.BoldObjectIsDeleted then
+      begin
+        Dec(fLoadedObjectCount);
+        if Owninglist.BoldPersistenceState = bvpsCurrent then
+        begin
+          SetPersistenceState(bvpsTransient);
+          OwningList.SendEvent(beValueInvalid);
+        end
         else
           Owninglist.Invalidate;
       end;
-      beObjectFetched: OwningList.SendEvent(beObjectFetched);
-    else
-      raise EBoldInternal.CreateFmt('%s.ReceiveClassEvent: Unknown event', [ClassName]);
     end;
-  end
-  else
-    if Event = beObjectFetched then
-    begin
-      OwningList.SendEvent(beObjectFetched);
-    end;
-
-
+  end;
   case event of
     beObjectCreated: OwningList.SendExtendedEvent(beItemAdded, [BoldObject.BoldObjectLocator]);
     beObjectDeleted: OwningList.SendExtendedEvent(beItemDeleted, [BoldObject.BoldObjectLocator]);
+    beObjectFetched: OwningList.SendExtendedEvent(beObjectFetched, [BoldObject.BoldObjectLocator]);
+    beObjectUnloaded: OwningList.SendExtendedEvent(beObjectUnloaded, [BoldObject.BoldObjectLocator])
+  else
+    raise EBoldInternal.CreateFmt('%s.ReceiveClassEvent: Unknown event: %d', [ClassName, Event]);
   end;
 end;
 
 procedure TBoldClassListController.RemoveByIndex(index: Integer);
 begin
+  Assert(not LocatorList[index].EnsuredBoldObject.BoldObjectIsDeleted);
   LocatorList[Index].EnsuredBoldObject.Delete;
 end;
 
 procedure TBoldClassListController.SubscribeToObjectDeleted;
 begin
-  // remove behaviour from parent
+end;
+
+procedure TBoldClassListController.CheckStillCurrent;
+begin
+  if OwningList.isCurrent and (fLoadedObjectCount <> Count) then
+    SetPersistenceState(bvpsTransient);
 end;
 
 function TBoldClassListController.HandlesAtTime: Boolean;
 begin
   result := true;
+end;
+
+function TBoldClassListController.HasLoadedSuperClass: boolean;
+begin
+  result := ClosestLoadedClassList <> nil;
+end;
+
+function TBoldClassListController.IsCurrentOrSuperClassIsCurrent: boolean;
+begin
+  result := HasLoadedSuperClass or (OwningObjectList.BoldPersistenceState = bvpsCurrent);
+end;
+
+procedure TBoldClassListController.AddLocator(Locator: TBoldObjectLocator);
+begin
+  LocatorList.Add(Locator);
+  CheckStillCurrent;
 end;
 
 function TBoldClassListController.AtTime(
@@ -540,8 +724,8 @@ begin
         result := TBoldObjectList(AtTimeList[i]);
     if not assigned(result) then
     begin
-    result := TBoldObjectList.InternalCreateClassList(BoldSystem, OwningList.BoldType as TBoldListTypeInfo);
-    TBoldClassListController(GetControllerForMember(result)).fTimestamp := Time;
+      result := TBoldObjectList.InternalCreateClassList(BoldSystem, OwningList.BoldType as TBoldListTypeInfo);
+      TBoldClassListController(GetControllerForMember(result)).fTimestamp := Time;
       AtTimeList.Add(result);
     end;
   end;
@@ -569,98 +753,77 @@ constructor TBoldClassListController.Create(OwningList: TBoldObjectList);
 begin
   inherited Create(OwningList);
   fTimestamp := BOLDMAXTIMESTAMP;
+  fClassTypeInfo := TBoldClassTypeInfo(TBoldListTypeInfo(OwningList.Boldtype).ListElementTypeInfo);
+  if Assigned(ClassTypeInfo.SuperClassTypeInfo) then
+  begin
+    fSuperClassList := BoldSystem.Classes[ClassTypeInfo.SuperClassTypeInfo.TopSortedIndex];
+    fSuperClassController := TBoldClassListController(GetControllerForMember(fSuperClassList));
+  end;
+  OwningList.DuplicateMode := bldmError;
 end;
 
-function TBoldClassListController.ProxyClass: TBoldMember_ProxyClass;
+function TBoldClassListController.GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
 begin
-  Result := TBoldClassList_Proxy;
+  Result := TBoldClassList_Proxy.Create(Member, Mode);
 end;
 
 function TBoldClassListController.GetIdList(Index: Integer): TBoldObjectID;
-var
-  aLocator: TBoldObjectLocator;
 begin
-  aLocator := LocatorList[Index];
-  result := aLocator.BoldObjectId
+  result := LocatorList[Index].BoldObjectId;
 end;
-
-{
-procedure TBoldClassListController.AddTransientFromSystem;
-var
-  Traverser: TBoldLocatorListTraverser;
-  Locator: TBoldObjectLocator;
-begin
-  Traverser := OwningList.BoldSystem.Locators.CreateTraverser;
-  while not Traverser.EndOfList do
-  begin
-    Locator := Traverser.Locator;
-    if assigned(Locator.BoldObject) and not Locator.BoldObject.BoldPersistent and Locator.BoldObject.BoldClassTypeInfo.BoldIsA(ClassTypeinfo) then
-      LocatorList.Add(Locator);
-    Traverser.Next;
-  end;
-  Traverser.Free;
-end;
-}
 
 procedure TBoldClassListController.SetFromIdList(
   List: TBoldObjectIdList; Mode: TBoldDomainElementProxyMode);
 
-  procedure InternalAddLocator(NewLocator: TBoldObjectLocator);
-  begin
-    Assert(Assigned(NewLocator));
-    if not IncludesLocator(NewLocator) then
-    begin
-      PreChange;
-      LocatorList.Add(NewLocator);
-      Changed(beItemAdded, [NewLocator]);
-    end;
-  end;
+var
+  BoldSystem: TBoldSystem;
 
   procedure InternalAddId(ID: TBoldObjectId);
-  begin
-    InternalAddLocator(BoldSystem.EnsuredLocatorByID[ID]);
-  end;
-
-  procedure AddTransientFromSystem(List:TBoldObjectIdList);
   var
-    Traverser: TBoldLocatorListTraverser;
     Locator: TBoldObjectLocator;
   begin
-    Traverser := OwningList.BoldSystem.Locators.CreateTraverser;
-    while not Traverser.EndOfList do
+    Locator := BoldSystem.EnsuredLocatorByID[ID];
+    if not IncludesLocator(Locator) then
     begin
-      Locator := Traverser.Locator;
-      if assigned(Locator.BoldObject) and not Locator.BoldObject.BoldPersistent and Locator.BoldObject.BoldClassTypeInfo.BoldIsA(ClassTypeinfo) then
-        List.Add(Locator.BoldObjectID);
-      Traverser.Next;
+      PreChange;
+      LocatorList.Add(Locator);
+      Changed(beItemAdded, [Locator]);
     end;
-    Traverser.Free;
   end;
 
+{$IFNDEF NoTransientInstancesOfPersistentClass}
+  procedure AddTransientFromSystem(List:TBoldObjectIdList);
   var
+    Locator: TBoldObjectLocator;
+  begin
+    if not BoldSystem.Locators.IsEmpty then
+    for Locator in BoldSystem.Locators do
+      if assigned(Locator.BoldObject) and not Locator.BoldObject.BoldPersistent and Locator.BoldObject.BoldClassTypeInfo.BoldIsA(ClassTypeinfo) then
+        List.Add(Locator.BoldObjectID);
+  end;
+{$ENDIF}
+
+var
   I: Integer;
   NewList: TBoldObjectIdlist;
   Locator: TBoldObjectLocator;
   TheObject: TBoldObject;
-
 begin
-
+  BoldSystem := self.BoldSystem;
   if assigned(List) then
     NewList := List.Clone
   else
     NewList := TBoldObjectidList.create;
-
+  try
     if mode = bdepPMIn then
     begin
-     // remove objects that have been deleted in memory
+      if BoldSystem.BoldDirty then // Search for Deleted objects only if system is dirty.
       for I := NewList.Count - 1 downto 0 do
       begin
         Locator := BoldSystem.Locators.LocatorByID[NewList[i]];
         if assigned(Locator) and assigned(Locator.BoldObject) and (Locator.BoldObject.BoldExistenceState = besDeleted) then
           NewList.RemoveByIndex(i);
       end;
-
-      // Add New Objects
       for I := 0 to BoldSystem.DirtyObjects.Count - 1 do
       begin
         TheObject := TBoldObject(BoldSystem.DirtyObjects[I]);
@@ -668,17 +831,28 @@ begin
           ((TheObject.BoldExistenceState = besExisting) and (TheObject.BoldPersistenceState = bvpsModified)) then
           NewList.add(TheObject.BoldObjectLocator.BoldObjectID)
       end;
-
+{$IFNDEF NoTransientInstancesOfPersistentClass}
       AddTransientFromSystem(NewList);
+{$ENDIF}
     end;
+    for I := GetCount - 1 downto 0 do
+      if not NewList.IdInList[GetLocator(I).BoldObjectID] then
+        LocatorList.RemoveByIndex(I);
+    for I := 0 to NewList.Count - 1 do
+      InternalAddId(NewList[I]);
+  finally
+    NewList.Free;
+  end;
+end;
 
-  // fix§up locator list with minimum impact
-  for I := GetCount - 1 downto 0 do
-    if not NewList.IdInList[GetLocator(I).BoldObjectID] then
-      LocatorList.RemoveByIndex(I);
-  for I := 0 to NewList.Count - 1 do
-    InternalAddId(NewList[I]);
-  NewList.Free;
+procedure TBoldClassListController.SetPersistenceState(
+  APersistenceState: TBoldValuePersistenceState);
+begin
+  with OwningList do
+  begin
+    BoldPersistenceState := APersistenceState;
+    SendEvent(beClassListStateChanged);
+  end;
 end;
 
 function TBoldClassListController.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode;
@@ -686,7 +860,7 @@ function TBoldClassListController.ProxyInterface(const IId: TGUID; Mode: TBoldDo
 begin
   if IsEqualGuid(IID, IBoldObjectIdListRef) then
   begin
-    result := ProxyClass.create(self.OwningList, Mode).GetInterface(IID, obj);
+    result := GetProxy(self.OwningList, Mode).GetInterface(IID, obj);
     if not result then
       raise EBoldInternal.CreateFmt('ProxyClass for %s did not implement IBoldObjectIdListRef', [ClassName]);
   end
@@ -696,17 +870,17 @@ end;
 
 { TBoldClassList_Proxy }
 
-procedure TBoldClassList_Proxy.AssignContentValue(Source: IBoldValue);
+function TBoldClassList_Proxy.GetClassListController: TBoldClassListController;
+begin
+  Result := TBoldClassListController(ProxedController);
+end;
+
+procedure TBoldClassList_Proxy.AssignContentValue(const Source: IBoldValue);
 begin
   if Mode = bdepContents then
     ClassListController.AssignContentValue(Source)
   else
-   UnsupportedMode(Mode, 'AssignContentValue'); // do not localize
-end;
-
-function TBoldClassList_Proxy.GetClassListController: TBoldClassListController;
-begin
-  Result := TBoldClassListController(ProxedController);
+   UnsupportedMode(Mode, 'AssignContentValue');
 end;
 
 function TBoldClassList_Proxy.GetCount: integer;
@@ -721,25 +895,36 @@ end;
 
 procedure TBoldClassList_Proxy.SetFromIdList(IdLIst: TBoldObjectIdList);
 begin
-  if Mode = bdepPMIn then  { TODO : Move in implementation to proxy }
+  if Mode = bdepPMIn then 
     ClassListController.SetFromIdList(IdLIst, Mode)
   else
-    UnsupportedMode(Mode, 'SetFromIdList'); // do not localize
+    UnsupportedMode(Mode, 'SetFromIdList');
+end;
+
+procedure TBoldClassList_Proxy.SetList(IdList: TBoldObjectIdList);
+var
+  i: integer;
+begin
+  IdList.Clear;
+  for I := 0 to ClassListController.Count - 1 do
+    IdList.Add(ClassListController.GetIdList(i));
 end;
 
 { TBoldObjectList_Proxy }
-
-procedure TBoldObjectList_Proxy.AssignContentValue(Source: IBoldValue);
-begin
-  if Mode = bdepContents then
-    ObjectListController.AssignContentValue(Source)
-  else
-   UnsupportedMode(Mode, 'AssignContentValue'); // do not localize
-end;
 
 function TBoldObjectList_Proxy.GetObjectListController: TBoldObjectListController;
 begin
   Result := TBoldObjectListController(ProxedController);
 end;
+
+procedure TBoldObjectList_Proxy.AssignContentValue(const Source: IBoldValue);
+begin
+  if Mode = bdepContents then
+    ObjectListController.AssignContentValue(Source)
+  else
+   UnsupportedMode(Mode, 'AssignContentValue');
+end;
+
+initialization
 
 end.

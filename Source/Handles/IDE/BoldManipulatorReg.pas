@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldManipulatorReg;
 
 interface
@@ -5,6 +8,8 @@ interface
 procedure Register;
 
 implementation
+
+{$R BoldManipulators.res}
 
 uses
   SysUtils,
@@ -25,3 +30,4 @@ begin
 end;
 
 end.
+

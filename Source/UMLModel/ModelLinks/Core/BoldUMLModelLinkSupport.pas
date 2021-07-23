@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelLinkSupport;
 
 interface
@@ -99,5 +102,7 @@ begin
     FreeAndNil(AllConstraints);
   end;
 end;
+
+initialization
 
 end.

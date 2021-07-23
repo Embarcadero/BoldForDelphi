@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleFile;
 
 interface
@@ -12,7 +15,8 @@ uses
   BoldUpdatePrecondition,
   BoldCondition,
   BoldFreeStandingValues,
-  BoldValueSpaceInterfaces;
+  BoldValueSpaceInterfaces,
+  BoldElements;
 
 type
   { forward declarations }
@@ -20,7 +24,6 @@ type
   TBoldPersistenceControllerFile = class;
 
   { TBoldAbstractPersistenceHandleFile }
-  {$MESSAGE WARN 'BoldModel should have FreeNotification!'}
   TBoldAbstractPersistenceHandleFile = class(TBoldPersistenceHandle)
   private
     FFileName: String;
@@ -50,18 +53,19 @@ type
     procedure WriteValueSpace; virtual; abstract;
     procedure ReadValueSpace; virtual; abstract;
   public
-    constructor Create(filename: string; CacheData: Boolean; MoldModel: TMoldModel);
-    destructor Destroy; override;
-    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
+    constructor create(filename: string; CacheData: Boolean; MoldModel: TMoldModel);
+    destructor destroy; override;
+    procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
-    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID); override;
+    procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
-    procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
+    procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     function MultilinksAreStoredInObject: Boolean; override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                     TranslationList: TBoldIdTranslationList); override;
+    function CanEvaluateInPS(sOCL: string; aSystem: TBoldElement; aContext: TBoldElementTypeInfo = nil; const aVariableList: TBoldExternalVariableList = nil): Boolean; override;
     property FileName: String read fFileName;
     property LocalValueSpace: IBoldValueSpace read GetValueSpace;
     property CacheData: Boolean read fCacheData;
@@ -73,11 +77,18 @@ implementation
 uses
   Dialogs,
   SysUtils,
-  BoldDefaultId,
-  PersistenceConsts,
-  BoldCoreConsts;
+  BoldDefaultId;
 
 { TBoldPersistenceControllerFile }
+
+function TBoldPersistenceControllerFile.CanEvaluateInPS(sOCL: string;
+  aSystem: TBoldElement; aContext: TBoldElementTypeInfo;
+  const aVariableList: TBoldExternalVariableList): Boolean;
+const
+  sMethodNotImplemented = '%s.%s: not supported/implemented';  
+begin
+  raise EBold.CreateFmt(sMethodNotImplemented, [ClassName, 'CanEvaluateInPS']); // do not localize
+end;
 
 constructor TBoldPersistenceControllerFile.create(filename: string; CacheData: Boolean; MoldModel: TMoldModel);
 begin
@@ -94,9 +105,8 @@ begin
 end;
 
 procedure TBoldPersistenceControllerFile.EnsureValueSpace;
-  procedure FixupValueSpace; // make sure that valuspaces in old formats can be handled
+  procedure FixupValueSpace;
   begin
-  // Make sure persistacestate is current for everything
     fFreeStandingValueSpace.MarkAllObjectsAndMembersCurrent;
   end;
 begin
@@ -116,22 +126,17 @@ end;
 
 procedure TBoldPersistenceControllerFile.PMExactifyIds(
   ObjectIdList: TBoldObjectIdList;
-  TranslationList: TBoldIdTranslationList);
+  TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean);
 begin
-  raise EBold.Create(sNotImplemented);
+  raise EBold.Create('NotImplemented');
 end;
 
 procedure TBoldPersistenceControllerFile.PMFetch(
   ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
   MemberIdList: TBoldMemberIdList; FetchMode: Integer;
   BoldClientID: TBoldClientID);
-var
-  i: integer;
 begin
   EnsureValueSpace;
-  for i := 0 to ObjectIdList.Count - 1 do
-    if not LocalValueSpace.HasContentsForId[ObjectIdList[i]] then
-      raise EBold.CreateFmt(sObjectNotInFile, [ClassName, ObjectIdList[i].AsString]);
   BoldApplyPartialValueSpace(ValueSpace, LocalValueSpace, ObjectIdList, MemberIdList, false);
 
   if not cacheData then
@@ -167,55 +172,55 @@ begin
   end
   else if Condition is TBoldSQLCondition then
   begin
-    ShowMessage(sSQLNotSpokenHere);
+    ShowMessage('This filehandler does not understand SQL, ignoring condition and orderby...');
     NewCondition := TBoldConditionWithClass.Create;
     NewCondition.TopSortedIndex := TBoldSQLCondition(Condition).TopSortedIndex;
     PMFetchIDListWithCondition(ObjectIdList, ValueSpace, FetchMode, NewCondition, NOTVALIDCLIENTID);
     NewCondition.free;
   end
   else
-    raise EBold.CreateFmt(sUnknownConditionType, [Condition.Classname]);
+    raise EBold.Create('unknown conditiontype: ' + Condition.Classname);
 end;
 
 procedure TBoldPersistenceControllerFile.PMSetReadonlyness(ReadOnlyList,
   WriteableList: TBoldObjectIdList);
 begin
-  raise EBold.Create(sNotImplemented);
+  raise EBold.Create('Not Implemented');
 end;
 
 procedure TBoldPersistenceControllerFile.PMTranslateToGlobalIds(
   ObjectIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.Create(sNotImplemented);
+  raise EBold.Create('Not Implemented');
 end;
 
 procedure TBoldPersistenceControllerFile.PMTranslateToLocalIds(
   GlobalIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.Create(sNotImplemented);
+  raise EBold.Create('Not Implemented');
 end;
 
 procedure TBoldPersistenceControllerFile.PMUpdate(
   ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
   Old_Values: IBoldValueSpace;
-  Precondition: TBoldUpdatePrecondition;
-  TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; BoldClientID: TBoldClientID);
+  Precondition: TBoldUpdatePrecondition; 
+  TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID);
 var
   NewTimeStamp: TDateTime;
   LocalTranslationList: TBoldIdTranslationList;
 begin
   if assigned(Precondition) then
-    raise EBold.CreateFmt(sPreconditionsNotSupported, [Classname, Precondition.Classname]);
-
+    raise EBold.CreateFmt('%s.PMUpdate: Preconditions (%s) not supported in this component', [Classname, Precondition.Classname]);
+    
   EnsureValueSpace;
 
   if fileexists(Filename) then
     NewTimeStamp := FileDateToDateTime(FileAge(FileName))
   else
     NewTimeStamp := 0;
-
+  TimeOfLatestUpdate := now;
   if (NewTimeStamp <> fFileTimeStamp) then
   begin
 {    if MessageDlg('The datafile has been written since you last accessed it... Go ahead?',
@@ -242,13 +247,12 @@ begin
     LocalTranslationList.Free;
 
   WriteValueSpace;
-
+  
   fFileTimestamp := FileDateToDateTime(FileAge(FileName));
 end;
 
 procedure TBoldPersistenceControllerFile.UnloadLocalValueSpace;
 begin
-  // does not work.
 {  fFreeStandingValueSpace.Free;
   fFreeStandingValueSpace := nil;
   }
@@ -284,10 +288,11 @@ end;
 destructor TBoldPersistenceControllerFile.destroy;
 begin
   FreeAndNil(fFreeStandingValueSpace);
-  inherited;
+  inherited; 
 end;
 
 { TBoldAbstractPersistenceHandleFile }
+
 
 procedure TBoldAbstractPersistenceHandleFile.SetBoldModel(const Value: TBoldAbstractModel);
 begin
@@ -303,5 +308,8 @@ procedure TBoldAbstractPersistenceHandleFile.SetFileName(const Value: String);
 begin
   FFileName := Value;
 end;
+
+
+initialization
 
 end.

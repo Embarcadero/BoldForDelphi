@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractPropagatorHandle;
 
 interface
@@ -24,5 +27,11 @@ type
   end;
 
 implementation
+
+uses
+  BoldRev
+  ;
+
+initialization
 
 end.

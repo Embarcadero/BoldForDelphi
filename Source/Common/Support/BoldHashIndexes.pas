@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHashIndexes;
 
 interface
@@ -19,8 +22,8 @@ type
   {---TBoldStringKey---}
   TBoldStringKey = class
   public
-    class function HashString(const KeyString: String; CompareMode: TBoldStringCompareMode): Cardinal;
-    class function HashBuffer(P: PChar; length: integer; CompareMode: TBoldStringCompareMode): Cardinal;
+    class function HashString(const KeyString: String; CompareMode: TBoldStringCompareMode): Cardinal;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function HashBuffer(const P: PChar; const Length: Integer; const CompareMode: TBoldStringCompareMode): Cardinal;
   end;
 
   {---TBoldStringHashIndex---}
@@ -31,8 +34,8 @@ type
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
    public
-    function FindByString(const KeyString: string): TObject;
-    procedure FindAllByString(const KeyString: string; List: TList);
+    function FindByString(const KeyString: string): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure FindAllByString(const KeyString: string; List: TList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   {---TBoldCaseSensitiveStringHashIndex---}
@@ -43,7 +46,7 @@ type
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
   public
-    function FindByString(const KeyString: string): TObject;
+    function FindByString(const KeyString: string): TObject;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   {---TBoldObjectHashIndex---}
@@ -53,9 +56,10 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    class function HashObject(KeyObject: TObject): Cardinal;
-    function FindByObject(KeyObject: TObject): TObject;
-    procedure FindAllByObject(const KeyObject: TObject; List: TList);
+    class function HashObject(KeyObject: TObject): Cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  public    
+    function FindByObject(KeyObject: TObject): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure FindAllByObject(const KeyObject: TObject; List: TList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
   {---TBoldClassHashIndex---}
@@ -65,8 +69,9 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    class function HashClass(KeyClass: TClass): Cardinal;
-    function FindByClass(KeyClass: TClass): TObject;
+    class function HashClass(KeyClass: TClass): Cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  public
+    function FindByClass(KeyClass: TClass): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
  end;
 
    {---TBoldGuidHashIndex---}
@@ -74,12 +79,13 @@ type
   private
     function GuidEqual(const Guid1, Guid2: TGuid): Boolean;
   protected
-    function ItemASKeyGUID(O: TObject): TGUID; virtual; abstract;
+    function ItemASKeyGUID(Item: TObject): TGUID; virtual; abstract;
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function HashGUID(const KeyGUID: TGUID): Cardinal;
-    function FindByGUID(const KeyGUID: TGUID): TObject;
+    function HashGUID(const KeyGUID: TGUID): Cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  public
+    function FindByGUID(const KeyGUID: TGUID): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
  end;
 
   {---TBoldCardinalHashIndex---}
@@ -89,47 +95,68 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function FindByCardinal(const KeyCardinal: Cardinal): TObject;
+    function FindByCardinal(const KeyCardinal: Cardinal): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
 
 implementation
 
 uses
-  Windows,  // CharUpperBuff, fixme move to BoldUtils.
-  SysUtils,
-  BoldUtils;
+  Windows,
+  BoldUtils,
+  BoldRev;
 
-class function TBoldStringKey.HashBuffer(P: PChar; Length: integer; CompareMode: TBoldStringCompareMode): Cardinal;
+{$IFDEF USEGLOBALCHARBUFFER}
+const
+  InitialBufferSize = 256;
+var
+  _PBuffer: PChar;
+  _PBufferLength: integer = InitialBufferSize;
+{$ENDIF}
+
+class function TBoldStringKey.HashBuffer(const P: PChar; const Length: Integer; const CompareMode: TBoldStringCompareMode): Cardinal;
+{$IFNDEF USEGLOBALCHARBUFFER}
   function LIHash: Cardinal; // Separate function to avoid string handling overhead in main func
   var
     PUpper: PChar;
   begin
-    GetMem(PUpper, Length);
+    GetMem(PUpper, Length * SizeOf(Char));
     try
-      Move(P^, PUpper^, Length);
+      Move(P^, PUpper^, Length * SizeOf(Char));
       CharUpperBuff(PUpper, Length);  // FIXME provide method in BoldUtils
       Result := HashBuffer(PUpper, Length, bscCaseDependent);
     finally
       Freemem(PUpper);
     end;
   end;
+{$ENDIF}
 var
   i: integer;
 begin
-   Result := 0;
-   case CompareMode of
-     bscCaseDependent:
-       for i := 0 to Length-1 do
-         Result := ((Result shl 3) and 2147483647) or
-                   (Result shr (32-3)) xor ord(P[i]);
-     bscCaseIndependent:
-       for i := 0 to Length-1 do
-         Result := ((Result shl 3) and 2147483647) or
-                   (Result shr (32-3)) xor (ord(P[i]) or 32);
+  Result := 0;
+  case CompareMode of
+    bscCaseDependent:
+      for i := 0 to Length-1 do
+        Result := ((Result shl 3) and 2147483647) or
+                  (Result shr (32-3)) xor ord(P[i]);
+    bscCaseIndependent:
+      for i := 0 to Length-1 do
+        Result := ((Result shl 3) and 2147483647) or
+                  (Result shr (32-3)) xor (ord(P[i]) or 32);
     else
+      {$IFDEF USEGLOBALCHARBUFFER}
+      if Length > _PBufferLength then begin
+        Freemem(_PBuffer);
+        GetMem(_PBuffer, Length * SizeOf(Char));
+        _PBufferLength := Length;
+      end;
+      Move(P^, _PBuffer^, Length * SizeOf(Char));
+      CharUpperBuff(_PBuffer, Length);  // FIXME provide method in BoldUtils
+      Result := HashBuffer(_PBuffer, Length, bscCaseDependent);
+      {$ELSE}
       Result := LIHash;
-   end;
+      {$ENDIF}
+  end;
 end;
 
 class function TBoldStringKey.HashString(const KeyString: String; CompareMode: TBoldStringCompareMode): Cardinal;
@@ -138,6 +165,12 @@ begin
 end;
 
 {---TBoldStringHashIndex---}
+
+function TBoldStringHashIndex.Hash(const Key): Cardinal;
+begin
+  Result := TBoldStringKey.HashString(string(Key), bscLocaleCaseIndependent);
+end;
+
 function TBoldStringHashIndex.HashItem(Item: TObject): Cardinal;
 begin
   Result := TBoldStringKey.Hashstring(ItemAsKeyString(Item), bscLocaleCaseIndependent);
@@ -145,7 +178,7 @@ end;
 
 function TBoldStringHashIndex.Match(const Key; Item:TObject):Boolean;
 begin
-  Result :=  BoldAnsiEqual(ItemAsKeyString(Item), string(Key));
+  Result := BoldAnsiEqual(ItemAsKeyString(Item), string(Key));
 end;
 
 function TBoldStringHashIndex.FindByString(const KeyString: string): TObject;
@@ -154,6 +187,12 @@ begin
 end;
 
 {---TBoldCaseSensitiveStringHashIndex---}
+
+function TBoldCaseSensitiveStringHashIndex.Hash(const Key): Cardinal;
+begin
+  Result := TBoldStringKey.HashString(string(Key), bscCaseDependent);
+end;
+
 function TBoldCaseSensitiveStringHashIndex.HashItem(Item: TObject): Cardinal;
 begin
   Result := TBoldStringKey.Hashstring(ItemAsKeyString(Item), bscCaseDependent);
@@ -170,6 +209,17 @@ begin
 end;
 
 {---TBoldObjectHashIndex---}
+
+class function TBoldObjectHashIndex.HashObject(KeyObject: TObject): Cardinal;
+begin
+  Result := Cardinal(KeyObject);
+end;
+
+function TBoldObjectHashIndex.Hash(const Key): Cardinal;
+begin
+   Result := Cardinal(Key);
+end;
+
 function TBoldObjectHashIndex.HashItem(Item: TObject): Cardinal;
 begin
   Result := HashObject(ItemAsKeyObject(Item));
@@ -186,6 +236,17 @@ begin
 end;
 
 {---TBoldClassHashIndex---}
+
+class function TBoldClassHashIndex.HashClass(KeyClass: TClass): Cardinal;
+begin
+  Result := Cardinal(KeyClass);
+end;
+
+function TBoldClassHashIndex.Hash(const Key): Cardinal;
+begin
+  Result := Cardinal(Key);
+end;
+
 function TBoldClassHashIndex.HashItem(Item: TObject): Cardinal;
 begin
   Result := HashClass(ItemAsKeyClass(Item));
@@ -202,6 +263,24 @@ begin
 end;
 
 {---TBoldGUIDHashIndex---}
+
+function TBoldGUIDHashIndex.HashGUID(const KeyGUID: TGUID): Cardinal;
+var
+  I: integer;
+begin
+  with KeyGUID do
+  begin
+    Result := D1 xor d2 xor (d3 shl 8);
+    for i := 0 to 7 do
+      result := result xor D4[I];
+  end;
+end;
+
+function TBoldGUIDHashIndex.Hash(const Key): Cardinal;
+begin
+  Result := HashGUid(TGuid(Key));
+end;
+
 function TBoldGUIDHashIndex.HashItem(Item: TObject): Cardinal;
 begin
   Result := HashGUID(ItemAsKeyGUID(Item));
@@ -218,7 +297,6 @@ begin
     result := result and (Guid1.D4[i] = Guid2.D4[i]);
 end;
 
-
 function TBoldGUIDHashIndex.Match(const Key; Item: TObject):Boolean;
 begin
   Result := GuidEqual(TGUID(Key), ItemAsKeyGUID(Item));
@@ -230,6 +308,12 @@ begin
 end;
 
 {---TBoldCardinalHashIndex---}
+
+function TBoldCardinalHashIndex.Hash(const Key): Cardinal;
+begin
+  Result := Cardinal(Key);
+end;
+
 function TBoldCardinalHashIndex.HashItem(Item: TObject): Cardinal;
 begin
   Result := ItemAsKeyCardinal(Item);
@@ -255,57 +339,15 @@ begin
   FindAll(KeyObject, List);
 end;
 
-function TBoldStringHashIndex.Hash(const Key): Cardinal;
-begin
-  Result := TBoldStringKey.HashString(string(Key), bscLocaleCaseIndependent);
-end;
-
-function TBoldCaseSensitiveStringHashIndex.Hash(const Key): Cardinal;
-begin
-  Result := TBoldStringKey.HashString(string(Key), bscCaseDependent);
-end;
-
-function TBoldObjectHashIndex.Hash(const Key): Cardinal;
-begin
-   Result := Cardinal(Key);
-end;
-
-function TBoldClassHashIndex.Hash(const Key): Cardinal;
-begin
-  Result := Cardinal(Key);
-end;
-
-function TBoldGUIDHashIndex.Hash(const Key): Cardinal;
-begin
-  Result := HashGUid(TGuid(Key));
-end;
-
-function TBoldCardinalHashIndex.Hash(const Key): Cardinal;
-begin
-  Result := Cardinal(Key);
-end;
-
-class function TBoldObjectHashIndex.HashObject(
-  KeyObject: TObject): Cardinal;
-begin
-  Result := Cardinal(KeyObject);
-end;
-
-class function TBoldClassHashIndex.HashClass(KeyClass: TClass): Cardinal;
-begin
-  Result := Cardinal(KeyClass);
-end;
-
-function TBoldGUIDHashIndex.HashGUID(const KeyGUID: TGUID): Cardinal;
-var
-  I: integer;
-begin
-  with KeyGUID do
-  begin
-    Result := D1 xor d2 xor (d3 shl 8);
-    for i := 0 to 7 do
-      result := result xor D4[I];
-  end;
-end;
+initialization
+{$IFDEF USEGLOBALCHARBUFFER}
+  GetMem(_PBuffer, InitialBufferSize * SizeOf(Char));
+{$ENDIF}
+finalization
+{$IFDEF USEGLOBALCHARBUFFER}
+  Freemem(_PBuffer);
+  _PBufferLength := 0;
+{$ENDIF}
 
 end.
+

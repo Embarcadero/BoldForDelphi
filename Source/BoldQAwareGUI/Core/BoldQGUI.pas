@@ -46,7 +46,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
   BoldSystemRT;
 
