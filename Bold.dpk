@@ -26,7 +26,7 @@ package Bold;
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Bold for Delphi - Runtime'}
-{$LIBVERSION '27'}
+{$LIBVERSION '28'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
@@ -151,7 +151,6 @@ contains
   BoldSOAP_TLB in 'Source\Common\SOAP\BoldSOAP_TLB.pas',
   BoldSOAP2_TLB in 'Source\Common\SOAP\BoldSOAP2_TLB.pas',
   BoldXMLRequests in 'Source\Common\SOAP\BoldXMLRequests.pas',
-  BoldDeriver in 'Source\Common\Subscription\BoldDeriver.pas',
   BoldSubscribableCollection in 'Source\Common\Subscription\BoldSubscribableCollection.pas',
   BoldSubscription in 'Source\Common\Subscription\BoldSubscription.pas',
   BoldBase64 in 'Source\Common\Support\BoldBase64.pas',
@@ -449,6 +448,7 @@ contains
   BoldExternalPersistenceHandleSQLPropEditor in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceHandleSQLPropEditor.pas',
   BoldExternalPersistenceSupport in 'Source\Persistence\ExternalPersistence\BoldExternalPersistenceSupport.pas',
   ExPeConsts in 'Source\Persistence\ExternalPersistence\ExPeConsts.pas',
-  BoldClientElementSupport in 'Source\ClientHandlesCom\Core\BoldClientElementSupport.pas';
+  BoldClientElementSupport in 'Source\ClientHandlesCom\Core\BoldClientElementSupport.pas',
+  BoldDeriver in 'Source\Common\Subscription\BoldDeriver.pas';
 
 end.

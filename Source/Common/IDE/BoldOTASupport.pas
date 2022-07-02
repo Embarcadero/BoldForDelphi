@@ -260,8 +260,8 @@ begin
       BoldLog.LogFmt('CurrentModule:', [result.FileName])
     else
       BoldLog.Log('CurrentModule not found');
-        end;
-    end;
+  end;
+end;
 
 function FindFileModuleInProject(const fileName: String; Project: IOTAProject): IOTAModule;
 var
