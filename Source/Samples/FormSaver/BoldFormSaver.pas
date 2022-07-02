@@ -30,7 +30,6 @@ type
     procedure _NotifyOutOfDate;
     procedure _MakeValid (DerivedObject: TObject; Subscriber: TBoldSubscriber);
     procedure _ReverseDerive(DerivedObject: TObject);
-
   protected
     function GetHostSystem: TBoldSystem; virtual; abstract;
     procedure SubscribeToCleanedObjects;
@@ -583,9 +582,12 @@ begin
   SetBoldPersistenceState(bvpsInvalid);
   SetElementFlag(befDerived, true);
   SubscribeToLocatorsInList := true;
+
+{$IFNDEF LightMemberDeriver}
   Deriver.OnDeriveAndSubscribe := _MakeValid;
   Deriver.OnReverseDerive := _ReverseDerive;
   Deriver.OnNotifyOutOfdate := _NotifyOutOfDate;
+{$ENDIF}
 end;
 
 procedure TBoldAbstractDirtyList.FreeContent;
