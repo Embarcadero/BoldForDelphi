@@ -1,9 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCheckListBoxReg;
 
 interface
 
 procedure Register;
-
+  
 implementation
 
 uses

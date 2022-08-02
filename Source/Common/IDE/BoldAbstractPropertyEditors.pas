@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractPropertyEditors;
 
 interface
@@ -5,8 +8,7 @@ interface
 uses
   Windows,
   Graphics,
-  DesignEditors,
-  EditIntf;
+  DesignEditors;
 
 type
   { forward declarations }
@@ -89,10 +91,14 @@ type
   { Source code altering property editors }
   { TModifyingMethodProperty }
   TModifyingMethodProperty = class(TBoldMethodProperty)
+  protected
+    procedure InsertText(const s: string); virtual;
   public
     procedure Edit; override;
-    procedure InsertText(const s: string); virtual;
-    function TextToInsert: string; virtual;
+    procedure InsertVariables; virtual;
+    procedure InsertImplementation; virtual;
+    function ImplementationTextToInsert: string; virtual;
+    function VariableDefinitionTextToInsert: string; virtual;
     procedure ReposCursor(DeltaLines, ColPos: integer);
     function GetDeltaLines: integer; virtual;
     function GetColPos: integer; virtual;
@@ -137,7 +143,8 @@ begin
   inherited;
   if NewMethod and ConfirmAdd then
   begin
-    InsertText(TextToInsert);
+    InsertVariables;
+    InsertImplementation;
     ReposCursor(DeltaLines, ColPos);
   end;
 end;
@@ -147,13 +154,36 @@ begin
   Result := True;
 end;
 
-function TModifyingMethodProperty.TextToInsert: string;
+function TModifyingMethodProperty.VariableDefinitionTextToInsert: string;
+begin
+  result := '';
+end;
+
+function TModifyingMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 end;
 
 procedure TModifyingMethodProperty.InsertText(const s: string);
 begin
+end;
+
+procedure TModifyingMethodProperty.InsertVariables;
+var
+  s: string;
+begin
+  s := VariableDefinitionTextToInsert;
+  if s = '' then
+    exit;
+  ReposCursor(-1, 0);
+  InsertText(s);
+  ReposCursor(2, 0);
+end;
+
+procedure TModifyingMethodProperty.InsertImplementation;
+begin
+//  ReposCursor(-1, 0);
+  InsertText(ImplementationTextToInsert);
 end;
 
 procedure TModifyingMethodProperty.ReposCursor(DeltaLines, ColPos: integer);
@@ -194,14 +224,14 @@ var
   EditPos: TOTAEditpos;
   CharPos: TOTACharpos;
 begin
-  if Supports(BorlandIDEServices, IOTAEditorServices, EditorServices) then
+  if (s <> '') and Supports(BorlandIDEServices, IOTAEditorServices, EditorServices) then
   begin
     EditPos := EditorServices.TopBuffer.TopView.CursorPos;
     EditorServices.TopBuffer.TopView.ConvertPos(True, EditPos, CharPos);
     CurPos := EditorServices.TopBuffer.TopView.CharPosToPos(CharPos);
     Writer := EditorServices.TopBuffer.CreateUndoableWriter;
     Writer.CopyTo(CurPos);
-    Writer.Insert(PAnsiChar(s));      // marco to be fixed
+    Writer.Insert(PAnsiChar({$IFDEF BOLD_UNICODE}AnsiString{$ENDIF}(s)));
   end;
 end;
 
@@ -238,7 +268,7 @@ end;
 
 function TBoldOneLinerWithEvalMethodProperty.GetColPos: integer;
 begin
-  Result := Pos(BOLDSYM_QUOTECHAR, TextToInsert)+1;
+  Result := Pos(BOLDSYM_QUOTECHAR, ImplementationTextToInsert)+1;
 end;
 
 { TBoldStringProperty }

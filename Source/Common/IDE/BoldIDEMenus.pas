@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIDEMenus;
 
 interface
@@ -27,7 +30,6 @@ type
     {Menu Actions}
     procedure ActionAbout(Sender: TObject);
     procedure ActionHelp(Sender: TObject);
-    procedure ActionURLHome(Sender: TObject);
     procedure ActionURLBfD(Sender: TObject);
     {Properties}
     property BoldMenu: TMenuItem read fBoldMenu;
@@ -41,9 +43,7 @@ implementation
 uses
   SysUtils,
   Forms,
-  BoldDefsDT,
-  BoldAbout,
-  BoldCommonConst;
+  BoldDefsDT;
 
 var
   G_BoldMenuExpert: TBoldMenuExpert = nil;
@@ -67,12 +67,6 @@ end;
 
 procedure TBoldMenuExpert.ActionAbout(Sender: TObject);
 begin
-  with BoldAbout.TfrmAboutBold.Create(nil) do
-  try
-    ShowModal;
-  finally
-    Free;
-  end;
 end;
 
 procedure TBoldMenuExpert.ActionHelp(Sender: TObject);
@@ -80,22 +74,17 @@ var
   HelpHandle: HWND;
 begin
 //FIXME PORT ###What happened to the helpfile property?
-//{ -- temproary removed during porting
+{ -- temproary removed during porting
   HelpHandle := Application.Handle;
   if Application.MainForm <> nil then
     HelpHandle := Application.MainForm.Handle;
   WinHelp(HelpHandle, HelpFile, HELP_FINDER, 0);
-//}
+}
 end;
 
 procedure TBoldMenuExpert.ActionURLBfD(Sender: TObject);
 begin
-  ShellExecute(0, 'open', URLBoldForDelphi, '', '', SW_SHOWMAXIMIZED); // do not localize
-end;
-
-procedure TBoldMenuExpert.ActionURLHome(Sender: TObject);
-begin
-  ShellExecute(0, 'open', URLBoldSoft, '', '', SW_SHOWMAXIMIZED); // do not localize
+  ShellExecute(0, 'open', URLBoldForDelphi, '', '', SW_SHOWMAXIMIZED);
 end;
 
 function TBoldMenuExpert.AddMenuItem(aName, aCaption: string; aClickEvent: TNotifyEvent; first: Boolean = false): TMenuItem;
@@ -131,20 +120,18 @@ begin
   {Main Bold Menu}
   fBoldMenu := TMenuItem.Create(fOwner);
   fBoldMenu.Enabled := true;
-  fBoldMenu.Caption := '&Bold'; // do not localize
-  fBoldMenu.Name := 'BoldMenu'; // do not localize
+  fBoldMenu.Caption := '&Bold';
+  fBoldMenu.Name := 'BoldMenu';
   I := 0;
-  while (I<MainMenu.Items.Count) and (MainMenu.Items[I].Name<>'ToolsMenu') do // do not localize
+  while (I<MainMenu.Items.Count) and (MainMenu.Items[I].Name<>'ToolsMenu') do
     Inc(I);
 
-  AddMenuItem('BoldURLDelimiterMenu', '-', nil); // do not localize
-  AddMenuItem('BoldHomePageMenu', sCompanyHomePage, ActionURLHome); // do not localize
-  AddMenuItem('BoldBfDHomePageMenu', sProductHomePage, ActionURLBfD); // do not localize
-  AddMenuItem('BoldHelpDelimiterMenu', '-', nil); // do not localize
-  AddMenuItem('BoldHelpMenu', sHelp, ActionHelp); // do not localize
-  AddMenuItem('BoldAboutDelimiterMenu', '-', nil); // do not localize
-  AddMenuItem('BoldAboutMenu', sAbout, ActionAbout); // do not localize
-  // in D7, the menu must have items before it is added to the main menu
+  AddMenuItem('BoldURLDelimiterMenu', '-', nil);
+  AddMenuItem('BoldBfDHomePageMenu', 'Bold for &Delphi Home Page', ActionURLBfD);
+  AddMenuItem('BoldHelpDelimiterMenu', '-', nil);
+  AddMenuItem('BoldHelpMenu', '&Help', ActionHelp);
+  AddMenuItem('BoldAboutDelimiterMenu', '-', nil);
+//  AddMenuItem('BoldAboutMenu', '&About', ActionAbout);
   MainMenu.Items.Insert(I, fBoldMenu);
 end;
 
@@ -173,7 +160,7 @@ begin
   MenuItem := TMenuItem.Create(fOwner);
   with MenuItem do
   begin
-    Name    := Expert.ClassName + 'Menu'; // do not localize
+    Name    := Expert.ClassName + 'Menu';
     Caption := Expert.GetMenuText;
     OnClick := Expert.ExecuteEvent;
   end;
@@ -186,5 +173,7 @@ begin
     fBoldMenu.Remove(anItem);
   anItem := nil;
 end;
+
+initialization
 
 end.

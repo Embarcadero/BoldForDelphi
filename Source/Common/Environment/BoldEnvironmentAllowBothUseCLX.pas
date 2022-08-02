@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldEnvironmentAllowBothUseCLX;
 
 interface
@@ -12,4 +15,3 @@ uses
 initialization
   BoldInternalAllowBothUseCLX := true;
 end.
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectRetriever;
 
 interface
@@ -8,11 +11,11 @@ uses
   BoldValueSpaceInterfaces,
   BoldSystem;
 
-function BoldRetrieveObjectByIdString(BoldSystem: TBoldSystem; IdString: String): TBoldObject;
+function BoldRetrieveObjectByIdString(BoldSystem: TBoldSystem; IdString: String; aLoadIfNotInMemory: boolean = true): TBoldObject;
 
 implementation
 
-function RetrieveObjectByInexactId(BoldSystem: TBoldSystem; ObjectId: tBoldObjectId): TBoldObject;
+function RetrieveObjectByInexactId(BoldSystem: TBoldSystem; ObjectId: TBoldObjectId): TBoldObject;
 var
   TranslationList: TBoldIdTranslationList;
   IdList: TBoldObjectIdList;
@@ -26,9 +29,9 @@ begin
     IdList := TBoldObjectIdList.Create;
     try
       IdList.Add(ObjectId);
-      BoldSystem.PersistenceController.PMExactifyIds(IdList, TranslationList);
+      BoldSystem.PersistenceController.PMExactifyIds(IdList, TranslationList, true);
       ExactId := TranslationList.TranslateToNewId[ObjectId];
-      if ExactId.TopSortedIndexExact then
+      if (not ExactId.NonExisting) and ExactId.TopSortedIndexExact then
       begin
         Locator := BoldSystem.EnsuredLocatorByID[ExactId];
         if Locator.EnsuredBoldObject.BoldExistenceState = besExisting then
@@ -41,7 +44,7 @@ begin
   end;
 end;
 
-function BoldRetrieveObjectByIdString(BoldSystem: TBoldSystem; IdString: String): TBoldObject;
+function BoldRetrieveObjectByIdString(BoldSystem: TBoldSystem; IdString: String; aLoadIfNotInMemory: boolean): TBoldObject;
 var
   ObjectId: TBoldDefaultID;
   Locator: TBoldObjectLocator;
@@ -54,11 +57,11 @@ begin
     ObjectId := TBoldDefaultID.CreateWithClassID(0, false);
     ObjectId.AsInteger := IdValue;
     try
-      // Check if the locator is already in memory
       Locator := BoldSystem.Locators.LocatorByID[ObjectId];
       if assigned(Locator) then
         result := Locator.EnsuredBoldObject
       else
+      if aLoadIfNotInMemory then      
         result := RetrieveObjectByInexactId(BoldSystem, ObjectId);
     finally
       ObjectId.Free;

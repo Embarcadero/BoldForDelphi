@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractLockManagerHandle;
 
 interface
@@ -18,5 +21,8 @@ type
   end;
 
 implementation
+
+
+initialization
 
 end.

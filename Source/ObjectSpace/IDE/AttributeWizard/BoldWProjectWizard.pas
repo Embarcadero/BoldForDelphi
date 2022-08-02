@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWProjectWizard;
 
 interface
@@ -71,7 +74,6 @@ begin
   Result := false;
   Project := nil;
   ModuleServices := (BorlandIDEServices as IOTAModuleServices);
-  // get the current module
   CurrentModule:= ModuleServices.CurrentModule;
   if Assigned(CurrentModule) then
   begin
@@ -80,17 +82,16 @@ begin
       Project := CurrentModule as IOTAProject;
       Result := true;
     end;
-    // go one level up to owners
     if not Result then
-      if (CurrentModule.OwnerCount > 0) then
+      if (CurrentModule.GetOwnerCount > 0) then
         for i:= 0 to CurrentModule.OwnerCount - 1 do
-          if (CurrentModule.Owners[i].QueryInterface(IOTAProject, Project) = S_OK) then
+          if (CurrentModule.GetOwner(i).QueryInterface(IOTAProject, Project) = S_OK) then
           begin
-            Project := CurrentModule.Owners[i] as IOTAProject;
+            Project := CurrentModule.GetOwner(i) as IOTAProject;
             Result := true;
             Break;
-          end; //if
-    // find a project amongst the open modules
+          end;
+
     if not Result then
       if (ModuleServices.ModuleCount > 0) then
         for i:=0 to ModuleServices.GetModuleCount - 1 do
@@ -100,20 +101,17 @@ begin
             Result := true;
             Break;
           end;
-  end; //if
+  end;
 end;
 
 procedure TProjectWizard.CreateModule;
 begin
 end;
 
-//procedure TProjectWizard.GetcomponentProps(Props: TListBox);
-//begin
-//end;
 
-//function TProjectWizard.GetAttributes: TStringList;
-//begin
-//end;
+
+
+
 
 
 {TOTAProject}
@@ -130,14 +128,12 @@ end;
 
 procedure TOTAProject.AddFile(const AFileName: string; IsUnitOrForm: Boolean);
 begin
-  //!!Delphi4
-//  IProject.AddFile(AFileName, IsUnitOrForm);
+
 end;
 
 procedure TOTAProject.RemoveFile(const AFileName: string);
 begin
-  //!!Delphi4
-//  IProject.RemoveFile(AFileName);
+
 end;
 
 function TOTAProject.GetModule(Index: Integer): IOTAModuleInfo;
@@ -147,8 +143,7 @@ end;
 
 function TOTAProject.CloseModule(ForceClosed: Boolean): Boolean;
 begin
-  //!!Delphi4
-//  Result := IProject.CloseModule(ForceClosed);
+
   Result := false;
 end;
 
@@ -183,8 +178,8 @@ var
 begin
   ModuleInfo := IProject.GetModule(Index);
   Result := false;
-///  Result := (ModuleInfo.GetModuleType = 0);
 end;
 
-end.
+initialization
 
+end.

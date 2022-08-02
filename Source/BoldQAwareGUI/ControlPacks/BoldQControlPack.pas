@@ -342,7 +342,6 @@ type
 implementation
 
 uses
-  BoldRev,
   BoldUtils,
   BoldExceptionHandlers,
 {$IFNDEF BOLDCOMCLIENT} // uses

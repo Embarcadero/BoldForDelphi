@@ -8,7 +8,7 @@ uses
   Dialogs,
   BoldSystem,
   BoldGuidUtils,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldUMLModel,
   BoldUMLTypes,
   BoldUMLPlugins,
@@ -334,7 +334,7 @@ end;
 // Resource for menu and button icon
 function TUMLModelToEcoIIIGenerator.GetImageResourceName: String;
 begin
-  result := 'EcoIII package file generator';
+  result := 'UMLPluginExportImage';
 end;
 
 // Caption for menu and hint for button

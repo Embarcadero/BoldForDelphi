@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDateTimeControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,10 +8,11 @@ unit BoldDateTimeControlPackCom;
 interface
 
 uses
-  BoldDefs,
-  BoldSubscription,
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  BoldControlPackCom;
+  BoldClientElementSupport,
+  BoldComClient,
+  BoldComObjectSpace_TLB,
+  BoldControlPackCom,
+  BoldDefs;
 
 type
   { Forward declarations }
@@ -65,7 +69,6 @@ type
     function GetEffectiveRenderer: TBoldRendererCom; override;
     property EffectiveAsDateTimeRenderer: TBoldAsDateTimeRendererCom read GetEffectiveAsDateTimeRenderer;
   public
-//    procedure Assign(Source: TPersistent); override;
     function GetCurrentAsDateTime(Follower: TBoldFollowerCom): TDateTime;
     procedure  MakeClean(Follower: TBoldFollowerCom); override;
     procedure MayHaveChanged(NewValue: TDateTime; Follower: TBoldFollowerCom);
@@ -78,10 +81,7 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
-  BoldControlPackDefs,
-  {!! DO NOT REMOVE !! BoldAttributes ,}
-  BoldGuard;
+  BoldControlPackDefs;
 
 var
   DefaultAsDateTimeRenderer: TBoldAsDateTimeRendererCom = nil;
@@ -98,15 +98,14 @@ begin
 end;
 
 function TBoldAsDateTimeRendererCom.DefaultMayModify(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): Boolean;
-{$IFNDEF BOLDCOMCLIENT} // defaultMayModify
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: IBoldElement;
-{$ENDIF}
+{$ENDIF}  
 begin
-  {$IFDEF BOLDCOMCLIENT} // defaultMayModify
+  {$IFDEF BOLDCOMCLIENT}
   result := inherited DefaultMayModify(Element, Representation, Expression, VariableList, Subscriber);
   {$ELSE}
-  // Note! We don't call inherited DefaultMayModify to prevent evaluation of expression two times!
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
   result := (ValueElement is TBAMoment) and ValueElement.ObserverMayModify(Subscriber);
   {$ENDIF}
@@ -114,7 +113,7 @@ end;
 
 function TBoldAsDateTimeRendererCom.DefaultGetAsDateTimeAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): TDateTime;
 var
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   el: IBoldElement;
   attr: IBoldAttribute;
   {$ELSE}
@@ -125,7 +124,7 @@ begin
   Result := 0;
   if Assigned(Element) then
   begin
-    {$IFDEF BOLDCOMCLIENT} //defaultGet
+    {$IFDEF BOLDCOMCLIENT}
     if assigned(Subscriber) then
       el := Element.EvaluateAndSubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, false, false)
     else
@@ -158,13 +157,13 @@ end;
 
 procedure TBoldAsDateTimeRendererCom.DefaultSetAsDateTime(Element: IBoldElement; const Value: TDateTime; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
 var
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   Attr: IBoldAttribute;
   {$ENDIF}
   ValueElement: IBoldElement;
 begin
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   if assigned(ValueElement) and (ValueElement.QueryInterface(IBoldAttribute, Attr) = S_OK) then
     Attr.AsVariant := Value
   else
@@ -260,7 +259,7 @@ begin
   if Assigned(Renderer) then
     Result := Renderer
   else
-    Result := DefaultAsDateTimeRenderer; //FIXME
+    Result := DefaultAsDateTimeRenderer;
 end;
 
 procedure TBoldDateTimeFollowerControllerCom.MakeClean(Follower: TBoldFollowerCom);
@@ -286,7 +285,7 @@ begin
     (Follower.RendererData as TBoldDateTimeRendererDataCom).CurrentDateTimeValue := NewValue;
     Follower.ControlledValueChanged(EffectiveAsDateTimeRenderer.IsChanged(Follower.RendererData as TBoldDateTimeRendererDataCom, NewValue, Representation, Expression, VariableList));
   end;
-end;
+end;   
 
 initialization
   DefaultAsDateTimeRenderer := TBoldAsDateTimeRendererCom.Create(nil);

@@ -1,14 +1,18 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldObjectSpaceLists;
 
 interface
 
 uses
   Classes,
-  BoldSubscription,
+  BoldSubscription,  
   BoldSystem,
   BoldSystemRT,
   BoldIndex,
-  BoldIndexableList;
+  BoldIndexableList,
+  BoldHashIndexes;
 
 type
   TBoldObjectAttributeIndexList = class;
@@ -18,24 +22,26 @@ type
 {---TBoldObjectAttributeIndexList---}
   TBoldObjectAttributeIndexList = class(TBoldIndexableList)
   private
-    function GetHasMembersIndex: Boolean;
-    function GetMembersIndex: TBoldMembersHashIndex;
-    function CreateMembersIndex(ObjectList: TBoldObjectList; MemberList: TBoldMemberRTInfoList): TBoldMembersHashIndex;
-    procedure NotifyMemberIndexBad; virtual;
+    class var IX_BoldQualifiers: integer;
+    function GetHasMembersIndex: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMembersIndex: TBoldMembersHashIndex; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
+    procedure NotifyMemberIndexBad; virtual;
     procedure EnsureLazyCreateIndexes; virtual;
+    function CreateMembersIndex(ObjectList: TBoldObjectList; MemberList: TBoldMemberRTInfoList): TBoldMembersHashIndex; virtual;
   public
     procedure InitMembersIndex(ObjectList: TBoldObjectList; MemberList: TBoldMemberRTInfoList);
     property HasMembersIndex: Boolean read GetHasMembersIndex;
-    function GetLocatorByAttributesAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator;
+    function GetLocatorByAttributesAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   end;
 
 {---TBoldObjectLocatorList---}
   TBoldObjectLocatorList = class(TBoldObjectAttributeIndexList)
   private
-    function GetLocatorIndex: TBoldLocatorHashIndex;
-    function GetLocators(index: Integer): TBoldObjectLocator;
-    procedure SetLocators(index: Integer; Value: TBoldObjectLocator);
+    class var IX_BoldObjectLocator: integer;
+    function GetLocatorIndex: TBoldLocatorHashIndex; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLocators(index: Integer): TBoldObjectLocator; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetLocators(index: Integer; Value: TBoldObjectLocator); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetLocatorInList(Locator: TBoldObjectLocator): Boolean;
     property LocatorIndex: TBoldLocatorHashIndex read GetLocatorIndex;
   protected
@@ -43,9 +49,9 @@ type
   public
     constructor Create;
     constructor CreateFromObjectList(BoldObjectList: TBoldObjectList);
-    procedure Add(NewLocator: TBoldObjectLocator);
+    procedure Add(NewLocator: TBoldObjectLocator); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function Clone: TBoldObjectLocatorList;
-    procedure Ensure(NewLocator: TBoldObjectLocator);
+    procedure Ensure(NewLocator: TBoldObjectLocator); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure FillObjectList(BoldObjectList: TBoldObjectList);
     procedure MergeObjectList(BoldObjectList: TBoldObjectList);
     property Locators[index: Integer]: TBoldObjectLocator read GetLocators write SetLocators; default;
@@ -59,15 +65,16 @@ type
     fMemberSubscriber: TBoldPassThroughSubscriber;
     fOwner: TBoldObjectAttributeIndexList;
     fObjectList: TBoldObjectList;
-    procedure _receiveMemberChanged(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    fStringCompareMode: TBoldStringCompareMode;
   protected
-    constructor Create(Owner: TBoldObjectAttributeIndexList; ObjectList: TBoldObjectList; Members: TBoldMemberRTInfoList);
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function LocatorFromItem(Item: TObject): TBoldObjectLocator;
-    function ObjectFromItem(Item: TObject): TBoldObject;
+    function LocatorFromItem(Item: TObject): TBoldObjectLocator; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function ObjectFromItem(Item: TObject): TBoldObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure _receiveMemberChanged(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); virtual;
   public
+    constructor Create(Owner: TBoldObjectAttributeIndexList; ObjectList: TBoldObjectList; Members: TBoldMemberRTInfoList; AStringCompareMode: TBoldStringCompareMode = bscCaseDependent);
     destructor Destroy; override;
     procedure Clear(DestroyObjects: Boolean = false); override;
     procedure Add(Item: TObject); override;
@@ -79,11 +86,7 @@ implementation
 uses
   SysUtils,
   BoldId,
-  BoldHashIndexes;
-
-var
-  IX_BoldObjectLocator: integer = -1;
-  IX_BoldQualifiers: integer = -1;
+  BoldDefs;
 
 type
   {---TBoldMembersKey---}
@@ -92,10 +95,27 @@ type
     FAttributeList: TBoldMemberList;
     FHash: Cardinal;
   public
-    constructor Create(Attributes: TBoldMemberList);
+    constructor Create(Attributes: TBoldMemberList; StringCompareMode: TBoldStringCompareMode);
     property AttributeList: TBoldMemberList read FAttributeList;
     function Hash: Cardinal;
   end;
+
+function TBoldMembersHashIndex.LocatorFromItem(Item: TObject): TBoldObjectLocator;
+begin
+  Assert(not Assigned(Item) or (Item is TBoldObjectLocator));
+  result := TBoldObjectLocator(Item);
+end;
+
+function TBoldMembersHashIndex.ObjectFromItem(Item: TObject): TBoldObject;
+var
+  temp: TBoldObjectLocator;
+begin
+  temp := LocatorFromItem(Item);
+  if assigned(temp) then
+    result := temp.EnsuredBoldObject
+  else
+    result := nil;
+end;
 
 procedure TBoldMembersHashIndex.Add(Item: TObject);
 var
@@ -114,12 +134,122 @@ begin
   end;
 end;
 
+  {---TBoldMembersHashIndex---}
+constructor TBoldMembersHashIndex.Create(Owner: TBoldObjectAttributeIndexList; ObjectList: TBoldObjectList; Members: TBoldMemberRTInfoList; AStringCompareMode: TBoldStringCompareMode);
+var
+  i: Integer;
+begin
+  inherited Create;
+  FStringCompareMode := AStringCompareMode;
+  FMemberIndexList := TList.Create;
+  FMemberIndexList.Capacity := Members.Count;
+  for i := 0 to Members.Count - 1 do
+    FMemberIndexList.Add(TBoldMemberId.create(Members[i].index));
+  fMemberSubscriber := TBoldPassThroughSubscriber.Create(_receiveMemberChanged);
+  fOwner := Owner;
+  fObjectList := ObjectList;
+end;
+
+destructor TBoldMembersHashIndex.Destroy;
+var
+  i: Integer;
+begin
+  for i := FMemberIndexList.Count-1 downto 0 do { counting down avoids adjusting other pointers in list }
+    TObject(FMemberIndexList[i]).Free;
+  FreeAndNil(FMemberIndexList);
+  FreeAndNil(fMemberSubscriber);
+  inherited;
+end;
+
+function TBoldMembersHashIndex.HashItem(Item: TObject): Cardinal;
+var
+  i: Integer;
+  concatval: String;
+  index: Integer;
+  member: TBoldMember;
+  BoldObject: TBoldObject;
+begin
+  concatval := '';
+  BoldObject := ObjectFromItem(Item);
+  for i := 0 to FMemberIndexList.Count - 1 do
+  begin
+    Assert(TObject(FMemberIndexList[i]) is TBoldMemberId);
+    index := TBoldMemberId(FMemberIndexList[i]).MemberIndex;
+    member := BoldObject.BoldMembers[index];
+    concatval := concatval + member.AsString;
+  end;
+  result := TBoldStringKey.HashString(concatval, fStringCompareMode);
+end;
+
+function TBoldMembersHashIndex.Match(const Key; Item:TObject):Boolean;
+var
+  MembersKey: TBoldMembersKey;
+  Member: TBoldMember;
+  BoldObject: TBoldObject;
+  i: Integer;
+const
+  cStringType = 'String'; // to avoid using BoldAttributes unit
+begin
+  MembersKey := TBoldMembersKey(Key);
+  BoldObject := ObjectFromItem(Item);
+  result := FMemberIndexList.Count = MembersKey.AttributeList.Count;
+  i := 0;
+  while result and (i < FMemberIndexList.Count) do
+  begin
+    Assert(TObject(FMemberIndexList[i]) is TBoldMemberId);
+    Member := BoldObject.BoldMembers[TBoldMemberId(FMemberIndexList[i]).MemberIndex];
+    if (fStringCompareMode <> bscCaseDependent) and (Member.BoldType.AsString = cStringType) then
+      result := MembersKey.AttributeList[i].IsEqualAs(ctCaseInsensitive, Member)
+    else
+      result := MembersKey.AttributeList[i].IsEqual(Member);
+    inc(i);
+  end;
+end;
+
+function TBoldMembersHashIndex.GetLocatorByAttributesAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator;
+var
+  Key: TBoldMembersKey;
+  i: integer;
+begin
+  Key := TBoldMembersKey.Create(MemberList, fStringCompareMode);
+  try
+    result := LocatorFromItem(Find(Key));
+  finally
+    Key.Free;
+  end;
+
+  if assigned(subscriber) then
+  begin
+    if assigned(result) then
+    begin
+      for i := 0 to FMemberIndexList.Count - 1 do
+        result.EnsuredBoldObject.BoldMembers[TBoldMemberId(FMemberIndexList[i]).MemberIndex].DefaultSubscribe(subscriber, breReSubscribe);
+    end
+    else if assigned(fObjectList) then
+      fObjectList.AddSmallSubscription(Subscriber, [beQualifierChanged], breReSubscribe);
+  end;
+end;
+
 procedure TBoldMembersHashIndex._receiveMemberChanged(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+var
+  Locator: TBoldObjectLocator;
 begin
+  if OriginalEvent = beValueChanged then
+  begin
+    Locator := (Originator as TBoldMember).OwningObject.BoldObjectLocator;
+    if not IsCorrectlyIndexed(Locator) then
+    begin
+      AutoResize := false;
+      RemoveChanged(Locator);
+      Add(locator);
+      AutoResize := true;
+    end;
+  end;
   if assigned(fObjectList) then
     fObjectList.SendEvent(beQualifierChanged);
-  fOwner.NotifyMemberIndexBad; // this will tell the owning locatorlist to destroy us.
+  if OriginalEvent <> beValueChanged then
+  fOwner.NotifyMemberIndexBad;
 end;
 
 procedure TBoldMembersHashIndex.Clear(DestroyObjects: Boolean = false);
@@ -159,9 +289,12 @@ end;
 
 procedure TBoldObjectAttributeIndexList.EnsureLazyCreateIndexes;
 begin
-  // nothing;
 end;
 
+function TBoldObjectAttributeIndexList.GetMembersIndex: TBoldMembersHashIndex;
+begin
+  result := TBoldMembersHashIndex(indexes[IX_BoldQualifiers]);
+end;
 
 procedure TBoldObjectAttributeIndexList.NotifyMemberIndexBad;
 var
@@ -174,13 +307,6 @@ begin
   end;
 end;
 
-function TBoldObjectAttributeIndexList.GetMembersIndex: TBoldMembersHashIndex;
-begin
-  result := TBoldMembersHashIndex(indexes[IX_BoldQualifiers]);
-end;
-
-
-
 {---TBoldObjectLocatorList---}
 constructor TBoldObjectLocatorList.Create;
 begin
@@ -189,18 +315,29 @@ begin
   OwnsEntries := False;
 end;
 
+function TBoldObjectLocatorList.GetLocators(index: Integer): TBoldObjectLocator;
+begin
+  Result := TBoldObjectLocator(Items[index]);
+end;
+
+procedure TBoldObjectLocatorList.SetLocators(index: Integer; Value: TBoldObjectLocator);
+begin
+  Items[index] := Value;
+end;
+
+procedure TBoldObjectLocatorList.Add(NewLocator: TBoldObjectLocator);
+begin
+  inherited Add(NewLocator);
+end;
+
 constructor TBoldObjectLocatorList.CreateFromObjectList(BoldObjectList: TBoldObjectList);
 var
   I: Integer;
 begin
   Create;
+  Capacity := BoldObjectList.Count;
   for I := 0 to BoldObjectList.Count - 1 do
     Add(BoldObjectList.Locators[I]);
-end;
-
-function TBoldObjectLocatorList.GetLocators(index: Integer): TBoldObjectLocator;
-begin
-  Result := TBoldObjectLocator(Items[index]);
 end;
 
 function TBoldObjectLocatorList.GetLocatorIndex: TBoldLocatorHashIndex;
@@ -210,25 +347,28 @@ begin
   result := TBoldLocatorHashIndex(Indexes[IX_BoldObjectLocator]);
 end;
 
-
 function TBoldObjectLocatorList.Clone: TBoldObjectLocatorList;
 var
   I: Integer;
 begin
   Result := TBoldObjectLocatorList.Create;
+  Result.Capacity := Capacity;
   for I := 0 to Count - 1 do
     Result.Add(Locators[I]);
 end;
 
 function TBoldObjectLocatorList.GetLocatorInList(Locator: TBoldObjectLocator): Boolean;
 begin
-  result := assigned(Locator);
-  if result then
+  Result := Assigned(Locator);
+  if Result then
   begin
-    if Count > 10 then
-      Result := Assigned(LocatorIndex.FindLocatorByLocator(Locator))
+    case Count of
+      0: result := false;
+      1: result := Locators[0] = Locator;
+      2..10: Result := IndexOf(Locator) <> -1;
     else
-      result := IndexOf(Locator) <> -1;
+      Result := Assigned(LocatorIndex.FindLocatorByLocator(Locator));
+    end;
   end;
 end;
 
@@ -250,11 +390,6 @@ begin
       BoldObjectList.Add(Locators[I].BoldObject);
 end;
 
-procedure TBoldObjectLocatorList.Add(NewLocator: TBoldObjectLocator);
-begin
-  inherited Add(NewLocator);
-end;
-
 procedure TBoldObjectLocatorList.EnsureLazyCreateIndexes;
 begin
   inherited;
@@ -267,121 +402,9 @@ begin
     Add(NewLocator);
 end;
 
-
-
-procedure TBoldObjectLocatorList.SetLocators(index: Integer; Value: TBoldObjectLocator);
-begin
-  Items[index] := Value;
-end;
-
-  {---TBoldMembersHashIndex---}
-constructor TBoldMembersHashIndex.Create(Owner: TBoldObjectAttributeIndexList; ObjectList: TBoldObjectList; Members: TBoldMemberRTInfoList);
-var
-  i: Integer;
-begin
-  inherited Create;
-  FMemberIndexList := TList.Create;
-  FMemberIndexList.Capacity := Members.Count;
-  for i := 0 to Members.Count - 1 do
-    FMemberIndexList.Add(TBoldMemberId.create(Members[i].index));
-  fMemberSubscriber := TBoldPassThroughSubscriber.Create(_receiveMemberChanged);
-  fOwner := Owner;
-  fObjectList := ObjectList;
-end;
-
-destructor TBoldMembersHashIndex.Destroy;
-var
-  i: Integer;
-begin
-  for i := 0 to FMemberIndexList.Count - 1 do
-    TObject(FMemberIndexList[i]).Free;
-  FreeAndNil(FMemberIndexList);
-  FreeAndNil(fMemberSubscriber);
-  inherited;
-end;
-
-function TBoldMembersHashIndex.HashItem(Item: TObject): Cardinal;
-var
-  i: Integer;
-  concatval: String;
-  index: Integer;
-  member: TBoldMember;
-  BoldObject: TBoldObject;
-begin
-  concatval := '';
-  BoldObject := ObjectFromItem(Item);
-  for i := 0 to FMemberIndexList.Count - 1 do
-  begin
-    Assert(TObject(FMemberIndexList[i]) is TBoldMemberId);
-    index := TBoldMemberId(FMemberIndexList[i]).MemberIndex;
-    member := BoldObject.BoldMembers[index];
-    concatval := concatval + member.AsString;
-  end;
-  result := TBoldStringKey.HashString(concatval, bscCaseDependent);
-end;
-
-function TBoldMembersHashIndex.Match(const Key; Item:TObject):Boolean;
-var
-  MembersKey: TBoldMembersKey;
-  BoldObject: TBoldObject;
-  i: Integer;
-begin
-  MembersKey := TBoldMembersKey(Key);
-  BoldObject := ObjectFromItem(Item);
-  result := FMemberIndexList.Count = MembersKey.AttributeList.Count;
-  i := 0;
-  while result and (i < FMemberIndexList.Count) do
-  begin
-    Assert(TObject(FMemberIndexList[i]) is TBoldMemberId);
-    result := MembersKey.AttributeList[i].IsEqual(BoldObject.BoldMembers[TBoldMemberId(FMemberIndexList[i]).MemberIndex]);
-    inc(i);
-  end;
-end;
-
-function TBoldMembersHashIndex.ObjectFromItem(Item: TObject): TBoldObject;
-var
-  temp: TBoldObjectLocator;
-begin
-  temp := LocatorFromItem(Item);
-  if assigned(temp) then
-    result := temp.EnsuredBoldObject
-  else
-    result := nil;
-end;
-
-function TBoldMembersHashIndex.LocatorFromItem(Item: TObject): TBoldObjectLocator;
-begin
-  Assert(not Assigned(Item) or (Item is TBoldObjectLocator));
-  result := TBoldObjectLocator(Item);
-end;
-
-function TBoldMembersHashIndex.GetLocatorByAttributesAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator;
-var
-  Key: TBoldMembersKey;
-  i: integer;
-begin
-  Key := TBoldMembersKey.Create(MemberList);
-  try
-    result := LocatorFromItem(Find(Key));
-  finally
-    Key.Free;
-  end;
-
-  if assigned(subscriber) then
-  begin
-    if assigned(result) then
-    begin
-      for i := 0 to FMemberIndexList.Count - 1 do
-        result.EnsuredBoldObject.BoldMembers[TBoldMemberId(FMemberIndexList[i]).MemberIndex].DefaultSubscribe(subscriber, breReSubscribe);
-    end
-    else if assigned(fObjectList) then
-      fObjectList.AddSmallSubscription(Subscriber, [beQualifierChanged], breReSubscribe);
-  end;
-end;
-
   {---TBoldMembersKey---}
 
-constructor TBoldMembersKey.Create(Attributes: TBoldMemberList);
+constructor TBoldMembersKey.Create(Attributes: TBoldMemberList; StringCompareMode: TBoldStringCompareMode);
 var
   i: Integer;
   concatval: String;
@@ -389,7 +412,7 @@ begin
   FAttributeList := Attributes;
   for i := 0 to FAttributeList.Count - 1 do
     concatval := concatval + FAttributeList[i].AsString;
-  FHash := TBoldStringKey.HashString(concatval, bscCaseDependent);
+  FHash := TBoldStringKey.HashString(concatval, StringCompareMode);
 end;
 
 function TBoldMembersKey.Hash: Cardinal;
@@ -402,4 +425,9 @@ begin
   Result := TBoldMembersKey(Key).Hash;
 end;
 
+initialization
+  TBoldObjectAttributeIndexList.IX_BoldQualifiers := -1;
+  TBoldObjectLocatorList.IX_BoldObjectLocator := -1
+
 end.
+

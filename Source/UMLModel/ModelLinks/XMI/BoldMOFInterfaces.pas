@@ -1,9 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldMOFInterfaces;
 
 interface
 
 uses
-  MSXML_TLB;
+  Bold_MSXML_TLB;
 
 type
   IBoldMOFObject = interface;

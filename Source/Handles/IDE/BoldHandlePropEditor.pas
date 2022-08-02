@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHandlePropEditor;
 
 interface
@@ -41,7 +44,7 @@ type
     procedure MyGetProc(const s: string);
   protected
     function AllMayBeSetTo(NewValue: TPersistent): boolean;
-    function ComponentMayBeSetTo(Component: TPersistent; NewValue: TPersistent):boolean;
+    function ComponentMayBeSetTo(Component: TPersistent; NewValue: TPersistent):boolean; virtual;
     property OrgGetProc: TGetStrProc read fOrgProc write fOrgProc;
   public
     procedure GetValues(Proc: TGetStrProc); override;
@@ -64,9 +67,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  HandlesConst;
-
+  BoldUtils;
+  
 { TBoldHandlePropertyEditor }
 procedure TBoldRootedHandleRootHandlePropertyEditor.GetValues(Proc: TGetStrProc);
 begin
@@ -92,14 +94,13 @@ end;
 function TBoldRootedHandleRootHandlePropertyEditor.ComponentMayBeSetTo(
   Component: TPersistent; NewValue: TPersistent): boolean;
 begin
-  Assert(Component is TBoldRootedHandle);
-  if (NewValue = Component) or  // Prevent link to self
-    ((NewValue is TBoldRootedHandle) and
-    TBoldRootedHandle(NewValue).IsRootLinkedTo(Component as TBoldRootedhandle)) then  // Prevent circular links
+  if (NewValue = Component) or
+    ((NewValue is TBoldRootedHandle) and (Component is TBoldRootedHandle) and
+    TBoldRootedHandle(NewValue).IsRootLinkedTo(Component as TBoldRootedhandle)) then
     Result := False
   else
     Result := True;
-end;
+end;        
 
 { TBoldOclExpressionForOclDefinition }
 
@@ -109,7 +110,7 @@ begin
   if component is TBoldOclDefinition then
     result := (Component as TBoldOclDefinition).GetContextType
   else
-    raise Exception.CreateFmt(sComnponentNotOCLDefinition, [ClassName]);
+    raise Exception.CreateFmt('%s.GetContextType: Component is not a TBoldOclDefinition', [ClassName]);
 end;
 
 { TBoldTypeNameSelectorForOclDefinition }
@@ -125,25 +126,24 @@ begin
   if component is TBoldOclDefinition then
     result := (Component as TBoldOclDefinition).SystemTypeInfo
   else
-    raise Exception.CreateFmt(sComnponentNotOCLDefinition, [ClassName]);
+    raise Exception.CreateFmt('%s.GetContextType: Component is not a TBoldOclDefinition', [ClassName]);
 end;
 
 { TBoldOclVariablesEditor }
 
 function TBoldOclVariablesEditor.GetDefaultMethodName: string;
-const
-  MethodName = 'Variables';
 begin
-  Result :=  MethodName;
+  Result := 'Variables';
 end;
 
 { TBoldOCLRepositoryEditor }
 
 function TBoldOCLRepositoryEditor.GetDefaultMethodName: string;
-const
-  MethodName = 'OCLDefinitions';
 begin
-  Result := MethodName;
+  Result := 'OCLDefinitions';
 end;
+
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLoggableCriticalSection;
 
 interface
@@ -6,11 +9,8 @@ uses
   SyncObjs,
   BoldThreadSafeLog;
 
-type
-  { forward declarations }
-  TBoldLoggableCriticalSection = class;
 
-  { TBoldLoggableCriticalSection }
+type
   TBoldLoggableCriticalSection = class(TCriticalSection)
   private
     fName: String;
@@ -21,7 +21,6 @@ type
   end;
 
 implementation
-
 uses
   SysUtils;
 
@@ -29,7 +28,7 @@ uses
 
 procedure TBoldLoggableCriticalSection.Acquire;
 begin
-  BoldLogThread('L='+fName); // do not localize
+  BoldLogThread('L='+fName);
   inherited;
 end;
 
@@ -42,7 +41,7 @@ end;
 procedure TBoldLoggableCriticalSection.Release;
 begin
   inherited;
-  BoldLogThread('U=' + fName); // do not localize
+  BoldLogThread('U=' + fName);
 end;
 
 end.

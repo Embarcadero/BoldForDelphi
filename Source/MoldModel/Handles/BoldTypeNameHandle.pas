@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeNameHandle;
 
 interface
@@ -11,6 +14,7 @@ type
   TBoldTypeNameHandle = class;
 
   { TBoldTypeNameHandle }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldTypeNameHandle = class(TComponent)
   private
     FDictionary: TBoldTypeNameDictionary;
@@ -46,5 +50,7 @@ procedure TBoldTypeNameHandle.SetDictionary(const Value: TBoldTypeNameDictionary
 begin
   FDictionary.Assign(Value);
 end;
+
+initialization
 
 end.

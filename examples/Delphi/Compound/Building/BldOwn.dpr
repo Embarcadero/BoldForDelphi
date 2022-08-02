@@ -7,8 +7,8 @@ program Bldown;
 
 uses
   Forms,
-  datamod in 'Datamod.pas' {DataModule1: TDataModule},
-  mainform in 'Mainform.pas' {allform},
+  Datamod in 'Datamod.pas' {DataModule1: TDataModule},
+  Mainform in 'Mainform.pas' {allform},
   PersonAutoFormUnit in 'PersonAutoFormUnit.pas' {PersonAutoForm};
 
 {$R *.RES}

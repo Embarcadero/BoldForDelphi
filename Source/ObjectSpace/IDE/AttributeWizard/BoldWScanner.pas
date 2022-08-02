@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWScanner;
 
 interface
@@ -125,7 +128,7 @@ begin
         ;
     '/':
       begin
-        while GetChar(Ch) and not (Ch in [BOLDLF, BOLDCR]) do
+        while GetChar(Ch) and not CharInSet(Ch, [BOLDLF, BOLDCR]) do
           ;
         Dec(fBufptr);
       end;
@@ -207,7 +210,7 @@ begin
   while GetChar(Ch) do
   begin
     fToken := fToken + Ch;
-    if Ch in [BOLDLF, BOLDCR] then
+    if CharInSet(Ch, [BOLDLF, BOLDCR]) then
     begin
       Dec(fBufPtr);
       Exit;
@@ -236,7 +239,7 @@ begin
   fTokenType := ttIdentifier;
   while GetChar(Ch) do
   begin
-    if not (Ch in ['a'..'z', 'A'..'Z', '0'..'9', '_', '.']) then
+    if not CharInSet(Ch, ['a'..'z', 'A'..'Z', '0'..'9', '_', '.']) then
     begin
       { put it back}
       Dec(fBufPtr);
@@ -290,24 +293,24 @@ var
 begin
   fToken := FirstChar;
   fTokenType := ttInteger;
-  while GetChar(Ch) and (Ch in ['0'..'9']) do
+  while GetChar(Ch) and CharInSet(Ch, ['0'..'9']) do
     fToken := fToken + Ch;
 
   if Ch = '.' then
   begin
     fTokenType := ttFloat;
     fToken := fToken + Ch;
-    while GetChar(Ch) and (Ch in ['0'..'9']) do
+    while GetChar(Ch) and CharInSet(Ch, ['0'..'9']) do
       fToken := fToken + Ch;
   end;
 
-  if Ch in ['e', 'E'] then
+  if CharInSet(Ch, ['e', 'E']) then
   begin
     fTokenType := ttFloat;
     fToken := fToken + Ch;
-    if GetChar(Ch) and (Ch in ['+', '-']) then
+    if GetChar(Ch) and CharInSet(Ch, ['+', '-']) then
       fToken := fToken + Ch;
-    while Ch in ['0'..'9'] do
+    while CharInSet(Ch, ['0'..'9']) do
     begin
       fToken := fToken + Ch;
       if not GetChar(Ch) then
@@ -386,5 +389,7 @@ begin
     fStream := nil;
   end;
 end;
+
+initialization
 
 end.

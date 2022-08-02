@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUndoActions;
 
 interface
@@ -38,10 +41,11 @@ type
 implementation
 
 uses
-  HandlesConst,
   BoldSystem,
   ActnList,
+  Menus, // for TextToShortCut
   BoldUndoInterfaces;
+
 
 { TBoldSetCheckPointAction }
 
@@ -50,13 +54,14 @@ procedure TBoldSetCheckPointAction.CheckAllowEnable(
 begin
   inherited;
   if EnableAction then
-    EnableAction := BoldSystemHandle.Active;
+    EnableAction := BoldSystemHandle.Active and BoldSystemHandle.System.UndoHandlerInterface.Enabled
+      and not ((BoldSystemHandle.System.UndoHandlerInterface.UndoList.Count > 0) and not BoldSystemHandle.System.UndoHandlerInterface.CurrentUndoBlockHasChanges);
 end;
 
 constructor TBoldSetCheckPointAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sSetCheckPoint;
+  Caption := 'Set check point';
 end;
 
 procedure TBoldSetCheckPointAction.ExecuteTarget(Target: TObject);
@@ -80,7 +85,8 @@ end;
 constructor TBoldUndoAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sUndo;
+  Caption := 'Undo';
+  ShortCut := TextToShortCut('Ctrl+Z');
 end;
 
 procedure TBoldUndoAction.ExecuteTarget(Target: TObject);
@@ -102,7 +108,8 @@ end;
 constructor TBoldRedoAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sRedo;
+  Caption := 'Redo';
+  ShortCut := TextToShortCut('Shift+Ctrl+Z');
 end;
 
 procedure TBoldRedoAction.ExecuteTarget(Target: TObject);

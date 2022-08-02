@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldControlPackPropertyEditors;
 
 interface
@@ -37,12 +40,12 @@ type
     function GetApprovedTypes: TBoldValueTypes; override;
     function GetContextType(Component: TPersistent): TBoldSystemTypeInfo; override;
   public
-    //procedure Edit; override;
   end;
 
   {---TBoldSingleFollowerControllerEditor---}
   TBoldSingleFollowerControllerEditor = class(TBoldClassProperty)
   public
+    function GetValue: string; override;
     function GetAttributes: TPropertyAttributes; override;
     procedure Edit; override;
   end;
@@ -97,7 +100,7 @@ type
   {---TBoldGetAsStringMethodProperty---}
   TBoldGetAsStringMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -105,7 +108,7 @@ type
   {---TBoldGetAsCheckBoxStateMethodProperty---}
   TBoldGetAsCheckBoxStateMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -113,7 +116,7 @@ type
   {---TBoldGetAsIntegerEventMethodProperty---}
   TBoldGetAsIntegerEventMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -121,7 +124,7 @@ type
   {---TBoldGetAsFloatEventMethodProperty---}
   TBoldGetAsFloatEventMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -129,7 +132,7 @@ type
   {---TBoldGetAsViewerMethodProperty---}
   TBoldGetAsViewerMethodProperty = class(TBoldOTAModifyingMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
     function GetColPos: integer; override;
   end;
@@ -137,20 +140,34 @@ type
   { TBoldHoldsChangedValueMethodProperty }
   TBoldHoldsChangedValueMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
   { TBoldReleaseChangedValueMethodProperty }
   TBoldReleaseChangedValueMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
   { TBoldMayModifyMethodProperty }
   TBoldMayModifyMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
     function GetDeltaLines: integer; override;
+  end;
+
+  {---TBoldAsVariantRendererEditor---}
+  TBoldAsVariantRendererEditor = class(TBoldComponentDblClickEditor)
+  protected
+    function GetDefaultMethodName: string; override;
+  end;
+
+  {---TBoldGetAsVariantMethodProperty---}
+  TBoldGetAsVariantMethodProperty = class(TBoldOTAModifyingMethodProperty)
+  public
+    function ImplementationTextToInsert: string; override;
+    function GetDeltaLines: integer; override;
+    function GetColPos: integer; override;
   end;
 
 implementation
@@ -160,7 +177,6 @@ uses
   BoldUtils,
   TypInfo,
   Controls,
-  BoldGuiResourceStrings,
   BoldControlPack,
   BoldTreeView,
   BoldDefs,
@@ -177,6 +193,21 @@ type
 function TBoldSingleFollowerControllerEditor.GetAttributes: TPropertyAttributes;
 begin
   Result := inherited GetAttributes + [paDialog] - [paMultiSelect];
+end;
+
+function TBoldSingleFollowerControllerEditor.GetValue: string;
+var
+  P: TPersistent;
+begin
+  p := TPersistent(GetOrdValue);
+  if Assigned(P) and (P is TBoldFollowerController) then
+  begin
+    Result := TBoldFollowerControllerHack(P).Expression;
+    if Result = '' then
+      Result := '('+TBoldFollowerControllerHack(P).EffectiveRenderer.Name+')';
+  end
+  else
+    Result := inherited GetValue;
 end;
 
 procedure TBoldSingleFollowerControllerEditor.Edit;
@@ -206,31 +237,31 @@ end;
 {---TBoldAsStringRendererEditor---}
 function TBoldAsStringRendererEditor.GetDefaultMethodName: string;
 begin
-  Result := 'OnGetAsString'; // do not localize
+  Result := 'OnGetAsString';
 end;
 
 {---TBoldAsIntegerRendererEditor---}
 function TBoldAsIntegerRendererEditor.GetDefaultMethodName: string;
 begin
-  Result := 'OnGetAsInteger'; // do not localize
+  Result := 'OnGetAsInteger';
 end;
 
 {---TBoldAsCheckBoxStateRendererEditor---}
 function TBoldAsCheckBoxStateRendererEditor.GetDefaultMethodName: string;
 begin
-  Result := 'OnGetAsCheckBoxState';// do not localize
+  Result := 'OnGetAsCheckBoxState';
 end;
 
 {---TBoldGetAsStringMethodProperty---}
-function TBoldGetAsStringMethodProperty.TextToInsert: string;
+function TBoldGetAsStringMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
-  Result :=                 '  Result := '''';' + BOLDCRLF;  // do not localize
+  Result :=                 '  Result := '''';' + BOLDCRLF;
 {$ENDIF}
-  Result := Result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;  // do not localize
-  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF; // do not localize
-  Result := Result + Format('  %s', [BOLDSYM_END]);  // do not localize
+  Result := Result + Format('  if %s(AFollower.Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
+  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
+  Result := Result + Format('  %s', [BOLDSYM_END]);
 end;
 
 function TBoldGetAsStringMethodProperty.GetDeltaLines: integer;
@@ -244,13 +275,13 @@ begin
 end;
 
 {---TBoldGetAsCheckBoxStateMethodProperty---}
-function TBoldGetAsCheckBoxStateMethodProperty.TextToInsert: string;
+function TBoldGetAsCheckBoxStateMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
-  Result :=                 '  Result := cbGrayed;' + BOLDCRLF; // do not localize
+  Result :=                 '  Result := cbGrayed;' + BOLDCRLF;
 {$ENDIF}
-  Result := Result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;  // do not localize
+  Result := Result + Format('  if %s(AFollower.Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_END]);
 end;
@@ -266,13 +297,13 @@ begin
 end;
 
 {---TBoldGetAsIntegerEventMethodProperty---}
-function TBoldGetAsIntegerEventMethodProperty.TextToInsert: string;
+function TBoldGetAsIntegerEventMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
-  Result :=                 '  Result := 0;' + BOLDCRLF; // do not localize
+  Result :=                 '  Result := 0;' + BOLDCRLF;
 {$ENDIF}
-  Result := Result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;  // do not localize
+  Result := Result + Format('  if %s(AFollower.Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_END]);
 end;
@@ -289,23 +320,23 @@ end;
 
 {--- TBoldHoldsChangedValueMethodProperty ---}
 
-function TBoldHoldsChangedValueMethodProperty.TextToInsert: string;
+function TBoldHoldsChangedValueMethodProperty.ImplementationTextToInsert: string;
 begin
-  result := Format('  Element%sEvaluateExpressionAsDirectElement(%s%s).RegisterModifiedValueHolder(Subscriber);', // do not localize
+  result := Format('  AFollower.Element%sEvaluateExpressionAsDirectElement(%s%s).RegisterModifiedValueHolder(AFollower.Subscriber);',
                    [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
 end;
 
 {--- TBoldReleaseChangedValueMethodProperty ---}
 
-function TBoldReleaseChangedValueMethodProperty.TextToInsert: string;
+function TBoldReleaseChangedValueMethodProperty.ImplementationTextToInsert: string;
 begin
-  result := Format('  Element%sEvaluateExpressionAsDirectElement(%s%s).UnRegisterModifiedValueHolder(Subscriber);', // do not localize
+  result := Format('  AFollower.Element%sEvaluateExpressionAsDirectElement(%s%s).UnRegisterModifiedValueHolder(AFollower.Subscriber);',
                    [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
 end;
 
-function TBoldMayModifyMethodProperty.TextToInsert: string;
+function TBoldMayModifyMethodProperty.ImplementationTextToInsert: string;
 begin
-  result := Format('  %sresult %s Element%sEvaluateExpressionAsDirectElement(%s%s).ObserverMayModify(subscriber);', // do not localize
+  result := Format('  %sresult %s AFollower.Element%sEvaluateExpressionAsDirectElement(%s%s).ObserverMayModify(AFollower.subscriber);',
                    [BOLDSYM_TYPEINTEGER, BOLDSYM_ASSIGNMENT, BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
   Result := Result + BOLDSYM_RETURNRESULT;
 end;
@@ -316,13 +347,13 @@ begin
 end;
 
 {---TBoldGetAsViewerMethodProperty---}
-function TBoldGetAsViewerMethodProperty.TextToInsert: string;
+function TBoldGetAsViewerMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
-  Result :=                 '  Result := nil;' + BOLDCRLF; // do not localize
+  Result :=                 '  Result := nil;' + BOLDCRLF;
 {$ENDIF}
-  Result := Result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;  // do not localize
+  Result := Result + Format('  if %s(AFollower.Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_END]);
 end;
@@ -367,7 +398,7 @@ begin
     I := GetOrdValue;
     S := IntToStr(I);
     with TBoldFollowerControllerHack(P).EffectiveRenderer do
-      if Representations.Values[S] <> '' then
+      if Representations.Values[S]<>'' then
         Result := Format('%d=%s', [I, Representations.Values[S]])
       else
         Result := inherited GetValue;
@@ -391,13 +422,13 @@ end;
 function TBoldRendererComponentProperty.GetValue: string;
 begin
   Result := Designer.GetComponentName(TComponent(GetOrdValue));
-  if (Result = '') then
-    Result := '(default)'; // do not localize
+  if (Result='') then
+    Result := '(default)';
 end;
 
 procedure TBoldRendererComponentProperty.GetValues(Proc: TGetStrProc);
 begin
-  Proc('(default)'); // do not localize
+  Proc('(default)');
   Designer.GetComponentNames(GetTypeData(GetPropType), Proc);
 end;
 
@@ -405,13 +436,13 @@ procedure TBoldRendererComponentProperty.SetValue(const Value: string);
 var
   Component: TComponent;
 begin
-  if (Value = '') or (Value[1] = '(') then
+  if (Value = '') or (Value[1]='(') then
     Component := nil
   else
   begin
     Component := Designer.GetComponent(Value);
     if not (Component is GetTypeData(GetPropType)^.ClassType) then
-      raise EPropertyError.Create(sInvalidPropertyValue);
+      raise EPropertyError.Create('Invalid property value');
   end;
   SetOrdValue(Longint(Component));
 end;
@@ -429,7 +460,7 @@ end;
 
 function TBoldNodeDescriptionEditor.GetVerb(Index: Integer): string;
 begin
-  Result := sEditNodeDescriptions;
+  Result := '&Edit Node Descriptions...';
 end;
 
 function TBoldNodeDescriptionEditor.GetVerbCount: Integer;
@@ -483,7 +514,7 @@ end;
 
 function TBoldAsFloatRendererEditor.GetDefaultMethodName: string;
 begin
-  Result := 'OnGetAsFloat'; // do not localize
+  Result := 'OnGetAsFloat';
 end;
 
 { TBoldGetAsFloatEventMethodProperty }
@@ -498,13 +529,13 @@ begin
   Result := -1;
 end;
 
-function TBoldGetAsFloatEventMethodProperty.TextToInsert: string;
+function TBoldGetAsFloatEventMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
-  Result :=                 '  Result := 0;' + BOLDCRLF; // do not localize
+  Result :=                 '  Result := 0;' + BOLDCRLF;
 {$ENDIF}
-  Result := Result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF; // do not localize
+  Result := Result + Format('  if %s(AFollower.Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
   Result := Result + Format('  %s', [BOLDSYM_END]);
 end;
@@ -523,7 +554,7 @@ begin
     Designer.Modified;
   end
   else
-    raise EPropertyError.Create(sInvalidPropertyValue);
+    raise EPropertyError.Create('Invalid property value');
 end;
 
 function TBoldTreeFollowerControllerEditor.GetAttributes: TPropertyAttributes;
@@ -531,4 +562,36 @@ begin
   Result := inherited GetAttributes + [paDialog] - [paMultiSelect];
 end;
 
+{ TBoldAsVariantRendererEditor }
+
+function TBoldAsVariantRendererEditor.GetDefaultMethodName: string;
+begin
+  Result := 'OnGetAsVariant'; // do not localize
+end;
+
+{ TBoldGetAsVariantMethodProperty }
+
+function TBoldGetAsVariantMethodProperty.GetColPos: integer;
+begin
+  Result := 5;
+end;
+ 
+function TBoldGetAsVariantMethodProperty.GetDeltaLines: integer;
+begin
+  Result := -1;
+end;
+ 
+function TBoldGetAsVariantMethodProperty.ImplementationTextToInsert: string;
+begin
+  Result := '';
+{$IFDEF BOLD_DELPHI}
+  Result :=                 '  Result := Null;' + BOLDCRLF;  // do not localize
+{$ENDIF}
+  Result := Result + Format('  if %s(AFollower.Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;  // do not localize
+  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF; // do not localize
+  Result := Result + Format('  %s', [BOLDSYM_END]);  // do not localize
+end;
+
+initialization
+  
 end.

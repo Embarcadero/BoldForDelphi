@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDefaultId;
 
 interface
@@ -15,8 +18,8 @@ type
   TBoldDefaultID = class(TBoldExternalObjectID)
   protected
     fDBValue: integer;
-    procedure SetAsInteger(NewValue: integer);
-    function GetAsInteger: Integer;
+    procedure SetAsInteger(NewValue: integer);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAsInteger: Integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetAsString: string; override;
     function GetHash: cardinal; override;
     function GetStreamName: string; override;
@@ -35,8 +38,10 @@ type
   protected
     function GetStreamName: string; override;
     function GetTimeStamp: TBoldTimeStampType; override;
+    function GetHash: cardinal; override;
+    function GetIsEqual(MatchID: TBoldObjectID): Boolean; override;     
   public
-    constructor createWithTimeAndClassId(TimeStamp: TBoldTimeStampType; TopSortedIndex: integer; Exact: Boolean);
+    constructor CreateWithTimeAndClassId(TimeStamp: TBoldTimeStampType; TopSortedIndex: integer; Exact: Boolean);
     function CloneWithClassId(TopSortedIndex: integer; Exact: Boolean): TBoldObjectId; override;
     property TimeStamp: TBoldTimeStampType read GetTimeStamp write fTimeStamp;
   end;
@@ -88,16 +93,22 @@ begin
   Result := FDbValue;
 end;
 
-Function TBolddefaultID.GetIsEqual(MatchID: TBoldObjectID): Boolean;
+Function TBoldDefaultID.GetIsEqual(MatchID: TBoldObjectID): Boolean;
 begin
-  result := assigned(MatchId) and ((MatchID.ClassType = TBoldDefaultId ) or (MatchID.ClassType = TBoldTimestampedDefaultId ))  and
-            (fdbValue = TBoldDefaultId(MatchId).fDbValue) and
-            (MatchId.TimeStamp = TimeStamp);
+  if not assigned(MatchId) then
+    Result := false
+  else if MatchID.ClassType = TBoldDefaultId then
+    Result := fdbValue = TBoldDefaultId(MatchId).fDbValue
+  else if MatchID.ClassType = TBoldTimestampedDefaultId  then
+    Result := (fdbValue = TBoldTimestampedDefaultId(MatchId).fDbValue) and
+      (MatchId.TimeStamp = BOLDMAXTIMESTAMP)  
+  else
+    Result := false;
 end;
 
 function TBoldDefaultID.GetHash: cardinal;
 begin
-  result := cardinal(fDBValue) + cardinal(Timestamp);
+  result := cardinal(fDBValue) + cardinal(BOLDMAXTIMESTAMP);
 end;
 
 procedure TBoldDefaultId.SetAsInteger(NewValue: integer);
@@ -124,10 +135,33 @@ begin
   (result as TBoldTimestampedDefaultId).fTimeStamp := fTimeStamp;
 end;
 
-constructor TBoldTimestampedDefaultId.createWithTimeAndClassId(TimeStamp: TBoldTimeStampType; TopSortedIndex: integer; Exact: Boolean);
+constructor TBoldTimestampedDefaultId.CreateWithTimeAndClassId(TimeStamp: TBoldTimeStampType; TopSortedIndex: integer; Exact: Boolean);
 begin
   inherited CreateWithClassId(TopSortedIndex, Exact);
   fTimeStamp := TimeStamp;
+end;
+
+function TBoldTimestampedDefaultId.GetHash: cardinal;
+begin
+  result := cardinal(fDBValue) + cardinal(fTimestamp);
+end;
+
+function TBoldTimestampedDefaultId.GetIsEqual(MatchID: TBoldObjectID): Boolean;
+var
+  TimestampedMatchId: TBoldTimestampedDefaultId;
+begin
+  if not assigned(MatchId) then
+    Result := false
+  else if MatchID.ClassType = TBoldDefaultId then
+    Result := (fdbValue = TBoldDefaultId(MatchId).fDbValue)  and (fTimeStamp = BOLDMAXTIMESTAMP)
+  else if MatchID.ClassType = TBoldTimestampedDefaultId  then
+  begin
+    TimestampedMatchId := TBoldTimestampedDefaultId(MatchId);
+    Result := (fdbValue = TimestampedMatchId.fDbValue) and
+      (TimestampedMatchId.fTimeStamp = fTimeStamp)
+  end
+  else
+    Result := false;
 end;
 
 function TBoldTimestampedDefaultId.GetStreamName: string;
@@ -206,6 +240,7 @@ begin
   inherited;
   Node.WriteSubNodeInteger(BoldNodeName_Timestamp, (Obj as TBoldTimestampedDefaultId).TimeStamp);
 end;
+
 
 function TBoldDefaultID.CloneWithTimeStamp(Time: TBoldTimeStampType): TBoldDefaultId;
 begin

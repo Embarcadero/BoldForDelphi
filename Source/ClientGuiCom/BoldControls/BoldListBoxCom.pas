@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListBoxCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -5,27 +8,27 @@ unit BoldListBoxCom;
 interface
 
 uses
+  // VCL
   Classes,
-  StdCtrls,
   Controls,
-  Windows,
-  Menus,
   Graphics,
+  Menus,
   Messages,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
-  BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
-  {$IFNDEF BOLDCOMCLIENT} // uses
+  StdCtrls,
+  Windows,
+
+  // Bold
+  {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
   BoldAFP,
   {$ENDIF}
   BoldAbstractListHandleCom,
+  BoldClientElementSupport,
+  BoldComObjectSpace_TLB,
   BoldControlPackCom,
   BoldListHandleFollowerCom,
   BoldListListControlPackCom,
   BoldStringControlPackCom;
-
-// CHECKME is a destroywind needed that saves the extra list.
-//         when is DestroyWnd actually called.
 
 type
   {Forward declarations of all classes}
@@ -173,9 +176,8 @@ implementation
 uses
   SysUtils,
   Forms,
-  BoldRev,
-  {$IFNDEF BOLDCOMCLIENT} // uses
-  BoldGui, // IFNDEF BOLDCOMCLIENT
+  {$IFNDEF BOLDCOMCLIENT}
+  BoldGui,
   {$ENDIF}
   BoldControlPackDefs,
   BoldListControlPackCom;
@@ -210,7 +212,6 @@ end;
 
 procedure TBoldCustomListBoxCom._BeforeMakeUptoDate(Follower: TBoldFollowerCom);
 begin
-  // Will fetch all
   if assigned(BoldHandle) and assigned(Boldhandle.list) then
     BoldHandle.list.EnsureRange(0, BoldHandle.list.Count-1);
   Items.BeginUpdate;
@@ -231,7 +232,6 @@ begin
   if Value <> FAlignment then
   begin
     FAlignment := Value;
-    // Enough to invalidate drawing surface
     Invalidate;
   end;
 end;
@@ -249,7 +249,7 @@ end;
 procedure TBoldCustomListBoxCom.SetItemIndex(Value: Integer);
 begin
   fHandleFollower.SetFollowerIndex(value);
-  inherited ItemIndex := Value; // FIXME;
+  inherited ItemIndex := Value;
 end;
 
 procedure TBoldCustomListBoxCom.SetBoldProperties(Value: TBoldListAsFollowerListControllerCom);
@@ -274,18 +274,13 @@ procedure TBoldCustomListBoxCom.SetSelection(aRow: Integer; Shift: TShiftState);
 begin
   if aRow = -1 then
     Exit;
-  //  Clear previous selection, Select one item
   if not ((ssShift in Shift) or (ssCtrl in Shift)) or not MultiSelect then
   begin
     fBoldProperties.SelectAll(Follower, False);
     fBoldProperties.SetSelected(Follower, aRow, True);
   end;
-
-  //  Select range from first selected item
   if (ssShift in Shift) and MultiSelect then
     fBoldProperties.SelectRange(Follower, aRow);
-
-  //  Toggle selection on current item
   if (ssCtrl in Shift) and MultiSelect then
     fBoldProperties.ToggleSelected(Follower, aRow);
   Invalidate;
@@ -311,7 +306,7 @@ begin
     inherited
   else
     if BoldProperties.DefaultDblClick and Assigned(CurrentBoldElement) then begin
-      {$IFDEF BOLDCOMCLIENT} // autoform
+      {$IFDEF BOLDCOMCLIENT}
       Autoform := nil;
       {$ELSE}
       AutoForm := AutoFormProviderRegistry.FormForElement(CurrentBoldElement);
@@ -371,7 +366,6 @@ end;
 
 function TBoldCustomListBoxCom.GetBoldList: IBoldList;
 begin
-  //CHECKME We may have to remove this because the list is not necessarily equal with the rendered list!!! /FH
   if Assigned(BoldHandle) then
     Result := BoldHandle.List
   else
@@ -394,11 +388,10 @@ procedure TBoldCustomListBoxCom._RowAfterMakeUptoDate(Follower: TBoldFollowerCom
 var
   index: Integer;
 begin
-// This shouldn't be needed...
-//  if Assigned(BoldHandle) then
-//    inherited ItemIndex := BoldHandle.CurrentIndex;
+
+
   index := Follower.index;
-  if (index > -1) and (index < Items.Count) then //FIXME: How come index sometimes is > Items.Count?
+  if (index > -1) and (index < Items.Count) then
     Items[index] := TBoldStringFollowerControllerCom(Follower.Controller).GetCurrentAsString(Follower);
 end;
 
@@ -428,10 +421,10 @@ var
   I: Integer;
 begin
   Result := 0;
-  if MultiSelect then // if not MultiSelect SelCount is always -1!
+  if MultiSelect then
     Result := SelCount
   else
-    for I := 0 to Items.Count - 1 do // Set result to 1 if something is selected
+    for I := 0 to Items.Count - 1 do
       if Selected[I] then
       begin
         Result := 1;
@@ -441,10 +434,10 @@ end;
 
 procedure TBoldCustomListBoxCom.KeyUp(var Key: Word; Shift: TShiftState);
 begin
-  if Key in [33..40] then //PGUP..DOWN
+  if Key in [33..40] then
   begin
-    Exclude(Shift, ssCtrl); // Cannot make non-consecutive selections with keyboard
-    SetSelection(ItemIndex, Shift); // Call setselection with currentrow and shiftstate
+    Exclude(Shift, ssCtrl);
+    SetSelection(ItemIndex, Shift);
   end;
   inherited;
 end;
@@ -452,7 +445,7 @@ end;
 procedure TBoldCustomListBoxCom.CNDrawItem(var Message: TWMDrawItem);
 var
   State: TOwnerDrawState;
-  SignedItemId: integer; // this variable is used to suppress warning from D4 when comparing signed and unsigned values
+  SignedItemId: integer;
 begin
   with Message.DrawItemStruct^ do
   begin
@@ -465,7 +458,6 @@ begin
       SignedItemId := -1;
     end;
     if Assigned(BoldHandle) and (SigneditemID = Follower.CurrentIndex) then
-      //FIXME Apperens of selected and current...
       Canvas.DrawFocusRect(rcItem);
   end;
 end;
@@ -478,7 +470,6 @@ begin
   BoldRowProperties.SetFont(Canvas.Font, Font, Follower.SubFollowers[index]);
   BoldRowProperties.SetColor(ec, Color, Follower.SubFollowers[index]);
   Canvas.Brush.Color := ec;
-  //  Selected state yields default highlight colors
   SubFollower := Follower.SubFollowers[index];
   if assigned(Subfollower) and Subfollower.Selected then
     with Canvas do
@@ -498,9 +489,7 @@ procedure TBoldCustomListBoxCom.MeasureItem(index: Integer; var Height: Integer)
 var
   S: string;
 begin
-  // Need to get the font to use
   BoldRowProperties.SetFont(Canvas.Font, Font, Follower.SubFollowers[index]);
-  // And measure using current data
   S := '';
   if Assigned(Follower) and
     Assigned(Follower.Controller) then
@@ -509,14 +498,11 @@ begin
     Height := 2 + Abs(Canvas.Font.Height)
   else
     Height := Canvas.TextHeight(S);
-
-  // Now allow user to remeasure, using updated height-value
   inherited;
 end;
 
 procedure TBoldCustomListBoxCom.WMSize(var Message: TWMSize);
 begin
-  // Redraw when resising if aligment is not taLeftJustify
   inherited;
   if Alignment <> taLeftJustify then
     Invalidate;
@@ -596,4 +582,3 @@ end;
 initialization
 
 end.
-

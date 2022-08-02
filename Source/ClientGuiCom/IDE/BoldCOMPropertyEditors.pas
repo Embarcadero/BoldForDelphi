@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCOMPropertyEditors;
 
 interface
@@ -24,8 +27,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
 
 { TBoldCOMMethodNoPurposeProperty }
 

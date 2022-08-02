@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStreams;
 
 interface
@@ -14,5 +17,8 @@ type
   end;
 
 implementation
+
+
+initialization
 
 end.

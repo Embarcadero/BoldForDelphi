@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWSimpleMenuWizard;
 
 interface
@@ -21,20 +24,20 @@ type
     fState: TWizardState;
     fParentMenuName: string;
     fMenuItemIndex: integer;
-    function GetIDString: string;     // IOTAWizard
+    function GetIDString: string;
     function GetName: string;
     function GetState: TWizardState;
     procedure InsertMenuItem(Action: TInsertAction; InsertPosition: Integer;
                     targetName: string; var PopupMenu: TPopUpMenu);
     function IsInIDE: boolean;
   protected
-    procedure Initialize; virtual; //add initialization code here, called in constructor
+    procedure Initialize; virtual;
   public
     constructor Create(const vname, vIDString: string; const vState: TWizardState;
                   const InsertPosition: integer; const vParentMenuName: string);
     procedure AddMenuItem(var PopupMenu: TPopupMenu);
     procedure Execute; virtual;
-    procedure AfterSave; virtual;             // IOTANotifier
+    procedure AfterSave; virtual;
     procedure BeforeSave; virtual;
     procedure Modified; virtual;
     procedure Destroyed; virtual;
@@ -117,7 +120,6 @@ var
   ACaption: string;
 begin
   if not IsInIDE then Exit;
-// for compatibility with Delphi4
   targetItem := nil;
   ACaption := StripHotkey(targetName);
   for I := 0 to (BorlandIDEServices as INTAServices).getMainMenu.Items.Count - 1 do
@@ -126,29 +128,22 @@ begin
       targetItem := (BorlandIDEServices as INTAServices).getMainMenu.Items[I];
       System.Break;
     end;
-//  targetItem := (BorlandIDEServices as INTAServices).getMainMenu.Items.Find(targetName);
   if Assigned(targetItem) then
   begin
-    //get the parent item
     if (Action = iaChild) then
       begin
-        //create a child of the target item
         parentItem := targetItem;
       end
     else
       begin
-        //get the target's parent
         parentItem := targetItem.Parent;
         if (Action = iaAfter) then
           Inc(InsertPosition);
       end;
-    //insert
    for I := PopupMenu.Items.Count - 1 downto 0 do
     begin
-      //remove the item from the popup menu
       Item := PopupMenu.Items[i];
       PopupMenu.Items.Delete(i);
-      // then add it to delphi's menu
       if Assigned(parentItem) then
         begin
           fMenuItem := Item;
@@ -171,32 +166,8 @@ end;
 
 procedure TSimpleMenuWizard.Initialize;
 begin
-//
 end;
 
+initialization
+
 end.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

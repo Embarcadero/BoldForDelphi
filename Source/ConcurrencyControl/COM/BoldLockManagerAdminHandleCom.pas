@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockManagerAdminHandleCom;
 
 interface
@@ -13,6 +16,7 @@ type
   {forward declarations}
   TBoldLockManagerAdminHandleCom = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldLockManagerAdminHandleCom = class(TBoldAbstractLockManagerAdminHandle)
   private
     FComObject: IUnknown;
@@ -183,5 +187,7 @@ begin
       end;
   end;
 end;
+
+initialization
 
 end.

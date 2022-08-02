@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOLLEDmmain;
 
 interface
@@ -27,10 +30,8 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 {$R *.DFM}
 
-initialization
 end.

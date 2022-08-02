@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldReg;
 
 interface
@@ -13,7 +16,7 @@ uses
   BoldTemplateExpander,
   BoldIDEConsts;
 
-{.$R *.res}
+{$R *.res}
 
 procedure Register;
 begin
@@ -22,3 +25,4 @@ begin
 end;
 
 end.
+

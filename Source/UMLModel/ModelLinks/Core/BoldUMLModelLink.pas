@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelLink;
 
 interface
@@ -33,8 +36,8 @@ type
     procedure SetFileName(const Value: string); virtual;
     function GetHandledObject: TObject; override;
   public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(owner: TComponent); override;
+    destructor destroy; override;
     function ExportModel(UMLModel: TUMLModel): Boolean; virtual; abstract;
     function ImportModel(UMLModel: TUMLModel): Boolean; virtual; abstract;
     property CanExport: Boolean read GetCanExport;

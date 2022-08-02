@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldServerHandles;
 
 interface
@@ -78,5 +81,7 @@ begin
       FObjectName := Value;
   end;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDatabaseAdapterDBISAM;
 
 interface
@@ -24,8 +27,8 @@ type
     procedure ReleaseBoldDatabase; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   public
-    constructor Create(aOwner: TComponent); override;
-    destructor Destroy; override;
+    constructor create(aOwner: TComponent); override;
+    destructor destroy; override;
   published
     property DataBase: TDBISAMDataBase read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -37,10 +40,9 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  DBISAMConsts;
+  BoldDefs;
 
-{ TBoldDatabaseAdapterDBISAM }
+{ TBoldDatabaseAdapterDBISAM }      
 
 constructor TBoldDatabaseAdapterDBISAM.create(aOwner: TComponent);
 begin
@@ -53,7 +55,7 @@ begin
   Changed;
   FreePublisher;
   FreeAndNil(fBoldDatabase);
-  inherited;
+  inherited;                   
 end;
 
 function TBoldDatabaseAdapterDBISAM.GetDataBase: TDBISAMDataBase;
@@ -64,7 +66,7 @@ end;
 function TBoldDatabaseAdapterDBISAM.GetDataBaseInterface: IBoldDatabase;
 begin
   if not assigned(Database) then
-    raise EBold.CreateFmt(sAdapterNotConnected, [classname]);
+    raise EBold.CreateFmt('%s.GetDatabaseInterface: The adapter is not connected to a database', [classname]); 
   if not assigned(fBoldDatabase) then
     fBoldDatabase := TBoldDBISAMDataBase.create(Database, SQLDataBaseConfig);
   result := fBoldDatabase;
@@ -79,5 +81,7 @@ procedure TBoldDatabaseAdapterDBISAM.SetDataBase(const Value: TDBISAMDataBase);
 begin
   InternalDatabase := value;
 end;
+
+initialization
 
 end.

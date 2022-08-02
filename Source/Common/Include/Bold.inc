@@ -1,0 +1,489 @@
+
+{.$WARN SYMBOL_PLATFORM OFF}
+{.$WARN UNIT_PLATFORM OFF}
+
+{$IFDEF BCB}
+  {$DEFINE BOLD_BCB}
+{$ENDIF}
+
+{$IFDEF DELPHI}
+  {$DEFINE BOLD_DELPHI}
+{$ENDIF}
+
+
+{$IFDEF BOLD_DELPHI} {$IFDEF BOLD_BCB}
+Illegal symbol combination BOLD_DELPHI and BOLD_BCB
+{$ENDIF} {$ENDIF}
+
+{$IFNDEF BOLD_DELPHI} {$IFNDEF BOLD_BCB}
+  {$DEFINE BOLD_DELPHI}
+{$ENDIF} {$ENDIF}
+
+// Determine delphi version from compiler version
+
+{$IFDEF VER140}              // Delphi 6
+  {$DEFINE BOLD_DELPHI6}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER150}              // Delphi 7
+  {$DEFINE BOLD_DELPHI7}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER160}              // Delphi 8
+  {$DEFINE BOLD_DELPHI8}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER170}              // Delphi 9 (2005)
+  {$DEFINE BOLD_DELPHI9}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER180}              // Delphi 10 (2006)
+  {$DEFINE BOLD_DELPHI10}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER185}              // Delphi 11 (2007)
+  {$UNDEF BOLD_DELPHI10} // Delphi 2007 is both VER180 and VER185
+  {$DEFINE BOLD_DELPHI11}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER190}              // Delphi 12 (2007 .NET)
+  {$DEFINE BOLD_DELPHI12}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER200}              // Delphi 13 (2009)
+  {$DEFINE BOLD_DELPHI13}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER210}              // Delphi 14 (2010)
+  {$DEFINE BOLD_DELPHI14}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER220}              // Delphi 15 (XE)
+  {$DEFINE BOLD_DELPHI15}
+  {$DEFINE BOLD_DELPHI15_OR_LATER}
+  {$DEFINE BOLD_DELPHI14_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER230}              // Delphi 16 (XE2)
+  {$DEFINE BOLD_DELPHI16}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER240}              // Delphi 17 (XE3)
+  {$DEFINE BOLD_DELPHI17}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER250}              // Delphi 18 (XE4)
+  {$DEFINE BOLD_DELPHI18}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER260}              // Delphi 19 (XE5)
+  {$DEFINE BOLD_DELPHI19}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER270}              // Delphi 20 (XE6)
+  {$DEFINE BOLD_DELPHI20}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER280}              // Delphi 21 (XE7)
+  {$DEFINE BOLD_DELPHI21}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER290}              // Delphi 22 (XE8)
+  {$DEFINE BOLD_DELPHI22}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER300}              // Delphi 23 (XE10) Seattle
+  {$DEFINE BOLD_DELPHI23}
+  {$DEFINE BOLD_DELPHI23_OR_LATER}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER310}              // Delphi 24 (XE10.1) Berlin
+  {$DEFINE BOLD_DELPHI24}
+  {$DEFINE BOLD_DELPHI24_OR_LATER}
+  {$DEFINE BOLD_DELPHI23_OR_LATER}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER320}              // Delphi 25 (XE10.2) Tokyo
+  {$DEFINE BOLD_DELPHI25}
+  {$DEFINE BOLD_DELPHI25_OR_LATER}
+  {$DEFINE BOLD_DELPHI24_OR_LATER}
+  {$DEFINE BOLD_DELPHI23_OR_LATER}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER330}              // Delphi 26 (XE10.3) Rio
+  {$DEFINE BOLD_DELPHI26}
+  {$DEFINE BOLD_DELPHI26_OR_LATER}
+  {$DEFINE BOLD_DELPHI25_OR_LATER}
+  {$DEFINE BOLD_DELPHI24_OR_LATER}
+  {$DEFINE BOLD_DELPHI23_OR_LATER}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER340}              // Delphi 27 (XE10.4) Sydney
+  {$DEFINE BOLD_DELPHI27}
+  {$DEFINE BOLD_DELPHI27_OR_LATER}
+  {$DEFINE BOLD_DELPHI26_OR_LATER}
+  {$DEFINE BOLD_DELPHI25_OR_LATER}
+  {$DEFINE BOLD_DELPHI24_OR_LATER}
+  {$DEFINE BOLD_DELPHI23_OR_LATER}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF VER350}              // Delphi 28 (XE11.1) Alexandria
+  {$DEFINE BOLD_DELPHI28}
+  {$DEFINE BOLD_DELPHI28_OR_LATER}
+  {$DEFINE BOLD_DELPHI27_OR_LATER}
+  {$DEFINE BOLD_DELPHI26_OR_LATER}
+  {$DEFINE BOLD_DELPHI25_OR_LATER}
+  {$DEFINE BOLD_DELPHI24_OR_LATER}
+  {$DEFINE BOLD_DELPHI23_OR_LATER}
+  {$DEFINE BOLD_DELPHI22_OR_LATER}
+  {$DEFINE BOLD_DELPHI21_OR_LATER}
+  {$DEFINE BOLD_DELPHI20_OR_LATER}
+  {$DEFINE BOLD_DELPHI19_OR_LATER}
+  {$DEFINE BOLD_DELPHI18_OR_LATER}
+  {$DEFINE BOLD_DELPHI17_OR_LATER}
+  {$DEFINE BOLD_DELPHI16_OR_LATER}
+  {$DEFINE BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_DELPHI11_OR_LATER}
+  {$DEFINE BOLD_DELPHI10_OR_LATER}
+  {$DEFINE BOLD_DELPHI7_OR_LATER}
+  {$DEFINE BOLD_DELPHI6_OR_LATER}
+{$ENDIF}
+
+{$IFDEF LINUX}
+  // Our implementation depends on MSXML and is not supported on Linux
+  {$UNDEF BOLD_XML_SUPPORT}
+  {DEFINE BOLD_IDECLX}
+  {$DEFINE BOLD_CLX}
+{$ENDIF}
+
+
+{$IFDEF MSWINDOWS}
+  {DEFINE BOLD_IDEVCL}
+{$ENDIF}
+
+// Edition switches
+{$IFNDEF BOLD_PROFESSIONAL}
+  {$IFNDEF BOLD_LITE}
+    {$DEFINE BOLD_ENTERPRISE}
+  {$ENDIF}
+{$ENDIF}
+
+
+// Compiler control
+{$IFDEF BOLD_DEV}
+  {$ASSERTIONS ON}
+  {$DEBUGINFO ON}
+  {$IOCHECKS ON}
+  {$LOCALSYMBOLS ON}
+  {$OPTIMIZATION OFF}
+  {$OVERFLOWCHECKS ON}
+  {$RANGECHECKS ON}
+  {$REFERENCEINFO ON}
+  {$STACKFRAMES ON}
+{$ENDIF}
+
+{$IFDEF BOLD_RELEASE}
+  {$ASSERTIONS OFF}
+  {$DEBUGINFO OFF}
+  {$IOCHECKS ON}
+  {$LOCALSYMBOLS OFF}
+  {$OPTIMIZATION ON}
+  {$OVERFLOWCHECKS OFF}
+  {$RANGECHECKS OFF}
+  {$REFERENCEINFO OFF}
+  {$STACKFRAMES OFF}
+{$ENDIF}
+
+{$IFDEF BOLD_DEBUG} {$IFDEF BOLD_RELEASE}
+Illegal symbol combination
+{$ENDIF} {$ENDIF}
+
+
+// If building SLIB, swicth on some flags switched off by BOLD_RELEASE
+{$IFDEF BOLD_SLIB}
+  {$STACKFRAMES ON}
+  {$OPTIMIZATION OFF}
+  {$DEBUGINFO ON}
+  {$LOCALSYMBOLS ON}
+  {$IOCHECKS ON}
+  {$OVERFLOWCHECKS ON}
+  {$RANGECHECKS ON}
+  {$REFERENCEINFO ON}
+  {$ASSERTIONS ON}
+  {$DEFINE BOLD_MEMORYDEBUG}
+{$ENDIF}
+
+{$IFDEF BOLD_MEMORYDEBUG}
+  {$DEFINE BOLD_DISABLEMEMORYMANAGER}
+  {$DEFINE BOLD_DISABLESHAREDSTRINGS}
+{$ENDIF}
+
+{$DEFINE BOLD_DISABLEMEMORYMANAGER}
+{.$DEFINE BOLDCOMCLIENT}
+
+{$IFNDEF DEBUG}
+  {$DEFINE BOLD_INLINE}
+{$ENDIF}
+
+{$UNDEF BOLD_UNICODE}
+{$IFDEF BOLD_DELPHI13_OR_LATER}
+  {$DEFINE BOLD_UNICODE}
+{$ENDIF}
+
+{$IFDEF BOLD_UNICODE}
+  {$STRINGCHECKS OFF} // http://www.micro-isv.asia/2008/10/needless-string-checks-with-ensureunicodestring/
+{$ENDIF BOLD_UNICODE}
+
+  // Use OXML instead of MSXML for XML operations (faster and can handle larger XML)
+{.$DEFINE OXML}
+
+  // Faster Display Queue - Simplified handling of (Most)Prioritized and less iteration of Display List
+{$DEFINE BoldQueue_Optimization}
+
+  // When fetching an object which class list is loaded then search there instead of going to db.
+{$DEFINE FetchFromClassList}
+
+  // Mechanism to automatically place subscriptions for all derivation code in .inc files
+{.$DEFINE NoAutoSubscription}
+
+  // Mechanism for efficient fetching
+{.$DEFINE SpanFetch}
+
+  // Turns off query mechanism
+{.$DEFINE BOLD_NO_QUERIES}
+
+  // Do not allow creation of transient instances of a persistent class.
+  // This is rarely used and if explicitly prohibited allows TBoldClassListController to not have to execute AddTransientFromSystem
+{.$DEFINE NoTransientInstancesOfPersistentClass}
+
+  // Do not allow adding of objects from different systems to same list
+{.$DEFINE AllowCrossSystemLists}
+
+  // Affects EndModify, if the new value is same as Old value mark the object Current instead of modified
+{$DEFINE CompareToOldValues}
+
+  // Debug addon to count instances per subclass of TBoldMemoryManagedObject
+{$DEFINE DebugInstanceCounter}
+
+  // It saves memory to use LightMemberDeriver, but FormSaver is not compatible with LightMemberDeriver
+{$DEFINE LightMemberDeriver}
+
+  // Define to use string comparison for all attributes. This may be faster, it uses IBoldStringRepresentable
+  // but assumes each value has distinct string representation.
+{.$DEFINE StringAttributeComparison}
+
+  // Turns of ObjectSpace transaction mechanism
+{.$DEFINE NoObjectSpaceTransactions}
+
+  // Turns off MayUpdate
+{.$DEFINE NoMayUpdate}
+
+  // USEGLOBALCHARBUFFER is an optimization in BoldHashIndexes.pas
+{$DEFINE USEGLOBALCHARBUFFER}
+
+// Shared Strings brings minimal memory savings, but at cost of performance
+{$DEFINE BOLD_DISABLESHAREDSTRINGS}
+
+// Extrenal IDServer used instead of BoldID/Timestamp tables, improves write performance and avoids deadlocks
+{.$DEFINE IDServer}
+
+// Uses StringBuilder for constructing SQL statements
+{$DEFINE RIL}
+
+// All attributes will return emptyValue instead of exception reading nil.
+{.$DEFINE NoNilAttributeExceptions}
+
+// Does not allow setting or storing of negative dates (before 1899) or after (2899-12-30)
+{.$DEFINE NoNegativeDates}
+
+// Converts zero date (1899) to nil when reading from db
+{$DEFINE ConvertZeroDateToDateNil}
+
+// DateTime and Date conform to each other
+{.$DEFINE DateTimeConformsToDate}
+
+// Allows usage of OCL expressions in constraint messages, the context of expression is the constrained element. Expression has to return a string.
+{.$DEFINE OCLConstraintMessages}
+
+// IndexColumn creates an extra Index column in MemberMappingTable
+{.$DEFINE IndexColumn}
+
+//Includes BoldJson and BoldObjectRepresentationJson
+{.$DEFINE BoldJson}
+
+// BoldSystem broadcasts member events - allows getting events from all objects and their members by only placing one subscription on system
+{$DEFINE BoldSystemBroadcastMemberEvents}
+
+// Generates Enum classes for For..In support, available since D2007
+{$IFDEF BOLD_DELPHI11_OR_LATER} // D2007+
+  {$DEFINE UseBoldListEnumerator}
+{$ENDIF}
+
+// do not copy old values to Rollback valuespace during fetch
+{$DEFINE DisableRollbackDuringFetch}
+
+// if link object is deleted (but not yet saved) and then same two objects on both ends are linked again, then reuse the deleted link object instead of creating new one.
+// This effectively avoids a db delete and insert of logically same object but with new id.
+// As a side effect this also avoids DetectLinkClassDuplicates in batch mode detecting false duplicate
+{$DEFINE ReuseDeletedLinkObjectOnRelink}
+
+{$IFDEF ReuseDeletedLinkObjectOnRelink}
+  {$IFNDEF CompareToOldValues}
+  ReuseDeletedLinkObjectOnRelink requires CompareToOldValues
+  {$ENDIF}
+{$ENDIF}

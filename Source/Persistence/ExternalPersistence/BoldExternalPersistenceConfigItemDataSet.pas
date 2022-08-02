@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceConfigItemDataSet;
 
 interface
@@ -36,6 +39,10 @@ type
 
 
 implementation
+
+uses
+  BoldRev;
+
 
 constructor TBoldExternalPersistenceConfigDataSetItem.Create(AOwner: TCollection);
 begin
@@ -86,5 +93,7 @@ function TBoldExternalPersistenceConfigDataSetItems.GetItem(
 begin
   result := inherited GetItem(Index) as TBoldExternalPersistenceConfigDataSetItem;
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComConnection;
 
 interface
@@ -14,19 +17,15 @@ const
 
 function BoldComConnectionTypeLibrary: ITypeLib;
 
-// -----------------------------------------------------------------------------
-// Type Library
-// -----------------------------------------------------------------------------
 
-// *********************************************************************//
-// GUIDS declared in the TypeLibrary. Following prefixes are used:
-//   Type Libraries    : LIBID_xxxx
-//   CoClasses         : CLASS_xxxx
-//   DISPInterfaces    : DIID_xxxx
-//   Non-DISP interfaces: IID_xxxx
-// *********************************************************************//
+
+
+
+
+
+
+
 const
-  // TypeLibrary Major and minor versions
   BoldComConnectionMajorVersion = 1;
   BoldComConnectionMinorVersion = 0;
 
@@ -37,9 +36,7 @@ const
   IID_IBoldProvider: TGUID = '{E07B7DF5-77D2-11D2-B7E0-00600871B01B}';
 type
 
-// *********************************************************************//
-// Forward declaration of types defined in TypeLibrary
-// *********************************************************************//
+
   IBoldClient = interface;
   IBoldClientDisp = dispinterface;
   IBoldServer = interface;
@@ -47,31 +44,25 @@ type
   IBoldProvider = interface;
   IBoldProviderDisp = dispinterface;
 
-// *********************************************************************//
-// Interface: IBoldClient
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E07B7DF3-77D2-11D2-B7E0-00600871B01B}
-// *********************************************************************//
+
+
+
   IBoldClient = interface(IDispatch)
     ['{E07B7DF3-77D2-11D2-B7E0-00600871B01B}']
     function  OnServerEvent(Event: Integer; Data: OleVariant): OleVariant; safecall;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldClientDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E07B7DF3-77D2-11D2-B7E0-00600871B01B}
-// *********************************************************************//
+
+
+
   IBoldClientDisp = dispinterface
     ['{E07B7DF3-77D2-11D2-B7E0-00600871B01B}']
     function  OnServerEvent(Event: Integer; Data: OleVariant): OleVariant; dispid 1;
   end;
 
-// *********************************************************************//
-// Interface: IBoldServer
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E07B7DF4-77D2-11D2-B7E0-00600871B01B}
-// *********************************************************************//
+
+
+
   IBoldServer = interface(IDispatch)
     ['{E07B7DF4-77D2-11D2-B7E0-00600871B01B}']
     function  Connect(const ClientId: WideString; Flags: Integer; const Client: IBoldClient): WordBool; safecall;
@@ -79,11 +70,9 @@ type
     function  Execute(const Name: WideString; Params: OleVariant): OleVariant; safecall;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldServerDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E07B7DF4-77D2-11D2-B7E0-00600871B01B}
-// *********************************************************************//
+
+
+
   IBoldServerDisp = dispinterface
     ['{E07B7DF4-77D2-11D2-B7E0-00600871B01B}']
     function  Connect(const ClientId: WideString; Flags: Integer; const Client: IBoldClient): WordBool; dispid 1;
@@ -91,11 +80,9 @@ type
     function  Execute(const Name: WideString; Params: OleVariant): OleVariant; dispid 3;
   end;
 
-// *********************************************************************//
-// Interface: IBoldProvider
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E07B7DF5-77D2-11D2-B7E0-00600871B01B}
-// *********************************************************************//
+
+
+
   IBoldProvider = interface(IDispatch)
     ['{E07B7DF5-77D2-11D2-B7E0-00600871B01B}']
     function  CreateObject(const ClassName: WideString): IUnknown; safecall;
@@ -104,11 +91,9 @@ type
     property ObjectInfo: OleVariant read Get_ObjectInfo;
   end;
 
-// *********************************************************************//
-// DispIntf:  IBoldProviderDisp
-// Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {E07B7DF5-77D2-11D2-B7E0-00600871B01B}
-// *********************************************************************//
+
+
+
   IBoldProviderDisp = dispinterface
     ['{E07B7DF5-77D2-11D2-B7E0-00600871B01B}']
     function  CreateObject(const ClassName: WideString): IUnknown; dispid 1;
@@ -116,15 +101,12 @@ type
     property ObjectInfo: OleVariant readonly dispid 3;
   end;
 
-// -----------------------------------------------------------------------------
-// Type Library End
-// -----------------------------------------------------------------------------
+
 
 implementation
 
 uses
   SysUtils,
-  BoldComConst,
   BoldComUtils;
 
 var
@@ -135,9 +117,11 @@ begin
   if not Assigned(G_TypeLibrary) then
   begin
     if LoadRegTypeLib(LIBID_BoldComConnection,1,0,0,G_TypeLibrary) <> 0 then
-      raise EBoldCom.Create(sUnableToLoadTypeLib);
+      raise EBoldCom.Create('Unable to load type library (BoldComConnection)');
   end;
   Result := G_TypeLibrary;
 end;
+
+initialization
 
 end.

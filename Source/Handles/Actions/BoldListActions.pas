@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListActions;
 
 interface
@@ -5,12 +8,12 @@ interface
 uses
   Classes,
   Controls,
-  BoldDefs,  // Defines EBold (Move it to BoldExceptions?)
+  BoldDefs,
   BoldSubscription,
   BoldSystem,
   BoldAbstractListHandle,
   BoldHandleAction,
-  BoldNavigatorDefs;  // Defines TBoldDeleteMode (should move to BoldDefs)
+  BoldNavigatorDefs;
 
 type
   TBoldListHandleAction = class;
@@ -23,7 +26,6 @@ type
   TBoldListHandleMoveUpAction =  class;
   TBoldListHandleMoveDownAction =  class;
 
-  { TBoldListHandleAction }
   TBoldListHandleAction = class(TBoldHandleAction)
   private
     function GetBoldHandle: TBoldAbstractListHandle;
@@ -34,7 +36,6 @@ type
     property BoldHandle: TBoldAbstractListHandle read GetBoldHandle write SetBoldHandle;
   end;
 
-  { TBoldListHandleNextAction }
   TBoldListHandleNextAction = class(TBoldListHandleAction)
   protected
     procedure CheckAllowEnable(var EnableAction: boolean); override;
@@ -43,7 +44,6 @@ type
     procedure ExecuteTarget(Target: TObject); override;
   end;
 
-  { TBoldListHandlePrevAction }
   TBoldListHandlePrevAction = class(TBoldListHandleAction)
   protected
     procedure CheckAllowEnable(var EnableAction: boolean); override;
@@ -52,7 +52,6 @@ type
     procedure ExecuteTarget(Target: TObject); override;
   end;
 
-  { TBoldListHandleFirstAction }
   TBoldListHandleFirstAction = class(TBoldListHandleAction)
   protected
     procedure CheckAllowEnable(var EnableAction: boolean); override;
@@ -111,7 +110,7 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  HandlesConst;
+  BoldRev;
 
 { TBoldListHandleAction }
 
@@ -148,7 +147,7 @@ end;
 constructor TBoldListHandleNextAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sNext;
+  Caption := 'Next';
 end;
 
 procedure TBoldListHandleNextAction.ExecuteTarget(Target: TObject);
@@ -170,7 +169,7 @@ end;
 constructor TBoldListHandlePrevAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sPrev;
+  Caption := 'Prev';
 end;
 
 procedure TBoldListHandlePrevAction.ExecuteTarget(Target: TObject);
@@ -192,7 +191,7 @@ end;
 constructor TBoldListHandleFirstAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sFirst;
+  Caption := 'First';
 end;
 
 procedure TBoldListHandleFirstAction.ExecuteTarget(Target: TObject);
@@ -214,7 +213,7 @@ end;
 constructor TBoldListHandleLastAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sLast;
+  Caption := 'Last';
 end;
 
 procedure TBoldListHandleLastAction.ExecuteTarget(Target: TObject);
@@ -236,7 +235,7 @@ begin
     dmUnlinkAllAndDelete:
       Result := True;
     else
-      raise EBold.CreateFmt(sUnknownDeleteMode, [ClassName]);
+      raise EBold.CreateFmt('%s.AllowDelete: Unknown deletemode', [ClassName]);
   end;
 end;
 
@@ -257,7 +256,7 @@ end;
 constructor TBoldListHandleDeleteAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sDelete;
+  Caption := 'Delete';
 end;
 
 procedure TBoldListHandleDeleteAction.ExecuteTarget(Target: TObject);
@@ -290,7 +289,7 @@ end;
 constructor TBoldListHandleAddNewAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sAddNew;
+  Caption := 'Add New';
 end;
 
 procedure TBoldListHandleAddNewAction.ExecuteTarget(Target: TObject);
@@ -315,7 +314,7 @@ end;
 constructor TBoldListHandleMoveUpAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sMoveUp;
+  Caption := 'Move up';
 end;
 
 procedure TBoldListHandleMoveUpAction.ExecuteTarget(Target: TObject);
@@ -337,7 +336,7 @@ end;
 constructor TBoldListHandleMoveDownAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := sMoveDown;
+  Caption := 'Move down';
 end;
 
 procedure TBoldListHandleMoveDownAction.ExecuteTarget(Target: TObject);
@@ -345,5 +344,7 @@ begin
   inherited;
   BoldHandle.List.Move(BoldHandle.CurrentIndex, BoldHandle.CurrentIndex+1);
 end;
+
+initialization
 
 end.

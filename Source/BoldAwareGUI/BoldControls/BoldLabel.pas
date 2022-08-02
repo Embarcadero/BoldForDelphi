@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLabel;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -10,12 +13,13 @@ uses
   Graphics,
   Controls,
   StdCtrls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldHandles,
   BoldControlPack,
   BoldElements,
   BoldStringControlPack,
-  BoldElementHandleFollower;
+  BoldElementHandleFollower,
+  BoldDefs;
 
 type
   {Forward declaration of classes}
@@ -31,8 +35,8 @@ type
     fMyColor: TColor;
     fMyFont: TFont;
     function GetContextType: TBoldElementTypeInfo;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
     procedure _FontChanged(sender: TObject);
     procedure AfterMakeUptoDate(Follower: TBoldFollower);
@@ -72,6 +76,7 @@ type
   end;
 
   { TBoldLabel }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldLabel = class(TBoldCustomLabel)
   public
     {$IFNDEF T2H}
@@ -138,7 +143,7 @@ begin
   fMyFont.OnChange := _FontChanged;
   fMyColor := EffectiveColor;
   if (csDesigning in ComponentState) then
-    ParentColor := True; //CHECKME This should not be necesary...
+    ParentColor := True;
 end;
 
 destructor TBoldCustomLabel.Destroy;
@@ -211,7 +216,7 @@ end;
 
 procedure TBoldCustomLabel.SetEffectiveColor(v: TColor);
 begin
-  if (EffectiveColor <> v) and not ParentColor then
+  if EffectiveColor <> v then
   begin
     inherited Color := v;
     if (csDesigning in ComponentState) then
@@ -236,7 +241,6 @@ var
 begin
   if (csDesigning in ComponentState) then
   begin
-    //  caption during design-time
     with BoldProperties do
       if Assigned(Renderer) then
         NewText := Format('%s.%s', [Renderer.name, Expression])
@@ -246,20 +250,16 @@ begin
         NewText := name;
   end
   else
-    //  Caption at run-time
     newText := BoldProperties.GetCurrentAsString(Follower);
 
   if Text <> newText then
     Text := newText;
 
   BoldProperties.SetFont(EffectiveFont, Font, Follower);
-  if not parentColor then
-  begin
-    ec := EffectiveColor;
-    BoldProperties.SetColor(ec, Color, Follower);
-    EffectiveColor := ec;
-  end;
-end;
+  ec := EffectiveColor;
+  BoldProperties.SetColor(ec, Color, Follower);
+  EffectiveColor := ec;
+end;  
 
 function TBoldCustomLabel.GetText: TCaption;
 begin
@@ -284,14 +284,14 @@ begin
     result := nil;
 end;
 
-function TBoldCustomLabel.GetExpression: String;
+function TBoldCustomLabel.GetExpression: TBoldExpression;
 begin
   result := BoldProperties.Expression;
 end;
 
-procedure TBoldCustomLabel.SetExpression(Expression: String);
+procedure TBoldCustomLabel.SetExpression(const Value: TBoldExpression);
 begin
-  BoldProperties.Expression := Expression;
+  BoldProperties.Expression := Value;
 end;
 
 function TBoldCustomLabel.GetVariableList: TBoldExternalVariableList;
@@ -328,4 +328,3 @@ begin
 end;
 
 end.
-

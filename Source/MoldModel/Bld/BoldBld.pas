@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldBld;
 
 interface
@@ -16,12 +19,13 @@ type
   {---Exceptions---}
   EBoldBLDParseError = class(EBold);
 
+
   {---TMoldBLDRW---}
   TMoldBLDRW = class
-    class function ModelFromFile(const filename: string): TMoldModel; // returns dynamically allocated model, with parts.
+    class function ModelFromFile(const filename: string): TMoldModel;
     class procedure ModelToFile(Model: TMoldModel; const filename: string);
     class procedure ModelToStrings(Model: TMoldModel; s: TSTrings);
-    class function StringsToModel(s: TStrings): TMoldModel; // returns dynamically allocated model, with parts.
+    class function StringsToModel(s: TStrings): TMoldModel;
   end;
 
 
@@ -36,8 +40,7 @@ uses
   BoldTaggedValueSupport,
   BoldDefaultTaggedValues,
   BoldUMLTaggedValues,
-  BoldUMLTypes,
-  BoldMoldConsts;
+  BoldUMLTypes;
 
 const
   LINKEXTENSION: string = '.bld';
@@ -55,6 +58,8 @@ type
   TPClass = class;
 
   TElementClass = class of TElement;
+
+
 
   TElementClassRecord = record
     ElementClass: TElementClass;
@@ -101,13 +106,13 @@ type
     Position: Integer;
     CurrentToken: TToken;
     CurrentCharacter: Char;
-    procedure GetToken; // Get a token
-    procedure Skip; // skip to next non-whitespace character
-    procedure GetCharacter; // Get next character
-    procedure GetCharacterNotEof; // Get next character, don't allow EOF
-    function NextCharacter: Char; // Get next non-whitespace character, and return in
-    procedure EatStartBlock(const keyw: string); // Eat start block
-    function TryKeyword(const keyw: string): Boolean; // eat keyword if matching
+    procedure GetToken;
+    procedure Skip;
+    procedure GetCharacter;
+    procedure GetCharacterNotEof;
+    function NextCharacter: Char;
+    procedure EatStartBlock(const keyw: string);
+    function TryKeyword(const keyw: string): Boolean;
     function GetKeyword: string;
     procedure Eat(t: BLDTokenKind);
     procedure EatKeyword(const keyw: string);
@@ -142,7 +147,7 @@ type
   {---TElementList---}
   TElementList = class(TBoldMemoryManagedObject)
     class procedure Write(list: TMoldElementList; w: TWriter);
-    class procedure Read(parent: TMoldElement; r: TReader);  // classes link themselves into the right list
+    class procedure Read(parent: TMoldElement; r: TReader);
   end;
 
   {---TPClass---}
@@ -193,7 +198,7 @@ begin
     Exit;
   theWriter := TWriter.Create(s);
   try
-    theWriter.Put(Format('VERSION %d', [CURRENTVERSION])); // do not localize
+    theWriter.Put(Format('VERSION %d', [CURRENTVERSION]));
     Tmodel.Write(model, theWriter);
   finally
     theWriter.Free;
@@ -213,13 +218,13 @@ begin
   end;
 end;
 
-class function TMoldBLDRW.StringsToModel(s:TStrings): TMoldModel; // returns dynamically allocated model, with parts.
+class function TMoldBLDRW.StringsToModel(s:TStrings): TMoldModel;
 var
   reader: TReader;
 begin
   Result := nil;
   if s.Count = 0 then
-      Result := TMoldModel.Create(nil, 'New_Model') // do not localize
+      Result := TMoldModel.Create(nil, 'New_Model')
   else
   begin
     reader := TReader.Create(s);
@@ -228,8 +233,7 @@ begin
         reader.CurrentToken := TToken.Create;
         reader.GetCharacter;
         reader.GetToken;
-        // Get version information (if any)
-        if reader.TryKeyword('VERSION') then // do not localize
+        if reader.TryKeyword('VERSION') then
           reader.FFormatVersion := reader.GetInteger
         else
            reader.FFormatVersion := 1;
@@ -240,12 +244,10 @@ begin
 }
         Result := TElement.CreateAndRead(nil, reader) as TMoldModel;
 
-//        if reader.fFormatVersion < 11 then
-//          Result.RootClass.ClassID := Result.FreeClassID;
 
       except
         on e: EBoldBLDParseError do
-          raise EBoldBLDParseError.CreateFmt(sErrorOnPos, [e.Message, reader.LineNumber, reader.Position]);
+          raise EBoldBLDParseError.CreateFmt('%s Line: %d Position: %d', [e.Message, reader.LineNumber, reader.Position]);
       end;
       finally
         Reader.Free;
@@ -319,7 +321,6 @@ begin
     else if s[i] = BOLDLF then
       begin
        Put('\' + 'l');
-  //     DontIndent;
       end
     else
       Put(s[i]);
@@ -336,9 +337,9 @@ procedure TWriter.PutBoolean(b: Boolean);
 begin
   doIndent;
   if b then
-    Put('TRUE') // do not localize
+    Put('TRUE')
   else
-    Put('FALSE'); // do not localize
+    Put('FALSE');
 end;
 
 Procedure TWriter.PutClassReference(aClass: TMoldClass);
@@ -346,7 +347,7 @@ begin
   if Assigned(aClass) then
     PutQuotedString(aClass.Name)
   else
-    PutQuotedString('<NONE>'); // do not localize
+    PutQUotedString('<NONE>');
 end;
 
 {---TReader---}
@@ -366,7 +367,7 @@ end;
 
 procedure TReader.Skip;
 begin
-  while (not EOS) and (CurrentCharacter in [SPACE, TAB]) do
+  while (not EOS) and CharInSet(CurrentCharacter, [SPACE, TAB]) do
     GetCharacter;
 end;
 
@@ -383,12 +384,12 @@ procedure TReader.GetCharacter;
       Inc(fLineNumber);
     end;
     Position := 1;
-    CurrentCharacter := ' '; // Space for newline
+    CurrentCharacter := ' ';
   end;
-
+  
 begin
   if EOS then
-    CurrentCharacter := ' ' // Space for newline
+    CurrentCharacter := ' '
   else
   if (Position > fLineLength) then
     NextLine
@@ -397,13 +398,12 @@ begin
     CurrentCharacter := Line[Position];
     INC(Position);
   end;
- //  write(output, currentcharacter);  // DEBUG only (or you'll get an IO error 103)
 end;
 
 procedure TReader.GetCharacterNotEof;
 begin
   if EOS then
-    raise EBoldBLDParseError.Create(sUnexpectedEOF)
+    raise EBoldBLDParseError.Create('BLD Reader: Unexpected EOF')
   else
     GetCharacter;
 end;
@@ -414,9 +414,10 @@ begin
   Result := CurrentCharacter;
 end;
 
+
 var
   TokenBuffer: string = '      ';
-  TokenBufferLength: integer = 6; // TokenBuffer MUST consist of this many spaces to start with
+  TokenBufferLength: integer = 6;
 
 procedure TReader.GetToken;
 var
@@ -446,7 +447,7 @@ begin
       begin
         Kind := INTVALUE;
         IntegerValue := ord(CurrentCharacter) - ord('0');
-        while Nextcharacter in ['0'..'9'] do
+        while CharInSet(Nextcharacter, ['0'..'9']) do
           IntegerValue := IntegerValue * 10 +  ord(CurrentCharacter) - ord('0')
       end;
 
@@ -457,7 +458,7 @@ begin
         StartIndex := Position;
         FoundLength := 1;
         TokenBuffer[FoundLength] := CurrentCharacter;
-        while NextCharacter in ['A'..'Z','a'..'z'] do
+        while CharInSet(NextCharacter, ['A'..'Z','a'..'z']) do
           Inc(FoundLength);
         StringValue := Copy(LineWithToken, StartIndex-1, FoundLength);
       end;
@@ -491,7 +492,7 @@ begin
         StringValue := Copy(TokenBuffer, 1, i);
       end;
       else
-        raise EBoldBLDParseError.CreateFmt(sBadCharacter, [IntToStr(ord(CurrentCharacter))])
+        raise EBoldBLDParseError.CreateFmt('BLD Reader: Bad character %s', [IntToStr(ord(CurrentCharacter))])
   end;
 end;
 
@@ -500,13 +501,13 @@ begin
   if CurrentToken.Kind = t then
     GetToken
   else
-    raise EBoldBLDParseError.Create(sSyntaxError);
+    raise EBoldBLDParseError.Create('BLD Reader: Syntax error');
 end;
 
 procedure TReader.EatKeyword(const keyw: string);
 begin
   if not TryKeyword(keyw) then
-    raise EBoldBLDParseError.CreateFmt(sAKeywordExpected, [keyw]);
+    raise EBoldBLDParseError.CreateFmt('BLD Reader: ''%s'' expected', [keyw]);
 end;
 
 procedure TReader.EatStartBlock(const keyw: string);
@@ -532,7 +533,7 @@ begin
   if CurrentToken.Kind = QSTRING then
     GetToken
   else
-    raise EBoldBLDParseError.Create(sQuotedStringExpected);
+    raise EBoldBLDParseError.Create('BLD Reader: Quoted string expected');
 end;
 
 function TReader.GetKeyword: string;
@@ -541,7 +542,7 @@ begin
   if CurrentToken.Kind = KEYWORD then
     GetToken
   else
-    raise EBoldBLDParseError.Create(sKeyWordTokenExpected);
+    raise EBoldBLDParseError.Create('BLD Reader: KEYWORD expected');
 end;
 
 function TReader.GetInteger: integer;
@@ -550,17 +551,17 @@ begin
   if CurrentToken.Kind = INTVALUE then
     GetToken
   else
-    raise EBoldBLDParseError.Create(sIntegerExpected);
+    raise EBoldBLDParseError.Create('BLD Reader: Integer expected');
 end;
 
 function TReader.GetBoolean: Boolean;
 begin
   Result := False;
-  if (CurrentToken.Kind = KEYWORD) and (CurrentToken.StringValue = 'TRUE') then // do not localize
+  if (CurrentToken.Kind = KEYWORD) and (CurrentToken.StringValue = 'TRUE') then
     Result := True
   else
-  if (CurrentToken.Kind <> KEYWORD) or (CurrentToken.StringValue <> 'FALSE') then // do not localize
-    raise EBoldBLDParseError.Create(sBooleanExpected);
+  if (CurrentToken.Kind <> KEYWORD) or (CurrentToken.StringValue <> 'FALSE') then
+    raise EBoldBLDParseError.Create('BLD Reader: Boolean expected');
   GetToken;
 end;
 
@@ -569,7 +570,7 @@ var
   name: string;
 begin
   name := GetQuotedString;
-  if name = '<NONE>' then // do not localize
+  if name = '<NONE>' then
     Result := nil
   else
     Result := CurrentModel.GetClassByName(name);
@@ -581,7 +582,7 @@ var
   model: TMoldModel;
 begin
   model := element as TMoldModel;
-  w.PutStartBlock('Model'); // do not localize
+  w.PutStartBlock('Model');
   w.PutQuotedString(Model.Name);
   { version 11 }
   w.PutQuotedString(Model.RootClass.Name);
@@ -591,10 +592,10 @@ begin
   { version 17 }
   w.PutQuotedString(Model.NonDefaultTaggedValuesCommaText);
 
-  w.PutStartBlock('Classes'); // do not localize
+  w.PutStartBlock('Classes');
   TElementList.Write(Model.Classes, w);
   w.PutEndBlock;
-  w.PutStartBlock('Associations'); // do not localize
+  w.PutStartBlock('Associations');
   TElementList.Write(Model.Associations, w);
   w.PutEndBlock;
   w.PutEndBlock;
@@ -615,11 +616,12 @@ begin
   if r.FormatVersion >= 11 then
     model.RootClass.Name := r.GetQuotedString;
 
+
   if r.FormatVersion >= 12 then
     if r.formatVersion < 19 then Model.BoldTVByName[TAG_PMAPPERNAME] := r.GetQuotedString;
 
   if r.FormatVersion >= 13 then
-    if r.formatVersion < 19 then r.GetQuotedString; // legacy, was Model.DatabaseName
+    if r.formatVersion < 19 then r.GetQuotedString;
 
   if r.FormatVersion >= 15 then
   begin
@@ -641,12 +643,12 @@ begin
   end;
 
   {get classes}
-  r.EatStartBlock('Classes'); // do not localize
+  r.EatStartBlock('Classes');
   r.CurrentModel := model;
   TElementList.Read(model, r);
   r.Eat(RPAR);
 
-  r.EatStartBlock('Associations'); // do not localize
+  r.EatStartBlock('Associations');
   TElementList.Read(model, r);
   r.Eat(RPAR);
   r.Eat(RPAR);
@@ -662,7 +664,6 @@ end;
 
 class procedure TElement.Read(element: TMoldElement; r: TReader);
 begin
-  // Do nothing
 end;
 
 class function TElement.CreateAndRead(parent: TMoldElement; r: TReader): TMoldElement;
@@ -700,7 +701,7 @@ class procedure TPClass.Write(element: TMoldElement; w: TWriter);
 begin
   with element as TMoldClass do
   begin
-    w.PutStartBlock('Class'); // do not localize
+    w.PutStartBlock('Class');
     inherited write(element, w);
     w.PutClassReference(SuperClass);
 
@@ -713,10 +714,10 @@ begin
     { version 17 }
     w.PutQuotedString(NonDefaultTaggedValuesCommaText);
 
-    w.PutStartBlock('Attributes'); // do not localize
+    w.PutStartBlock('Attributes');
     TElementList.Write(Attributes, w);
     w.PutEndBlock;
-    w.PutStartBlock('Methods'); // do not localize
+    w.PutStartBlock('Methods');
     TElementList.Write(Methods, w);
     w.PutEndBlock;
     w.PutEndBlock;
@@ -727,12 +728,10 @@ class procedure TPClass.Read(element: TMoldElement; r: TReader);
 begin
   with element as TMoldClass do
   begin
-    // note special handling for classes    inherited read(element, r);
     if r.formatVersion < 19 then BoldTVByName[TAG_TABLENAME] := r.GetQuotedString;
     if r.formatVersion < 19 then BoldTVByName[TAG_TABLEMAPPING] := TBoldTaggedValueSupport.TableMappingToString(TTableMapping(r.GetInteger));
-    if r.formatVersion < 19 then r.GetInteger; // used to be classid, read for backward comaptibility
+    if r.formatVersion < 19 then r.GetInteger;
     SuperClass := r.GetClassReference;
-    // for older versions superclass may be nil but should be RootClass
     if (not Assigned(SuperClass)) and
        (Element <> Model.RootClass) then
       SuperClass := Model.RootClass;
@@ -766,13 +765,13 @@ begin
     if r.FormatVersion >= 17 then
     begin
       NonDefaultTaggedValuesCommaText := r.GetQuotedString;
-    end;
+    end;  
 
-    r.EatStartBlock('Attributes'); // do not localize
+    r.EatStartBlock('Attributes');
     TElementList.Read(element, r);
     r.Eat(RPAR);
 
-    r.EatStartBlock('Methods'); // do not localize
+    r.EatStartBlock('Methods');
     TElementList.Read(element, r);
     r.Eat(RPAR);
     r.Eat(RPAR);
@@ -784,7 +783,7 @@ class procedure TAttribute.Write(element: TMoldElement; w: TWriter);
 begin
   with Element as TMoldAttribute do
   begin
-    w.PutStartBlock('Attribute'); // do not localize
+    w.PutStartBlock('Attribute');
     inherited write(element, w);
     w.PutQuotedString(BoldType);
     { version 3 }
@@ -841,7 +840,7 @@ begin
         Stereotype := r.GetQuotedString;
         Constraints.CommaText := r.GetQuotedString;
         Visibility := TVisibilityKind(r.GetInteger);
-        if r.formatVersion < 19 then {DelphiField := }r.GetQuotedString; // removed in version 18
+        if r.formatVersion < 19 then {DelphiField := }r.GetQuotedString;
         if r.formatVersion < 19 then BoldTVByName[TAG_DPREAD] := TBoldTaggedValueSupport.DelphiPropertyAccessKindToString(TDelphiPropertyAccessKind(r.GetInteger));
         if r.formatVersion < 19 then BoldTVByName[TAG_DPWRITE] := TBoldTaggedValueSupport.DelphiPropertyAccessKindToString(TDelphiPropertyAccessKind(r.GetInteger));
         if r.formatVersion < 19 then {DerivationOCL := }r.GetQuotedString;
@@ -861,7 +860,6 @@ begin
     end
     else
     begin
-      // FIXME: Jan, ta ställning till vad de andra ska bli /fredrik 96-11-04
       BoldTVByName[TAG_DELPHINAME] := ColumnName;
     end;
     r.Eat(RPAR);
@@ -873,7 +871,7 @@ class procedure TMethod.Write(element: TMoldElement; w: TWriter);
 begin
   with element as TMoldMethod do
   begin
-    w.PutStartBlock('Method'); // do not localize
+    w.PutStartBlock('Method');
     inherited write(element, w);
     w.PutQuotedString(Signature);
     w.PutBoolean(IsClassMethod);
@@ -906,6 +904,7 @@ begin
       if r.formatVersion < 19 then BoldTVByName[TAG_DELPHINAME]  := r.GetQuotedString;
     end;
 
+
     if r.FormatVersion >= 16 then
     begin
       Stereotype := r.GetQuotedString;
@@ -931,7 +930,7 @@ class procedure TRole.Write(element: TMoldElement; w: TWriter);
 begin
   with element as TMoldRole do
   begin
-    w.PutStartBlock('Role'); // do not localize
+    w.PutStartBlock('Role');
     inherited write(element, w);
     w.PutBoolean(Navigable);
     { version 2 }
@@ -947,7 +946,7 @@ begin
     { version 17 }
     w.PutQuotedString(NonDefaultTaggedValuesCommaText);
     { version 13}
-    w.PutStartBlock('Qualifiers'); // do not localize
+    w.PutStartBlock('Qualifiers');
     TElementList.Write(Qualifiers, w);
     w.PutEndBlock;
     w.PutEndBlock;
@@ -979,7 +978,7 @@ begin
       BoldTVByName[TAG_DELPHINAME] := ColumnName;
 
     if r.FormatVersion >= 4 then
-      if r.formatVersion < 19 then r.GetBoolean; // legacy, was Mandatory
+      if r.formatVersion < 19 then r.GetBoolean;
 
     if r.formatVersion < 19 then BoldTVByName[TAG_EMBED] := BooleanToString((r.FormatVersion < 9) or   { Embed introduced in v9, default True }
              r.GetBoolean);
@@ -1006,7 +1005,7 @@ begin
 
     if r.FormatVersion >= 14 then
     begin
-      r.EatStartBlock('Qualifiers'); // do not localize
+      r.EatStartBlock('Qualifiers');
       TElementList.Read(element, r);
       r.Eat(RPAR);
     end;
@@ -1020,7 +1019,7 @@ class procedure TQualifier.Write(element: TMoldElement; w: TWriter);
 begin
   with Element as TMoldQualifier do
   begin
-    w.PutStartBlock('Qualifier'); // do not localize
+    w.PutStartBlock('Qualifier');
     inherited write(element, w);
     w.PutQuotedString(BoldType);
     { version 19 }
@@ -1049,7 +1048,7 @@ class procedure TAssociation.Write(element: TMoldElement;w: TWriter);
 begin
   with element as TMoldAssociation do
   begin
-    w.PutStartBlock('Association'); // do not localize
+    w.PutStartBlock('Association');
     inherited write(element, w);
     w.PutClassReference(LinkClass);
     { version 16 }
@@ -1060,7 +1059,7 @@ begin
     { version 19 }
     w.PutBoolean(Derived);
 
-    w.PutStartBlock('Roles'); // do not localize
+    w.PutStartBlock('Roles');
     TElementList.Write(Roles, w);
     w.PutEndBlock;
     w.PutEndBlock;
@@ -1081,18 +1080,16 @@ begin
       Stereotype := r.GetQuotedString;
       Constraints.CommaText := r.GetQuotedString;
     end;
-    // support for older versions that did not store "Persistent" for associations
     StdTVByName[TAG_PERSISTENCE] := TV_PERSISTENCE_PERSISTENT;
     if r.FormatVersion >= 17 then
     begin
       NonDefaultTaggedValuesCommaText := r.GetQuotedString;
     end;
-    // Get aRole list
 
     if r.FormatVersion >= 19 then
       Derived := r.GetBoolean;
 
-    r.EatStartBlock('Roles'); // do not localize
+    r.EatStartBlock('Roles');
     TElementList.Read(element, r);
     r.Eat(RPAR);
     r.Eat(RPAR);
@@ -1104,13 +1101,13 @@ type
 var
   TypeTable: array [typetableIndex] of TElementClassRecord =
     (
-     (elementClass: TModel;       moldElementClass: TMoldModel;       name: 'Model'), // do not localize
-     (elementClass: TPClass;      moldElementClass: TMoldClass;       name: 'Class'), // do not localize
-     (elementClass: TAttribute;   moldElementClass: TMoldAttribute;   name: 'Attribute'), // do not localize
-     (elementClass: TMethod;      moldElementClass: TMoldMethod;      name: 'Method'), // do not localize
-     (elementClass: TAssociation; moldElementClass: TMoldAssociation; name: 'Association'), // do not localize
-     (elementClass: TRole;        moldElementClass: TMoldRole;        name: 'Role'), // do not localize
-     (elementClass: TQualifier;   moldElementClass: TMoldQualifier;   name: 'Qualifier') // do not localize
+     (elementClass: TModel;       moldElementClass: TMoldModel;       name: 'Model'),
+     (elementClass: TPClass;      moldElementClass: TMoldClass;       name: 'Class'),
+     (elementClass: TAttribute;   moldElementClass: TMoldAttribute;   name: 'Attribute'),
+     (elementClass: TMethod;      moldElementClass: TMoldMethod;      name: 'Method'),
+     (elementClass: TAssociation; moldElementClass: TMoldAssociation; name: 'Association'),
+     (elementClass: TRole;        moldElementClass: TMoldRole;        name: 'Role'),
+     (elementClass: TQualifier;   moldElementClass: TMoldQualifier;   name: 'Qualifier')
    );
 
 function TypeTableByMoldElement(moldElement: TMoldElement): TElementClassRecord;
@@ -1123,7 +1120,7 @@ begin
       Result := typetable[i];
       Exit;
     end;
-  raise EBoldInternal.Create('TypeTableByMoldElement: moldElementClass not found in typetable'); // do not localize
+  raise EBoldInternal.Create('TypeTableByMoldElement: moldElementClass not found in typetable');
 end;
 
 function TypeTableByName(name: string): TElementClassRecord;
@@ -1136,7 +1133,7 @@ begin
       Result := typetable[i];
       Exit;
     end;
-  raise EBoldInternal.CreateFmt('TypeTableByName: %s not found in typetable', [name]); // do not localize
+  raise EBoldInternal.CreateFmt('TypeTableByName: %s not found in typetable', [name]);
 end;
 
 function BooleanToMultiplicityString(Value: Boolean): String;
@@ -1146,5 +1143,7 @@ begin
   else
     Result := '1';
 end;
+
+initialization
 
 end.

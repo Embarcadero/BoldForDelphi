@@ -2,22 +2,22 @@
 
 function MakeList( First : AYaccStackElement; Offs : integer ) : AYaccStackElement;
 begin
-   result := AYaccStackElement.CreateOffs( offs );
-   result.List := TList.Create;
-   Result.List.Add( First.Clone );
+  result := AYaccStackElement.CreateOffs( offs );
+  result.List := TList.Create;
+  Result.List.Add( First.Clone );
 end;
 
 function PushList( First, List : AYaccStackElement; Offs : integer ) : AYaccStackElement;
 begin
-   result := AYaccStackElement.CreateOffs( Offs );
-   result.list := list.list;
-   result.list.insert( 0, first.clone );
+  result := AYaccStackElement.CreateOffs( Offs );
+  result.list := list.list;
+  result.list.insert( 0, first.clone );
 end;
 
 function MakeEmptyList : AYaccStackElement;
 begin
-   result := AYaccStackElement.CreateOffs( 0 );
-   result.List := TList.Create;
+  result := AYaccStackElement.CreateOffs( 0 );
+  result.List := TList.Create;
 end;
 
 procedure ReleaseList( List : AYaccStackElement );
@@ -28,61 +28,70 @@ procedure ReleaseList( List : AYaccStackElement );
 var
   i : integer;
 begin
-   if assigned( LIst.LIst ) then begin
-     for i := 0 to list.list.count-1 do begin
-        AYaccStackElement( List.List[i] ).free;
-     end;
-     list.list.free;
-   end;
+  if assigned( LIst.LIst ) then begin
+    for i := 0 to list.list.count-1 do begin
+      AYaccStackElement( List.List[i] ).free;
+    end;
+    list.list.free;
+  end;
 end;
 
 procedure RetrieveNodeList( ParseList : AYaccStackElement; var NodeList : TBoldOCLNodeList );
 var
-   i : integer;
+  i, OldLength : integer;
 begin
-   if not assigned( ParseList ) then exit;
-   if assigned( ParseList.List ) then begin
-      if not assigned( Nodelist ) then
-         Nodelist := TBoldOCLNodeList.create;
-      for i := 0 to ParseList.List.Count-1 do
-         Nodelist.Add( AYaccStackElement( ParseList.List[i] ).Node );
-      ReleaseList( ParseList );
-   end;
+  if not assigned( ParseList ) then exit;
+  if assigned( ParseList.List ) then
+  begin
+     OldLength := Length(Nodelist);
+     SetLength(NodeList, OldLength + ParseList.List.Count);
+     for i := 0 to ParseList.List.Count-1 do
+        Nodelist[i+OldLength] := AYaccStackElement( ParseList.List[i] ).Node ;
+     ReleaseList( ParseList );
+  end;
 end;
 
 
 function Make1Operation( const OpName : String; arg1 : AYaccStackElement; Offs : integer ) : AYaccStackElement;
+var
+  OP: TBoldOclOperation;
 begin
-   result := AYaccStackElement.CreateOffs( Arg1.Offset );
-   result.Node := TBoldOclOperation.Create;
-   Result.Node.Position := Offs;
-   TBoldOclOperation( result.Node ).args := TBoldOCLNodeList.create;
-   TBoldOclOperation( result.Node ).args.add( arg1.Node );
-   TBoldOclOperation( result.Node ).OperationName := OpName;
+  result := AYaccStackElement.CreateOffs( Arg1.Offset );
+  OP:= TBoldOclOperation.Create;
+  result.Node := OP;
+  Result.Node.Position := Offs;
+  SetLength(OP.args,1);
+  OP.args[0] := arg1.Node;
+  OP.OperationName := OpName;
 end;
 
 function Make2Operation(const OpName : String; arg1, arg2 : AYaccStackElement; Offs : integer ) : AYaccStackElement;
+var
+  OP: TBoldOclOperation;
 begin
-   result := AYaccStackElement.CreateOffs( offs );
-   result.Node := TBoldOclOperation.Create;
-   Result.Node.Position := Offs;
-   TBoldOclOperation( result.Node ).args := TBoldOClNodeList.create;
-   TBoldOclOperation( result.Node ).args.add( arg1.Node );
-   TBoldOclOperation( result.Node ).args.add( arg2.Node );
-   TBoldOclOperation( result.Node ).OperationName := OpName;
+  result := AYaccStackElement.CreateOffs( offs );
+  OP:= TBoldOclOperation.Create;
+  result.Node := OP;
+  Result.Node.Position := Offs;
+  SetLength(OP.args,2);
+  OP.args[0] := arg1.Node;
+  OP.args[1] := arg2.Node;
+  OP.OperationName := OpName;
 end;
 
 function Make3Operation(const OpName : String; arg1, arg2, arg3 : AYaccStackElement; Offs : integer ) : AYaccStackElement;
+var
+  OP: TBoldOclOperation;
 begin
-   result := AYaccStackElement.CreateOffs( offs );
-   result.Node := TBoldOclOperation.Create;
-   Result.Node.Position := Offs;
-
-   TBoldOclOperation( result.Node ).args := TBoldOCLNodeList.create;
-   TBoldOclOperation( result.Node ).args.add( arg1.Node );
-   TBoldOclOperation( result.Node ).args.add( arg2.Node );
-   TBoldOclOperation( result.Node ).args.add( arg3.Node );
-   TBoldOclOperation( result.Node ).OperationName := OpName;
+  result := AYaccStackElement.CreateOffs( offs );
+  OP:= TBoldOclOperation.Create;
+  result.Node := OP;
+  Result.Node.Position := Offs;
+  SetLength(OP.args,3);
+  OP.args[0] := arg1.Node;
+  OP.args[1] := arg2.Node;
+  OP.args[2] := arg3.Node;
+  OP.OperationName := OpName;
 end;
 
 function MakeUnaryMinus(const OpName : String; arg1 : AYaccStackElement; Offs : integer ) : AYaccStackElement;
@@ -120,16 +129,25 @@ end;
 
 function MakeName( Name : AYaccStackElement; Offs : integer ) : AYaccStackElement;
 begin
-   result := AYaccStackElement.CreateOffs( Offs );
-   Result.Name := BoldSharedStringManager.GetSharedString(Name.Lexeme.Buffer);
-   if Result.Name[1] in ['A'..'Z'] then Result.NameIsType := true;
+  result := AYaccStackElement.CreateOffs( Offs );
+  {$IFDEF BOLD_UNICODE}
+  Result.Name := BoldSharedStringManager.GetSharedString(string(AnsiString(Name.Lexeme.Buffer)));
+  if CharInSet(Result.Name[1], ['A'..'Z']) then Result.NameIsType := true;
+  {$ELSE}
+  Result.Name := BoldSharedStringManager.GetSharedString(Name.Lexeme.Buffer);
+  if Result.Name[1] in ['A'..'Z'] then Result.NameIsType := true;
+  {$ENDIF}
 end;
 
 function MakeDeclarator( VarName, VarType : AYaccStackElement; Offs : integer ) : AYaccStackElement;
 begin
   result := AYaccStackElement.CreateOffs( Offs );
   if assigned( varName ) then
-    result.Name := BoldSharedStringManager.GetSharedString(VarName.Lexeme.Buffer);
+    {$IFDEF BOLD_UNICODE}
+    result.Name := BoldSharedStringManager.GetSharedString(string(AnsiString(VarName.Lexeme.Buffer)));
+    {$ELSE}
+    result.Name := BoldSharedStringManager.GetSharedString(string(AnsiString(VarName.Lexeme.Buffer)));
+    {$ENDIF}
   if assigned( varType ) then begin
     result.DeclaratorTypeList := VarType.List;
     result.SimpleTypeSpecifierIsEnum := VarType.SimpleTypeSpecifierIsEnum;
@@ -157,7 +175,6 @@ begin
     LiteralCollection.RangeStop := ExprListOrRange.Stop;
   end else begin
     LiteralCollection.IsRange := false;
-    LiteralCollection.Elements := TBoldOCLNodeList.Create;
     RetrieveNodeList( ExprListOrRange, LiteralCollection.Elements );
   end;
 
@@ -198,9 +215,13 @@ begin
 //  value := TBAString.Create(nil);
   if assigned( Str ) then
   begin
+    {$IFDEF BOLD_UNICODE}
+    s := string(AnsiString(Str.Lexeme.Buffer));
+    {$ELSE}
     s := Str.Lexeme.Buffer;
-    s := StringReplace(s, '\''', '''', [rfReplaceAll]); 
-    s := StringReplace(s, '\\', '\', [rfReplaceAll]); 
+    {$ENDIF}
+    s := StringReplace(s, '\''', '''', [rfReplaceAll]);
+    s := StringReplace(s, '\\', '\', [rfReplaceAll]);
     Node.StrValue := BoldSharedStringManager.GetSharedString(s);
   end
   else
@@ -218,7 +239,11 @@ begin
   node := TBoldOCLIntLiteral.create;
 //  value := TBAInteger.Create(nil);
   try
+    {$IFDEF BOLD_UNICODE}
+    Node.IntValue := StrToInt( string(AnsiString(Int.Lexeme.Buffer)) );
+    {$ELSE}
     Node.IntValue := StrToInt( Int.Lexeme.Buffer );
+    {$ENDIF}
 //    value.MakeImmutable;
   except
     on eConvertError do
@@ -232,13 +257,23 @@ end;
 function MakeLiteralDate(Date: AYaccStackElement; Offs: integer ) : AYaccStackElement;
 var
   node : TBoldOCLDateLiteral;
+  {$IFDEF BOLD_UNICODE}
+  sDate: string;
+  {$ENDIF}
   y, m, d: integer;
 begin
   result := AYaccStackElement.CreateOffs( offs );
   node := TBoldOCLDateLiteral.create;
+  {$IFDEF BOLD_UNICODE}
+  sDate := string(AnsiString(Date.lexeme.buffer));
+  y := StrToInt(copy(sDate, 2, 4));
+  m := StrToInt(copy(sDate, 7, 2));
+  d := StrToInt(copy(sDate, 10, 2));
+  {$ELSE}
   y := StrToInt(copy(Date.lexeme.buffer, 2, 4));
   m := StrToInt(copy(Date.lexeme.buffer, 7, 2));
   d := StrToInt(copy(Date.lexeme.buffer, 10, 2));
+  {$ENDIF}
   try
     Node.DateValue := EncodeDate(y, m, d);
   except
@@ -251,16 +286,26 @@ end;
 
 function MakeLiteralTime(Time: AYaccStackElement; Offs: integer ) : AYaccStackElement;
 var
-  node : TBoldOCLDateLiteral;
+  node : TBoldOCLTimeLiteral;
+  {$IFDEF BOLD_UNICODE}
+  sTime: string;
+  {$ENDIF}
   h, m, s: integer;
 begin
   result := AYaccStackElement.CreateOffs( offs );
-  node := TBoldOCLDateLiteral.create;
+  node := TBoldOCLTimeLiteral.create;
+  {$IFDEF BOLD_UNICODE}
+  sTime := string(AnsiString(Time.lexeme.buffer));
+  h := StrToInt(copy(sTime, 2, 2));
+  m := StrToInt(copy(sTime, 5, 2));
+  s := StrToIntDef(copy(sTime, 8, 2), 0);
+  {$ELSE}
   h := StrToInt(copy(Time.lexeme.buffer, 2, 2));
   m := StrToInt(copy(Time.lexeme.buffer, 5, 2));
   s := StrToIntDef(copy(Time.lexeme.buffer, 8, 2), 0);
+  {$ENDIF}
   try
-    Node.DateValue := EncodeTime(h, m, s, 0);
+    Node.TimeValue := EncodeTime(h, m, s, 0);
   except
     on eConvertError do
        raise EBoldOCLAbort.CreateFmt( boeConversionError, [offs, Time.Lexeme.Buffer, 'Time']);
@@ -281,12 +326,19 @@ begin
   node := TBoldOCLNumericLiteral.create;
 //  value := TBAFloat.Create(nil);
   try
+    {$IFDEF BOLD_UNICODE}
+    TempFloatString := string(AnsiString(Float.Lexeme.Buffer));
+    {$ELSE}
     TempFloatString := Float.Lexeme.Buffer;
-    if FormatSettings.DecimalSeparator <> '.' then TempFloatString[POs('.', TempFloatString)] := FormatSettings.DecimalSeparator;
+    {$ENDIF}
+    if {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator <> '.' then
+    begin
+      TempFloatString[POs('.', TempFloatString)] := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator;
+    end;
     Node.FloatValue := StrTofloat( TempFloatString );
   except
     on eConvertError do begin
-       raise EBoldOCLAbort.CreateFmt( boeConversionError, [offs, Float.Lexeme.Buffer, 'real']);
+      raise EBoldOCLAbort.CreateFmt( boeConversionError, [offs, Float.Lexeme.Buffer, 'real']);
     end;
   end;
   result.node := node;
@@ -449,10 +501,10 @@ begin
     ReleaseList( Name );
   end;
 
-  TBoldOclOperation( Result.Node ).args := TBoldOCLNodeList.Create;
+  SetLength(TBoldOclOperation( Result.Node ).args, 1);
 
   if assigned( Context ) then
-    TBoldoclOperation( Result.Node ).Args.Add( Context.Node )
+    TBoldoclOperation( Result.Node ).Args[0] := Context.Node
   else
     raise EBoldOCLAbort.CreateFmt( boeOperationWithOutContext, [offs]);
 

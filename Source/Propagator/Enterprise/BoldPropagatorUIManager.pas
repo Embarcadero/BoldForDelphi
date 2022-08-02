@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPropagatorUIManager;
 
 interface
@@ -14,7 +17,7 @@ type
   TUIManager = class;
 
   { TUIManager }
-  TUIManager = class(TBoldPassthroughSubscriber)
+  TUIManager = class(TBoldExtendedPassthroughSubscriber)
   private
     fClientHandler: TBoldClientHandler;
     fEnabled: Boolean;
@@ -48,8 +51,7 @@ uses
   windows,
   ComServ,
   classes,
-  comctrls,
-  PropagatorConsts;
+  comctrls;
 
 { UIManager }
 
@@ -86,9 +88,7 @@ end;
 
 procedure TUIManager.RefreshClick(Sender: TObject);
 begin
-  // this is the method that will be executed on the console refresh button
-  PropagatorMainForm.mnuRefreshGUI.Caption := sHangOn;
-//  PropagatorMainForm.btnRefresh.Refresh;
+  PropagatorMainForm.mnuRefreshGUI.Caption := 'Hang on...';
   UpdateDisplay(true);
 end;
 
@@ -169,14 +169,13 @@ begin
     for i := 0 to ClientInfoList.Count - 1 do
     begin
       ClientInfo.CommaText := ClientInfoList[i];
-      ClientID := StrToIntDef(ClientInfo.values['ID'], -1); // do not localize
+      ClientID := StrToIntDef(ClientInfo.values['ID'], -1);
       if ClientID = -1 then
       begin
-        // Some Global info from the ClientHandler
         PropagatorMainForm.SetClientHandlerStats(
-        StrToIntDef(ClientInfo.Values['TotalClients'], -1), // do not localize
-        StrToIntDef(ClientInfo.Values['PeakClients'], -1), // do not localize
-        StrToIntDef(ClientInfo.Values['TotalLostEvents'], -1)); // do not localize
+        StrToIntDef(ClientInfo.Values['TotalClients'], -1),
+        StrToIntDef(ClientInfo.Values['PeakClients'], -1),
+        StrToIntDef(ClientInfo.Values['TotalLostEvents'], -1));
       end
       else
       begin
@@ -185,19 +184,17 @@ begin
 
         PropagatorMainForm.AddUser(
           ClientID,
-          ClientInfo.values['IDString'], // do not localize
-          StrToDateFmt(ClientInfo.values['RegistrationTime'], 'yyyy-mm-dd hh:nn:ss', '-'), // do not localize
-          StrToDateFmt(ClientInfo.values['LeaseTimeout'], 'yyyy-mm-dd hh:nn:ss', '-'), // do not localize
-          StrToIntDef(ClientInfo.values['Packages'], -1), // do not localize
-          StrToIntDef(ClientInfo.values['Events'], -1), // do not localize
-          StrToDateFmt(ClientInfo.values['LastSend'], 'yyyy-mm-dd hh:nn:ss', '-'), // do not localize
-          StrToDateFmt(ClientInfo.values['LongestInterval'], 'yyyy-mm-dd hh:nn:ss', '-'), // do not localize
-          ClientInfo.values['Status'], // do not localize
-          StrToIntDef(ClientInfo.values['LostEvents'], 0)); // do not localize
+          ClientInfo.values['IDString'],
+          StrToDateFmt(ClientInfo.values['RegistrationTime'], 'yyyy-mm-dd hh:nn:ss', '-'),
+          StrToDateFmt(ClientInfo.values['LeaseTimeout'], 'yyyy-mm-dd hh:nn:ss', '-'),
+          StrToIntDef(ClientInfo.values['Packages'], -1),
+          StrToIntDef(ClientInfo.values['Events'], -1),
+          StrToDateFmt(ClientInfo.values['LastSend'], 'yyyy-mm-dd hh:nn:ss', '-'),
+          StrToDateFmt(ClientInfo.values['LongestInterval'], 'yyyy-mm-dd hh:nn:ss', '-'),
+          ClientInfo.values['Status'],
+          StrToIntDef(ClientInfo.values['LostEvents'], 0));
       end;
     end;
-
-    // some testcases does not have a real Advanced Propagator...
     if assigned(TBoldPropagatorServer.Instance.AdvancedPropagator) then
     begin
       PropagatorMainForm.InQ := TBoldPropagatorServer.Instance.AdvancedPropagator.Dequeuer.InQueueCount;
@@ -240,11 +237,13 @@ begin
   for i := 0 to ClientInfoList.Count - 1 do
   begin
     ClientInfo.CommaText := ClientInfoList[i];
-    ClientID := StrToIntDef(ClientInfo.values['ID'], -1); // do not localize
-    ClientHandler.SendDisconnectRequest(ClientId, sPropagatorMustBeShutDown, 60000);
+    ClientID := StrToIntDef(ClientInfo.values['ID'], -1);
+    ClientHandler.SendDisconnectRequest(ClientId, 'Propagator must be shut down', 60000);
   end;
   ClientInfoList.Free;
   ClientInfo.Free;
 end;
+
+initialization
 
 end.

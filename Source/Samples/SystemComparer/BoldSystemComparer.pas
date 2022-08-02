@@ -1,27 +1,43 @@
-unit BoldSystemComparer;
 
+{ Global compiler directives }
+{$include bold.inc}
+unit BoldSystemComparer;
 interface
 
 uses
   Classes,
   BoldSystem,
+  BoldElements,
+  BoldDomainElement,
   BoldHandles;
 
 type
+  TOnDifferenceEvent = procedure (ALeft, ARight: TBoldDomainElement; AMessage: string; var AContinue: boolean) of object;
+  TCompareOptions = set of (coDerived, // derived members
+                            coTransient, // transient members
+                            coTransientObjects, // transient objects
+                            coCompareObjectTimestamp //  Object timestamp
+                            {coIgnoreCurrentTime});
 
   TBoldSystemComparer = class
+  private
+    fOnDifference: TOnDifferenceEvent;
+    fOptions: TCompareOptions;
   protected
-    class function GetCorrespondingObject(LeftObject: TBoldObject; RightSystem: TBoldSystem): TBoldObject; virtual;
-    class function CompareObjects(Left, Right: TBoldObject): string; virtual;
-    class function CompareAttributes(Left, Right: TBoldAttribute): string; virtual;
-    class function CompareMembers(Left, Right: TBoldMember): string; virtual;
-    class function CompareObjectReferences(Left, Right: TBoldObjectReference): string; virtual;
-    class function CompareObjectLists(Left, Right: TBoldObjectList): string; virtual;
-    class function FullObjectName(BoldObject: TBoldObject): string; virtual;
-    class function FullMemberName(BoldMember: TBoldMember): string; virtual;
-    class function ObjectReferenceAsString(ObjectReference: TBoldObjectReference): string; virtual;
+    function GetCorrespondingObject(LeftObject: TBoldObject; RightSystem: TBoldSystem): TBoldObject; virtual;
+    function CompareObjects(Left, Right: TBoldObject): string; virtual;
+    function CompareAttributes(Left, Right: TBoldAttribute): string; virtual;
+    function CompareMembers(Left, Right: TBoldMember): string; virtual;
+    function CompareObjectReferences(Left, Right: TBoldObjectReference): string; virtual;
+    function CompareObjectLists(Left, Right: TBoldObjectList): string; virtual;
+    function FullObjectName(BoldObject: TBoldObject): string; virtual;
+    function FullMemberName(BoldMember: TBoldMember): string; virtual;
+    function ObjectReferenceAsString(ObjectReference: TBoldObjectReference): string; virtual;
+    function DoOnDifference(ALeft, ARight: TBoldDomainElement; AMessage: string): boolean;
   public
-    class function CompareSystems(Left, Right: TBoldSystem): string; virtual;
+    function CompareSystems(Left, Right: TBoldSystem): string; virtual;
+    property OnDifference: TOnDifferenceEvent read fOnDifference write fOnDifference;
+    property Options: TCompareOptions read fOptions write fOptions;
   end;
 
 
@@ -31,23 +47,31 @@ uses
   SysUtils,
   BoldUtils;
 
-
 { TBoldSystemComparer }
 
-class function TBoldSystemComparer.CompareAttributes(Left,
+function TBoldSystemComparer.CompareAttributes(Left,
   Right: TBoldAttribute): string;
 begin
   if not Left.IsEqual(Right) then
+  begin
     result := Format('Attributes differ: %s:''%s'' <> %s:''%s''', [
         FullMemberName(Left),
         Left.AsString,
         FullMemberName(right),
         Right.AsString]);
+    if DoOnDifference(Left, Right, result) then
+      result := '';
+  end;
 end;
 
-class function TBoldSystemComparer.CompareMembers(Left,
+function TBoldSystemComparer.CompareMembers(Left,
   Right: TBoldMember): string;
 begin
+  result := '';
+  if not (coDerived in Options) and left.Derived then
+    exit;
+  if not (coTransient in Options) and not left.BoldPersistent then
+    exit;
   if (Left is TBoldAttribute) and (Right is TBoldAttribute) then
     Result := CompareAttributes(TBoldAttribute(Left), TBoldAttribute(Right))
   else if (Left is TBoldObjectReference) and (Right is TBoldObjectReference) then
@@ -56,9 +80,11 @@ begin
     result := CompareObjectLists(TBoldObjectList(Left), TBoldObjectList(Right))
   else
     result := Format('members differ in type %s <> %s', [FullMemberName(Left), FullMemberName(Right)]);
+  if (result <> '') and DoOnDifference(Left, Right, result) then
+    result := '';
 end;
 
-class function TBoldSystemComparer.CompareObjectLists(Left,
+function TBoldSystemComparer.CompareObjectLists(Left,
   Right: TBoldObjectList): string;
 var
   i: integer;
@@ -66,7 +92,7 @@ var
   RightCopy: TBoldObjectList;
   Ordered: Boolean;
 begin
- Ordered := Left.BoldRoleRTInfo.IsOrdered;
+  Ordered := Left.BoldRoleRTInfo.IsOrdered;
   if Left.Count <> Right.Count then
     Result := Format(
         'multilinks have different count : %s:%d <> %s:%d', [
@@ -74,6 +100,8 @@ begin
         left.Count,
         FullMemberName(right),
         right.Count])
+  else if Left.Empty then
+    exit
   else if Ordered then
   begin
     for i := 0 to Left.Count-1 do
@@ -86,7 +114,7 @@ begin
           FullObjectName(Left[i]),
           FullMemberName(Right),
           FullObjectName(Right[i])]);
-        Exit;
+        break;
       end;
    end
    else
@@ -103,21 +131,23 @@ begin
         begin
           Result :=  Format(
             'Position %d in left not found in right : %s[%d]:%s no in %s', [
-            i, i,
+            i,
             FullMemberName(Left),
+            i,
             FullObjectName(Left[i]),
-            FullMemberName(Right),
-            FullObjectName(Right[i])]);
-          Exit;
+            FullMemberName(Right)]);
+          break;
         end;
       end;
     finally
       RightCopy.Free;
     end;
   end;
+  if (result <> '') and DoOnDifference(Left, Right, result) then
+    result := '';
 end;
 
-class function TBoldSystemComparer.CompareObjectReferences(Left,
+function TBoldSystemComparer.CompareObjectReferences(Left,
   Right: TBoldObjectReference): string;
 begin
   if GetCorrespondingObject(Left.BoldObject, right.BoldSystem) <> Right.BoldObject then
@@ -127,14 +157,16 @@ begin
         ObjectReferenceAsString(Left),
         FullMemberName(right),
         ObjectReferenceAsString(Right)]);
+  if (result <> '') and DoOnDifference(Left, Right, result) then
+    result := '';
 end;
 
-class function TBoldSystemComparer.CompareObjects(Left,
+function TBoldSystemComparer.CompareObjects(Left,
   Right: TBoldObject): string;
 var
   i: integer;
 begin
-  if Left.BoldClassTypeInfo.ExpressionName <> right.BoldClassTypeInfo.ExpressionName then
+  if not Left.BoldClassTypeInfo.BoldIsA(right.BoldClassTypeInfo) then
     Result := Format(
         'Objects have different ClassName : %s:%d <> %s:%d', [
         FullObjectName(Left),
@@ -150,21 +182,26 @@ begin
         right.BoldMemberCount])
    else
    begin
+    if (coCompareObjectTimestamp in Options) and
+      (left.AsIBoldObjectContents[bdepContents].TimeStamp <> right.AsIBoldObjectContents[bdepContents].TimeStamp) then
+        result := Format('Left %s Timestamp: %d <> Right %s Timestamp: %d', [Left.DebugInfo, left.AsIBoldObjectContents[bdepContents].TimeStamp, right.DebugInfo, right.AsIBoldObjectContents[bdepContents].TimeStamp])
+    else
      for i := 0 to Left.BoldMemberCount-1 do
      begin
        result := CompareMembers(Left.BoldMembers[i], Right.BoldMembers[i]);
-       if Result <> ' ' then
+       if Result <> '' then
          Break;
      end;
    end;
+  if (result <> '') and DoOnDifference(Left, Right, result) then
+    result := '';
 end;
 
-class function TBoldSystemComparer.CompareSystems(Left,
+function TBoldSystemComparer.CompareSystems(Left,
   Right: TBoldSystem): string;
 var
   i: integer;
-  IndexOfCorresponding: integer;
-  RightCopy: TBoldObjectList;
+  LeftObject, RightObject: TBoldObject;
 begin
   if Left.Classes[0].Count <> Right.Classes[0].Count then
     Result := Format(
@@ -174,30 +211,42 @@ begin
         )
    else
    begin
-    RightCopy := TBoldObjectList.Create;
-    try
-      RightCopy.AddList(Right.Classes[0]);
-      for i := 0 to Left.Classes[0].Count-1 do
-      begin
-        IndexOfCorresponding := RightCopy.IndexOf(GetCorrespondingObject(Left.Classes[0][i], Right));
-        if IndexOfCorresponding <> -1 then
-        begin
-          Result := Compareobjects(Left.Classes[0][i], Left.Classes[0][IndexOfCorresponding]);
-          RightCopy.RemoveByIndex(IndexOfCorresponding)
-        end
-        else
-          Result :=  Format(
-            'Object %s in left not found in right' , [FullObjectName(Left.Classes[0][i])]);
-       if result <> '' then
-         Exit;
-      end;
-    finally
-      RightCopy.Free;
+    Left.Classes[0].EnsureObjects;
+    Right.Classes[0].EnsureObjects;
+{$IFDEF FetchFromClassList}
+    for i := 0 to Left.BoldSystemTypeInfo.TopSortedClasses.Count -1 do
+      Left.Classes[i].EnsureObjects;
+    for i := 0 to Right.BoldSystemTypeInfo.TopSortedClasses.Count -1 do
+      Right.Classes[i].EnsureObjects;
+{$ENDIF}
+    for i := 0 to Left.Classes[0].Count-1 do
+    begin
+      LeftObject := Left.Classes[0][i];
+      if not (coTransientObjects in Options) and not LeftObject.BoldPersistent then
+       continue; // skip transient objects
+      RightObject := Right.Locators.ObjectByID[LeftObject.BoldObjectLocator.BoldObjectID];
+      if Assigned(RightObject) then
+        Result := Compareobjects(LeftObject, RightObject)
+      else
+        Result :=  Format(
+          'Object %s in left not found in right' , [FullObjectName(Left.Classes[0][i])]);
+     if result <> '' then
+       break;
     end;
   end;
+  if (result <> '') and DoOnDifference(Left, Right, result) then
+    result := '';
 end;
 
-class function TBoldSystemComparer.FullMemberName(
+function TBoldSystemComparer.DoOnDifference(ALeft, ARight: TBoldDomainElement;
+  AMessage: string): boolean;
+begin
+  result := false;
+  if Assigned(fOnDifference) then
+    fOnDifference(ALeft, ARight, AMessage, result);
+end;
+
+function TBoldSystemComparer.FullMemberName(
   BoldMember: TBoldMember): string;
 begin
   if not Assigned(BoldMember) then
@@ -206,7 +255,7 @@ begin
     Result := Format('%s.%s', [FullObjectName(BoldMember.OwningObject), BoldMember.BoldMemberRTInfo.expressionname]);
 end;
 
-class function TBoldSystemComparer.FullObjectName(
+function TBoldSystemComparer.FullObjectName(
   BoldObject: TBoldObject): string;
 begin
   if not Assigned(BoldObject) then
@@ -215,7 +264,7 @@ begin
     Result := Format('%s:%s', [BoldObject.BoldClassTypeInfo.expressionname, BoldObject.BoldObjectLocator.AsString]);
 end;
 
-class function TBoldSystemComparer.GetCorrespondingObject(
+function TBoldSystemComparer.GetCorrespondingObject(
   LeftObject: TBoldObject; RightSystem: TBoldSystem): TBoldObject;
 begin
   if not Assigned(LeftObject) then
@@ -224,13 +273,15 @@ begin
     Result := RightSystem.Locators.ObjectByID[LeftObject.BoldObjectLocator.BoldObjectID];
 end;
 
-class function TBoldSystemComparer.ObjectReferenceAsString(ObjectReference:
+function TBoldSystemComparer.ObjectReferenceAsString(ObjectReference:
   TBoldObjectReference): string;
 begin
   if Assigned(ObjectReference) then
     Result := FullObjectName(ObjectReference.BoldObject)
   else
-    result := 'Nil'; //do not localize
+    result := 'Nil';
 end;
+
+initialization
 
 end.

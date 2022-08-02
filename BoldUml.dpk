@@ -1,33 +1,34 @@
 package BoldUml;
 
 {$R *.res}
-{A}{ ALIGN ON}
-{C}{ ASSERTIONS ON}
-{B}{ BOOLEVAL OFF}
-{D}{ DEBUGINFO ON}
-{X}{ EXTENDEDSYNTAX ON}
-{G}{ IMPORTEDDATA ON}
-{I}{ IOCHECKS ON}
-{L}{ LOCALSYMBOLS ON}
-{H}{ LONGSTRINGS ON}
-{Z1}{ MINENUMSIZE 1}
-{P}{ OPENSTRINGS ON}
-{O}{ OPTIMIZATION OFF}
-{Q}{ OVERFLOWCHECKS ON}
-{R}{ RANGECHECKS ON}
-{U}{ SAFEDIVIDE OFF}
-{W}{ STACKFRAMES ON}
-{T}{ TYPEDADDRESS OFF}
-{V}{ VARSTRINGCHECKS ON}
-{J}{ WRITEABLECONST ON}
-
-{$IMAGEBASE $00400000}
-{$DESIGNONLY}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{ ALIGN 8}
+{ ASSERTIONS ON}
+{ BOOLEVAL OFF}
+{ DEBUGINFO ON}
+{ EXTENDEDSYNTAX ON}
+{ IMPORTEDDATA ON}
+{ IOCHECKS ON}
+{ LOCALSYMBOLS ON}
+{ LONGSTRINGS ON}
+{ OPENSTRINGS ON}
+{ OPTIMIZATION OFF}
+{ OVERFLOWCHECKS ON}
+{ RANGECHECKS ON}
 {$REFERENCEINFO ON}
-{$IMPLICITBUILD ON}
-
+{ SAFEDIVIDE OFF}
+{ STACKFRAMES ON}
+{ TYPEDADDRESS OFF}
+{ VARSTRINGCHECKS ON}
+{ WRITEABLECONST ON}
+{ MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Bold 4.0 for Delphi (Model editor)'}
 {$LIBSUFFIX '90'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
 
 requires
   vcl,
@@ -72,6 +73,8 @@ contains
   BoldUMLBldLink in 'Source\UMLModel\ModelLinks\Bld\BoldUMLBldLink.pas',
   BoldCodePlugins in 'Source\UMLModel\Plugins\BoldCodePlugins.pas',
   BoldDbPlugins in 'Source\UMLModel\Plugins\BoldDbPlugins.pas',
+  BoldConstraintValidator in 'Source\Samples\ConstraintValidator\BoldConstraintValidator.pas',
+  BoldConstraintValidatorReg in 'Source\Samples\ConstraintValidator\BoldConstraintValidatorReg.pas',
   BoldModelOCLValidatorPlugIn in 'Source\UMLModel\Plugins\BoldModelOCLValidatorPlugIn.pas',
   BoldUMLModelEditPlugIn in 'Source\UMLModel\Plugins\BoldUMLModelEditPlugIn.pas',
   BoldUMLPluginCallBacks in 'Source\UMLModel\Plugins\BoldUMLPluginCallBacks.pas',

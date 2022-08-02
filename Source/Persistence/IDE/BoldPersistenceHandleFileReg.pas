@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleFileReg;
 
 interface
@@ -5,8 +8,6 @@ interface
 procedure Register;
 
 implementation
-
-{.$R BoldPersistenceHandleFile.res}
 
 uses
   SysUtils,
@@ -28,7 +29,7 @@ type
 {---TBoldRose98FileNameProperty---}
 function TBoldXMLFileNameProperty.FileFilter: string;
 begin
-  Result := Format('%s (*.%s)|*%1:s', [XML_LINKDESC, XML_LINKEXTENSION]); // do not localize
+  Result := Format('%s (*.%s)|*%1:s', [XML_LINKDESC, XML_LINKEXTENSION]);
 end;
 
 function TBoldXMLFileNameProperty.IsValid: boolean;
@@ -48,7 +49,7 @@ end;
 
 procedure RegisterEditors;
 begin
-  RegisterPropertyEditor(TypeInfo(String), TBoldPersistenceHandleFileXML, 'Filename', TBoldXMLFileNameProperty); // do not localize
+  RegisterPropertyEditor(TypeInfo(String), TBoldPersistenceHandleFileXML, 'Filename', TBoldXMLFileNameProperty);
 end;
 
 procedure Register;

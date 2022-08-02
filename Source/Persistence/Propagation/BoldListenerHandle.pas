@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldListenerHandle;
 
 interface
@@ -18,11 +21,12 @@ type
   {forward declarations}
   TBoldListenerHandle= class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldListenerHandle = class(TBoldHandle)
   private
     fActive: Boolean;
     fBoldListenerThread: TBoldListenerThread;
-    fDequeuer: TBoldAbstractDequeuer;
+    fDequeuer: TBoldStringDequeuer;
     fPTSubscriber: TBoldPassThroughSubscriber;
     fAutoStart: Boolean;
     fLeaseDuration: integer;
@@ -35,10 +39,10 @@ type
     fPropagatorHandle: TBoldAbstractPropagatorHandle;
     fOnThreadError: TBoldMessageEvent;
     fExtendLeaseAfter: integer;
-    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);    
     function GetListenerThread: TBoldListenerThread;
     function GetConnected: Boolean;
-    procedure SetDequeuer(aDequeuer: TBoldAbstractDequeuer);
+    procedure SetDequeuer(aDequeuer: TBoldStringDequeuer);
     procedure NotifyDequeuer(Sender: TObject);
     procedure setLeaseDuration(Value: integer);
     procedure setPollingInterval(Value: integer);
@@ -50,11 +54,11 @@ type
     function GetIsLoaded: Boolean;
     procedure StopAndFreeListenerThread;
     procedure SetExtendLeaseAfter(const Value: integer);
-    procedure Subscribe(const DoSubscribe: Boolean);
+    procedure Subscribe(const DoSubscribe: Boolean);    
   protected
     function GetHandledObject: TObject; override;
     function GetBoldClientID: TBoldClientID;
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;    
     property IsLoaded: Boolean read GetIsLoaded;
   public
     constructor Create(Owner: TComponent); override;
@@ -73,7 +77,7 @@ type
     property ExtendLeaseAfter: integer read fExtendLeaseAfter write SetExtendLeaseAfter;
     property PollingInterval: integer read fPollingInterval write setPollingInterval;
     property AutoExtendLease: Boolean read fAutoExtendLease write setAutoExtendLease;
-    property Dequeuer: TBoldAbstractDequeuer read fDequeuer write SetDequeuer;
+    property Dequeuer: TBoldStringDequeuer read fDequeuer write SetDequeuer;
     property ClientIdentifierString: string read fClientIdentifierString write setClientIdentifierString;
     property PropagatorHandle: TBoldAbstractPropagatorHandle read fPropagatorHandle write SetPropagatorHandle;
     property OnRegistrationFailed: TNotifyEvent read FOnRegistrationFailed write FOnRegistrationFailed;
@@ -89,7 +93,6 @@ uses
   BoldEnvironment,
   Windows,
   Messages,
-  BoldPMConsts,
   BoldThreadSafeQueue;
 
 { TBoldListenerHandle }
@@ -98,7 +101,7 @@ constructor TBoldListenerHandle.Create(Owner: TComponent);
 begin
   inherited;
   FClientIdentifierString := '';
-  fPTSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
+  fPTSubscriber := TBoldPassthroughSubscriber.Create(_Receive);  
   fPropagatorHandleSubscriber := TBoldPassThroughSubscriber.Create(_ReceivePropagatorHandleEvents);
   fAutoStart := True;
   fLeaseDuration := DEFAULT_LEASE_DURATION;
@@ -128,7 +131,7 @@ end;
 destructor TBoldListenerHandle.Destroy;
 begin
   StopAndFreeListenerThread;
-  FreeAndNil(fPTSubscriber);
+  FreeAndNil(fPTSubscriber);  
   FreeAndNil(fPropagatorHandleSubscriber);
   inherited;
 end;
@@ -143,13 +146,13 @@ begin
   Result := ListenerThread.Registered;
 end;
 
-procedure TBoldListenerHandle.SetDequeuer(aDequeuer: TBoldAbstractDequeuer);
+procedure TBoldListenerHandle.SetDequeuer(aDequeuer: TBoldStringDequeuer);
 begin
   if aDequeuer <> fDequeuer then
   begin
     fDequeuer := aDequeuer;
     if Assigned(fDequeuer) then
-      fDequeuer.Queue := ListenerThread.Queue;
+      fDequeuer.Queue := ListenerThread.InQueue;
   end;
 end;
 
@@ -182,13 +185,13 @@ end;
 procedure TBoldListenerHandle.StartListenerThread;
 begin
   if not Assigned(fPropagatorHandle) then
-    raise EBold.CreateFmt(sPropagatorHandleNotAssigned, [ClassName]);
+    raise EBold.CreateFmt('%s.StartListenerThread: PropagatorHandle not assigned', [ClassName]);
   if not ListenerThread.Registered then
   begin
     ListenerThread.Resume;
     ListenerThread.WaitUntilInitialized;
     if not (fPropagatorHandle.Connected) then
-      raise EBold.CreateFmt(sPropagatorHandleNotConnected, [ClassName]);
+      raise EBold.CreateFmt('%s.StartListenerThread: PropagatorHandle not connected', [ClassName]);
     ListenerThread.Propagator := fPropagatorHandle.ClientHandler;
     ListenerThread.OnPropagatorFailure := fPropagatorHandle.DoPropagatorCallFailed;
     ListenerThread.OnThreadError := OnThreadError;
@@ -291,7 +294,7 @@ begin
   if Value <> fPropagatorHandle then
   begin
     if fActive then
-      raise EBold.CreateFmt(sCannotChangeHandleWhenActive, [ClassName]);
+      raise EBold.Create('TBoldListenerHandle.SetPropagatorHandle: Can''t change handle on active listener');
     fPropagatorHandleSubscriber.CancelAllSubscriptions;
     Subscribe(False);
     fPropagatorHandle := Value;
@@ -323,7 +326,7 @@ end;
 procedure TBoldListenerHandle.SetExtendLeaseAfter(const Value: integer);
 begin
   if (value < 10) or (value > 90) then
-    raise EBold.CreateFmt(sValueOutOfRange, [ClassName]);
+    raise EBold.CreateFmt('%s.SetExtendLeaseAfter: Value must be between 10 and 90', [ClassName]);
   fExtendLeaseAfter := Value;
   ListenerThread.ExtendLeaseAfter := Value;
 end;
@@ -357,5 +360,6 @@ begin
   else
     fPTSubscriber.CancelAllSubscriptions;
 end;
+
 
 end.

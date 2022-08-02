@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelMOFAdapters;
 
 interface
@@ -10,7 +13,7 @@ uses
   BoldSystem,
   BoldAttributes,
   BoldUMLXMILink,
-  MSXML_TLB,
+  Bold_MSXML_TLB,
   BoldUMLModel;
 
 type
@@ -20,7 +23,7 @@ type
     fOwningLink: TBoldUMLXMILink;
     function LocalId: string;
   protected
-    function QualifiedClassName: string; virtual;
+    function QualifiedClassName: string; virtual;  
     function Attributes: IBoldMOFAttributeList; virtual;
     function References: IBoldMOFReferenceList; virtual;
     property Obj: TBoldObject read fObj;
@@ -245,8 +248,8 @@ type
 
   function GetOtherMIObj(Obj: TBoldObject): TBoldObject;
   function IsDiamondInherited(Member: TBoldMember): Boolean;
-  function IsOfBoldAddedClass(Obj: TBoldObject): Boolean;
-
+  function IsOfBoldAddedClass(Obj: TBoldObject): Boolean;  
+  
 implementation
 
 uses
@@ -257,7 +260,7 @@ uses
 
 function IsMultiplicity(Attr: TBoldAttribute): Boolean;
 begin
-  result := Attr.BoldType.ModelName = 'Multiplicity'; // do not localize
+  result := Attr.BoldType.ModelName = 'Multiplicity';
 end;
 
 function IsExpression(Attr: TBoldAttribute): Boolean;
@@ -292,7 +295,7 @@ end;
 
 function IsOfBoldAddedClass(Obj: TBoldObject): Boolean;
 begin
-  result := Obj.BoldClassTypeInfo.Stereotype = 'Bold'; // do not localize
+  result := Obj.BoldClassTypeInfo.Stereotype = 'Bold';
 end;
 
 function GetOtherMIObj(Obj: TBoldObject): TBoldObject;
@@ -329,7 +332,7 @@ begin
   if IsDiamondInherited(Ref) then
   begin
     Obj2 := GetOtherMIObj(Ref.OwningObject);
-    if Ref.BoldMemberRTInfo.ModelName = 'taggedValue' then // do not localize
+    if Ref.BoldMemberRTInfo.ModelName = 'taggedValue' then
     begin
       result := TBoldUMLMOFMultipleInheritenceTVListAdapter.Create(
           Ref as TUMLTaggedValueList, TUMLModelElement(Obj2).M_taggedValue, OwningLink);
@@ -347,7 +350,7 @@ function IsInheritedButShouldNotBe(Member: TBoldMember): Boolean;
 begin
   if (IsAssociationButNotAssociationClass(Member.OwningObject) or
       (Member.OwningObject.ClassType = TUMLStereotype)) and
-    (FindDefiningClass(Member.BoldMemberRTInfo).ModelName = 'Namespace') then // do not localize
+    (FindDefiningClass(Member.BoldMemberRTInfo).ModelName = 'Namespace') then
     result := true
   else
     result := false;
@@ -381,9 +384,9 @@ end;
 function TBoldUMLMOFObjectAdapter.QualifiedClassName: string;
 begin
   if IsAssociationClassClass(fObj) then
-    result := 'Foundation.Core.AssociationClass' // do not localize
+    result := 'Foundation.Core.AssociationClass'
   else if IsLinkObjectObject(fObj) then
-    result := 'Behavioral_Elements.Common_Behavior.LinkObject' // do not localize
+    result := 'Behavioral_Elements.Common_Behavior.LinkObject'
   else
     result := RemoveBoldPackageNames(fObj.BoldClassTypeInfo.QualifiedName);
 end;
@@ -431,7 +434,7 @@ end;
 function TBoldUMLMOFAttributeListAdapter.IsBoldAddedAttribute(
   Attr: TBoldMember): Boolean;
 begin
-  result := (Attr.BoldMemberRTInfo.Stereotype = 'Bold') or // do not localize
+  result := (Attr.BoldMemberRTInfo.Stereotype = 'Bold') or
             IsInheritedButShouldNotBe(Attr);
 end;
 
@@ -460,11 +463,11 @@ var
   dotpos: Integer;
 begin
   if fOwningLink.TranslateRoseTaggedValues and
-    (fAttr.DisplayName = 'UMLTaggedValue.tag') and // do not localize
+    (fAttr.DisplayName = 'UMLTaggedValue.tag') and
     (pos('.', fAttr.AsString) <> 0) then
   begin
     dotpos := pos('.', fAttr.AsString);
-    result := 'RationalRose$' + Copy(fAttr.AsString, 1, dotpos-1) + ':' + // do not localize
+    result := 'RationalRose$' + Copy(fAttr.AsString, 1, dotpos-1) + ':' +
               Copy(fAttr.AsString, dotpos+1, MAXINT);
   end
   else
@@ -528,6 +531,7 @@ begin
     GetReferences(fRefs, Obj);
 end;
 
+
 destructor TBoldUMLMOFReferenceListAdapter.Destroy;
 begin
   FreeAndNil(fRefs);
@@ -547,13 +551,11 @@ begin
     GetReferences(List2, Obj2);
     for i := 0 to List2.Count-1 do
     begin
-      // The two halves should have the common part (diamond inheritence) first.
       if TBoldMember(List[i]).BoldMemberRTInfo.ModelName =
-        TBoldMember(List2[i]).BoldMemberRTInfo.ModelName then // FIXME: use qualified names
+        TBoldMember(List2[i]).BoldMemberRTInfo.ModelName then
       begin
-        // Just keep the first one.
-        // FIXME: Merge?
-        // Note: Tagged Values will be handled by ObjectListAdapter-factory
+
+
       end else
         List.Add(List2[i]);
     end;
@@ -582,10 +584,10 @@ var
 begin
   assert(Role.BoldMemberRTInfo.IsRole);
   RoleRt := TBoldRoleRTInfo(Role.BoldMemberRTInfo);
-  Result := (RoleRt.Stereotype = 'Bold') or // do not localize
-    (RoleRt.AssociationStereotype = 'Bold') or // do not localize
-    (RoleRt.ClassTypeInfoOfOtherEnd.Stereotype = 'Bold') or // do not localize
-    ((RoleRt.ModelName = 'associationEnd') and (RoleRt.ClassTypeInfo.ModelName = 'Classifier')) or // do not localize
+  Result := (RoleRt.Stereotype = 'Bold') or
+    (RoleRt.AssociationStereotype = 'Bold') or
+    (RoleRt.ClassTypeInfoOfOtherEnd.Stereotype = 'Bold') or
+    ((RoleRt.ModelName = 'associationEnd') and (RoleRt.ClassTypeInfo.ModelName = 'Classifier')) or
     IsInheritedButShouldNotBe(Role);
 end;
 
@@ -763,7 +765,7 @@ end;
 
 function TBoldUMLMOFMultiplicityAdapter.IsDerived: Boolean;
 begin
-  result := false;
+  result := false; 
 end;
 
 function TBoldUMLMOFMultiplicityAdapter.IsMulti: Boolean;
@@ -788,12 +790,12 @@ end;
 
 function TBoldUMLMOFMultiplicityAdapter.QualifiedClassName: string;
 begin
-  result := 'Foundation.Data_Types.Multiplicity'; // do not localize
+  result := 'Foundation.Data_Types.Multiplicity';
 end;
 
 function TBoldUMLMOFMultiplicityAdapter.QualifiedName: string;
 begin
-  result := 'Foundation.Data_Types.Multiplicity.range'; // do not localize
+  result := 'Foundation.Data_Types.Multiplicity.range';
 end;
 
 function TBoldUMLMOFMultiplicityAdapter.Reference(
@@ -819,9 +821,9 @@ function TBoldUMLMOFMultiplicityRangeAdapter.Attribute(
   index: Integer): IBoldMOFAttribute;
 begin
   if index = 0 then
-    result := TBoldUMLMOFMultiplicityRangeBoundAdapter.Create('lower', fLower) // do not localize
+    result := TBoldUMLMOFMultiplicityRangeBoundAdapter.Create('lower', fLower)
   else if index = 1 then
-    result := TBoldUMLMOFMultiplicityRangeBoundAdapter.Create('upper', fUpper) // do not localize
+    result := TBoldUMLMOFMultiplicityRangeBoundAdapter.Create('upper', fUpper)
   else
     raise EBoldInternal.CreateFmt('%s.Attribute: index out of bounds %d', [classname, index]);
 end;
@@ -845,24 +847,24 @@ begin
   splitpos := pos('..', Range);
   if splitpos = 0 then
   begin
-    if (trim(Range) = '*') or (trim(Range) = 'n') then
+    if Range = '*' then
     begin
       fLower := 0;
       fUpper := -1;
     end else
     begin
-      fLower := StrToInt(trim(Range));
+      fLower := StrToInt(Range);
       fUpper := fLower;
-    end;
+    end;  
   end
   else
   begin
-    fLower := StrToInt(trim(Copy(Range, 1, splitpos-1)));
+    fLower := StrToInt(Copy(Range, 1, splitpos-1));
     Upper := Copy(Range, splitpos+2, maxint);
-    if (trim(Upper) = '*') or (trim(Upper) = 'n') then
+    if Upper = '*' then
       fUpper := -1
     else
-      fUpper := StrToInt(trim(Upper));
+      fUpper := StrToInt(Upper);
   end;
 end;
 
@@ -873,7 +875,7 @@ end;
 
 function TBoldUMLMOFMultiplicityRangeAdapter.QualifiedClassName: string;
 begin
-  result := 'Foundation.Data_Types.MultiplicityRange'; // do not localize
+  result := 'Foundation.Data_Types.MultiplicityRange';
 end;
 
 function TBoldUMLMOFMultiplicityRangeAdapter.RefCount: Integer;
@@ -938,7 +940,7 @@ end;
 
 function TBoldUMLMOFMultiplicityRangeBoundAdapter.QualifiedName: string;
 begin
-  result := 'Foundation.Data_Types.MultiplicityRange.' + fAttrName; // do not localize
+  result := 'Foundation.Data_Types.MultiplicityRange.' + fAttrName;
 end;
 
 { TBoldUMLMOFExpressionAdapter }
@@ -962,7 +964,7 @@ function TBoldUMLMOFExpressionAdapter.Attribute(
   index: Integer): IBoldMOFAttribute;
 begin
   if index = 0 then
-    result := TBoldUMLMOFDummyAttrAdapter.Create('Foundation.Data_Types.Expression.language') // do not localize
+    result := TBoldUMLMOFDummyAttrAdapter.Create('Foundation.Data_Types.Expression.language')
   else if index = 1 then
     result := self
   else
@@ -1017,12 +1019,12 @@ end;
 
 function TBoldUMLMOFExpressionAdapter.QualifiedClassName: string;
 begin
-  result := 'Foundation.Data_Types.' + fExprAttr.BoldType.ModelName; // do not localize
+  result := 'Foundation.Data_Types.' + fExprAttr.BoldType.ModelName;
 end;
 
 function TBoldUMLMOFExpressionAdapter.QualifiedName: string;
 begin
-  result := 'Foundation.Data_Types.Expression.body'; // do not localize
+  result := 'Foundation.Data_Types.Expression.body';
 end;
 
 function TBoldUMLMOFExpressionAdapter.Reference(
@@ -1082,5 +1084,7 @@ function TBoldUMLMOFDummyAttrAdapter.QualifiedName: string;
 begin
   result := fQualifiedName;
 end;
+
+initialization
 
 end.

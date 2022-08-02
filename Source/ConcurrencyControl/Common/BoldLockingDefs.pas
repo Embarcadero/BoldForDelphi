@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLockingDefs;
 
 interface
@@ -10,5 +13,6 @@ const
 
 implementation
 
-end.
+initialization
 
+end.

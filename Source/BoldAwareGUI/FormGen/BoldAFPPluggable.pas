@@ -26,6 +26,7 @@ type
   TBoldHandleLocatorStyle = (hfByName, hfByType);
 
   {---TBoldPlaceableAFP---}
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPlaceableAFP = class(TComponent)
   private
     fOnGetFormClass: TBoldGetFormClassEvent;
@@ -240,7 +241,11 @@ begin
   if DefaultBehaviour then
     inherited
   else
+  begin
     BoldHandle := RetrieveHandle;
+    if not Assigned(BoldHandle) then
+      inherited;
+  end;
 end;
 
 procedure TBoldPluggableAFP.EnsureComponents;

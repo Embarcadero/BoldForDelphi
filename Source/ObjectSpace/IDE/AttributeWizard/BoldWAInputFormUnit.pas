@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWAInputFormUnit;
 
 interface
@@ -7,7 +10,7 @@ uses
   Messages,
   Classes,
   Graphics,
-  Controls,
+  Controls,                                                            
   Forms,
   Dialogs,
   StdCtrls,
@@ -110,5 +113,7 @@ begin
   else
     CanClose := true;
 end;
+
+initialization
 
 end.

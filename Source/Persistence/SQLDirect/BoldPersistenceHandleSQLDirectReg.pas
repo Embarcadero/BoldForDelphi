@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandleSQLDirectReg;
 
 interface
@@ -11,16 +14,22 @@ implementation
 uses
   SysUtils,
   Classes,
+  BoldIDESupport,
+  BoldVersionInfo,
   BoldDatabaseAdapterSQLDirect,
   BoldPersistenceHandleSQLDirect,
-  BoldIDESupport,
-  BoldIDEConsts;
+  BoldIDEConsts;    
 
 procedure Register;
 begin
-  RemovePackageFromDisabledPackagesRegistry(format('BoldSQLDirect%s', [LIBSUFFIX])); // do not localize
+  RemovePackageFromDisabledPackagesRegistry(format('Bold%d%d%sSQLDirect', [
+    BoldBuildVersionNumberMajor,
+    BoldBuildVersionNumberMinor,
+    BoldBuildTarget]));
   RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleSQLDirect]);
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterSQLDirect]);
 end;
+
+initialization
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLOCLValidator;
 
 interface
@@ -19,11 +22,12 @@ type
   { TOCLValidityChecker }
   TOCLValidityChecker = class
   private
+    fBoldModel: TBoldModel;
     fUMLModel: TUMLModel;
     fTypeNameDictionary: TBoldTypeNameDictionary;
     fSystemTypeInfo: TBoldSystemTypeInfo;
     fOclEvaluator: TBoldOCL;
-    function ExtractSystemTypeInfo(UMLMOdel: TUMLModel): TBoldSystemTypeInfo;
+    function ExtractSystemTypeInfo(BoldModel: TBoldModel): TBoldSystemTypeInfo;
     function GetOCLEvaluator: TBoldOCL;
     function AttributeTypeInfoFromUMLAttribute(UMLAttribute: TUMLAttribute): TBoldAttributeTypeInfo;
     function ElementTypeInfoFromUMLAssociationEnd(UMLAssociationEnd: TUMLAssociationEnd): TBoldElementTypeInfo;
@@ -39,9 +43,12 @@ type
     procedure ValidateExpression(const ScopeName: string; Element, Context: TUMLModelElement; const Expression: string; ElementTypeInfo: TBoldElementTypeInfo);
     property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
     property OCLEvaluator: TBoldOCL read GetOCLEvaluator;
+    property UMLModel: TUMLModel read fUMLModel;
+    property BoldModel: TBoldModel read fBoldModel;
   public
     constructor Create(aTypeNameDictionary: TBoldTypeNameDictionary);
-    procedure ValidateModel(UMLModel: TUMLModel);
+    destructor Destroy; override;
+    procedure ValidateModel(BoldModel: TBoldModel);
     property TypeNameDictionary: TBoldTypeNameDictionary read fTypeNameDictionary;
   end;
 
@@ -56,6 +63,7 @@ uses
   BoldDefaultTaggedValues,
   BoldOCLClasses,
   BoldOCLError,
+  BoldUMLAbstractModelValidator,
   BoldGuard;
 
 { TOCLValidityChecker }
@@ -65,16 +73,15 @@ begin
   fTypeNameDictionary := aTypeNameDictionary;
 end;
 
-function TOCLValidityChecker.ExtractSystemTypeInfo(UMLModel: TUMLModel): TBoldSystemTypeInfo;
-var
-  MoldModel: TMoldModel;
+destructor TOCLValidityChecker.Destroy;
 begin
-  MoldModel := TBoldModelConverter.UMLModelToMold(UMLModel);
-  try
-    Result := TBoldSystemTypeInfo.Create(MoldModel, false, false, fTypeNameDictionary);
-  finally
-    MoldModel.Free;
-  end;
+  FreeAndNil(fSystemTypeInfo);
+  inherited;
+end;
+
+function TOCLValidityChecker.ExtractSystemTypeInfo(BoldModel: TBoldModel): TBoldSystemTypeInfo;
+begin
+  Result := TBoldSystemTypeInfo.Create(BoldModel.MoldModel, false, false, fTypeNameDictionary);
 end;
 
 function TOCLValidityChecker.GetOCLEvaluator: TBoldOCL;
@@ -86,15 +93,13 @@ end;
 
 procedure TOCLValidityChecker.ValidateAssociationEnd(UMLAssociationEnd: TUMLAssociationEnd);
 begin
-  // DerivationExpression
   if UMLAssociationEnd.GetBoldTV(TAG_DERIVATIONOCL) <> '' then
   begin
     if UMLAssociationEnd.Association.Derived then
       ValidateExpression('DerivationOCL', UMLAssociationEnd, UMLAssociationEnd.otherEnd.type_, UMLAssociationEnd.GetBoldTV(TAG_DERIVATIONOCL), ElementTypeInfoFromUMLAssociationEnd(UMLAssociationEnd))
     else
-      AddViolation(sHint, UMLAssociationEnd, 'Derivation expression specified for non-derived association');
+      AddViolation(sHint, UMLAssociationEnd, 'Derivation expression specified for non-derived associationEnd'+ UMLAssociationEnd.GetOtherEnd.Type_.name + '.' + UMLAssociationEnd.Name);
   end;
-  // Constraints
   ValidateConstraints(UMLAssociationEnd, UMLAssociationEnd.type_, UMLAssociationEnd.constraint);
 end;
 
@@ -102,7 +107,6 @@ procedure TOCLValidityChecker.ValidateAssociation(UMLAssociation: TUMLAssociatio
 var
   Context: TUMLModelElement;
 begin
-  // Constraints
   if Assigned(UMLAssociation.class_) then
     Context := UMLAssociation.class_
   else
@@ -114,15 +118,13 @@ end;
 
 procedure TOCLValidityChecker.ValidateAttribute(UMLAttribute: TUMLAttribute);
 begin
-  // Derivation expression
   if UMLAttribute.GetBoldTV(TAG_DERIVATIONOCL) <> '' then
   begin
     if UMLAttribute.Derived then
       ValidateExpression('DerivationOCL', UMLAttribute, UMLAttribute.owner, UMLAttribute.GetBoldTV(TAG_DERIVATIONOCL), AttributeTypeInfoFromUMLAttribute(UMLAttribute))
     else
-      AddViolation(sHint, UMLAttribute, 'Derivation expression specified for non-derived attribute');
+      AddViolation(sHint, UMLAttribute, 'Derivation expression specified for non-derived attribute: ' + UmlAttribute.owner.name + '.' + UMLAttribute.Name);
   end;
-  // Constraints
   ValidateConstraints(UMLAttribute, UMLAttribute.owner, UMLAttribute.constraint);
 end;
 
@@ -130,23 +132,16 @@ procedure TOCLValidityChecker.ValidateClass(UMLClass: TUMLClass);
 var
   i: integer;
 begin
-  // Default string representation
   if UMLClass.GetBoldTV(TAG_DEFAULTSTRINGREPRESENTATION) <> '' then
     ValidateExpression('DefaultStringRepresentation', UMLClass, UMLClass, UMLClass.GetBoldTV(TAG_DEFAULTSTRINGREPRESENTATION), OCLEvaluator.SymbolTable.Help.StringType);
-  // Members
   for i := 0 to UMLClass.feature.Count - 1 do
   begin
     if UMLClass.Feature[i] is TUMLAttribute then
       ValidateAttribute(TUMLAttribute(UMLClass.Feature[i]));
   end;
-
-  // AssociationEnds
   for i := 0 to UMLClass.associationEnd.Count - 1 do
     ValidateAssociationEnd(TUMLAssociationEnd(UMLClass.associationEnd[i]));
-
-  // Constraints
   ValidateConstraints(UMLCLass, UMLClass, UMLClass.constraint);
-  // Derivation expressions
   ValidateDerivationExpressions(UMLClass, UMLClass.taggedValue['Bold.DerivationExpressions']);
 end;
 
@@ -166,7 +161,7 @@ var
   ValidationContext: TBoldElementTypeInfo;
   Mapping: TBoldTypeNameMapping;
 begin
-  ErrorHeader := 'Invalid ' + ScopeName + ': ';
+  ErrorHeader := 'Invalid ' + ScopeName + ': ' + Element.name + ': ' + Expression + ': ';
   ValidationContext := nil;
   if context is TUMLClass then
     ValidationContext := SystemTypeInfo.ClassTypeInfoByModelName[Context.Name]
@@ -206,19 +201,25 @@ begin
       AddViolation(sError, Element, ErrorHeader + Format(' Type mismatch: Expected %s got %s', [ElementTypeInfo.ExpressionName, Result.ExpressionName]));
 end;
 
-procedure TOCLValidityChecker.ValidateModel(UMLModel: TUMLModel);
+procedure TOCLValidityChecker.ValidateModel(BoldModel: TBoldModel);
 var
   i: integer;
 begin
-  fUMLModel := UMLModel;
-  fSystemTypeInfo := ExtractSystemTypeInfo(UMLModel);
+  fBoldModel := BoldModel;
+  fUMLModel := BoldModel.EnsuredUMLModel;
+  BoldModel.StartValidation;
   BoldLog.StartLog('Validating OCL in model');
-  ClearViolations;
-  for i := 0 to UMLModel.Classes.Count - 1 do
-    ValidateClass(UMLModel.Classes[i]);
-  for i := 0 to UMLModel.associations.Count - 1 do
-    ValidateAssociation(UMLModel.associations[i]);
-  BoldLog.EndLog;
+  try
+    fSystemTypeInfo := ExtractSystemTypeInfo(BoldModel);
+    ClearViolations;
+    for i := 0 to UMLModel.Classes.Count - 1 do
+      ValidateClass(UMLModel.Classes[i]);
+    for i := 0 to UMLModel.associations.Count - 1 do
+      ValidateAssociation(UMLModel.associations[i]);
+  finally
+    BoldModel.EndValidation;
+    BoldLog.EndLog;
+  end;
 end;
 
 procedure TOCLValidityChecker.ValidateDerivationExpressions(UMLClass: TUMLClass; UMLTaggedValue: TUMLTaggedValue);
@@ -273,9 +274,9 @@ begin
     begin
       UMLAttribute := TUMLAttribute(UMLModelElement);
       if not UMLAttribute.Derived then
-        AddViolation(sHint, UMLAttribute, 'Derivation expression respecified for non-derived attribute')
+        AddViolation(sHint, UMLAttribute, 'Derivation expression respecified for non-derived attribute' + UmlAttribute.owner.name + '.' + UMLAttribute.Name)
       else if UMLAttribute.GetBoldTV(TAG_DERIVATIONOCL) = '' then
-        AddViolation(sHint, UMLAttribute, 'Derivation expression respecified for code-derived attribute')
+        AddViolation(sHint, UMLAttribute, 'Derivation expression respecified for code-derived attribute' + UmlAttribute.owner.name + '.' + UMLAttribute.Name)
       else
         ValidateExpression('DerivationExpression', UMLClass, UMLClass, StringList.Values[StringList.Names[i]], AttributeTypeInfoFromUMLAttribute(UMLAttribute))
     end;
@@ -284,9 +285,9 @@ begin
     begin
       UMLAssociationEnd := TUMLAssociationEnd(UMLModelElement);
       if not UMLAssociationEnd.association.derived then
-        AddViolation(sHint, UMLAssociationEnd, 'Derivation expression respecified for non-derived association')
+        AddViolation(sHint, UMLAssociationEnd, 'Derivation expression respecified for non-derived association'+ UMLAssociationEnd.GetOtherEnd.Type_.name + '.' + UMLAssociationEnd.Name)
       else if UMLAssociationEnd.GetBoldTV(TAG_DERIVATIONOCL) = '' then
-        AddViolation(sHint, UMLAssociationEnd, 'Derivation expression respecified for code-derived association end')
+        AddViolation(sHint, UMLAssociationEnd, 'Derivation expression respecified for code-derived association end'+ UMLAssociationEnd.GetOtherEnd.Type_.name + '.' + UMLAssociationEnd.Name)
       else
         ValidateExpression('DerivationExpression', UMLClass, UMLClass, StringList.Values[StringList.Names[i]], ElementTypeInfoFromUMLAssociationEnd(UMLAssociationEnd));
     end;
@@ -321,6 +322,9 @@ begin
   Violation := fUMLModel.Validator.Violation.AddNew;
   Violation.Severity := Severity;
   Violation.ModelElement := Element;
+  if Length(Msg) > 255 then
+    Violation.Description := Copy(Msg, 0, 200) + ' ...'
+  else
   Violation.Description := Msg;
 end;
 
@@ -328,8 +332,16 @@ procedure TOCLValidityChecker.ClearViolations;
 var
   i: integer;
 begin
-  for i := fUMLModel.Validator.Violation.count - 1 downto 0 do
-    fUMLModel.Validator.Violation[i].Delete
+  fUMLModel.BoldSystem.StartTransaction();
+  try
+    for i := fUMLModel.Validator.Violation.count - 1 downto 0 do
+      fUMLModel.Validator.Violation[i].Delete;
+    fUMLModel.BoldSystem.CommitTransaction();
+  except
+    fUMLModel.BoldSystem.RollbackTransaction();
+  end;
 end;
+
+initialization
 
 end.

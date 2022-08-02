@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldStringId;
 
 interface
@@ -5,11 +8,12 @@ interface
 uses
   BoldId;
 
+
 type
   TBoldStringID = class(TBoldExternalObjectID)
   protected
     fIdValue: String;
-    procedure SetAsString(NewValue: String);
+    procedure SetAsString(NewValue: String); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetAsString: string; override;
     function GetHash: cardinal; override;
     function GetStreamName: string; override;
@@ -18,6 +22,7 @@ type
     function GetIsEqual(MatchID: TBoldObjectID): Boolean; override;
     property AsString: String read GetAsString write SetAsString;
   end;
+
 
 implementation
 
@@ -42,7 +47,7 @@ type
 
 { TBoldStringID }
 
-function HashString(const S: string): CARDINAL;
+function HashString(const S: string): CARDINAL; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
 var
   i: integer;
 begin
@@ -111,7 +116,6 @@ begin
   inherited;
   Node.WriteSubNodeString(BoldNodeName_IdValue, (Obj as TBoldStringID).fIdValue);
 end;
-
 initialization
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLStringIdStreamer.Create);
 end.

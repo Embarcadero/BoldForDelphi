@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAwareGuiComReg;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -9,24 +12,23 @@ procedure Register;
 implementation
 
 uses
-  BoldRev,
   Classes,
   DesignIntf,
   BoldDefs,
   BoldAbstractPropertyEditors,
   BoldComPropertyEditors,
   BoldGridPropertyEditorsCom,
-{$IFNDEF BOLDCOMCLIENT} // uses
-  BoldHandlesCom, // IFNDEF BOLDCOMCLIENT
-  BoldExceptionHandlersCom, // IFNDEF BOLDCOMCLIENT
-  BoldAbstractListHandleCom, // IFNDEF BOLDCOMCLIENT
-  BoldComboBoxPropertyEditors, // IFNDEF BOLDCOMCLIENT
-  BoldControlPackPropertyEditors, // IFNDEF BOLDCOMCLIENT
+{$IFNDEF BOLDCOMCLIENT}
+  BoldHandlesCom,
+  BoldExceptionHandlersCom,
+  BoldAbstractListHandleCom,
+  BoldComboBoxPropertyEditors,
+  BoldControlPackPropertyEditors,
 
-  BoldMLRenderersCom, // fixthis  // IFNDEF BOLDCOMCLIENT
-  BoldDataSetCom, // IFNDEF BOLDCOMCLIENT
-  BoldDataSetPropertyEditors, // IFNDEF BOLDCOMCLIENT
-  BoldDragDropTargetCom, // IFNDEF BOLDCOMCLIENT
+  BoldMLRenderersCom,
+  BoldDataSetCom,
+  BoldDataSetPropertyEditors,
+  BoldDragDropTargetCom,
 {$ENDIF}
   BoldPropertiesControllerPropertyEditorsCom,
   BoldPropertiesControllerCom,
@@ -60,16 +62,14 @@ uses
 
 procedure RegisterEditors;
 begin
-  //TBoldRendererCom
   RegisterPropertyEditor(TypeInfo(TBoldSubscribeCom), nil, '', TBoldElementCOMSubscribeMethodProperty);
   RegisterPropertyEditor(TypeInfo(TBoldHoldsChangedValueCom), nil, '', TBoldCOMMethodNoPurposeProperty);
   RegisterPropertyEditor(TypeInfo(TBoldReleaseChangedValueCom), nil, '', TBoldCOMMethodNoPurposeProperty);
   RegisterPropertyEditor(TypeInfo(TBoldMayModifyCom), nil, '', TBoldCOMMethodNoPurposeProperty);
 
-  {$IFNDEF BOLDCOMCLIENT} // register editors
+  {$IFNDEF BOLDCOMCLIENT}
 
-  // Register property editors
-  // All properties of type TBoldElementHandleCom named BoldHandle will be displayed RED if prop not set
+
   RegisterPropertyEditor(TypeInfo(TBoldElementHandleCom), TPersistent, 'BoldHandle', TBoldComponentPropertyIndicateMissing);
   RegisterPropertyEditor(TypeInfo(TBoldAbstractListHandleCom), TBoldComboBoxCom, 'BoldListHandleCom', TBoldComponentPropertyIndicateMissing);
 
@@ -77,25 +77,17 @@ begin
   RegisterPropertyEditor(TypeInfo(integer), TBoldFollowerControllerCom, 'Representation', TBoldRepresentationProperty);
   RegisterPropertyEditor(TypeInfo(TBoldRendererCom), TBoldFollowerControllerCom, 'Renderer', TBoldRendererComponentProperty);
 
-  // Note: registering for TPersistent screws up, as all string-properties will get an ellipsis!
-  // v the below line doesn't work, but is left as a reminder.
-  //  RegisterPropertyEditor(TypeInfo(TBoldExpression), TPersistent, '', TBoldOCLExpressionProperty);
-  // ^ the above line doesn't work, but is left as a reminder.
+
+
 
   RegisterPropertyEditor(TypeInfo(TBoldExpression), TBoldFollowerControllerCom, 'Expression', TBoldOCLExpressionForFollowerControllersProperty);
 
   RegisterPropertyEditor(TypeInfo(TBoldSingleFollowerControllerCom), nil, '', TBoldSingleFollowerControllerEditor);
   RegisterPropertyEditor(TypeInfo(TBoldTreeFollowerControllerCom), nil, '', TBoldTreeFollowerControllerEditor);
-
-  //TBoldAsStringRendererCom
   RegisterPropertyEditor(TypeInfo(TBoldGetAsStringCom), nil, '', TBoldGetAsStringMethodProperty);
-  //TBoldAsCheckBoxRenderer
   RegisterPropertyEditor(TypeInfo(TBoldGetAsCheckBoxStateCom), nil, '', TBoldGetAsCheckBoxStateMethodProperty);
-  //TBoldAsIntegerRendererCom
   RegisterPropertyEditor(TypeInfo(TBoldGetAsIntegerEventCom), nil, '', TBoldGetAsIntegerEventMethodProperty);
-  //TBoldAsFloatRendererCom
   RegisterPropertyEditor(TypeInfo(TBoldGetAsFloatEventCom), nil, '', TBoldGetAsFloatEventMethodProperty);
-  //TBoldAsViewerRendererCom
   RegisterPropertyEditor(TypeInfo(TBoldGetAsViewerCom), nil, '', TBoldGetAsViewerMethodProperty);
   RegisterPropertyEditor(TypeInfo(String), TBoldNodeDescriptionCom, 'ContextTypeName', TBoldTypeNameSelectorPropertyForTreeFollowerController);
 
@@ -104,8 +96,6 @@ begin
 
   RegisterPropertyEditor(TypeInfo(String), TBoldComboBoxCom, 'BoldSetValueExpression', TBoldOCLExpressionForComboBoxSetValueExpression);
   RegisterPropertyEditor(TypeInfo(String), TBoldDropTargetCom, 'NodeSelectionExpression', TBoldOCLExpressionForOCLComponent);
-
-  // Register Component editors
     {Renderer editors}
   RegisterComponentEditor(TBoldAsStringRendererCom, TBoldAsStringRendererEditor);
   RegisterComponentEditor(TBoldAsCheckBoxStateRendererCom, TBoldAsCheckboxStateRendererEditor);
@@ -128,14 +118,14 @@ begin
   RegisterComponentEditor(TBoldPropertiesControllerCom,TBoldPropertiesControllerComponentEditorCom);
   RegisterPropertyEditor(TypeInfo(String), TBoldDrivenPropertyCom, 'PropertyName', TPropertyNamePropertyCom);
   RegisterPropertyEditor(TypeInfo(TComponent), TBoldDrivenPropertyCom, 'VCLComponent', TVCLComponentPropertyCom);
-{$IFNDEF BOLDCOMCLIENT} // registerEditors
+{$IFNDEF BOLDCOMCLIENT}
   RegisterComponentEditor(TBoldAbstractDataset, TBoldDataSetEditor);
 {$ENDIF}
 end;
 
 procedure RegisterComponentsOnPalette;
 begin
-{$IFNDEF BOLDCOMCLIENT} // RegisterComponents
+{$IFNDEF BOLDCOMCLIENT}
   RegisterComponents(BOLDPAGENAME_MISC,
   [
     TBoldDataSetCom,
@@ -143,7 +133,7 @@ begin
   ]);
 {$ENDIF}
 
-{$IFDEF BOLDCOMCLIENT} // RegisterComponents
+{$IFDEF BOLDCOMCLIENT}
   RegisterComponents('Bold COM Controls',
 {$ELSE}
   RegisterComponents(BOLDPAGENAME_CONTROLS,
@@ -167,12 +157,11 @@ begin
     TBoldImageCom,
     TBoldPropertiesControllerCom,
     TBoldStringsPropertyControllerCom,
-    //Renderers
     TBoldAsStringRendererCom,
     TBoldAsCheckBoxStateRendererCom,
     TBoldAsIntegerRendererCom,
     TBoldAsFloatRendererCom,
-    {$IFNDEF BOLDCOMCLIENT} // Register Components
+    {$IFNDEF BOLDCOMCLIENT}
     TBoldAsMLStringRendererCom,
     TBoldDropTargetCom,
     {$ENDIF}
@@ -182,10 +171,8 @@ end;
 
 procedure Register;
 begin
-  begin
-    RegisterComponentsOnPalette;
-    RegisterEditors;
-  end;
+  RegisterComponentsOnPalette;
+  RegisterEditors;
 end;
 
 end.

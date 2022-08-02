@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAdvancedPropagator;
 
 interface
@@ -16,7 +19,8 @@ uses
   BoldThreadSafeLog,
   IniFiles,
   BoldPropagatorMainForm,
-  Classes;
+  Classes
+  ;
 
 type
   {forward declarations}
@@ -65,15 +69,14 @@ uses
   BoldUtils,
   BoldPropagatorConstants,
   BoldDefs,
-  BoldPropagatorServer,
-  PropagatorConsts;
+  BoldPropagatorServer;
 
   {TBoldAdvancedPropagator}
 procedure TBoldAdvancedPropagator.Initialize;
 begin
   if fEnableLogging then
     BoldInitLog(fLogFileName, fErrorLogFileName, fThreadLogFileName, fMaxLogFileSize);
-  BoldLogError(sInitializing, [ClassName]);
+  BoldLogError('%s.Initialize: Starting..........................................', [ClassName]);
   fClientHandler := TBoldClientHandler.Create;
   fEnqueuer := TBoldEnqueuer.Create(fClientHandler);
   fUIManager := TUIManager.Create;
@@ -117,7 +120,7 @@ begin
     FreeAndNil(fPriorityListEnlister);
     FreeAndNil(fClientHandler);
   end;
-  BoldLogError(sDestroying, [ClassName]);
+  BoldLogError('%s.Destroy: Closing down peacefully..........................................', [ClassName]);
 
   BoldDoneLog;
   inherited;
@@ -152,7 +155,7 @@ begin
     if Assigned(fUIManager) then
       fUIManager.SetDequeueIndicator(false);
   except on E: Exception do
-    BoldLogError('%s.DoneDequeue: %s', [ClassName, E.message]); // do not localize
+    BoldLogError('%s.DoneDequeue: error = %s', [ClassName, E.message])
   end;
 end;
 
@@ -160,11 +163,13 @@ procedure TBoldAdvancedPropagator.StartDequeue(Sender: TObject);
 begin
   if Assigned(fUIManager) then
     fUIManager.SetDequeueIndicator(true);
-end;
+end;                                          
 
 function TBoldAdvancedPropagator.getClientHandler: TBoldClientHandler;
 begin
   Result := fClientHandler;
 end;
+
+initialization
 
 end.

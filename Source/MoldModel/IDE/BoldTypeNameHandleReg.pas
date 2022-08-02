@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldTypeNameHandleReg;
 
 interface
@@ -37,13 +40,15 @@ uses
   Controls,
   BoldTypeNameDictionary,
   BoldTypeNameHandle,
-  BoldTypeNameEditor,
-  BoldMoldConsts;
+
+  BoldTypeNameEditor,  
+  BoldGuard,
+  BoldRev;
 
 procedure Register;
 begin
   RegisterComponentEditor(TBoldTypeNameHandle, TBoldTypeNameEditor);
-  RegisterPropertyEditor(TypeInfo(TBoldTypeNameDictionary), TBoldTypeNameHandle, 'Dictionary', TBoldTypeNamePropEditor); // do not localize
+  RegisterPropertyEditor(TypeInfo(TBoldTypeNameDictionary), TBoldTypeNameHandle, 'Dictionary', TBoldTypeNamePropEditor);
 end;
 
 { TTBoldModelEditor }
@@ -55,23 +60,21 @@ begin
   with Component as TBoldTypeNameHandle do
   begin
     EditorForm := TBoldTypeNameEditorForm.Create(nil);
-    try
-	    EditorForm.LoadFromDictionary(Dictionary);
+    EditorForm.LoadFromDictionary(Dictionary);
 
-      if EditorForm.ShowModal = mrOK then
-      begin
-        EditorForm.SaveToDictionary(Dictionary);
-        Designer.Modified;
-      end;
-    finally
-      EditorForm.Free;
+    if EditorForm.ShowModal = mrOK then
+    begin
+      EditorForm.SaveToDictionary(Dictionary);
+      Designer.Modified;
     end;
+
+    EditorForm.Free;
   end;
 end;
 
 function TBoldTypeNameEditor.GetVerb(index: Integer): string;
 begin
-  result := sEditTypeNames;
+  result := 'Edit type names';
 end;
 
 function TBoldTypeNameEditor.GetVerbCount: Integer;
@@ -107,7 +110,7 @@ end;
 
 function TBoldTypeNamePropEditor.GetValue: String;
 begin
-  result := 'TBoldTypeNameDictionary'; // do not localize
+  result := 'TBoldTypeNameDictionary';
 end;
 
 end.

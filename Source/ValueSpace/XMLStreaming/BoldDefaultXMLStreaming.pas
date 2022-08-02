@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldDefaultXMLStreaming;
 
 interface
@@ -72,8 +75,8 @@ type
   public
     constructor Create(MoldMember: TMoldMember; Owner: TBoldXMLClassStreamer);
     destructor Destroy; override;
-    procedure WriteValue(Node: TBoldXMLNode; Value: IBoldValue);
-    procedure ReadValue(Node: TBoldXMLNode; Value: IBoldValue);
+    procedure WriteValue(Node: TBoldXMLNode; const Value: IBoldValue);
+    procedure ReadValue(Node: TBoldXMLNode; const Value: IBoldValue);
     property TypeStreamName: string read fTypeStreamName;
     property Persistent: Boolean read fPersistent;
     property MemberId: TBoldMemberId read fMemberId;
@@ -86,14 +89,14 @@ type
     fMemberStreamers: TBoldXMLModelElementStreamerList;
     fOwner: TBoldDefaultXMLStreamManager;
     function GetMemberStreamer(Index: Integer): TBoldXMLMemberStreamer;
-    function GetMemberStreamerByName(Name: string): TBoldXMLMemberStreamer;
+    function GetMemberStreamerByName(const Name: string): TBoldXMLMemberStreamer;
   public
     constructor Create(MoldClass: TMoldClass; Owner: TBoldDefaultXMLStreamManager);
     destructor Destroy; override;
-    procedure WriteObject(Node: TBoldXMLNode; ObjectContents: IBoldObjectContents; ObjectId: TBoldObjectId; MemberIdList: TBoldMemberIdList);
-    procedure ReadObject(Node: TBoldXMLNode; ValueSpace: IBoldValueSpace);
+    procedure WriteObject(Node: TBoldXMLNode; const ObjectContents: IBoldObjectContents; ObjectId: TBoldObjectId; MemberIdList: TBoldMemberIdList);
+    procedure ReadObject(Node: TBoldXMLNode; const ValueSpace: IBoldValueSpace);
     property MemberStreamers[Index: integer]: TBoldXMLMemberStreamer read GetMemberStreamer;
-    property MemberStreamerByName[Name: String]: TBoldXMLMemberStreamer read GetMemberStreamerByName;
+    property MemberStreamerByName[const Name: String]: TBoldXMLMemberStreamer read GetMemberStreamerByName;
   end;
 
   { TBoldDefaultXMLStreamManager }
@@ -105,15 +108,15 @@ type
     fPersistenceStatesToBeStreamed: TBoldValuePersistenceStateSet;
     fPersistenceStatesToOverwrite: TBoldValuePersistenceStateSet;
     function GetClassStreamer(TopSortedIndex: Integer): TBoldXMLClassStreamer;
-    function GetClassStreamerByName(Name: string): TBoldXMLClassStreamer;
+    function GetClassStreamerByName(const Name: string): TBoldXMLClassStreamer;
   public
     constructor Create(Registry: TBoldXMLStreamerRegistry; Model: TMoldModel);
     destructor Destroy; override;
-    procedure WriteValueSpace(ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList; Node: TBoldXMLNode);
-    procedure ReadValueSpace(ValueSpace: IBoldValueSpace; Node: TBoldXMLNode);
+    procedure WriteValueSpace(const ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList; Node: TBoldXMLNode);
+    procedure ReadValueSpace(const ValueSpace: IBoldValueSpace; Node: TBoldXMLNode);
     property Model: TMoldModel read fModel;
     property ClassStreamers[TopSortedIndex: Integer]: TBoldXMLClassStreamer read GetClassStreamer;
-    property ClassStreamerByName[Name: string]: TBoldXMLClassStreamer read GetClassStreamerByName;
+    property ClassStreamerByName[const Name: string]: TBoldXMLClassStreamer read GetClassStreamerByName;
     property IgnorePersistenceState: Boolean read fIgnorePersistenceState write fIgnorePersistenceState;
     property PersistenceStatesToOverwrite: TBoldValuePersistenceStateSet read fPersistenceStatesToOverwrite write fPersistenceStatesToOverwrite;
     property PersistenceStatesToBeStreamed: TBoldValuePersistenceStateSet read fPersistenceStatesToBeStreamed write fPersistenceStatesToBeStreamed;
@@ -122,151 +125,149 @@ type
   { TBoldXMLValueStreamer }
   TBoldXMLValueStreamer = class(TBoldXMLInterfaceStreamer)
   public
-    procedure WriteInterface(Item: IBoldStreamable; Node: TBoldXMLNode); override;
-    procedure ReadInterface(Item: IBoldStreamable; Node: TBoldXMLNode); override;
+    procedure WriteInterface(const Item: IBoldStreamable; Node: TBoldXMLNode); override;
+    procedure ReadInterface(const Item: IBoldStreamable; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLNullableValueStreamer }
   TBoldXMLNullableValueStreamer = class(TBoldXMLValueStreamer)
   protected
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); virtual;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); virtual;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); virtual;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); virtual;
   public
-    procedure WriteInterface(Item: IBoldStreamable; Node: TBoldXMLNode); override;
-    procedure ReadInterface(Item: IBoldStreamable; Node: TboldXMLNode); override;
+    procedure WriteInterface(const Item: IBoldStreamable; Node: TBoldXMLNode); override;
+    procedure ReadInterface(const Item: IBoldStreamable; Node: TboldXMLNode); override;
   end;
 
   { TBoldXMLStringContentStreamer }
   TBoldXMLStringContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLIntegerContentStreamer }
   TBoldXMLIntegerContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLFloatContentStreamer }
   TBoldXMLFloatContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLCurrencyContentStreamer }
   TBoldXMLCurrencyContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLBooleanContentStreamer }
   TBoldXMLBooleanContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLDateContentStreamer }
   TBoldXMLDateContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLTimeContentStreamer }
   TBoldXMLTimeContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLDateTimeContentStreamer }
   TBoldXMLDateTimeContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLBlobContentStreamer }
   TBoldXMLBlobContentStreamer = class(TBoldXMLNullableValueStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLTypedBlobStreamer }
   TBoldXMLTypedBlobStreamer = class(TBoldXMLBlobContentStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLRoleStreamer }
   TBoldXMLRoleStreamer = class(TBoldXMLValueStreamer)
   protected
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); virtual;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); virtual;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); virtual;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); virtual;
   public
-    procedure WriteInterface(Item: IBoldStreamable; Node: TBoldXMLNode); override;
-    procedure ReadInterface(Item: IBoldStreamable; Node: TBoldXMLNode); override;
+    procedure WriteInterface(const Item: IBoldStreamable; Node: TBoldXMLNode); override;
+    procedure ReadInterface(const Item: IBoldStreamable; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLIdRefStreamer }
   TBoldXMLIdRefStreamer = class(TBoldXMLRoleStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLIdRefPairStreamer }
   TBoldXMLIdRefPairStreamer = class(TBoldXMLRoleStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLIdListRefStreamer }
   TBoldXMLIdListRefStreamer = class(TBoldXMLRoleStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
   { TBoldXMLIdListRefPairStreamer }
   TBoldXMLIdListRefPairStreamer = class(TBoldXMLRoleStreamer)
   protected
     function GetStreamName: string; override;
-    procedure WriteContent(Item: IBoldValue; Node: TBoldXMLNode); override;
-    procedure ReadContent(Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure WriteContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
+    procedure ReadContent(const Item: IBoldValue; Node: TBoldXMLNode); override;
   end;
 
 implementation
 
 uses
   BoldHashIndexes,
-  MSXML_TLB,
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   SysUtils,
-  ValueSpaceConst,
   BoldDefaultStreamNames;
-//  BoldUtils;
 
 const
   BoldNodeName_persistencestate = 'persistencestate';
@@ -320,40 +321,60 @@ end;
 function TBoldDefaultXMLStreamManager.GetClassStreamer(TopSortedIndex: Integer): TBoldXMLClassStreamer;
 begin
   if TopSortedIndex >= fClassStreamers.Count then
-    raise EBold.CreateFmt(sInvalidIndex, [classname]);
+    raise EBold.CreateFmt('%s.GetClassStreamer: Not a valid index', [classname]);
 
   result := TBoldXMLClassStreamer(fClassStreamers.Items[TopSortedIndex]);
 end;
 
-function TBoldDefaultXMLStreamManager.GetClassStreamerByName(Name: string): TBoldXMLClassStreamer;
+function TBoldDefaultXMLStreamManager.GetClassStreamerByName(const Name: string): TBoldXMLClassStreamer;
 begin
   result := fClassStreamers.StreamerByName[Name] as TBoldXMLClassStreamer;
 
   if not assigned(result) then
-    raise EBold.CreateFmt(sUnrecognizedClassName, [classname, 'GetClassStreamerByName', name]); // Do not localize
+    raise EBold.CreateFmt('%s.GetClassStreamerByName: Unrecognized class name %s', [classname, name]);
 end;
 
-procedure TBoldDefaultXMLStreamManager.ReadValueSpace(ValueSpace: IBoldValueSpace; Node: TBoldXMLNode);
+procedure TBoldDefaultXMLStreamManager.ReadValueSpace(const ValueSpace: IBoldValueSpace; Node: TBoldXMLNode);
 var
   aSubNode: TBoldXMLNode;
+  {$IFDEF OXML}
+  aNodeListEnumerator: TXMLChildNodeListEnumerator;
+  aNode: PXMLNode;
+  {$ELSE}
   aNodeList: IXMLDomNodeList;
   aNode: IXMLDomNode;
+  {$ENDIF}
 begin
-  if not assigned(ValueSpace) then
+  if not assigned(ValueSpace) then begin
     exit;
+  end;
+  {$IFDEF OXML}
+  aNodeListEnumerator := Node.XMLDomElement.ChildNodes.GetEnumerator;
+  try
+    while aNodeListEnumerator.MoveNext do
+    begin
+      aNode := aNodeListEnumerator.Current;
+      aSubNode := TBoldXMLNode.Create(Node.Manager, aNode, nil);
+      ClassStreamerByName[aSubNode.Accessor].ReadObject(aSubNode, ValueSpace);
+      aSubNode.Free;
+    end;
+  finally
+    aNodeListEnumerator.Free;
+  end;
+  {$ELSE}
   aNodeList := Node.XMLDomElement.childNodes;
   aNode := aNodeList.nextNode;
-  while assigned(aNode) do
-  begin
+  while assigned(aNode) do begin
     aSubNode := TBoldXMLNode.Create(Node.Manager, aNode as IXMLDOMElement, nil);
     ClassStreamerByName[aSubNode.Accessor].ReadObject(aSubNode, ValueSpace);
 
     aSubNode.Free;
     aNode := aNodeList.nextNode;
   end;
+  {$ENDIF}
 end;
 
-procedure TBoldDefaultXMLStreamManager.WriteValueSpace(ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList;
+procedure TBoldDefaultXMLStreamManager.WriteValueSpace(const ValueSpace: IBoldValueSpace; IdList: TBoldObjectIdList;
   MemberIdList: TBoldMemberIdList; Node: TBoldXMLNode);
 var
   i: integer;
@@ -373,7 +394,7 @@ end;
 
 { TBoldXMLValueStreamer }
 
-procedure TBoldXMLValueStreamer.ReadInterface(Item: IBoldStreamable; Node: TBoldXMLNode);
+procedure TBoldXMLValueStreamer.ReadInterface(const Item: IBoldStreamable; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
 begin
@@ -381,28 +402,39 @@ begin
   if not (Node.Manager as TBoldDefaultXMLStreamManager).IgnorePersistenceState then
   begin
     SubNode := Node.GetSubNode(BoldNodeName_persistencestate);
-    (Item as IBoldValue).BoldPersistenceState := TBoldValuePersistenceState(SubNode.ReadInteger);
+    if Assigned(SubNode) then begin
+      (Item as IBoldValue).BoldPersistenceState :=
+          TBoldValuePersistenceState(SubNode.ReadInteger);
+      SubNode.Free;
+    end else begin
+      // No node found -> set default BoldPersistenceState (bvpsCurrent)
+      (Item as IBoldValue).BoldPersistenceState := bvpsCurrent;
+    end;
+  end;
+end;
+
+procedure TBoldXMLValueStreamer.WriteInterface(const Item: IBoldStreamable; Node: TBoldXMLNode);
+var
+  SubNode: TBoldXMLNode;
+  iPersistenceState: Integer;
+begin
+  inherited;
+  iPersistenceState := Integer((Item as IBoldValue).BoldPersistenceState);
+  // Only write BoldPersistenceState other than bvpsCurrent, to minimize XML size
+  if iPersistenceState <> 0 then begin
+    SubNode := Node.NewSubNode(BoldNodeName_persistencestate);
+    SubNode.WriteInteger(iPersistenceState);
     SubNode.Free;
   end;
 end;
 
-procedure TBoldXMLValueStreamer.WriteInterface(Item: IBoldStreamable; Node: TBoldXMLNode);
-var
-  SubNode: TBoldXMLNode;
-begin
-  inherited;
-  SubNode := Node.NewSubNode(BoldNodeName_persistencestate);
-  SubNode.WriteInteger(Integer((Item as IBoldValue).BoldPersistenceState));
-  SubNode.Free;
-end;
-
 { TBoldXMLNullableValueStreamer }
 
-procedure TBoldXMLNullableValueStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLNullableValueStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
 end;
 
-procedure TBoldXMLNullableValueStreamer.ReadInterface(Item: IBoldStreamable; Node: TboldXMLNode);
+procedure TBoldXMLNullableValueStreamer.ReadInterface(const Item: IBoldStreamable; Node: TboldXMLNode);
 var
   ContentNode: TBoldXMLNode;
 begin
@@ -415,11 +447,11 @@ begin
   ContentNode.Free;
 end;
 
-procedure TBoldXMLNullableValueStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLNullableValueStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
 end;
 
-procedure TBoldXMLNullableValueStreamer.WriteInterface(Item: IBoldStreamable; Node: TBoldXMLNode);
+procedure TBoldXMLNullableValueStreamer.WriteInterface(const Item: IBoldStreamable; Node: TBoldXMLNode);
 var
   ContentNode: TBoldXMLNode;
 begin
@@ -439,13 +471,13 @@ begin
   result := BoldContentName_String;
 end;
 
-procedure TBoldXMLStringContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLStringContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   (Item as IBoldStringContent).asString := Node.ReadString;
 end;
 
-procedure TBoldXMLStringContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLStringContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   Node.WriteString((Item as IBoldStringContent).asString);
@@ -458,13 +490,13 @@ begin
   result := BoldContentName_Integer;
 end;
 
-procedure TBoldXMLIntegerContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIntegerContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   (Item as IBoldIntegerContent).asInteger := Node.ReadInteger;
 end;
 
-procedure TBoldXMLIntegerContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIntegerContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   Node.WriteInteger((Item as IBoldIntegerContent).asInteger);
@@ -472,11 +504,11 @@ end;
 
 { TBoldXMLRefStreamer }
 
-procedure TBoldXMLRoleStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLRoleStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
 end;
 
-procedure TBoldXMLRoleStreamer.ReadInterface(Item: IBoldStreamable; Node: TBoldXMLNode);
+procedure TBoldXMLRoleStreamer.ReadInterface(const Item: IBoldStreamable; Node: TBoldXMLNode);
 var
   ContentNode: TBoldXMLNode;
 begin
@@ -486,11 +518,11 @@ begin
   ContentNode.Free;
 end;
 
-procedure TBoldXMLRoleStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLRoleStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
 end;
 
-procedure TBoldXMLRoleStreamer.WriteInterface(Item: IBoldStreamable; Node: TBoldXMLNode);
+procedure TBoldXMLRoleStreamer.WriteInterface(const Item: IBoldStreamable; Node: TBoldXMLNode);
 var
   ContentNode: TBoldXMLNode;
 begin
@@ -507,7 +539,7 @@ begin
   result := BoldContentName_ObjectIdRef;
 end;
 
-procedure TBoldXMLIdRefStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdRefStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
   anId: TBoldObjectId;
@@ -516,17 +548,15 @@ begin
   inherited;
   anIdRef := Item as IBoldObjectIdRef;
   anId := Node.ReadSubNodeObject(BoldNodeName_id , '') as TBoldObjectId;
-  anIdRef.SetFromId(anId);
-  anId.Free;
+  anIdRef.SetFromId(anId, true);
   SubNode := Node.GetSubNode(BoldNodeName_OrderNo);
   if assigned(SubNode) then
     anIdRef.OrderNo := SubNode.ReadInteger;
   SubNode.Free;
 end;
 
-procedure TBoldXMLIdRefStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdRefStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
-//  SubNode: TBoldXMLNode;
   anIdRef: IBoldObjectIdRef;
 begin
   inherited;
@@ -545,7 +575,7 @@ begin
   result := BoldContentName_ObjectIdRefPair;
 end;
 
-procedure TBoldXMLIdRefPairStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdRefPairStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
   Id1, Id2: TBoldObjectId;
@@ -562,7 +592,7 @@ begin
   Id2.Free;
 end;
 
-procedure TBoldXMLIdRefPairStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdRefPairStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
 begin
@@ -582,7 +612,7 @@ begin
   result := BoldContentName_ObjectIdListRef;
 end;
 
-procedure TBoldXMLIdListRefStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdListRefStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
   anIdList: TBoldObjectIdList;
@@ -595,7 +625,7 @@ begin
   anIdList.Free;
 end;
 
-procedure TBoldXMLIdListRefStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdListRefStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
   anIdList: TBoldobjectIdList;
@@ -620,7 +650,7 @@ begin
   result := BoldContentName_ObjectIdListRefPair;
 end;
 
-procedure TBoldXMLIdListRefPairStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdListRefPairStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
   IdList1, IdList2: TBoldObjectIdList;
@@ -637,7 +667,7 @@ begin
   IdList2.Free;
 end;
 
-procedure TBoldXMLIdListRefPairStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLIdListRefPairStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 var
   SubNode: TBoldXMLNode;
   anIdList: TBoldobjectIdList;
@@ -683,7 +713,7 @@ begin
   fExpressionName := MoldClass.ExpandedExpressionName;
   fMemberStreamers := TBoldXMLModelElementStreamerList.Create;
   for i := 0 to MoldClass.AllBoldMembers.Count - 1 do
-    fMemberStreamers.Add(TBoldXMLMemberStreamer.Create(MoldClass.AllBoldMembers[i], self));
+    fMemberStreamers.Add(TBoldXMLMemberStreamer.Create(MoldClass.AllBoldMembers[i], self)); 
 end;
 
 destructor TBoldXMLClassStreamer.Destroy;
@@ -700,23 +730,28 @@ begin
     result := nil;
 end;
 
-function TBoldXMLClassStreamer.GetMemberStreamerByName(Name: string): TBoldXMLMemberStreamer;
+function TBoldXMLClassStreamer.GetMemberStreamerByName(const Name: string): TBoldXMLMemberStreamer;
 begin
   result := fMemberStreamers.StreamerByName[Name] as TBoldXMLMemberStreamer;
 
   if not assigned(result) then
-    raise EBold.CreateFmt(sUnrecognizedClassName, [classname, 'GetMemberStreamerByName', name]); // do not localize
+    raise EBold.CreateFmt('%s.GetMemberStreamerByName: Unrecognized class name %s', [classname, name]);
 end;
 
-procedure TBoldXMLClassStreamer.ReadObject(Node: TBoldXMLNode; ValueSpace: IBoldValueSpace);
+procedure TBoldXMLClassStreamer.ReadObject(Node: TBoldXMLNode; const ValueSpace: IBoldValueSpace);
 var
   aSubNode: TBoldXMLNode;
   MembersNode: TBoldXMLNode;
   anId: TboldObjectId;
   ObjectContents: IBoldObjectContents;
+  aMemberStreamer: TBoldXMLMemberStreamer;
+  {$IFDEF OXML}
+  aNodeEnumerator: TXMLChildNodeListEnumerator;
+  aNode: PXMLNode;
+  {$ELSE}
   aNodeList: IXMLDomNodeList;
   aNode: IXMLDomNode;
-  aMemberStreamer: TBoldXMLMemberStreamer;
+  {$ENDIF}
 begin
   aSubNode := Node.GetSubNode(BoldNodeName_id);
   anId := aSubNode.ReadObject('') as TBoldObjectId;
@@ -726,12 +761,23 @@ begin
   if not fOwner.IgnorePersistenceState then
   begin
     aSubNode := Node.GetSubNode(BoldNodeName_persistencestate);
-    ObjectContents.BoldPersistenceState := TBoldValuePersistenceState(aSubNode.ReadInteger);
-    aSubNode.Free;
+    if Assigned(aSubNode) then begin
+      ObjectContents.BoldPersistenceState := TBoldValuePersistenceState(aSubNode.ReadInteger);
+      aSubNode.Free;
+    end else begin
+      // No node found -> set default BoldPersistenceState (bvpsCurrent)
+      ObjectContents.BoldPersistenceState := bvpsCurrent;
+    end;
   end;
   aSubNode := Node.GetSubNode(BoldNodeName_existencestate);
-  ObjectContents.BoldExistenceState := TBoldExistenceState(aSubNode.ReadInteger);
-  aSubNode.Free;
+  if Assigned(aSubNode) then begin
+    ObjectContents.BoldExistenceState := TBoldExistenceState(aSubNode.ReadInteger);
+    aSubNode.Free;
+  end else begin
+    // No node found -> set default BoldExistenceState (besExisting)
+    ObjectContents.BoldExistenceState := besExisting;
+  end;
+
 
   aSubNode := Node.GetSubNode(BoldNodeName_timestamp);
   if assigned(aSubNode) then
@@ -748,6 +794,22 @@ begin
   end;
 
   MembersNode := Node.GetSubNode(BoldNodeName_members);
+  {$IFDEF OXML}
+  aNodeEnumerator := MembersNode.XMLDomElement.ChildNodes.GetEnumerator;
+  try
+    while aNodeEnumerator.MoveNext do begin
+      aNode := aNodeEnumerator.Current;
+      aSubNode := TBoldXMLNode.Create(Node.Manager, aNode, nil);
+      aMemberStreamer := MemberStreamerByName[aSubNode.Accessor];
+      ObjectContents.EnsureMember(aMemberStreamer.MemberId, aMemberStreamer.TypeStreamName);
+      aMemberStreamer.ReadValue(aSubNode, ObjectContents.ValueByIndex[aMemberStreamer.Index]);
+      aSubNode.Free;
+    end;
+  finally
+    aNodeEnumerator.Free;
+    MembersNode.Free;
+  end;
+  {$ELSE}
   aNodeList := MembersNode.XMLDomElement.childNodes;
   aNode := aNodeList.nextNode;
   while assigned(aNode) do
@@ -756,20 +818,22 @@ begin
     aMemberStreamer := MemberStreamerByName[aSubNode.Accessor];
     ObjectContents.EnsureMember(aMemberStreamer.MemberId, aMemberStreamer.TypeStreamName);
     aMemberStreamer.ReadValue(aSubNode, ObjectContents.ValueByIndex[aMemberStreamer.Index]);
-
     aSubNode.Free;
     aNode := aNodeList.nextNode;
   end;
   MembersNode.Free;
+  {$ENDIF}
 end;
 
 procedure TBoldXMLClassStreamer.WriteObject(Node: TBoldXMLNode;
-  ObjectContents: IBoldObjectContents; ObjectId: TBoldObjectId; MemberIdList: TBoldMemberIdList);
+  const ObjectContents: IBoldObjectContents; ObjectId: TBoldObjectId; MemberIdList: TBoldMemberIdList);
 var
   i: Integer;
   ObjNode: TBoldXMLNode;
   MembersNode: TBoldXMLNode;
   aSubNode: TBoldXMLNode;
+  iBoldPersistenceState,
+  iBoldExistenceState: Integer;
 begin
   if not assigned(ObjectContents) then
     exit;
@@ -779,15 +843,26 @@ begin
   aSubNode := ObjNode.NewSubNode(BoldNodeName_id);
   aSubNode.WriteObject('', ObjectId);
   aSubNode.Free;
-  aSubNode := ObjNode.NewSubNode(BoldNodeName_persistencestate);
-  aSubNode.WriteInteger(Integer(ObjectContents.BoldPersistenceState));
-  aSubNode.Free;
-  aSubNode := ObjNode.NewSubNode(BoldNodeName_existencestate);
-  aSubNode.WriteInteger(Integer(ObjectContents.BoldExistenceState));
-  aSubNode.Free;
-  aSubNode := ObjNode.NewSubNode(BoldNodeName_timestamp);
-  aSubNode.WriteInteger(ObjectContents.TimeStamp);
-  aSubNode.Free;
+  iBoldPersistenceState := Integer(ObjectContents.BoldPersistenceState);
+  // Only write BoldPersistenceState other than bvpsCurrent, to minimize XML size
+  if iBoldPersistenceState <> 0 then begin
+    aSubNode := ObjNode.NewSubNode(BoldNodeName_persistencestate);
+    aSubNode.WriteInteger(iBoldPersistenceState);
+    aSubNode.Free;
+  end;
+  iBoldExistenceState := Integer(ObjectContents.BoldExistenceState);
+  // Only write BoldExistenceState other than besExisting, to minimize XML size
+  if iBoldExistenceState <> 1 then begin
+    aSubNode := ObjNode.NewSubNode(BoldNodeName_existencestate);
+    aSubNode.WriteInteger(iBoldExistenceState);
+    aSubNode.Free;
+  end;
+  // Onyl write TimeStamp if it is set, to minimize XML size
+  if ObjectContents.TimeStamp <> -1 then begin
+    aSubNode := ObjNode.NewSubNode(BoldNodeName_timestamp);
+    aSubNode.WriteInteger(ObjectContents.TimeStamp);
+    aSubNode.Free;
+  end;
   if ObjectContents.GlobalId <> '' then
     ObjNode.WriteSubNodeString(BoldNodeName_globalid, ObjectContents.GlobalId);
 
@@ -826,14 +901,14 @@ begin
 end;
 
 procedure TBoldXMLMemberStreamer.ReadValue(Node: TBoldXMLNode;
-  Value: IBoldValue);
+  const Value: IBoldValue);
 begin
   if assigned(self) and assigned(Value) then
     if (Value.BoldPersistenceState in fOwner.fOwner.PersistenceStatesToOverwrite) then
       Node.ReadInterface(TypeStreamName, Value as IBoldStreamable);
 end;
 
-procedure TBoldXMLMemberStreamer.WriteValue(Node: TBoldXMLNode; Value: IBoldValue);
+procedure TBoldXMLMemberStreamer.WriteValue(Node: TBoldXMLNode; const Value: IBoldValue);
 var
   aSubNode: TBoldXMLNode;
 begin
@@ -853,12 +928,12 @@ begin
   result := BoldContentName_Float;
 end;
 
-procedure TBoldXMLFloatContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLFloatContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   (Item as IBoldFloatContent).asFloat := Node.ReadFloat;
 end;
 
-procedure TBoldXMLFloatContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLFloatContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   Node.WriteFloat((Item as IBoldFloatContent).asFloat);
 end;
@@ -870,12 +945,12 @@ begin
   result := BoldContentName_Currency;
 end;
 
-procedure TBoldXMLCurrencyContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLCurrencyContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   (Item as IBoldCurrencyContent).asCurrency := Node.ReadCurrency;
 end;
 
-procedure TBoldXMLCurrencyContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLCurrencyContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   Node.WriteCurrency((Item as IBoldCurrencyContent).asCurrency);
 end;
@@ -887,13 +962,13 @@ begin
   result := BoldContentName_Boolean;
 end;
 
-procedure TBoldXMLBooleanContentStreamer.ReadContent(Item: IBoldValue;
+procedure TBoldXMLBooleanContentStreamer.ReadContent(const Item: IBoldValue;
   Node: TBoldXMLNode);
 begin
   (Item as IBoldBooleanContent).asBoolean := Node.ReadBoolean;
 end;
 
-procedure TBoldXMLBooleanContentStreamer.WriteContent(Item: IBoldValue;
+procedure TBoldXMLBooleanContentStreamer.WriteContent(const Item: IBoldValue;
   Node: TBoldXMLNode);
 begin
   Node.WriteBoolean((Item as IBoldBooleanContent).asBoolean);
@@ -906,12 +981,12 @@ begin
   result := BoldContentName_Date;
 end;
 
-procedure TBoldXMLDateContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLDateContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   (Item as IBoldDateContent).asDate := Node.ReadDate;
 end;
 
-procedure TBoldXMLDateContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLDateContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   Node.WriteDate((Item as IBoldDateContent).asDate);
 end;
@@ -923,14 +998,14 @@ begin
   result := BoldContentName_Time;
 end;
 
-procedure TBoldXMLTimeContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLTimeContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   (Item as IBoldTimeContent).asTime := Node.ReadTime;
 end;
 
-procedure TBoldXMLTimeContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLTimeContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
-  Node.WriteTime((Item as IBoldTimeContent).asTime);
+  Node.WriteTime((Item as IBoldTimeContent).asTime); 
 end;
 
 { TBoldXMLDateTimeContentStreamer }
@@ -940,12 +1015,12 @@ begin
   result := BoldContentName_DateTime;
 end;
 
-procedure TBoldXMLDateTimeContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLDateTimeContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   (Item as IBoldDateTimeContent).asDateTime := Node.ReadDateTime;
 end;
 
-procedure TBoldXMLDateTimeContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLDateTimeContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   Node.WriteDateTime((Item as IBoldDateTimeContent).asDateTime);
 end;
@@ -957,12 +1032,12 @@ begin
   result := BoldContentName_Blob;
 end;
 
-procedure TBoldXMLBlobContentStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLBlobContentStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   (Item as IBoldBlobContent).asBlob := Node.ReadData;
 end;
 
-procedure TBoldXMLBlobContentStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLBlobContentStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   Node.WriteData((Item as IBoldBlobContent).asBlob);
@@ -975,13 +1050,13 @@ begin
   result := BoldContentName_TypedBlob;
 end;
 
-procedure TBoldXMLTypedBlobStreamer.ReadContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLTypedBlobStreamer.ReadContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   (Item as IBoldTypedBlob).ContentTypeContent := Node.ReadSubNodeString(BoldNodeName_ContentType);
 end;
 
-procedure TBoldXMLTypedBlobStreamer.WriteContent(Item: IBoldValue; Node: TBoldXMLNode);
+procedure TBoldXMLTypedBlobStreamer.WriteContent(const Item: IBoldValue; Node: TBoldXMLNode);
 begin
   inherited;
   Node.WriteSubNodeString(BoldNodeName_ContentType, (Item as IBoldTypedBlob).ContentTypeContent);
@@ -1025,6 +1100,6 @@ initialization
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLIdListRefPairStreamer.Create);
 
 finalization
-  FreeAndNil(G_MainRegistry);
+  FreeAndNil(G_MainRegistry);  
 
 end.

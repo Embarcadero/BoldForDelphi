@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceHandleDataSet;
 
 interface
@@ -10,6 +13,7 @@ uses
   BoldExternalPersistenceControllerDataSet;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExternalPersistenceHandleDataSet = class(TBoldAbstractPartiallyExternalPH)
   private
     FConfig: TBoldExternalPersistenceConfigDataSetItems;
@@ -78,5 +82,7 @@ begin
   if Assigned(Value) then
     Config.Assign(Value);
 end;
+
+initialization
 
 end.

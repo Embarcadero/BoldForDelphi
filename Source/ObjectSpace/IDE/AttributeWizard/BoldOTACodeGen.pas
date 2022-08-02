@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOTACodeGen;
 
 interface
@@ -23,13 +26,11 @@ type
    fSource: string;
   public
    constructor Create;
-   // IOTACreator methods
    function GetCreatorType: string;
    function GetExisting: Boolean;
    function GetFileSystem: string;
    function GetOwner: IOTAModule;
    function GetUnnamed: Boolean;
-   //IOTAModuleCreator methods
    function GetAncestorName: string;
    function GetImplFileName: string;
    function GetIntfFileName: string;
@@ -144,7 +145,6 @@ end;
 
 procedure TUnitCreator.FormCreated(const FormEditor: IOTAFormEditor);
 begin
-//
 end;
 
 function TUnitCreator.CreateUnit(const FileName, Source: string; Owner: IOTAModule): IOTAModule;
@@ -170,5 +170,7 @@ function TUnitFile.GetAge: TDateTime;
 begin
  Result:= -1;
 end;
+
+initialization
 
 end.

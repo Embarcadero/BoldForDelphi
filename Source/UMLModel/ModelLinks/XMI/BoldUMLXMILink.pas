@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLXMILink;
 
 interface
@@ -12,6 +15,7 @@ type
   TBoldUMLXMILink = class;
 
   { TBoldUMLXMILink }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldUMLXMILink = class(TBoldUMLModelLink)
   private
     fFilename: String;
@@ -61,7 +65,7 @@ begin
     BoldLog.EndLog;
   finally
     exporter.Free;
-  end;
+  end;    
   result := true;
 end;
 

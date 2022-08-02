@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAbstractObjectUpgraderHandle;
 
 interface
@@ -19,7 +22,7 @@ type
     function CreateObjectUpgrader: TBoldAbstractObjectUpgrader; virtual; abstract;
     function GetHandledObject: TObject; override;
   public
-    destructor Destroy; override;
+    destructor destroy; override;
     property ObjectUpgrader: TBoldAbstractObjectUpgrader read GetObjectUpgrader;
   published
     property Config: TBoldObjectUpgraderConfiguration read GetConfig write SetConfig;
@@ -74,4 +77,3 @@ begin
 end;
 
 end.
-

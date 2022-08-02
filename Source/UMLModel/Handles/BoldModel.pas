@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldModel;
 
 interface
@@ -21,6 +24,7 @@ type
   TUMLModelMode = (ummNone, ummDesignTime, ummRunTime);
 
   { TBoldModel }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldModel = class(TBoldAbstractModel)
   private
     FUMLModelExposed: Boolean;
@@ -31,16 +35,17 @@ type
     fSystemHandle: TBoldSystemHandle;
     fModelChangedSubscriber: TBoldPassthroughSubscriber;
     fEditableModel: boolean;
+    fValidateNesting: integer;
     procedure SetBoldify(const Value: TBoldUMLBoldify);
     procedure EnsureUMLModel;
     procedure AssertDesignTime;
     procedure ReadUMLModelAsString(Reader: TReader);
     procedure WriteUMLModelAsString(Writer: TWriter);
-    function UMLModelToString: string;
     procedure UMLModelFromString(ModelAsString: string);
     function GetEnsuredUMLModel: TUMLModel;
     function GetUMLModel: TUMLModel;
     procedure UMLModelChangedRecieve(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetIsValidating: boolean;
   protected
     procedure DefineProperties(Filer: TFiler); override;
     procedure SubscribeToUMLModel;
@@ -54,8 +59,12 @@ type
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     procedure EnsureTypes;
+    function UMLModelToString: string;
+    procedure StartValidation;
+    procedure EndValidation;
     property UMLModel: TUMLModel read GetUMLModel;
     property EnsuredUMLModel: TUMLModel read GetEnsuredUMLModel;
+    property IsValidating: boolean read GetIsValidating;
   published
     property UMLModelMode: TUMLModelMode read fUMLModelMode write fUMLModelMode;
     property Boldify: TBoldUMLBoldify read FBoldify write SetBoldify;
@@ -83,7 +92,7 @@ function TheModelList: TBoldModelList;
 implementation
 
 uses
-  BoldUMLModelDataModule, // Circular dependency
+  BoldUMLModelDataModule,
   SysUtils,
   BoldLogHandler,
   BoldUMLModelStreamer,
@@ -93,6 +102,7 @@ uses
   BoldUMLAttributes,
   BoldUMLModelConverter,
   BoldUMLModelValidator,
+  BoldUMLUtils,
   BoldGuard;
 
 var
@@ -117,7 +127,7 @@ end;
 procedure TBoldModel.DefineProperties(Filer: TFiler);
 begin
   inherited DefineProperties(Filer);
-  Filer.DefineProperty('UMLModelAsString', ReadUMLModelAsString, WriteUMLModelAsString, UMLModelMode <> ummNone); // do not localize
+  Filer.DefineProperty('UMLModelAsString', ReadUMLModelAsString, WriteUMLModelAsString, UMLModelMode <> ummNone);
 end;
 
 destructor TBoldModel.Destroy;
@@ -168,7 +178,6 @@ begin
     for Index := 0 to Count - 1 do
     begin
       if Mapping[index].ModelName = DEFAULTNAME then
-        // ignore
       else if Assigned(BoldMemberTypeList.DescriptorByDelphiName[Mapping[Index].ExpandedDelphiName]) then
       begin
         if BoldMemberTypeList.DescriptorByDelphiName[Mapping[index].ExpandedDelphiName].AbstractionLevel = alConcrete then
@@ -185,6 +194,11 @@ begin
   EnsureUMLModel;
   Result := fUMLModel;
   MarkUMLModelExposed;
+end;
+
+function TBoldModel.GetIsValidating: boolean;
+begin
+  result := fValidateNesting > 0;
 end;
 
 procedure TBoldModel.ReadUMLModelAsString(Reader: TReader);
@@ -217,13 +231,23 @@ begin
       end;
       ummRunTime: UMLModelFromString(fUMLModelAsString);
     end;
-    fUMLModelAsString := ''; // Reclaim memory. Saving will be straight from UMLModel
+    fUMLModelAsString := '';
   end;
 end;
 
 procedure TBoldModel.SetBoldify(const Value: TBoldUMLBoldify);
 begin
   Boldify.Assign(Value);
+end;
+
+procedure TBoldModel.StartValidation;
+begin
+  Inc(fValidateNesting);
+end;
+
+procedure TBoldModel.EndValidation;
+begin
+  Dec(fValidateNesting);
 end;
 
 procedure TBoldModel.UMLModelFromString(ModelAsString: string);
@@ -235,9 +259,8 @@ begin
       fUMLModel.Delete;
       fUMLModel := nil;
     end;
-    // Model always freshly created at this point.
     TUMLModelStreamer.FillSystemFromString(fSystemHandle.System, ModelAsString, fSystemHandle.SystemTypeInfoHandle.BoldModel.MoldModel);
-    fUMLModel := fSystemHandle.System.EvaluateExpressionAsDirectElement('UMLModel.allInstances->first') as TUMLModel; // do not localize
+    fUMLModel := fSystemHandle.System.EvaluateExpressionAsDirectElement('UMLModel.allInstances->first') as TUMLModel;
     if not Assigned(fUMLModel) then
       raise EBold.Create('Bad string format for UMLModel');
   end;
@@ -308,7 +331,7 @@ begin
 
     Errors := TStringList.Create;
 
-    Validator := TBoldUMLModelValidator.Create(UMLModel);
+    Validator := TBoldUMLModelValidator.Create(self, SQLDataBaseConfigforModel(self));
 
     Validator.Validate(TypeNameDictionary);
 
@@ -319,9 +342,8 @@ begin
     MoldModel :=  TBoldModelConverter.UMLModelToMold(UMLModel);
     MoldModel.TVByName[BOLDINTERALTVPREFIX + TV_MODELERRORS] := Errors.CommaText;
 
-    SetFromModel(MoldModel); // hands over ownership of MoldModel
+    SetFromModel(MoldModel);
 
-    // Restore  UML model state
     if not FlattenState then
       TBoldUMLSupport.UnFlatten(UMLModel);
 
@@ -341,6 +363,8 @@ end;
 
 procedure TBoldModel.UMLModelChangedRecieve(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
+  if IsValidating then
+    exit;
   UnSubscribeToUMLModel;
   SendEvent(self, beModelChanged);
   UpdateDesigner;
@@ -351,7 +375,7 @@ begin
   Assert(Assigned(fUMLModel));
   Assert(not Assigned(fModelChangedSubscriber));
   fModelChangedSubscriber := TBoldPassthroughSubscriber.Create(UMLModelChangedRecieve);
-  TBoldUMLSupport.SubscribeToEntireModel(fUMLModel, fModelChangedSubscriber);  // note fUMLModel to stop loops
+  TBoldUMLSupport.SubscribeToEntireModel(fUMLModel, fModelChangedSubscriber);
 end;
 
 procedure TBoldModel.UnSubscribeToUMLModel;

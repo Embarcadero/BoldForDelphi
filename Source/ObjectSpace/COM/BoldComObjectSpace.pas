@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComObjectSpace;
 
 interface
@@ -45,8 +48,7 @@ implementation
 uses
   SysUtils,
   BoldComUtils,
-  BoldComObjectSpace_TLB,
-  BoldComConst;
+  BoldComObjectSpace_TLB;
 
 var
   G_TypeLibrary: ITypeLib = nil;
@@ -56,9 +58,11 @@ begin
   if not Assigned(G_TypeLibrary) then
   begin
     if Failed(LoadRegTypeLib(LIBID_BoldComObjectSpace,1,0,0,G_TypeLibrary)) then
-      raise EBoldCom.Create(sUnableToLoadComObjectSpace);
+      raise EBoldCom.Create('Unable to load type library (BoldComObjectSpace)');
   end;
   Result := G_TypeLibrary;
 end;
+
+initialization
 
 end.

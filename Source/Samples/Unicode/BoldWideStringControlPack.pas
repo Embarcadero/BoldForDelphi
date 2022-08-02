@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldWideStringControlPack;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -59,6 +62,7 @@ type
     function GetAsWideStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldWideStringFollowerController; Subscriber: TBoldSubscriber): WideString; virtual;
     procedure SetAsWideString(Element: TBoldElement; Value: WideString; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList); virtual;
     procedure DrawOnCanvas(Follower: TBoldFollower; Canvas: TCanvas; Rect: TRect; Alignment: TAlignment; Margins: TPoint); override;
+    function HasSetValueEventOverrides: boolean; override;
   public
     class function DefaultRenderer: TBoldAsWideStringRenderer;
     class procedure DrawWideStringOnCanvas(Canvas: TCanvas; Rect: TRect; Alignment: TAlignment; Margins: TPoint; S: WideString);
@@ -72,7 +76,7 @@ type
     function IsChanged(RendererData: TBoldWideStringRendererData; NewValue: WideString; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
     procedure SetFont(Element: TBoldElement; EffectiveFont, Font: TFont; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
     procedure SetColor(Element: TBoldElement; var EffectiveColor: TColor; Color: TColor; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList);
-    procedure MakeUptodateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
+    procedure MakeUpToDateAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldFollowerController; Subscriber: TBoldSubscriber); override;
     procedure MultiMakeUpToDateAndSubscribe(Elements: TBoldClientableList; Subscribers: TBoldObjectArray; RendererData: TBoldObjectArray; FollowerController: TBoldFollowerController);
     procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldWideStringFollowerController; Subscriber: TBoldSubscriber); virtual;
   published
@@ -97,7 +101,7 @@ type
     function GetSupportsMultiEnsure: Boolean; override;
     function GetEffectiveRenderer: TBoldRenderer; override;
     property EffectiveAsWideStringRenderer: TBoldAsWideStringRenderer read GetEffectiveAsWideStringRenderer;
-    procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldObjectArray); override;
+    procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray); override;
   public
     procedure MakeClean(Follower: TBoldFollower); override;
     function GetCurrentAsWideString(Follower: TBoldFollower): WideString;
@@ -121,7 +125,8 @@ uses
   {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
   {$ENDIF}
-  Variants;
+  Variants,
+  BoldRev;
 
 var
   DefaultAsWideStringRenderer: TBoldAsWideStringRenderer;
@@ -194,7 +199,7 @@ procedure TBoldWideStringFollowerController.MakeClean(Follower: TBoldFollower);
 begin
   if ValidateWideString(GetCurrentAsWideString(Follower), Follower) then
   begin
-    ReleaseChangedValue(Follower); // note, must do first, since set can change element
+    ReleaseChangedValue(Follower);
     SetAsWideString(GetCurrentAsWideString(Follower), Follower);
   end
   else
@@ -213,7 +218,6 @@ begin
   Renderer := EffectiveRenderer as TBoldAsWideStringRenderer;
   if Assigned(Renderer.OnGetAsWideString) or Assigned(Renderer.OnSubscribe) or Assigned(Renderer.OnMayModify) then   begin
     Renderer.MakeUptodateAndSubscribe(Follower.Element, Follower.RendererData, Self, Subscriber);
-    Follower.RendererData.MayModify := Renderer.MayModify(Follower.Element, Representation, Expression, GetVariableListAndSubscribe(follower.Subscriber), Follower.Subscriber);
   end else
     renderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Follower.Element, Follower.RendererData, Self, Subscriber);
 end;
@@ -232,7 +236,6 @@ end;
 var
   Left: Integer;
 begin
-  // Adjust for alignment
   case Alignment of
     taLeftJustify: Left := Margins.X + Rect.Left;
     taRightJustify: Left := (Rect.Right - Rect.Left) - Canvas.TextWidth(S) + Rect.Left - 1 - Margins.X;
@@ -258,7 +261,7 @@ end;
 
 procedure TBoldAsWideStringRenderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: TBoldElement; RendererData: TBoldRendererData; FollowerController: TBoldWideStringFollowerController; Subscriber: TBoldSubscriber);
 var
-  {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
+  {$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
   {$ELSE}
   E: TBoldIndirectElement;
@@ -272,20 +275,18 @@ begin
       S := '('+Name+')'
     else
       S := '('+ClassName+')';
-    RendererData.MayModify := False;
   end
   else
   begin
     if Assigned(Element) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
+      {$IFDEF BOLDCOMCLIENT}
       e := Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber.ClientId, Subscriber.SubscriberId, False, false);
       if Assigned(E) then
       begin
         S := E.WideStringRepresentation[FollowerController.Representation];
         if Assigned(Subscriber) then
           E.SubscribeToWideStringRepresentation(FollowerController.Representation, Subscriber.ClientId, Subscriber.SubscriberId, breReEvaluate, false);
-        RendererData.MayModify := true;
       end
       else
         S := FollowerController.NilWideStringRepresentation
@@ -298,7 +299,6 @@ begin
           s := FollowerController.NilWideStringRepresentation;
           if Assigned(Subscriber) then
             E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
-          RendererData.MayModify := E.Value.ObserverMayModifyAsString(FollowerController.Representation, Subscriber);
           (RendererData as TBoldWideStringRendererData).MaxWideStringLength := -1;
         end
         else if Assigned(E.Value) then
@@ -309,7 +309,6 @@ begin
             S := E.Value.StringRepresentation[FollowerController.Representation];
           if Assigned(Subscriber) then
             E.Value.SubscribeToStringRepresentation(FollowerController.Representation, Subscriber, breReEvaluate);
-          RendererData.MayModify := E.Value.ObserverMayModifyAsString(FollowerController.Representation, Subscriber);
           if (E.Value is TBoldAttribute) and assigned((E.Value as TBoldAttribute).BoldAttributeRTInfo) then
             (RendererData as TBoldWideStringRendererData).MaxWideStringLength := (E.Value as TBoldAttribute).BoldAttributeRTInfo.Length
           else
@@ -336,7 +335,7 @@ end;
 
 function TBoldAsWideStringRenderer.DefaultGetAsWideStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldWideStringFollowerController; Subscriber: TBoldSubscriber): WideString;
 var
-  {$IFDEF BOLDCOMCLIENT} // DefaultGet
+  {$IFDEF BOLDCOMCLIENT}
   e: IBoldElement;
   {$ELSE}
   E: TBoldIndirectElement;
@@ -354,7 +353,7 @@ begin
   begin
     if Assigned(Element) then
     begin
-      {$IFDEF BOLDCOMCLIENT} // defaultGet
+      {$IFDEF BOLDCOMCLIENT}
       e := Element.EvaluateAndSubscribeToExpression(FollowerController.Expression, Subscriber.ClientId, Subscriber.SubscriberId, False, false);
       if Assigned(E) then
       begin
@@ -414,7 +413,7 @@ begin
   if Assigned(ValueElement) then
     Result := ValueElement.ValidateCharacter(C, Representation)
   else
-    Result := False;
+    Result := HasSetValueEventOverrides;
 end;
 
 function TBoldAsWideStringRenderer.DefaultValidateWideString(Element: TBoldElement; Value: WideString; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: TBoldExternalVariableList): Boolean;
@@ -430,7 +429,7 @@ begin
       Result := ValueElement.ValidateString(Value, Representation)
   end
   else
-    Result := False;
+    Result := HasSetValueEventOverrides;
 end;
 
 function TBoldAsWideStringRenderer.GetAsWideStringAndSubscribe(Element: TBoldElement; FollowerController: TBoldWideStringFollowerController; Subscriber: TBoldSubscriber): WideString;
@@ -520,6 +519,11 @@ begin
   {$ENDIF}
 end;
 
+function TBoldAsWideStringRenderer.HasSetValueEventOverrides: boolean;
+begin
+  result := Assigned(FOnSetAsWideString);
+end;
+
 function TBoldWideStringFollowerController.GetSupportsMultiEnsure: Boolean;
 begin
   {$IFDEF BOLDCOMCLIENT}
@@ -531,30 +535,28 @@ begin
 end;
 
 procedure TBoldWideStringFollowerController.DoMultiMakeUptodateAndSubscribe(
-  Followers: TBoldObjectArray);
+  Followers: TBoldFollowerArray);
 var
   Renderer: TBoldAsWideStringRenderer;
   Elements: TBoldClientableList;
   Subscribers: TBoldObjectArray;
   RendererData: TBoldObjectArray;
-  I: integer;
-  MaxIndex: integer;
+  F: TBoldFollower;
 begin
   Assert(SupportsMulti);
-  MaxIndex := Followers.Count - 1;
   Renderer := EffectiveRenderer as TBoldAsWideStringRenderer;
-  Elements := TBoldClientableList.Create(MaxIndex,[]);
-  Subscribers := TBoldObjectArray.Create(MaxIndex,[]);
-  RendererData := TBoldObjectArray.Create(MaxIndex,[]);
+  Elements := TBoldClientableList.Create(Length(Followers),[]);
+  Subscribers := TBoldObjectArray.Create(Length(Followers),[]);
+  RendererData := TBoldObjectArray.Create(Length(Followers),[]);
   try
-    for I := 0 to MaxIndex do
+    for F in Followers do
     begin
-      Elements.Add(TBoldFollower(Followers[I]).Element);
-      if TBoldFollower(Followers[I]).State in bfdNeedResubscribe then
-        Subscribers.Add(Followers[i])
+      Elements.Add(F.Element);
+      if F.State in bfdNeedResubscribe then
+        Subscribers.Add(F)
       else
         Subscribers.Add(nil);
-      RendererData.Add(TBoldFollower(Followers[I]).RendererData);
+      RendererData.Add(F.RendererData);
     end;
     Renderer.MultiMakeUpToDateAndSubscribe(Elements, Subscribers, RendererData, Self);
   finally
@@ -620,4 +622,3 @@ finalization
   FreeAndNil(DefaultAsWideStringRenderer);
 
 end.
-

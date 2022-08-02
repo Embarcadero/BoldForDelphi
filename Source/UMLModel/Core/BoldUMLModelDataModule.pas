@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUMLModelDataModule;
 
 interface
@@ -34,8 +37,7 @@ procedure EnsureModelEditDataModule;
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 var
   DataModuleEnsured: Boolean = false;
@@ -47,10 +49,10 @@ begin
     dmModelEdit := TdmModelEdit.Create(nil);
     DataModuleEnsured := true;
   end;
-end;
+end;  
 
 {$R *.dfm}
-
+               
 initialization
 finalization
   if DataModuleEnsured and assigned(dmModelEdit) then

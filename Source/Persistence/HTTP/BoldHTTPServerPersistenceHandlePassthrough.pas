@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldHTTPServerPersistenceHandlePassthrough;
 
 interface
@@ -8,13 +11,15 @@ uses
   BoldPersistenceHandle,
   BoldAbstractModel,
   BoldSubscription,
-  Classes;
+  Classes
+  ;
 
 type
   { forward declarations}
   TBoldHTTPServerPersistenceHandlePassthrough = class;
 
   { TBoldHTTPServerPersistenceHandlePassthrough }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldHTTPServerPersistenceHandlePassthrough = class(TBoldSubscribableComponent)
   private
     FPersistenceHandle: TBoldPersistenceHandle;
@@ -38,8 +43,7 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  BoldDefs,
-  BoldComConst;
+  BoldDefs;
 
 { TBoldHTTPServerPersistenceHandlePassthrough }
 
@@ -50,7 +54,7 @@ begin
     if Assigned(PersistenceController) then
       AdapterCore.Get(request, reply, PersistenceController)
     else
-      raise EBold.CreateFmt(sPersistenceHandleNotAssigned, [ClassName, 'Get']); // do not localize
+      raise EBold.CreateFmt('%s.%s: PersistenceHandle not assigned', [ClassName, 'Get']);
   except on E: Exception do
     Reply := E.Message + ' ' + request;
   end;
@@ -82,5 +86,7 @@ begin
       FPersistenceHandle := nil;
   end;
 end;
+
+initialization
 
 end.

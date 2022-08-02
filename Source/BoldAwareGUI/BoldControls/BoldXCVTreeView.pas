@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldXCVTreeView;
 
 interface
@@ -9,6 +12,7 @@ uses
 
 type
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXCVTreeView = class(TBoldTreeView)
   private
     fOnCut: TNotifyEvent;

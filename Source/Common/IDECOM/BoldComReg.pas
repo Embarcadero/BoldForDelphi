@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldComReg;
 
 interface
@@ -5,7 +8,9 @@ interface
 procedure Register;
 
 implementation
+
 {$R BoldComReg.Res}
+
 uses
   Classes,
   DesignIntf,
@@ -13,7 +18,8 @@ uses
   BoldComClientHandles,
   BoldComEditors,
   BoldIDEConsts,
-  BoldObjectNamePropertyEditor;
+  BoldObjectNamePropertyEditor
+  ;
 
 procedure Register;
 begin
@@ -26,8 +32,8 @@ begin
   RegisterComponentEditor(TBoldComServerHandle, TBoldComServerHandleComponentEditor);
 
   RegisterPropertyEditor(TypeInfo(string), TBoldComExportHandle,
-    'ServerClass', TBoldComServerClassPropertyEditor); // do not localize
-  RegisterPropertyEditor(TypeInfo(String), TBoldComClientObjectHandle, 'Objectname', TBoldObjectNameProperty); // do not localize
+    'ServerClass', TBoldComServerClassPropertyEditor);
+  RegisterPropertyEditor(TypeInfo(String), TBoldComClientObjectHandle, 'Objectname', TBoldObjectNameProperty);
 end;
 
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCaptionControllerCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -7,7 +10,7 @@ interface
 uses
   Classes,
   Controls,
-  BoldEnvironmentVCL, // Make sure VCL environement loaded, and finalized after
+  BoldEnvironmentVCL,
   BoldHandlesCom,
   BoldElementHandleFollowerCom,
   BoldComObjectSpace_TLB, BoldClientElementSupport, BoldComClient,
@@ -111,7 +114,7 @@ begin
     (s <> TrackedCaption) then
   begin
     fCaption := s;
-    TrackedCaption := Caption; //TrackedCaption ensures valid fTrackControl
+    TrackedCaption := Caption;
   end;
 end;
 
@@ -120,7 +123,7 @@ begin
   if Control <> fTrackControl then
   begin
     fTrackControl := Control;
-    Caption := Caption; //Update caption if new Control;
+    Caption := Caption;
   end;
 end;
 
@@ -187,4 +190,3 @@ end;
 initialization
 
 end.
-

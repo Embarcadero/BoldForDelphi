@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFileHandler;
 
 interface
@@ -92,7 +95,7 @@ implementation
 uses
   SysUtils,
   Dialogs,
-  BoldCommonConst;
+  BoldRev;
 
 var
   G_FileHandlerList: TBoldObjectArray;
@@ -109,7 +112,6 @@ var
   i: integer;
 begin
   try
-    // see if we can find an existing filehandler
     for i := 0 to BoldFileHandlerList.Count - 1 do
     begin
       if AnsiUpperCase((BoldFileHandlerList[i] as TBoldFileHandler).SetFileName) = AnsiUpperCase(Filename) then
@@ -123,7 +125,7 @@ begin
     result.InitializeStringList;
   except
     on e: exception do
-      raise EBold.CreateFmt(sUnableToCreateFileHandle, [FileName, e.message]);
+      raise EBold.CreateFmt('Unable to create filehandler for %s: %s', [FileName, e.message]);
   end;
 end;
 
@@ -166,7 +168,7 @@ begin
   fLastWasNewLIne := true;
   fIndentLevel := 0;
   FOnInitializeFileContents := OnInitializeFileContents;
-  fFileFilter := sFileHandlerMask;
+  fFileFilter := 'Pascal Unit (*.pas)|*.pas|Include files (*.inc)|*.inc|Text files (*.txt)|*.txt|All Files (*.*)|*.*';
   BoldFileHandlerList.Add(self);
 end;
 
@@ -176,7 +178,7 @@ begin
     FlushFile;
   except
     on e:Exception do
-      ShowMessage(SysUtils.Format(sFileSaveProblem, [e.Message]));
+      ShowMessage('File most likely not saved properly: ' + e.Message);
   end;
   FreeAndNil(fStringList);
   BoldFileHandlerList.remove(self);
@@ -209,14 +211,14 @@ end;
 
 procedure TBoldfileHandler.StartBlock;
 begin
-  Writeln('begin'); // do not localize
+  Writeln('begin');
   Indent;
 end;
 
 procedure TBoldfileHandler.EndBlock(const AddNewLine: boolean);
 begin
   Dedent;
-  Writeln('end;'); // do not localize
+  Writeln('end;');
   if AddNewLine then
     NewLine;
 end;
@@ -343,12 +345,12 @@ begin
   if CheckWriteable then
   begin
     StringList.SaveToFile(FileName);
-    BoldLog.LogFmt(sSaved, [FileName]);
+    BoldLog.Log('Saved ' + FileName);
   end
   else
   begin
-    BoldLog.LogFmt(sModuleReadOnly, [FFileName], ltError);
-    ShowMessage(SysUtils.Format(sModuleReadOnly, [fFileName]));
+    BoldLog.LogFmt('%s is readonly!', [FFileName], ltError);
+    ShowMessage(fFileName + ' is readonly!');
   end;
 end;
 
@@ -360,7 +362,6 @@ end;
 
 function TBoldFileHandler.CheckWriteable(FName: string = ''): Boolean;
 begin
-  // If parameter is omitted use the FileName property
   if FName = '' then
     FName := FileName;
   Result := not (FileExists(FName) and FileIsReadOnly(FName));
@@ -368,13 +369,11 @@ end;
 
 procedure TBoldFileHandler.CloseFile;
 begin
-  // do nothing
 end;
 
-initialization // empty
+initialization
 
 finalization
   FreeAndNil(G_FileHandlerList);
 
 end.
-

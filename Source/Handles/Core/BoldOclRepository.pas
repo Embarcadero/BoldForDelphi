@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldOclRepository;
 
 interface
@@ -8,22 +11,29 @@ uses
   BoldSystemRT,
   BoldSystemHandle,
   BoldSubscription,
-  BoldComponentvalidator;
+  BoldHandles,
+  BoldComponentvalidator,
+  BoldDefs;
 
 type
   TBoldOclDefinitions = class;
   TBoldOclDefinition = class;
   TBoldOclRepository = class;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldOclRepository = class(TBoldSubscribableComponent, IBoldValidateableComponent)
   private
+    fSystemHandle: TBoldSystemHandle;
     FOclDefinitions: TBoldOclDefinitions;
-    FSystemHandle: TBoldSystemHandle;
     procedure SetOclDefinitions(const Value: TBoldOclDefinitions);
-    procedure SetSystemHandle(const Value: TBoldSystemHandle);
+    procedure SetSystemHandle(Value: TBoldSystemHandle);
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
   public
+    procedure AfterConstruction; override;
     constructor Create(owner: TComponent); override;
+    destructor Destroy; override;
     function LookUpOclDefinition(Name: string): string;
   published
     property OclDefinitions: TBoldOclDefinitions read FOclDefinitions write SetOclDefinitions;
@@ -39,7 +49,7 @@ type
     property OwningRepository: TBoldOclRepository read fOwningRepository;
     function NameIsUnique(Name: String): Boolean;
   public
-    constructor Create(OwningRepository: TBoldOclRepository);
+    constructor create(OwningRepository: TBoldOclRepository);
     function GetUniqueName: String;
     function LookUpOclDefinition(Name: string): string;
     property Items[Index: integer]: TBoldOclDefinition read GetItems; default;
@@ -50,8 +60,8 @@ type
     fName: String;
     fExpression: String;
     fContext: String;
-    procedure SetExpression(Expression: String);
-    function GetExpression: String;
+    procedure SetExpression(const Value: TBoldExpression);
+    function GetExpression: TBoldExpression;
     function GetVariableList: TBoldExternalVariableList;
     function GetDefinitions: TBoldOclDefinitions;
     function QueryInterface(const IId: TGUID; out Obj): HResult; virtual; stdcall;
@@ -63,7 +73,7 @@ type
     function GetDisplayName: string; override;
   public
     constructor Create(Collection: TCollection); override;
-    destructor Destroy; override;
+    destructor destroy; override;
     function GetContextType: TBoldElementTypeInfo;
     property Definitions: TBoldOclDefinitions read GetDefinitions;
     property SystemTypeInfo: TBoldSystemTypeInfo read GetSystemTypeInfo;
@@ -73,26 +83,46 @@ type
     property Context: String read FContext write fContext;
   end;
 
+
 implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldHandles,
-  BoldLogHandler,
-  HandlesConst;
+  BoldLogHandler;
 
 { TBoldOclRepository }
 
-constructor TBoldOclRepository.create(owner: TComponent);
+procedure TBoldOclRepository.AfterConstruction;
+begin
+  inherited;
+  if (TBoldSystemHandle.DefaultBoldSystemHandle <> nil) and not (csLoading in ComponentState) and (csDesigning in ComponentState) then
+  {connect to default system at design time}
+    SystemHandle := TBoldSystemHandle.DefaultBoldSystemHandle as TBoldSystemHandle;
+end;
+
+constructor TBoldOclRepository.Create(owner: TComponent);
 begin
   inherited;
   FOclDefinitions := TBoldOclDefinitions.Create(self);
 end;
 
+destructor TBoldOclRepository.Destroy;
+begin
+  FreeAndNil(FOclDefinitions);
+  inherited;
+end;
+
 function TBoldOclRepository.LookUpOclDefinition(Name: string): string;
 begin
   result := OclDefinitions.LookUpOclDefinition(Name);
+end;
+
+procedure TBoldOclRepository.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if (Operation = opRemove) and (AComponent = SystemHandle) then
+    SystemHandle := nil;
 end;
 
 procedure TBoldOclRepository.SetOclDefinitions(
@@ -101,14 +131,21 @@ begin
   FOclDefinitions := Value;
 end;
 
-procedure TBoldOclRepository.SetSystemHandle(const Value: TBoldSystemHandle);
+procedure TBoldOclRepository.SetSystemHandle(Value: TBoldSystemHandle);
 begin
-  if assigned(SystemHandle) then
-    SystemHandle.InstallOclDefinitionLookUp(nil);
-
-  FSystemHandle := Value;
-  if assigned(SystemHandle) then
-    SystemHandle.InstallOclDefinitionLookUp(LookUpOclDefinition);
+  if fSystemHandle = Value then
+   exit;
+  if assigned(Value) and Assigned(fSystemHandle) then
+  begin
+    fSystemHandle.InstallOclDefinitionLookUp(nil);
+    fSystemHandle.RemoveFreeNotification(self);
+  end;
+  fSystemHandle := Value;
+  if assigned(Value) then
+  begin
+    Value.InstallOclDefinitionLookUp(LookUpOclDefinition);
+    Value.FreeNotification(Self);
+  end;
 end;
 
 function TBoldOclRepository.ValidateComponent(
@@ -118,20 +155,18 @@ var
   i: integer;
   Context: TBoldElementTypeInfo;
 begin
-  result := true;
   if not assigned(SystemHandle) then
-    BoldLog.LogFmt(sRepositoryHasNoSystemHandle, [NamePrefix, Name])
+    BoldLog.LogFmt('*** OclRepository %s%s has no SystemHandle', [NamePrefix, Name])
   else if not assigned(SystemHandle.StaticSystemTypeInfo) then
-    BoldLog.LogFmt(sSystemHandleHasNoTypeInfo, [NamePrefix, Name])
+    BoldLog.LogFmt('*** SystemHandle of OclRepository %s%s has no TypeInfo', [NamePrefix, Name])
   else
   begin
-    for i := 0 to OclDefinitions.count - 1 do
-    begin
+    for i := 0 to OclDefinitions.count-1 do begin
       Context := SystemHandle.StaticSystemTypeInfo.ElementTypeInfoByExpressionName[OclDefinitions[i].Context];
       result := ComponentValidator.ValidateExpressionInContext(
         OclDefinitions[i].Expression,
         Context,
-        NamePrefix + Name + '.' + OclDefinitions[i].Name) and result;
+        NamePrefix+Name+ '.'+OclDefinitions[i].Name) and result;
     end;
   end;
 end;
@@ -144,9 +179,10 @@ begin
   Name := (Collection as TBoldOclDefinitions).GetUniqueName;
 end;
 
-destructor TBoldOclDefinition.Destroy;
+destructor TBoldOclDefinition.destroy;
 begin
   inherited;
+
 end;
 
 function TBoldOclDefinition.GetContextType: TBoldElementTypeInfo;
@@ -164,11 +200,11 @@ end;
 
 function TBoldOclDefinition.GetDisplayName: string;
 begin
-  result:= '%' + name + ': ' + Expression;
+  result:= '%' + name + ': '+Expression;
 end;
 
 
-function TBoldOclDefinition.GetExpression: String;
+function TBoldOclDefinition.GetExpression: TBoldExpression;
 begin
   result := fExpression;
 end;
@@ -195,9 +231,9 @@ begin
     Result := E_NOINTERFACE;
 end;
 
-procedure TBoldOclDefinition.SetExpression(Expression: String);
+procedure TBoldOclDefinition.SetExpression(const Value: TBoldExpression);
 begin
-  fExpression := Expression;
+  fExpression := Value;
 end;
 
 procedure TBoldOclDefinition.SetName(const Value: String);
@@ -207,7 +243,7 @@ begin
     if TBoldOclDefinitions(Collection).NameIsUnique(Value) then
       FName := Value
     else
-      raise EBold.CreateFmt(sNameNotUnique, [Value]);
+      raise EBold.CreateFmt('Invalid Name: %s Not Unique', [Value]);
   end;
 end;
 
@@ -245,7 +281,7 @@ var
 begin
   i := 1;
   repeat
-    result := 'Ocl' + IntToStr(i); // do not translate
+    result := 'Ocl'+IntToStr(i);
     Inc(i);
   until NameIsUnique(result);
 end;
@@ -255,7 +291,7 @@ var
   i: integer;
 begin
   result := '';
-  for i := 0 to Count - 1 do
+  for i := 0 to Count -1 do
     if Items[i].Name = Name then
     begin
       result := items[i].Expression;
@@ -269,7 +305,7 @@ var
 begin
   result := true;
   for i := 0 to Count-1 do
-    if AnsiCompareStr(Name, Items[i].Name) = 0 then
+    if CompareStr(Name, Items[i].Name) = 0 then
     begin
       result := false;
       exit;
@@ -277,4 +313,3 @@ begin
 end;
 
 end.
-

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCheckListBox;
 
 interface
@@ -10,6 +13,7 @@ type
   TBoldCheckListBox = class;
 
   { TBoldCheckListBox }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldCheckListBox = class(TBoldCustomCheckListBox)
   published
     property BoldListProperties;
@@ -21,5 +25,9 @@ type
   end;
 
 implementation
+
+
+{ TBoldCheckListBox }
+initialization
 
 end.

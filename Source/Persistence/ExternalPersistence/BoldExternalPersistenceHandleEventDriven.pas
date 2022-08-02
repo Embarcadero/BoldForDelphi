@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldExternalPersistenceHandleEventDriven;
 
 interface
@@ -14,6 +17,7 @@ type
   TBoldExternalPersistenceHandleEventDriven = class;
 
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExternalPersistenceHandleEventDriven = class(TBoldAbstractpartiallyExternalPH)
   private
     FConfig: TBoldExternalPersistenceConfigItems;
@@ -29,6 +33,7 @@ type
   published
     property Config: TBoldExternalPersistenceConfigItems read fConfig write SetConfig;
     property MaxFetchBlockSize: integer read fMaxFetchBlockSize write fMaxFetchBlockSize default 250;
+    property UpdateBoldDatabaseFirst;
     {$IFNDEF T2H}
     property NextPersistenceHandle;
     property BoldModel;
@@ -52,7 +57,7 @@ constructor TBoldExternalPersistenceHandleEventDriven.Create(Owner: TComponent);
 begin
   inherited;
   FConfig := TBoldExternalPersistenceConfigItems.Create(self);
-  fMaxFetchBlockSize := 250;
+  fMaxFetchBlockSize := 250; 
 end;
 
 destructor TBoldExternalPersistenceHandleEventDriven.Destroy;
@@ -65,7 +70,7 @@ function TBoldExternalPersistenceHandleEventDriven.CreatePersistenceController: 
 var
   Controller: TBoldExternalPersistenceControllerEventDriven;
 begin
-  Controller := TBoldExternalPersistenceControllerEventDriven.Create(BoldModel.MoldModel, Config, BoldModel.TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates, MaxFetchBlockSize);
+  Controller := TBoldExternalPersistenceControllerEventDriven.Create(BoldModel.MoldModel, Config, BoldModel.TypeNameDictionary, OnStartUpdates, OnEndUpdates, OnFailUpdates, MaxFetchBlockSize, UpdateBoldDatabaseFirst);
   ChainPersistenceController(Controller);
   Result := Controller;
 end;
@@ -82,5 +87,6 @@ function TBoldExternalPersistenceHandleEventDriven.GetPersistenceController: TBo
 begin
   result := inherited PersistenceController as TBoldExternalPersistenceControllerEventDriven;
 end;
+
 
 end.

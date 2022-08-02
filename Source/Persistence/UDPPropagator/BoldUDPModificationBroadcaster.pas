@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldUDPModificationBroadcaster;
 
 interface
@@ -12,6 +15,7 @@ uses
   BoldAbstractModificationPropagator,
 
   { Indy }
+  IdGlobal,
   IdUDPClient,
   IdUDPServer,
   IdSocketHandle;
@@ -24,6 +28,7 @@ type
   TActivationErrorEvent = procedure(Sender: TObject; E: Exception) of object;
 
   { TBoldUDPModificationBroadcaster }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldUDPModificationBroadcaster = class(TBoldAbstractNotificationPropagator)
   private
     fUDPClient: TIdUDPClient;
@@ -34,14 +39,13 @@ type
   protected
     procedure OnSendQueueNotEmpty(Sender: TBoldThreadSafeQueue); override;
     procedure SetActive(Value: Boolean); override;
-    procedure InternalUDPRead(Sender: TObject; AData: TStream; ABinding: TIdSocketHandle);
+    procedure InternalUDPRead(AThread: TIdUDPListenerThread; const AData: TIdBytes; ABinding: TIdSocketHandle);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
     property Port: Integer read GetPort write SetPort;
     property OnActivationError: TActivationErrorEvent read FOnActivationError write FOnActivationError;
-    // inherited properties
     {$IFNDEF T2H}
     property NextPersistenceHandle;
     property Active;
@@ -69,8 +73,9 @@ begin
   fUDPServer := TIdUDPServer.Create(Self);
   fUDPClient.BroadcastEnabled := True;
   fUDPServer.OnUDPRead := InternalUDPRead;
+// procedure(AThread: TIdUDPListenerThread; const AData: TIdBytes; ABinding: TIdSocketHandle)
 
-  fUDPClient.Host := '255.255.255.255'; // do not localize
+  fUDPClient.Host := '255.255.255.255';
   fUDPClient.Port := 4098;
 
   fUDPServer.DefaultPort := 4098;
@@ -121,19 +126,13 @@ begin
   fUDPServer.Bindings.Add.Port := Value;
 end;
 
-procedure TBoldUDPModificationBroadcaster.InternalUDPRead(Sender: TObject; AData: TStream;
-  ABinding: TIdSocketHandle);
+procedure TBoldUDPModificationBroadcaster.InternalUDPRead(AThread: TIdUDPListenerThread; const AData: TIdBytes; ABinding: TIdSocketHandle);
 var
   S: String;
 begin
-  if AData.Size - AData.Position > 0 then
-  begin
-    SetLength(S, AData.Size - AData.Position);
-    AData.Read(S[1], Length(S));
-    if Length(S) > 0 then
-      if SameText(Copy(S, 1, Length(SIdentification)), SIdentification) then
-        ReceiveEvent(Copy(S, Length(SIdentification) + 1, Length(S)));
-  end;
+  s := BytesToString(AData);
+  if SameText(Copy(S, 1, Length(SIdentification)), SIdentification) then
+    ReceiveEvent(Copy(S, Length(SIdentification) + 1, Length(S)));
 end;
 
 procedure TBoldUDPModificationBroadcaster.OnSendQueueNotEmpty(Sender: TBoldThreadSafeQueue);
@@ -142,7 +141,7 @@ begin
   BoldEffectiveEnvironment.ProcessMessages;
 
   while not SendQueue.Empty do
-    fUDPClient.Send('255.255.255.255', // do not localize
+    fUDPClient.Send('255.255.255.255',
                    fUDPClient.Port,
                    SIdentification + SendQueue.Dequeue);
 end;

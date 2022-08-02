@@ -67,6 +67,7 @@ type
   end;
 
   { TBoldLabel }
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldLabel = class(TBoldCustomLabel)
   public
     {$IFNDEF T2H}
@@ -116,7 +117,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils;
 
 type
@@ -278,6 +278,5 @@ begin
   result := BoldProperties.VariableList;
 end;
 
-initialization
 end.
 

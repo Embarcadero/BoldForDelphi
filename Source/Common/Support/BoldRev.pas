@@ -1,10 +1,9 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRev;
 
 interface
-
-implementation
-
-(*
 
 uses
   Classes;
@@ -18,8 +17,6 @@ function BoldModuleVersions: TStringList;
 procedure BoldRegisterModuleVersion(const Version: string);
 
 implementation
-
-{.$R *.res}
 
 uses
   SysUtils;
@@ -60,20 +57,22 @@ end;
 function BoldModuleVersions: TStringList;
 begin
   if not Assigned(G_VersionList) then
+  begin
     G_VersionList := TStringList.Create;
+    G_VersionList.Sorted := true;
+    G_VersionList.Duplicates := dupError;
+  end;
   Result := G_VersionList;
 end;
 
 procedure BoldRegisterModuleVersion(const Version: string);
 begin
-  with BoldModuleVersions do
-    if IndexOf(Version) = -1 then
-      BoldModuleVersions.Add(Version);
+  BoldModuleVersions.Add(Version);
 end;
 
 initialization
 
 finalization
   FreeAndNil(G_VersionList);
-*)
+
 end.

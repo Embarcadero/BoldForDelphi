@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldRichEdit;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -138,8 +141,9 @@ uses
   StdCtrls,
   BoldDefs,
   BoldControlPackDefs,
+  BoldUtils,
   SysUtils,
-  BoldGuiResourceStrings;
+  BoldRev;
 
 {---TBoldCustomRichEdit---}
 constructor TBoldCustomRichEdit.Create(AOwner: TComponent);
@@ -290,7 +294,7 @@ begin
     if not EffectiveReadOnly then
       inherited Text := value
     else
-      raise EBold.CreateFmt(sTextNotModifiable, [ClassName]);
+      raise EBold.Create('TBoldEdit.Text: Not modifiable');
 end;
 
 function TBoldCustomRichEdit.GetText: string;
@@ -308,7 +312,7 @@ end;
 procedure TBoldCustomRichEdit.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
-  if (Key in [#32..#255]) and
+  if CharInSet(Key, [#32..#255]) and
     not BoldProperties.ValidateCharacter(Key, Follower) then
   begin
     MessageBeep(0);
@@ -379,5 +383,8 @@ function TBoldCustomRichEdit.GetFollower: TBoldFollower;
 begin
   Result := fHandleFollower.Follower;
 end;
+
+initialization
+
 
 end.

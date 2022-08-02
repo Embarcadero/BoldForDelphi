@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldFloatControlPackCom;
 
 {$DEFINE BOLDCOMCLIENT} {Clientified 2002-08-05 13:13:02}
@@ -65,7 +68,6 @@ type
     property EffectiveAsFloatRenderer: TBoldAsFloatRendererCom read GetEffectiveAsFloatRenderer;
     function GetEffectiveRenderer: TBoldRendererCom; override;
   public
-//    procedure Assign(Source: TPersistent); override;
     function GetCurrentAsFloat(Follower: TBoldFollowerCom): double;
     procedure  MakeClean(Follower: TBoldFollowerCom); override;
     procedure MayHaveChanged(NewValue: double; Follower: TBoldFollowerCom);
@@ -78,10 +80,9 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
   {!! DO NOT REMOVE !! BoldAttributes ,}
-  BoldControlPackDefs,
+  BoldControlPackDefs,  
   BoldGuard;
 
 var
@@ -99,15 +100,14 @@ begin
 end;
 
 function TBoldAsFloatRendererCom.DefaultMayModify(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): Boolean;
-{$IFNDEF BOLDCOMCLIENT} // defaultMayModify
+{$IFNDEF BOLDCOMCLIENT}
 var
   ValueElement: IBoldElement;
 {$ENDIF}
 begin
-  {$IFDEF BOLDCOMCLIENT} // defaultMayModify
+  {$IFDEF BOLDCOMCLIENT}
   result := inherited DefaultMayModify(Element, Representation, Expression, VariableList, Subscriber);
   {$ELSE}
-  // Note! We don't call inherited DefaultMayModify to prevent evaluation of expression two times!
   ValueElement := GetExpressionAsDirectElement(Element, Expression, VariableList);
   result := ((ValueElement is TBAFloat) or (ValueElement is TBADateTime)) and ValueElement.ObserverMayModify(Subscriber)
   {$ENDIF}
@@ -115,7 +115,7 @@ end;
 
 function TBoldAsFloatRendererCom.DefaultGetAsFloatAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): double;
 var
-  {$IFDEF BOLDCOMCLIENT} // defaultGet
+  {$IFDEF BOLDCOMCLIENT}
   el: IBoldElement;
   attr: IBoldAttribute;
   {$ELSE}
@@ -126,7 +126,7 @@ begin
   Result := 0;
   if Assigned(Element) then
   begin
-    {$IFDEF BOLDCOMCLIENT} // defaultGet
+    {$IFDEF BOLDCOMCLIENT}
     if assigned(Subscriber) then
       el := Element.EvaluateAndSubscribeToExpression(Expression, Subscriber.ClientId, Subscriber.SubscriberId, false, false)
     else
@@ -159,12 +159,12 @@ end;
 procedure TBoldAsFloatRendererCom.DefaultSetAsFloat(Element: IBoldElement; const Value: double; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
 var
   ValueElement: IBoldElement;
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   attr: IBoldAttribute;
   {$ENDIF}
 begin
   ValueElement := GetExpressionAsDirectElement(Element, Expression , VariableList);
-  {$IFDEF BOLDCOMCLIENT} // defaultSet
+  {$IFDEF BOLDCOMCLIENT}
   if assigned(ValueElement) and (ValueElement.QueryInterface(IBoldAttribute, attr) = S_OK) then
     Attr.AsVariant := Value
   else

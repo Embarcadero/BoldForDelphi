@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldIndexList;
 
 interface
@@ -80,7 +83,6 @@ end;
 
 procedure TBoldIndexList.DeleteINodeByKey(Key: variant);
 begin
-  //overriden in derived classes
 end;
 
 procedure TBoldIndexList.RemoveKey(Key: variant);
@@ -97,7 +99,7 @@ begin
   end;
   if Assigned(iNode) then
   begin
-    iNode.next := nil; // is this necessary???
+    iNode.next := nil;
     DeleteINodeByKey(Key);
   end;
 end;
@@ -154,5 +156,7 @@ procedure TBoldAbstractMultiIndexedList.RemoveKey(IndexOrder: integer;
 begin
   Indices[IndexOrder].RemoveKey(Key);
 end;
+
+initialization
 
 end.

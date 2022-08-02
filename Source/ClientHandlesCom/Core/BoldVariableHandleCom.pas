@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldVariableHandleCom;
 
 interface
@@ -41,8 +44,6 @@ implementation
 
 uses
   SysUtils,
-  BoldComHandlesConst,
-  ComHandlesConst,
   BoldUtils,
   BoldDefs,
   BoldComUtils;
@@ -65,14 +66,12 @@ end;
 
 procedure TBoldVariableHandleCom.ClearAllValues;
 begin
-  // from TBoldElementHandleCom
   FDynamicBoldType := nil;
   FStaticBoldType := nil;
   FStaticSystemTypeInfo := nil;
   FValue := nil;
   FHandleId := 0;
-  // from TBoldNonSystemHandleCom
-  // from TBoldVariableHandleCom
+
 end;
 
 function TBoldVariableHandleCom.GetValueTypeName: string;
@@ -99,7 +98,7 @@ begin
   if Value <> FValueTypeName then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, [ValueTypeName]);
+      raise EBold.CreateFmt('%s.ValueTypeName is read-only', [ClassName]);
     FValueTypeName := Value;
     LocalValueChanged;
   end;
@@ -110,7 +109,7 @@ begin
   if Value <> FInitialValues then
   begin
     if not OwnsHandleOnServer then
-      raise EBold.CreateFmt(sPropertyIsReadOnly, [InitialValues]);
+      raise EBold.CreateFmt('%s.InitialValues is read-only', [ClassName]);
     FInitialValues.Assign(Value);
     LocalValueChanged;
   end;
@@ -137,13 +136,13 @@ begin
     DummyList,
     DummyListType,
     NamedValues);
-  FHandleId := BoldGetNamedValue(NamedValues, nv_HandleId);
+  FHandleId := BoldGetNamedValue(NamedValues, 'HandleId');
   if not OwnsHandleOnServer then
   begin
-    FValueTypeName := BoldGetNamedValue(NamedValues, nv_ValueTypeName);
+    FValueTypeName := BoldGetNamedValue(NamedValues, 'ValueTypeName');
     Temp := TStringList.Create;
     try
-      BoldVariantToStrings(BoldGetNamedValue(NamedValues, nv_InitialValues),Temp);
+      BoldVariantToStrings(BoldGetNamedValue(NamedValues, 'InitialValues'),Temp);
       FInitialValues.Assign(Temp);
     finally
       Temp.Free;
@@ -163,25 +162,24 @@ begin
   else
     StaticSystemHandleId := 0;
   NamedValues := BoldCreateNamedValues(
-    [nv_StaticSystemHandle,
-     nv_ValueTypeName,
-     nv_InitialValues],
+    ['StaticSystemHandle',
+    'ValueTypeName',
+    'InitialValues'],
     [StaticSystemHandleId,
-     FValueTypeName,
-     BoldStringsToVariant(FInitialValues)]);
+    FValueTypeName,
+    BoldStringsToVariant(FInitialValues)]);
   ServerElementHandle.SetData(DataFlags, nil, NamedValues);
 end;
 
 function TBoldVariableHandleCom.ServerHandleClassName: string;
 begin
-  result := ServerHandleClassName_VariableHandle;
+  result := 'TBoldVariableHandle';
 end;
 
 procedure TBoldVariableHandleCom.DefineProperties(Filer: TFiler);
 begin
   inherited DefineProperties(Filer);
-  // ExpressionName changed name to ValueTypeName after 2.5
-  Filer.DefineProperty('ExpressionName', ReadExpressionName, nil, True); // do not localize
+  Filer.DefineProperty('ExpressionName', ReadExpressionName, nil, True);
 end;
 
 procedure TBoldVariableHandleCom.ReadExpressionName(Reader: TReader);
@@ -189,4 +187,6 @@ begin
   ValueTypeName := Reader.ReadString;
 end;
 
+initialization
+  
 end.

@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldSOAPClientPersistenceHandles;
 
 interface
@@ -8,6 +11,7 @@ uses
   BoldPersistenceController;
 
 type
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSOAPClientPersistenceHandle = class(TBoldAbstractComClientPersistenceHandle)
   private
     fModel: TBoldAbstractModel;
@@ -33,5 +37,7 @@ begin
     Controller.Connect(ConnectionHandle.BoldProvider, ObjectName);
   result := Controller;
 end;
+
+initialization
 
 end.

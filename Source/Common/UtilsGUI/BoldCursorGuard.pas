@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldCursorGuard;
 
 interface
@@ -36,5 +39,7 @@ begin
   Screen.Cursor := fOldCursor;
   inherited;
 end;
+
+initialization
 
 end.

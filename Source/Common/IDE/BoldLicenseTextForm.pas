@@ -1,9 +1,12 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldLicenseTextForm;
 
 interface
 
 uses
-  Windows, Classes, Controls, Forms,
+  Windows, Classes, Controls, Forms, 
   BoldRegistry,
   Dialogs,
   StdCtrls, ExtCtrls;
@@ -36,6 +39,7 @@ uses
   SysUtils,
   BoldUtils;
 
+
 procedure TfrmLicenseText.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   var
     Reg: TBoldRegistry;
@@ -67,5 +71,4 @@ begin
 end;
 
 
-initialization
 end.

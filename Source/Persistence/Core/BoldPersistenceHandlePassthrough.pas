@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldPersistenceHandlePassthrough;
 
 interface
@@ -15,13 +18,15 @@ type
     fNextPHandleSubscriber: TBoldPassthroughSubscriber;
     procedure SetNextPersistenceHandle(NextPHandle: TBoldPersistenceHandle);
     procedure NextPHandleDeleted(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetLastPersistenceHandle: TBoldPersistenceHandle;
   protected
     procedure ChainPersistenceController(PersistenceController: TBoldPersistenceControllerPassThrough);
     procedure SetActive(Value: Boolean); override;
-    procedure InitNextPHandle(NextPHandle: TBoldPersistenceHandle); virtual;
+    procedure InitNextPHandle(NextPHandle: TBoldPersistenceHandle); virtual; 
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
+    property LastPersistenceHandle: TBoldPersistenceHandle read GetLastPersistenceHandle;
     property NextPersistenceHandle: TBoldPersistenceHandle read fNextPersistenceHandle write {fNextPersistenceHandle}SetNextPersistenceHandle;
   end;
 
@@ -29,15 +34,17 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  BoldRev;
 
 { TBoldPersistenceControllerPassthroughHandle }
 
+
 procedure TBoldPersistenceHandlePassthrough.SetActive(Value: Boolean);
 begin
-  inherited;
   if Assigned(NextPersistenceHandle) then
     NextPersistenceHandle.Active := Value;
+  inherited;
 end;
 
 procedure TBoldPersistenceHandlePassthrough.SetNextPersistenceHandle(
@@ -49,7 +56,7 @@ begin
     fNextPersistenceHandle := NextPHandle;
     if Assigned(fNextPersistenceHandle) then
       fNextPersistenceHandle.AddSmallSubscription(fNextPHandleSubscriber, [beDestroying], beDestroying);
-    InitNextPHandle(NextPHandle);
+    InitNextPHandle(NextPHandle);      
   end;
 end;
 
@@ -71,13 +78,19 @@ begin
   FreePublisher;
   FreeAndNil(fNextPHandleSubscriber);
   fNextPersistenceHandle := nil;
-  inherited;
+  inherited;  
+end;
+
+function TBoldPersistenceHandlePassthrough.GetLastPersistenceHandle: TBoldPersistenceHandle;
+begin
+  result := NextPersistenceHandle;
+  while result is TBoldPersistenceHandlePassthrough do
+    result := TBoldPersistenceHandlePassthrough(result).NextPersistenceHandle;
 end;
 
 procedure TBoldPersistenceHandlePassthrough.InitNextPHandle(
   NextPHandle: TBoldPersistenceHandle);
 begin
-  //DoNothing
 end;
 
 procedure TBoldPersistenceHandlePassthrough.ChainPersistenceController(PersistenceController: TBoldPersistenceControllerPassThrough);
@@ -85,5 +98,7 @@ begin
   if Assigned(NextPersistenceHandle) then
     PersistenceController.NextPersistenceController := NextPersistenceHandle.PersistenceController;
 end;
+
+initialization
 
 end.
