@@ -401,7 +401,7 @@ begin
   if Use <> 0 then
     Assert(False, 'Assertion failure');
   if Buffer <> nil then
-    FreeMem(Buffer, Length);
+    FreeMem(Buffer, Length + 1);
   inherited;
 end;
 
