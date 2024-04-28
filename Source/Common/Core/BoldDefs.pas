@@ -269,6 +269,12 @@ const
   {$IFDEF BOLD_DELPHI27}
   BOLD_HOST_IDE_REGISTRYPATH = '\Software\Embarcadero\BDS\21.0\';
   {$ENDIF}
+  {$IFDEF BOLD_DELPHI28}
+  BOLD_HOST_IDE_REGISTRYPATH = '\Software\Embarcadero\BDS\22.0\';
+  {$ENDIF}
+  {$IFDEF BOLD_DELPHI29}
+  BOLD_HOST_IDE_REGISTRYPATH = '\Software\Embarcadero\BDS\23.0\';
+  {$ENDIF}
 
 const
   ONE_SECOND = 1000;
