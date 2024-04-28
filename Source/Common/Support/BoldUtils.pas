@@ -79,13 +79,7 @@ var BoldRunningAsDesignTimePackage: boolean = false;
 implementation
 
 uses
-  BoldRev
-  {$IFDEF RIL}
-  {$IFNDEF BOLD_UNICODE}
-  ,StringBuilder
-  {$ENDIF}
-  {$ENDIF}
-;
+  BoldRev;
 
 {$IFDEF LINUX}
 const
