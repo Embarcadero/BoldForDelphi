@@ -2,3 +2,8 @@ QuickStart & FAQ
 
 This file is meant to list most common questions.
 Send your questions to roland.bengtsson@gmail.com
+
+Q: Why is bold.inc is not found ?
+A: Make a new variable in Delphi. Go to menu Tools/Options/Environment Variables.
+   Make a new variable BoldDelphi and set it to folder for Bolds source. Ex: C:\BoldForDelphi
+   Note no ending backslash. The variable is used in project options.
