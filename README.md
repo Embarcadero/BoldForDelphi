@@ -1,4 +1,9 @@
 # BoldForDelphi
+This is develop branch.
+
+Purpose of this is either to direct commit changes here.
+For more complicated changes it is an advantage to make a separate feature branch that is later merged here.
+External developers should fork repository and pull request changes to this branch.
 
 The original source code of the Bold library for Delphi
 Version 4.0.1.0 Bold for Delphi, Release 4.0 - 2004-04-23
