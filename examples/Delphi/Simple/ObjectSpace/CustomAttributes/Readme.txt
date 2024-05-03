@@ -1,4 +1,4 @@
-Contents of the Sample Attriubtes directory
+Contents of the Sample Attributes directory
 ----------------------------------------
 This directory contains a few sample attribute classes.
 
