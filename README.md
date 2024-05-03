@@ -1,5 +1,10 @@
 # BoldForDelphi
 
+This is AttracsBold branch.
+
+This is unicode compatible version of Bold with parts taken from Attracs private repository.
+No changes should be done here. Use develop and master branch instead.
+
 The original source code of the Bold library for Delphi
 Version 4.0.1.0 Bold for Delphi, Release 4.0 - 2004-04-23
 
