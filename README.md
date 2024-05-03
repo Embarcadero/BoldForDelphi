@@ -1,5 +1,11 @@
 # BoldForDelphi
 
+This is master branch.
+
+Purpose of this is always be stable and ready for deploy to a production environment.
+Do not commit directly to master branch. Instead merge changes from develop branch.
+A new release is done for each merge from develop.
+
 The original source code of the Bold library for Delphi
 Version 4.0.1.0 Bold for Delphi, Release 4.0 - 2004-04-23
 
