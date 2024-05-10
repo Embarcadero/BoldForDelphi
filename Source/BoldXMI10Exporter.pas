@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldXMI10Exporter;
@@ -55,6 +62,7 @@ type
 implementation
 
 uses
+  BoldRev,
   BoldDefs,
   BoldUtils,
   BoldUMLTypes;
@@ -402,5 +410,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldXMI10Exporter.pas $ $Revision: 4 $ $Date: 02-07-05 16:23 $');
 
 end.

@@ -94,8 +94,11 @@ var
   item: TBoldEventQueueItem;
 begin
   item := TBoldEventQueueItem(fItemIndex.GetAndRemoveAny);
-  item.SendEvent;
-  Item.Free;
+  try
+    item.SendEvent;
+  finally
+    Item.Free;
+  end;
 end;
 
 procedure TBoldEventQueue.DequeueAll;
@@ -106,6 +109,7 @@ end;
 
 destructor TBoldEventQueue.Destroy;
 begin
+  fItemIndex.Clear(true);
   FreeAndNil(fItemIndex);
   inherited;
 end;

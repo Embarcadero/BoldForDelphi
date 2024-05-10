@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemHandle;
@@ -77,6 +77,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldRegionDefinitions,
   BoldEnvironment,
@@ -125,7 +127,7 @@ begin
   if Assigned(System) then
     System.UpdateDatabase
   else
-    raise EBold.CreateFmt('%s.UpdateDatabase (%s) cannot be invoked without a system', [ClassName, Name]);
+    raise EBold.CreateFmt(sCannotUpdateDatebaseWithoutSystem, [ClassName, Name]);
 end;
 
 function TBoldSystemHandle.GetSystem: TBoldSystem;
@@ -164,14 +166,13 @@ begin
         if (csDesigning in ComponentState) then
           exit;
         if not assigned(SystemTypeInfoHandle) then
-          raise EBold.CreateFmt('Unable to activate a system without a SystemTypeInfoHandle (%s)', [name]);
+          raise EBold.CreateFmt(sUnableToActivateSystemWithoutTypeInfoHandle, [name]);
 
         if not assigned(StaticSystemTypeInfo) then
-          raise EBold.Create('Unable to find a SystemTypeInfo. Possible misstakes: Forgot to connect the SystemTypeInfoHandle to a Model, CreationOrder of the forms/dataModules');
+          raise EBold.Create(sUnableToFindTypeInfoHandle);
 
         if not StaticSystemTypeInfo.SystemIsRunnable then
-          raise EBold.Create('Unable to activate system. Initialization errors in StaticSystemTypeInfo:' + BOLDCRLF +
-                             StaticSystemTypeInfo.InitializationLog.Text);
+          raise EBold.CreateFmt(sUnableToActivateSystem, [BOLDCRLF, StaticSystemTypeInfo.InitializationLog.Text]);
 
         if Persistent then
         begin
@@ -231,7 +232,7 @@ begin
   begin
     fPersistenceHandleSubscriber.CancelAllSubscriptions;
     if Active then
-      PanicShutDownSystem('PersistenceHandle was changed on a running system.');
+      PanicShutDownSystem(sPersistenceHandleChangedOnRunningSystem);
     fPersistenceHandle := NewHandle;
     if assigned(fPersistenceHandle) then
       fPersistenceHandle.AddSmallSubscription(fPersistenceHandleSubscriber, [beDestroying], brePersistenceHandleDestroying);
@@ -261,16 +262,16 @@ begin
 end;
 
 procedure TBoldSystemHandle.ModelChanged;
-var
-  WasActive: Boolean;
+//var
+//  WasActive: Boolean;
 begin
-  WasActive := Active;
+//  WasActive := Active;
   if Active then
-    PanicShutDownSystem('The model changed in a running system');
+    PanicShutDownSystem(sModelChangedOnRunningSystem);
+
   Active := False;
 {  if WasActive then
     Active := True
-  else
 }
     SendEvent(self, beValueIdentityChanged);
 end;
@@ -305,7 +306,7 @@ begin
     beRegionDefinitionClearing:
     begin
       if Active then
-        PanicShutDownSystem('RegionDefinitions were removed from a running system.');
+        PanicShutDownSystem(sRegionDefinitionsRemovedFromRunningSystem);
       FreeAndNil(fRegionFactory);
     end;
   end;
@@ -329,7 +330,7 @@ begin
     System.Discard;
     Active := False;
     if DirtyCount >0 then
-      raise EBold.CreateFmt(Message + BOLDCRLF + 'System Panic shut down. %d objects discarded', [system.DirtyObjects.Count]);
+      raise EBold.CreateFmt(sPanicShutDown, [Message, BOLDCRLF, system.DirtyObjects.Count]);
   except
     on e: Exception do
      if BoldEffectiveEnvironment.RunningInIDE then

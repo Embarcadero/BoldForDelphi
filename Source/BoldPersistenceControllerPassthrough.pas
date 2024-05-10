@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceControllerPassthrough;
@@ -52,6 +52,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldRev;
 
   { TBoldPersistenceControllerPassthrough }
@@ -96,7 +98,7 @@ begin
   if Assigned(fNextPersistenceController) then
     Result := fNextPersistenceController
   else
-    raise EBold.CreateFmt('%s.getNextPersistenceController: NextPersistenceController not assigned', [ClassName]);
+    raise EBold.CreateFmt(sNextControllerMissing, [ClassName]);
 end;
 
 procedure TBoldPersistenceControllerPassthrough.PMExactifyIds(

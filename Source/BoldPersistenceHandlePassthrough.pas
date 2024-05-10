@@ -42,9 +42,9 @@ uses
 
 procedure TBoldPersistenceHandlePassthrough.SetActive(Value: Boolean);
 begin
+  inherited;
   if Assigned(NextPersistenceHandle) then
     NextPersistenceHandle.Active := Value;
-  inherited;
 end;
 
 procedure TBoldPersistenceHandlePassthrough.SetNextPersistenceHandle(
@@ -98,7 +98,5 @@ begin
   if Assigned(NextPersistenceHandle) then
     PersistenceController.NextPersistenceController := NextPersistenceHandle.PersistenceController;
 end;
-
-initialization
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclSemantics;
@@ -8,7 +8,8 @@ interface
 uses
   BoldSystemRT,
   BoldElements,
-  BoldOclClasses;
+  BoldOclClasses,
+  Classes;
 
 type
   { forward declarations }
@@ -24,8 +25,12 @@ type
     fEnv: TBoldOclEnvironment;
     fEvaluator: TBoldEvaluator;
     fIgnoreNelCompatibility: Boolean;
+    fReferencedVariables: TList;
+    function GetReferencedVariables: TList;
+    function GetHasReferencedVariables: boolean;
   public
     constructor Create(Model: TBoldSystemTypeInfo; Evaluator: TBoldEvaluator; SymTab: TBoldSymbolDictionary; Env: TBoldOclEnvironment);
+    destructor Destroy; override;
     procedure AddListCoercionOnArgs(N: TBoldOCLOperation);
     procedure CheckArgumentType(actArg: TBoldOCLNode; FormArg: TBoldElementTypeInfo);
     procedure DeduceBoldType(N: TBoldOCLOperation);
@@ -48,15 +53,18 @@ type
     procedure VisitTBoldOclOperation(N: TBoldOCLOperation); override;
     procedure VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); override;
     procedure VisitTBoldOclTypeNode(N: TBoldOclTypeNode); override;
-    procedure VisitTBoldOclVariablereference(N: TBoldOCLVariableReference); override;
+    procedure VisitTBoldOclVariableReference(N: TBoldOCLVariableReference); override;
     property IgnoreNelCompatibility: Boolean read fIgnoreNelCompatibility write fIgnoreNelCompatibility;
+    property ReferencedVariables: TList read GetReferencedVariables;
+    property HasReferencedVariables: boolean read GetHasReferencedVariables;
   end;
 
 implementation
 
 uses
-  Classes,
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldOclError,
   BoldOcl;
@@ -75,6 +83,12 @@ begin
   fEnv := Env;
   fEvaluator := Evaluator;
   SymbolTable := SymTab;
+end;
+
+destructor TBoldOclSemanticsVisitor.Destroy;
+begin
+  FreeAndNil(fReferencedVariables);
+  inherited;
 end;
 
 procedure TBoldOclSemanticsVisitor.PushResubscribe(var ReSubscribe, OldReSubscribe: Boolean);
@@ -174,6 +188,18 @@ end;
 function TBoldOclSemanticsVisitor.FindSymbol(const name: string): TBoldOclSymbol;
 begin
   result := Symboltable.SymbolByName[name];
+end;
+
+function TBoldOclSemanticsVisitor.GetHasReferencedVariables: boolean;
+begin
+  result := Assigned(fReferencedVariables) and (fReferencedVariables.Count > 0);
+end;
+
+function TBoldOclSemanticsVisitor.GetReferencedVariables: TList;
+begin
+  if not Assigned(fReferencedVariables) then
+    fReferencedVariables := TList.Create;
+  result := fReferencedVariables;
 end;
 
 procedure TBoldOclSemanticsVisitor.AddListCoercionOnArgs(N: TBoldOCLOperation);
@@ -312,7 +338,7 @@ begin
 
       if not Type2.ConformsTo(type1) and
         not Type1.ConformsTo(Type2) then
-        raise EBoldOCLAbort.CreateFmt('%d: In "%s", one of the arguments must conform to the other (%s and %s does not)', [n.Position, n.Symbol.SymbolName, Type1.AsString, type2.AsString]);
+        raise EBoldOCLAbort.CreateFmt(sArgumentsDoNotConform, [n.Position, n.Symbol.SymbolName, Type1.AsString, type2.AsString]);
     end;
   except
     on e: Exception do
@@ -479,7 +505,7 @@ begin
       ClassTypeInfo := TBoldListTypeInfo(n.MethodOf.BoldType).ListElementTypeInfo as TBoldClassTypeInfo;
 
     if not assigned(classTypeInfo) then
-      raise EBoldOclInternalError.CreateFmt('%d: Method (%s) is not operating on a class...', [N.Position, N.OperationName]);
+      raise EBoldOclInternalError.CreateFmt(sMethodNotoperatingOnClass, [N.Position, N.OperationName]);
 
     MethodRTInfo := ClassTypeInfo.Methods.ItemsByExpressionName[n.OperationName];
     if not assigned(MethodRTInfo) then
@@ -521,6 +547,8 @@ begin
       VarRef.VariableName := VarRef.VariableBinding.VariableName;
       VarRef.BoldType := VarRef.VariableBinding.BoldType;
       VarRef.Position := N.Position;
+      if VarRef.VariableBinding.IsConstant then
+        VarRef.IsConstant := VarRef.VariableBinding.IsConstant;
       N.MemberOf := VarRef;
     end
     else
@@ -530,9 +558,15 @@ begin
       Varref.VariableName := N.Membername;
       VarRef.Position := N.Position;
       VarRef.BoldType := Binding.BoldType;
+      if Binding.IsConstant then
+        Varref.IsConstant := Binding.IsConstant;
       if not assigned(VarRef.BoldType) then
         raise EBoldOCLInternalError.CreateFmt(boeVariableNotAssigned, [N.Position, VarRef.VariableName]);
       ReplacementNode := VarRef;
+      if not Varref.IsConstant and (UpperCase(Varref.VariableName) <> 'SELF') then
+      begin
+        ReferencedVariables.Add(VarRef);
+      end;
       exit;
     end;
   end else
@@ -597,7 +631,7 @@ begin
           roleRTInfo := nil;
 
         if not assigned(RoleRTInfo) then
-          raise EBoldOclAbort.CreateFmt('%d: Only roles may be qualified', [n.position]);
+          raise EBoldOclAbort.CreateFmt(sOnlyRolesCanBeQualified, [n.position]);
         if not RoleRTInfo.IsQualified then
           raise EBoldOclAbort.CreateFmt('%d: %s.%s is not a qualified role', [n.position, ClassTypeInfo.ExpressionName, RoleRTInfo.ExpressionName]);
         if Length(N.Qualifier) <> RoleRTInfo.Qualifiers.count then
@@ -637,7 +671,7 @@ begin
   N.IsConstant := False;
 end;
 
-procedure TBoldOclSemanticsVisitor.VisitTBoldOclVariablereference(N: TBoldOCLVariableReference);
+procedure TBoldOclSemanticsVisitor.VisitTBoldOclVariableReference(N: TBoldOCLVariableReference);
 begin
   N.VariableBinding := fEnv.Lookup(N.VariableName);
   if not assigned(N.VariableBinding) then

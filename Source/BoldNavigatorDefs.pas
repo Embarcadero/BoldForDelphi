@@ -53,8 +53,8 @@ type
     procedure SetnbMoveUp(const Value: integer);
     procedure SetnbMoveDown(const Value: integer);
   public
-    constructor create(Owner: TBoldNavigateBtnImageIndexOwner);
-    procedure assign(Source: TPersistent); override;
+    constructor Create(Owner: TBoldNavigateBtnImageIndexOwner);
+    procedure Assign(Source: TPersistent); override;
   published
     property nbFirst: integer read FnbFirst write SetnbFirst;
     property nbPrior: integer read FnbPrior write SetnbPrior;
@@ -97,7 +97,7 @@ const
 
 { TBoldNavigateBtnImageIndex }
 
-procedure TBoldNavigateBtnImageIndex.assign(Source: TPersistent);
+procedure TBoldNavigateBtnImageIndex.Assign(Source: TPersistent);
 begin
   if source is TBoldNavigateBtnImageIndex then
   begin
@@ -114,7 +114,7 @@ begin
     inherited Assign(source);
 end;
 
-constructor TBoldNavigateBtnImageIndex.create(Owner: TBoldNavigateBtnImageIndexOwner);
+constructor TBoldNavigateBtnImageIndex.Create(Owner: TBoldNavigateBtnImageIndexOwner);
 begin
   fOwner := Owner;
   inherited Create;

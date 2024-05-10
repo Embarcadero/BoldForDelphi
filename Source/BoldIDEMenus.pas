@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -30,6 +37,7 @@ type
     {Menu Actions}
     procedure ActionAbout(Sender: TObject);
     procedure ActionHelp(Sender: TObject);
+    procedure ActionURLHome(Sender: TObject);
     procedure ActionURLBfD(Sender: TObject);
     {Properties}
     property BoldMenu: TMenuItem read fBoldMenu;
@@ -43,7 +51,11 @@ implementation
 uses
   SysUtils,
   Forms,
-  BoldDefsDT;
+
+  BoldCoreConsts,
+  BoldRev,
+  BoldDefsDT,
+  BoldAbout;
 
 var
   G_BoldMenuExpert: TBoldMenuExpert = nil;
@@ -67,6 +79,12 @@ end;
 
 procedure TBoldMenuExpert.ActionAbout(Sender: TObject);
 begin
+  with BoldAbout.TfrmAboutBold.Create(nil) do
+  try
+    ShowModal;
+  finally
+    Free;
+  end;
 end;
 
 procedure TBoldMenuExpert.ActionHelp(Sender: TObject);
@@ -83,6 +101,11 @@ begin
 end;
 
 procedure TBoldMenuExpert.ActionURLBfD(Sender: TObject);
+begin
+  ShellExecute(0, 'open', URLBoldForDelphi, '', '', SW_SHOWMAXIMIZED);
+end;
+
+procedure TBoldMenuExpert.ActionURLHome(Sender: TObject);
 begin
   ShellExecute(0, 'open', URLBoldForDelphi, '', '', SW_SHOWMAXIMIZED);
 end;
@@ -126,12 +149,14 @@ begin
   while (I<MainMenu.Items.Count) and (MainMenu.Items[I].Name<>'ToolsMenu') do
     Inc(I);
 
-  AddMenuItem('BoldURLDelimiterMenu', '-', nil);
-  AddMenuItem('BoldBfDHomePageMenu', 'Bold for &Delphi Home Page', ActionURLBfD);
-  AddMenuItem('BoldHelpDelimiterMenu', '-', nil);
-  AddMenuItem('BoldHelpMenu', '&Help', ActionHelp);
-  AddMenuItem('BoldAboutDelimiterMenu', '-', nil);
-//  AddMenuItem('BoldAboutMenu', '&About', ActionAbout);
+  AddMenuItem('BoldURLDelimiterMenu', '-', nil); // do not localize
+  AddMenuItem('BoldHomePageMenu', sCompanyHomePage, ActionURLHome); // do not localize
+  AddMenuItem('BoldBfDHomePageMenu', sProductHomePage, ActionURLBfD); // do not localize
+  AddMenuItem('BoldHelpDelimiterMenu', '-', nil); // do not localize
+  AddMenuItem('BoldHelpMenu', sHelp, ActionHelp); // do not localize
+  AddMenuItem('BoldAboutDelimiterMenu', '-', nil); // do not localize
+  AddMenuItem('BoldAboutMenu', sAbout, ActionAbout); // do not localize
+  // in D7, the menu must have items before it is added to the main menu
   MainMenu.Items.Insert(I, fBoldMenu);
 end;
 
@@ -175,5 +200,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldIDEMenus.pas $ $Revision: 15 $ $Date: 02-07-16 14:52 $');
 
 end.

@@ -165,6 +165,7 @@ begin
   fCaptionHandleFollower := TBoldElementHandleFollower.Create(AOwner, FBoldCaption);
   fEnabledHandleFollower := TBoldElementHandleFollower.Create(AOwner, FBoldEnabled);
   fBoldHandleFollower := TBoldElementHandleFollower.Create(AOwner, FBoldProperties);
+  Enabled := false;
 end;
 
 destructor TBoldAction.Destroy;

@@ -1,19 +1,20 @@
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldDBActions;
 
 interface
 
 uses
+  ActnList,
   Classes,
+
+  BoldCoreConsts,
   BoldHandleAction,
   BoldPersistenceHandleDB,
   BoldSubscription,
   BoldDbValidator,
   BoldDbStructureValidator,
-  BoldDbDataValidator,
-  ActnList;
+  BoldDbDataValidator;
 
 const
   cDefaultPauseBetweenQueries = 1; //ms
@@ -98,6 +99,8 @@ implementation
 uses
   BoldDefs,
   SysUtils,
+  BoldHandles,
+  BoldSystemHandle,
   BoldActionDefs,
   BoldDbEvolutor,
   BoldDbEvolutorForm,
@@ -124,6 +127,8 @@ constructor TBoldPersistenceHandleAction.Create(AOwner: TComponent);
 begin
   inherited;
   fHandleSubscriber := TBoldPassthroughSubscriber.Create(_HandleSubscriberReceive);
+  if (TBoldSystemHandle.DefaultBoldSystemHandle <> nil) and not (csLoading in ComponentState) and (csDesigning in ComponentState) then
+    BoldPersistenceHandleDB := (TBoldSystemHandle.DefaultBoldSystemHandle as TBoldSystemHandle).PersistenceHandleDB as TBoldPersistenceHandleDB;
 end;
 
 destructor TBoldPersistenceHandleAction.Destroy;
@@ -177,7 +182,7 @@ end;
 constructor TBoldGenerateSchemaAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Generate Schema';
+  Caption := sGenerateSchema;
 end;
 
 procedure TBoldGenerateSchemaAction.ExecuteTarget(Target: TObject);
@@ -231,7 +236,6 @@ begin
   if not assigned(fValidator) then
     fValidator := TBoldDbDataValidator.Create(nil);
   fValidator.PersistenceHandle := BoldPersistenceHandleDB;
-  fValidator.PauseBetweenQueries := PauseBetweenQueries;
   fValidator.Execute;
 end;
 

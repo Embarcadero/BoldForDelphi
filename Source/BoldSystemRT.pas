@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemRT;
@@ -222,6 +222,7 @@ type
     function GetTaggedvalueCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetConstraintByIndex(Index: integer): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetTaggedValueByIndex(Index: integer): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  protected
     function GetListTypeInfo: TBoldListTypeInfo; override;
   public
     constructor Create(MoldElement: TMoldElement; SystemTypeInfo: TBoldSystemTypeInfo);
@@ -368,6 +369,9 @@ type
     procedure Initialize(MoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary; BoldObjectClasses: TBoldGeneratedClassList; BoldObjectListClasses: TBoldGeneratedClassList; SkipMembers: Boolean); virtual;
     procedure SetObjectClass(BoldObjectClasses: TBoldGeneratedClassList);
     function GetQualifiedName: string;
+    function GetMultilinkCount: integer;
+    function GetSinglelinkCount: integer;
+    function GetAttributeCount: integer;
   protected
     constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; moldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary;  BoldObjectClasses: TBoldGeneratedClassList; BoldObjectListClasses: TBoldGeneratedClassList; SkipMembers: Boolean = false);
     function GetBoldType: TBoldElementTypeInfo; override;
@@ -388,7 +392,10 @@ type
     property AllRoles: TBoldRoleRTInfoList read fAllRoles;
     property AllRolesCount: Integer read fAllRolesCount;
     property DerivedMemberCount: integer read fDerivedMemberCount;
+    property AttributeCount: integer read GetAttributeCount;
     property AllMembersCount: integer read fAllMembersCount;
+    property SinglelinkCount: integer read GetSinglelinkCount;
+    property MultilinkCount: integer read GetMultilinkCount;
     property FirstOwnMemberIndex: Integer read FFirstOwnMemberIndex;
     property HasSubclasses: Boolean index befHasSubclasses read GetElementFlag;
     property IsAbstract: Boolean index befIsAbstract read GetElementFlag;
@@ -514,7 +521,7 @@ type
     function GetIsRole: Boolean; override;
     function GetStoreInUndo: boolean; override;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure SetForceOtherEnd;
     property ClassTypeInfoOfOtherEnd: TBoldClassTypeInfo read FClassTypeInfoOfOtherEnd;
     property ForceOtherEnd: Boolean index befForceOtherEnd read GetElementFlag;
@@ -638,6 +645,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldGuard,
   BoldNameExpander,
@@ -648,8 +657,7 @@ uses
   BoldDefaultTaggedValues,
   BoldSystem,
   BoldAttributes,
-  BoldDefaultStreamNames,
-  Windows;
+  BoldDefaultStreamNames;
 
 {$IFDEF BOLD_LITE}
 var
@@ -915,7 +923,7 @@ begin
   G_TheSystemType := self;
 {$ENDIF}
   SetValueType(bvtSystem);
-  fTypeTypeInfo := TBoldTypeTypeInfo.Create('MetaType', 'MetaType', 'MetaType', self);
+  fTypeTypeInfo := TBoldTypeTypeInfo.Create('MetaType', 'MetaType', 'MetaType', self); // do not localize
 
   fAttributeTypes := TBoldAttributeTypeInfoList.Create;
   AttributeTypes.Capacity := TypeNameDictionary.count;
@@ -935,6 +943,7 @@ begin
   begin
     BoldGeneratedCodeDescriptor := nil;
     for i := 0 to GeneratedCodes.Count - 1 do
+    begin
       if (GeneratedCodes.ModelEntries[i].ExpressionName = MoldModel.ExpandedExpressionName) then
       begin
         BoldGeneratedCodeDescriptor := GeneratedCodes.ModelEntries[i];
@@ -953,9 +962,13 @@ begin
           break;
         end;
       end;
-    if CheckCodeCheckSum and (Assigned(BoldGeneratedCodeDescriptor) and (BoldGeneratedCodeDescriptor.CRC <> '') and (BoldGeneratedCodeDescriptor.CRC <> MoldModel.CRC) ) then
-      InitializationError('Generated CRC differs from Model CRC (expected %s, found %s). Please regenerate code.',
-                            [MoldModel.CRC, BoldGeneratedCodeDescriptor.CRC]);
+    end;
+
+    if CheckCodeCheckSum and (Assigned(BoldGeneratedCodeDescriptor) and (BoldGeneratedCodeDescriptor.CRC <> '') and 
+      (BoldGeneratedCodeDescriptor.CRC <> MoldModel.CRC) ) then
+    begin
+      InitializationError(sCRCDiffers, [MoldModel.CRC, BoldGeneratedCodeDescriptor.CRC]);
+    end;
   end;
 
   for I := 0 to TypeNameDictionary.count - 1 do
@@ -963,9 +976,13 @@ begin
     InstallAttributeType(TypeNameDictionary, i);
   end;
 
+  // The super-element-list that all other lists conform to (Used for OCL)
+  // Note: The elements does not need to (and should not) conform!
   fUntypedListTypeInfo := TBoldListTypeInfo.Create(nil, self, TBoldObjectList);
   ListTypes.Add(fUntypedListTypeInfo);
 
+  // Superclasses must be constructed first.
+  // This also assures that FClasses will be topologicaly sorted
   moldModel.EnsureTopSorted;
 
   Errors := TStringList.Create;
@@ -994,13 +1011,11 @@ begin
     for i := 0 to TopSortedClasses.Count - 1 do
       if CompareText(TopSortedClasses[i].ObjectClass.ClassName, TopSortedClasses[i].DelphiName) <> 0 then
       begin
-        InitializationError('Generated code for %s not registered with framework, ensure that it is included in project',
-                                [TopSortedClasses[i].ExpressionName]);
+        InitializationError(sGeneratedCodeNotRegistered, [TopSortedClasses[i].ExpressionName]);
       end;
   end;
 
   fMethodsInstalled := False;
-
   fNilTypeInfo := TBoldNilTypeInfo.Create(self, nil, nil, nil, nil);
   fValueSetTypeInfo := AttributeTypeInfoByExpressionName['ValueSet'];
 end;
@@ -1264,7 +1279,7 @@ function TBoldClassTypeInfo.BoldIsA(C2: TBoldElementTypeInfo): Boolean;
 var
   lBoldClassTypeInfo: TBoldClassTypeInfo;
 begin
-  if (c2.ClassType = TBoldClassTypeInfo) then
+  if Assigned(c2) and (c2.ClassType = TBoldClassTypeInfo) then
   begin
     if C2 = Self then
     begin
@@ -1596,12 +1611,12 @@ begin
   LinkObjectRole2 := nil;
   if not assigned(moldAssociation.Roles[0].moldClass) then
   begin
-    SystemTypeInfo.InitializationError('Invalid association: %s.%s does not point to a class', [MoldAssociation.Name , MoldAssociation.Roles[0].Name]);
+    SystemTypeInfo.InitializationError(sInvalidAssociation, [MoldAssociation.Name , MoldAssociation.Roles[0].Name]);
     exit;
   end;
   if not assigned(moldAssociation.Roles[1].moldClass) then
   begin
-    SystemTypeInfo.InitializationError('Invalid association: %s.%s does not point to a class', [MoldAssociation.Name , MoldAssociation.Roles[1].Name]);
+    SystemTypeInfo.InitializationError(sInvalidAssociation, [MoldAssociation.Name , MoldAssociation.Roles[1].Name]);
     exit;
   end;
    
@@ -1862,7 +1877,7 @@ begin
     SetElementFlag(befHasInitalvalue, true);
   Mapping := TypeNameDictionary.MappingForModelName[MoldAttribute.BoldType];
   if not assigned(Mapping) then
-    ClassTypeInfo.SystemTypeInfo.InitializationError('Unable to find Mapping for %s.%s: %s',
+    ClassTypeInfo.SystemTypeInfo.InitializationError(sCannotFindAttributeMapping,
                           [MoldAttribute.MoldClass.ExpandedExpressionname,
                            MoldAttribute.ExpandedExpressionName,
                            MoldAttribute.BoldType])
@@ -1871,14 +1886,14 @@ begin
     fBoldType := ClassTypeInfo.SystemTypeInfo.AttributeTypeInfoByExpressionName[Mapping.expressionName];
     fStreamName := Mapping.ExpandedContentsName;
     if not assigned(fBoldType) then
-      ClassTypeInfo.SystemTypeInfo.InitializationError('Unable to find BoldType for %s.%s (ExpressionType: %s)',
+      ClassTypeInfo.SystemTypeInfo.InitializationError(sUnableToFindBoldTypeForAttribute,
                             [MoldAttribute.MoldClass.ExpandedExpressionname,
                              MoldAttribute.ExpandedExpressionName,
                              Mapping.ExpressionName]);
 
     if assigned(fBoldtype) and
       not assigned((fBoldType as TBoldAttributeTypeInfo).AttributeClass) then
-      ClassTypeInfo.SystemTypeInfo.InitializationError('Attribute %s.%s: %s has no registered DelphiType',
+      ClassTypeInfo.SystemTypeInfo.InitializationError(sAttributeHasNoDelphiType,
                             [MoldAttribute.MoldClass.ExpandedExpressionname,
                              MoldAttribute.ExpandedExpressionName,
                              MoldAttribute.BoldType]);
@@ -2035,20 +2050,46 @@ begin
   Result := FAllMembers.ItemsByModelName[Name];
 end;
 
+function TBoldClassTypeInfo.GetMultilinkCount: integer;
+var
+  i: integer;
+begin
+  result := 0;
+  for i := 0 to AllRoles.Count -1 do
+    if AllRoles[i].IsMultiRole then
+      Inc(result);
+end;
+
+function TBoldClassTypeInfo.GetSinglelinkCount: integer;
+var
+  i: integer;
+begin
+  result := 0;
+  for i := 0 to AllRoles.Count -1 do
+    if AllRoles[i].IsSingleRole then
+      Inc(result);
+end;
+
+function TBoldClassTypeInfo.GetAttributeCount: integer;
+begin
+  result := AllMembersCount - AllRolesCount;
+end;
+
 procedure TBoldClassTypeInfo.InitializeMultiplicityConstraints;
 var
   upper, lower: integer;
   i: integer;
   RoleRT: TBoldRoleRTInfo;
+
   procedure AddMultiplicityConstraint(Role: TBoldRoleRTInfo; const ExprFragment: String; const moreless: String; limit: integer);
   var
     Constr: TBoldConstraintRTinfo;
   begin
     Constr := TBoldConstraintRTInfo.Create(nil,
-      Role.ModelName + ' multiplicity constraint', '', '',
+      Role.ModelName + ' multiplicity constraint', '', '', // do not localize
       SystemTypeInfo,
-      format('%s->size %s %d', [role.ExpressionName, ExprFragment, limit]),
-      format('Role %s must have %s %d %s',[role.ModelName, moreless, limit, role.ClassTypeInfoOfOtherEnd.ModelName]));
+      format('%s->size %s %d', [role.ExpressionName, ExprFragment, limit]), // do not localize
+      format(sMultiplicityConstraintMessage,[role.ModelName, moreless, limit, role.ClassTypeInfoOfOtherEnd.ModelName]));
     AddConstraint(Constr);
   end;
 
@@ -2064,9 +2105,9 @@ begin
         lower := GetLowerLimitForMultiplicity(RoleRT.Multiplicity);
 
         if (upper > 1) and (upper < MaxInt) then
-          AddMultiplicityConstraint(RoleRT, '<=', 'at most', upper);
+          AddMultiplicityConstraint(RoleRT, '<=', sAtMost, upper);
         if (lower > 0) then
-          AddMultiplicityConstraint(RoleRT, '>=', 'at least', lower);
+          AddMultiplicityConstraint(RoleRT, '>=', sAtLeast, lower);
       end;
     end;
   end;
@@ -2079,7 +2120,6 @@ var
   I: Integer;
   tempClass: TMoldClass;
   role: TMoldRole;
-  AttributeCount: integer;
   RoleCount: integer;
   MethodCount: integer;
 begin
@@ -2122,12 +2162,9 @@ begin
     exit;
 
   RoleCount := 0;
-  AttributeCount := 0;
   for i := 0 to MoldClass.AllBoldMembers.Count - 1 do
   begin
-    if MoldClass.AllBoldMembers[i] is TMoldAttribute then
-      Inc(AttributeCount)
-    else
+    if not (MoldClass.AllBoldMembers[i] is TMoldAttribute) then
       Inc(RoleCount);
   end;
   fAllRoles.Capacity := RoleCount;
@@ -2266,7 +2303,7 @@ begin
   begin
     if assigned(TempAttributeType.AttributeClass) and
       (AnsiCompareText(TempAttributeType.AttributeClass.ClassName, Mapping.ExpandedDelphiName) <> 0) then
-      InitializationError('Error installing %s, already mapped to %s', [TypeNameDictionary.Mapping[pos].ExpressionName, TempAttributeType.AttributeClass.ClassName]);
+      InitializationError(sErrorInstallingAttribute, [TypeNameDictionary.Mapping[pos].ExpressionName, TempAttributeType.AttributeClass.ClassName]);
     exit;
   end;
 
@@ -2289,7 +2326,7 @@ begin
         begin
           SuperDescriptor := BoldMemberTypes.DescriptorByDelphiName[SuperClassName];
           if not assigned(SuperDescriptor) then
-            InitializationError('Error installing %s, Super class (%s) not registered', [TypeNameDictionary.Mapping[pos].ExpressionName, SuperClassName])
+            InitializationError(sErrorInstallingAttribute_MissingSuperType, [TypeNameDictionary.Mapping[pos].ExpressionName, SuperClassName])
           else
           begin
             SuperMapping := TypeNameDictionary.AddMapping;
@@ -2566,7 +2603,7 @@ begin
   result := fBoldType;
 end;
 
-destructor TBoldRoleRTInfo.destroy;
+destructor TBoldRoleRTInfo.Destroy;
 begin
   FreeAndNil(FQualifiers);
   inherited;

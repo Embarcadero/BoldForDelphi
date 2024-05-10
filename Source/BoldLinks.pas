@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 
@@ -89,7 +89,7 @@ type
     procedure MakeDbCurrent; override;
     function AssertIntegrity: Boolean; override;
     procedure Unlink(OldLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode); override;
-    procedure LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode); override;
+    procedure LinkTo(NewLocator: TBoldObjectLocator; UpdateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode); override;
     function ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean; override;
     function GetLocator: TBoldObjectLocator; override;
     procedure SetLocator(NewLocator: TBoldObjectLocator); override;
@@ -133,6 +133,7 @@ type
   public
     constructor Create(OwningList: TBoldObjectList); reintroduce;
     destructor Destroy; override;
+    function AssertIntegrity: Boolean; override;
     procedure LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode); override;
     procedure Unlink(OldLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode); override;
     function GetCount: Integer; override;
@@ -181,7 +182,7 @@ type
     destructor Destroy; override;
     function AssertIntegrity: Boolean; override;
     procedure LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode); override;
-    procedure UnLink(OldLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode); override;
+    procedure Unlink(OldLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode); override;
     function GetCount: Integer; override;
     function GetLocator(index: Integer): TBoldObjectLocator; override;
     function GetLocatorByQualifiersAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator; override;
@@ -210,6 +211,7 @@ type
     function GetFreeStandingClass: TBoldFreeStandingElementClass; override;
     function GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
   public
+    function AssertIntegrity: Boolean; override;
     function GetCount: Integer; override;
     function GetLocator(index: Integer): TBoldObjectLocator; override;
     function GetLocatorByQualifiersAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator; override;
@@ -231,6 +233,7 @@ type
   protected
     procedure SetFromId(Id: TBoldObjectId; Mode: TBoldDomainElementProxyMode); override;
   public
+    function AssertIntegrity: Boolean; override;
     procedure SetLocator(NewLocator: TBoldObjectLocator); override;
   end;
 
@@ -241,6 +244,7 @@ type
     function GetFreeStandingClass: TBoldFreeStandingElementClass; override;
     function GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
   public
+    function AssertIntegrity: Boolean; override;
     function GetLocator: TBoldObjectLocator; override;
     procedure SetLocator(NewLocator: TBoldObjectLocator); override;
     procedure MakeDbCurrent; override;
@@ -258,6 +262,7 @@ uses
   Classes,
   TypInfo,
 
+  BoldCoreConsts,
   BoldGuard,
   BoldStreams,
   BoldValueSpaceInterfaces,
@@ -341,9 +346,10 @@ var
   ObjRef: TBoldObjectReference;
 begin
   if (not (Assigned(Source) and (source.QueryInterface(IBoldObjectIDRef, S) = S_OK))) then
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
+
   SetFromId(s.Id, false);
-  if Mode <>bdepContents then
+  if Mode <>bdepContents then { TODO : Check why Orderno not included in contents }
     SetOrderNo(s.OrderNo);
   if Mode in [bdepUnDo, bdepContents] then
   begin
@@ -414,7 +420,7 @@ var
   s: IBoldObjectIdRefPair;
 begin
   if (not Assigned(Source)) or (source.QueryInterface(IBoldObjectIDRefPair, S) <> S_OK) then
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
   SetFromIds(s.Id1, s.Id2);
 end;
 
@@ -468,7 +474,7 @@ var
 begin
   G := TBoldGuard.Create(anIdList);
   if (not Assigned(Source)) or (source.QueryInterface(IBoldObjectIDListRef, S) <> S_OK) then
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
   anIdList := TBoldObjectIdList.Create;
   anIdList.Capacity := s.Count;
   for i := 0 to s.Count - 1 do
@@ -529,7 +535,7 @@ begin
   begin
     IdList.Capacity := LocatorList.Count;
     for I := 0 to LocatorList.Count - 1 do
-      IdList.Add(LocatorList[I].BoldObjectId);
+        IdList.Add(LocatorList[I].BoldObjectId);
   end;
 end;
 
@@ -545,7 +551,7 @@ var
 begin
   G := TBoldGuard.Create(anIdList1, anIdList2);
   if (not Assigned(source)) or (source.QueryInterface(IBoldObjectIDListRefPair, S) <> S_OK) then
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
   anIdList1 := TBoldObjectIdList.Create;
   anIdList2 := TBoldObjectIdList.Create;
   i := s.Count;
@@ -630,10 +636,9 @@ begin
     OtherEndController.LinkTo(OwningList.OwningObject.BoldObjectLocator, true, blulMarkModified);
     if RoleRTInfo.IsOrdered then
       OtherEndController.SetAndModifyOrderNo(LocatorList.IndexOf(Locator));
-    Changed(beItemAdded, [Locator]);
-
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beItemAdded, [Locator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -688,7 +693,6 @@ procedure TBoldDirectMultiLinkController.MakeDbCurrent;
     lIndexOfOtherEnd: Integer;
     lTopSortedIndex: integer;
     OtherEndBoldClassTypeInfo: TBOldClassTypeInfo;
-    lTopSortedClasses: TBoldClassTypeInfoList;
   begin
     lBoldGuard := TBoldGuard.Create(lBoldObjectIdList, lSortList);
     OtherEndBoldClassTypeInfo := RoleRTInfo.ClassTypeInfoOfOtherEnd;
@@ -696,7 +700,6 @@ procedure TBoldDirectMultiLinkController.MakeDbCurrent;
     ClassList := BoldSystem.Classes[lTopSortedIndex];
     lOwnBoldObjectLocator := OwningObject.BoldObjectLocator;
     lBoldObjectIdList := TBoldObjectIdList.Create;
-    lTopSortedClasses := BoldSystem.BoldSystemTypeInfo.TopSortedClasses;
     if RoleRTInfo.IsOrdered then
       lSortList := TList.Create;
     lIsOrdered := RoleRTInfo.IsOrdered;
@@ -773,7 +776,7 @@ begin
       LocatorList.InitMembersIndex(OwningObjectList, RoleRTInfo.Qualifiers)
     end
     else
-      raise EBold.CreateFmt('%s.GetLocatorByQualifiers: Object list does not have a member index or role is not qualified', [ClassName]);
+      raise EBold.CreateFmt(sRolenotQualified, [ClassName]);
   end;
   result := LocatorList.GetLocatorByAttributesAndSubscribe(MemberList, Subscriber);
 end;
@@ -802,36 +805,43 @@ begin
     LocatorList.Insert(Index, Locator);
     GetOtherEndController(Locator).LinkTo(OwningList.OwningObject.BoldObjectLocator, true, blulMarkModified);
     ReOrder;
-    Changed(beItemAdded, [Locator]);
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beItemAdded, [Locator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
 end;
 
-procedure TBoldDirectMultiLinkController.linkto(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode) ;
+procedure TBoldDirectMultiLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode) ;
 begin
   Assert((Mode <> blulMarkAdjusted) or (OwningList.BoldPersistenceState = bvpsCurrent), OwningMember.DisplayName);
   if IncludesLocator(NewLocator) then // this used to be an assert, but we now just exit
   begin
     exit;
   end;
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningList, 'Linkto', '');
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningList, 'Linkto', '');
 
-  PreChange;
-  LocatorList.Add(NewLocator);
-  if Mode = blulMarkAdjusted then
-    OwningObjectList.Adjusted := True;
-  if updateOrderNo and RoleRTInfo.IsOrdered then
-    GetOtherEndController(NewLocator).SetAndModifyOrderNo(LocatorList.IndexOf(NewLocator));  //TODO - This could have side effect when mode is blulMarkAdjusted
-  Changed(beItemAdded, [NewLocator]);
-  if Mode = blulMarkModified then
-    EndModify;
+    PreChange;
+    LocatorList.Add(NewLocator);
+    if Mode = blulMarkAdjusted then
+      OwningObjectList.Adjusted := True;
+    if updateOrderNo and RoleRTInfo.IsOrdered then
+      GetOtherEndController(NewLocator).SetAndModifyOrderNo(LocatorList.IndexOf(NewLocator));  //TODO - This could have side effect when mode is blulMarkAdjusted
+    if Mode = blulMarkModified then
+      EndModify;
+    BoldSystem.CommitTransaction;
+    Changed(beItemAdded, [NewLocator]);
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TBoldDirectMultiLinkController.Move(CurrentIndex, NewIndex: Integer);
@@ -848,10 +858,9 @@ begin
     PreChange;
     LocatorList.Move(CurrentIndex, NewIndex);
     ReOrder;
-    Changed(beOrderChanged, []);
-
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beOrderChanged, []);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -875,9 +884,9 @@ begin
     GetOtherEndController(Locator).Unlink(OwningList.OwningObject.BoldObjectLocator, blulMarkModified);
     LocatorList.RemoveByIndex(index);
     ReOrder;
-    Changed(beItemDeleted, [Locator]);
     EndModify;
-    BoldSystem.CommitTransaction;
+    Changed(beItemDeleted, [Locator]);
+    BoldSystem.CommitTransaction;    
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -1094,16 +1103,14 @@ begin
     BoldClearLastFailure;
     if not StartModify then
       BoldRaiseLastFailure(OwningList, 'SetLocator', '');
-
     PreChange;
     GetOtherEndController(LocatorList[index]).UnLink(OwningList.OwningObject.BoldObjectLocator, blulMarkModified);
     GetOtherEndController(Locator).LinkTo(OwningList.OwningObject.BoldObjectLocator, true, blulMarkModified);
     LocatorList[index] := Locator;
     ReOrder;
-    Changed(beItemReplaced, [Locator, Index]);
-
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beItemReplaced, [Locator, Index]);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -1138,19 +1145,26 @@ begin
   begin
     exit;
   end;
+  BoldSystem.StartTransaction;
+  try
 
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningList, 'Unlink', '');
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningList, 'Unlink', '');
 
-  PreChange;
-  LocatorList.Remove(OldLocator);
-  if Mode = blulMarkAdjusted then
-    OwningObjectList.Adjusted := True;
-  Changed(beItemDeleted, [OldLocator]);
-  if Mode = blulMarkModified then
-    EndModify;
+      PreChange;
+    LocatorList.Remove(OldLocator);
+    if Mode = blulMarkAdjusted then
+      OwningObjectList.Adjusted := True;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beItemDeleted, [OldLocator]);
+    BoldSystem.CommitTransaction;
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 function TBoldDirectMultiLinkController.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -1220,7 +1234,7 @@ begin
     Result := (OrderNo1 - OrderNo2);
   end
   else
-    raise EBold.Create('Cannot call compare if OtherEnd is not a single role');
+    raise EBold.Create(sOtherEndMustBeSingle);
 end;
 
 procedure TBoldDirectMultiLinkController.ClearNoLongerReferring(NewList: TBoldObjectIdList);
@@ -1237,13 +1251,11 @@ var
     Locator: TBoldObjectLocator;
     OwnLocator: TBoldObjectLocator;
     BoldSystem: TBoldSystem;
-    TopSortedClasses: TBoldClassTypeInfoList;
   begin
     G := TBoldGuard.Create(Traverser);
     BoldSystem := self.BoldSystem;
     Traverser := BoldSystem.Locators.CreateTraverser;
     OwnLocator := OwningList.OwningObject.BoldObjectLocator;
-    TopSortedClasses := BoldSystem.BoldSystemTypeInfo.TopSortedClasses;
     while Traverser.MoveNext do
     begin
       Locator := Traverser.Locator;
@@ -1319,6 +1331,23 @@ begin
   end;
   if ListOfReferring <> OwningObjectList then
     FreeAndNil(ListOfReferring);
+end;
+
+function TBoldDirectMultiLinkController.AssertIntegrity: Boolean;
+var
+  i: integer;
+begin
+  for i := 0 to LocatorList.Count - 1 do
+  begin
+    Assert(LocatorList[i].AsString <> '');
+    Assert(Assigned(GetOtherEndController(LocatorList[i]).fLocator));
+    Assert(GetOtherEndController(LocatorList[i]).fLocator.AsString <> '');
+  end;
+  if Assigned(OwningObjectList.OldValue) then
+  begin
+//    OwningObjectList.OldValue
+  end;
+  Result := True;
 end;
 
 procedure TBoldDirectMultiLinkController.Clear;
@@ -1412,19 +1441,26 @@ end;
 
 procedure TBoldDirectSingleLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
 begin
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningReference, 'linkto', '');
-  if fLocator <> NewLocator then
-  begin
+  if fLocator = NewLocator then
+    exit;
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningReference, 'linkto', '');
     RemoveFromOtherEnd(Mode);
     InternalSetLocator(NewLocator);
     if OwningReference.BoldPersistenceState = bvpsInvalid then
       OwningReference.HasOldValues := True;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beValueChanged, [NewLocator]);
+    BoldSystem.CommitTransaction;
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
   end;
-  if Mode = blulMarkModified then
-    EndModify;
 end;
 
 procedure TBoldDirectSingleLinkController.RemoveFromOtherEnd(Mode: TBoldLinkUnlinkMode);
@@ -1524,6 +1560,7 @@ begin
       SetAndModifyOrderNo(-1);
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beValueChanged, [NewLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -1539,7 +1576,6 @@ begin
           raise EBold.CreateFmt('%s.InternalSetLocator: Object %s is incorrect type %s in %s. Expected type: %s', [ClassName, NewLocator.AsString, NewLocator.BoldClassTypeInfo.ExpressionName, OwningReference.debuginfo, OwningReference.BoldRoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
     PreChange;
     fLocator := NewLocator;
-    Changed(beValueChanged, [NewLocator]);
   end;
 end;
 
@@ -1578,24 +1614,31 @@ begin
   //This will lead to data corruption - Unlink will set correct value to nil!
 
 //  Assert(Not assigned(fLocator) or (fLocator = OldLocator));
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningReference, 'Unlink', '');
 
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningReference, 'Unlink', '');
+    InternalSetLocator(nil);
+    OwningReference.HasOldValues := False;
 
-  InternalSetLocator(nil);
-  OwningReference.HasOldValues := False;
-
-  if RoleRTInfo.IsOrdered then
-  begin
-    if Mode = blulMarkModified then //PATCH
-      SetAndModifyOrderNo(-1)
-    else                            //PATCH
-      SetOrderNo(-1, bdepPMIn);     //PATCH Do not call SetAndModifyOrderNo when Mode is bluMarkAdjustd - this creates an unwanted save
+    if RoleRTInfo.IsOrdered then
+    begin
+      if Mode = blulMarkModified then //PATCH
+        SetAndModifyOrderNo(-1)
+      else                            //PATCH
+        SetOrderNo(-1, bdepPMIn);     //PATCH Do not call SetAndModifyOrderNo when Mode is bluMarkAdjustd - this creates an unwanted save
+    end;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beValueChanged, [nil]);
+    BoldSystem.CommitTransaction;
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
   end;
-  if Mode = blulMarkModified then
-    EndModify;
 end;
 
 procedure TBoldDirectSingleLinkController.PreDiscard;
@@ -1657,26 +1700,21 @@ procedure TBoldDirectSingleLinkController.MakeDbCurrent;
 {$IFDEF FetchFromClassList}
   procedure FetchFromClassList;
   var
-    BoldRoleRTInfo: TBoldRoleRTInfo;
     OtherEndBoldClassTypeInfo: TBoldClassTypeInfo;
     ClassList: TBoldObjectList;
     BoldObjectId: TBoldObjectId;
-    BoldObject: TBoldObject;
     IndexOfOtherEnd: Integer;
-    BoldObjectReference: TBoldObjectReference;
     BoldMember: TBoldMember;
     i: integer;
     Locator: TBoldObjectLocator;
     CheckType: boolean;
     lTopSortedIndex: Integer;
-    lTopSortedClasses: TBoldClassTypeInfoList;
     AllMembersLoaded: boolean;
   begin
     OtherEndBoldClassTypeInfo := RoleRTInfo.ClassTypeInfoOfOtherEnd;
     IndexOfOtherEnd := RoleRTInfo.IndexOfOtherEnd;
     lTopSortedIndex := RoleRTInfo.ClassTypeInfoOfOtherEnd.TopSortedIndex;
     ClassList := BoldSystem.Classes[lTopSortedIndex];
-    lTopSortedClasses := BoldSystem.BoldSystemTypeInfo.TopSortedClasses;
     Locator := OwningReference.OwningObject.BoldObjectLocator;
     BoldObjectId := nil;
     CheckType := ClassList.BoldPersistenceState <> bvpsCurrent;
@@ -1776,28 +1814,35 @@ begin
   result := fOtherEndLocator;
 end;
 
-procedure TBoldIndirectSingleLinkController.linkto(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
+procedure TBoldIndirectSingleLinkController.LinkTo(NewLocator: TBoldObjectLocator; UpdateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
 begin
   Assert((Mode <> blulMarkAdjusted) or (OwningReference.BoldPersistenceState = bvpsCurrent), OwningMember.DisplayName);
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningReference, 'Linkto', '');
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningReference, 'Linkto', '');
 
-  if fLinkObjectLocator <> NewLocator then
-  begin
-    if assigned(fLinkObjectLocator) then
-      DeleteLink(Mode);
-    PreChange;
-    fLinkObjectLocator := NewLocator;
-    fOtherEndLocator := GetLinkObjectOtherLinkController(NewLocator.EnsuredBoldObject).fLocator;
-    if not VerifyLocatorType(fOtherEndLocator, OwningReference.BoldRoleRTInfo.ClassTypeInfoOfOtherEnd, false) then
-        raise EBold.CreateFmt('%s.linkto: Object %s is incorrect type %s in %s. Expected type: %s', [ClassName, fOtherEndLocator.AsString, fOtherEndLocator.BoldClassTypeInfo.ExpressionName, OwningReference.debuginfo, OwningReference.BoldRoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
+    if fLinkObjectLocator <> NewLocator then
+    begin
+      if assigned(fLinkObjectLocator) then
+        DeleteLink(Mode);
+      PreChange;
+      fLinkObjectLocator := NewLocator;
+      fOtherEndLocator := GetLinkObjectOtherLinkController(NewLocator.EnsuredBoldObject).fLocator;
+      if not VerifyLocatorType(fOtherEndLocator, OwningReference.BoldRoleRTInfo.ClassTypeInfoOfOtherEnd, false) then
+          raise EBold.CreateFmt('%s.linkto: Object %s is incorrect type %s in %s. Expected type: %s', [ClassName, fOtherEndLocator.AsString, fOtherEndLocator.BoldClassTypeInfo.ExpressionName, OwningReference.debuginfo, OwningReference.BoldRoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
+    end;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beValueChanged, [fOtherEndLocator]);
+    GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
+    BoldSystem.CommitTransaction;
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
   end;
-  Changed(beValueChanged, [fOtherEndLocator]);
-  GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
-  if Mode = blulMarkModified then
-    EndModify;
 end;
 
 function TBoldIndirectSingleLinkController.NewLink(OtherLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode): TBoldObject;
@@ -1941,10 +1986,10 @@ begin
       fLinkObjectLocator := NewLink(NewLocator, blulMarkModified).BoldObjectLocator
     else
       fLinkObjectLocator := nil;
-    Changed(beValueChanged, [NewLocator]);
-    GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beValueChanged, [NewLocator]);
+    GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -1965,18 +2010,25 @@ procedure TBoldIndirectSingleLinkController.Unlink(OldLocator: TBoldObjectLocato
 begin
   Assert((Mode <> blulMarkAdjusted) or (OwningReference.BoldPersistenceState = bvpsCurrent), OwningMember.DisplayName);
   Assert(fLinkObjectLocator = OldLocator);
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningReference, 'Unlink', '');
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningReference, 'Unlink', '');
 
-  PreChange;
-  fLinkObjectLocator := nil;
-  fOtherEndLocator := nil;
-  Changed(beValueChanged, [nil]);
-  GetLinkObjectRoleController.Changed( beValueChanged, [nil]);
-  if Mode = blulMarkModified then
-    EndModify;
+    PreChange;
+    fLinkObjectLocator := nil;
+    fOtherEndLocator := nil;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beValueChanged, [nil]);
+    GetLinkObjectRoleController.Changed( beValueChanged, [nil]);
+    BoldSystem.CommitTransaction;
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 function TBoldIndirectSingleLinkController.GetProxy(Member: TBoldMember; Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
@@ -2014,6 +2066,7 @@ begin
         Assert(fLinkObjectLocator.BoldObject.BoldExistenceState = besExisting);
         Assert(GetLinkObjectOwnLinkController(fLinkObjectLocator.BoldObject).fLocator = OwningReference.OwningObject.BoldObjectLocator);
         Assert(GetLinkObjectOtherLinkController(fLinkObjectLocator.BoldObject).fLocator = fOtherEndLocator);
+        Assert(GetLinkObjectRoleController.AssertIntegrity);
       end
       else
       begin
@@ -2057,10 +2110,10 @@ begin
     Assert(ReferredLocatorList.Count = LinkLocatorList.Count);
     if RoleRTInfo.IsOrdered then
       GetLinkObjectOwnLinkController(LinkObject).SetAndModifyOrderNo(LinkLocatorList.IndexOf(LinkObject.BoldObjectLocator));
-    Changed(beItemAdded, [Locator]);
-    GetLinkObjectListController.Changed(beItemAdded, [LinkObject.BoldObjectLocator]);
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beItemAdded, [Locator]);
+    GetLinkObjectListController.Changed(beItemAdded, [LinkObject.BoldObjectLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -2114,21 +2167,17 @@ procedure TBoldIndirectMultiLinkController.MakeDbCurrent;
     lListOfOtherEnd: TBoldObjectIdList;
     lThisEndInLinkClass: TBoldObjectReference;
     lOtherEndInLinkClass: TBoldObjectReference;
-    lTopSortedIndex: Integer;
     lMultiLinkItem: TIndirectMultiLinkItem;
     lSortList: TList;
     i: integer;
     lIsOrdered: boolean;
     CheckType: boolean;
-    lTopSortedClasses: TBoldClassTypeInfoList;
   begin
     lBoldGuard := TBoldGuard.Create(lListOfLinkObjects, lListOfOtherEnd, lSortList);
     lLinkClassTypeInfo := RoleRTInfo.LinkClassTypeInfo;
     ClassList := BoldSystem.Classes[lLinkClassTypeInfo.TopSortedIndex];
-    lTopSortedIndex := RoleRTInfo.ClassTypeInfoOfOtherEnd.TopSortedIndex;
     lOtherIndexInLinkClass := RoleRTInfo.OtherIndexInLinkClass;
     lOwnIndexInLinkClass := RoleRTInfo.OwnIndexInLinkClass ;
-    lTopSortedClasses := BoldSystem.BoldSystemTypeInfo.TopSortedClasses;
     lListOfLinkObjects := TBoldObjectIdList.Create;
     lListOfOtherEnd:= TBoldObjectIdList.Create;
     lIsOrdered := RoleRTInfo.IsOrdered;
@@ -2225,7 +2274,7 @@ begin
       ReferredLocatorList.InitMembersIndex(OwningObjectList, RoleRTInfo.Qualifiers)
     end
     else
-      raise EBold.CreateFmt('%s.GetLocatorByQualifiers: Object list does not have a member index or role is not qualified', [ClassName]);
+      raise EBold.CreateFmt(sRolenotQualified, [ClassName]);
   end;
   result := ReferredLocatorList.GetLocatorByAttributesAndSubscribe(MemberList, Subscriber);
 end;
@@ -2257,17 +2306,17 @@ begin
     LinkLocatorList.Insert(Index, NewLinkLocator);
     ReferredLocatorList.Insert(Index, Locator);
     ReOrder;
-    Changed(beItemAdded, [Locator]);
-    GetLinkObjectListController.Changed(beItemAdded, [NewLinkLocator]);
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beItemAdded, [Locator]);
+    GetLinkObjectListController.Changed(beItemAdded, [NewLinkLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
 end;
 
-procedure TBoldIndirectMultiLinkController.linkto(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
+procedure TBoldIndirectMultiLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
 var
   NewReferredLocator: TBoldObjectLocator;
 begin
@@ -2276,31 +2325,37 @@ begin
   begin
     exit;
   end;
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningList, 'Linkto', '');
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningList, 'Linkto', '');
 
-  PreChange;
-  NewReferredLocator := GetLinkObjectOtherLinkController(NewLocator.EnsuredBoldObject).fLocator;
-  LinkLocatorList.Add(NewLocator);
-  ReferredLocatorList.Add(NewReferredLocator);
-  if updateOrderNo and RoleRTInfo.IsOrdered then
-    GetLinkObjectOwnLinkController(NewLocator.BoldObject).SetAndModifyOrderNo(LinkLocatorList.IndexOf(NewLocator)); //TODO - This could have side effect when mode is blulMarkAdjusted
-  if Mode = blulMarkAdjusted then
-    OwningObjectList.Adjusted := True;
-  Changed(beItemAdded, [NewReferredLocator]);
-  GetLinkObjectListController.Changed(beItemAdded, [NewLocator]);
-  if Mode = blulMarkModified then
-    EndModify;
+    PreChange;
+    NewReferredLocator := GetLinkObjectOtherLinkController(NewLocator.EnsuredBoldObject).fLocator;
+    LinkLocatorList.Add(NewLocator);
+    ReferredLocatorList.Add(NewReferredLocator);
+    if updateOrderNo and RoleRTInfo.IsOrdered then
+      GetLinkObjectOwnLinkController(NewLocator.BoldObject).SetAndModifyOrderNo(LinkLocatorList.IndexOf(NewLocator)); //TODO - This could have side effect when mode is blulMarkAdjusted
+    if Mode = blulMarkAdjusted then
+      OwningObjectList.Adjusted := True;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beItemAdded, [NewReferredLocator]);
+    GetLinkObjectListController.Changed(beItemAdded, [NewLocator]);
+    BoldSystem.CommitTransaction();
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TBoldIndirectMultiLinkController.Move(CurrentIndex, NewIndex: Integer);
 begin
   EnsureOrder;
-  if not RoleRTInfo.IsOrdered then
-    exit;
-
+//  if not RoleRTInfo.IsOrdered then
+//    exit;
   BoldSystem.StartTransaction;
   try
     BoldClearLastFailure;
@@ -2311,10 +2366,10 @@ begin
     LinkLocatorList.Move(CurrentIndex, NewIndex);
     ReferredLocatorList.Move(CurrentIndex, NewIndex);
     ReOrder;
-    Changed(beOrderChanged, []);
-    GetLinkObjectListController. Changed(beOrderChanged, []);
     EndModify;
     BoldSystem.CommitTransaction;
+    Changed(beOrderChanged, []);
+    GetLinkObjectListController. Changed(beOrderChanged, []);
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -2387,9 +2442,9 @@ begin
       BoldSystem.AllowObjectDestruction;
     end;
     ReOrder;
+    EndModify;
     Changed(beItemDeleted, [Locator]);
     GetLinkObjectListController.Changed(beItemDeleted, [LinkLocator]);
-    EndModify;
     BoldSystem.CommitTransaction;
   except
     BoldSystem.RollbackTransaction;
@@ -2619,9 +2674,9 @@ begin
     LinkLocatorList[index] := NewLink(Locator, blulMarkModified).BoldObjectLocator;
     ReferredLocatorList[index] := Locator;
     DeleteLink(OldLinkLocator, blulMarkModified);
+    EndModify;
     Changed(beItemReplaced, [Locator, Index]);
     GetLinkObjectListController.Changed(beItemReplaced, [OldLinkLocator, Index]);
-    EndModify;
     BoldSystem.CommitTransaction;
   except
     BoldSystem.RollbackTransaction;
@@ -2653,22 +2708,29 @@ begin
     exit;
   end;
   Assert(LinkLocatorList.LocatorInList[OldLocator]);
-  BoldClearLastFailure;
-  if Mode = blulMarkModified then
-    if not StartModify then
-      BoldRaiseLastFailure(OwningList, 'Unlink', '');
+  BoldSystem.StartTransaction;
+  try
+    BoldClearLastFailure;
+    if Mode = blulMarkModified then
+      if not StartModify then
+        BoldRaiseLastFailure(OwningList, 'Unlink', '');
 
-  PreChange;
-  OldIndex := LinkLocatorList.IndexOf(OldLocator);
-  LinkLocatorList.Remove(OldLocator);
-  OldLinkLocator := ReferredLocatorList[oldIndex];
-  ReferredLocatorList.RemoveByIndex(OldIndex);
-  if Mode = blulMarkAdjusted  then
-    OwningObjectList.Adjusted := True;
-  Changed(beItemDeleted, [OldLocator]);
-  GetLinkObjectListController.Changed(beItemDeleted, [OldLinkLocator]);
-  if Mode = blulMarkModified then
-    EndModify;
+    PreChange;
+    OldIndex := LinkLocatorList.IndexOf(OldLocator);
+    LinkLocatorList.Remove(OldLocator);
+    OldLinkLocator := ReferredLocatorList[oldIndex];
+    ReferredLocatorList.RemoveByIndex(OldIndex);
+    if Mode = blulMarkAdjusted  then
+      OwningObjectList.Adjusted := True;
+    if Mode = blulMarkModified then
+      EndModify;
+    Changed(beItemDeleted, [OldLocator]);
+    GetLinkObjectListController.Changed(beItemDeleted, [OldLinkLocator]);
+    BoldSystem.CommitTransaction;
+  except
+    BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 function TBoldIndirectMultiLinkController.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -2751,7 +2813,7 @@ begin
     Result := (OrderNo1 - OrderNo2);
   end
   else
-    raise EBold.Create('Cannot call compare if OtherEnd is not a single role');
+    raise EBold.Create(sOtherEndMustBeSingle);
 end;
 
 function TBoldIndirectMultiLinkController.AssertIntegrity: Boolean;
@@ -2768,6 +2830,8 @@ begin
       Assert(LinkLocatorList[i].BoldObject.BoldExistenceState = besExisting);
       Assert(GetLinkObjectOwnLinkController(LinkLocatorList[i].BoldObject).fLocator = OwningObjectList.OwningObject.BoldObjectLocator);
       Assert(GetLinkObjectOtherLinkController(LinkLocatorList[i].BoldObject).fLocator = ReferredLocatorList[i]);
+//      Assert(GetLinkObjectOwnLinkController(LinkLocatorList[i].BoldObject).AssertIntegrity);
+//      Assert(GetLinkObjectOtherLinkController(LinkLocatorList[i].BoldObject).AssertIntegrity);
     end
     else
     begin
@@ -2885,6 +2949,15 @@ begin
 end;
 
 { TBoldLinkObjectSingleLinkController }
+function TBoldLinkObjectSingleLinkController.AssertIntegrity: Boolean;
+begin
+  result := Assigned(self.fLocator);
+  if OwningReference.BoldRoleRtInfo.IndexOfMainRole <> -1 then
+  begin
+    self.ControllerForMainRole.AssertIntegrity;
+    self.ControllerForLinkRole.AssertIntegrity;
+  end;
+end;
 
 function TBoldLinkObjectSingleLinkController.OtherInnerLinkController: TBoldLinkObjectSingleLinkController;
 begin
@@ -2925,7 +2998,7 @@ begin
           (OuterSingle.fOtherEndLocator = nil) then
           OuterSingle.fOtherEndLocator := fLocator;
       end else
-        raise EBold.CreateFmt('%s.SetFromId: Unexpected type of controller: %s', [classname, OtherOuterLink.classname]);
+        raise EBold.CreateFmt(sUnexpectedControllerType, [classname, OtherOuterLink.classname]);
     end;
   end;
 end;
@@ -2933,7 +3006,7 @@ end;
 procedure TBoldLinkObjectSingleLinkController.SetLocator(NewLocator: TBoldObjectLocator);
 begin
   if assigned(NewLocator) then
-    raise EBold.CreateFmt('%s.SetLocator: Cannot change a Link Object Single Link', [ClassName]);
+    raise EBold.CreateFmt(sCannotChangeLinkObjectSingleLink, [ClassName]);
   inherited;
 end;
 
@@ -2941,13 +3014,19 @@ end;
 
 procedure TBoldLinkObjectListController.AddLocator(Locator: TBoldObjectLocator);
 begin
-  raise EBold.CreateFmt('%s.AddLocator: Cannot add directly to a list of link objects', [ClassName]);
+  raise EBold.CreateFmt(sInvalidForListOfLinkObjects, [ClassName, 'AddLocator']); // do not localize
 end;
 
 procedure TBoldLinkObjectListController.MakeDbCurrent;
 begin
   GetMainList.EnsureContentsCurrent;
   GetObjectList.BoldPersistenceState := bvpsCurrent;
+end;
+function TBoldLinkObjectListController.AssertIntegrity: Boolean;
+begin
+  result := true;
+  Assert(self.GetLocatorList.Count = self.GetMainList.Count);
+  Assert(count = self.GetMainListController.Count);
 end;
 
 function TBoldLinkObjectListController.GetCount: Integer;
@@ -2991,32 +3070,32 @@ end;
 
 procedure TBoldLinkObjectListController.InsertLocator(index: Integer; Locator: TBoldObjectLocator);
 begin
-  raise EBold.CreateFmt('%s.InsertLocator: cannot insert into a list of link objects', [ClassName]);
+  raise EBold.CreateFmt(sInvalidForListOfLinkObjects, [ClassName, 'InsertLocator']); // do not localize
 end;
 
 procedure TBoldLinkObjectListController.Move(CurrentIndex, NewIndex: Integer);
 begin
-  raise EBold.CreateFmt('%s.Move: Cannot move items in a list of link objects', [ClassName]);
+  raise EBold.CreateFmt(sInvalidForListOfLinkObjects, [ClassName, 'Move']); // do not localize
 end;
 
 procedure TBoldLinkObjectListController.RemoveByIndex(index: Integer);
 begin
-  raise EBold.CreateFmt('%s.RemoveByIndex: Cannot remove from a list of link objects', [ClassName]);
+  raise EBold.CreateFmt(sInvalidForListOfLinkObjects, [ClassName, 'RemoveByIndex']); // do not localize
 end;
 
 procedure TBoldLinkObjectListController.SetLocator(index: Integer; Locator: TBoldObjectLocator);
 begin
-  raise EBold.CreateFmt('%s.SetLocator: Cannot modify a list of link objects directly', [ClassName]);
+  raise EBold.CreateFmt(sInvalidForListOfLinkObjects, [ClassName, 'SetLocator']); // do not localize
 end;
 
 function TBoldLinkObjectListController.GetStreamName: string;
 begin
-  raise EBold.CreateFmt('%s.GetStreamName: Abstract error', [Classname]);
+  raise EBold.CreateFmt(sLocatedAbstractError, [Classname, 'GetStreamName']); // do not localize
 end;
 
 function TBoldLinkObjectListController.GetFreeStandingClass: TBoldFreeStandingElementClass;
 begin
-  raise EBold.CreateFmt('%s.GetFreeStandingClass: Abstract error', [Classname]);
+  raise EBold.CreateFmt(sLocatedAbstractError, [Classname, 'GetFreeStandingClass']); // do not localize
 end;
 
 function TBoldLinkObjectListController.GetMainList: TBoldObjectList;
@@ -3051,7 +3130,14 @@ end;
 
 function TBoldLinkObjectReferenceController.GetStreamName: string;
 begin
-  raise EBold.CreateFmt('%s.GetStreamName: Abstract error', [Classname]);
+  raise EBold.CreateFmt(sLocatedAbstractError, [Classname, 'GetStreamName']); // do not localize
+end;
+
+function TBoldLinkObjectReferenceController.AssertIntegrity: Boolean;
+begin
+  result := true;
+//  if GetLocator <> nil then
+//  ControllerForMainRole.AssertIntegrity;
 end;
 
 function TBoldLinkObjectReferenceController.GetFreeStandingClass: TBoldFreeStandingElementClass;
@@ -3084,7 +3170,7 @@ end;
 
 procedure TBoldLinkObjectReferenceController.SetLocator(NewLocator: TBoldObjectLocator);
 begin
-  raise EBold.CreateFmt('%s.SetLocator: Cannot set a link object reference directy', [Classname]);
+  raise EBold.CreateFmt(sCannotSetLinkObjectReference, [Classname]);
 end;
 
 { TBoldUnOrderedDirectSingleLinkController }

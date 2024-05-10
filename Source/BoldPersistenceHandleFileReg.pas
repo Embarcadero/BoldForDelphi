@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldPersistenceHandleFile.res}
+
 uses
   SysUtils,
   Classes,
@@ -54,8 +56,8 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldPersistenceHandleFileXML]);
-  RegisterEditors;
+    RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldPersistenceHandleFileXML]);
+    RegisterEditors;
 end;
 
 end.

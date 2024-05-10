@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldElementList;
@@ -31,6 +31,7 @@ type
     function InternalAddNew: TBoldElement; override;
     function GetCanCreateNew: Boolean; override;
     procedure InternalClear; override;
+    procedure AssignCloneValue(AClone: TBoldMember); override;
     function GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;    
     //function ProxyClass: TBoldMember_ProxyClass; override;
   public
@@ -50,6 +51,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldSubscription,
   BoldSystemRT,
@@ -103,6 +106,14 @@ procedure TBoldElementList.Assign(Source: TBoldElement);
 begin
   if source is TBoldElementList then
     addlist(Source as TBoldElementList)
+  else
+    inherited;
+end;
+
+procedure TBoldElementList.AssignCloneValue(AClone: TBoldMember);
+begin
+  if AClone is TBoldElementList then
+    TBoldElementList(AClone).AddList(self)
   else
     inherited;
 end;
@@ -165,12 +176,12 @@ end;
 
 procedure TBoldElementList.InsertNew(index: Integer);
 begin
-  raise EBold.CreateFmt('%s.InsertNew: This operation is not allowed', [className]);
+  raise EBold.CreateFmt(sOperationNotAllowed, [className, 'InsertNew']); // do not localize
 end;
 
 function TBoldElementList.InternalAddNew: TBoldElement;
 begin
-  raise EBold.CreateFmt('%s.InternalAddNew: This operation is not allowed', [className]);
+  raise EBold.CreateFmt(sOperationNotAllowed, [className, 'InternalAddNew']); // do not localize
 end;
 
 procedure TBoldElementList.Move(CurIndex, NewIndex: Integer);
@@ -181,7 +192,7 @@ end;
 (*
 function TBoldElementList.ProxyClass: TBoldMember_ProxyClass;
 begin
-  raise EBold.CreateFmt('%s.ProxyClass: This operation is not allowed', [className]);
+  raise EBold.CreateFmt(sOperationNotAllowed, [className, 'ProxyClass']); // do not localize
 end;
 *)
 
@@ -213,7 +224,7 @@ end;
 
 function TBoldElementListController.CreateNew: TBoldElement;
 begin
-  raise EBold.Create('not implemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'CreateNew']);
 end;
 
 destructor TBoldElementListController.Destroy;
@@ -241,7 +252,7 @@ end;
 function TBoldElementListController.GetStreamName: string;
 begin
   result := '';
-  raise EBold.create('not implemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'GetStreamName']);
 end;
 
 function TBoldElementListController.IncludesElement(Item: TBoldElement): Boolean;

@@ -25,6 +25,7 @@ uses
   BoldPropertyEditors,
   BoldHandlePropEditor,
   BoldPlaceableSubscriber,
+  BoldPlaceableListSubscriber,
   BoldActions, BoldHandleAction, BoldListActions, BoldUndoActions,
   BoldSystem,
   BoldAbstractModel,
@@ -70,7 +71,8 @@ begin
                    TBoldListHandleMoveDownAction,
                    TBoldSetCheckPointAction,
                    TBoldUndoAction,
-                   TBoldRedoAction
+                   TBoldRedoAction,
+                   TBoldClearUndoAction
                   ], nil);
 end;
 
@@ -96,7 +98,8 @@ begin
     [
     TBoldFilter,
     TBoldComparer,
-    TBoldPlaceableSubscriber
+    TBoldPlaceableSubscriber,
+    TBoldPlaceableListSubscriber
     ]);
 
   RegisterComponents(BOLDPAGENAME_DEPRECATED,

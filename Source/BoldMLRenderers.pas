@@ -6,6 +6,7 @@ unit BoldMLRenderers;
 interface
 
 uses
+  Classes,
   BoldDefs,
   BoldSubscription,
   BoldControlPack,

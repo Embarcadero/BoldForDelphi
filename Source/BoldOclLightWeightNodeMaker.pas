@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclLightWeightNodeMaker;
@@ -63,6 +63,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldElements,
   BoldAttributes,
@@ -82,10 +84,8 @@ begin
      not OclRootNode.BoldType.ConformsTo(SystemTypeInfo.RootClassTypeInfo.ListTypeInfo) then
     begin
       if not (OclRootNode.BoldType is TBoldClassTypeInfo) or not OclRootNode.BoldType.ConformsTo(SystemTypeInfo.RootClassTypeInfo) then
-        SetFailure(0, format('Result of PS-evaluation must be an objectlist (was type: %s)', [OclRootNode.BoldType.AsString]));
+        SetFailure(0, format(sPSResultMustBeObjectList, [OclRootNode.BoldType.AsString]));
     end;
-  if not assigned(System) then
-    SetFailure(0, 'PS-evaluation can not be performed without a system');
 end;
 
 destructor TBoldOLWNodeMaker.destroy;
@@ -126,7 +126,7 @@ end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLIteral);
 begin
-  SetFailure(n.Position, 'OLWNodes does not support CollectionLiterals');
+  SetFailure(n.Position, sCollectionLiteralsNotSupported);
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral);
@@ -193,7 +193,7 @@ begin
       end;
     end;
     if not EffectivePersistent then
-      SetFailure(n.Position, format('Non persistent members (%s) can not be used in OLWNodes', [n.RTInfo.ExpressionName]));
+      SetFailure(n.Position, Format(sTransientMembersCannoteUsed, [n.RTInfo.ExpressionName]));
   end;
 
   if assigned(n.Qualifier) then
@@ -207,7 +207,7 @@ end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclMethod(N: TBoldOclMethod);
 begin
-  SetFailure(n.Position, 'OLWNodes does not support methods');
+  SetFailure(n.Position, sMethodsNotSupported);
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclNode(N: TBoldOclNode);
@@ -266,12 +266,12 @@ begin
 
       if n.args[0].BoldType.ConformsTo(BooleanType) and
          n.args[1].BoldType.ConformsTo(BooleanType) then
-        SetFailure(n.Position, 'Can not compare two booleans to each other with "=" or "<>", use boolean operations instead');
+        SetFailure(n.Position, sUseBooleanOperations);
 
       if assigned(Literal) then
       begin
         if LiteralType.ConformsTo(BooleanType) then
-          SetFailure(n.Position, 'Can not compare boolean values to literals when converting to SQL, use boolean operations instead');
+          SetFailure(n.Position, sUseBooleanOperationsWithLiterals);
 
         if LiteralType.ConformsTo((LiteralType.SystemTypeInfo as TBoldSystemTypeInfo).ValueSetTypeInfo) then
         begin
@@ -286,15 +286,17 @@ begin
             end;
             if Assigned(ValueSetValue) then begin
               Literal.IntValue := ValueSetValue.AsInteger;
-            end else begin
-              SetFailure(n.Position, format('EnumName (%s) not valid for %s', [LiteralName, LiteralType.ExpressionName]));
+            end 
+            else 
+            begin
+              SetFailure(n.Position, format(sEnumNameNotValid, [LiteralName, LiteralType.ExpressionName]));
             end;
           finally
             ValueSet.Free;
           end;
         end
         else
-          SetFailure(n.Position, format('Enum (%s) compared to a non Enum (%s)', [LiteralName, LiteralType.ExpressionName]));
+          SetFailure(n.Position, format(sEnumComparedToNonEnum, [LiteralName, LiteralType.ExpressionName]));
       end;
     end;
   end;
@@ -311,7 +313,7 @@ begin
   if n.Value is TBoldClassTypeInfo then
     fRootNode := TBoldOLWTypeNode.Create(n.Position, N.typeName, (n.Value as TBoldClassTypeInfo).TopSortedIndex)
   else
-    SetFailure(n.Position, 'OLWNodes does not support the type ' + n.TypeName);
+    SetFailure(n.Position, Format(sTypeNotSupported, [n.TypeName]));
 end;
 
 procedure TBoldOLWNodeMaker.VisitTBoldOclVariableBinding(N: TBoldOclVariableBinding);
@@ -320,6 +322,14 @@ var
   VarBind: TBoldOLWVariableBinding;
   Obj: TBoldObject;
 begin
+  if not assigned(n.Value) and (n.BoldType is TBoldAttributeTypeInfo) then
+  begin
+    VarBind := TBoldOLWVariableBinding.Create(N.Position, n.VariableName, -1);
+    Varbindings.Add(n);
+    OLWvarBindings.Add(VarBind);
+    fRootNode := VarBind;
+  end
+  else
   if assigned(n.Value) or (n.BoldType is TBoldClassTypeInfo) then
   begin
     TopSortedIndex := -1;
@@ -352,12 +362,11 @@ begin
     OLWvarBindings.Add(VarBind);
 
     fRootNode := VarBind;
-
   end
   else
   begin
     fRootNode := TBoldOLWVariableBinding.Create(N.Position, n.VariableName, -1);
-    setFailure(n.Position, Format('LoopVariables can only have class type, not %s', [n.BoldType.AsString]));
+    setFailure(n.Position, Format(sLoopVariablesMustBeClassType, [n.BoldType.AsString]));
   end;
 end;
 

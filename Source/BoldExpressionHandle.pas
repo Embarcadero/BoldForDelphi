@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -20,7 +27,6 @@ type
   TBoldExpressionHandleClass = class of TBoldExpressionHandle;       
 
   {---TBoldExpressionHandle---}
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExpressionHandle = class(TBoldRootedHandle, IBoldOCLComponent)
   function IBoldOCLComponent.GetContextType = GetStaticRootType;
   private
@@ -29,6 +35,8 @@ type
     fVariablesSubscriber: TBoldPassThroughSubscriber;
     fEvaluateInPS: Boolean;
     fUsePrefetch: Boolean;
+    fOffset: integer;
+    fMaxAnswers: integer;
     procedure _VariablesReceive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SetExpression(const Value: TBoldExpression);
     function GetExpression: TBoldExpression;
@@ -50,6 +58,8 @@ type
     property Expression: TBoldExpression read GetExpression write SetExpression;
     property Variables: TBoldOclVariables read GetVariables write SetVariables;
     property EvaluateInPS: Boolean read fEvaluateInPS write SetEvaluateInPS default false;
+    property InPSMaxAnswers: integer read fMaxAnswers write fMaxAnswers default -1;
+    property InPSOffset: integer read fOffset write fOffset default -1;
     {$IFNDEF T2H}
     property Subscribe;
     {$ENDIF}
@@ -60,9 +70,15 @@ implementation
 
 uses
   SysUtils,
+  {$IFDEF ATTRACS}
+  AttracsPerformance,
+  AttracsDefs,
+  AttracsTraceLog,
+  {$ENDIF}
   {$IFDEF SpanFetch}
   AttracsSpanFetchManager,
-  {$ENDIF}  
+  {$ENDIF}
+  BoldCoreConsts,
   BoldRev;
 
 const
@@ -106,35 +122,56 @@ procedure TBoldExpressionHandle.DeriveAndSubscribe(DerivedObject: TObject;
 var
   RootValue: TBoldElement;
   vars: TBoldExternalVariableList;
+{$IFDEF ATTRACS}
+  PerformanceMeasurement : TPerformanceMeasurement;
+  HandleLongName : String;
+{$ENDIF}
 begin
   if csDestroying in ComponentState then
     raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
-  RootValue := EffectiveRootValue;
-  if Assigned(RootValue) then
-  begin
-    if assigned(Variables) then
-      variables.SubscribeToHandles(Subscriber, Expression);
-    Vars := VariableList;
-    try
-    begin
-{$IFDEF SpanFetch}
-    if UsePrefetch and not EvaluateInps then
-      FetchOclSpan(RootValue, Expression, vars);
+{$IFDEF ATTRACS}
+  PerformanceMeasurement := TPerformanceMeasurement.ReStart;
+  try
 {$ENDIF}
-      if Assigned(RootValue.BoldType) then // ValueSetValue has no BoldType
-        RootValue.EvaluateAndSubscribeToExpression(Expression, Subscriber, ResultElement, False, EvaluateInPS, vars)
-    end;
-    except
-      on e: Exception do
+    RootValue := EffectiveRootValue;
+    if Assigned(RootValue) then
+    begin
+      if assigned(Variables) then
+        variables.SubscribeToHandles(Subscriber, Expression);
+      Vars := VariableList;
+      try
       begin
-        e.message := format('%s.DeriveAndSubscribe (%s): Failed with message: %s',
-          [ClassName, GetFullName(self), e.Message]);
-        raise
+  {$IFDEF SpanFetch}
+      if UsePrefetch and not EvaluateInps then
+        FetchOclSpan(RootValue, Expression, vars);
+  {$ENDIF}
+        if Assigned(RootValue.BoldType) then // ValueSetValue has no BoldType
+          RootValue.EvaluateAndSubscribeToExpression(Expression, Subscriber, ResultElement, False, EvaluateInPS, vars, fMaxAnswers, fOffset)
       end;
-    end;
-  end else
-    ResultElement.SetOwnedValue(nil);
-  SubscribeToValue;
+      except
+        on E: Exception do
+        begin
+          E.message := Format(sDeriveAndSubscribeFailed, [ClassName, GetFullName(self), E.Message]);
+          raise
+        end;
+      end;
+    end else
+      ResultElement.SetOwnedValue(nil);
+    SubscribeToValue;
+{$IFDEF ATTRACS}
+  finally
+    if not PerformanceMeasurement.AcceptableTimeForSmallComputation then
+    begin
+      if Assigned(Self.Owner) then
+        HandleLongName := Owner.Name + '.' + Self.Name
+      else
+        HandleLongName := Self.Name;
+      PerformanceMeasurement.WhatMeasured := 'Deriving TBoldExpressionHandle ' + HandleLongName;
+      PerformanceMeasurement.WhatMeasuredParameter := 'expression ' + Self.Expression;
+      PerformanceMeasurement.Trace;
+    end; // if TimeTaken too long
+  end;
+{$ENDIF}
 end;
 
 function TBoldExpressionHandle.GetExpression: String;
@@ -147,7 +184,7 @@ begin
   if Value <> Variables then
   begin
     if assigned(value) and value.LinksToHandle(self) then
-      raise EBold.CreateFmt('%s.SetVariables: %s can not be linked to %s. Circular reference', [classname, name, value.name]);
+      raise EBold.CreateFmt(sCircularReference, [classname, name, value.name]);
     FVariables := Value;
     StaticBoldTypeChanged;
     fVariablesSubscriber.CancelAllSubscriptions;
@@ -192,6 +229,8 @@ begin
   inherited;
   fVariablesSubscriber := TBoldPassthroughSubscriber.create(_VariablesReceive);
   fUsePrefetch := true;
+  fMaxAnswers := -1;
+  fOffset := -1;
 end;
 
 destructor TBoldExpressionHandle.Destroy;
@@ -220,5 +259,7 @@ begin
     result := Component = variables;
 end;
 
+initialization
+  BoldRegisterModuleVersion('$Workfile: BoldExpressionHandle.pas $ $Revision: 27 $ $Date: 02-08-08 9:21 $');
 end.
 

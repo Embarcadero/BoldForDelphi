@@ -36,8 +36,8 @@ type
     property Follower: TBoldFollower read GetFollower;
   public
     { Public declarations }
-    constructor create(owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(owner: TComponent); override;
+    destructor Destroy; override;
   published
     { Published declarations }
     property BoldHandle: TBoldElementHandle read GetBoldHandle write SetBoldHandle;
@@ -52,7 +52,7 @@ uses
 
 { TBoldPageControl }
 
-constructor TBoldPageControl.create(owner: TComponent);
+constructor TBoldPageControl.Create(owner: TComponent);
 begin
   inherited;
   fBoldProperties := TBoldStringFollowerController.Create(self);
@@ -61,7 +61,7 @@ begin
   fBoldProperties.OnGetContextType := _GetContextType;
 end;
 
-destructor TBoldPageControl.destroy;
+destructor TBoldPageControl.Destroy;
 begin
   FreeAndNil(fHandleFollower);
   FreeAndNil(fBoldProperties);

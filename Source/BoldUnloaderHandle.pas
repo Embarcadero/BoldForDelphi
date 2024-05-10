@@ -12,12 +12,13 @@ uses
   BoldSubscription,
   BoldSystem,
   BoldSystemHandle,
+  BoldHandles,
   Classes,
   ExtCtrls;
 
 const
   cTickInterval = 60 * 1000; // 1 minute
-  cScanPerTick = 50; // milliseconds, max time to spend scaning
+  cScanPerTick = 100; // milliseconds, max time to spend scaning
   cMinAgeForUnload = 5; // unit is the TickInterval so (cTickInterval * cMinAgeForUnload) = 5 minutes
 
 type
@@ -25,18 +26,14 @@ type
   TBoldUnloaderHandle = class;
 
   [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
-  TBoldUnloaderHandle = class(TComponent)
+  TBoldUnloaderHandle = class(TBoldSystemExtensionComponent)
   private
     fActive: Boolean;
     fUnloader: TBoldUnloader;
     fTimer: TTimer;
-    fBoldSystemHandle: TBoldSystemHandle;
-    fSubscriber: TBoldPassthroughSubscriber;
     function GetUnloadDelayedFetch: boolean;
     function GetMinAgeForUnload: integer;
     function GetScanPerTick: integer;
-    procedure ReceiveFromSystemHandle(Originator: TObject; OriginalEvent: TBoldEvent;
-    RequestedEvent: TBoldRequestedEvent);
     procedure SetActive(const Value: boolean);
     procedure SetUnloadDelayedFetch(const Value: boolean);
     procedure SetMinAgeForUnload(const Value: integer);
@@ -48,7 +45,6 @@ type
     function GetUnloadFromCurrentClassList: boolean;
     procedure SetUnloadFromCurrentClassList(const Value: boolean);
     property Unloader: TBoldUnloader read fUnloader;
-    procedure SetBoldSystemHandle(const Value: TBoldSystemHandle);
     procedure Tick(Sender: Tobject);
     procedure PropagateToUnloder;
     function GetTickInterval: integer;
@@ -57,13 +53,13 @@ type
     function GetOnMayUnload: TBoldUnloadObjectEvent;
     procedure SetOnMayInvalidate(const Value: TBoldInvalidateMemberEvent);
     procedure SetOnMayUnload(const Value: TBoldUnloadObjectEvent);
-    procedure PlaceSubscriptions;
+  protected
+    procedure StaticBoldTypeChanged; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
     property TickInterval: integer read GetTickInterval write SetTickInterval default cTickInterval;
-    property BoldSystemHandle: TBoldSystemHandle read fBoldSystemHandle write SetBoldSystemHandle;
     property ScanPerTick: integer read GetScanPerTick write SetScanPerTick default cScanPerTick;
     property MinAgeForUnload: integer read GetMinAgeForUnload write SetMinAgeForUnload default cMinAgeForUnload;
     property UnloadDelayedFetch: boolean read GetUnloadDelayedFetch write SetUnloadDelayedFetch default false;
@@ -91,7 +87,6 @@ constructor TBoldUnloaderHandle.Create(AOwner: TComponent);
 begin
   inherited;
   fUnLoader := TBoldUnloader.Create;
-  fSubscriber := TBoldPassthroughSubscriber.Create(ReceiveFromSystemHandle);
   fTimer := TTimer.Create(Self);
   fTimer.Enabled := True;
   TickInterval := cTickInterval;
@@ -103,8 +98,6 @@ end;
 
 destructor TBoldUnloaderHandle.Destroy;
 begin
-  BoldSystemHandle := nil;
-  FreeAndNil(fSubscriber);
   FreeAndNil(fUnLoader);
   FreeAndNil(fTimer);
   inherited;
@@ -135,25 +128,12 @@ begin
   Result := fTimer.Interval;
 end;
 
-procedure TBoldUnloaderHandle.PlaceSubscriptions;
-begin
-  fSubscriber.CancelAllSubscriptions;
-  if assigned(fBoldSystemHandle) then
-  begin
-    fBoldSystemHandle.AddSmallSubscription(fSubscriber, [beDestroying], breHandleDestroyed);
-    fBoldSystemHandle.AddSmallSubscription(fSubscriber, [beValueIdentityChanged], breSystemChanged);
-    if assigned(fBoldSystemHandle.System) then
-      fBoldSystemHandle.System.AddSmallSubscription(fSubscriber, [beDestroying], beDestroying);
-  end;
-end;
-
 procedure TBoldUnloaderHandle.PropagateToUnloder;
 begin
-  PlaceSubscriptions;
   if Active then
   begin
-    if Assigned(BoldSystemHandle) then
-      fUnloader.BoldSystem := BoldSystemHandle.System
+    if Assigned(StaticSystemHandle) then
+      fUnloader.BoldSystem := StaticSystemHandle.System
     else
      fUnloader.BoldSystem := nil;
     fUnloader.Active := Assigned(fUnloader.BoldSystem);
@@ -162,30 +142,11 @@ begin
     fUnLoader.Active := False;
 end;
 
-procedure TBoldUnloaderHandle.ReceiveFromSystemHandle(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-begin
-  if RequestedEvent = breHandleDestroyed then
-    BoldSystemHandle := nil
-  else
-    PropagateToUnloder;
-end;
-
 procedure TBoldUnloaderHandle.SetActive(const Value: boolean);
 begin
   if (fActive <> Value) then
   begin
     fActive := Value;
-    PropagateToUnloder;
-  end;
-end;
-
-procedure TBoldUnloaderHandle.SetBoldSystemHandle(
-  const Value: TBoldSystemHandle);
-begin
-  if Value <> fBoldSystemHandle then
-  begin
-    fBoldSystemHandle := Value;
     PropagateToUnloder;
   end;
 end;
@@ -200,6 +161,12 @@ procedure TBoldUnloaderHandle.SetUnloadFromCurrentClassList(
   const Value: boolean);
 begin
   Unloader.UnloadFromCurrentClassList := Value;
+end;
+
+procedure TBoldUnloaderHandle.StaticBoldTypeChanged;
+begin
+  inherited;
+  PropagateToUnloder;
 end;
 
 procedure TBoldUnloaderHandle.SetMinAgeForUnload(

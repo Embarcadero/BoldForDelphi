@@ -1,4 +1,4 @@
-
+ï»¿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSqlSymbols;
@@ -7,7 +7,7 @@ interface
 
 uses
   BoldIndexableList,
-  BoldSqlNodes;
+  BoldSqlNodes, System.Classes, Data.DB;
 
 type
   TBSS_Symbol = class(TBoldSqlSymbol)
@@ -32,14 +32,17 @@ function SqlSymbolDictionary: TBoldSqlSymbolDictionary;
 implementation
 
 uses
+  SysUtils,
+
+  BoldCoreConsts,
   BoldPMappersSql,
   BoldSQLQuery,
   BoldHashIndexes,
   BoldPMappersDefault,
-  SysUtils,
   BoldDefs,
   BoldContainers,
-  BoldPSDescriptionsSQL, BoldPMappersLinkDefault;
+  BoldPSDescriptionsSQL,
+  BoldPMappersLinkDefault;
 
 var
   SqlSymbols: TBoldSqlSymbolDictionary;
@@ -402,6 +405,12 @@ type
 
 type
   TBSS_BoldIDIn = class(TBSS_BinarySymbol)
+  public
+    procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
+  end;
+
+type
+  TBSS_NamedIDIn = class(TBSS_BinarySymbol)
   public
     procedure BuildWCFOrQuery(OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace); override;
   end;
@@ -889,12 +898,12 @@ var
   Loopvar: TBoldSqlVariableBinding;
 begin
   if not (OperationNode.args[1] is TBoldSqlMember) then
-    raise EBold.Create('Argument to OrderBy must be a Member');
+    raise EBold.Create(sArgToOrderByMustBeMember);
 
   OrderByMember := OperationNode.args[1] as TBoldSqlMember;
 
   if OrderByMember.MemberMapper.ColumnCount <> 1 then
-    raise EBold.Create('Argument to OrderBy must have exactly 1 column');
+    raise EBold.Create(sArgToOrderByMustHaveExactlyOneColumn);
 
   Loopvar := (OperationNode as TBoldSQlIteration).Loopvar;
 
@@ -924,9 +933,6 @@ var
   TableRef: TBoldSQlTableReference;
   ColRef: TBoldSqlColumnReference;
   Loopvar: TBoldSqlVariableBinding;
-const
-  sArgToOrderByMustBeMember = 'Argument to OrderBy must be a Member';
-  sArgToOrderByMustHaveExactlyOneColumn = 'Argument to OrderBy must have exactly 1 column';
 begin
   if not (OperationNode.args[1] is TBoldSqlMember) then
     raise EBold.Create(sArgToOrderByMustBeMember);
@@ -1287,8 +1293,8 @@ begin
   aWCF := OperationNode.Args[1].RelinquishWCF;
   sIDs := aWCF.GetAsString(OperationNode.Args[0].Query);
   aWCF.Free;
-  // Übergebenen String in ID-Liste umwandeln -> "" entfernen
-  // Außer es ist Paramter (:Param)
+  // Ãœbergebenen String in ID-Liste umwandeln -> "" entfernen
+  // AuÃŸer es ist Paramter (:Param)
   if (Length(sIDs) > 0) then begin
     if (sIDs[1] = '''') then begin
       sIDs := Copy(sIDs, 2, Length(sIDs) - 2);
@@ -1334,6 +1340,85 @@ begin
     raise EBoldInternal.Create(className + ': No Query found.');
   TableRefs := Query.TableReferences;
   OperationNode.WCF := TBoldSQLWCFColumnRef.Create(TableRefs[TableRefs.Count-1].GetColumnReference(ColumnName));
+end;
+
+{ TBSS_NamedIDIn }
+
+procedure TBSS_NamedIDIn.BuildWCFOrQuery(
+  OperationNode: TBoldSQLOperation; NameSpace: TBoldSqlNameSpace);
+var
+  TypeColRef: TBoldSQLWCFColumnRef;
+  TypeValue: TBoldSQLWCFGenericExpression;
+  aWCF: TBoldSqlWCF;
+  sIDs: string;
+  aColRef: TBoldSQLColumnReference;
+  slHelper: TStringList;
+  i: Integer;
+  sUnicodePrefix: string;
+  oSQLNode: TBoldSQLNode;
+begin
+  oSQLNode := OperationNode.Args[0];
+  aColRef := oSQLNode.MainTableRef.GetColumnReference(TBoldSqlStrLiteral(OperationNode.Args[1]).asString);
+  TypeColRef := TBoldSQLWCFColumnRef.Create(aColRef);
+
+  if oSQLNode.HasQuery then
+  begin
+    sUnicodePrefix := oSQLNode.Query.SQLDataBaseConfig.UnicodeStringPrefix;
+  end else
+  begin
+    sUnicodePrefix := 'N'; // fallback
+  end;
+
+  aWCF := OperationNode.Args[2].RelinquishWCF;
+  try
+    sIDs := aWCF.GetAsString(OperationNode.Args[0].Query);
+  finally
+    aWCF.Free;
+  end;
+
+  // convert passed string to ID list -> remove "".
+  // Unless it is a paramter (:Param)
+  if (Length(sIDs) > 0) then begin
+
+    // remove leading Unicodeprefix, if existing, to add this later for every single item
+    if sIds[1] = sUnicodePrefix then
+    begin
+      sIDs := Copy(sIDs, 2, Length(sIDs));
+    end;
+
+    if (sIDs[1] = '''') then begin
+      sIDs := Copy(sIDs, 2, Length(sIDs) - 2);
+    end else if (sIDs[1] = ':') then begin
+      sIDs := OperationNode.Args[0].Query.Params.ParamValues[Copy(sIDs, 2, MaxInt)];
+    end;
+  end;
+
+
+  if sIDs <> '' then begin
+    // in case we have a "string" column, every id needs to set in own singlequotes
+    if (aColRef.ColumnDescription.FieldType in [ftString, ftMemo, ftFixedChar, ftWideString, ftWideMemo]) then begin
+      slHelper := TStringList.Create;
+      try
+        slHelper.Delimiter := ',';
+        slHelper.DelimitedText := sIDs;
+        for i := 0 to slHelper.Count - 1 do begin
+
+          // also adding leading unicode prefix for every single item...
+          if i = 0 then begin
+            sIDs := sUnicodePrefix + '''' + Trim(slHelper[i]) + '''';
+          end else begin
+            sIDs := sIDs + ', ' + sUnicodePrefix + '''' + Trim(slHelper[i]) + '''';
+          end;
+        end;
+      finally
+        slHelper.Free;
+      end;
+    end;
+  end;
+
+  TypeValue := TBoldSQLWCFGenericExpression.Create('(' + sIDs + ')');
+  OperationNode.WCF := TBoldSQLWCFBinaryInfix.Create(TypeColRef, TypeValue, 'in'); // do not localize
+  CollectArgWCFs(OperationNode);
 end;
 
 initialization
@@ -1397,6 +1482,7 @@ initialization
   sqlSymbols.Add(TBSS_BoldId.Create);
   sqlSymbols.Add(TBSS_BoldIDIs.Create);
   sqlSymbols.Add(TBSS_BoldIDIn.Create);
+  sqlSymbols.Add(TBSS_NamedIDIn.Create);
 
 finalization
   FreeAndNil(sqlSymbols);

@@ -75,6 +75,7 @@ end;
 
 destructor TOCLValidityChecker.Destroy;
 begin
+  FreeAndNil(fOclEvaluator);
   FreeAndNil(fSystemTypeInfo);
   inherited;
 end;

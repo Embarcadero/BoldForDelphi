@@ -8,7 +8,7 @@ interface
 uses
   Classes,
   DesignEditors,
-  DesignIntf, 
+  DesignIntf,
   BoldAbstractPropertyEditors;
 
 type
@@ -54,6 +54,7 @@ end;
 procedure TPropertyNameProperty.GetValues(Proc: TGetStrProc);
 var
   SelectedComponent: TBoldDrivenProperty;
+  ProcessedList: TList;
 
   procedure DeclareProperties(LastObject: TObject; TypeInfo: PTypeInfo; Path: String);
   var
@@ -68,9 +69,9 @@ var
     for I := 0 to Count - 1 do
     begin
       if Path = '' then
-        NewPath := String(PropList[I]^.Name)
+        NewPath := PropList[I]^.Name
       else
-        NewPath := Path + '.' + String(PropList[I]^.Name);
+        NewPath := Path + '.' + PropList[I]^.Name;
 
       if (PropList[I]^.PropType^.Kind <> tkClass) then
       begin
@@ -80,7 +81,7 @@ var
       else
       begin
         if Assigned(LastObject) then
-          NewObj := TObject(GetOrdProp(LastObject, String(PropList[I]^.Name)));
+          NewObj := TObject(GetOrdProp(LastObject, PropList[I]^.Name));
 
         if NewObj is TCollection then
           for J := 0 to TCollection(NewObj).Count - 1 do
@@ -90,17 +91,25 @@ var
             DeclareProperties(TCollection(NewObj).Items[J], TCollection(NewObj).Items[J].ClassInfo,SubPath)
           end
         else
-          DeclareProperties(NewObj, PropList[I]^.PropType^,NewPath);
+          if ProcessedList.indexOf(NewObj) = -1 then
+          begin
+            ProcessedList.Add(NewObj);
+            DeclareProperties(NewObj, PropList[I]^.PropType^,NewPath);
+          end;
       end;
     end;
   end;
 
 begin
   if PropCount < 1 then exit;
-
-  SelectedComponent := GetComponent(0) as TBoldDrivenProperty;
-  if Assigned(SelectedComponent) and Assigned(SelectedComponent.VCLComponent) then
-    DeclareProperties(SelectedComponent.VCLComponent,SelectedComponent.VCLComponent.ClassInfo,'');
+  ProcessedList := TList.Create;
+  try
+    SelectedComponent := GetComponent(0) as TBoldDrivenProperty;
+    if Assigned(SelectedComponent) and Assigned(SelectedComponent.VCLComponent) then
+      DeclareProperties(SelectedComponent.VCLComponent,SelectedComponent.VCLComponent.ClassInfo,'');
+  finally
+    ProcessedList.free;
+  end;
 end;
 
 {-- TVCLComponentProperty -----------------------------------------------------}

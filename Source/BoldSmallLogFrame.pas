@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSmallLogFrame;
@@ -38,6 +38,7 @@ type
     fStartTime: TDateTime;
     fSessionName: string;
     fHighestSeverity: TBoldLogType;
+    fProgressPosition: integer;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -46,15 +47,16 @@ type
     procedure Log(const s: string; LogType: TBoldLogType = ltInfo);
     procedure ProgressStep;
     procedure Show;
-    procedure Sync; 
+    procedure Sync;
     procedure StartLog(const SessionName: String);
     procedure EndLog;
     procedure WarningIndicatorClick(Sender: TObject);
     procedure CalculateTimeLeft;
     procedure ProcessInterruption;
+    procedure DoRefresh;
   public
-    constructor create(Owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(Owner: TComponent); override;
+    destructor Destroy; override;
     class function CreateSmallLogForm(Caption: string): TForm;
     { Public declarations }
   end;
@@ -63,7 +65,16 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils;
+
+const
+  c100ms = 1/24/60/60/10; // do not refresh more than once per 100 ms
+  cProgressBarPrecision = 0.05; // ignore less than 5 percent movement
+
+var
+  _lastRefresh: TDateTime;
 
 type
   TExposedShape = class(TShape)
@@ -83,9 +94,9 @@ begin
     DonePart := pgLog.Position / pgLog.Max;
     PartLeft := 1 - DonePart;
     TimeLeft := (PartLeft * usedTime) / DonePart;
-    lblTimeLeft.Caption := 'Time left: ' + FormatDateTime('hh:mm:ss', timeLeft);
-    lblTotTime.Caption := 'Tot time: ' + FormatDateTime('hh:mm:ss', TimeLeft + UsedTime);
-    Refresh;
+    lblTimeLeft.Caption := Format(sLogTimeLeft, [FormatDateTime('hh:mm:ss', timeLeft)]); // do not localize
+    lblTotTime.Caption := Format(sLogTotalTime, [FormatDateTime('hh:mm:ss', TimeLeft + UsedTime)]); // do not localize
+    DoRefresh;
   end;
 end;
 
@@ -95,39 +106,50 @@ begin
   lblLogHeader.Caption := '';
   lblLogText.Caption := '';
   pgLog.Position := 0;
+  fProgressPosition := 0;
   lblTimeLeft.Caption := '';
   WarningPanel.visible := false;
 end;
 
-constructor TBoldLogFrame.create(Owner: TComponent);
+constructor TBoldLogFrame.Create(Owner: TComponent);
 begin
   inherited;
   lblLogText.Caption := '';
   lblLogMainHeader.Caption := '';
   lblLogHeader.Caption := '';
-  lblTimeLeft.Caption := ''; 
+  lblTimeLeft.Caption := '';
   BoldLog.RegisterLogReceiver(self);
   TExposedShape(WarningIndicator).OnClick := WarningIndicatorClick;
 end;
 
-destructor TBoldLogFrame.destroy;
+destructor TBoldLogFrame.Destroy;
 begin
   BoldLog.UnRegisterLogReceiver(self);
   inherited;
 end;
 
+procedure TBoldLogFrame.DoRefresh;
+begin
+  if now - _lastRefresh > c100ms then
+  begin
+    _lastRefresh := now;
+    Refresh;
+  end;
+end;
+
 procedure TBoldLogFrame.EndLog;
 begin
-  lblLogText.Caption := 'Done...';
+  lblLogText.Caption := sLogSmallDone;
   pgLog.Position := pgLog.Max + 1;
+  fProgressPosition := pgLog.Max + 1;
   if not WarningPanel.Visible then
     Timer1.Enabled := true;
   btnStop.Enabled := false;
 
   if fHighestSeverity = ltWarning then
-    lblLogText.Caption := lblLogText.Caption + '  there were warnings, click the yellow icon for details...'
+    lblLogText.Caption := Format(sLogSmallWarnings, [sLogSmallDone])
   else if fHighestSeverity = ltError then
-    lblLogText.Caption := lblLogText.Caption + '  there were errors, click the red icon for details...';
+    lblLogText.Caption := Format(sLogSmallErrors, [sLogSmallDone]);
 end;
 
 
@@ -141,7 +163,7 @@ begin
   if LogType in [ltInfo, ltWarning, ltError] then
   begin
     lblLogText.caption := trim(s);
-    Refresh;
+    DoRefresh;
   end;
   if LogType = ltWarning then
   begin
@@ -159,20 +181,27 @@ end;
 
 procedure TBoldLogFrame.ProgressStep;
 begin
-  pgLog.StepIt;
-  CalculateTimeLeft;
+  if pgLog.Max = 0 then
+    exit;
+  Inc(fProgressPosition);
+  if ((fProgressPosition-pgLog.Position) / pgLog.Max) > cProgressBarPrecision then
+  begin
+    pgLog.Position := fProgressPosition;
+    CalculateTimeLeft;
+  end;
 end;
 
 procedure TBoldLogFrame.SetProgress(const Value: integer);
 begin
   pgLog.position := Value;
+  fProgressPosition := Value;
   CalculateTimeLeft;
 end;
 
 procedure TBoldLogFrame.SetLogHeader(const Value: string);
 begin
   lblLogHeader.caption := Value;
-  Refresh;
+  DoRefresh;
 end;
 
 procedure TBoldLogFrame.SetProgressMax(const Value: integer);
@@ -190,7 +219,7 @@ begin
   Clear;
   lblLogMainHeader.Caption := SessionName;
   fSessionName := SessionName;
-  Refresh;
+  DoRefresh;
   Show;
   fStartTime := now;
   Timer1.Enabled := false; 
@@ -222,7 +251,8 @@ end;
 
 procedure TBoldLogFrame.Sync;
 begin
-  Application.ProcessMessages;
+  if Visible then
+    Application.ProcessMessages;
 end;
 
 class function TBoldLogFrame.CreateSmallLogForm(Caption: string): TForm;

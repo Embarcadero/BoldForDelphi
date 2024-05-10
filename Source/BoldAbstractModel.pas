@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractModel;
@@ -41,7 +41,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure SetFromModel(model: TMoldModel); //PATCH CFloury made public
+    procedure SetFromModel(model: TMoldModel);
+    procedure SetFromModelAsString(const ModelAsStrings: TStrings);
     procedure UpdateDesigner;
     procedure WriteToBeRemovedInfoToFile(FileName: String);
     property MoldModel: TMoldModel read GetMoldModel;
@@ -56,6 +57,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldBld,
   BoldGuard,
   BoldEnvironment,
@@ -72,8 +75,9 @@ end;
 destructor TBoldAbstractModel.Destroy;
 begin
   FreePublisher;
+  if fMoldModel <> FRawMoldModel then
+    FreeAndNil(fMoldModel);
   FreeAndNil(fRawMoldModel);
-  FreeAndNil(fMoldModel);
   FreeAndNil(fImplicitTypeNameDictionary);
   inherited Destroy;
 end;
@@ -105,7 +109,7 @@ procedure TBoldAbstractModel.DefineProperties(Filer: TFiler);
 
 begin
   inherited DefineProperties(Filer);
-  Filer.DefineProperty('Model', ReadModel, WriteModel, DoWriteModel);
+  Filer.DefineProperty(sModel, ReadModel, WriteModel, DoWriteModel);
 end;
 
 procedure TBoldAbstractModel.ReadModel(Reader: TReader);
@@ -119,7 +123,7 @@ begin
   while not Reader.EndOfList do
     ModelAsStrings.Add(Reader.ReadString);
   Reader.ReadListEnd;
-  SetFromModel(TMoldBLDRW.StringsToModel(ModelAsStrings));
+  SetFromModelAsString(ModelAsStrings);
 end;
 
 procedure TBoldAbstractModel.WriteModel(Writer: TWriter);
@@ -153,13 +157,37 @@ begin
   ModelAsStrings := TStringList.Create;
   if not Assigned(model) then
     Model := TMoldBLDRW.StringsToModel(ModelAsStrings);
+  if fMoldModel <> FRawMoldModel then
+    FreeAndNil(fMoldModel);
   FreeAndNil(FRawMoldModel);
-  FreeAndNil(fMoldModel);
-  FRawMoldModel := Model;
+  fMoldModel := Model;
+  if fMoldModel.TrimRemoved then // if nothing is trimmed then RawModel and MoldModel are same and can share same instance.
+  begin
+    TMoldBLDRW.ModelToStrings(Model, ModelAsStrings);
+    fRawMoldModel := TMoldBLDRW.StringsToModel(ModelAsStrings)
+  end
+  else
+    FRawMoldModel := Model;
   FRawMoldModel.TypeNameDictionary := TypeNameDictionary;
-  TMoldBLDRW.ModelToStrings(Model, ModelAsStrings);
+  fMoldModel.UpdateMemberIndexes;
+  ReadToBeRemovedInfoFromFile(FMoldModel);
+  fMoldModel.TypeNameDictionary := TypeNameDictionary;
+end;
+
+procedure TBoldAbstractModel.SetFromModelAsString(const ModelAsStrings: TStrings);
+begin
+  if fMoldModel <> FRawMoldModel then
+    FreeAndNil(fMoldModel);
+  FreeAndNil(FRawMoldModel);
   FMoldModel := TMoldBLDRW.StringsToModel(ModelAsStrings);
-  fMoldModel.TrimRemoved;
+  if fMoldModel.TrimRemoved then  // if nothing is trimmed then RawModel and MoldModel are same and can share same instance
+  begin
+    fRawMoldModel := TMoldBLDRW.StringsToModel(ModelAsStrings);
+    FRawMoldModel.TypeNameDictionary := TypeNameDictionary;
+  end
+  else
+    fRawMoldModel := fMoldModel;
+  fMoldModel.UpdateMemberIndexes;
   ReadToBeRemovedInfoFromFile(FMoldModel);
   fMoldModel.TypeNameDictionary := TypeNameDictionary;
 end;

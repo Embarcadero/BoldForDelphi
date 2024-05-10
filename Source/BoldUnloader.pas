@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////
 
 
 unit BoldUnloader;
@@ -64,12 +64,12 @@ type
     property OnReportUnload: TBoldReportUnloadEvent read fOnReportUnload write fOnReportUnload;
   end;
 
-
 implementation
 
 uses
   SysUtils,
   Windows,
+
   DateUtils,
   BoldUtils,
   BoldCoreConsts,
@@ -90,7 +90,7 @@ begin
       if Assigned(BoldSystem) then
         Tick
       else
-        raise EBold.Create('TBoldUnLoader: Attempt to set Active without BoldSystem');
+        raise EBold.CreateFmt(sNeedSystemToActivate, [ClassName]);
     end
     else
       FreeAndNil(fTraverser);
@@ -99,8 +99,11 @@ end;
 
 procedure TBoldUnLoader.SetBoldSystem(const Value: TBoldSystem);
 begin
-  Active := False;
-  fBoldSystem := Value;
+  if fBoldSystem <> Value then
+  begin
+    Active := False;
+    fBoldSystem := Value;
+  end;
 end;
 
 procedure TBoldUnLoader.StartScan;

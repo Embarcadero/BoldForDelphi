@@ -19,6 +19,8 @@ type
   TBoldLogSQLAction = class;
   TBoldLogPMAction = class;
   TBoldLogOCLAction = class;
+  TBoldLogOSSAction = class;
+  TBoldLogQueueAction = class;
   TBoldLogFormAction = class;
 
   { TBoldSystemDebuggerAction }
@@ -41,7 +43,7 @@ type
   protected
     function GetLogHandler: TBoldLogHandler; virtual; abstract;
     function GetLogType: string; virtual; abstract;
-    procedure SetLogHandler(Value: TBoldLogHandler); virtual; abstract; 
+    procedure SetLogHandler(Value: TBoldLogHandler); virtual; abstract;
     property LogType: string read GetLogType;
     property LogHandler: TBoldLogHandler read GetLogHandler write SetLogHandler;
   public
@@ -83,6 +85,14 @@ type
     procedure SetLogHandler(Value: TBoldLogHandler); override;
   end;
 
+  { TBoldLogQueueAction }
+  TBoldLogQueueAction = class(TBoldLogAction)
+  protected
+    function GetLogHandler: TBoldLogHandler; override;
+    function GetLogType: string; override;
+    procedure SetLogHandler(Value: TBoldLogHandler); override;
+  end;
+
   { TBoldLogFormAction }
   TBoldLogFormAction = class(TAction)
   private
@@ -101,7 +111,8 @@ uses
   BoldOCL,
   BoldDBInterfaces,
   BoldPMappers,
-  BoldObjectSpaceExternalEvents;
+  BoldObjectSpaceExternalEvents,
+  BoldQueue;
 
 { TBoldSystemDebuggerAction }
 
@@ -121,7 +132,7 @@ end;
 procedure TBoldSystemDebuggerAction.ExecuteTarget(Target: TObject);
 begin
   inherited;
-  if Checked then
+  if Assigned(fDebugForm) then
     CloseDebugForm
   else
     if Assigned(BoldSystemHandle) then
@@ -152,7 +163,10 @@ procedure TBoldSystemDebuggerAction.Notification(AComponent: TComponent;
 begin
   inherited;
   if (AComponent = fDebugForm) and (Operation = opRemove) then
+  begin
     fDebugForm := nil;
+    Checked := false;
+  end;
 end;
 
 { TBoldLogOCLAction }
@@ -281,6 +295,23 @@ end;
 procedure TBoldLogOSSAction.SetLogHandler(Value: TBoldLogHandler);
 begin
   BoldOSSLogHandler := Value;
+end;
+
+{ TBoldLogQueueAction }
+
+function TBoldLogQueueAction.GetLogHandler: TBoldLogHandler;
+begin
+  result := BoldQueueLogHandler;
+end;
+
+function TBoldLogQueueAction.GetLogType: string;
+begin
+  Result := 'Display Queue';
+end;
+
+procedure TBoldLogQueueAction.SetLogHandler(Value: TBoldLogHandler);
+begin
+  BoldQueueLogHandler := Value;
 end;
 
 end.

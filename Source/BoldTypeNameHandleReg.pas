@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldTypeNameHandleReg;
@@ -38,10 +38,11 @@ implementation
 uses
   SysUtils,
   Controls,
+
+  BoldCoreConsts,
   BoldTypeNameDictionary,
   BoldTypeNameHandle,
-
-  BoldTypeNameEditor,  
+  BoldTypeNameEditor,
   BoldGuard,
   BoldRev;
 
@@ -74,7 +75,7 @@ end;
 
 function TBoldTypeNameEditor.GetVerb(index: Integer): string;
 begin
-  result := 'Edit type names';
+  result := sEditTypeNames;
 end;
 
 function TBoldTypeNameEditor.GetVerbCount: Integer;

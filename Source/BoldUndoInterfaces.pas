@@ -29,12 +29,18 @@ type
     function GetValueSpace: IBoldValueSpace;
     function GetContainsChanges: Boolean;
     function GetContent: String;
+    function GetCaption: String;
     function GetCreated: TDateTime;
+    function GetObjectCount: integer;
+    function GetIndex: integer;
     property Name: string read GetName;
     property ValueSpace: IBoldValueSpace read GetValueSpace;
     property ContainsChanges: Boolean read GetContainsChanges;
     property Content: String read GetContent;
     property Created: TDateTime read GetCreated;
+    property Caption: String read GetCaption;
+    property ObjectCount: integer read GetObjectCount;
+    property Index: integer read GetIndex;
   end;
 
   IBoldUndoList = interface
@@ -50,6 +56,7 @@ type
     procedure MoveBlock(CurIndex, NewIndex: integer);
     procedure RenameBlock(const OldName, NewName: string);
     function RemoveBlock(const BlockName: string): Boolean;
+    procedure Clear;
     property Count: Integer read GetCount;
     property Items[Index: integer]: IBoldUndoBlock read GetItem; default;
     property ItemByName[const Name: string]: IBoldUndoBlock read GetItemByName;
@@ -62,7 +69,7 @@ type
   ['{FCAC02E0-0067-41F1-B755-C6F162EA40E7}']
     function GetUndoList: IBoldUndoList;
     function GetRedoList: IBoldUndoList;
-    function GetUniqueBlockName(const SuggestedName: string): string;
+    function GetUniqueBlockName: string;
     function CanUndoBlock(const BlockName: string): Boolean;
     function CanRedoBlock(const BlockName: string):Boolean;
     function GetEnabled: Boolean;
@@ -71,10 +78,11 @@ type
     procedure RedoLatest;
     procedure UndoBlock(const BlockName: string);
     procedure RedoBlock(const BlockName: string);
-    procedure SetNamedCheckPoint(const CheckPointName: string);
-    procedure SetCheckPoint;
+    function SetCheckPoint(const ACaption: string = ''): string; overload;
     procedure ClearAllUndoBlocks;
     function GetCurrentUndoBlockHasChanges: boolean;
+    procedure ClearCurrentUndoBlock;
+    function GetIsEmpty: boolean;
     property UndoList: IBoldUndoList read GetUndoList;
     property RedoList: IBoldUndoList read GetRedoList;
     property Enabled: Boolean read GetEnabled write SetEnabled;

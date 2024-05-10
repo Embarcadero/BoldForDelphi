@@ -1,6 +1,31 @@
-﻿
-{.$WARN SYMBOL_PLATFORM OFF}
-{.$WARN UNIT_PLATFORM OFF}
+{$WARNINGS ON}
+{$HINTS ON}
+
+{$WARN SYMBOL_PLATFORM OFF}
+{$WARN UNIT_PLATFORM OFF}
+
+{$IFDEF WIN32}
+  {$DEFINE MSWINDOWS}
+{$ENDIF}
+
+{$IFDEF WIN64}
+  {$DEFINE MSWINDOWS}
+{$ENDIF}
+
+{$IFDEF BOLD_ARCHITECT}
+  {$UNDEF BOLD_LICENSE}
+{$ENDIF}
+
+{$IFDEF BOLD_DELPHI_PARSER}
+  {$DEFINE WIN32}
+  {$DEFINE VER130}
+{$ENDIF}
+
+// LicenseManager cannot be compiled with BOLD_BCB defined for some reason...
+{$IFDEF BOLD_LICENSEMANAGER}
+  {$DEFINE DELPHI}
+  {$UNDEF BCB}
+{$ENDIF}
 
 {$IFDEF BCB}
   {$DEFINE BOLD_BCB}
@@ -241,7 +266,7 @@ Illegal symbol combination BOLD_DELPHI and BOLD_BCB
   {$DEFINE BOLD_DELPHI6_OR_LATER}
 {$ENDIF}
 
-{$IFDEF VER330}              // Delphi 25 (XE10.3) Rio
+{$IFDEF VER330}              // Delphi 26 (XE10.3) Rio
   {$DEFINE BOLD_DELPHI26}
   {$DEFINE BOLD_DELPHI26_OR_LATER}
   {$DEFINE BOLD_DELPHI25_OR_LATER}
@@ -261,7 +286,7 @@ Illegal symbol combination BOLD_DELPHI and BOLD_BCB
   {$DEFINE BOLD_DELPHI6_OR_LATER}
 {$ENDIF}
 
-{$IFDEF VER340}              // Delphi 26 (XE10.4) Sydney
+{$IFDEF VER340}              // Delphi 27 (XE10.4) Rio
   {$DEFINE BOLD_DELPHI27}
   {$DEFINE BOLD_DELPHI27_OR_LATER}
   {$DEFINE BOLD_DELPHI26_OR_LATER}
@@ -282,29 +307,7 @@ Illegal symbol combination BOLD_DELPHI and BOLD_BCB
   {$DEFINE BOLD_DELPHI6_OR_LATER}
 {$ENDIF}
 
-{$IFDEF VER350}              // Delphi 27 (11.3) Alexandria
-  {$DEFINE BOLD_DELPHI28}
-  {$DEFINE BOLD_DELPHI28_OR_LATER}
-  {$DEFINE BOLD_DELPHI27_OR_LATER}
-  {$DEFINE BOLD_DELPHI26_OR_LATER}
-  {$DEFINE BOLD_DELPHI25_OR_LATER}
-  {$DEFINE BOLD_DELPHI24_OR_LATER}
-  {$DEFINE BOLD_DELPHI23_OR_LATER}
-  {$DEFINE BOLD_DELPHI22_OR_LATER}
-  {$DEFINE BOLD_DELPHI21_OR_LATER}
-  {$DEFINE BOLD_DELPHI20_OR_LATER}
-  {$DEFINE BOLD_DELPHI19_OR_LATER}
-  {$DEFINE BOLD_DELPHI18_OR_LATER}
-  {$DEFINE BOLD_DELPHI17_OR_LATER}
-  {$DEFINE BOLD_DELPHI16_OR_LATER}
-  {$DEFINE BOLD_DELPHI13_OR_LATER}
-  {$DEFINE BOLD_DELPHI11_OR_LATER}
-  {$DEFINE BOLD_DELPHI10_OR_LATER}
-  {$DEFINE BOLD_DELPHI7_OR_LATER}
-  {$DEFINE BOLD_DELPHI6_OR_LATER}
-{$ENDIF}
-
-{$IFDEF VER360}              // Delphi 28 (12.1) Athens
+{$IFDEF VER350}              // Delphi 28 (Delphi 11) Alexandria
   {$DEFINE BOLD_DELPHI28}
   {$DEFINE BOLD_DELPHI28_OR_LATER}
   {$DEFINE BOLD_DELPHI27_OR_LATER}
@@ -365,8 +368,8 @@ Illegal symbol combination BOLD_DELPHI and BOLD_BCB
   {$IOCHECKS ON}
   {$LOCALSYMBOLS OFF}
   {$OPTIMIZATION ON}
-  {$OVERFLOWCHECKS OFF}
-  {$RANGECHECKS OFF}
+  {$OVERFLOWCHECKS ON}
+  {$RANGECHECKS ON}
   {$REFERENCEINFO OFF}
   {$STACKFRAMES OFF}
 {$ENDIF}
@@ -424,14 +427,14 @@ Illegal symbol combination
 {.$DEFINE NoAutoSubscription}
 
   // Mechanism for efficient fetching
-{.$DEFINE SpanFetch}
+{$DEFINE SpanFetch}
 
   // Turns off query mechanism
 {.$DEFINE BOLD_NO_QUERIES}
 
   // Do not allow creation of transient instances of a persistent class.
   // This is rarely used and if explicitly prohibited allows TBoldClassListController to not have to execute AddTransientFromSystem
-{.$DEFINE NoTransientInstancesOfPersistentClass}
+{$DEFINE NoTransientInstancesOfPersistentClass}
 
   // Do not allow adding of objects from different systems to same list
 {.$DEFINE AllowCrossSystemLists}
@@ -440,10 +443,7 @@ Illegal symbol combination
 {$DEFINE CompareToOldValues}
 
   // Debug addon to count instances per subclass of TBoldMemoryManagedObject
-{$DEFINE DebugInstanceCounter}
-
-  // It saves memory to use LightMemberDeriver, but FormSaver is not compatible with LightMemberDeriver
-{$DEFINE LightMemberDeriver}
+{.$DEFINE DebugInstanceCounter}
 
   // Define to use string comparison for all attributes. This may be faster, it uses IBoldStringRepresentable
   // but assumes each value has distinct string representation.
@@ -451,6 +451,15 @@ Illegal symbol combination
 
   // Turns of ObjectSpace transaction mechanism
 {.$DEFINE NoObjectSpaceTransactions}
+
+  // ?
+{.$DEFINE ACCESSSTATISTICS}
+
+  // Temporarly used for debugging, remove ?
+{.$DEFINE ATINDEXDEBUG}
+
+  // ?
+{.$DEFINE EXPRESSION_OVERRIDES_DOUBLE_DERIVE}
 
   // Turns off MayUpdate
 {.$DEFINE NoMayUpdate}
@@ -461,8 +470,11 @@ Illegal symbol combination
 // Shared Strings brings minimal memory savings, but at cost of performance
 {$DEFINE BOLD_DISABLESHAREDSTRINGS}
 
+ // Attracs specific performance monitoring
+{$DEFINE NO_PERFORMANCE_COUNTERS}
+
 // Extrenal IDServer used instead of BoldID/Timestamp tables, improves write performance and avoids deadlocks
-{.$DEFINE IDServer}
+{$DEFINE IDServer}
 
 // Uses StringBuilder for constructing SQL statements
 {$DEFINE RIL}
@@ -471,7 +483,7 @@ Illegal symbol combination
 {.$DEFINE NoNilAttributeExceptions}
 
 // Does not allow setting or storing of negative dates (before 1899) or after (2899-12-30)
-{.$DEFINE NoNegativeDates}
+{$DEFINE NoNegativeDates}
 
 // Converts zero date (1899) to nil when reading from db
 {$DEFINE ConvertZeroDateToDateNil}
@@ -485,8 +497,8 @@ Illegal symbol combination
 // IndexColumn creates an extra Index column in MemberMappingTable
 {.$DEFINE IndexColumn}
 
-//Includes BoldJson and BoldObjectRepresentationJson
-{.$DEFINE BoldJson}
+//Includes BoldJson and BoldObjectRepresentationJson - includes LkJSON v1.07
+{$DEFINE BoldJson}
 
 // BoldSystem broadcasts member events - allows getting events from all objects and their members by only placing one subscription on system
 {$DEFINE BoldSystemBroadcastMemberEvents}
@@ -495,9 +507,6 @@ Illegal symbol combination
 {$IFDEF BOLD_DELPHI11_OR_LATER} // D2007+
   {$DEFINE UseBoldListEnumerator}
 {$ENDIF}
-
-// do not copy old values to Rollback valuespace during fetch
-{$DEFINE DisableRollbackDuringFetch}
 
 // if link object is deleted (but not yet saved) and then same two objects on both ends are linked again, then reuse the deleted link object instead of creating new one.
 // This effectively avoids a db delete and insert of logically same object but with new id.
@@ -508,4 +517,20 @@ Illegal symbol combination
   {$IFNDEF CompareToOldValues}
   ReuseDeletedLinkObjectOnRelink requires CompareToOldValues
   {$ENDIF}
+{$ENDIF}
+
+{$DEFINE UseSynCommons}
+
+// settings for design package
+{$IFNDEF Attracs}
+  {$DEFINE NoAutoSubscription}
+  {$UNDEF SpanFetch}
+  {$UNDEF NoTransientInstancesOfPersistentClass}
+  {$UNDEF CompareToOldValues}
+  {$DEFINE NoObjectSpaceTransactions}
+  {$DEFINE NoMayUpdate}
+  {$UNDEF IDServer}
+  {$UNDEF NoNegativeDates}
+  {$UNDEF ConvertZeroDateToDateNil}
+  {$UNDEF BoldSystemBroadcastMemberEvents}
 {$ENDIF}

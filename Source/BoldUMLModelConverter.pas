@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelConverter;
@@ -6,6 +6,7 @@ unit BoldUMLModelConverter;
 interface
 
 uses
+  Classes,
   BoldUMLModel,
   BoldMeta,
   BoldSystem,
@@ -14,37 +15,41 @@ uses
 type
   TBoldModelConverter = class
   private
-    class procedure UMLElementToMoldElement(UMLElement: TUMLModelElement; MoldElement: TMoldElement);
-    class procedure UMLClassToMoldClass(UMLClass: TUMLClass; MoldClass: TMoldClass);
-    class procedure UMLAssociationToMoldAssociation(UMLAssociation: TUMLAssociation; MoldAssociation: TMoldAssociation);
-    class procedure UMLAttributeToMoldAttribute(UMLAttribute: TUMLAttribute; MoldAttribute: TMoldAttribute);
-    class procedure UMLOperationToMoldMethod(UMLOperation: TUMLOperation; MoldMethod: TMoldMethod);
-    class procedure UMLAssociationEndToMoldRole(UMLAssociationEnd: TUMLAssociationEnd; MoldRole: TMoldRole);
-    class procedure UMLAttributeToMoldQualifier(UMLAttribute: TUMLAttribute; MoldQualifier: TMoldQualifier);
-    class procedure UMLParametersToMoldParameters(UMLParameters: TBoldObjectList; MoldMethod: TMoldMethod);
-    class function UMLModelGetUniqueRootClass(UMLModel: TUMLModel): TUMLClass;
+    fClasses: TStringList;
+    procedure UMLElementToMoldElement(UMLElement: TUMLModelElement; MoldElement: TMoldElement);
+    procedure UMLClassToMoldClass(UMLClass: TUMLClass; MoldClass: TMoldClass);
+    procedure UMLAssociationToMoldAssociation(UMLAssociation: TUMLAssociation; MoldAssociation: TMoldAssociation);
+    procedure UMLAttributeToMoldAttribute(UMLAttribute: TUMLAttribute; MoldAttribute: TMoldAttribute);
+    procedure UMLOperationToMoldMethod(UMLOperation: TUMLOperation; MoldMethod: TMoldMethod);
+    procedure UMLAssociationEndToMoldRole(UMLAssociationEnd: TUMLAssociationEnd; MoldRole: TMoldRole);
+    procedure UMLAttributeToMoldQualifier(UMLAttribute: TUMLAttribute; MoldQualifier: TMoldQualifier);
+    procedure UMLParametersToMoldParameters(UMLParameters: TBoldObjectList; MoldMethod: TMoldMethod);
+    function UMLModelGetUniqueRootClass(UMLModel: TUMLModel): TUMLClass;
 
-    class procedure MoldElementToUMLElement(MoldElement: TMoldElement; UMLElement: TUMLModelElement);
-    class procedure MoldClassToUMLClass(MoldClass: TMoldClass; UMLClass: TUMLClass);
-    class procedure MoldAssociationToUMLAssociation(MoldAssociation: TMoldAssociation; UMLAssociation: TUMLAssociation);
-    class procedure MoldAttributeToUMLAttribute(MoldAttribute: TMoldAttribute; UMLAttribute: TUMLAttribute);
-    class procedure MoldMethodToUMLOperation(MoldMethod: TMoldMethod; UMLOperation: TUMLOperation);
-    class procedure MoldRoleToUMLAssociationEnd(MoldRole: TMoldRole; UMLAssociationEnd: TUMLAssociationEnd);
-    class procedure MoldQualifierToUMLAttribute(MoldQualifier: TMoldQualifier; UMLAttribute: TUMLAttribute);
-    class procedure MoldParametersToUMLParameters(MoldParameters: TBoldObjectArray; UMLParameters: TBoldObjectList; BoldSystem: TBoldSystem);
-    class function GetUMLClassByName(const name: string; UMLModel: TUMLModel): TUMLClass;
-    class function GetUMLAssociationByName(const name: string; UMLModel: TUMLModel): TUMLAssociation;
-    class procedure MoldModelToUMLModel(MoldModel: TMoldModel; UMLModel: TUMLModel);
+    procedure MoldElementToUMLElement(MoldElement: TMoldElement; UMLElement: TUMLModelElement);
+    procedure MoldClassToUMLClass(MoldClass: TMoldClass; UMLClass: TUMLClass);
+    procedure MoldAssociationToUMLAssociation(MoldAssociation: TMoldAssociation; UMLAssociation: TUMLAssociation);
+    procedure MoldAttributeToUMLAttribute(MoldAttribute: TMoldAttribute; UMLAttribute: TUMLAttribute);
+    procedure MoldMethodToUMLOperation(MoldMethod: TMoldMethod; UMLOperation: TUMLOperation);
+    procedure MoldRoleToUMLAssociationEnd(MoldRole: TMoldRole; UMLAssociationEnd: TUMLAssociationEnd);
+    procedure MoldQualifierToUMLAttribute(MoldQualifier: TMoldQualifier; UMLAttribute: TUMLAttribute);
+    procedure MoldParametersToUMLParameters(MoldParameters: TBoldObjectArray; UMLParameters: TBoldObjectList; BoldSystem: TBoldSystem);
+    function GetUMLClassByName(const name: string; UMLModel: TUMLModel): TUMLClass;
+    function GetUMLAssociationByName(const name: string; UMLModel: TUMLModel): TUMLAssociation;
+    procedure MoldModelToUMLModel(MoldModel: TMoldModel; UMLModel: TUMLModel);
   public
-    class function UMLModelToMold(UMLModel: TUMLModel): TMoldModel; virtual;
+    constructor Create;
+    destructor Destroy; override;
+    class function UMLModelToMold(UMLModel: TUMLModel): TMoldModel;
     class procedure MoldModelToUML(MoldModel: TMoldModel; TargetUMLModel: TUMLModel);
   end;
 
 implementation
 
 uses
-  Classes,
   SysUtils,
+
+  BoldCoreConsts,
   BoldLogHandler,
   BoldQueue,
   BoldUtils,
@@ -52,7 +57,11 @@ uses
   BoldMetaSupport,
   BoldDefaultTaggedValues,
   BoldUMLModelSupport,
-  BoldUMLTypes;
+  BoldUMLTypes,
+  BoldFreeStandingValueFactories,
+  BoldFreeStandingValues,
+  BoldValueInterfaces,
+  BoldDomainElement;
 
 class function TBoldModelConverter.UMLModelToMold(UMLModel: TUMLModel): TMoldModel;
 var
@@ -61,38 +70,54 @@ var
   MoldAssociation: TMoldAssociation;
   i: integer;
   UMLRootClass: TUMLClass;
+  Converter: TBoldModelConverter;
+  G: IBoldGuard;
 begin
-  MoldModel := TMoldModel.Create(nil, UMLModel.Name);
-  UMLElementToMoldElement(UMLModel, MoldModel);
-  BoldLog.StartLog('Converting UMLModel to Mold');
-  BoldLog.ProgressMax := UMLModel.Classes.Count + UMLModel.Associations.Count;
+  G := TBoldGuard.Create(Converter);
+  Converter := TBoldModelConverter.Create;
+  UMLModel.BoldSystem.StartTransaction();
+  with Converter do
+  try
+    MoldModel := TMoldModel.Create(nil, UMLModel.Name);
+    UMLElementToMoldElement(UMLModel, MoldModel);
+    BoldLog.StartLog(sConvertingModelToMold);
+    BoldLog.ProgressMax := UMLModel.Classes.Count + UMLModel.Associations.Count;
 
-  UMLRootClass := UMLModelGetUniqueRootClass(UMLModel);
-  if UMLRootClass <> nil then
-    MoldModel.RootClass.name := UMLRootClass.Name;
-  for i := 0 to UMLModel.Classes.Count - 1 do
-  begin
-    MoldClass := MoldModel.GetClassByName((UMLModel.Classes[i]).Name);
-    UMLClassToMoldClass(UMLModel.Classes[i], MoldClass);
-    BoldLog.ProgressStep;
-  end;
-  for i := 0 to UMLModel.Associations.Count - 1 do
-  begin
-    if (UMLModel.associations[i].connection.Count = 2) and
-      (UMLModel.associations[i].connection[0].type_ is TUMLClass) and
-      (UMLModel.associations[i].connection[1].type_ is TUMLClass) then
+    UMLRootClass := UMLModelGetUniqueRootClass(UMLModel);
+    if UMLRootClass <> nil then
+      MoldModel.RootClass.name := UMLRootClass.Name;
+    fClasses.clear;
+    for i := 0 to UMLModel.Classes.Count - 1 do
+      fClasses.AddObject(UMLModel.Classes[i].Name, UMLModel.Classes[i]);
+    fClasses.Sorted := true;
+    for i := 0 to UMLModel.Classes.Count - 1 do
     begin
-      MoldAssociation := TMoldAssociation.Create(MoldModel, UMLModel.Associations[i].name);
-      UMLAssociationToMoldAssociation(UMLModel.Associations[i],
-                                       MoldAssociation);
+      MoldClass := MoldModel.GetClassByName((UMLModel.Classes[i]).Name);
+      UMLClassToMoldClass(UMLModel.Classes[i], MoldClass);
+      BoldLog.ProgressStep;
     end;
-    BoldLog.ProgressStep;
+    for i := 0 to UMLModel.Associations.Count - 1 do
+    begin
+      if (UMLModel.associations[i].connection.Count = 2) and
+        (UMLModel.associations[i].connection[0].type_ is TUMLClass) and
+        (UMLModel.associations[i].connection[1].type_ is TUMLClass) then
+      begin
+        MoldAssociation := TMoldAssociation.Create(MoldModel, UMLModel.Associations[i].name);
+        UMLAssociationToMoldAssociation(UMLModel.Associations[i],
+                                         MoldAssociation);
+      end;
+      BoldLog.ProgressStep;
+    end;
+    result := MoldModel;
+    BoldLog.EndLog;
+    UMLModel.BoldSystem.CommitTransaction();
+  except
+    UMLModel.BoldSystem.RollbackTransaction();
+    raise;
   end;
-  result := MoldModel;
-  BoldLog.EndLog;
 end;
 
-class procedure TBoldModelConverter.UMLElementToMoldElement(UMLElement: TUMLModelElement; MoldElement: TMoldElement);
+procedure TBoldModelConverter.UMLElementToMoldElement(UMLElement: TUMLModelElement; MoldElement: TMoldElement);
 var
   Index: Integer;
 begin
@@ -104,7 +129,7 @@ begin
     MoldElement.TVByName[UMLElement.M_TaggedValue[Index].Tag] := UMLElement.M_TaggedValue[Index].Value;
 end;
 
-class procedure TBoldModelConverter.UMLClassToMoldClass(UMLClass: TUMLClass; MoldClass: TMoldClass);
+procedure TBoldModelConverter.UMLClassToMoldClass(UMLClass: TUMLClass; MoldClass: TMoldClass);
 var
   i: Integer;
   MoldAttribute: TMoldAttribute;
@@ -134,7 +159,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.UMLAssociationToMoldAssociation(UMLAssociation: TUMLAssociation; MoldAssociation: TMoldAssociation);
+procedure TBoldModelConverter.UMLAssociationToMoldAssociation(UMLAssociation: TUMLAssociation; MoldAssociation: TMoldAssociation);
 var
   i: Integer;
   MoldRole: TMoldRole;
@@ -153,7 +178,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.UMLAssociationEndToMoldRole(UMLAssociationEnd: TUMLAssociationEnd; MoldRole: TMoldRole);
+procedure TBoldModelConverter.UMLAssociationEndToMoldRole(UMLAssociationEnd: TUMLAssociationEnd; MoldRole: TMoldRole);
 var
   OtherAssociationEnd: TUMLAssociationEnd;
   OtherEndClass: TUMLClass;
@@ -178,7 +203,6 @@ begin
     Aggregation := UMLAssociationEnd.Aggregation;
     Visibility := UMLAssociationEnd.Visibility;
     Changeability := UMLAssociationEnd.Changeability;
-
   end;
   for i := 0 to {OtherAssociationEnd.}UMLAssociationEnd.Qualifier.Count - 1 do
   begin
@@ -187,7 +211,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.UMLAttributeToMoldQualifier(UMLAttribute: TUMLAttribute; MoldQualifier: TMoldQualifier);
+procedure TBoldModelConverter.UMLAttributeToMoldQualifier(UMLAttribute: TUMLAttribute; MoldQualifier: TMoldQualifier);
 begin
   UMLElementToMoldElement(UMLAttribute, MoldQualifier);
   with MoldQualifier do
@@ -196,7 +220,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.UMLAttributeToMoldAttribute(UMLAttribute: TUMLAttribute; MoldAttribute: TMoldAttribute);
+procedure TBoldModelConverter.UMLAttributeToMoldAttribute(UMLAttribute: TUMLAttribute; MoldAttribute: TMoldAttribute);
 begin
   UMLElementToMoldElement(UMLAttribute, MoldAttribute);
   with MoldAttribute do
@@ -208,7 +232,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.UMLOperationToMoldMethod(UMLOperation: TUMLOperation; MoldMethod: TMoldMethod);
+procedure TBoldModelConverter.UMLOperationToMoldMethod(UMLOperation: TUMLOperation; MoldMethod: TMoldMethod);
 var
   i: Integer;
 begin
@@ -228,7 +252,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.UMLParametersToMoldParameters(UMLParameters: TBoldObjectList; MoldMethod: TMoldMethod);
+procedure TBoldModelConverter.UMLParametersToMoldParameters(UMLParameters: TBoldObjectList; MoldMethod: TMoldMethod);
 var Index: Integer;
     MoldParameter: TMoldParameter;
 begin
@@ -246,7 +270,7 @@ begin
   end;
 end;
 
-class function TBoldModelConverter.UMLModelGetUniqueRootClass(UMLModel: TUMLModel): TUMLClass;
+function TBoldModelConverter.UMLModelGetUniqueRootClass(UMLModel: TUMLModel): TUMLClass;
 var
   i: Integer;
 begin
@@ -272,43 +296,64 @@ begin
 end;
 
 class procedure TBoldModelConverter.MoldModelToUML(MoldModel: TMoldModel; TargetUMLModel: TUMLModel);
+var
+  Converter: TBoldModelConverter;
+  G: IBoldGuard;
 begin
-  TargetUMLModel.BoldSystem.StartTransaction;
-  try
-    TargetUMLModel.Clear;
-    MoldModelToUMLModel(MoldModel, TargetUMLModel);
-    TargetUMLModel.BoldSystem.CommitTransaction;
-  except
-    TargetUMLModel.BoldSystem.RollBackTransaction;
+  G := TBoldGuard.Create(Converter);
+  Converter := TBoldModelConverter.Create;
+  with Converter do
+  begin
+    TargetUMLModel.BoldSystem.StartTransaction;
+    try
+      TargetUMLModel.Clear;
+      MoldModelToUMLModel(MoldModel, TargetUMLModel);
+      TargetUMLModel.BoldSystem.CommitTransaction;
+    except
+      TargetUMLModel.BoldSystem.RollBackTransaction;
+    end;
   end;
 end;
 
-class procedure TBoldModelConverter.MoldModelToUMLModel(MoldModel: TMoldModel; UMLModel: TUMLModel);
+procedure TBoldModelConverter.MoldModelToUMLModel(MoldModel: TMoldModel; UMLModel: TUMLModel);
 var
   i: Integer;
   UMLClass: TUMLClass;
   UMLAssociation: TUMLAssociation;
 begin
   MoldElementToUMLElement(MoldModel, UMLModel);
-  BoldLog.StartLog('Converting MoldModel to UML');
+  BoldLog.StartLog(sConvertingModelToUML);
   BoldLog.ProgressMax := MoldModel.Classes.Count + MoldModel.Associations.Count;
   BoldInstalledQueue.DeactivateDisplayQueue;
   TBoldUMLBoldify.SetRootClassName(UMLModel, MoldModel.RootClass.Name);
   try
+    BoldLog.LogHeader := 'Processing classes';
+    fClasses.clear;
+    for i := 0 to MoldModel.Classes.Count - 1 do
+    begin
+      UMLClass := TUMLClass.Create(UMLModel.BoldSystem);
+      UMLClass.Name := MoldModel.Classes[i].name;
+      UMLModel.OwnedElement.Add(UMLClass);
+      fClasses.AddObject(UMLClass.Name, UMLClass);
+    end;
+    fClasses.Sorted := true;
+
     for i := 0 to MoldModel.Classes.Count-1 do
     begin
       UMLClass := GetUMLClassByName(MoldModel.Classes[i].name, UMLModel);
       MoldClassToUMLClass(MoldModel.Classes[i], UMLClass);
       BoldLog.ProgressStep;
-      BoldLog.Sync;
+      if (i mod 10) = 0 then
+        BoldLog.Sync;
     end;
-
+    BoldLog.LogHeader := 'Processing associations';
     for i := 0 to MoldModel.Associations.Count-1 do
     begin
       UMLAssociation := GetUMLAssociationByName(MoldModel.Associations[i].name, UMLModel);
       MoldAssociationToUMLAssociation(MoldModel.Associations[i], UMLAssociation);
       BoldLog.ProgressStep;
-      BoldLog.Sync;
+      if (i mod 10) = 0 then
+        BoldLog.Sync;
     end;
   finally
     BoldInstalledQueue.ActivateDisplayQueue;
@@ -316,7 +361,25 @@ begin
   BoldLog.EndLog;
 end;
 
-class procedure TBoldModelConverter.MoldElementToUMLElement(MoldElement: TMoldElement; UMLElement: TUMLModelElement);
+procedure TBoldModelConverter.MoldElementToUMLElement(MoldElement: TMoldElement; UMLElement: TUMLModelElement);
+
+  procedure InternalSetValue(AElement: TBoldAttribute; const StringValue: string);
+  var
+    TempValue: TBoldFreeStandingValue;
+    StringContent: IBoldStringContent;
+  begin
+    TempValue := FreeStandingValueFactory.CreateInstance('String') as TBoldFreeStandingValue;
+    try
+      StringContent := (TempValue as IBoldStringContent);
+      StringContent.asString := StringValue;
+      TempValue.BoldPersistenceState := AElement.BoldPersistenceState;
+      AElement.AsIBoldValue[bdepContents].AssignContent(StringContent);
+    finally
+      StringContent := nil;
+      TempValue.free;
+    end;
+  end;
+
 var
   I: Integer;
   G: IBoldGuard;
@@ -328,26 +391,27 @@ begin
   with UMLElement do
   begin
     Name := MoldElement.name;
-    StereotypeName := MoldElement.Stereotype;
+    if StereotypeName <> MoldElement.Stereotype then
+      StereotypeName := MoldElement.Stereotype;
     for i := 0 to MoldElement.Constraints.Count-1 do
       with Constraint.AddNew as TUMLConstraint do
       begin
-        Name := MoldElement.Constraints.Names[i];
-        Body := MoldElement.Constraints.Values[Name];
+        InternalSetValue(M_Name, MoldElement.Constraints.Names[i]);
+        InternalSetValue(M_Body, MoldElement.Constraints.Values[Name]);
       end;
     MoldElement.AddAllTaggedValues(Tags, Values);
     for i := 0 to Tags.Count-1 do
     begin
       with M_TaggedValue.AddNew do
       begin
-        tag := Tags[i];
-        value := Values[i];
+        InternalSetValue(M_tag, Tags[i]);
+        InternalSetValue(M_Value, Values[i]);
       end;
     end;
   end;
 end;
 
-class procedure TBoldModelConverter.MoldClassToUMLClass(MoldClass: TMoldClass; UMLClass: TUMLClass);
+procedure TBoldModelConverter.MoldClassToUMLClass(MoldClass: TMoldClass; UMLClass: TUMLClass);
 var
   i: Integer;
   UMLAttribute: TUMLAttribute;
@@ -377,7 +441,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.MoldAssociationToUMLAssociation(MoldAssociation: TMoldAssociation; UMLAssociation: TUMLAssociation);
+procedure TBoldModelConverter.MoldAssociationToUMLAssociation(MoldAssociation: TMoldAssociation; UMLAssociation: TUMLAssociation);
 var
   i: Integer;
   UMLAssociationEnd: TUMLAssociationEnd;
@@ -397,19 +461,22 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.MoldAttributeToUMLAttribute(MoldAttribute: TMoldAttribute; UMLAttribute: TUMLAttribute);
+procedure TBoldModelConverter.MoldAttributeToUMLAttribute(MoldAttribute: TMoldAttribute; UMLAttribute: TUMLAttribute);
 begin
   MoldElementToUMLElement(MoldAttribute, UMLAttribute);
   with UMLAttribute do
   begin
     typeName := MoldAttribute.BoldType;
-    Derived := MoldAttribute.Derived;
-    Visibility := MoldAttribute.Visibility;
-    InitialValue := MoldAttribute.InitialValue;
+    if Derived <> MoldAttribute.Derived then
+      Derived := MoldAttribute.Derived;
+    if Visibility <> MoldAttribute.Visibility then
+      Visibility := MoldAttribute.Visibility;
+    if InitialValue <> MoldAttribute.InitialValue then
+      InitialValue := MoldAttribute.InitialValue;
   end;
 end;
 
-class procedure TBoldModelConverter.MoldMethodToUMLOperation(MoldMethod: TMoldMethod; UMLOperation: TUMLOperation);
+procedure TBoldModelConverter.MoldMethodToUMLOperation(MoldMethod: TMoldMethod; UMLOperation: TUMLOperation);
 var
   ReturnUMLParameter: TUMLParameter;
 begin
@@ -420,7 +487,8 @@ begin
       ownerScope := skClassifier
     else
       ownerScope := skInstance;
-    Visibility := MoldMethod.Visibility;
+    if Visibility <> MoldMethod.Visibility then
+      Visibility := MoldMethod.Visibility;
     MoldParametersToUMLParameters(MoldMethod.Parameters, Parameter, UMLOperation.BoldSystem);
     if MoldMethod.ReturnType <> '' then
     begin
@@ -435,7 +503,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.MoldRoleToUMLAssociationEnd(MoldRole: TMoldRole; UMLAssociationEnd: TUMLAssociationEnd);
+procedure TBoldModelConverter.MoldRoleToUMLAssociationEnd(MoldRole: TMoldRole; UMLAssociationEnd: TUMLAssociationEnd);
 var
   i: Integer;
   UMLAttribute: TUMLAttribute;
@@ -448,9 +516,12 @@ begin
     else
       Type_ := nil;
     isNavigable := MoldRole.Navigable;
-    isOrdered := MoldRole.Ordered;
-    Aggregation := MoldRole.Aggregation;
-    Visibility := MoldRole.Visibility;
+    if isOrdered <> MoldRole.Ordered then
+      isOrdered := MoldRole.Ordered;
+    if Aggregation <>MoldRole.Aggregation then
+      Aggregation := MoldRole.Aggregation;
+    if Visibility <> MoldRole.Visibility then
+      Visibility := MoldRole.Visibility;
     Changeability := MoldRole.Changeability;
     Multiplicity := MoldRole.Multiplicity;
   end;
@@ -462,7 +533,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.MoldQualifierToUMLAttribute(MoldQualifier: TMoldQualifier; UMLAttribute: TUMLAttribute);
+procedure TBoldModelConverter.MoldQualifierToUMLAttribute(MoldQualifier: TMoldQualifier; UMLAttribute: TUMLAttribute);
 begin
   MoldElementToUMLElement(MoldQualifier, UMLAttribute);
   with UMLAttribute do
@@ -471,7 +542,7 @@ begin
   end;
 end;
 
-class procedure TBoldModelConverter.MoldParametersToUMLParameters(MoldParameters: TBoldObjectArray; UMLParameters: TBoldObjectList; BoldSystem: TBoldSystem);
+procedure TBoldModelConverter.MoldParametersToUMLParameters(MoldParameters: TBoldObjectArray; UMLParameters: TBoldObjectList; BoldSystem: TBoldSystem);
 var Index: Integer;
     UMLParameter: TUMLParameter;
 begin
@@ -491,12 +562,22 @@ begin
   end;
 end;
 
-class function TBoldModelConverter.GetUMLClassByName(const Name: string; UMLModel: TUMLModel): TUMLClass;
+function TBoldModelConverter.GetUMLClassByName(const Name: string; UMLModel: TUMLModel): TUMLClass;
 var
   UMLClass: TUMLClass;
   i: Integer;
 begin
   UMLClass := nil;
+  if fClasses.Count > 0 then
+  begin
+    i := fClasses.IndexOf(Name);
+    if i <> -1 then
+    begin
+      result :=  fClasses.Objects[i] as TUMLClass;
+      exit;
+    end;
+  end
+  else
   for i := 0 to UMLModel.OwnedElement.Count-1 do
   begin
     if (UMLModel.OwnedElement[i] is TUMLClass) and
@@ -515,7 +596,19 @@ begin
   result := UMLClass;
 end;
 
-class function TBoldModelConverter.GetUMLAssociationByName(const name: string; UMLModel: TUMLModel): TUMLAssociation;
+constructor TBoldModelConverter.Create;
+begin
+  inherited;
+  fClasses := TStringList.Create;
+end;
+
+destructor TBoldModelConverter.Destroy;
+begin
+  fClasses.free;
+  inherited;
+end;
+
+function TBoldModelConverter.GetUMLAssociationByName(const name: string; UMLModel: TUMLModel): TUMLAssociation;
 begin
   Result := TUMLAssociation.Create(UMLModel.BoldSystem);
   Result.Name := name;

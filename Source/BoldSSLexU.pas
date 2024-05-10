@@ -103,13 +103,13 @@ type
 
   SSLexLexeme = class(SSLexRoot)
   public
-    Buffer: PAnsiChar;
+    Buffer: String;
     Use: Integer;
     Line: Longint;
     Offset: Longint;
     Length: Longint;
     Token: Cardinal;
-    constructor Create(TheData: PAnsiChar; TheLength, TheLine, TheOffset: Longint);
+    constructor Create(TheData: String; TheLength, TheLine, TheOffset: Longint);
     procedure RefInc;
     function RefDec: Boolean;
     destructor Destroy; override;
@@ -119,7 +119,7 @@ type
 
   SSLexConsumer = class(SSLexRoot)
   public
-    Buffer: PAnsiChar;
+    Buffer: String;
     Bof: Longint;
     Line: Longint;
     Offset: Longint;
@@ -156,7 +156,7 @@ type
 
   SSLexStringConsumer = class(SSLexConsumer)
   public
-    constructor Create(TheString: PAnsiChar);
+    constructor Create(TheString: String);
   end;
 
   SSLexFileConsumer = class(SSLexConsumer)
@@ -190,7 +190,8 @@ type
 implementation
 
 uses
-  BoldSSExcept, SysUtils;
+  BoldSSExcept,
+  SysUtils;
 
 constructor SSYaccStackElement.Create;
 begin
@@ -237,13 +238,11 @@ begin
   Offset := 1;
   Bof := SSLexConsumerBof;
   Mode := TheMode;
-  Buffer := nil;
+  Buffer := '';
 end;
 
 destructor SSLexConsumer.Destroy;
 begin
-  if Buffer <> nil then
-    FreeMem(Buffer, BuffLen);
   inherited;
 end;
 
@@ -330,7 +329,7 @@ begin
 
       if Result = True then
       begin
-        Current := Longint(Buffer[Index]);
+        Current := Ord(Buffer[Index+1]);
         Inc(Index);
         if Current = Ord($0A) then
         begin
@@ -345,13 +344,12 @@ begin
 
 end;
 
-constructor SSLexStringConsumer.Create(TheString: PAnsiChar);
+constructor SSLexStringConsumer.Create(TheString: String);
 begin
   inherited Create(0, SSLexBinaryMode);
-  DataLen := StrLen(TheString);
+  DataLen := Length(TheString);
   BuffLen := DataLen;
-  GetMem(Buffer, BuffLen);
-  StrMove(Buffer, TheString, BuffLen);
+  Buffer := Copy(TheString, 1, BuffLen);
 end;
 
 function SSLexConsumer.Lexeme: SSLexLexeme;
@@ -359,22 +357,23 @@ var
   Length: Longint;
 begin
   Length := Mark - Start;
-  Result := SSLexLexeme.Create(PAnsiChar(Buffer) + Start, Length, Line, Offset);
+  Result := SSLexLexeme.Create(Buffer, Length, Line, Offset);
   FlushLexeme;
 end;
 
 function SSLexConsumer.LexemeAll: SSLexLexeme;
+var
+  Length: Longint;
 begin
-  Result := SSLexLexeme.Create(PAnsiChar(Buffer) + Start, Index - Start, Line, Offset);
+  Length := Mark - Start;
+  Result := SSLexLexeme.Create(Copy(Buffer, Start, Length), Index - Start, Line, Offset);
   FlushLexemeAll;
 end;
 
-constructor SSLexLexeme.Create(TheData: PAnsiChar; TheLength, TheLine, TheOffset: Integer);
+constructor SSLexLexeme.Create(TheData: String; TheLength, TheLine, TheOffset: Integer);
 begin
   inherited Create;
-  GetMem(Buffer, TheLength + 1);
-  StrMove(Buffer, TheData, TheLength);
-  PByteArray(Buffer)[TheLength] := 0;
+  Buffer := Copy(TheData, 1+TheOffset, TheLength);
   Length := TheLength;
   Line := TheLine;
   Offset := TheOffset;
@@ -400,8 +399,6 @@ destructor SSLexLexeme.Destroy;
 begin
   if Use <> 0 then
     Assert(False, 'Assertion failure');
-  if Buffer <> nil then
-    FreeMem(Buffer, Length + 1);
   inherited;
 end;
 
@@ -519,7 +516,6 @@ var
   Consumed: Boolean;
   RFinal, RTempFinal: TRow;
 begin
-  Result := nil;
   while True do
   begin
     State := 0;
@@ -608,7 +604,7 @@ var
 begin
   Lexeme := Consumer.LexemeAll;
   AnException := SSException.CreateLongLongNameLen(SSExceptionLexError, SSLexMsgError,
-    Lexeme.Line, Lexeme.Offset, PChar(string(Lexeme.Buffer)), Lexeme.Length);
+    Lexeme.Line, Lexeme.Offset, Lexeme.Buffer, Lexeme.Length);
   raise AnException;
 end;
 
@@ -1531,8 +1527,6 @@ begin
 
   {$ENDREGION}
 end;
-
-
 
 end.
 

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLogHandler;
@@ -73,6 +73,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldMath,
   BoldRev;
 
@@ -242,7 +244,7 @@ end;
 
 procedure TBoldLogHandler.InterruptProcess;
 begin
-  Log('Trying to abort process');
+  Log(sTryingToAbort);
   fInterrupted := true;
   fInterruptHandled := false;
 end;
@@ -254,7 +256,7 @@ begin
   if result then
   begin
     if not fInterruptHandled then
-      Log('Process stopped');
+      Log(sProcessStopped);
     fInterruptHandled := true;
   end;
 end;
@@ -277,6 +279,7 @@ end;
 procedure TBoldLogReceiverSubscriber.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
+  // Do nothing... Handled by Extended
 end;
 
 procedure TBoldLogReceiverSubscriber.ReceiveExtended(Originator: TObject;
@@ -292,18 +295,18 @@ procedure TBoldLogReceiverSubscriber.ReceiveExtended(Originator: TObject;
       vtUnicodeString: Result := string(VR.vUnicodeString);
       {$ENDIF}
       else
-        raise Exception.Create('unknown type in GetString');
+        raise Exception.Create(sUnknownTypeInGetString);
     end;
   end;
 
 begin
   case OriginalEvent of
-    bleSetProgress: fReceiver.SetProgress(args[0].VInteger);
-    bleSetLogHeader: fReceiver.SetLogHeader(GetString(Args[0]));
-    bleSetProgressMax: fReceiver.SetProgressMax(args[0].VInteger);
-    bleLog: fReceiver.Log(GetString(Args[0]), TBoldLogType(args[1].vInteger)) ;
-    bleStartLog: fReceiver.StartLog(GetString(Args[0]));
-
+    bleSetProgress: fReceiver.SetProgress(args[0].VInteger); // Value: integer
+    bleSetLogHeader: fReceiver.SetLogHeader(GetString(Args[0])); // Value: string
+    bleSetProgressMax: fReceiver.SetProgressMax(args[0].VInteger); // Value: integer
+    bleLog: fReceiver.Log(GetString(Args[0]), TBoldLogType(args[1].vInteger)) ;// s: string; LogType: TBoldLogType
+    bleStartLog: fReceiver.StartLog(GetString(Args[0]));//SessionName: String
+    // commit suicide
     bleRemoveReceiver: if IUnknown(Args[0].VInterface) = freceiver then free;
     beDestroying: Free;
     bleClear: fReceiver.Clear;

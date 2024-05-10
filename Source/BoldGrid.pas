@@ -1,4 +1,4 @@
-
+ï»¿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGrid;
@@ -2386,8 +2386,6 @@ var
   CellFollower: TBoldFollower;
   ListElement: TBoldElement;
   CellValue: TBoldElement;
-  FollowerController: TExposedFollowerController;
-  Renderer: TExposedBoldAsStringRenderer;
 begin
   fEditColumn := Grid.Columns[Grid.Col] as TBoldGridColumn;
   if Grid.LookUpEditorActive then
@@ -2411,8 +2409,6 @@ begin
       Combo.Items.AddObject(fEditColumn.LookUpProperties.NilStringRepresentation, nil);
     end;
 
-    FollowerController := TExposedFollowerController(fEditColumn.LookUpProperties);
-    renderer := TExposedBoldAsStringRenderer(FollowerController.EffectiveRenderer);
     if assigned(fEditColumn.LookupHandle.List) then
       fEditColumn.LookupHandle.List.EnsureRange(0, fEditColumn.LookupHandle.Count - 1);
     for i := 0 to fEditColumn.LookupHandle.Count - 1 do
@@ -2776,7 +2772,7 @@ begin
       SetIndex(1);
       BoldProperties.Expression := 'constraints->exists(c|not c)';
       Width := bmpBoldGridSelected.Width + 3;
-      Title.Caption := '§';
+      Title.Caption := 'ï¿½';
       BoldProperties.Renderer := TBoldConstraintRenderer.Create(Self);
       ColReadOnly := True;
     end;

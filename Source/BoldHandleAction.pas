@@ -102,6 +102,4 @@ begin
   EnableAction := Assigned(BoldElementHandle);
 end;
 
-initialization
-
 end.

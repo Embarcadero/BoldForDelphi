@@ -8,6 +8,7 @@ unit BoldFloatControlPack;
 interface
 
 uses
+  Classes,
   BoldDefs,
   BoldSubscription,
   BoldElements,

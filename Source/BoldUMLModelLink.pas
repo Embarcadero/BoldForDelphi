@@ -36,8 +36,8 @@ type
     procedure SetFileName(const Value: string); virtual;
     function GetHandledObject: TObject; override;
   public
-    constructor create(owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(owner: TComponent); override;
+    destructor Destroy; override;
     function ExportModel(UMLModel: TUMLModel): Boolean; virtual; abstract;
     function ImportModel(UMLModel: TUMLModel): Boolean; virtual; abstract;
     property CanExport: Boolean read GetCanExport;
@@ -187,13 +187,18 @@ end;
 function TBoldUMLModelLinkList.GetFileFilter: string;
 var
   i: integer;
+  AllSupportedFilter: string;
 begin
   Result := '';
-
+  AllSupportedFilter := 'All Supported|';
   for i := 0 to Count - 1  do
+  begin
     Result := Result + Descriptors[i].FilterString + '|';
-
-  Result := Result + ALLFILESFILTER;
+    AllSupportedFilter := AllSupportedFilter + '*' + Descriptors[i].Suffix;
+    if i < count-1 then
+      AllSupportedFilter := AllSupportedFilter + ';';
+  end;
+  Result := AllSupportedFilter + '|' + Result + ALLFILESFILTER;
 end;
 
 function TBoldUMLModelLinkList.GetLinkClasses(const Index: integer; const Suffix: string): TBoldUMLModelLinkClass;
@@ -273,21 +278,16 @@ begin
 end;
 
 procedure TBoldUMLModelLink.SetBoldModel(const Value: TBoldAbstractModel);
-var
-  OldLInk: TBoldUMLModelLink;
 begin
   fSubscriber.CancelAllSubscriptions;
   if assigned(Value) then
   begin
-    OldLink := BoldGetUMLModelLinkForComponent(Value);
-    if assigned(OldLink) and (OldLink <> Self) then
-      ShowMessageFmt('Warning: %s is already connected to %s', [OldLink.Name, Value.Name]);
     Value.AddSmallSubscription(fSubscriber, [beDestroying], beDestroying);
   end;
   fBoldModel := Value;
 end;
 
-constructor TBoldUMLModelLink.create(owner: TComponent);
+constructor TBoldUMLModelLink.Create(owner: TComponent);
 begin
   inherited;
   fsubscriber := TBoldPassthroughSubscriber.Create(_Receive);
@@ -300,7 +300,7 @@ begin
     fBoldModel := nil;
 end;
 
-destructor TBoldUMLModelLink.destroy;
+destructor TBoldUMLModelLink.Destroy;
 begin
   inherited;
   FreeAndNil(fSubscriber);

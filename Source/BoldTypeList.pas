@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldTypeList;
@@ -53,6 +53,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldMetaElementList,
   BoldSystemRT;
 
@@ -153,12 +155,12 @@ end;
 
 procedure TBoldTypeList.InsertNew(index: Integer);
 begin
-  raise EBold.CreateFmt('%s.InsertNew: Types can not be inserted like this', [classname])
+  raise EBold.CreateFmt(sCannotInsertTypes, [classname])
 end;
 
 function TBoldTypeList.InternalAddNew: TBoldElement;
 begin
-  raise EBold.CreateFmt('%s.InternalAddNew: Types can not be added like this', [classname])
+  raise EBold.CreateFmt(sCannotAddTypes, [classname])
 end;
 
 procedure TBoldTypeList.InternalClear;
@@ -177,7 +179,7 @@ end;
 (*
 function TBoldTypeList.ProxyClass: TBoldMember_ProxyClass;
 begin
-  raise EBold.CreateFmt('Abstract error: %s.ProxyClass (IBoldValue not supported!)', [ClassName]);
+  raise EBold.CreateFmt(sAbstractError_InterfaceNotSupported, [ClassName]);
 end;
 *)
 
@@ -198,7 +200,7 @@ begin
   if element is TBoldElementTypeInfo then
     list.Add(element as TBoldElementTypeInfo)
   else
-    raise EBold.CreateFmt('Can not add element: %s', [element.ClassName]);
+    raise EBold.CreateFmt(sCannotAddElement, [element.ClassName]);
 end;
 
 constructor TBoldTypeListController.Create(OwningList: TBoldList);
@@ -209,7 +211,7 @@ end;
 
 function TBoldTypeListController.CreateNew: TBoldElement;
 begin
-  raise EBold.Create('Can not create new in Typelists');
+  raise EBold.Create(sCannotCreateNewInTypeLists);
 end;
 
 destructor TBoldTypeListController.Destroy;
@@ -236,7 +238,7 @@ end;
 function TBoldTypeListController.GetStreamName: string;
 begin
   result := '';
-  raise EBold.create('not implemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'GetStreamName']);
 end;
 
 function TBoldTypeListController.IncludesElement(Item: TBoldElement): Boolean;
@@ -254,7 +256,6 @@ begin
   list.Insert(index, element);
 end;
 
-
 procedure TBoldTypeListController.Move(CurrentIndex, NewIndex: Integer);
 begin
   list.Move(CurrentIndex, NewIndex);
@@ -267,7 +268,7 @@ end;
 
 procedure TBoldTypeListController.SetElement(index: Integer; Value: TBoldElement);
 begin
-  raise Ebold.Create('Can not set elements in TypeLists');
+  raise Ebold.Create(sCannotSetElementsInTypeLists);
 end;
 
 { TBoldTypeListFactory }

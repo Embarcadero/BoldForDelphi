@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractDequeuer;
@@ -27,7 +27,7 @@ type
   private
     fQueue: TBoldThreadSafeObjectQueue;
   protected
-    procedure HandleMessage(const AOSSMessage: TObject); virtual; abstract;
+    procedure HandleMessage(const AMessage: TObject); virtual; abstract;
   public
     procedure DequeueAll; override;
     property Queue: TBoldThreadSafeObjectQueue read fQueue write fQueue;
@@ -37,7 +37,7 @@ type
   private
     fQueue: TBoldThreadSafeStringQueue;
   protected
-    procedure HandleMessage(const aMsg: String); virtual; abstract;
+    procedure HandleMessage(const AMessage: String); virtual; abstract;
   public
     procedure DequeueAll; override;
     property Queue: TBoldThreadSafeStringQueue read fQueue write fQueue;
@@ -86,6 +86,5 @@ begin
   while not Queue.Empty do
     HandleMessage(Queue.Dequeue);
 end;
-
 
 end.

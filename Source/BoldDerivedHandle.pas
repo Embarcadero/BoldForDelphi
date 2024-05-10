@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -19,7 +26,6 @@ type
   TBoldDerivedHandle = class;
 
   {---TBoldDerviedHandle---}
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldDerivedHandle = class(TBoldRootedHandle)
   private
     fOnDeriveAndSubscribe: TBoldHandleDeriveAndSubscribe;
@@ -39,7 +45,15 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
+  BoldRev,
   BoldSystemRT,
+  {$IFDEF ATTRACS}
+  AttracsPerformance,
+  AttracsDefs,
+  AttracsTraceLog,
+  {$ENDIF}
   BoldDefs;
 
 
@@ -56,12 +70,38 @@ begin
 end;
 
 procedure TBoldDerivedHandle.DeriveAndSubscribe(DerivedObject: TObject;Subscriber: TBoldSubscriber);
+{$IFDEF ATTRACS}
+var
+  PerformanceMeasurement : TPerformanceMeasurement;
+  HandleLongName: string;
+begin
+  if csDestroying in ComponentState then
+    raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
+  PerformanceMeasurement := TPerformanceMeasurement.ReStart;
+  try
+    Assert (DerivedObject is TBoldIndirectElement);
+    if Assigned(fOnDeriveAndSubscribe) then
+      fOnDeriveAndSubscribe(Self, EffectiveRootValue, TBoldIndirectElement(DerivedObject), Subscriber);
+  finally
+    if not PerformanceMeasurement.AcceptableTimeForSmallComputation then
+    begin
+      if Assigned(Self.Owner) then
+        HandleLongName := Owner.Name + '.' + Self.Name
+      else
+        HandleLongName := Self.Name;
+
+      PerformanceMeasurement.WhatMeasured := 'Deriving TBoldDerivedHandle ' + HandleLongName;
+      PerformanceMeasurement.Trace;
+    end; // if TimeTaken too long
+  end; //finally
+{$ELSE}
 begin
   if csDestroying in ComponentState then
     raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
   Assert(DerivedObject is TBoldIndirectElement);
-  if Assigned(fOnDeriveAndSubscribe) then
-    fOnDeriveAndSubscribe(Self, EffectiveRootValue, TBoldIndirectElement(DerivedObject), Subscriber);
+    if Assigned(fOnDeriveAndSubscribe) then
+      fOnDeriveAndSubscribe(Self, EffectiveRootValue, TBoldIndirectElement(DerivedObject), Subscriber);
+{$ENDIF}
 end;
 
 function TBoldDerivedHandle.GetStaticBoldType: TBoldElementTypeInfo;
@@ -79,7 +119,7 @@ begin
   begin
     result := SystemTypeInfo.ElementTypeInfoByExpressionName[ValueTypeName];
     if assigned(result) and not (result.BoldValueType in [bvtAttr, bvtList]) then
-      raise EBold.CreateFmt('%s.GetStaticBoldType: Only lists and attributes are allowed as types (expr: %s)', [ClassName, ValueTypeName]);
+      raise EBold.CreateFmt(sIllegalTypeSelected, [ClassName, ValueTypeName]);
   end
   else
     result := nil;
@@ -103,5 +143,8 @@ begin
     StaticBoldTypeChanged;
   end;
 end;
+
+initialization
+  BoldRegisterModuleVersion('$Workfile: BoldDerivedHandle.pas $ $Revision: 15 $ $Date: 02-07-17 7:04 $');
 
 end.

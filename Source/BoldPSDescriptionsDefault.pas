@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPSDescriptionsDefault;
@@ -67,10 +67,9 @@ implementation
 
 uses
   SysUtils,
-  {$IFNDEF BOLD_UNICODE}
-  StringBuilder,
-  {$ENDIF}
   DB,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldLogHandler,
   BoldNameExpander,
@@ -116,12 +115,13 @@ procedure TBoldDefaultSystemDescription.AddFirstClock(PSParams: TBoldPSDefaultPa
   end;
   
 begin
-  BoldLog.Log('Writing First Clock');
+  BoldLog.Log(sLogWritingFirstClock);
 
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddFirstClockUsingTable;
     dbgQuery: AddFirstClockUsingQuery;
-    else raise EBold.CreateFmt('%s.AddFirstClock: unknown database generation mode', [ClassName]);
+    else 
+      raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstClock']); // do not localize
   end;
 end;
 
@@ -154,20 +154,22 @@ procedure TBoldDefaultSystemDescription.AddFirstID(PSParams: TBoldPSDefaultParam
   end;
 
 begin
-  BoldLog.Log('Writing First ID');
+  BoldLog.Log(sLogWritingFirstID);
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddFirstIDUsingTable;
     dbgQuery: AddFirstIDUsingQuery;
-    else raise EBold.CreateFmt('%s.AddFirstID: unknown database generation mode', [ClassName]);
+    else 
+      raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstID']); // do not localize
   end;
 end;
 
 procedure TBoldDefaultSystemDescription.AddFirstTimeStamp(PSParams: TBoldPSDefaultParams);
+
   procedure AddFirstTimeStampUsingTable;
   var
     Table: IBoldTable;
   begin
-    BoldLog.Log('Writing First TimeStamp');
+    BoldLog.Log(sLogWritingFirstTimeStamp);
     Table := PSParams.DataBase.GetTable;
     with Table do
     try
@@ -181,6 +183,7 @@ procedure TBoldDefaultSystemDescription.AddFirstTimeStamp(PSParams: TBoldPSDefau
       PSParams.DataBase.ReleaseTable(table);
     end;
   end;
+
   procedure AddFirstTimeStampUsingQuery;
   begin
     Query.AssignSQLText(format(
@@ -190,11 +193,12 @@ procedure TBoldDefaultSystemDescription.AddFirstTimeStamp(PSParams: TBoldPSDefau
   end;
 
 begin
-  BoldLog.Log('Writing First TimeStamp');
+  BoldLog.Log(sLogWritingFirstTimeStamp);
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddFirstTimeStampUsingTable;
     dbgQuery: AddFirstTimeStampUsingQuery;
-    else raise EBold.CreateFmt('%s.AddFirstTimeStamp: unknown database generation mode', [ClassName]);
+    else 
+      raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstTimeStamp']); // do not localize
   end;
 end;
 
@@ -228,7 +232,6 @@ procedure TBoldDefaultSystemDescription.AddTableNames(PSParams: TBoldPSDefaultPa
     i: integer;
     row, limit: integer;
     sb: TStringBuilder;
-    TableCount: integer;
     sInsert: string;
   begin
     sb := TStringBuilder.Create;
@@ -258,11 +261,12 @@ procedure TBoldDefaultSystemDescription.AddTableNames(PSParams: TBoldPSDefaultPa
   end;
 
 begin
-  BoldLog.Log('Writing TableNames');
+  BoldLog.Log(sLogWritingTableNames);
   case EffectiveGenerationMode(PSParams) of
     dbgTable: AddTableNamesUsingTable;
     dbgQuery: AddTableNamesUsingQuery;
-    else raise EBold.CreateFmt('%s.AddTableNames: unknown database generation mode', [ClassName]);
+    else 
+      raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddTableNames']); // do not localize
   end;
 end;
 
@@ -291,7 +295,7 @@ begin
   inherited;
   if BoldLog.ProcessInterruption then
     exit;
-  BoldLog.LogHeader := 'Initializing Default Persistent Storage';
+  BoldLog.LogHeader := sLogInitializingDefaultPS;
   PSParamsDefault := PSParams as TBoldPSDefaultParams;
   try
     InternalExecute;
@@ -300,7 +304,7 @@ begin
     if EffectiveUseTransactions(PSParamsDefault) then
     begin
       BoldLog.Separator;
-      BoldLog.Log('Committing changes to initial data');
+      BoldLog.Log(sCommittingInitialData);
       PSParamsDefault.Database.Commit;
     end;
   end;

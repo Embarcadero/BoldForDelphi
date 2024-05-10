@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRegionDefinitionParser;
@@ -49,22 +49,17 @@ type
     procedure GenerateDefaultRegions;
   public
     constructor Create(RegionDefinitions: TBoldRegionDefinitions; SystemTypeInfo: TBoldSystemTypeInfo);
-    destructor destroy; override;
+    destructor Destroy; override;
     function Parse(RegionDefinitionList: TStrings): Boolean;
     property RegionDefinitions: TBoldRegionDefinitions read fRegionDefinitions;
     property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
     property Errors: TStringList read fErrors;
   end;
 
-
-
-
-
-
-
 implementation
 
 uses
+  BoldCoreConsts,
   BoldTaggedValueSupport,
   BOldUtils,
   BoldRev;
@@ -97,7 +92,7 @@ begin
   OrgPosition := fPosition;
   for i := 1 to length(s) do
     if EOS or (NextToken <> s[i]) then
-      AddError(OrgPosition, 'Expected ''%s''', [s], petSyntax)
+      AddError(OrgPosition, sExpectedToken, [s], petSyntax)
     else
       inc(fPosition);
   Skip;
@@ -182,9 +177,9 @@ begin
   if EOS or not CharInSet(NextToken, ['a'..'z','A'..'Z','_']) then
   begin
     case SymbolType of
-      stClassName: AddError(fPosition, 'Class name expected', [], petSyntax);
-      stMemberName: AddError(fPosition, 'Member name expected', [], petSyntax);
-      stRegionName: AddError(fPosition, 'Region name expected', [], petSyntax);
+      stClassName: AddError(fPosition, sClassNameExpected, [], petSyntax);
+      stMemberName: AddError(fPosition, sMemberNameExpected, [], petSyntax);
+      stRegionName: AddError(fPosition, sRegionNameExpected, [], petSyntax);
     end;
   end;
   Result := NextToken;
@@ -231,7 +226,7 @@ begin
     if assigned(MemberRTInfo) then
       TBoldRegionElementInclusion.Create(ConcreteRegionDefinition, MemberRTInfo)
     else
-      AddError(fLastSymbolPosition, '%s is not a member of %s', [MemberName, ConcreteRegionDefinition.RootClass.ExpressionName], petSemantics);
+      AddError(fLastSymbolPosition, sXIsNotAMember, [MemberName, ConcreteRegionDefinition.RootClass.ExpressionName], petSemantics);
     tryToEat(',');
   end;
 end;
@@ -253,9 +248,9 @@ begin
     IsDependent := not tryToEat('-');
     MemberRTInfo := ConcreteRegionDefinition.RootClass.MemberRTInfoByExpressionName[MemberName];
     if not assigned(MemberRTInfo) then
-      AddError(fLastSymbolPosition, '%s is not a member of %s', [MemberName, ConcreteRegionDefinition.RootClass.ExPressionName], petSemantics)
+      AddError(fLastSymbolPosition, sXIsNotAMember, [MemberName, ConcreteRegionDefinition.RootClass.ExPressionName], petSemantics)
     else if not (MemberRTInfo is TBoldRoleRTInfo) then
-      AddError(fLastSymbolPosition, 'Member %s.%s is not a role, unable to navigate', [ConcreteRegionDefinition.RootClass.ExPressionName, MemberName], petSemantics)
+      AddError(fLastSymbolPosition, sMemberIsNotARole, [ConcreteRegionDefinition.RootClass.ExPressionName, MemberName], petSemantics)
     else
     begin
       SubRegion := RegionDefinitions.EnsuredCoreDefinition(RegionName);
@@ -273,7 +268,7 @@ var
 begin
   ConcreteRegionDefinition := CoreDefinition.EnsuredConcreteDefinition(ClassTypeInfo, AlreadyDefined);
   if AlreadyDefined then
-    AddError(1, 'Multiple definitions of %s[%s]', [CoreDefinition.Name ,classTypeInfo.ExpressionName], petSemantics)
+    AddError(1, sMultipleDefinitions, [CoreDefinition.Name ,classTypeInfo.ExpressionName], petSemantics)
   else
   begin
     ParseMembers(ConcreteRegionDefinition);
@@ -329,13 +324,13 @@ begin
   if Assigned(ClassTypeInfo) then
     ParseMembersAndSubregions(CoreDefinition, ClassTypeInfo)
   else
-    AddError(fLastSymbolPosition, 'Unknown class name: ''%s''', [ClassName], petSemantics);
+    AddError(fLastSymbolPosition, sUnknownClassName, [ClassName], petSemantics);
 end;
 
-destructor TBoldRegionParser.destroy;
+destructor TBoldRegionParser.Destroy;
 begin
   FreeAndNil(fErrors);
-  inherited;          
+  inherited;
 end;
 
 procedure TBoldRegionParser.AddError(pos: integer; msg: String; args: array of const; ErrorType: TBoldRegionParserErrorType);
@@ -344,7 +339,7 @@ var
 begin
   ErrorMsg := '';
   if Pos <> -1 then
-    ErrorMsg := format('"%s" (%d): ', [fExpression, pos]);
+    ErrorMsg := format('"%s" (%d): ', [fExpression, pos]); // do not localize
   ErrorMsg := ErrorMsg + format(Msg, args);
   fErrors.Add(ErrorMsg);
   if ErrorType = petSyntax then
@@ -361,15 +356,12 @@ begin
     CoreDef := TBoldRegionCoreDefinition(fRegionDefinitions.CoreDefinitions[i]);
     if CoreDef.ConcreteDefinitions.Count = 0 then
       for j := 0 to CoreDef.UsedBy.Count-1 do
-        AddError(-1, 'Referenced region (%s) not defined. Used by %s[%s], role %s', [
+        AddError(-1, sReferencedRegionNotDefined, [
           CoreDef.Name,
           CoreDef.UsedBy[j].ParentRegion.CoreDefinition.Name,
           CoreDef.UsedBy[j].ParentRegion.RootClass.ExpressionName,
           CoreDef.UsedBy[j].SubregionRootNavigation.ExpressionName], petSemantics);
   end;
-
 end;
-
-initialization
 
 end.

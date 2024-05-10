@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersLinkDefault;
@@ -95,9 +95,6 @@ type
     function GetLinkClassTableName: string;
     function GetLinkClassObjectMapper: TBoldObjectDefaultMapper; virtual; abstract;
     function GetClosestColumnName: string;
-    property ClosestOtherEndObjectMapperIndex: Integer read fClosestOtherEndObjectMapperIndex;
-    property ClosestOtherEndMemberMapperIndex: Integer read GetClosestOtherEndMemberMapperIndex;
-    property RemoteOtherEndObjectMapperIndex: Integer read fRemoteOtherEndObjectMapperIndex;
     function GetRemoteInnerLinkMapper: TBoldEmbeddedSingleLinkDefaultMapper;
     function GetClosestOtherEndObjectMapper: TBoldObjectDefaultMapper;
   protected
@@ -116,6 +113,9 @@ type
     property ClosestOtherEndObjectMapper: TBoldObjectDefaultMapper read GetClosestOtherEndObjectMapper;
     property IsIndirect: Boolean read fIsIndirect;
     property LinkClassTablename: string read GetLinkClassTableName;
+    property ClosestOtherEndObjectMapperIndex: Integer read fClosestOtherEndObjectMapperIndex;
+    property ClosestOtherEndMemberMapperIndex: Integer read GetClosestOtherEndMemberMapperIndex;
+    property RemoteOtherEndObjectMapperIndex: Integer read fRemoteOtherEndObjectMapperIndex;
     property LinkClassObjectMapper: TBoldObjectDefaultMapper read GetLinkClassObjectMapper;
     property Ordered: Boolean read GetIsOrdered;
     procedure PMFetch(ObjectIDList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList); override;
@@ -190,6 +190,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldLogHandler,
   BoldDefaultId,
@@ -279,7 +281,7 @@ end;
 
 function TBoldNonEmbeddedLinkDefaultMapper.CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField; ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList): Boolean;
 begin
-  raise EBold.CreateFmt('%s.CompareField: Can not be called for this class, it is not stored', [classname]);
+  raise EBold.CreateFmt(sCannotCallOnTransientClass, [classname]);
 end;
 
 function TBoldNonEmbeddedLinkDefaultMapper.GetColumnCount: Integer;
@@ -690,18 +692,24 @@ var
       CompareValuestoLists(CurrentObjectId, MemberInterface, ListOfClosestEnd, ListOfRemoteEnd, FailureList, TranslationList);
       if FailureList.Count > OldFailureCount then
       begin
-        BoldLog.LogFmt('Optimistic Locking failed for %s.%s for the following objects', [
+        BoldLog.LogFmt(sOptimisticLockingFailedForTheFollowing, [
           ObjectPersistenceMapper.ExpressionName,
           ExpressionName]);
         for i := OldFailureCount to FailureList.Count - 1 do
-          BoldLog.Log('Id: '+ FailureList[i].AsString);
+          BoldLog.LogFmt(sLogIdAsString, [FailureList[i].AsString]);
       end;
     end
     else if MemberInterface.BoldPersistenceState = bvpsInvalid then
       StuffValuesFromLists(MemberInterface, ListOfClosestEnd, ListOfRemoteEnd);
     ListOfClosestEnd.Clear;
     ListOfRemoteEnd.Clear;
-    UnprocessedObjects.RemoveByIndex(UnprocessedObjects.IndexByID[CurrentobjectId]);
+    if UnprocessedObjects.First.IsEqual[CurrentobjectId] then
+      UnprocessedObjects.RemoveByIndex(0)
+    else
+    if UnprocessedObjects.Last.IsEqual[CurrentobjectId] then
+      UnprocessedObjects.RemoveByIndex(UnprocessedObjects.Count-1)
+    else
+      UnprocessedObjects.RemoveByIndex(UnprocessedObjects.IndexByID[CurrentobjectId]);
   end;
 
   procedure EnsureAndAddToList(List: TBoldObjectIdList; ClassId: integer; Exact: Boolean; IdAsInteger: integer);
@@ -862,7 +870,7 @@ begin
     if ResultList.Count > 1 then
       ResultList.Sort(SortLinkValues);
     if BoldPMLogHandler<>nil then
-      BoldPMLogFmt('Fetched %4d ids for %4d nonembedded links %s.%s', [ResultLIst.Count, ObjectIdList.Count, ObjectPersistenceMapper.ExpressionName, ExpressionName]);
+      BoldPMLogFmt(sLogFetchIDs, [ResultLIst.Count, ObjectIdList.Count, ObjectPersistenceMapper.ExpressionName, ExpressionName]);
 
     ProcessResult(ResultList, ValueSpace, ObjectIdList, TranslationList, timeStamp, FetchMode, FailureList);
   finally
@@ -885,7 +893,7 @@ begin
   case ColumnIndex of
     0, 1: Result := SystemPersistenceMapper.SQLDataBaseConfig.ColumnTypeForInteger;
   else
-    raise EBoldBadColumnIndex.CreateFmt('%s.GetColumnTypeAsSQL: Bad column index', [ClassName]);
+    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnTypeAsSQL', ColumnIndex]); // do not localize
   end;
 end;
 
@@ -899,7 +907,7 @@ begin
   case ColumnIndex of
     0, 1: Result := ftInteger;
   else
-    raise EBoldBadColumnIndex.CreateFmt('%s.GetColumnBDEFieldType: Bad column index', [ClassName]);
+    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnBDEFieldType', ColumnIndex]); // do not localize
   end;
 end;
 
@@ -942,7 +950,7 @@ begin
     0: Result := InitialColumnRootName;
     1: Result := InitialColumnRootName + ORDERCOLUMN_SUFFIX;
   else
-    raise EBoldBadColumnIndex.CreateFmt('%s.GetInitialColumnName: Bad column index', [classname]);
+    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [classname, 'GetInitialColumnName', ColumnIndex]); // do not localize
   end;
 end;
 
@@ -994,7 +1002,7 @@ begin
     1:
       result := SingleLink.OrderNo;
   else
-    raise EBoldBadColumnIndex.CreateFmt('%s.ValueAsVariant: Bad column index (%d)', [ClassName, ColumnIndex]);
+    raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'ValueAsVariant', ColumnIndex]); // do not localize
   end;
 end;
 
@@ -1016,7 +1024,7 @@ begin
     1:
       anIdRef.Orderno := Field.AsInteger;
     else
-      raise EBoldBadColumnIndex.CreateFmt('%s.ValueFromField: Bad column index', [ClassName]);
+      raise EBoldBadColumnIndex.CreateFmt(sIllegalColumnIndex, [ClassName, 'ValueFromField', ColumnIndex]); // do not localize
   end;
 end;
 
@@ -1077,7 +1085,7 @@ begin
   fIsStoredInObject := IsStoredInObject and (Role.RoleType in [rtRole, rtInnerLinkRole]);
   fOtherEndObjectPMIndex := ClassOfOtherEnd.TopSortedIndex;
   fOtherEndExact :=  ClassOfOtherEnd.SubClasses.Count = 0;
-  fOtherEndMemberIndex := ClassOfOtherEnd.AllBoldMembers.IndexOf(role.OtherEnd);
+  fOtherEndMemberIndex := role.OtherEnd.Index;
   fIsInherited := MoldMember.MoldClass <> MoldClass;
 end;
 
@@ -1101,7 +1109,7 @@ begin
   Role := moldMember as TMoldRole;
   ClassOfOtherEnd := Role.OtherEnd.moldClass;
   fClosestOtherEndObjectMapperIndex := ClassOfOtherEnd.TopSortedIndex;
-  fClosestOtherEndMemberIndex := ClassOfOtherEnd.AllBoldMembers.IndexOf(Role.OtherEnd);
+  fClosestOtherEndMemberIndex := Role.OtherEnd.Index;
   fRemoteOtherEndObjectMapperIndex := fClosestOtherEndObjectMapperIndex;
   fRemoteInnerLinkMemberIndex := -1;
 end;
@@ -1150,12 +1158,11 @@ begin
   fIsIndirect := True;
   LinkClass := Role.Association.LinkClass;
   fClosestOtherEndObjectMapperIndex := LinkClass.TopSortedIndex;
-  fClosestOtherEndMemberIndex := LinkClass.AllBoldMembers.IndexOf(Role.LinkRole.OtherEnd);
+  fClosestOtherEndMemberIndex := Role.LinkRole.OtherEnd.Index;
   fRemoteOtherEndObjectMapperIndex := Role.OtherEnd.MoldClass.TopSortedIndex;
-
-  fRemoteInnerLinkMemberIndex := LinkClass.AllBoldMembers.IndexOf(Role.OtherEnd.LinkRole.OtherEnd);
+  fRemoteInnerLinkMemberIndex := Role.OtherEnd.LinkRole.OtherEnd.Index;
   if (LinkClass.TableMapping = tmChildren) then
-    raise EBoldFeatureNotImplementedYet.CreateFmt('%s.%s: ChildMapped LinkObjects (%s) are not supported!',
+    raise EBoldFeatureNotImplementedYet.CreateFmt(sChildMappedLinkClassesNotSupported,
                                                   [MoldClass.name, Role.Name, LinkClass.Name]);
 end;
 
@@ -1227,7 +1234,7 @@ begin
   Role := moldMember as TMoldRole;
   ClassOfOtherEnd := Role.OtherEnd.moldClass;
   fClosestOtherEndObjectMapperIndex := ClassOfOtherEnd.TopSortedIndex;
-  fClosestOtherEndMemberIndex := ClassOfOtherEnd.AllBoldMembers.IndexOf(Role.OtherEnd);
+  fClosestOtherEndMemberIndex := Role.OtherEnd.Index;
   fRemoteOtherEndObjectMapperIndex := fClosestOtherEndObjectMapperIndex;
   fRemoteInnerLinkMemberIndex := -1;
 end;
@@ -1285,12 +1292,11 @@ begin
   fIsIndirect := True;
   LinkClass := Role.Association.LinkClass;
   fClosestOtherEndObjectMapperIndex := LinkClass.TopSortedIndex;
-  fClosestOtherEndMemberIndex := LinkClass.AllBoldMembers.IndexOf(Role.LinkRole.OtherEnd);
+  fClosestOtherEndMemberIndex := Role.LinkRole.OtherEnd.Index;
   fRemoteOtherEndObjectMapperIndex := Role.OtherEnd.MoldClass.TopSortedIndex;
-  fRemoteInnerLinkMemberIndex := LinkClass.AllBoldMembers.IndexOf(Role.OtherEnd.LinkRole.OtherEnd);
-
+  fRemoteInnerLinkMemberIndex := Role.OtherEnd.LinkRole.OtherEnd.Index;
   if (LinkClass.TableMapping = tmChildren) then
-    raise EBoldFeatureNotImplementedYet.CreateFmt('%s.%s: ChildMapped LinkObjects (%s) are not supported!',
+    raise EBoldFeatureNotImplementedYet.CreateFmt(sChildMappedLinkClassesNotSupported,
                                                   [MoldClass.name, Role.Name, LinkClass.Name]);
 end;
 

@@ -70,13 +70,6 @@ type
     property PlugIn: TUMLPlugIn read FPlugIn write FPlugIn;
   end;
 
-  TUMLPlugInToolButton = class(TToolButton)
-  private
-    FPlugIn: TUMLPlugIn;
-  public
-    property PlugIn: TUMLPlugIn read FPlugIn write FPlugIn;
-  end;
-
 implementation
 
 uses

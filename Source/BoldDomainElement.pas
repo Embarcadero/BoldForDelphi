@@ -105,7 +105,7 @@ uses
 type
   TBoldDomainElementCollectionIndex = class(TBoldObjectHashIndex)
   protected
-    function ItemASKeyObject(Item: TObject): TObject; override;
+    function ItemAsKeyObject(Item: TObject): TObject; override;
   end;
 
 { TBoldDomainElement }
@@ -280,7 +280,7 @@ begin
   result := assigned(TBoldObjectHashIndex(Indexes[IX_DomainElementCollection]).FindByObject(Item));
 end;
 
-function TBoldDomainElementCollectionIndex.ItemASKeyObject(Item: TObject): TObject;
+function TBoldDomainElementCollectionIndex.ItemAsKeyObject(Item: TObject): TObject;
 begin
   result := item;
 end;

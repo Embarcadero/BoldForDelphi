@@ -161,7 +161,7 @@ end;
 
 function TModifyingMethodProperty.ImplementationTextToInsert: string;
 begin
-  Result := '';
+  result := '';
 end;
 
 procedure TModifyingMethodProperty.InsertText(const s: string);

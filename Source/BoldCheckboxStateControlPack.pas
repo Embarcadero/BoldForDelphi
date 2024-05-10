@@ -9,6 +9,7 @@ unit BoldCheckboxStateControlPack;
 interface
 
 uses
+  Classes,
   StdCtrls, // TCheckBoxState
   BoldDefs,
   BoldElements,

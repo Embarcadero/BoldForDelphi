@@ -49,7 +49,7 @@ type
     procedure CloseDataBase;
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
-    procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
+    procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     property PersistenceMapper: TBoldSystemDefaultMapper read GetPersistenceMapper;
@@ -103,12 +103,11 @@ var
   NewTimeStamp: TBoldTimeStampType;
 begin
   EnsureActive('PMUpdate');
-  SendExtendedEvent(bpeStartUpdate, [ObjectIdList, valueSpace]);
   if assigned(TranslationList) then
     aTranslationList := TranslationList
   else
     aTranslationList := TBoldIdTranslationList.Create;
-
+  SendExtendedEvent(bpeStartUpdate, [ObjectIdList, valueSpace]);
   try
     PersistenceMapper.PMUpdate(ObjectIdList, ValueSpace, Old_Values, Precondition, aTranslationList, NewTimeStamp, TimeOfLatestUpdate);
     if not assigned(Precondition) or not Precondition.failed then
@@ -181,10 +180,10 @@ var
 begin
   Guard := TBoldguard.Create(TranslationList);
   EnsureActive('PMFetchIdListWithCondition');
+  WasInTransaction := PersistenceMapper.Database.InTransaction;
   SendExtendedEvent(bpeStartFetchId, [Condition]);
   try
     TranslationList := TBoldIdTranslationList.Create;
-    WasInTransaction := PersistenceMapper.Database.InTransaction;
     PersistenceMapper.PMFetchClassWithCondition(ObjectIdList, ValueSpace, Condition, FetchMode, TranslationList);
     ValueSpace.ApplyTranslationList(TranslationList);
     if not WasInTransaction and PersistenceMapper.Database.InTransaction then
@@ -241,7 +240,7 @@ begin
   PersistenceMapper.PMTranslateToLocalIds(GlobalIdList, TranslationList);
 end;
 
-procedure TBoldPersistenceControllerDefault.PMSetReadonlyness(ReadOnlyList,
+procedure TBoldPersistenceControllerDefault.PMSetReadOnlyness(ReadOnlyList,
   WriteableList: TBoldObjectIdList);
 begin
   EnsureActive('PMSetReadonlyness');

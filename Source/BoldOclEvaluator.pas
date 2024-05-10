@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclEvaluator;
@@ -42,13 +42,13 @@ type
     procedure VisitTBoldOclIteration(N: TBoldOclIteration); override;
     procedure VisitTBoldOclMember(N: TBoldOclMember); override;
     procedure VisitTBoldOclVariableReference(N: TBoldOclVariableReference); override;
-    procedure VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral); override;
+    procedure VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral); override;
     procedure VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); override;
     procedure VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral); override;
     procedure VisitTBoldOclDateLiteral(N: TBoldOclDateLiteral); override;
     procedure VisitTBoldOclTimeLiteral(N: TBoldOclTimeLiteral); override;
     procedure VisitTBoldOclIntLiteral(N: TBoldOclIntLiteral); override;
-    procedure VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLiteral); override;
+    procedure VisitTBoldOclCollectionLiteral(N: TBoldOclCollectionLiteral); override;
     procedure SubScribeToElem(N: TBoldOclNode);
   end;
 
@@ -60,6 +60,8 @@ implementation
 uses
   Classes,
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldOclError,
   BoldContainers,
@@ -384,38 +386,41 @@ begin
       OclOrderBy, OclOrderDescending:
       begin
         SortKeyHolder := TBoldOclNode.Create;
-        SortKeys := TBoldMemberList.Create;
-        SortKeys.DuplicateMode := bldmAllow;
-        SortArgIsRTMember := (N.Args[1] is TBoldOclMember) and Assigned((N.Args[1] as TBoldOclMember).RTInfo);
-        SortKeys.CloneMembers := not SortArgIsRTMember;
+        try
+          SortKeys := TBoldMemberList.Create;
+          SortKeys.DuplicateMode := bldmAllow;
+          SortArgIsRTMember := (N.Args[1] is TBoldOclMember) and Assigned((N.Args[1] as TBoldOclMember).RTInfo);
+          SortKeys.CloneMembers := not SortArgIsRTMember;
 
-        SortKeyHolder.SetOwnedvalue(SortKeys);
-        OperationParams.Result := SortkeyHolder;
-        List := N.Args[0].Value as TBoldList;
-        List.EnsureRange(0, List.Count-1);
-        for i := 0 to List.Count - 1 do begin
-          N.LoopVar.SetReferenceValue(List[i]);
-          N.Args[1].AcceptVisitor(self);
-          OperationParams.values[0] := n.args[1].Value;
-          OperationParams.values[1] := n.LoopVar.value;
-          N.Symbol.Evaluate(OperationParams);
-        end;
-        Sortlist(N, List, SortKeyHolder, N.IteratorSpecifier);
-        if not SortKeys.CloneMembers then
-        begin
-          for i := Sortkeys.Count-1 downto 0 do
+          SortKeyHolder.SetOwnedvalue(SortKeys);
+          OperationParams.Result := SortkeyHolder;
+          List := N.Args[0].Value as TBoldList;
+          List.EnsureRange(0, List.Count-1);
+          for i := 0 to List.Count - 1 do begin
+            N.LoopVar.SetReferenceValue(List[i]);
+            N.Args[1].AcceptVisitor(self);
+            OperationParams.values[0] := n.args[1].Value;
+            OperationParams.values[1] := n.LoopVar.value;
+            N.Symbol.Evaluate(OperationParams);
+          end;
+          Sortlist(N, List, SortKeyHolder, N.IteratorSpecifier);
+          if not SortKeys.CloneMembers then
           begin
-
-            if not assigned(Sortkeys[i].OwningObject) then
+            for i := Sortkeys.Count-1 downto 0 do
             begin
-              TempSortKey := SortKeys[i];
-              SortKeys.RemoveByIndex(i);
-              TempSortKey.Free;
+
+              if not assigned(Sortkeys[i].OwningObject) then
+              begin
+                TempSortKey := SortKeys[i];
+                SortKeys.RemoveByIndex(i);
+                TempSortKey.Free;
+              end;
             end;
           end;
-        end;
-        SortKeyHolder.Free;
-      end
+        finally
+          SortKeyHolder.Free;
+        end
+      end;
       {;
       OclUnique:
       begin
@@ -492,6 +497,7 @@ var
   begin
     Result := CreateNewMember(n.BoldType) as TBoldMemberList;
     Result.DuplicateMode := bldmAllow;
+    Result.CloneMembers := false;
     index := N.memberindex;
     Result.Capacity := OldObjectList.Count;
     for i := 0 to OldObjectList.Count - 1 do begin
@@ -563,6 +569,8 @@ var
     Result.DuplicateMode := bldmAllow;
 
     for i := 0 to OldObjectList.Count - 1 do begin
+      if OldObjectList.Locators[i].BoldObjectID.NonExisting then
+        continue;
       LoopObject := OldObjectList[i];
       Link := LoopObject.BoldMembers[N.memberindex] as TBoldObjectReference;
       if assigned(CurrentSubscriber) then
@@ -585,7 +593,7 @@ begin
         else if N.MemberOf.Value is TBoldObject then
           Obj := TBoldObject(N.MemberOf.Value)
         else if assigned(n.Memberof.Value) then
-          raise EBold.CreateFmt('unknown type of memberof: %s',[N.MemberOf.Value.ClassName]);
+          raise EBold.CreateFmt(sUnknownTypeOfMemberOf,[N.MemberOf.Value.ClassName]);
 
         if assigned(Obj) and assigned(Obj.BoldObjectLocator) then
         begin
@@ -613,11 +621,12 @@ begin
           bvtAttr: N.SetOwnedValue(retrieveAttribute);
           bvtClass: N.SetOwnedValue(RetrieveSingleLink);
           bvtList: N.SetOwnedValue(retrieveMultiLink)
-        else raise EBold.CreateFmt('unknown type of member: %s',[N.MemberType.ClassName]);
+        else
+          raise EBold.CreateFmt(sUnknownTypeOfMember,[N.MemberType.ClassName]);
         end;
       end;
     else
-      raise EBold.CreateFmt('unknown type of member: %s',[N.MemberOf.Value.BoldType.ClassName]);
+      raise EBold.CreateFmt(sUnknownTypeOfMember,[N.MemberOf.Value.BoldType.ClassName]);
     end;
 
     SubScribeToElem(N);
@@ -632,18 +641,21 @@ begin
   VariableValue := N.VariableBinding.Value;
   N.SetReferenceValue(VariableValue);
   if assigned(currentSubscriber) and Assigned(VariableValue) then
+  begin
+    if not VariableValue.Mutable then
+      N.IsConstant := true;
+    if not N.IsConstant then
     VariableValue.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe or fResubscribeAll));
-
-
+  end;
 end;
 
-procedure TBoldOclEvaluatorVisitor.VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral);
+procedure TBoldOclEvaluatorVisitor.VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral);
 begin
   if not assigned(n.value) then
     n.SetReferenceValue(CurrentSystemTypeInfo.FindValueSetByName(N.Name));
 end;
 
-procedure TBoldOclEvaluatorVisitor.VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLiteral);
+procedure TBoldOclEvaluatorVisitor.VisitTBoldOclCollectionLiteral(N: TBoldOclCollectionLiteral);
 var
   i       : Integer;
   tempInteger: TBAInteger;

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOCLGraphicRTDebug;
@@ -7,6 +7,8 @@ interface
 
 uses
   Classes,
+
+  BoldCoreConsts,
   BoldElements,
   BoldOclRTDebug,
   BoldDefs;
@@ -63,13 +65,9 @@ begin
   Fixform := TBoldOclPropEditForm.Create(nil);
   fixform.Context := Context;
   FixForm.OclExpr := ocl;
-  FixForm.Caption := 'Runtime OCL Debugger: Illegal expression encountered, Please try to fix it';
-  FixForm.ExpressionPage.Caption := 'In component: ' + Componentpath;
-  ShowMessage(format(
-    'Incorrect OCL-expression: %s' + BOLDCRLF +
-    'In Component: %s' + BOLDCRLF +
-    'Message: %s' + BOLDCRLF +
-    'Context: %s', [ocl, Componentpath, Message, Context.AsString]));
+  FixForm.Caption := sIllegalExpressionEncountered;
+  FixForm.ExpressionPage.Caption := Format(sInComponent, [Componentpath]);
+  ShowMessage(format(sIncorrectMessage, [ocl, BOLDCRLF, Componentpath, BOLDCRLF, Message, BOLDCRLF, Context.AsString]));
   if (FixForm.ShowModal = mrOK) and
     (ocl <> FixForm.OclExpr) then
   begin

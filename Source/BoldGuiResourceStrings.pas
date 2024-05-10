@@ -1,16 +1,9 @@
-
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 1996-2002 Boldsoft AB              //
-//              (c) 2002-2005 Borland Software Corp    //
-//                                                     //
-/////////////////////////////////////////////////////////
-
-
-unit BoldGuiResourceStrings;
+﻿unit BoldGuiResourceStrings;
 
 interface
+
+uses
+  BoldCoreConsts;
 
 resourcestring
   SCantGetIntegerValue = 'Can''t get integer value from element (%s)';
@@ -66,15 +59,14 @@ resourcestring
   sJpegImage = 'JPEG image';
 
 // Navigator hints
-  SNavHintFirst = 'First';
-  SNavHintPrior = 'Prior';
-  SNavHintNext = 'Next';
-  SNavHintLast = 'Last';
-  SNavHintNew = 'New';
-  SNavHintDelete = 'Delete';
-  SNavHintMoveUp = 'Move up';
-  SNavHintMoveDown = 'Move down';
-  sUnknownDeleteMode = '%s.MapMinus: Unknown delete mode';
+  SNavHintFirst = sFirst;
+  SNavHintPrior = sPrev;
+  SNavHintNext = sNext;
+  SNavHintLast = sLast;
+  SNavHintNew = sAddNew;
+  SNavHintDelete = sDelete;
+  SNavHintMoveUp = sMoveUp;
+  SNavHintMoveDown = sMoveDown;
   sDeleteQuestion = 'Delete "%1:s"?';
   sUnlinkQuestion = 'Unlink "%1:s" from "%2:s"?';
   sRemoveQuestion = 'Remove "%1:s" from the list?';
@@ -91,7 +83,6 @@ resourcestring
 
 //BoldControlPack
   sClassHasNoSubfollowers = '%s: This class has no subfollowers';
-  sNotImplemented = '%s.%s not implemented';
   sCannotModifyValue = '%s.DefaultHoldsChangedValue: Can''t Modify Value';
   sReplaceNotImplemented = '%s.DefaultDragDrop: Replace not implemented yet';
   sUnknownRequestedEvent = '%s.Receive: Unknown RequestedEvent (%d)';
@@ -125,7 +116,7 @@ resourcestring
   sStringValidationFailed = 'String validation failed';
   sUnknownReason = 'Unknown reason';
 
-//B oldViewerControlPack
+//BoldViewerControlPack
   sViewerNotAvailable = 'Viewer not available (%s)';
 
 //BoldComboBoxPropertyEditors
@@ -157,7 +148,6 @@ resourcestring
   sCreateNew = 'Create new...';
   sAddExisting = 'Add existing...';
   sUnlink = 'Unlink';
-  sDelete = 'Delete';
   sHistoricObject = 'Historic object - Timestamp %d';
   sClose = 'Close';
   sApply = '&Apply';

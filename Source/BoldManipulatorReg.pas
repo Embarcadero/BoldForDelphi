@@ -9,8 +9,6 @@ procedure Register;
 
 implementation
 
-{$R BoldManipulators.res}
-
 uses
   SysUtils,
   BoldUtils,
@@ -26,7 +24,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponentsOnPalette;
+    RegisterComponentsOnPalette;
 end;
 
 end.

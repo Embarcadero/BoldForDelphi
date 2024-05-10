@@ -146,6 +146,4 @@ begin
   Result := (fOwner as TBoldSnooperHandle).CheckDatabaseLock;
 end;
 
-initialization
-
 end.

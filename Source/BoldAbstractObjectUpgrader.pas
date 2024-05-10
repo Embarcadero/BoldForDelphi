@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractObjectUpgrader;
@@ -66,6 +66,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldNameExpander,
   BoldTaggedValueSupport;
 
@@ -90,8 +92,8 @@ begin
   if ExpressionName <> '' then
     result := ExpressionName
   else
-    result := '<unassigned>';
-  result := 'Upgrade ' + result + ' if older than ' + intToStr(UpgradeOlderThanVersion);
+    result := sDisplayNameUnassigned;
+  result := Format(sUpgradeIfOlderThan, [Result, UpgradeOlderThanVersion]);
 end;
 
 

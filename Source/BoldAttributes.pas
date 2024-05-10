@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAttributes;
@@ -63,26 +63,28 @@ type
   TBAString = class(TBoldAttribute)
   strict private
     FValue: string;
-  private
     class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
     procedure SetDataValue(const NewValue: string);
-    procedure SetContent(const NewValue: string);
+    function SetContent(const NewValue: string): boolean;
+    function GetValue: string; virtual;
+    procedure SetValue(const Value: string); virtual;
+    property Value: string read GetValue write SetValue;
   protected
     function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
+    procedure AssignCloneValue(AClone: TBoldMember); override;
     procedure FreeContent; override;
     function GetAsAnsiString: TBoldAnsiString; virtual;
     function GetAsUnicodeString: TBoldUnicodeString; virtual;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
-    function GetValue: string; virtual;
     function MaySetValue(NewValue: String; Subscriber: TBoldSubscriber): Boolean; virtual;
     function GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
     procedure SetAsAnsiString(const Value: TBoldAnsiString); virtual;
     procedure SetAsUnicodeString(const Value: TBoldUnicodeString); virtual;
-    procedure SetValue(const Value: string); virtual;
     function GetFreeStandingClass: TBoldFreeStandingElementClass; override;
-    property Value: string read GetValue write SetValue;
   public
     constructor CreateWithValue(const Value: string);
     procedure Assign(Source: TBoldElement); override;
@@ -109,30 +111,29 @@ type
     function GetContentAsUnicodeString: TBoldUnicodeString;
     function GetProxedString: TBAString;
     procedure SetContentAsString(const NewValue: String);
-    function GetContentAsString: String; override;
     procedure SetContentAsAnsiString(const NewValue: TBoldAnsiString);
     procedure SetContentAsUnicodeString(const NewValue: TBoldUnicodeString);
   protected
+    function GetContentAsString: String; override;
     property ProxedString: TBAString read GetProxedString;
+  public
     class function MakeProxy(ProxedMember: TBoldMember; Mode:  TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
   end;
   {$ENDIF}
 
   {---TBAAnsiString---}
   TBAAnsiString = class(TBAString)
-  private
-    function ProxyClass: TBoldMember_ProxyClass;
   {$IFDEF BOLD_UNICODE}
   private
     fValue: TBoldAnsiString;
-    procedure SetContent(NewValue: TBoldAnsiString);
+    function SetContent(NewValue: TBoldAnsiString): boolean;
     procedure SetDataValue(NewValue: TBoldAnsiString);
+    procedure SetValue(const Value: string); override;
   {$ENDIF}
   protected
   {$IFDEF BOLD_UNICODE}
     procedure FreeContent; override;
     function GetValue: string; override;
-    procedure SetValue(const Value: string); override;
     function GetAsAnsiString: TBoldAnsiString; override;
     procedure SetAsAnsiString(const Value: TBoldAnsiString); override;
   {$ENDIF}
@@ -153,17 +154,16 @@ type
   private
   {$IFNDEF BOLD_UNICODE}
     fValue: TBoldUnicodeString;
-    procedure SetContent(NewValue: TBoldUnicodeString);
+    function SetContent(NewValue: TBoldUnicodeString): boolean;;
     procedure SetDataValue(NewValue: TBoldUnicodeString);
+    procedure SetValue(const Value: string); override;
   {$ENDIF}
-    function ProxyClass: TBoldMember_ProxyClass;
   protected
   {$IFNDEF BOLD_UNICODE}
     procedure FreeContent; override;
     function GetAsUnicodeString: TBoldUnicodeString; override;
     function GetValue: string; override;
     procedure SetAsUnicodeString(const Value: TBoldUnicodeString); override;
-    procedure SetValue(const Value: string); override;
   {$ENDIF}
     function GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
   public
@@ -194,12 +194,9 @@ type
 
   {---TBANumeric---}
   TBANumeric = class(TBoldAttribute)
-  private
-    class var AttributeTypeInfo: TBoldElementTypeInfo;
   protected
     function GetAsFloat: Double; virtual; abstract;
     procedure SetAsInteger(Value: integer); virtual; abstract;
-    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
   public
     procedure SetEmptyValue; override;
     function IsVariantTypeCompatible(const Value: Variant): Boolean; override;
@@ -211,13 +208,19 @@ type
 
   {---TBAInteger---}
   TBAInteger = class(TBANumeric)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     FValue: integer;
     procedure SetDataValue(NewValue: Integer);
-    procedure SetContent(NewValue: Integer);
+    function SetContent(NewValue: Integer): boolean;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure FreeContent; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
+    procedure AssignCloneValue(AClone: TBoldMember); override;
     function CheckRangeWithBounds(Value, Min, Max: integer): boolean;
     function GetAsInteger: integer; virtual;
     function GetAsFloat: Double; override;
@@ -247,9 +250,15 @@ type
 
   {---TBASmallInt---}
   TBASmallInt = class(TBAInteger)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     function GetAsSmallInt: SmallInt;
     procedure SetAsSmallInt(const Value: SmallInt);
+  protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
   public
     function CheckRange(Value: integer): Boolean; override;
     property AsSmallInt: SmallInt read GetAsSmallInt write SetAsSmallInt;
@@ -257,9 +266,15 @@ type
 
   {---TBAShortInt---}
   TBAShortInt = class(TBASmallInt)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     function GetAsShortInt: ShortInt;
     procedure SetAsShortInt(const Value: ShortInt);
+  protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
   public
     function CheckRange(Value: integer): Boolean; override;
     property AsShortInt: ShortInt read GetAsShortInt write SetAsShortInt;
@@ -267,9 +282,15 @@ type
 
   {---TBAWord---}
   TBAWord = class(TBAInteger)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     function GetAsWord: Word;
     procedure SetAsWord(const Value: Word);
+  protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
   public
     function CheckRange(Value: integer): Boolean; override;
     property AsWord: Word read GetAsWord write SetAsWord;
@@ -277,9 +298,15 @@ type
 
   {---TBAByte---}
   TBAByte = class(TBAWord)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     function GetAsByte: Byte;
     procedure SetAsByte(const Value: Byte);
+  protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
   public
     function CheckRange(Value: integer): Boolean; override;
     property AsByte: Byte read GetAsByte write SetAsByte;
@@ -287,13 +314,19 @@ type
 
   {---TBAFloat---}
   TBAFloat = class(TBANumeric)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     fValue: Double;
-    procedure SetContent(NewValue: Double);
+    function SetContent(NewValue: Double): boolean;
     procedure SetDataValue(NewValue: Double);
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure FreeContent; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
+    procedure AssignCloneValue(AClone: TBoldMember); override;
     function GetAsFloat: Double; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetAsFloat(Value: Double); virtual;
@@ -322,13 +355,19 @@ type
 
   {---TBACurrency---}
   TBACurrency = class(TBANumeric)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     FValue: Currency;
-    procedure SetContent(NewValue: Currency);
+    function SetContent(NewValue: Currency): boolean;
     procedure SetDataValue(NewValue: Currency);
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure FreeContent; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
+    procedure AssignCloneValue(AClone: TBoldMember); override;
     function GetAsCurrency: Currency;
     function GetAsFloat: Double; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
@@ -384,17 +423,21 @@ type
 
   {---TBABlob---}
   TBABlob = class(TBoldAttribute)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     fStream: TBoldBlobStream;
     fSupressEventCount: integer;
-    procedure SetContent(NewValue: TBoldAnsiString);
+    function SetContent(NewValue: TBoldAnsiString): boolean;
     procedure SetDataValue(NewValue: TBoldAnsiString);
     function GetBlobSize: Int64;
     function GetAsStream: TBoldBlobStream;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     procedure FreeContent; override;
-    procedure SetAsVariant(const Value: Variant); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function GetAsBlob: TBoldAnsiString;
@@ -414,6 +457,7 @@ type
     procedure SetToNull; override;
     procedure Assign(Source: TBoldElement); override;
     procedure AssignValue(const Source: IBoldValue); override;
+    procedure SetAsVariant(const Value: Variant); override;
     property ContentType: string index brShort read GetStringRepresentation write SetStringRepresentation;
     function CanSetValue(NewValue: TBoldAnsiString; Subscriber: TBoldSubscriber): Boolean;
     function CompareToAs(CompareType: TBoldCompareType; BoldElement: TBoldElement): Integer; override;
@@ -431,16 +475,21 @@ type
 
   {-- TBATypedBlob --}
   TBATypedBlob = class(TBABlob)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     FContentType: string;
     procedure SetContentType2(Value: string);
     procedure SetContentTypeContent(NewValue: String);
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function GetContentTypeContent: String;
     function GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
-    function GetFreeStandingClass: TBoldFreeStandingElementClass; override;    
+    function GetFreeStandingClass: TBoldFreeStandingElementClass; override;
   public
     procedure AssignValue(const Source: IBoldValue); override;
     procedure SetToNull; override;
@@ -469,7 +518,6 @@ type
   TBAMoment = class(TBANumeric)
   private
     FValue: TDateTime;
-    class var AttributeTypeInfo: TBoldElementTypeInfo;
     procedure SetDataValue(NewValue: TDateTime);
     procedure SetDateTimeContent(NewValue: TDateTime);
     function GetDays: Word;
@@ -489,7 +537,6 @@ type
     procedure SetAsDateTime(Value: TDateTime);
     procedure SetAsTime(Value: TDateTime);
     function MaySetValue(NewValue: TDateTime; Subscriber: TBoldSubscriber): Boolean; virtual;
-    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     property AsDate: TDateTime read GetAsDate write SetAsDate;
     property AsTime: TDateTime read GetAsTime write SetAsTime;
     property Seconds: Word read GetSeconds;
@@ -513,7 +560,12 @@ type
 
   {---TBADateTime---}
   TBADateTime = class(TBAMoment)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
@@ -538,7 +590,12 @@ type
 
   {---TBADate---}
   TBADate = class(TBAMoment)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
@@ -558,9 +615,14 @@ type
 
   {---TBATime---}
   TBATime = class(TBAMoment)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     function GetAsSeconds: cardinal;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
@@ -626,19 +688,23 @@ type
 
   {TBAValueSet}
   TBAValueSet = class(TBoldAttribute)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     FValue: TBAValueSetValue;
-    class var AttributeTypeInfo: TBoldElementTypeInfo;
     procedure CheckIllegalValue;
     function GetAsInteger: Integer;
     procedure SetAsInteger(Value: Integer);
-    procedure SetContent(NewValue: TBAValueSetValue);
+    function SetContent(NewValue: TBAValueSetValue): boolean;
     procedure SetContentAsInteger(NewValue: Integer);
     procedure SetDataValue(NewValue: TBAValueSetValue);
   protected
     procedure FreeContent; override;
     function GetContentAsInteger: Integer; virtual;
     procedure AssignContentValue(const Source: IBoldValue); override;
+    procedure AssignCloneValue(AClone: TBoldMember); override;
     procedure Initialize; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
@@ -666,9 +732,14 @@ type
 
   {---TBABoolean---}
   TBABoolean = class(TBAValueSet)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     class var _BooleanValues: TBAValueSetValueList;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     function GetAsBoolean: Boolean;
     procedure SetAsBoolean(Value: Boolean);
@@ -681,11 +752,15 @@ type
     function GetAsVariant: Variant; override;
     function ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean; override;
     function IsVariantTypeCompatible(const Value: Variant): Boolean; override;
-    function IsEqualToValue(const Value: IBoldValue): Boolean; override;    
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsBoolean: Boolean read GetAsBoolean write SetAsBoolean;
   end;
 
   TBAConstraint = class(TBABoolean)
+  strict private
+    class var AttributeTypeInfo: TBoldElementTypeInfo;
+  private
+    class procedure ClearAttributeTypeInfo;
   private
     fConstraint: TBoldConstraintRTInfo;
     fOwningElement: TBoldElement;
@@ -693,6 +768,7 @@ type
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure CalculateConstraint;
   protected
+    function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
     function GetContentAsInteger: Integer; override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure Initialize; override;
@@ -712,6 +788,7 @@ function VarArrayToBoldMemberList(const Values: array of const): TBoldMemberList
 implementation
 
 uses
+  Math,
   {$IFDEF BOLD_UNICODE}AnsiStrings,{$ENDIF}
   BoldNameExpander,
   BoldTaggedValueSupport,
@@ -746,17 +823,46 @@ end;
 procedure TBoldSystemSubscriber.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  TBAString.AttributeTypeInfo := nil;
-  TBANumeric.AttributeTypeInfo := nil;
-  TBAMoment.AttributeTypeInfo := nil;
-  TBAValueSet.AttributeTypeInfo := nil;
+  TBAString.ClearAttributeTypeInfo;
+  TBAAnsiString.ClearAttributeTypeInfo;
+  TBAUnicodeString.ClearAttributeTypeInfo;
+  TBAText.ClearAttributeTypeInfo;
+  TBAUnicodeText.ClearAttributeTypeInfo;
+  TBATrimmedString.ClearAttributeTypeInfo;
+  TBAInteger.ClearAttributeTypeInfo;
+  TBAWord.ClearAttributeTypeInfo;
+  TBASmallInt.ClearAttributeTypeInfo;
+  TBAByte.ClearAttributeTypeInfo;
+  TBAShortInt.ClearAttributeTypeInfo;
+  TBAFloat.ClearAttributeTypeInfo;
+  TBACurrency.ClearAttributeTypeInfo;
+  TBABlob.ClearAttributeTypeInfo;
+  TBATypedBlob.ClearAttributeTypeInfo;
+  TBADateTime.ClearAttributeTypeInfo;
+  TBADate.ClearAttributeTypeInfo;
+  TBATime.ClearAttributeTypeInfo;
+  TBAValueSet.ClearAttributeTypeInfo;
+  TBABoolean.ClearAttributeTypeInfo;
+  TBAConstraint.ClearAttributeTypeInfo;
+  TBABlobImageJPEG.ClearAttributeTypeInfo;
+  TBABlobImageBMP.ClearAttributeTypeInfo;
   FreeAndNil(_SystemSubscriber);
 end;
 
+const
+  DEFAULTNOW = '<NOW>';
+  Meth_GetStringRepresentation = 'GetStringRepresentation';
+  Meth_SetStringRepresentation = 'SetStringRepresentation';
+
 type
   TBAUnicodeString_Proxy = class(TBAString_Proxy, IBoldUnicodeStringContent)
+  private
+    class var fLastUsed: array[TBoldDomainElementProxyMode] of TBoldMember_Proxy;
+    class var fLastUsedAsInterface: array[TBoldDomainElementProxyMode] of IBoldValue;
+  protected
+    class function MakeProxy(ProxedMember: TBoldMember; Mode:  TBoldDomainElementProxyMode): TBoldMember_Proxy; override;
   end;
-  
+
   TBAInteger_Proxy = class(TBoldAttribute_Proxy, IBoldIntegerContent)
   private
     function GetProxedInteger: TBAInteger;
@@ -770,7 +876,7 @@ type
   private
     function GetProxedFloat: TBAFloat;
     function GetContentAsFloat: Double;
-    procedure SetContentAsFloat(NewValue: Double);    
+    procedure SetContentAsFloat(NewValue: Double);
   protected
     property ProxedFloat: TBAFloat read GetProxedFloat;
   end;
@@ -783,7 +889,6 @@ type
     function GetBlobAsStream: TStream;
     procedure BeginSupressEvents;
     procedure EndSupressEvents;
-    function SupressEvents: boolean;
     property ProxedBlob: TBABlob read GetProxedBlob;
   end;
 
@@ -851,7 +956,7 @@ begin
     vtInt64:        Result := TBAInteger.CreateWithValue(value.VInt64^);
     vtBoolean:      Result := TBABoolean.CreateWithValue(value.VBoolean);
     vtExtended:     Result := TBAFloat.CreateWithValue(value.VExtended^);
-    vtString:       Result := TBAString.CreateWithValue(value.VString^);
+    vtString:       Result := TBAString.CreateWithValue(String(value.VString^));
     vtAnsiString:   Result := TBAString.CreateWithValue(String(value.VAnsiString));
 {$IFDEF BOLD_UNICODE}
     vtUnicodeString: Result := TBAString.CreateWithValue(String(value.vUnicodeString));
@@ -875,18 +980,26 @@ end;
 
 { TBAString }
 procedure TBAString.SetDataValue(const NewValue: string);
+var
+  bContentIsNull: Boolean;
+  sOldValue: String;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-
   if IsNull or (FValue <> NewValue) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -897,7 +1010,7 @@ end;
 procedure TBAString.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
 
   if Representation = brDefault then
     SetDataValue(Value)
@@ -909,7 +1022,7 @@ function TBAString.GetStringRepresentation(Representation: TBoldRepresentation):
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetStringRepresentation', '');
+    BoldRaiseLastFailure(self, Meth_GetStringRepresentation, '');
   if Representation <> brDefault then
     inherited GetStringRepresentation(Representation);
 
@@ -926,7 +1039,7 @@ begin
     Result := (BoldAttributeRtInfo.Length = -1) or
       (Length(Value) <= BoldAttributeRtInfo.Length);
     if not result then
-      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('String too long. Max allowed: %d, actual: %d.', [BoldAttributeRtInfo.Length, Length(Value)] , self));
+      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sStringTooLong, [BoldAttributeRtInfo.Length, Length(Value)] , self));
   end
   else
     Result := True;
@@ -956,7 +1069,12 @@ begin
   end
   else
   if Assigned(BoldElement) then
-    Result := StringCompare(CompType, AsString, BoldElement.AsString)
+  begin
+    if (BoldElement is TBoldAttribute) and EitherIsNull(Self, TBoldAttribute(BoldElement)) then
+      Result := NullSmallest(BoldElement)
+    else
+      Result := StringCompare(CompType, AsString, BoldElement.AsString);
+  end
   else
     result := -1;
 end;
@@ -975,6 +1093,11 @@ begin
 {$ENDIF}
 end;
 
+class procedure TBAString.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBAString.MaySetValue(NewValue: String;
   Subscriber: TBoldSubscriber): Boolean;
 begin
@@ -989,27 +1112,19 @@ begin
   if source.QueryInterface(IBoldStringContent, S) = S_OK then
     SetDataValue(s.AsString)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
-procedure TBAString.SetContent(const NewValue: string);
-var
-  bContentIsNull: Boolean;
-  sOldValue: string;
+function TBAString.SetContent(const NewValue: string): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
-     bContentIsNull or (fValue <> NewValue) then
+     ContentIsNull or (fValue <> NewValue) then
   begin
     PreChange;
-    sOldValue := fValue;
     fValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
@@ -1029,55 +1144,89 @@ begin
 end;
 
 procedure TBAString_Proxy.SetContentAsString(const NewValue: string);
+var
+  bContentIsNull: Boolean;
+  sOldValue: string;
 begin
-  ProxedString.SetContent(NewValue);
+  bContentIsNull := ProxedString.ContentIsNull;
+  sOldValue := ProxedString.Value;
+  if ProxedString.SetContent(NewValue) then
+    if bContentIsNull then
+      ProxedString.Changed(beValueChanged, [NewValue])
+    else
+      ProxedString.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 procedure TBAString_Proxy.SetContentAsAnsiString(const NewValue:
     TBoldAnsiString);
+var
+  bContentIsNull: Boolean;
+  sOldValue: string;
+  bHasChanged: Boolean;
 begin
-  if ProxedString is TBAAnsiString then begin
-    TBAAnsiString(ProxedString).SetContent(NewValue);
-  end else begin
-    ProxedString.SetContent(string(NewValue));
-  end;
+  bContentIsNull := ProxedString.ContentIsNull;
+  sOldValue := ProxedString.Value;
+  if ProxedString is TBAAnsiString then
+    bHasChanged := TBAAnsiString(ProxedString).SetContent(NewValue)
+  else
+    bHasChanged := ProxedString.SetContent(string(NewValue));
+  if bHasChanged then
+    if bContentIsNull then
+      ProxedString.Changed(beValueChanged, [NewValue])
+    else
+      ProxedString.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 procedure TBAString_Proxy.SetContentAsUnicodeString(const NewValue:
     TBoldUnicodeString);
+var
+  bContentIsNull: Boolean;
+  sOldValue: String;
+  bHasChanged: Boolean;
 begin
+  bContentIsNull := ProxedString.ContentIsNull;
+  sOldValue := ProxedString.Value;
   if ProxedString is TBAUnicodeString then begin
-    TBAUnicodeString(ProxedString).SetContent(NewValue);
+    bHasChanged := TBAUnicodeString(ProxedString).SetContent(NewValue);
   end else begin
-    ProxedString.SetContent(string(NewValue));
+    bHasChanged := ProxedString.SetContent(string(NewValue));
   end;
+  if bHasChanged then
+    if bContentIsNull then
+      ProxedString.Changed(beValueChanged, [NewValue])
+    else
+      ProxedString.Changed(beValueChanged, [NewValue, sOldValue]);
+end;
+
+procedure TBAString.AssignCloneValue(AClone: TBoldMember);
+begin
+  EnsureContentsCurrent;
+  if ContentIsNull then
+    (AClone as TBAString).SetContentToNull
+  else
+    (AClone as TBAString).SetToNonNull;
+  (AClone as TBAString).fValue := FValue;
 end;
 
 procedure TBAString.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldStringContent;
   sr: IBoldStringRepresentable;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContent('')
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
+  begin
+    if CanSetToNull(nil) then
+      SetContentToNull
+    else
+      SetContent('')
+  end
   else if source.QueryInterface(IBoldStringContent, S) = S_OK then
-  begin
-    if s.IsNull then
-      SetContentToNull
-    else
-      SetContent(s.AsString)
-  end
+    SetContent(s.AsString)
   else if source.QueryInterface(IBoldStringRepresentable, sr) = S_OK then
-  begin
-    if sr.IsNull then
-      SetContentToNull
-    else
-      SetContent(sr.AsString)
-  end
+    SetContent(sr.AsString)
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBAString.GetProxy(Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
@@ -1210,40 +1359,40 @@ begin
   SetDataValue(Value);
 end;
 
-procedure TBAAnsiString.SetContent(NewValue: TBoldAnsiString);
-var
-  bContentIsNull: Boolean;
-  sOldValue: TBoldAnsiString;
+function TBAAnsiString.SetContent(NewValue: TBoldAnsiString): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
-     bContentIsNull or (fValue <> NewValue) then
+     ContentIsNull or (fValue <> NewValue) then
   begin
     PreChange;
-    sOldValue := fValue;
     fValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
 procedure TBAAnsiString.SetDataValue(NewValue: TBoldAnsiString);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TBoldAnsiString;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(string(NewValue), nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', ''); // do not localize
-
   if IsNull or (fValue <> NewValue) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(string(NewValue), nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, ''); // do not localize
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', ''); // do not localize
+      BoldRaiseLastFailure(self, sSetDataValue, ''); // do not localize
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -1278,11 +1427,6 @@ function TBAAnsiString.GetProxy(
   Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
 begin
   result := TBAAnsiString_Proxy.MakeProxy(self, mode);
-end;
-
-function TBAAnsiString.ProxyClass: TBoldMember_ProxyClass;
-begin
-  result := TBAAnsiString_Proxy;
 end;
 
 function TBAAnsiString.ProxyInterface(const IId: TGUID; Mode:
@@ -1331,40 +1475,40 @@ begin
   SetDataValue(Value);
 end;
 
-procedure TBAUnicodeString.SetContent(NewValue: TBoldUnicodeString);
-var
-  bContentIsNull: Boolean;
-  sOldValue: TBoldUnicodeString;
+function TBAUnicodeString.SetContent(NewValue: TBoldUnicodeString): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
-     bContentIsNull or (fValue <> NewValue) then
+     ContentIsNull or (fValue <> NewValue) then
   begin
     PreChange;
-    sOldValue := fValue;
     fValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
 procedure TBAUnicodeString.SetDataValue(NewValue: TBoldUnicodeString);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TBoldUnicodeString;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(string(NewValue), nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', ''); // do not localize
-
   if IsNull or (fValue <> NewValue) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(string(NewValue), nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, ''); // do not localize
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', ''); // do not localize
+      BoldRaiseLastFailure(self, sSetDataValue, ''); // do not localize
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -1377,11 +1521,6 @@ begin
   FValue := TBoldUnicodeString(Value);
 end;
 {$ENDIF}
-
-function TBAUnicodeString.ProxyClass: TBoldMember_ProxyClass;
-begin
-  result := TBAUnicodeString_Proxy;
-end;
 
 function TBAUnicodeString.ProxyInterface(const IId: TGUID; Mode:
     TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -1449,15 +1588,6 @@ begin
     Result := inherited CompareToAs(CompType, BoldElement);
 end;
 
-function TBANumeric.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
-begin
-  if not Assigned(AttributeTypeInfo) then
-  begin
-    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
-    SubscribeToSystem;
-  end;
-  result := AttributeTypeInfo;
-end;
 
 function TBANumeric.IsNullOrZero: boolean;
 begin
@@ -1471,27 +1601,35 @@ end;
 
 procedure TBANumeric.SetEmptyValue;
 begin
-  if AsFloat <> 0 then  
+  if AsFloat <> 0 then
     AsInteger := 0;
 end;
 
 { TBAInteger }
 
 procedure TBAInteger.SetDataValue(NewValue: Integer);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Integer;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-  if not CheckRange(NewValue) then
-    raise EBoldInternal.CreateFmt('%s: %s', [DisplayName, GetBoldLastFailureReason.Reason]);
-
   if IsNull or (FValue <> NewValue) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    if not CheckRange(NewValue) then
+      raise EBoldInternal.CreateFmt('%s: %s', [DisplayName, GetBoldLastFailureReason.Reason]);
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -1513,7 +1651,7 @@ end;
 procedure TBAInteger.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   if Representation = brDefault then
     if Value = '' then
       SetToNull
@@ -1527,7 +1665,7 @@ function TBAInteger.GetStringRepresentation(Representation: TBoldRepresentation)
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetStringRepresentation', '');
+    BoldRaiseLastFailure(self, Meth_GetStringRepresentation, '');
   if Representation <> brDefault then
     inherited GetStringRepresentation(Representation);
   if IsNull then {IsNull ensures current}
@@ -1665,13 +1803,16 @@ begin
   begin
     result := false;
     SetBoldLastFailureReason(
-      TBoldFailureReason.createFmt(
-        'Value outside range, range is %d to %d. Attempted to set %d',
-        [Min, MAX, Value], self));
+      TBoldFailureReason.createFmt(sRangeError, [Min, MAX, Value], self));
   end
   else
     result := true;
-end;                     
+end;
+
+class procedure TBAInteger.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
 
 {---TBAByte---}
 function TBAByte.CheckRange(Value: integer): Boolean;
@@ -1679,9 +1820,24 @@ begin
   result := CheckRangeWithBounds(Value, Low(Byte), High(Byte));
 end;
 
+class procedure TBAByte.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBAByte.GetAsByte: Byte;
 begin
   result := AsInteger;
+end;
+
+function TBAByte.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 procedure TBAByte.SetAsByte(const Value: Byte);
@@ -1696,9 +1852,24 @@ begin
 end;
 
 
+class procedure TBAShortInt.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBAShortInt.GetAsShortInt: ShortInt;
 begin
   result := AsInteger;
+end;
+
+function TBAShortInt.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 procedure TBAShortInt.SetAsShortInt(const Value: ShortInt);
@@ -1712,9 +1883,24 @@ begin
   result := CheckRangeWithBounds(Value, Low(SmallInt), High(SmallInt));
 end;
 
+class procedure TBASmallInt.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBASmallInt.GetAsSmallInt: SmallInt;
 begin
   result := AsInteger;
+end;
+
+function TBASmallInt.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 procedure TBASmallInt.SetAsSmallInt(const Value: SmallInt);
@@ -1728,9 +1914,24 @@ begin
   result := CheckRangeWithBounds(Value, Low(word), High(Word));
 end;
 
+class procedure TBAWord.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBAWord.GetAsWord: Word;
 begin
   result := AsInteger;
+end;
+
+function TBAWord.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 procedure TBAWord.SetAsWord(const Value: Word);
@@ -1745,33 +1946,34 @@ begin
   if source.QueryInterface(IBoldIntegerContent, S) = S_OK then
     SetDataValue(s.AsInteger)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
-procedure TBAInteger.SetContent(NewValue: Integer);
-var
-  bContentIsNull: Boolean;
-  sOldValue: Integer;
+function TBAInteger.SetContent(NewValue: Integer): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
     ContentIsNull or (FValue <> NewValue) then
   begin
     PreChange;
-    sOldValue := fValue;
     FValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
 procedure TBAInteger_Proxy.SetContentAsInteger(NewValue: Integer);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Integer;
 begin
-  ProxedInteger.SetContent(NewValue);
+  bContentIsNull := ProxedInteger.ContentIsNull;
+  sOldValue := ProxedInteger.fValue;
+  if ProxedInteger.SetContent(NewValue) then
+    if bContentIsNull then
+      ProxedInteger.Changed(beValueChanged, [NewValue])
+    else
+      ProxedInteger.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 function TBAInteger_Proxy.GetContentAsInteger: Integer;
@@ -1779,23 +1981,35 @@ begin
   result := ProxedInteger.fValue;
 end;
 
+procedure TBAInteger.AssignCloneValue(AClone: TBoldMember);
+begin
+  EnsureContentsCurrent;
+  if ContentIsNull  then
+    (AClone as TBAInteger).SetContentToNull
+  else
+    (AClone as TBAInteger).SetToNonNull;
+  (AClone as TBAInteger).fValue := FValue;
+end;
+
 procedure TBAInteger.AssignContentValue(const Source: IBoldValue);
 var
-  s: IBoldIntegerContent;
+  i: IBoldIntegerContent;
+  s: IBoldStringContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContent(0)
-  else if source.QueryInterface(IBoldIntegerContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetContent(s.AsInteger)
+      SetContent(0);
   end
+  else if source.QueryInterface(IBoldIntegerContent, i) = S_OK then
+    SetContent(i.AsInteger)
+  else if source.QueryInterface(IBoldStringContent, s) = S_OK then
+    SetContent(s.asString.ToInteger)
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBAInteger.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -1814,19 +2028,26 @@ end;
 { TBAFloat }
 
 procedure TBAFloat.SetDataValue(NewValue: Double);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Double;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-
-  if IsNull or (FValue <> NewValue) then
+  if IsNull or not (SameValue(FValue, NewValue)) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
-
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -1843,7 +2064,7 @@ end;
 procedure TBAFloat.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   if Representation = brDefault then
     if Value = '' then
       SetToNull
@@ -1857,7 +2078,7 @@ function TBAFloat.GetStringRepresentation(Representation: TBoldRepresentation): 
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetStringRepresentation', '');
+    BoldRaiseLastFailure(self, Meth_GetStringRepresentation, '');
   if Representation <> brDefault then
     inherited GetStringRepresentation(Representation);
   if IsNull then {IsNull ensures current}
@@ -1879,7 +2100,7 @@ begin
     if IsNull or vFloat.IsNull then
       result := false
     else
-      result := Self.asFloat = vFloat.asFloat
+      result := SameValue(Self.asFloat, vFloat.asFloat);
   end
   else
     result := inherited IsEqualToValue(Value);
@@ -1894,7 +2115,7 @@ function TBAFloat.GetAsFloat: Double;
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetAsFloat', '');
+    BoldRaiseLastFailure(self, 'GetAsFloat', ''); // do not localize
   EnsureNotNull; {ensures current}
   Result := FValue;
 end;
@@ -1924,7 +2145,7 @@ begin
   begin
     result := TextToFloat(PChar(Value), temp, fvExtended);
     if not result then
-      FormatFailure(value, 'float');
+      FormatFailure(value, 'float'); // do not localize
   end;
 end;
 
@@ -1955,7 +2176,7 @@ begin
 
       case CompType of
         ctDefault:
-          if AsFloat = CompareValue then
+          if SameValue(AsFloat, CompareValue) then
             Result := 0
           else if AsFloat > CompareValue then
             Result := 1
@@ -1990,6 +2211,11 @@ begin
 {$ENDIF}
 end;
 
+class procedure TBAFloat.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBAFloat.MaySetValue(NewValue: Double;
   Subscriber: TBoldSubscriber): Boolean;
 begin
@@ -2003,27 +2229,19 @@ begin
   if source.QueryInterface(IBoldFloatContent, S) = S_OK then
     SetDataValue(s.AsFloat)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
-procedure TBAFloat.SetContent(NewValue: Double);
-var
-  bContentIsNull: Boolean;
-  sOldValue: Double;
+function TBAFloat.SetContent(NewValue: Double): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
-    ContentIsNull or (FValue <> NewValue) then
+    ContentIsNull or not (SameValue(FValue, NewValue)) then
   begin
     PreChange;
-    sOldValue := fValue;
     FValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
@@ -2033,8 +2251,27 @@ begin
 end;
 
 procedure TBAFloat_Proxy.SetContentAsFloat(NewValue: Double);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Double;
 begin
-  ProxedFloat.SetContent(NewValue);
+  bContentIsNull := ProxedFloat.ContentIsNull;
+  sOldValue := ProxedFloat.fValue;
+  if ProxedFloat.SetContent(NewValue) then
+    if bContentIsNull then
+      ProxedFloat.Changed(beValueChanged, [NewValue])
+    else
+      ProxedFloat.Changed(beValueChanged, [NewValue, sOldValue]);
+end;
+
+procedure TBAFloat.AssignCloneValue(AClone: TBoldMember);
+begin
+  EnsureContentsCurrent;
+  if ContentIsNull  then
+    (AClone as TBAFloat).SetContentToNull
+  else
+    (AClone as TBAFloat).SetToNonNull;
+  (AClone as TBAFloat).fValue := FValue;
 end;
 
 procedure TBAFloat.AssignContentValue(const Source: IBoldValue);
@@ -2042,40 +2279,32 @@ var
   FloatContent: IBoldFloatContent;
   CurrencyContent: IBoldCurrencyContent;
   IntegerContent: IBoldIntegerContent;
+  StringContent: IBoldStringContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContent(0)
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
+  begin
+    if CanSetToNull(nil) then
+      SetContentToNull
+    else
+      SetContent(0);
+  end
   else if source.QueryInterface(IBoldFloatContent, FloatContent) = S_OK  then
-  begin
-    if FloatContent.IsNull then
-      SetContentToNull
-    else
-      SetContent(FloatContent.AsFloat)
-  end
+    SetContent(FloatContent.AsFloat)
   else if source.QueryInterface(IBoldCurrencyContent, CurrencyContent) = S_OK then
-  begin
-    if CurrencyContent.IsNull then
-      SetContentToNull
-    else
-      SetContent(CurrencyContent.asCurrency)
-  end
+    SetContent(CurrencyContent.asCurrency)
   else if source.QueryInterface(IBoldIntegerContent, IntegerContent) = S_OK then
-  begin
-    if IntegerContent.IsNull then
-      SetContentToNull
-    else
-      SetContent(IntegerContent.asInteger)
-  end
+    SetContent(IntegerContent.asInteger)
+  else if source.QueryInterface(IBoldStringContent, StringContent) = S_OK then
+    SetContent(StrToFloat(StringContent.asString))
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBAFloat.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
 begin
   if IsEqualGuid(IID, IBoldFloatContent) then
-    Result := RetrieveProxyInterface(IBoldFloatContent, Mode, obj, 'IBoldFloatContent')
+    Result := RetrieveProxyInterface(IBoldFloatContent, Mode, obj, 'IBoldFloatContent') // do not localize
   else
     result := inherited ProxyInterface(IID, Mode, Obj);
 end;
@@ -2088,18 +2317,26 @@ end;
 { TBACurrency }
 
 procedure TBACurrency.SetDataValue(NewValue: Currency);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Currency;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-
-  if IsNull or (FValue <> NewValue) then
+  if IsNull or not (SameValue(FValue, NewValue)) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
+      BoldRaiseLastFailure(self, sSetDataValue, ''); // do not localize
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -2109,14 +2346,14 @@ end;
 
 procedure TBACurrency.SetEmptyValue;
 begin
-  if fValue <> 0 then  
+  if fValue <> 0 then
     inherited;
 end;
 
 procedure TBACurrency.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   if Representation = brDefault then
   begin
     if Value = '' then
@@ -2136,7 +2373,7 @@ function TBACurrency.GetStringRepresentation(Representation: TBoldRepresentation
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetStringRepresentation', '');
+    BoldRaiseLastFailure(self, Meth_GetStringRepresentation, '');
   if Representation <> brDefault then
     inherited GetStringRepresentation(Representation);
   if IsNull then {IsNull ensures current}
@@ -2158,7 +2395,7 @@ begin
     if IsNull or vCurrency.IsNull then
       result := false
     else
-      result := Self.asCurrency = vCurrency.asCurrency
+      result := (SameValue(Self.asCurrency, vCurrency.asCurrency));
   end
   else
     result := inherited IsEqualToValue(Value);
@@ -2178,7 +2415,7 @@ function TBACurrency.GetAsCurrency: Currency;
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetAsCurrency', '');
+    BoldRaiseLastFailure(self, 'GetAsCurrency', ''); // do not localize
   EnsureNotNull; {ensures current}
   Result := FValue;
 end;
@@ -2187,7 +2424,7 @@ function TBACurrency.GetAsFloat: Double;
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetAsFloat', '');
+    BoldRaiseLastFailure(self, 'GetAsFloat', ''); // do not localize
   EnsureNotNull; {ensures current}
   Result := FValue;
 end;
@@ -2212,7 +2449,7 @@ begin
   begin
     result := TextToFloat(PChar(Value), temp, fvCurrency);
     if not result then
-      FormatFailure(value, 'currency');
+      FormatFailure(value, 'currency'); // do not localize
   end;
 end;
 
@@ -2252,7 +2489,8 @@ begin
         CompareValue := TBANumeric(BoldElement).AsFloat;
 
       case CompType of
-        ctDefault:          if AsCurrency = CompareValue then
+        ctDefault:
+          if SameValue(AsCurrency, CompareValue) then
             Result := 0
           else if AsCurrency > CompareValue then
             Result := 1
@@ -2287,6 +2525,11 @@ begin
 {$ENDIF}
 end;
 
+class procedure TBACurrency.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBACurrency.MaySetValue(NewValue: Currency;
   Subscriber: TBoldSubscriber): Boolean;
 begin
@@ -2300,33 +2543,34 @@ begin
   if source.QueryInterface(IBoldCurrencyContent, S) = S_OK then
     SetDataValue(s.AsCurrency)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
-procedure TBACurrency.SetContent(NewValue: Currency);
-var
-  bContentIsNull: Boolean;
-  sOldValue: Currency;
+function TBACurrency.SetContent(NewValue: Currency): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
-    ContentIsNull or (FValue <> NewValue) then
+    ContentIsNull or not (SameValue(fValue, NewValue)) then
   begin
     PreChange;
-    sOldValue := fValue;
     FValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
 procedure TBACurrency_Proxy.SetContentAsCurrency(NewValue: Currency);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Currency;
 begin
-  ProxedCurrency.SetContent(NewValue);
+  bContentIsNull := ProxedCurrency.ContentIsNull;
+  sOldValue := ProxedCurrency.FValue;
+  if ProxedCurrency.SetContent(NewValue) then
+    if bContentIsNull then
+      ProxedCurrency.Changed(beValueChanged, [NewValue])
+    else
+      ProxedCurrency.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 function TBACurrency_Proxy.GetContentAsCurrency: Currency;
@@ -2334,44 +2578,44 @@ begin
   result := ProxedCurrency.fValue;
 end;
 
+procedure TBACurrency.AssignCloneValue(AClone: TBoldMember);
+begin
+  EnsureContentsCurrent;
+  if ContentIsNull  then
+    (AClone as TBACurrency).SetContentToNull
+  else
+    (AClone as TBACurrency).SetToNonNull;
+  (AClone as TBACurrency).fValue := FValue;
+end;
+
 procedure TBACurrency.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldCurrencyContent;
   FloatContent: IBoldFloatContent;
   IntegerContent: IBoldIntegerContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContent(0)
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
+  begin
+    if CanSetToNull(nil) then
+      SetContentToNull
+    else
+      SetContent(0);
+  end
   else if (source.QueryInterface(IBoldCurrencyContent, S) = S_OK) then
-  begin
-    if s.IsNull then
-      SetContentToNull
-    else
-      SetContent(s.AsCurrency)
-  end
+    SetContent(s.AsCurrency)
   else if (source.QueryInterface(IBoldFloatContent, FloatContent) = S_OK) then
-  begin
-    if FloatContent.IsNull then
-      SetContentToNull
-    else
-      SetContent(FloatContent.AsFloat)
-  end
+    SetContent(FloatContent.AsFloat)
   else if (source.QueryInterface(IBoldIntegerContent, IntegerContent) = S_OK) then
-  begin
-    if IntegerContent.IsNull then
-      SetContentToNull
-    else
-      SetContent(IntegerContent.AsInteger)
-  end  else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    SetContent(IntegerContent.AsInteger)
+  else
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBACurrency.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
 begin
   if IsEqualGuid(IID, IBoldCurrencyContent) then
-    Result := RetrieveProxyInterface(IID, Mode, obj, 'IBoldCurrencyContent')
+    Result := RetrieveProxyInterface(IID, Mode, obj, 'IBoldCurrencyContent') // do not localize
   else
     result := inherited ProxyInterface(IID, Mode, Obj);
 end;
@@ -2454,7 +2698,7 @@ end;
 
 procedure TBoldBlobStream.Clear;
 begin
-  SetSize(0);
+  SetSize(Int64(0));
 end;
 
 procedure TBoldBlobStream.Truncate;
@@ -2558,18 +2802,26 @@ end;
 { TBABlob }
 
 procedure TBABlob.SetDataValue(NewValue: TBoldAnsiString);
+var
+  bContentIsNull: Boolean;
+  sOldValue: AnsiString;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-
   if IsNull or not AsStream.IsDataSame(PAnsiChar(NewValue), Length(NewValue)) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    bContentIsNull := ContentIsNull;
+    sOldValue := self.GetAsBlob;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -2580,7 +2832,7 @@ end;
 procedure TBABlob.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   case Representation of
     brDefault: SetDataValue(TBoldAnsiString(Value));
     brShort: {Content type is lost when assigned to a Blob};
@@ -2611,7 +2863,7 @@ function TBABlob.GetStringRepresentation(Representation: TBoldRepresentation): s
 begin
   BoldClearLastFailure;
   if not CanRead(nil) then
-    BoldRaiseLastFailure(self, 'GetStringRepresentation', '');
+    BoldRaiseLastFailure(self, Meth_GetStringRepresentation, '');
   case Representation of
     brDefault: begin
       if IsNull then {IsNull ensures current}
@@ -2641,6 +2893,16 @@ begin
   result := fStream;
 end;
 
+function TBABlob.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
+end;
+
 function TBABlob.GetBlobSize: Int64;
 begin
   result := AsStream.GetBlobSize;
@@ -2667,7 +2929,7 @@ begin
     AsStream.Clear;
     p := VarArrayLock(Value);
     try
-      AsStream.Write(p ^, VarArrayHighBound(Value, 1));
+      AsStream.Write(p ^, VarArrayHighBound(Value, 1)+1);
     finally
       VarArrayUnlock(Value);
     end;
@@ -2691,6 +2953,7 @@ end;
 
 procedure TBABlob.EndModifyOfBlob;
 begin
+  // We can not call SetToNull since that will cause recursive Modification. that must be done by InternalSetSize
   if (GetBlobSize<>0) then
     SetToNonNull;
   // Old value is not passed in as parameter when Blob is set via Stream
@@ -2733,6 +2996,11 @@ begin
 {$ENDIF}
 end;
 
+class procedure TBABlob.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 function TBABlob.MaySetValue(NewValue: TBoldAnsiString;
   Subscriber: TBoldSubscriber): Boolean;
 begin
@@ -2746,19 +3014,15 @@ begin
   if source.QueryInterface(IBoldBlobContent, S) = S_OK then
     SetDataValue(s.AsBlob)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
-procedure TBABlob.SetContent(NewValue: TBoldAnsiString);
-var
-  bContentIsNull: Boolean;
-  aOldValue: TBytes;
+function TBABlob.SetContent(NewValue: TBoldAnsiString): boolean;
 begin
-  bContentIsNull := ContentIsNull;
-  if bContentIsNull or not AsStream.IsDataSame(PAnsiChar(NewValue), Length(NewValue)) then
+  result := false;
+  if ContentIsNull or not AsStream.IsDataSame(PAnsiChar(NewValue), Length(NewValue)) then
   begin
     PreChange;
-    aOldValue := Copy(AsStream.fData, 0, BlobSize);
     if NewValue = '' then
     begin
       AsStream.Clear;
@@ -2770,11 +3034,7 @@ begin
       AsStream.Seek(0, soFromEnd);
     end;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [AsStream.fData]);
-    end else begin
-      Changed(beValueChanged, [AsStream.fData, aOldValue]);
-    end;
+    result := true;
   end;
 end;
 
@@ -2799,27 +3059,35 @@ begin
 end;
 
 procedure TBABlob_Proxy.SetContentAsBlob(const NewValue: TBoldAnsiString);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TBoldAnsiString;
 begin
-  ProxedBlob.SetContent(NewValue);
+  bContentIsNull := ProxedBlob.ContentIsNull;
+  sOldValue := ProxedBlob.GetAsBlob;
+  if ProxedBlob.SetContent(NewValue) then
+    if bContentIsNull then
+      ProxedBlob.Changed(beValueChanged, [NewValue])
+    else
+      ProxedBlob.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 procedure TBABlob.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBlobContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContent('')
-  else if source.QueryInterface(IBoldBlobContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetContent(s.AsBlob)
+      SetContent('');
   end
+  else if source.QueryInterface(IBoldBlobContent, S) = S_OK then
+    SetContent(s.AsBlob)
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBABlob.CompareToAs(CompareType: TBoldCompareType;
@@ -2864,6 +3132,7 @@ function TBABlob.IsEqualAs(CompareType: TBoldCompareType;
   BoldElement: TBoldElement): Boolean;
 var
   CompareBlob: TBABlob;
+  BLobLength: integer;
 begin
   if BoldElement is TBABlob then
   begin
@@ -2871,7 +3140,10 @@ begin
     if EitherIsNull(self, CompareBlob) then
       result := CompareBlob.IsNull and IsNull
     else
-      result := CompareBlob.AsStream.fData = AsStream.fData;
+    begin
+      BLobLength := Length(CompareBlob.AsStream.fData);
+      result := (Length(AsStream.fData) = BLobLength) and CompareMem(@CompareBlob.AsStream.fData[0], @AsStream.fData[0], BLobLength);
+    end;
   end
   else
     Result := inherited IsEqualAs(CompareType, BoldElement);
@@ -2913,7 +3185,14 @@ procedure TBABlob.FreeContent;
 begin
   inherited;
   if assigned(fStream) then
+  begin
+    BeginSupressEvents;
+    try
     fStream.Clear;
+    finally
+      EndSupressEvents;
+    end;
+  end;
 end;
 
 procedure TBABlob.SetEmptyValue;
@@ -2946,6 +3225,9 @@ end;
 
 { TBATypedBlob }
 procedure TBATypedBlob.SetContentType2(Value: string);
+var
+  bContentIsNull: Boolean;
+  sOldValue: AnsiString;
 begin
   BoldClearLastFailure;
   if not CanSetContentType(Value, nil) then
@@ -2956,13 +3238,29 @@ begin
     if not StartModify then
       BoldRaiseLastFailure(self, 'SetContentType', '');
     try
+      bContentIsNull := ContentIsNull;
+      sOldValue := GetAsBlob;
       SetContentTypeContent(Value);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [Value])
+      else
+        Changed(beValueChanged, [Value, sOldValue]);
     except
       FailModify;
       raise;
     end;
   end
+end;
+
+function TBATypedBlob.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 function TBATypedBlob.GetContentTypeContent: String;
@@ -2983,7 +3281,7 @@ begin
   case Representation of
     brShort: begin
       if not CanRead(nil) then
-        BoldRaiseLastFailure(self, 'GetStringRepresentation', '');
+        BoldRaiseLastFailure(self, Meth_GetStringRepresentation, '');
       Result := FContentType;
     end;
   else
@@ -2996,7 +3294,7 @@ begin
   case Representation of
     brShort: begin
       if not ValidateString(Value, Representation) then
-        BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+        BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
       SetContentType2(Value);
     end;
   else
@@ -3019,6 +3317,11 @@ begin
 {$ENDIF}
 end;
 
+class procedure TBATypedBlob.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 procedure TBATypedBlob.AssignValue(const Source: IBoldValue);
 var
   s: IBoldTypedBlob;
@@ -3032,7 +3335,7 @@ begin
     SetDataValue(s2.AsBlob);
   end
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
 function TBATypedBlob.CompareToAs(CompareType: TBoldCompareType;
@@ -3077,8 +3380,8 @@ procedure TBABlobImageJPEG.SetStringRepresentation(Representation: TBoldRepresen
 begin
   case Representation of
     brShort: begin
-      if (Value<>'') and (Value<>ContentType) then
-        raise EBold.CreateFmt('%s.SetStringRepresentation: Can not assign a ''%s'' to a ''%s''', [ClassName, Value, ContentType]);
+      if (Value <> '') and (Value <> ContentType) then
+        raise EBold.CreateFmt(sCannotAssignXtoY, [ClassName, Value, ContentType]);
     end;
   else
     inherited SetStringRepresentation(Representation, Value);
@@ -3102,7 +3405,7 @@ begin
   case Representation of
     brShort: begin
       if (Value <> '') and (Value <> ContentType) then
-        raise EBold.CreateFmt('%s.SetStringRepresentation: Can not assign a ''%s'' to a ''%s''', [ClassName, Value, ContentType]);
+        raise EBold.CreateFmt(sCannotAssignXtoY, [ClassName, Value, ContentType]);
     end;
   else
     inherited SetStringRepresentation(Representation, Value);
@@ -3138,33 +3441,40 @@ begin
   PreChange;
   FContentType := NewValue;
   SetToNonNull;
-  Changed(beValueChanged, [AsStream.fData]);
 end;
 
 { TBAMoment }
 
 procedure TBAMoment.SetDataValue(NewValue: TDateTime);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TDateTime;
 begin
-  BoldClearLastFailure;
-{$IFDEF NoNegativeDates}
-  if IsPartOfSystem then
-  begin
-  if (NewValue < 0) then
-    BoldRaiseLastFailure(self, 'SetDataValue', 'Attempt to set date before 1899-12-30');
-  if (NewValue >= 1000*365) then
-    BoldRaiseLastFailure(self, 'SetDataValue', 'Attempt to set date after 2899-12-30');
-  end;
-{$ENDIF}
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-
   if IsNull or (FValue <> NewValue) then
   begin
+    BoldClearLastFailure;
+  {$IFDEF NoNegativeDates}
+    if IsPartOfSystem then
+    begin
+    if (NewValue < 0) then
+      BoldRaiseLastFailure(self, sSetDataValue, 'Attempt to set date before 1899-12-30');
+    if (NewValue >= 1000*365) then
+      BoldRaiseLastFailure(self, sSetDataValue, 'Attempt to set date after 2899-12-30');
+    end;
+  {$ENDIF}
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetDateTimeContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -3210,7 +3520,7 @@ begin
   if not CanRead(nil) then
     BoldRaiseLastFailure(self, 'GetAsDate', '');
   EnsureNotNull; {ensures current}
-  Result := Int(fValue);;
+  Result := Int(fValue);
 end;
 
 function TBAMoment.GetAsTime: TDateTime;
@@ -3332,11 +3642,10 @@ begin
     sOldValue := fValue;
     FValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
+    if bContentIsNull then
+      Changed(beValueChanged, [NewValue])
+    else
       Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
   end;
 end;
 
@@ -3346,8 +3655,17 @@ begin
 end;
 
 procedure TBAMoment_Proxy.SetContentAsDate(NewValue: TDateTime);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TDateTime;
 begin
+  bContentIsNull := ProxedMoment.ContentIsNull;
+  sOldValue := ProxedMoment.FValue;
   ProxedMoment.SetDateTimeContent(Int(NewValue) + GetContentAsTime);
+  if bContentIsNull then
+    ProxedMoment.Changed(beValueChanged, [NewValue])
+  else
+    ProxedMoment.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 function TBAMoment_Proxy.GetContentAsTime: TDateTime;
@@ -3361,13 +3679,31 @@ begin
 end;
 
 procedure TBAMoment_Proxy.SetContentAsDateTime(NewValue: TDateTime);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TDateTime;
 begin
+  bContentIsNull := ProxedMoment.ContentIsNull;
+  sOldValue := ProxedMoment.FValue;
   ProxedMoment.SetDateTimeContent(NewValue);
+  if bContentIsNull then
+    ProxedMoment.Changed(beValueChanged, [NewValue])
+  else
+    ProxedMoment.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 procedure TBAMoment_Proxy.SetContentAsTime(NewValue: TDateTime);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TDateTime;
 begin
+  bContentIsNull := ProxedMoment.ContentIsNull;
+  sOldValue := ProxedMoment.FValue;
   ProxedMoment.SetDateTimeContent(frac(NewValue) + GetContentAsDate);
+  if bContentIsNull then
+    ProxedMoment.Changed(beValueChanged, [NewValue])
+  else
+    ProxedMoment.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 procedure TBAMoment.SetEmptyValue;
@@ -3478,11 +3814,11 @@ end;
 procedure TBADateTime.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   if Representation = brDefault then
     if Value = '' then
       SetToNull
-    else if upperCase(Value) = '<NOW>' then
+    else if upperCase(Value) = DEFAULTNOW then
       SetDataValue(now)
     else
       SetDataValue(StrToDateTime(Value))
@@ -3510,7 +3846,7 @@ begin
   try
     if value = '' then
       result := CanSetToNull(nil)
-    else if upperCase(Value) = '<NOW>' then
+    else if upperCase(Value) = DEFAULTNOW then
       result := true
     else
     begin
@@ -3519,7 +3855,7 @@ begin
     end;
   except
     Result := False;
-    FormatFailure(value, 'datetime');
+    FormatFailure(value, 'datetime'); // do not localize
   end;
 end;
 
@@ -3527,11 +3863,11 @@ end;
 procedure TBADate.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   if Representation = brDefault then
     if Value = '' then
       SetToNull
-    else if upperCase(Value) = '<NOW>' then
+    else if upperCase(Value) = DEFAULTNOW then
       SetDataValue(now)
     else
       try
@@ -3562,7 +3898,7 @@ begin
   try
     if value = '' then
       result := CanSetToNull(nil)
-    else if upperCase(Value) = '<NOW>' then
+    else if upperCase(Value) = DEFAULTNOW then
       result := true
     else
     begin
@@ -3571,7 +3907,7 @@ begin
     end;
   except
     Result := False;
-    FormatFailure(value, 'date');
+    FormatFailure(value, 'date'); // do not localize
   end;
 end;
 
@@ -3579,11 +3915,11 @@ end;
 procedure TBATime.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   if Representation = brDefault then
     if Value = '' then
       SetToNull
-    else if upperCase(Value) = '<NOW>' then
+    else if upperCase(Value) = DEFAULTNOW then
       SetDataValue(now)
     else
       SetDataValue(StrToTime(Value))
@@ -3611,7 +3947,7 @@ begin
   try
     if value = '' then
       result := CanSetToNull(nil)
-    else if upperCase(Value) = '<NOW>' then
+    else if upperCase(Value) = DEFAULTNOW then
       result := true
     else
     begin
@@ -3620,7 +3956,7 @@ begin
     end;
   except
     Result := False;
-    FormatFailure(value, 'time');
+    FormatFailure(value, 'time'); // do not localize
   end;
 end;
 
@@ -3650,7 +3986,7 @@ end;
 procedure TBAValueSetValue.SetStringRepresentation(Representation: TBoldRepresentation; const Value: string);
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(nil, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(nil, 'SetStringRepresentation', sStringValidationFailed);
   FStringRepresentations.Strings[Representation] := Value;
 end;
 
@@ -3745,8 +4081,11 @@ var
 begin
   Result := nil;
   for I := 0 to FValueList.Count - 1 do
-    if TBAValueSetValue(FValueList.Items[I]).AsInteger = Value
-      then Result := FValueList.Items[I];
+    if TBAValueSetValue(FValueList.Items[I]).AsInteger = Value then
+    begin
+      Result := FValueList.Items[I];
+      exit;
+    end;
 end;
 
 function TBAValueSetValueList.GetFirstValue: TBAValueSetValue;
@@ -3816,7 +4155,12 @@ begin
   if source.QueryInterface(IBoldDateTimeContent, S) = S_OK then
     SetDataValue(s.AsDateTime)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
+end;
+
+class procedure TBADateTime.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
 end;
 
 constructor TBADateTime.CreateWithValue(Value: TDateTime);
@@ -3828,20 +4172,19 @@ end;
 procedure TBADateTime.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldDateTimeContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetDateTimeContent(0)
-  else if source.QueryInterface(IBoldDateTimeContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetDateTimeContent(s.AsDateTime)
+      SetDateTimeContent(0)
   end
+  else if source.QueryInterface(IBoldDateTimeContent, S) = S_OK then
+    SetDateTimeContent(s.AsDateTime)
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBADateTime.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -3852,6 +4195,16 @@ begin
     Result := RetrieveProxyInterface(IID, Mode, obj, 'IBold[Date][Time]Content')
   else
     result := inherited ProxyInterface(IID, Mode, Obj);
+end;
+
+function TBADateTime.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 function TBADateTime.GetFreeStandingClass: TBoldFreeStandingElementClass;
@@ -3867,20 +4220,28 @@ end;
 { TBAValueSet }
 
 procedure TBAValueSet.SetDataValue(NewValue: TBAValueSetValue);
+var
+  bContentIsNull: Boolean;
+  sOldValue: TBAValueSetValue;
 begin
-  BoldClearLastFailure;
-  if not CanSetValue(NewValue, nil) then
-    BoldRaiseLastFailure(self, 'SetDataValue', '');
-  if not Assigned(NewValue) then
-    raise EBold.CreateFmt('%s: Invalid value', [ClassName]);
-
   if IsNull or not (FValue.IsEqual(NewValue)) then
   begin
+    BoldClearLastFailure;
+    if not CanSetValue(NewValue, nil) then
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    if not Assigned(NewValue) then
+      raise EBold.CreateFmt(sValueNotSet, [ClassName]);
     if not StartModify then
-      BoldRaiseLastFailure(self, 'SetDataValue', '');
+      BoldRaiseLastFailure(self, sSetDataValue, '');
+    bContentIsNull := ContentIsNull;
+    sOldValue := fValue;
     try
       SetContent(NewValue);
       EndModify;
+      if bContentIsNull then
+        Changed(beValueChanged, [NewValue])
+      else
+        Changed(beValueChanged, [NewValue, sOldValue]);
     except
       FailModify;
       raise;
@@ -3907,9 +4268,9 @@ var
   ValueSetValue: TBAValueSetValue;
 begin
   if not ValidateString(Value, Representation) then
-    BoldRaiseLastFailure(self, 'SetStringRepresentation', 'String validation failed');
+    BoldRaiseLastFailure(self, Meth_SetStringRepresentation, sStringValidationFailed);
   ValueSetValue := Values.FindByString(Representation, Value);
-  assert(assigned(ValueSetValue), 'ValidateString said OK, but SetStringRepresentation can not find a valuesetvalue');
+  assert(assigned(ValueSetValue), sCannotFindValueSetValue);
   SetDataValue(ValueSetValue)
 end;
 
@@ -3947,7 +4308,7 @@ begin
     try
       Values.ToStrings(Representation, strList);
       Str := BoldSeparateStringList(StrList, ', ', '(', ')');
-      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('Unknown stringvalue ''%s'', Allowed values: %s', [Value, Str], self));
+      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sUnknownStringValue, [Value, Str], self));
     finally
       StrList.Free;
     end;
@@ -4001,7 +4362,7 @@ begin
   else
   if BoldElement is TBAValueSetValue then
   begin
-    // Since TBAValueSetValue has no BoldType we compare both Integer and String values to make sure they are the same 
+    // Since TBAValueSetValue has no BoldType we compare both Integer and String values to make sure they are the same
     if (AsInteger = TBAValueSetValue(BoldElement).AsInteger) and (TBAValueSetValue(BoldElement).AsString = AsString) then
       Result := 0
     else
@@ -4046,7 +4407,7 @@ procedure TBAValueSet.Initialize;
 begin
   inherited;
   if not Assigned(Values) then
-    raise EBold.CreateFmt('%s: Values not properly initalized', [ClassName]);
+    raise EBold.CreateFmt(sValuesNotInitialized, [ClassName]);
   if assigned(values.FValueList) and (values.fValueList.count <> 0) then
     FValue := Values.GetFirstValue
   else
@@ -4055,32 +4416,40 @@ end;
 
 procedure TBAValueSet.AssignValue(const Source: IBoldValue);
 var
-  s: IBoldIntegerContent;
+  i: IBoldIntegerContent;
+  s: IBoldStringContent;
+  value: TBAValueSetValue;
 begin
-  if source.QueryInterface(IBoldIntegerContent, S) = S_OK then
-    SetDataValue(Values.FindByInteger(s.AsInteger))
+  if source.QueryInterface(IBoldIntegerContent, i) = S_OK then
+  begin
+    Value := Values.FindByInteger(i.AsInteger);
+    if Assigned(Value) then
+      SetDataValue(Value)
+    else
+      raise EBold.CreateFmt(sUnknownIntRepr, [classname, sAssignValue, i.asString]);
+  end
+  else if source.QueryInterface(IBoldStringContent, s) = S_OK then
+  begin
+    Value := Values.FindByString(brDefault, s.asString);
+    if Assigned(Value) then
+      SetDataValue(Value)
+    else
+      raise EBold.CreateFmt(sUnknownStringRepr, [classname, sAssignValue, s.asString]);
+  end
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
 end;
 
-procedure TBAValueSet.SetContent(NewValue: TBAValueSetValue);
-var
-  bContentIsNull: Boolean;
-  sOldValue: TBAValueSetValue;
+function TBAValueSet.SetContent(NewValue: TBAValueSetValue): boolean;
 begin
-  bContentIsNull := ContentIsNull;
+  result := false;
   if (BoldPersistenceState = bvpsInvalid) or
-     bContentIsNull or not (fValue.IsEqual(NewValue)) then
+     ContentIsNull or not (fValue.IsEqual(NewValue)) then
   begin
     PreChange;
-    sOldValue := fValue;
     fValue := NewValue;
     SetToNonNull;
-    if bContentIsNull then begin
-      Changed(beValueChanged, [NewValue]);
-    end else begin
-      Changed(beValueChanged, [NewValue, sOldValue]);
-    end;
+    result := true;
   end;
 end;
 
@@ -4091,11 +4460,21 @@ end;
 
 procedure TBAValueSet_Proxy.SetContentAsString(const NewValue: String);
 var
+  bContentIsNull: Boolean;
+  sOldValue: String;
   ValueSetValue: TBAValueSetValue;
 begin
   ValueSetValue := ProxedValueSet.Values.FindByString(brDefault, NewValue);
   if assigned(ValueSetValue) then
-    ProxedValueSet.SetContent(ValueSetValue);
+  begin
+    bContentIsNull := ProxedValueSet.ContentIsNull;
+    sOldValue := ProxedValueSet.FValue.AsString;
+    if ProxedValueSet.SetContent(ValueSetValue) then
+      if bContentIsNull then
+        ProxedValueSet.Changed(beValueChanged, [NewValue])
+      else
+        ProxedValueSet.Changed(beValueChanged, [NewValue, sOldValue]);
+  end;
 end;
 
 function TBAValueSet_Proxy.GetContentAsInteger: Integer;
@@ -4119,27 +4498,61 @@ begin
 end;
 
 procedure TBAValueSet_Proxy.SetContentAsInteger(NewValue: Integer);
+var
+  bContentIsNull: Boolean;
+  sOldValue: Integer;
 begin
+  bContentIsNull := ProxedValueSet.ContentIsNull;
+  sOldValue := ProxedValueSet.FValue.FAsInteger;
   ProxedValueSet.ContentAsInteger:= NewValue;
+  if bContentIsNull then
+    ProxedValueSet.Changed(beValueChanged, [NewValue])
+  else
+    ProxedValueSet.Changed(beValueChanged, [NewValue, sOldValue]);
+end;
+
+procedure TBAValueSet.AssignCloneValue(AClone: TBoldMember);
+begin
+  EnsureContentsCurrent;
+  if ContentIsNull  then
+    (AClone as TBAValueSet).SetContentToNull
+  else
+    (AClone as TBAValueSet).SetToNonNull;
+  (AClone as TBAValueSet).fValue := FValue;
 end;
 
 procedure TBAValueSet.AssignContentValue(const Source: IBoldValue);
 var
-  s: IBoldIntegerContent;
+  i: IBoldIntegerContent;
+  s: IBoldStringContent;
+  value: TBAValueSetValue;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContent(Values.GetFirstValue)
-  else if source.QueryInterface(IBoldIntegerContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetContent(Values.FindByInteger(s.AsInteger))
+      SetContent(Values.GetFirstValue)
+  end
+  else if source.QueryInterface(IBoldIntegerContent, i) = S_OK then
+  begin
+    value := Values.FindByInteger(i.AsInteger);
+    if Assigned(Value) then
+      SetContent(Value)
+    else
+      raise EBold.CreateFmt(sUnknownIntRepr, [classname, sAssignContentValue, i.asString]);
+  end
+  else if source.QueryInterface(IBoldStringContent, S) = S_OK then
+  begin
+    Value := Values.FindByString(brDefault, s.asString);
+    if Assigned(Value) then
+      SetContent(Value)
+    else
+      raise EBold.CreateFmt(sUnknownStringRepr, [classname, sAssignContentValue, s.asString]);
   end
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 function TBAValueSet.ProxyInterface(const IId: TGUID; Mode: TBoldDomainElementProxyMode; out Obj): Boolean;
@@ -4166,7 +4579,7 @@ begin
   else if not assigned(BoldAttributeRTInfo) or BoldAttributeRTInfo.AllowNull then
     SetToNull
   else
-    raise EBold.CreateFmt('%s.SetEmptyValue: There are no legal values, and null is not allowed for this attribute (%s)', [classname, '']);
+    raise EBold.CreateFmt(sNoLegalValuesAvailable, [classname, '']);  //FIXME: Missing parameter
 end;
 
 procedure TBAValueSet.CheckIllegalValue;
@@ -4174,10 +4587,15 @@ begin
   if not IsNull and not Assigned(FValue) then
   begin
     if BoldPersistenceState = bvpsCurrent then
-      raise EBold.Create('Illegal value in valueset. Bad data in database?')
+      raise EBold.Create(sBadDataInDB)
     else
-      raise EBold.Create('Illegal value in valueset. Cannot read.')
+      raise EBold.Create(sCannotRead)
   end;
+end;
+
+class procedure TBAValueSet.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
 end;
 
 function TBAValueSet.CompareToEnumLiteral(const str: String): Boolean;
@@ -4195,6 +4613,11 @@ begin
 end;
 
 { TBABoolean }
+class procedure TBABoolean.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 constructor TBABoolean.CreateWithValue(Value: Boolean);
 begin
   inherited Create;
@@ -4268,6 +4691,16 @@ begin
     Result := AsInteger;
 end;
 
+function TBAInteger.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
+end;
+
 function TBAInteger.GetFreeStandingClass: TBoldFreeStandingElementClass;
 begin
   result := TBFSInteger;
@@ -4287,6 +4720,16 @@ begin
     Result := Null
   else
     Result := AsFloat;
+end;
+
+function TBAFloat.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 function TBAFloat.GetFreeStandingClass: TBoldFreeStandingElementClass;
@@ -4310,6 +4753,16 @@ begin
     Result := AsCurrency;
 end;
 
+function TBACurrency.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
+end;
+
 function TBACurrency.GetFreeStandingClass: TBoldFreeStandingElementClass;
 begin
   result := TBFSCurrency;
@@ -4329,16 +4782,6 @@ begin
     Result := Null
   else
     Result := GetAsDateTime;
-end;
-
-function TBAMoment.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
-begin
-  if not Assigned(AttributeTypeInfo) then
-  begin
-    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
-    SubscribeToSystem;
-  end;
-  result := AttributeTypeInfo;
 end;
 
 procedure TBAMoment.SetAsVariant(const Value: Variant);
@@ -4380,6 +4823,16 @@ begin
     Result := AsBoolean;
 end;
 
+function TBABoolean.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
+end;
+
 function TBABoolean.GetFreeStandingClass: TBoldFreeStandingElementClass;
 begin
   result := TBFSBoolean;
@@ -4416,7 +4869,12 @@ begin
   if source.QueryInterface(IBoldDateContent, S) = S_OK then
     SetDataValue(s.AsDate)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
+end;
+
+class procedure TBADate.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
 end;
 
 constructor TBADate.CreateWithValue(Value: TDateTime);
@@ -4432,7 +4890,12 @@ begin
   if source.QueryInterface(IBoldTimeContent, S) = S_OK then
     SetDataValue(s.AsTime)
   else
-    raise EBold.CreateFmt('%s.AssignValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignValue]);
+end;
+
+class procedure TBATime.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
 end;
 
 constructor TBATime.CreateWithValue(Value: TDateTime);
@@ -4454,56 +4917,53 @@ end;
 procedure TBADate.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldDateContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetDateTimeContent(0)
-  else if source.QueryInterface(IBoldDateContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetDateTimeContent(s.AsDate)
+    SetDateTimeContent(0)
   end
+  else if source.QueryInterface(IBoldDateContent, S) = S_OK then
+    SetDateTimeContent(s.AsDate)
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 procedure TBATime.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldTimeContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetDateTimeContent(0)
-  else if source.QueryInterface(IBoldTimeContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetDateTimeContent(s.AsTime)
+    SetDateTimeContent(0)
   end
+  else if source.QueryInterface(IBoldTimeContent, S) = S_OK then
+    SetDateTimeContent(s.AsTime)
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
 end;
 
 procedure TBABoolean.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBooleanContent;
+  NullableValue: IBoldNullableValue;
 begin
-  if not assigned(source) and CanSetToNull(nil) then
-    SetContentToNull
-  else if not assigned(source) then
-    SetContentAsInteger(Integer(false))
-  else if source.QueryInterface(IBoldBooleanContent, S) = S_OK then
+  if not assigned(source) or ((source.QueryInterface(IBoldNullableValue, NullableValue) = S_OK) and NullableValue.IsNull) then
   begin
-    if s.IsNull then
+    if CanSetToNull(nil) then
       SetContentToNull
     else
-      SetContentAsInteger(Integer(s.AsBoolean))
+      SetContentAsInteger(Integer(false))
   end
+  else if source.QueryInterface(IBoldBooleanContent, S) = S_OK then
+    SetContentAsInteger(Integer(s.AsBoolean))
   else
     inherited;
 end;
@@ -4551,10 +5011,25 @@ begin
     asBoolean := false;
 end;
 
+class procedure TBAConstraint.ClearAttributeTypeInfo;
+begin
+  AttributeTypeInfo := nil;
+end;
+
 destructor TBAConstraint.destroy;
 begin
   FreeAndNil(fElementSubscriber);
   inherited;
+end;
+
+function TBAConstraint.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 function TBAConstraint.GetContentAsInteger: Integer;
@@ -4617,14 +5092,14 @@ begin
       resType := Owningelement.Evaluator.ExpressionType(Constraint.ConstraintExpression, OwningElement.BoldType, true);
     except
       on e: Exception do
-        raise EBold.CreateFmt('Invalid Constraint: %s ' + BOLDCRLF + '%s', [Constraint.ConstraintExpression, e.message]);
+        raise EBold.CreateFmt(sInvalidConstraint, [Constraint.ConstraintExpression, BOLDCRLF, e.message]);
     end;
 
     if not assigned(ResType) then
-      raise EBold.CreateFmt('unknown type of constraint expression: %s (in context: %s)', [Constraint.ConstraintExpression, OwningElement.BoldType.AsString]);
+      raise EBold.CreateFmt(sUnknownConstraintType, [Constraint.ConstraintExpression, OwningElement.BoldType.AsString]);
 
     if not ResType.ConformsTo((BoldType.SystemTypeInfo as TboldSystemTypeInfo).AttributeTypeInfoByDelphiName[TBABoolean.ClassName]) then
-      raise EBold.CreateFmt('Constraint is not Boolean: %s (in context %s)', [Constraint.ConstraintExpression, OwningElement.BoldType.AsString]);
+      raise EBold.CreateFmt(sConstraintNotBoolean, [Constraint.ConstraintExpression, OwningElement.BoldType.AsString]);
 
   {$IFDEF OCLConstraintMessages}
     if Constraint.ConstraintMessage <> '' then
@@ -4744,11 +5219,6 @@ begin
   result := ProxedMember as TBABlob;
 end;
 
-function TBABlob_Proxy.SupressEvents: Boolean;
-begin
-  result := ProxedBlob.SupressEvents;
-end;
-
 { TBAValueSet_Proxy }
 
 function TBAValueSet_Proxy.GetProxedvalueSet: TBAValueSet;
@@ -4772,6 +5242,16 @@ begin
     Result := RetrieveProxyInterface(IID, Mode, obj, 'IBoldTimeContent')
   else
     result := inherited ProxyInterface(IId, Mode, Obj);
+end;
+
+function TBADate.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
 end;
 
 function TBADate.GetFreeStandingClass: TBoldFreeStandingElementClass;
@@ -4802,8 +5282,17 @@ begin
 end;
 
 procedure TBATypedBlob_Proxy.SetContentTypeContent(const NewValue: String);
+var
+  bContentIsNull: Boolean;
+  sOldValue: AnsiString;
 begin
+  bContentIsNull := ProxedTypedBlob.ContentIsNull;
+  sOldValue := ProxedTypedBlob.GetAsBlob;
   ProxedTypedBlob.SetContentTypeContent(NewValue);
+  if bContentIsNull then
+    ProxedTypedBlob.Changed(beValueChanged, [NewValue])
+  else
+    ProxedTypedBlob.Changed(beValueChanged, [NewValue, sOldValue]);
 end;
 
 function TBAMoment_Proxy.GetProxedMoment: TBAMoment;
@@ -4816,9 +5305,38 @@ begin
   Result := Seconds + (Minutes * 60) + (Hours * 3600);
 end;
 
+function TBATime.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
+begin
+  if not Assigned(AttributeTypeInfo) then
+  begin
+    AttributeTypeInfo := inherited GetAttributeTypeInfoForType;
+    SubscribeToSystem;
+  end;
+  result := AttributeTypeInfo;
+end;
+
 function TBATime.GetFreeStandingClass: TBoldFreeStandingElementClass;
 begin
   result := TBFSTime;
+end;
+
+{ TBAUnicodeString_Proxy }
+
+class function TBAUnicodeString_Proxy.MakeProxy(ProxedMember: TBoldMember;
+  Mode: TBoldDomainElementProxyMode): TBoldMember_Proxy;
+begin
+  Result := fLastUsed[Mode];
+  // Reuse proxy if we hold only reference
+  if Assigned(Result) and (Result.RefCount =1) then
+  begin
+    Result.Retarget(ProxedMember, Mode);
+  end
+  else
+  begin
+    Result := Create(ProxedMember, Mode);
+    fLastUsed[Mode] := Result;
+    fLastUsedAsInterface[Mode] := Result;  // Inc refcount
+  end;
 end;
 
 initialization
@@ -4863,7 +5381,7 @@ finalization
       RemoveDescriptorByClass(TBAAnsiString);
       RemoveDescriptorByClass(TBAUnicodeString);
       RemoveDescriptorByClass(TBAText);
-      RemoveDescriptorByClass(TBAUnicodeText);      
+      RemoveDescriptorByClass(TBAUnicodeText);
       RemoveDescriptorByClass(TBATrimmedString);
       RemoveDescriptorByClass(TBANumeric);
       RemoveDescriptorByClass(TBAInteger);
@@ -4887,3 +5405,4 @@ finalization
     end;
 
 end.
+

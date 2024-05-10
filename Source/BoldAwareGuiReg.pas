@@ -33,6 +33,8 @@ uses
   BoldPropertiesControllerPropertyEditors,
   BoldPropertiesController,
   BoldStringsPropertyController,
+  BoldPropertyMapper,
+  BoldPropertyMappingPropertyEditors,
   BoldControlPack,
   BoldVariantControlPack,
   BoldGenericListControlPack,
@@ -122,6 +124,10 @@ begin
   RegisterComponentEditor(TBoldPropertiesController,TBoldPropertiesControllerComponentEditor);
   RegisterPropertyEditor(TypeInfo(String), TBoldDrivenProperty, 'PropertyName', TPropertyNameProperty);
   RegisterPropertyEditor(TypeInfo(TComponent), TBoldDrivenProperty, 'VCLComponent', TVCLComponentProperty);
+
+  RegisterComponentEditor(TBoldPropertyMapper,TBoldPropertyMapperComponentEditor);
+  RegisterPropertyEditor(TypeInfo(String), TBoldPropertyMapping, 'VCLProperty', TVCLPropertyProperty);
+  RegisterPropertyEditor(TypeInfo(TComponent), TBoldPropertyMapping, 'VCLComponent', TVCLComponentProperty);
 end;
 
 procedure RegisterComponentsOnPalette;
@@ -157,6 +163,7 @@ begin
     TBoldImage,
     TBoldPropertiesController,
     TBoldStringsPropertyController,
+    TBoldPropertyMapper,
     TBoldAsStringRenderer,
     TBoldAsCheckboxStateRenderer,
     TBoldAsIntegerRenderer,
@@ -181,8 +188,8 @@ end;
 
 procedure Register;
 begin
-  RegisterComponentsOnPalette;
-  RegisterEditors;
+    RegisterComponentsOnPalette;
+    RegisterEditors;
   RegisterActionsInDelphi;
 end;
 

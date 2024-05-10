@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldExternalPersistenceControllerEventDriven;
@@ -49,6 +49,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldValueInterfaces,
   BoldStringId,
@@ -75,7 +77,7 @@ begin
       if MoldClass.AllBoldMembers[i].Storage = bsExternalKey then
       begin
         if assigned(Keyvalue) then
-          raise EBold.createFmt('AssignKeyValue only supported automatically for classes with one external key: %s', [MoldClass.Name]);
+          raise EBold.createFmt(sAssignKeyValueRequiresOneKey, [MoldClass.Name]);
 
         KeyValue := ObjectContents.ValueByIndex[i];
         if KeyValue.QueryInterface(IBoldStringContent, StrContent) = S_OK then
@@ -113,7 +115,7 @@ begin
     if assigned(ConfigItem) then
     begin
       if not assigned(ConfigItem.OnCreateObject) then
-        raise EBold.CreateFmt('Creating new objects of type %s not supported/allowed', [ConfigItem.ExpressionName]);
+        raise EBold.CreateFmt(sCreateObjectsNotAllowed, [ConfigItem.ExpressionName]);
       ExternalKey := GetExternalKeyFromObject(ObjectContents, ValueSpace);
       ConfigItem.OnCreateObject(PersistentObjectFromObjectContents(ObjectContents, ValueSpace, MoldClass), ExternalKey, ValueSpace);
       ExternalKey.Free;
@@ -139,7 +141,7 @@ begin
     if assigned(ConfigItem) then
     begin
       if not assigned(ConfigItem.OnDeleteObject) then
-        raise EBold.CreateFmt('Deleting objects of type %s not supported/allowed', [ConfigItem.ExpressionName]);
+        raise EBold.CreateFmt(sDeleteObjectsNotAllowed, [ConfigItem.ExpressionName]);
       ExternalKey := GetExternalKeyFromObject(ObjectContents, valueSpace);
       ConfigItem.OnDeleteObject(PersistentObjectFromObjectContents(ObjectContents, ValueSpace, MoldClass), ExternalKey);
       ExternalKey.Free;
@@ -181,7 +183,7 @@ begin
       if Assigned(ConfigItem.OnReadObject) then
         ConfigItem.OnReadObject(PersistentObject, ExternalKey, FetchContext)
       else
-        raise EBold.CreateFmt('Event ReadObject is not implemented for class %s', [MoldClass.Name]);
+        raise EBold.CreateFmt(sReadObjectNotImplementedForClass, [MoldClass.Name]);
     end;
   finally
     ExternalKey.free;
@@ -198,7 +200,7 @@ begin
   if assigned(ConfigItem) and assigned(ConfigItem.OngetKeyList) then
     ConfigItem.OnGetKeyList(ExternalKeys)
   else
-    raise EBold.CreateFmt('Getting external keys for class %s not implemented', [MoldClass.Name]);
+    raise EBold.CreateFmt(sGetExternalKeyNotImplementedForClass, [MoldClass.Name]);
 end;
 
 function TBoldExternalPersistenceControllerEventDriven.HandlesClass(MoldClass: TMoldClass): Boolean;
@@ -248,7 +250,7 @@ begin
     if assigned(ConfigItem) then
     begin
       if not assigned(ConfigItem.OnUpdateObject) then
-        raise EBold.CreateFmt('Modifying objects of type %s not supported/allowed', [ConfigItem.ExpressionName]);
+        raise EBold.CreateFmt(sModifyObjectsNotAllowed, [ConfigItem.ExpressionName]);
       ExternalKey := GetExternalKeyFromObject(ObjectContents, ValueSpace);
       ConfigItem.OnUpdateObject(PersistentObjectFromObjectContents(ObjectContents, valueSpace, MoldClass), ExternalKey, ValueSpace);
       ExternalKey.Free;

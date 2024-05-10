@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldIDAdderHandle;
@@ -51,10 +51,12 @@ type
 implementation
 
 uses
+  Dialogs,
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
-  BoldIDAdder,
-  dialogs;
+  BoldIDAdder;
 
 { TBoldIDAdderHandle }
 
@@ -159,7 +161,7 @@ procedure TBoldIDAdderHandle.ReadObsoleteProperty(Reader: TReader;
   const PropertyName, NewPropertyName, OldPropertyValue, ComponentName: string);
 begin
   if (csDesigning in ComponentState) then
-    MessageDlg(Format('%s.%s has been moved to component (%s.%s). Old value was "%s"',
+    MessageDlg(Format(sPropertyHasMoved,
                       [ClassName, PropertyName, ComponentName, NewPropertyName, OldPropertyValue]), mtWarning, [mbOK], 0);
 end;
 
@@ -200,7 +202,5 @@ begin
   else
     fPTSubscriber.CancelAllSubscriptions;
 end;
-
-initialization
 
 end.

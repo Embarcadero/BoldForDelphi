@@ -36,8 +36,8 @@ type
     function CreateObjectUpgrader: TBoldAbstractObjectUpgrader; override;
     function ConfigClass: TBoldObjectUpgraderConfigClass; override;
   public
-    constructor create(owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(owner: TComponent); override;
+    destructor Destroy; override;
     property ObjectUpgrader: TBoldObjectUpgrader read GetObjectUpgrader;
   published
     property PersistenceHandle: TBoldAbstractPersistenceHandleDB read FPersistenceHandle write SetPersistenceHandle;
@@ -64,7 +64,7 @@ begin
   result := TBoldObjectUpgraderConfigurationWithEvent;
 end;
 
-constructor TBoldObjectUpgraderHandle.create(owner: TComponent);
+constructor TBoldObjectUpgraderHandle.Create(owner: TComponent);
 begin
   inherited;
   fComponentSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveComponentEvents);
@@ -75,7 +75,7 @@ begin
   result := TBoldObjectUpgrader.Create(Config, GetSystemTypeInfo, GetPersistenceController);
 end;
 
-destructor TBoldObjectUpgraderHandle.destroy;
+destructor TBoldObjectUpgraderHandle.Destroy;
 begin
   FreeAndNil(fComponentSubscriber);
   inherited;                       

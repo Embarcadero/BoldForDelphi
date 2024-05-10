@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLogHandlerForm;
@@ -30,7 +30,7 @@ type
     procedure SetProgressMax(const Value: integer);
     procedure ProcessInterruption;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure Clear;
     procedure Hide;
     procedure Log(const s: string; LogType: TBoldLogType = ltInfo);
@@ -46,6 +46,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldIsoDateTime;
 
@@ -67,7 +69,7 @@ end;
 
 procedure TBoldLogHandlerReceiver.EndLog;
 begin
-  Log(format('%s: Done %s', [AsIsoDateTimeMs(now), fSessionName]));
+  Log(format(sLogDone, [AsIsoDateTimeMs(now), fSessionName]));
   Hideprogressbar;
 end;
 
@@ -86,12 +88,14 @@ end;
 procedure TBoldLogHandlerReceiver.Log(const s: string; LogType: TBoldLogType = ltInfo);
 begin
   LogForm.AddLog(s);
-  LogForm.Refresh;
+  if LogForm.Visible then
+    LogForm.Refresh;
 end;
 
 procedure TBoldLogHandlerReceiver.ProgressStep;
 begin
-  LogForm.ProgressBar1.StepIt;
+  if LogForm.Visible then
+    LogForm.ProgressBar1.StepIt;
 end;
 
 procedure TBoldLogHandlerReceiver.SaveLog;
@@ -101,7 +105,8 @@ end;
 
 procedure TBoldLogHandlerReceiver.SetProgress(const Value: integer);
 begin
-  LogForm.ProgressBar1.Position := Value;
+  if LogForm.Visible then
+    LogForm.ProgressBar1.Position := Value;
 end;
 
 procedure TBoldLogHandlerReceiver.SetLogHeader(const Value: string);
@@ -111,7 +116,7 @@ end;
 
 procedure TBoldLogHandlerReceiver.SetProgressMax(const Value: integer);
 begin
-  if Value > 0 then
+  if (Value > 0) and LogForm.Visible then
     LogForm.Progressbar1.Max := Value;
 end;
 
@@ -123,9 +128,9 @@ end;
 
 procedure TBoldLogHandlerReceiver.StartLog(const SessionName: String);
 begin
-  LogForm.Caption := 'Logging Activity: ' + SessionName;
+  LogForm.Caption := Format(sLogFormCaption, [SessionName]);
   fSessionName := SessionName;
-  Log(format('%s: Starting %s', [AsIsoDateTimeMs(now), SessionName]));
+  Log(format(sLogStarting, [AsIsoDateTimeMs(now), SessionName]));
 end;
 
 procedure TBoldLogHandlerReceiver.ProcessInterruption;
@@ -135,16 +140,17 @@ end;
 
 procedure TBoldLogHandlerReceiver.HideProgressBar;
 begin
-  LogForm.ProgressBar1.Position := 0;
+  if LogForm.Visible then
+    LogForm.ProgressBar1.Position := 0;
 end;
 
 procedure TBoldLogHandlerReceiver.Sync;
 begin
-  Application.ProcessMessages;
+  if LogForm.Visible then
+    Application.ProcessMessages;
 end;
 
 initialization
-
   LogHandlerForm := TBoldLogHandlerReceiver.Create;
   BoldLog.RegisterLogReceiver(LogHandlerForm as IBoldLogReceiver);
 

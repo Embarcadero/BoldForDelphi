@@ -40,7 +40,6 @@ type
   TBoldItemRecBloc = class
   private
     fEntries: array[0..4094] of  TBoldHashIndexItemEntryRec;
-    FFirstEntry: PItemEntry;
     function GetFirstEntry: PItemEntry; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   public
     constructor Create;
@@ -826,12 +825,9 @@ begin
 end;
 
 procedure TBoldIntegerIndex.RemoveByIndex(Index: Integer);
-var
-  Temp: TObject;
 begin
   if (Index < 0) or (Index >= FCount) then
     RangeError(Index);
-  Temp := FObjectStaticArray^[Index];
   Dec(FCount);
   if Index < FCount then
     System.Move(FObjectStaticArray^[Index + 1], FObjectStaticArray^[Index],
@@ -1039,9 +1035,9 @@ end;
 
 destructor TBoldHashIndexItemEntryRecHandler.Destroy;
 begin
- //  if fCount <> 0 then
- //    raise Exception.Create('TBoldHashIndexItemEntryRecHandler: Not all records freed');
   FreeAndNil(fBlocks);
+  if fCount <> 0 then
+    raise Exception.Create('TBoldHashIndexItemEntryRecHandler: Not all records freed');
   inherited;
 end;
 

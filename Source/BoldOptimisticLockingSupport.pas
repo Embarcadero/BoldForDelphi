@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOptimisticLockingSupport;
@@ -44,6 +44,8 @@ implementation
 uses
   SysUtils,
   Classes,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldIndexableList,
   BoldElements,
@@ -349,18 +351,16 @@ begin
       if OtherEnd.BoldPersistenceState = bvpsInvalid then
       begin
         if OwningRoleRTInfo.ForceOtherEnd then
-          raise EBold.CreateFmt('%s.GetRegionsForRemoteMember: The related role (of %s) is not loaded. Unable to ensure optimistic locking consistency', [classname, OwningRoleRTInfo.AsString]);
+          raise EBold.CreateFmt(sRelatedRoleNotLoaded, [classname, OwningRoleRTInfo.AsString]);
       end
       else
         GetRegionsForElement(OtherEnd, Regions);
     end
     else
       if OwningRoleRTInfo.ForceOtherEnd then
-        raise EBold.CreateFmt('%s.GetRegionsForRemoteMember: The related object (of %s) is not loaded. Unable to ensure optimistic locking consistency', [classname, OwningRoleRTInfo.AsString]);
+        raise EBold.CreateFmt(sRelatedObjectNotLoaded, [classname, OwningRoleRTInfo.AsString]);
   end;
 end;
-
-
 
 procedure TBoldOptimisticLockHandler.EnsureEnclosure(Obj: TBoldObject; Enclosure: TBoldObjectList; ValidateOnly: Boolean; var ListIsEnclosure: Boolean);
 var

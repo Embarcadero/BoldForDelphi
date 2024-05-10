@@ -1,4 +1,4 @@
-unit BoldAFP;
+﻿unit BoldAFP;
 
 interface
 
@@ -91,6 +91,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldSystemRT,
   BoldSystem,
@@ -289,7 +291,7 @@ begin
     // Cannot use FreeAndNil on property - there's no variable to access.
     Form.Free;
     Form := nil;
-    raise EBoldInternal.CreateFmt('%s.PostEnsureComponents: BoldHandle not assigned', [ClassName]);
+    raise EBoldInternal.CreateFmt(sMissingBoldHandle, [ClassName]);
   end;
 end;
 

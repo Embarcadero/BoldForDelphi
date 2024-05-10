@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractPartiallyExternalPC;
@@ -48,8 +48,10 @@ type
 
 implementation
 uses
-  BoldGuard,
   SysUtils,
+
+  BoldCoreConsts,
+  BoldGuard,
   BoldNameExpander,
   BoldDefaultStreamNames,
   BoldDefs,
@@ -179,12 +181,12 @@ begin
     if (MoldClass.AllBoldMembers[i] is TMoldAttribute) and (MoldClass.AllBoldMembers[i].Storage = bsExternalKey) then
     begin
       if assigned(ExternalKey) then
-        raise EBold.CreateFmt('%s.ExternalKeysToInternalSQL: Automatic SQL-generation only supported for classes with 1 (one) external key (class %s has multiple)', [classname, MoldClass.ExpandedExpressionName])
+        raise EBold.CreateFmt(sNotSupportedWithMultipleKeys, [classname, MoldClass.ExpandedExpressionName])
       else
         ExternalKey := MoldClass.AllBoldMembers[i] as TMoldAttribute;
     end;
   if not assigned(ExternalKey) then
-    raise EBold.CreateFmt('%s.ExternalKeysToInternalSQL: Automatic SQL-generation only supported for classes with 1 (one) external key (class %s has none!)', [classname, MoldClass.ExpandedExpressionName]);
+    raise EBold.CreateFmt(sNotSupportedWithNoKeys, [classname, MoldClass.ExpandedExpressionName]);
 
   result := format('%s.%s in (', [
     BoldExpandName(ExternalKey.MoldClass.Tablename, ExternalKey.MoldClass.Name, xtSQL, -1, nccFalse),
@@ -250,7 +252,7 @@ begin
     end;
   end;
   if index = -1 then
-    raise EBold.CreateFmt('%s.FindMoldRoleByName: There is no role called %s in class %s', [ClassNAme, ExpressionName, MoldClass.ExpandedExpressionName]);
+    raise EBold.CreateFmt(sNoSuchRole, [ClassNAme, ExpressionName, MoldClass.ExpandedExpressionName]);
 end;
 
 procedure TBoldAbstractPartiallyExternalPC.HandleAllInstances(

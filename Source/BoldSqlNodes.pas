@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSqlNodes;
@@ -183,12 +183,14 @@ type
     constructor Create(Position: integer; VariableName: String; TopSortedIndex: integer);
     procedure AcceptVisitor(V: TBoldSqlNodeVisitor); override;
     procedure AddRef;
+    procedure DecRef;
     property VariableName: string read fVariableName;
     property TopSortedIndex: integer read fTopSortedIndex;
     property ExternalVarvalue: Variant read fExternalVarValue write fExternalVarValue;
     property IsLoopVar: Boolean read fIsLoopVar write fIsLoopVar;
     property IsExternal: Boolean read fIsExternal write fIsExternal;
     property Context: TBoldObjectIdList read fContext write fContext;
+    property RefCount: integer read fRefCount;
   end;
 
   TBoldSqlVariableReference = class(TBoldSqlNode)
@@ -310,11 +312,12 @@ type
     destructor Destroy;override;
   end;
 
-
 implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldSQLMappingInfo,
   BoldPMappersDefault;
@@ -427,7 +430,7 @@ procedure TBoldSqlNode.SetObjectMapper(const Value: TBoldObjectSQLMapper);
 begin
   fObjectmapper := Value;
   if HasObjectMapper and (length(ObjectMapper.SystemPersistenceMapper.MappingInfo.GetAllInstancesMapping(ObjectMapper.ExpressionName)) > 1) then
-    raise EBold.Create('ChildMapped classes not supported: '+ObjectMapper.ExpressionName);
+    raise EBold.CreateFmt(sChildMappedClassesNotSupported, [ObjectMapper.ExpressionName]);
 end;
 
 procedure TBoldSqlNode.SetQuery(const Value: TBoldSqlQuery);
@@ -649,14 +652,19 @@ begin
   v.VisitTBoldSqlVariableBinding(self);
 end;
 
-
 procedure TBoldSqlVariableBinding.AddRef;
 begin
   inc(fRefCount);
   if (fRefCount > 1) and not fIsLoopVar then
-    raise EBold.Create('external variables (and self) can currently only be referenced once');
+    raise EBold.Create(sExternalVarsCanOnlyBereferencedOnce);
 end;
 
+procedure TBoldSqlVariableBinding.DecRef;
+begin
+  if (fRefCount = 0) then
+    raise EBold.Create('negative refcount for external variables (or self)');
+  dec(fRefCount);
+end;
 
 constructor TBoldSqlVariableBinding.Create(Position: integer; VariableName: String; TopSortedIndex: integer);
 begin
@@ -664,7 +672,6 @@ begin
   fVariableName := VariableName;
   fTopSortedIndex := TopSortedIndex;
 end;
-
 
 { TBoldSqlStrLiteral }
 
@@ -857,8 +864,7 @@ begin
   inherited;
 end;
 
-constructor TBoldSqlEnumLiteral.Create(Position, IntValue: integer; Name:
-    String);
+constructor TBoldSqlEnumLiteral.Create(Position, IntValue: integer; Name: String);
 begin
   inherited Create(Position);
   fIntValue := IntValue;

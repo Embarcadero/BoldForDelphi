@@ -38,6 +38,4 @@ begin
   result := Controller;
 end;
 
-initialization
-
 end.

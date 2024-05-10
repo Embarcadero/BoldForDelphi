@@ -38,8 +38,8 @@ type
     procedure DoAfterDeleteItem(index: Integer; OwningFollower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure DoReplaceItem(index: Integer; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure CleanRendererData(RendererData: TBoldRendererData); override;
-  public
     class function PrecreateFollowers: boolean; virtual;
+  public
     constructor Create(aOwningComponent: TComponent);
     procedure SetActiveRange(Follower: TBoldFollower; FirstActive: Integer; LastActive: Integer; RangeBuffer: Integer = 1);
     procedure SelectAll(Follower: TBoldFollower; SetSelect: Boolean); {Maybe make available in renderer?}
@@ -219,7 +219,7 @@ end;
 destructor TBoldFollowerList.Destroy;
 var
   I: Integer;
-  Follower: TBoldFollower;
+//  Follower: TBoldFollower;
 //  lBoldTreeNode: TBoldTreeNode;
 begin
   for I := Count - 1 downto 0 do

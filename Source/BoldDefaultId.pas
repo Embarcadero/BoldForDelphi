@@ -39,9 +39,9 @@ type
     function GetStreamName: string; override;
     function GetTimeStamp: TBoldTimeStampType; override;
     function GetHash: cardinal; override;
-    function GetIsEqual(MatchID: TBoldObjectID): Boolean; override;     
   public
     constructor CreateWithTimeAndClassId(TimeStamp: TBoldTimeStampType; TopSortedIndex: integer; Exact: Boolean);
+    function GetIsEqual(MatchID: TBoldObjectID): Boolean; override;
     function CloneWithClassId(TopSortedIndex: integer; Exact: Boolean): TBoldObjectId; override;
     property TimeStamp: TBoldTimeStampType read GetTimeStamp write fTimeStamp;
   end;

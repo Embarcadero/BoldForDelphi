@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclRepository;
@@ -73,7 +73,7 @@ type
     function GetDisplayName: string; override;
   public
     constructor Create(Collection: TCollection); override;
-    destructor destroy; override;
+    destructor Destroy; override;
     function GetContextType: TBoldElementTypeInfo;
     property Definitions: TBoldOclDefinitions read GetDefinitions;
     property SystemTypeInfo: TBoldSystemTypeInfo read GetSystemTypeInfo;
@@ -88,6 +88,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldLogHandler;
 
 { TBoldOclRepository }
@@ -155,12 +157,14 @@ var
   i: integer;
   Context: TBoldElementTypeInfo;
 begin
+  result := false;
   if not assigned(SystemHandle) then
-    BoldLog.LogFmt('*** OclRepository %s%s has no SystemHandle', [NamePrefix, Name])
+    BoldLog.LogFmt(sRepositoryHasNoSystemHandle, [NamePrefix, Name])
   else if not assigned(SystemHandle.StaticSystemTypeInfo) then
-    BoldLog.LogFmt('*** SystemHandle of OclRepository %s%s has no TypeInfo', [NamePrefix, Name])
+    BoldLog.LogFmt(sSystemHandleHasNoTypeInfo, [NamePrefix, Name])
   else
   begin
+    result := true;
     for i := 0 to OclDefinitions.count-1 do begin
       Context := SystemHandle.StaticSystemTypeInfo.ElementTypeInfoByExpressionName[OclDefinitions[i].Context];
       result := ComponentValidator.ValidateExpressionInContext(
@@ -179,7 +183,7 @@ begin
   Name := (Collection as TBoldOclDefinitions).GetUniqueName;
 end;
 
-destructor TBoldOclDefinition.destroy;
+destructor TBoldOclDefinition.Destroy;
 begin
   inherited;
 
@@ -243,7 +247,7 @@ begin
     if TBoldOclDefinitions(Collection).NameIsUnique(Value) then
       FName := Value
     else
-      raise EBold.CreateFmt('Invalid Name: %s Not Unique', [Value]);
+      raise EBold.CreateFmt(sNameNotUnique, [Value]);
   end;
 end;
 

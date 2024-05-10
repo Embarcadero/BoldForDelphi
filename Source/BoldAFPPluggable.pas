@@ -1,3 +1,6 @@
+
+{ Global compiler directives }
+{$include bold.inc}
 unit BoldAFPPluggable;
 
 interface
@@ -262,7 +265,7 @@ var
 begin
   Result := inherited MemberShouldBeDisplayed(Member);
   if Result then
-    for i := 0 to G_AFPList.Count - 1 do
+    for i := G_AFPList.Count - 1 downto 0 do
     begin
       Result := TBoldPlaceableAFP(G_AFPList[i]).MemberShouldBeDisplayed(Member);
       if not Result then Break;
@@ -274,7 +277,7 @@ var
   i: integer;
 begin
   Result := nil;
-  for i := 0 to G_AFPList.Count - 1 do
+  for i := G_AFPList.Count - 1 downto 0 do
   begin
     Result := TBoldPlaceableAFP(G_AFPList[i]).GetFormClass(Element);
     if Assigned(Result) then Break;
@@ -286,7 +289,7 @@ var
   i: integer;
 begin
   Result := nil;
-  for i := 0 to G_AFPList.Count - 1 do
+  for i := G_AFPList.Count - 1 downto 0 do
   begin
     Result := TBoldPlaceableAFP(G_AFPList[i]).RetrieveHandle(Form);
     if Assigned(Result) then Break;

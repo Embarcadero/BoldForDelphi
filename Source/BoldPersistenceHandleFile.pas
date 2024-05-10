@@ -77,6 +77,8 @@ implementation
 uses
   Dialogs,
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefaultId;
 
 { TBoldPersistenceControllerFile }
@@ -128,7 +130,7 @@ procedure TBoldPersistenceControllerFile.PMExactifyIds(
   ObjectIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean);
 begin
-  raise EBold.Create('NotImplemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'PMExactifyIds']);
 end;
 
 procedure TBoldPersistenceControllerFile.PMFetch(
@@ -179,27 +181,27 @@ begin
     NewCondition.free;
   end
   else
-    raise EBold.Create('unknown conditiontype: ' + Condition.Classname);
+    raise EBold.CreateFmt(sUnknownConditionType, [Condition.Classname]);
 end;
 
 procedure TBoldPersistenceControllerFile.PMSetReadonlyness(ReadOnlyList,
   WriteableList: TBoldObjectIdList);
 begin
-  raise EBold.Create('Not Implemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'PMSetReadonlyness']);
 end;
 
 procedure TBoldPersistenceControllerFile.PMTranslateToGlobalIds(
   ObjectIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.Create('Not Implemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'PMTranslateToGlobalIds']);
 end;
 
 procedure TBoldPersistenceControllerFile.PMTranslateToLocalIds(
   GlobalIdList: TBoldObjectIdList;
   TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.Create('Not Implemented');
+  raise EBold.CreateFmt(sNotImplemented, [ClassName, 'PMTranslateToLocalIds']);
 end;
 
 procedure TBoldPersistenceControllerFile.PMUpdate(

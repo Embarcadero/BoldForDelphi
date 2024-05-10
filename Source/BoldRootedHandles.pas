@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRootedHandles;
@@ -47,6 +47,7 @@ type
     procedure EffectiveRootValueChanged; virtual;
     function EffectiveRootValue: TBoldElement;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; override;
+    procedure SetStaticSystemHandle(Value: TBoldAbstractSystemHandle); override;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
     procedure SetRootTypeName(Value: string); virtual;    
     procedure Loaded; override;
@@ -89,8 +90,9 @@ type
 implementation
 
 uses
-
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldEnvironment;
 
@@ -153,6 +155,13 @@ begin
     Result := inherited GetStaticSystemHandle;
 end;
 
+procedure TBoldRootedHandle.SetStaticSystemHandle(Value: TBoldAbstractSystemHandle);
+begin
+  if Assigned(RootHandle) then
+    Value := GetStaticSystemHandle;
+  inherited SetStaticSystemHandle(Value);
+end;
+
 function TBoldRootedHandle.GetStaticSystemTypeInfo: TBoldSystemTypeInfo;
 begin
   if Assigned(InternalRootHandle) then
@@ -173,7 +182,7 @@ begin
   begin
     if (Value = self) or
     ((Value is TBoldRootedHandle) and TBoldRootedHandle(Value).IsRootLinkedTo(Self)) then
-      raise EBold.CreateFmt('%s.SetInternalRootHandle: Circular reference', [ClassName]);
+      raise EBold.CreateFmt(sInternalRootHandle_CircRef, [ClassName]);
     fInternalRootHandleSubscriber.CancelAllSubscriptions;
     fInternalRootHandle := Value;
     if Assigned(InternalRootHandle) then
@@ -333,7 +342,7 @@ end;
 
 function TBoldRootedHandle.IsStaticSystemHandleStored: boolean;
 begin
-  result := inherited IsStaticSystemHandleStored and not (RootHandle is TBoldAbstractSystemHandle) and not (RootHandle is TBoldNonSystemHandle);
+  result := inherited IsStaticSystemHandleStored and not (RootHandle is TBoldNonSystemHandle);
 end;
 
 procedure TBoldRootedHandle.SetRootTypeName(Value: string);

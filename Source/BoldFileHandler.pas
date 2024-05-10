@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldFileHandler;
@@ -94,6 +94,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   Dialogs,
   BoldRev;
 
@@ -125,7 +127,7 @@ begin
     result.InitializeStringList;
   except
     on e: exception do
-      raise EBold.CreateFmt('Unable to create filehandler for %s: %s', [FileName, e.message]);
+      raise EBold.CreateFmt(sUnableToCreateFileHandle, [FileName, e.message]);
   end;
 end;
 
@@ -168,7 +170,7 @@ begin
   fLastWasNewLIne := true;
   fIndentLevel := 0;
   FOnInitializeFileContents := OnInitializeFileContents;
-  fFileFilter := 'Pascal Unit (*.pas)|*.pas|Include files (*.inc)|*.inc|Text files (*.txt)|*.txt|All Files (*.*)|*.*';
+  fFileFilter := sFileHandlerMask;
   BoldFileHandlerList.Add(self);
 end;
 
@@ -178,7 +180,7 @@ begin
     FlushFile;
   except
     on e:Exception do
-      ShowMessage('File most likely not saved properly: ' + e.Message);
+      ShowMessage(SysUtils.Format(sFileSaveProblem, [e.Message]));
   end;
   FreeAndNil(fStringList);
   BoldFileHandlerList.remove(self);
@@ -345,12 +347,12 @@ begin
   if CheckWriteable then
   begin
     StringList.SaveToFile(FileName);
-    BoldLog.Log('Saved ' + FileName);
+    BoldLog.LogFmt(sSaved, [FileName]);
   end
   else
   begin
-    BoldLog.LogFmt('%s is readonly!', [FFileName], ltError);
-    ShowMessage(fFileName + ' is readonly!');
+    BoldLog.LogFmt(sModuleReadOnly, [FFileName], ltError);
+    ShowMessage(SysUtils.Format(sModuleReadOnly, [fFileName]));
   end;
 end;
 

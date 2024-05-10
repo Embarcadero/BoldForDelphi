@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldEnvironmentVCL;
@@ -15,8 +15,10 @@ uses
   AppEvnts,
   Controls,
   Dialogs,
-  BoldDefs,
   Forms,
+
+  BoldCoreConsts,
+  BoldDefs,
   BoldQueue,
   BoldEnvironment,
   BoldRev;
@@ -26,19 +28,25 @@ type
   TBoldAppEventQueue = class;
   TBoldVCLEnvironmentConfiguration = class;
 
+  TBoldAppEventQueueDisplayMode = (dmOnMessage, dmOnIdle);
+
   { TBoldAppEventQueue }
   TBoldAppEventQueue = class(TBoldQueue)
   private
     fAppEvents: TApplicationEvents;
     fBoldQueueActive: Boolean;
+    fQueueDisplayMode: TBoldAppEventQueueDisplayMode;
     procedure ApplicationEventsOnIdle(Sender: TObject; var Done: Boolean);
+    procedure ApplicationEventsOnMessage(var Msg: TMsg; var Handled: Boolean);
     function GetAppEvents: TApplicationEvents;
   protected
+    function GetIsActive: boolean; override;
     property AppEvents: TApplicationEvents read GetAppEvents;
   public
     destructor Destroy; override;
-    procedure DeActivateDisplayQueue; override;
     procedure ActivateDisplayQueue; override;
+    procedure DeActivateDisplayQueue; override;
+    property QueueDisplayMode: TBoldAppEventQueueDisplayMode read fQueueDisplayMode write fQueueDisplayMode;
   end;
 
   { TBoldVCLEnvironmentConfiguration }
@@ -116,8 +124,9 @@ var
   ParentForm: TCustomForm;
   Owner: TComponent;
 begin
+  // Don't call inherited
   if not RunningInIDE then
-    raise EBold.CreateFmt('%s: Not running in IDE', ['UpdateDesigner']);
+    raise EBold.CreateFmt(sNotRunningInIDE, ['UpdateDesigner']); // do not localize
   ParentForm := nil;
   Owner := nil;
   if (Sender is TControl) then
@@ -144,8 +153,12 @@ end;
 
 procedure TBoldAppEventQueue.ActivateDisplayQueue;
 begin
+  inherited;
   fBoldQueueActive := true;
-  AppEvents.OnIdle := ApplicationEventsOnIdle;
+  case QueueDisplayMode of
+    dmOnIdle: AppEvents.OnIdle := ApplicationEventsOnIdle;
+    dmOnMessage: AppEvents.OnMessage := ApplicationEventsOnMessage;
+  end;
 end;
 
 procedure TBoldAppEventQueue.ApplicationEventsOnIdle(Sender: TObject; var Done: Boolean);
@@ -158,7 +171,7 @@ begin
         dmDisplayOne: Done := not DisplayOne;
         dmDisplayAll: Done := not DisplayAll;
         else
-          raise EBoldInternal.CreateFmt('%s.ApplicationEventsOnIdle: Unknown displaymode', [classname]);
+          raise EBoldInternal.CreateFmt(sUnknownDisplayMode, [classname]);
       end;
       if Done then
         PerformPostDisplayQueue;
@@ -166,13 +179,25 @@ begin
   except
     Application.HandleException(nil);
   end;
+end;
 
+procedure TBoldAppEventQueue.ApplicationEventsOnMessage(var Msg: TMsg;
+  var Handled: Boolean);
+begin
+  if IsActive then
+    ApplicationEventsOnIdle(nil, Handled);
+  Handled := false;
 end;
 
 procedure TBoldAppEventQueue.DeActivateDisplayQueue;
 begin
+  inherited;
   fBoldQueueActive := false;
-  AppEvents.OnIdle := nil;
+  if Assigned(fAppEvents) then
+  begin
+    AppEvents.OnIdle := nil;
+    AppEvents.OnMessage := nil;
+  end;
 end;
 
 destructor TBoldAppEventQueue.Destroy;
@@ -186,6 +211,11 @@ begin
   if not Assigned(fAppEvents) then
     fAppEvents := TApplicationEvents.create(nil);
   Result := fAppEvents;
+end;
+
+function TBoldAppEventQueue.GetIsActive: boolean;
+begin
+  result := fBoldQueueActive;
 end;
 
 initialization

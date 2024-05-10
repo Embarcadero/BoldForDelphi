@@ -584,6 +584,4 @@ begin
   Result := nil;
 end;
 
-initialization
-
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComponentValidator;
@@ -40,12 +40,13 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldLogHandler,
   BoldDefs,
   BoldEnvironment;
 
 { TBoldComponentValidator }
-
 
 function TBoldComponentValidator.ValidateComponent(Component: TPersistent; NamePrefix: String = ''; TraverseSubComponents: Boolean = false): Boolean;
 var
@@ -58,7 +59,7 @@ begin
   vCounter := ValidateCount;
   vIsFormOrDataModule := BoldEffectiveEnvironment.IsFormOrDataModule(Component);
   if vIsFormOrDataModule then
-    BoldLog.LogFmt('Validating %s', [(Component as TComponent).Name], ltInfo);
+    BoldLog.LogFmt(sValidatingHeader, [(Component as TComponent).Name], ltInfo);
 
   result := true;
   if Supports(Component, IBoldValidateableComponent, ValidateableComponent) then
@@ -73,12 +74,11 @@ begin
   if vIsFormOrDataModule then
   begin
     if result then
-      BoldLog.LogFmt('%s ok, checked %d expressions.', [(Component as TComponent).Name, ValidateCount - vCounter], ltInfo)
+      BoldLog.LogFmt(sOKCheckMessage, [(Component as TComponent).Name, ValidateCount - vCounter], ltInfo)
     else
-      BoldLog.LogFmt('%s failed, checked %d expressions.', [(Component as TComponent).Name, ValidateCount - vCounter], ltWarning);
+      BoldLog.LogFmt(sErrorCheckMessage, [(Component as TComponent).Name, ValidateCount - vCounter], ltWarning);
   end;
 end;
-
 
 function TBoldComponentValidator.ValidateExpressionInContext(Expression: string; Context: TBoldElementTypeInfo; Name: String; const VariableList: TBoldExternalVariableList = nil): Boolean;
 begin
@@ -87,7 +87,7 @@ begin
   if not assigned(Context) then
   begin
     result := false;
-    BoldLog.LogFmt('No context for %s', [Name], ltWarning);
+    BoldLog.LogFmt(sNoContext, [Name], ltWarning);
   end
   else
   begin
@@ -97,11 +97,11 @@ begin
       on e: exception do
       begin
         result := false;
-        BoldLog.LogFmt('Error in %s: %s', [Name, e.Message], ltError);
+        BoldLog.LogFmt(sValidationError, [Name, e.Message], ltError);
       end;
     end;
     if not Result then
-      BoldLog.LogFmt('Expression: %s', [Expression], ltWarning);
+      BoldLog.LogFmt(sValidationExpression, [Expression], ltWarning);
   end;
 end;
 
@@ -130,7 +130,7 @@ end;
 procedure TBoldComponentValidator.InitializeLog;
 begin
   BoldLog.Show;
-  BoldLog.StartLog('Component validation');
+  BoldLog.StartLog(sComponentValidation);
 end;
 
 procedure TBoldComponentValidator.CompleteLog;

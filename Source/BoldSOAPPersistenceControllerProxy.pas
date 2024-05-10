@@ -356,6 +356,4 @@ begin
   AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
 end;
 
-initialization
-
 end.

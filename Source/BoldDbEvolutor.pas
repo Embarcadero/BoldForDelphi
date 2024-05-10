@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDbEvolutor;
@@ -94,13 +94,15 @@ type
 implementation
 
 uses
-  Db,
+  DB,
+  SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldMath,
   BoldnameExpander,
   BoldLogHandler,
   BoldDbInterfaces,
-  SysUtils,
   BoldUtils,
   BoldGuard;
 
@@ -295,7 +297,6 @@ var
   IndexedColumns: TStringList;
   AllTables: TStringList;
   IndexDefs: TBoldIndexDescriptionArray;
-  t: Integer;
   g: IBoldGuard;
 begin
   g := TBoldGuard.Create(AllTables, IndexedColumns);
@@ -384,9 +385,9 @@ end;
 procedure TBoldDataBaseEvolutor.CalculateScript;
 begin
   if PersistenceHandle.Active then
-    raise EBold.CreateFmt('%s.CalculateScript: PersistenceHandle %s is active. unable to execute', [classname, PersistenceHandle.Name]);
+    raise EBold.CreateFmt(sPersistenceHandleActive, [classname, PersistenceHandle.Name]);
 
-  BoldLog.LogHeader := 'Initializing Script';
+  BoldLog.LogHeader := sInitializingScript;
   BoldLog.ProgressMax := 10;
   try
     PMapper.OpenDatabase(false, false);
@@ -655,7 +656,7 @@ begin
   begin
     dbType := SourceMapping.GetDbTypeMapping(ExpressionName);
     if dbType = NO_CLASS then
-      raise EBold.CreateFmt('%s.TranslateClassExpressionName: Unable to find source dbid for %s', [classname, expressionName]);
+      raise EBold.CreateFmt(sUnableToFindDBID, [classname, expressionName]);
     for i := 0 to SourceMapping.DbTypeMappings.Count - 1 do
     begin
       TestName := SourceMapping.DbTypeMappings[i].ClassExpressionName;
@@ -798,7 +799,7 @@ procedure TBoldDataBaseEvolutor.DetectMapperChange(NewMemberMapping, OldMemberMa
 begin
   if (OldMemberMapping.MapperName <> '') and not NewMemberMapping.CompareMapping(OldMemberMapping) then
     (Param as TStrings).Add(
-      format('Member %s.%s changed mapper (%s->%s). Column[s] (%s) in table %s will be dropped and (%s) will be created in table %s, data loss!', [
+      format(sMemberChangedMapper, [
         NewMemberMapping.ClassExpressionName,
         NewMemberMapping.MemberName,
         OldMemberMapping.MapperName,
@@ -831,9 +832,9 @@ begin
         if length(OldMapping.GetObjectStorageMapping(OldExprName)) > 0 then
         begin
           if GenericScript then
-            Info.Add(format('Class %s is concrete in old model, but %s is Abstract in new model', [OldExprName, NewExprName]))
+            Info.Add(format(sClassBecameAbstract, [OldExprName, NewExprName]))
           else if HasOldInstances(OldExprName) then
-            Info.Add(format('ERROR: There are instances of class %s, but %s is abstract in new model', [OldExprName, NewExprName]));
+            Info.Add(format(sUnableToHandleInstancesOfAbstract, [OldExprName, NewExprName]));
         end;
       end;
     end;
@@ -846,7 +847,7 @@ begin
     begin
       if HasOldInstances(UnhandledMemberMappings[0].ClassExpressionName) then
       begin
-        s := format('Data stored in column %s.%s for member %s.%s will be lost', [
+        s := Format(sDataStoredInXForYWillBeLost, [
           UnhandledMemberMappings[0].TableName,
           UnhandledMemberMappings[0].columns,
           UnhandledMemberMappings[0].ClassExpressionName,
@@ -855,9 +856,9 @@ begin
         if newClassExpressionName <> UnhandledMemberMappings[0].ClassExpressionName then
         begin
           if NewClassExpressionname = '' then
-            s := s + ' (class no longer exists)'
+            s := s + sClassNoLongerExists
           else
-            s := s + format(' (class now called %s)', [NewClassExpressionName]);
+            s := s + format(sNewNameForClass, [NewClassExpressionName]);
         end;
         info.add(s);
       end;

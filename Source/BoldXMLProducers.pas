@@ -1,12 +1,18 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
 unit BoldXMLProducers;
 
 interface
-
 uses
-  Bold_MSXML_TLB,
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldStringList,
   BoldManipulators,
   BoldDefs,
@@ -26,7 +32,6 @@ const
 
 type
   TBoldAbstractXMLProducer = class;
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXMLProducer = class;
 
   TBoldProduceEvent = procedure (const paramList: TBoldStringList; const DomDoc: IXMLDomDocument) of object;
@@ -55,7 +60,6 @@ type
       const XMLAttributes: TBoldStringList = nil): IXMLDomElement;
   end;
 
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldXMLProducer = class(TBoldAbstractXMLProducer)
   private
     FOnProduce: TBoldProduceEvent;
@@ -68,13 +72,14 @@ type
 
 implementation
 
-{$R BoldXMLProducers.res}
+{$R *.res}
 
 uses
   SysUtils,
-  BoldUtils,
-  HandlesConst
-  ;
+
+  BoldCoreConsts,
+  BoldRev,
+  BoldUtils;
 
 { TBoldXMLProducer }
 
@@ -158,7 +163,7 @@ var
 begin
   doc := CoDOMDocument.Create;
   doc.async := false;
-  ProcessingInstruction := doc.createProcessingInstruction('xml', 'version="1.0"'); // do not localize
+  ProcessingInstruction := doc.createProcessingInstruction('xml', 'version="1.0"');
   doc.appendChild(ProcessingInstruction);
   try
     Produce(paramList, doc);
@@ -209,5 +214,7 @@ begin
       Result.setAttribute(WideString(XMLAttributes.Names[i]), WideString(XMLAttributes.Strings[i]));
 end;
 
+initialization
+  BoldRegisterModuleVersion('$Workfile: BoldXMLProducers.pas $ $Revision: 9 $ $Date: 3/20/01 2:20p $');
 
 end.

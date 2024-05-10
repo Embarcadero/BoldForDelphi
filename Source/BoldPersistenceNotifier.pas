@@ -25,6 +25,7 @@ type
   TBoldAlertExcessiveFetchEvent = procedure(ObjectId: TBoldObjectId; FetchCount: integer) of object;
 
   { TBoldAbstractPersistenceNotifier }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldAbstractPersistenceNotifier = class(TComponent)
   private
     fEvents: array[bpeMinReserved..bpeMaxReserved] of TBoldExtendedEventHandler;
@@ -167,8 +168,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 const
   brePersistenceHandleDestroying = 100;
@@ -422,9 +422,9 @@ end;
 constructor TBoldPersistenceProgressNotifier.create(owner: TComponent);
 begin
   inherited;
-  fMsgFetchObjects := 'Fetching objects';
-  fMsgRetrieveIds := 'Retrieving object IDs';
-  fMsgUpdateDatabase := 'Updating database';
+  fMsgFetchObjects := 'Loading %d objects';
+  fMsgRetrieveIds := 'Loading IDs';
+  fMsgUpdateDatabase := 'Saving %d objects';
 end;
 
 procedure TBoldPersistenceProgressNotifier.CreateObject(
@@ -506,10 +506,6 @@ begin
   StepProgress;
 end;
 
-type
-  TExposedWinControl = class(TWinControl);
-
-{ Handle removing of non-bold components }  
 function TBoldPersistenceProgressNotifier.GetAnimationInterval: integer;
 begin
   result := AnimationTimer.Interval;
@@ -526,6 +522,7 @@ begin
   result := fAnimationTimer;
 end;
 
+{ Handle removing of non-bold components }
 procedure TBoldPersistenceProgressNotifier.Notification(
   AComponent: TComponent; Operation: TOperation);
 begin
@@ -556,6 +553,9 @@ procedure TBoldPersistenceProgressNotifier.SetAnimationInterval(
 begin
   AnimationTimer.Interval := Value;
 end;
+
+type
+  TExposedWinControl = class(TWinControl);
 
 procedure TBoldPersistenceProgressNotifier.SetMessage(const s: String);
 begin
@@ -612,7 +612,6 @@ begin
     AnimationTimer.Enabled := False;
     if not Animation.Active and (Animation.FrameCount > 0) then
       Animation.Play(0, Animation.FrameCount - 1, 0);
-
     Animation.Refresh;
   end;
 end;
@@ -680,7 +679,5 @@ begin
     fLastUpdate := now;
   end;
 end;
-
-initialization
 
 end.

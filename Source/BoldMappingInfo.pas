@@ -246,7 +246,7 @@ begin
         Script.Add(sl.Text);
         sl.clear;
         if Separator <> '' then
-        Script.Add(Separator);
+          Script.Add(Separator);
         row := 0;
       end;
     end;
@@ -294,7 +294,7 @@ begin
         Script.Add(sl.Text);
         sl.clear;        
         if Separator <> '' then
-        Script.Add(Separator);
+          Script.Add(Separator);
         row := 0;
       end;
     end;
@@ -321,7 +321,7 @@ begin
         Script.Add(sl.Text);
         sl.clear;        
         if Separator <> '' then
-        Script.Add(Separator);
+          Script.Add(Separator);
         row := 0;
       end;
     end;
@@ -347,7 +347,7 @@ begin
         Script.Add(sl.Text);
         sl.clear;        
         if Separator <> '' then
-        Script.Add(Separator);
+          Script.Add(Separator);
         row := 0;
       end;
     end;

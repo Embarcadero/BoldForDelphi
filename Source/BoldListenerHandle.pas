@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListenerHandle;
@@ -88,11 +88,13 @@ type
 implementation
 
 uses
+  Messages,
   SysUtils,
+  Windows,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldEnvironment,
-  Windows,
-  Messages,
   BoldThreadSafeQueue;
 
 { TBoldListenerHandle }
@@ -185,7 +187,7 @@ end;
 procedure TBoldListenerHandle.StartListenerThread;
 begin
   if not Assigned(fPropagatorHandle) then
-    raise EBold.CreateFmt('%s.StartListenerThread: PropagatorHandle not assigned', [ClassName]);
+    raise EBold.CreateFmt(sPropagatorHandleNotAssigned, [ClassName]);
   if not ListenerThread.Registered then
   begin
     ListenerThread.Resume;
@@ -294,7 +296,7 @@ begin
   if Value <> fPropagatorHandle then
   begin
     if fActive then
-      raise EBold.Create('TBoldListenerHandle.SetPropagatorHandle: Can''t change handle on active listener');
+      raise EBold.CreateFmt(sCannotChangeHandleWhenActive, [ClassName]);
     fPropagatorHandleSubscriber.CancelAllSubscriptions;
     Subscribe(False);
     fPropagatorHandle := Value;
@@ -326,7 +328,7 @@ end;
 procedure TBoldListenerHandle.SetExtendLeaseAfter(const Value: integer);
 begin
   if (value < 10) or (value > 90) then
-    raise EBold.CreateFmt('%s.SetExtendLeaseAfter: Value must be between 10 and 90', [ClassName]);
+    raise EBold.CreateFmt(sValueOutOfRange, [ClassName]);
   fExtendLeaseAfter := Value;
   ListenerThread.ExtendLeaseAfter := Value;
 end;

@@ -1,4 +1,4 @@
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldConstraintValidator;
 
@@ -74,8 +74,6 @@ type
     fFailedConstraints: TBoldConstraintFailureList;
     procedure PreUpdate(Sender: TObject);
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
-    { IBoldValidateableComponent }
-    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean; override;
   private
 //    fCheckModelConstraints: boolean;
     fOnConstraintsFailed: TBoldConstraintsFailureEvent;
@@ -86,6 +84,8 @@ type
     procedure ProcessFailedConstraints;
     procedure SetEnabled(const Value: Boolean);
   protected
+    { IBoldValidateableComponent }
+    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean; override;
     procedure StaticBoldTypeChanged; override;
     procedure Changed;
     function BoldSystem: TBoldSystem;
@@ -169,6 +169,7 @@ type
 implementation
 
 uses
+  BoldCoreConsts,
   BoldSystemRT;
 
 { TBoldConstraintCollection }
@@ -353,7 +354,7 @@ begin
       {$IFDEF BoldSystemBroadcastMemberEvents}
         BoldSystem.AddSubscription(Subscriber, beCompleteModify, beCompleteModify);
       {$ELSE}
-        raise Exception.Create(ClassName + ': vmOnModify mode requires BoldSystemBroadcastMemberEvents conditional define.');
+        raise Exception.CreateFmt(sVMOnModifyRequirements, [ClassName]);
       {$ENDIF}
       vmPreUpdate:
         BoldSystem.OnPreUpdate := PreUpdate;
@@ -480,7 +481,6 @@ end;
 function TBoldConstraintValidator.ValidateComponent(
   ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
 var
-  Context: TBoldElementTypeInfo;
   Constraint: TBoldConstraintItem;
 begin
   result := inherited ValidateComponent(ComponentValidator, NamePrefix);

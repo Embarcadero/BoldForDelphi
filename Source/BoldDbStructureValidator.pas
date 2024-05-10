@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDbStructureValidator;
@@ -36,8 +36,11 @@ type
 implementation
 
 uses
-  classes,
-  db,
+  Classes,
+  DB,
+  SysUtils,
+
+  BoldCoreConsts,
   BoldQueryUserDlg,
   BoldLogHandler,
   BoldDefs,
@@ -45,7 +48,6 @@ uses
   BoldPMappersDefault,
   BoldPMappersSQL,
   BoldPMappers,
-  SysUtils,
   BoldRev;
 
 { TBoldDbStructureValidator }
@@ -59,23 +61,29 @@ var
   MappingsAdded: Boolean;
 begin
   try
+    BoldLog.LogHeader := 'Opening database';
     PMapper := PersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
     MappingInfo := PMapper.MappingInfo;
     PersistenceHandle.DataBaseInterface.Open;
 
+    BoldLog.LogHeader := 'Reading mapping from database';
     MappingInfo.ReadDataFromDB(PersistenceHandle.DataBaseInterface, true, true);
     MappingsAdded := false;
     QueryRes := qrNo;
+    BoldLog.ProgressMax := PMapper.ObjectPersistenceMappers.Count - 1;
 
     for i := 0 to PMapper.ObjectPersistenceMappers.Count - 1 do
     begin
+      BoldLog.Progress := i;
       ObjectMapper := PMapper.ObjectPersistenceMappers[i];
       if Assigned(ObjectMapper) then
       begin
+        BoldLog.LogHeader := 'Reading mapping for: ' + ObjectMapper.ExpressionName;
         if MappingInfo.GetDbTypeMapping(ObjectMapper.ExpressionName) = NO_CLASS then
         begin
           if QueryRes <> qrYesAll then
-            QueryRes := QueryUser('Missing ID', format('A databaseId was missing for %s. Do you want to add an unused ID?', [ObjectMapper.ExpressionName]));
+            QueryRes := QueryUser(sMissingID, format(sAnIDWasMissing, [ObjectMapper.ExpressionName]));
+
           if QueryRes in [qrYesAll, qrYes] then
           begin
             MappingInfo.AddTypeIdMapping(ObjectMapper.ExpressionName, MappingInfo.HighestUsedDbType+1);
@@ -97,10 +105,11 @@ begin
     BoldLog.ProgressMax := SystemSQLMapper.AllTables.count - 1;
     for i := 0 to SystemSQLMapper.AllTables.count - 1 do
     begin
-      ValidateTable(SystemSQLMapper.AllTables[i]);
-      BoldLog.LogHeader := 'Checking table ' + SystemSQLMapper.AllTables[i].SQLName;
+      BoldLog.LogHeader := Format(sCheckingTable, [SystemSQLMapper.AllTables[i].SQLName]);
       BoldLog.Progress := i;
+      ValidateTable(SystemSQLMapper.AllTables[i]);
     end;
+    BoldLog.LogHeader := '';
   finally
     PersistenceHandle.Active := false;
   end;
@@ -123,10 +132,6 @@ var
   ColumnName: String;
   FieldDef: TFieldDef;
 const
-  sColumnMissing = 'Column missing: %s.%s (SQLType: %s)';
-  sColumnSizeMismatch = 'Column %s in table %s has wrong size %d, should be %d';
-  sColumnAllowsNull = 'Column %s in table %s allows null but the model does not';
-  sColumnNotAllows = 'Column %s in table %s does not allow null but the model does';
   BlobFieldTypes = [{$IFDEF BOLD_DELPHI15_OR_LATER}ftStream,{$ENDIF} ftBlob..ftTypedBinary, ftWideMemo, ftOraBlob, ftOraClob];
 begin
   TableName := BoldSQLColumnDescription.tableDescription.SQLName;
@@ -194,6 +199,7 @@ begin
   sTableName := TBoldSQLTableDescription(BoldSQLIndexDescription.Owner).SQLName;
   sIndexFields := BoldSQLIndexDescription.IndexedFields;
   aQuery := DataBase.GetQuery;
+  isMultiIndex := false;
   aIndexFields := TStringList.Create;
   try
     if pos(',', sIndexFields) > 1 then
@@ -282,7 +288,7 @@ begin
   end
   else
   begin
-    BoldLog.LogFmt('Table %s does not exist', [BoldSQLTableDescription.MappedSQLName(BoldSQLTableDescription.SQLNameUpper)], ltWarning);
+    BoldLog.LogFmt(sTableDoesNotExist, [BoldSQLTableDescription.MappedSQLName(BoldSQLTableDescription.SQLNameUpper)], ltWarning);
     remedy.Add(BoldSQLTableDescription.sqlforCreateTable(DataBase));
   end;
 end;

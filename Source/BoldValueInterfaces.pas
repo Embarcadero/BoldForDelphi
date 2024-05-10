@@ -47,7 +47,7 @@ type
     bctObjectIdRef,
     bctObjectIdRefPair,
     bctObjectIdListRef,
-    bctObjectIdListRefPair);  
+    bctObjectIdListRefPair);
 
   IBoldValue = interface
   ['{67C57AD9-621B-11D2-AFF7-006008F62CFF}']
@@ -61,14 +61,7 @@ type
     property ContentType: TBoldValueContentType read GetContentType;
    end;
 
-  IBoldNullableValue = interface(IBoldValue)
-  ['{4EE57D4A-0958-49AF-944A-A01AAEB099DF}']
-    procedure SetContentToNull;
-    function GetContentIsNull: Boolean;
-    property IsNull: Boolean read GetContentIsNull;
-   end;
-
-  IBoldStringRepresentable = interface(IBoldNullableValue)
+  IBoldStringRepresentable = interface(IBoldValue)
   ['{67C57AC7-621B-11D2-AFF7-006008F62CFF}']
     function GetStringRepresentation(representation:integer): String;
 //    procedure SetStringRepresentation(Representation: integer; const NewValue: String);
@@ -77,7 +70,14 @@ type
     property asString: String read GetContentAsString;
   end;
 
-  IBoldStringContent = interface(IBoldStringRepresentable)
+  IBoldNullableValue = interface(IBoldStringRepresentable)
+  ['{4EE57D4A-0958-49AF-944A-A01AAEB099DF}']
+    procedure SetContentToNull;
+    function GetContentIsNull: Boolean;
+    property IsNull: Boolean read GetContentIsNull;
+   end;
+
+  IBoldStringContent = interface(IBoldNullableValue)
   ['{67C57AC6-621B-11D2-AFF7-006008F62CFF}']
     procedure SetContentAsString(const NewValue: String);
     property asString: String read GetContentAsString write SetContentAsString;
@@ -96,63 +96,63 @@ type
     function GetContentAsUnicodeString: TBoldUnicodeString;
     property asUnicodeString: TBoldUnicodeString read GetContentAsUnicodeString write SetContentAsUnicodeString;
   end;
-      
-  IBoldVariantReadable = interface(IBoldStringRepresentable)
+
+  IBoldVariantReadable = interface(IBoldNullableValue)
   ['{4284362D-6830-4FB1-87CD-AEED41E57192}']
     function GetAsVariant: Variant;
     property AsVariant: Variant read GetAsVariant;
   end;
 
-  IBoldIntegerContent = interface(IBoldStringRepresentable)
+  IBoldIntegerContent = interface(IBoldNullableValue)
   ['{67C57AC8-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsInteger: Integer;
     procedure SetContentAsInteger(NewValue: Integer);
     property asInteger: Integer read GetContentAsInteger write SetContentAsInteger;
   end;
 
-  IBoldFloatContent = interface(IBoldStringRepresentable)
+  IBoldFloatContent = interface(IBoldNullableValue)
   ['{67C57AC9-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsFloat: Double;
     procedure SetContentAsFloat(NewValue: Double);
     property asFloat: Double read GetContentAsFloat write SetContentAsFloat;
   end;
 
-  IBoldCurrencyContent = interface(IBoldStringRepresentable)
+  IBoldCurrencyContent = interface(IBoldNullableValue)
   ['{67C57ACA-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsCurrency: Currency;
     procedure SetContentAsCurrency(NewValue: Currency);
     property asCurrency: Currency read GetContentAsCurrency write SetContentAsCurrency;
   end;
 
-  IBoldBooleanContent = interface(IBoldStringRepresentable)
+  IBoldBooleanContent = interface(IBoldNullableValue)
   ['{67C57ACB-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsBoolean: Boolean;
     procedure SetContentAsBoolean(NewValue: Boolean);
     property asBoolean: Boolean read GetContentAsBoolean write SetContentAsBoolean;
   end;
 
-  IBoldDateContent = interface(IBoldStringRepresentable)
+  IBoldDateContent = interface(IBoldNullableValue)
   ['{67C57ACC-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsDate: TDateTime;
     procedure SetContentAsDate(NewValue: TDateTime);
     property asDate: TDateTime read GetContentAsDate write SetContentAsDate;
   end;
 
-  IBoldTimeContent = interface(IBoldStringRepresentable)
+  IBoldTimeContent = interface(IBoldNullableValue)
   ['{67C57ACD-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsTime: TDateTime;
     procedure SetContentAsTime(NewValue: TDateTime);
     property asTime: TDateTime read GetContentAsTime write SetContentAsTime;
   end;
 
-  IBoldDateTimeContent = interface(IBoldStringRepresentable)
+  IBoldDateTimeContent = interface(IBoldNullableValue)
   ['{67C57ACE-621B-11D2-AFF7-006008F62CFF}']
     function GetContentAsDateTime: TDateTime;
     procedure SetContentAsDateTime(NewValue: TDateTime);
     property asDateTime: TDateTime read GetContentAsDateTime write SetContentAsDateTime;
   end;
 
-  IBoldBlobContent = interface(IBoldStringRepresentable)
+  IBoldBlobContent = interface(IBoldNullableValue)
   ['{F6CE03A0-6283-11D2-AFF7-006008F62CFF}']
     function GetContentAsBlob: TBoldAnsiString;
     procedure SetContentAsBlob(const NewValue: TBoldAnsiString);
@@ -174,7 +174,7 @@ type
     property ContentTypeContent: String read GetContentTypeContent write SetContentTypeContent;
   end;
 
-  IBoldObjectIdRef = Interface(IBoldValue)
+  IBoldObjectIdRef = Interface(IBoldStringRepresentable)
   ['{E5AD30CD-544F-4941-998B-947DDDC4E698}']
     procedure SetFromId(Id: TBoldObjectId; Adopt: Boolean);
     function GetId: TBoldObjectID;
@@ -184,7 +184,7 @@ type
     property OrderNo: integer read getOrderNo write SetOrderNo;
   end;
 
-  IBoldObjectIdListRef = Interface(IBoldValue)
+  IBoldObjectIdListRef = Interface(IBoldStringRepresentable)
   ['{2EFDD2F7-F998-4ADB-842B-9AEA65C9E602}']
     procedure SetFromIdList(IdList: TBoldObjectIdList);
     procedure SetList(IdList: TBoldObjectIdList);
@@ -194,7 +194,7 @@ type
     property Count: integer read Getcount;
   end;
 
-  IBoldObjectIdListRefPair = interface(IBoldValue)
+  IBoldObjectIdListRefPair = interface(IBoldStringRepresentable)
   ['{13F940A4-3559-4CD8-84B5-9C87C1F4FCB4}']
     function GetIdList1(Index: Integer): TBoldObjectID;
     function GetIdList2(Index: Integer): TBoldObjectID;
@@ -205,7 +205,7 @@ type
     property IdList2[Index: integer]: TBoldObjectID read GetIdList2;
   end;
 
-  IBoldObjectIdRefPair = interface(IBoldValue)
+  IBoldObjectIdRefPair = interface(IBoldStringRepresentable)
   ['{C533AEE9-7B7B-496C-831C-4B05FDD27E4F}']
     procedure SetFromIds(Id1, Id2: TBoldObjectId);
     function GetId1: TBoldObjectID;
@@ -218,8 +218,5 @@ type
   end;
 
 implementation
-
-
-initialization
 
 end.

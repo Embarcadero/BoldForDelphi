@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPerformanceCounter;
@@ -6,18 +6,13 @@ unit BoldPerformanceCounter;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
   Windows,
-  {$ENDIF}
   Classes,
   BoldDefs;
 
 type
   { forward declarations }
   TBoldPerformanceCounter = class;
-  {$IFDEF LINUX}
-  TLargeInteger = longint;
-  {$ENDIF}
   TBoldPerformanceCounterState = (bpcsStopped, bpcsStarted);
   TBoldPerformanceCounterClass = class of TBoldPerformanceCounter;
 
@@ -34,14 +29,20 @@ type
     function GetLastCallAsString: string;
     function GetAccumulatedTime: TDateTime;
     function GetSeconds: double;
+    function GetAccumulatedCPUTimeMs: string;
+    function GetAccumulatedTimeMs: string;
+    function GetLastCallCpuTimeMs: string;
   public
     procedure Clear;
     property LastCallSeconds: double read GetLastCallSeconds;
     property LastCallAsString: string read GetLastCallAsString;
 //    property Calls: Int64 read fCalls;
     property AccumulatedTime: TDateTime read GetAccumulatedTime;
+    property AccumulatedTimeMs: string read GetAccumulatedTimeMs;
     property LastCallCpuTime: TDateTime read fLastCallCpuTime;
+    property LastCallCpuTimeMs: string read GetLastCallCpuTimeMs;
     property AccumulatedCpuTime: TDateTime read fAccumulatedCPUTime;
+    property AccumulatedCpuTimeMS: string read GetAccumulatedCPUTimeMs;
     property Seconds: Double read GetSeconds;
   end;
 
@@ -73,6 +74,8 @@ type
     function GetAccumulatedTime: TDateTime;
     function GetNamePath: string;
     function GetPercentOfOwnerAsString: String;
+    function GetAccumulatedTimeMs: string;
+    function GetfAccumulatedCPUTimeMS: string;
   protected
     function NumberOfParents: integer;
     procedure InternalStart;
@@ -106,8 +109,10 @@ type
     property Owner: TBoldPerformanceCounter read fOwner;
     property Calls: Int64 read fOwnData.fCalls;
     property AccumulatedTime: TDateTime read GetAccumulatedTime;
+    property AccumulatedTimeMs: string read GetAccumulatedTimeMs;
     property LastCallCpuTime: TDateTime read fOwnData.fLastCallCpuTime;
     property AccumulatedCpuTime: TDateTime read fOwnData.fAccumulatedCPUTime;
+    property AccumulatedCpuTimeMs: string read GetfAccumulatedCPUTimeMS;
 
     property Tag: integer read fTag write fTag;
 
@@ -123,11 +128,15 @@ uses
   SysUtils,
   DateUtils,
 
+  BoldCoreConsts,
   BoldUtils;
 
 var
   G_MainPerformanceCounter: TBoldPerformanceCounter;
   Frequency: TLargeInteger;
+
+const
+  cTimeFormat = 'hh:nn:ss.zzz';
 
 function BoldMainPerformanceCounter: TBoldPerformanceCounter;
 begin
@@ -135,20 +144,6 @@ begin
     G_MainPerformanceCounter := TBoldPerformanceCounter.Create(nil, 'BoldMainPerformanceCounter');
   result := G_MainPerformanceCounter;
 end;
-
-{$IFDEF LINUX}
-function QueryPerformanceCounter(var PerformanceCounter: TLargeInteger): boolean;
-begin
-  PerformanceCounter := 0;
-  Result := False;
-end;
-
-function QueryPerformanceFrequency(var Frequency: TLargeInteger): boolean;
-begin
-  Frequency := 0;
-  Result := False;
-end;
-{$ENDIF}
 
 function TBoldPerformanceCounter.FileTime2DateTime(FileTime: TFileTime): TDateTime;    //Convert then FileTime to TDatetime format
 var
@@ -214,6 +209,11 @@ end;
 function TBoldPerformanceCounter.GetChildren(index: integer): TBoldPerformanceCounter;
 begin
   result := TBoldPerformanceCounter(fChildren[index]);
+end;
+
+function TBoldPerformanceCounter.GetfAccumulatedCPUTimeMS: string;
+begin
+  result := FormatDateTime(cTimeFormat, AccumulatedCPUTime);
 end;
 
 function TBoldPerformanceCounter.GetLastCallAsString: string;
@@ -408,6 +408,11 @@ begin
 // ElapsedMilliseconds / MSecsPerSec / SecsPerDay;
 end;
 
+function TBoldPerformanceCounter.GetAccumulatedTimeMs: string;
+begin
+  result := FormatDateTime(cTimeFormat, AccumulatedTime);
+end;
+
 function TBoldPerformanceCounter.GetActive: boolean;
 begin
   result := fActive;
@@ -436,9 +441,9 @@ function TBoldPerformanceCounter.GetAsString: String;
 var
   i: integer;
 begin
-  result := format('%-35s seconds: %8.4f  calls: %5d ', [NamePath, Seconds, Calls]);
+  result := format(sCallCount, [NamePath, Seconds, Calls]);
   if Assigned(fOwner) then
-    result := format('%s %4.1f percent of %s', [result, PercentOfOwner, fOwner.NamePath]);
+    result := format(sPercentCount, [result, PercentOfOwner, fOwner.NamePath]);
 
   result := result+BOLDCRLF;
 
@@ -492,6 +497,11 @@ begin
   fLastCallCpuTime := 0;
 end;
 
+function TBoldPerformanceData.GetAccumulatedCPUTimeMs: string;
+begin
+  result := FormatDateTime(cTimeFormat, AccumulatedCPUTime);
+end;
+
 function TBoldPerformanceData.GetAccumulatedTime: TDateTime;
 begin
 {  if Active and HasRuningChildren? then
@@ -503,9 +513,19 @@ begin
     result := (fAccumulatedTime) / Frequency / SecsPerDay;
 end;
 
+function TBoldPerformanceData.GetAccumulatedTimeMs: string;
+begin
+  result := FormatDateTime(cTimeFormat, AccumulatedTime);
+end;
+
 function TBoldPerformanceData.GetLastCallAsString: string;
 begin
   result := Trim(format('%8.3f seconds', [LastCallSeconds]));
+end;
+
+function TBoldPerformanceData.GetLastCallCpuTimeMs: string;
+begin
+  result := FormatDateTime(cTimeFormat, LastCallCpuTime);
 end;
 
 function TBoldPerformanceData.GetLastCallSeconds: double;

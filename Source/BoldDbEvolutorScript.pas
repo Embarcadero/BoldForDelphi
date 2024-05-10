@@ -1,4 +1,4 @@
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldDbEvolutorScript;
 
@@ -257,6 +257,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldGuard,
   BoldUtils,
   Boldrev;
@@ -274,7 +276,7 @@ var
   i: integer;
   index: TBoldSQLIndexDescription;
 begin
-  Script.Comment('Add table %s', [TableDescr.SQLName]);
+  Script.Comment(sAddTable, [TableDescr.SQLName]);
   Script.ExecuteSQL(TableDescr.SQLForCreateTable(Script.fDataBase), []);
   for i := 0 to TableDescr.IndexList.Count-1 do
   begin
@@ -768,8 +770,6 @@ begin
 end;
 
 procedure TBoldDataBaseEvolutorScript.CommitTransaction;
-const
-  sCommittingToDB = 'Committing changes to database';
 begin
   if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
     exit;
@@ -783,8 +783,6 @@ begin
 end;
 
 procedure TBoldDataBaseEvolutorScript.RollBackTransaction;
-const
-  sRollingBackDB = 'Rolling back database changes';
 begin
   if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
     exit;
@@ -806,11 +804,8 @@ begin
 end;
 
 procedure TBoldAddColumn.Execute;
-var
-  i: integer;
-  index: TBoldSQLIndexDescription;
 begin
-  Script.Comment('Add column %s.%s', [ColumnDesc.TableDescription.SQLName, ColumnDesc.SQLName]);
+  Script.Comment(sAddColumn, [ColumnDesc.TableDescription.SQLName, ColumnDesc.SQLName]);
   Script.ExecuteSQL( 'ALTER TABLE %s ADD %s', [ColumnDesc.TableDescription.SQLName, ColumnDesc.GetSQLForColumn(Script.fDataBase)]);
   // There was code to also add index here, but we removed it as indexes are handled by separate AddIndex Operation
 end;
@@ -848,7 +843,7 @@ var
   WhereConds: TStringList;
   SelectColumn: string;
 begin
-  Script.Comment('Add Instances of class %s to table %s', [ExpressionName, TargetTable]);
+  Script.Comment(sAddInstanceOfClassToTable, [ExpressionName, TargetTable]);
   SourceColumns := TStringList.Create;
   TargetColumns := TStringList.Create;
   IdColumnList := TStringList.Create;
@@ -865,7 +860,7 @@ begin
     LocalMoveData := MoveData;
     while assigned(LocalMoveData) do
     begin
-      Script.Comment('Move data from %s.%s to %s.%s (dbtypes: %s)', [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
+      Script.Comment(sMoveDataFromXtoY, [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
       if SourceTables.IndexOf(LocalMoveData.SourceTable) = -1 then
         SourceTables.Add(LocalMoveData.SourceTable);
       SelectColumn := LocalMoveData.SourceTable + '.' + LocalMoveData.SourceColumn;
@@ -914,8 +909,8 @@ end;
 
 procedure TBoldDeleteInstances.Execute;
 begin
-  Script.Comment('Delete instances of %s from table %s', [ExpressionName, TableName]);
-  Script.ExecuteSQL('DELETE FROM %s WHERE BOLD_TYPE = %d', [TableName, DbType]);
+  Script.Comment(sDeleteInstancesOfClassFromTable, [ExpressionName, TableName]);
+  Script.ExecuteSQL('DELETE FROM %s WHERE BOLD_TYPE = %d', [TableName, DbType]); // do not localize
 end;
 
 function TBoldDeleteInstances.GetDebugInfo: string;
@@ -1010,7 +1005,7 @@ begin
   LocalMoveData := self;
   while assigned(LocalMoveData) do
   begin
-    Script.Comment('Move data from %s.%s to %s.%s (dbtype: %s)', [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
+    Script.Comment(sMoveDataFromXtoY, [LocalMoveData.SourceTable, LocalMoveData.SourceColumn, LocalMoveData.TargetTable, LocalMoveData.TargetColumn, LocalMoveData.DbTypes]);
     SourceColumns.Add(LocalMoveData.SourceColumn);
     TargetColumns.Add(LocalMoveData.TargetColumn);
     LocalMoveData := LocalMoveData.AlsoMoveData;
@@ -1069,7 +1064,7 @@ end;
 
 procedure TBoldDropIndex.Execute;
 begin
-  Script.Comment('Drop index %s', [IndexName]);
+  Script.Comment(sDropIndex, [IndexName]);
   Script.ExecuteSQL(Script.fSqlDatabaseConfig.GetDropIndexQuery(TableName, IndexName), []);
 end;
 
@@ -1090,7 +1085,7 @@ end;
 
 procedure TBoldDropColumn.Execute;
 begin
-  Script.Comment('Drop column %s.%s', [TableName, ColumnName]);
+  Script.Comment(sDropColumn, [TableName, ColumnName]);
   Script.ExecuteSQL(Script.fSqlDatabaseConfig.GetDropColumnQuery(TableName, ColumnName), []);
 end;
 
@@ -1098,7 +1093,7 @@ end;
 
 procedure TBoldDropTable.Execute;
 begin
-  Script.Comment('Drop table %s', [TableName]);
+  Script.Comment(sDropTable, [TableName]);
   Script.ExecuteSQL(Script.fSqlDatabaseConfig.GetDropTableQuery(TableName), []);
 end;
 

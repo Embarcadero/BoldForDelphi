@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDbValidator;
@@ -50,13 +50,15 @@ type
 implementation
 
 uses
+  Dialogs,
+  Controls,
+  SysUtils,
+
+  BoldCoreConsts,
+  BoldDefs,
   BoldPMappers,
   BoldLogHandler,
-  BoldNameExpander,
-  BoldDefs,
-  SysUtils,
-  Dialogs,
-  Controls;
+  BoldNameExpander;
 
 { TBoldDbValidator }
 
@@ -148,7 +150,7 @@ begin
       end;
     end;
     if not found then
-      BoldLog.LogFmt('Database contains a class %s with BoldType %d that is not in the model...', [Name, BoldDbType]);
+      BoldLog.LogFmt(sClassInDBNotInModel, [Name, BoldDbType]);
     Query.Next;
   end;
   Query.Close;
@@ -161,14 +163,12 @@ begin
     begin
       if not MissingClasses then
         BoldLog.Separator;
-      BoldLog.LogFmt('Model contains a class %s that does not have a database id', [ObjectPMapper.ExpressionName]);
+      BoldLog.LogFmt(sClassWithMissingID, [ObjectPMapper.ExpressionName]);
       MissingClasses := true;
     end;
   end;
 
-  if MissingClasses and
-    (MessageDlg('There are classes with no database ID. Do you want to correct this now?',
-          mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+  if MissingClasses and (MessageDlg(sCorrectClassWithNoID, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     BoldLog.Separator;
     Execquery.AssignSQLText(
@@ -189,7 +189,7 @@ begin
       begin
         Inc(HighestBoldDbType);
         ObjectPMapper.BoldDbType := HighestBoldDbType;
-        BoldLog.LogFmt('Adding BoldDbType %d for %s', [ObjectPMapper.BoldDbType, ObjectPMapper.expressionName]);
+        BoldLog.LogFmt(sAddBoldDBTType, [ObjectPMapper.BoldDbType, ObjectPMapper.expressionName]);
         TypeParam.AsInteger := HighestBoldDbType;
         ClassParam.AsString := ObjectPMapper.ExpressionName;
         ExecQuery.ExecSQL;
@@ -221,7 +221,7 @@ function TBoldDbValidator.Execute: Boolean;
 var
   i: integer;
 begin
-  BoldLog.StartLog('Database validation');
+  BoldLog.StartLog(sDBValidation);
   result := false;
   if assigned(PersistenceHandle) then
   begin
@@ -232,25 +232,26 @@ begin
         if remedy.Count <> 0 then
         begin
           BoldLog.Separator;
-          BoldLog.Log('Inconsistencies found', ltWarning);
+          BoldLog.Log(sFoundInconsistencies, ltWarning);
           for i := 0 to remedy.Count - 1 do
             BoldLog.Log(remedy[i], ltDetail);
           BoldLog.Separator;
         end;
         result := Remedy.Count = 0;
+        BoldLog.Log(sDBValidationDone, ltInfo);
       finally
-        BoldLog.Log('Database validation finished', ltInfo);
         DeActivate;
       end;
     except
       on e: Exception do
       begin
-        BoldLog.LogFmt('Database validation failed: %s', [e.message], ltError);
+        BoldLog.LogFmt(sDBValidationFailed, [e.message], ltError);
       end;
     end;
   end
   else
-    BoldLog.Log('Unable to perform validation, missing a PersistenceHandle', ltError);
+    BoldLog.Log(sMissingPSHandle, ltError);
+
   BoldLog.EndLog;
 end;
 

@@ -79,6 +79,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldRootedHandles;
 
 type
@@ -329,7 +331,7 @@ end;
 procedure TBoldListHandle.SetVariables(Value: TBoldOclVariables);
 begin
   if assigned(value) and value.LinksToHandle(self) then
-    raise EBold.CreateFmt('%s.SetVariables: %s can not be linked to %s. Circular reference', [classname, name, value.name]);
+    raise EBold.CreateFmt(sCircularReference, [classname, 'SetVariables', name, value.name]);
   fExpressionHandle.Variables := Value;
 end;
 

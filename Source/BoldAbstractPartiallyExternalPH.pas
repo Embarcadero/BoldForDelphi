@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractPartiallyExternalPH;
@@ -35,6 +35,7 @@ type
 implementation
 
 uses
+  BoldCoreConsts,
   BoldStringId,
   BoldDefaultId,
   BoldDefs,
@@ -78,7 +79,7 @@ begin
   Guard := TBoldGuard.Create(ExternalKeys, InternalIds);
   MoldClass := BoldModel.MoldModel.Classes.ItemsByExpressionName[ExpressionName];
   if not assigned(MoldClass) then
-    raise EBold.CreateFmt('%s.GetObjectIdByExternalKey: Invalid class name (%s)', [classname, expressionname]);
+    raise EBold.CreateFmt(sInvalidClassName, [classname, expressionname]);
   ExternalKeys := TBoldObjectIdLIst.Create;
   InternalIds := TBoldObjectIdLIst.Create;
   ExternalKeys.Add(ExternalKey);

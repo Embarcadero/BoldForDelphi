@@ -1,4 +1,4 @@
-
+ï»¿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldComAdapter;
@@ -88,6 +88,8 @@ implementation
 uses
   SysUtils,
   Classes, //PATCH
+
+  BoldCoreConsts,
   BoldDefs,
   BoldIndexableList,
   BoldHashIndexes,
@@ -105,9 +107,8 @@ type
   {---TBoldObjectHashIndex---}
   TBoldAdapterCacheIndex = class(TBoldObjectHashIndex)
   protected
-    function ItemASKeyObject(Item: TObject): TObject; override;
+    function ItemAsKeyObject(Item: TObject): TObject; override;
   end;
-
 
 var
   G_BoldComAdapterFactory: TBoldComAdapterFactory = nil;
@@ -157,7 +158,7 @@ begin
 
       Inc(vAdapterRefCount[vAdapter.RefCount]);
 
-      //Annat intressant som kan mätas och användas för klassning:
+      //Annat intressant som kan mï¿½tas och anvï¿½ndas fï¿½r klassning:
       //
       //vAdapter.RefCount
     end;
@@ -198,7 +199,7 @@ begin
       Adapter := TBoldComAdapterFactory.Instance.CreateAdapterForObject(Adaptee,Owner);
 
     if not Assigned(Adapter) then
-      raise EBoldCom.CreateFmt('No adapter registered for %s',[Adaptee.ClassName]);
+      raise EBoldCom.CreateFmt(sNoAdapterRegistered,[Adaptee.ClassName]);
 {
     UnknownAdapter := Adapter;
     if UnknownAdapter.QueryInterface(IID,Obj) <> 0 then
@@ -388,7 +389,7 @@ end;
 
 { TBoldAdapterCacheIndex }
 
-function TBoldAdapterCacheIndex.ItemASKeyObject(Item: TObject): TObject;
+function TBoldAdapterCacheIndex.ItemAsKeyObject(Item: TObject): TObject;
 begin
   assert(item is TBoldComAdapter);
   result := (item as TBoldComAdapter).Adaptee;

@@ -6,7 +6,7 @@ unit BoldMOFInterfaces;
 interface
 
 uses
-  Bold_MSXML_TLB;
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF};
 
 type
   IBoldMOFObject = interface;

@@ -15,7 +15,8 @@ uses
   BoldMemberTypeDictionary,
   BoldTaggedValueSupport,
   BoldUMLAbstractModelValidator,
-  BoldUMLModel;
+  BoldUMLModel,
+  BoldUmlTypes;
 
 type
   { forward declarations }
@@ -46,9 +47,57 @@ type
     property SQLReservedWordList: TStringlist read GetSQLReservedWordList;
   public
     destructor Destroy; override;
+    class function GetMethodName(Method: String): String; static;
+    class function GetMethodVisibility(Method: String): TVisibilityKind; static;
     procedure Validate(TypeNameDictionary: TBoldTypeNameDictionary);
     property TypeNameDictionary: TBoldTypeNameDictionary read fTypeNameDictionary;
   end;
+
+const
+  // kala 990707  It should not be ',' as separator between param-names.
+  {$IFDEF BOLD_DELPHI}
+  FrameworkMethods: array[0..20] of String = (
+  'protected function GetStringRepresentation(Representation: TBoldRepresentation): string; virtual;',
+  'protected procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); virtual;',
+  'public procedure SubscribeToStringRepresentation(Representation: TBoldRepresentation; Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent); virtual;',
+  'public function ValidateCharacter(C: Char; Representation: TBoldRepresentation): Boolean; virtual;',
+  'public function ValidateString(const Value: string; Representation: TBoldRepresentation): Boolean; virtual;',
+  'public function CompareToAs(CompareType: TBoldCompareType; BoldDirectElement: TBoldElement): Integer; virtual;',
+  'protected procedure ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const); virtual;',
+  'protected function ReceiveQueryFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; virtual;',
+  'public procedure Assign(Source: TBoldElement); virtual;',
+  'protected procedure CompleteCreate; virtual;',
+  'protected procedure CompleteRecreate; virtual;',
+  'protected procedure CompleteUpdate; virtual;',
+  'public procedure AfterConstruction; virtual;',
+  'public procedure BeforeDestruction; virtual;',
+  'protected function MayDelete: Boolean; virtual;',
+  'protected function MayUpdate: Boolean; virtual;',
+  'protected procedure PrepareDelete; virtual;',
+  'protected procedure PrepareDiscard; virtual;',
+  'protected procedure PrepareUpdate; virtual;',
+  'protected procedure InternalPrepareDeleteOrDeleteByDiscard; virtual;',
+  'protected function InternalCanDeleteObject: Boolean; virtual;'
+ );
+ {$ENDIF}
+ {$IFDEF BOLD_BCB}
+  // TODO: BCB Methods not updated, adjust from the Delphi list above
+  FrameworkMethods: array[0..12] of String = (
+  'function GetStringRepresentation(Representation: int): String; virtual;',
+  'procedure SetStringRepresentation(Representation: int; const Value: String); virtual;',
+  'procedure SubscribeToStringRepresentation(Representation: int; Subscriber: TBoldSubscriber*; RequestedEvent: int); virtual;',
+  'function ValidateCharacter(C: Char; Representation: int): Boolean; virtual;',
+  'function ValidateString(Value: String; Representation: int): Boolean; virtual;',
+  'function CompareToAs(CompareType: TBoldCompareType; BoldDirectElement: TBoldElement*): Integer; virtual;',
+  'procedure ReceiveEventFromOwned(Originator: TObject*; OriginalEvent: int); virtual;',
+  'function ReceiveQueryFromOwned(Originator: TObject*; OriginalEvent: int; Args: const TVarRec*; Subscriber: TBoldSubscriber*): Boolean; virtual;',
+  'procedure Assign(Source: TBoldElement*); virtual;',
+  'procedure CompleteCreate; virtual;',
+  'function MayDelete: Boolean; virtual;',
+  'function MayUpdate: Boolean; virtual;',
+  'procedure PrepareDelete; virtual;'
+ );
+ {$ENDIF}
 
 implementation
 
@@ -60,8 +109,6 @@ uses
   BoldPMappers,
   BoldDefaultTaggedValues,
   BoldDefaultStreamNames,
-  BoldUMLTypes,
-  BoldUMLModelEditForm,
   BoldAttributes;
 
 resourcestring
@@ -332,49 +379,47 @@ var
   TableNames: TStringList;
   Mapper: String;
   ErrorStr: String;
+  vClass: TUMLClass;
+  UndoWasEnabled: boolean;
 begin
+  if not Assigned(UMLModel) then
+    raise EBoldInternal.Create('Model not assigned');
   if not(TBoldUMLBoldify.IsBoldified(UMLModel) and TBoldUMLSupport.IsFlattened(UMLModel)) then
     raise EBoldInternal.Create('Model not Boldified and flattened');
-
+  fTypeNameDictionary := TypeNameDictionary;
+  if not assigned(TypeNameDictionary) then
+    addError('No TypeNameDictionary available', [], UMLModel);
   BoldLog.StartLog('Validating the model');
+  UndoWasEnabled := UMLModel.BoldSystem.UndoHandlerInterface.Enabled;
+  UMLModel.BoldSystem.UndoHandlerInterface.Enabled := false;
   BoldModel.StartValidation;
   try
-    fTypeNameDictionary := TypeNameDictionary;
-
-    ClearViolations;
-
-    if not assigned(TypeNameDictionary) then
-      addError('No TypeNameDictionary available', [], UMLModel);
-
-    if Assigned(UMLModel) then
-    begin
+    UMLModel.BoldSystem.StartTransaction();
+    try
       with UMLModel do
       begin
+        ClearViolations;
         if Name = '' then
           AddError(sUMVModelNameEmpty, [], UMLModel);
-
         ValidateNames(UMLModel, UMLModel.Name);
-
         Mapper := GetBoldTV(TAG_PMAPPERNAME);
-
         if not SameText(Mapper, DEFAULTNAME) and CheckDbStuff then
         begin
           if not Assigned(BoldSystemPersistenceMappers.DescriptorByName[Mapper]) then
             AddError(sUMVModelUnknownMapper, [Mapper, Name], UMLModel);
         end;
-
         Names := TStringList.Create;
         SourceCodeNames := TStringList.Create;
         ExpressionNames := TStringList.Create;
         TableNames := TStringList.Create;
-
         for I := 0 to Classes.Count - 1 do
         begin
-            Names.AddObject(AnsiUpperCase(Classes[i].Name), Classes[i]);
-            SourceCodeNames.AddObject(AnsiUpperCase(ExpandedSourceName(Classes[i])), Classes[i]);
-            ExpressionNames.AddObject(AnsiUpperCase(Classes[i].ExpandedExpressionName), Classes[i]);
-            if CheckDBStuff and Classes[i].Persistent then
-              TableNames.AddObject(AnsiUpperCase(ExpandedDBName(Classes[i])), Classes[i]);
+            vClass := Classes[i];
+            Names.AddObject(AnsiUpperCase(vClass.Name), vClass);
+            SourceCodeNames.AddObject(AnsiUpperCase(ExpandedSourceName(vClass)), vClass);
+            ExpressionNames.AddObject(AnsiUpperCase(vClass.ExpandedExpressionName), vClass);
+            if CheckDBStuff and vClass.Persistent then
+              TableNames.AddObject(AnsiUpperCase(ExpandedDBName(vClass)), vClass);
         end;
         Names.Sort;
         SourceCodeNames.Sort;
@@ -384,7 +429,6 @@ begin
         begin
           if Names[i] = Names[i + 1] then
             AddError(sUMVClassNameExists, [(Names.Objects[i] as TUMLClass).Name], Names.Objects[i] as TUMLClass);
-
           if (Language <> mvslNone) and (SourceCodeNames[i] = SourceCodeNames[i + 1]) then
           begin
             case Language of
@@ -396,13 +440,10 @@ begin
                                             (SourceCodeNames.Objects[i] as TUMLClass).Name],
                                             SourceCodeNames.Objects[i] as TUMLClass)
           end;
-
-
           if ExpressionNames[i] = ExpressionNames[i + 1] then
             AddError(sUMVExpressionNameExists, [(ExpressionNames.Objects[i] as TUMLClass).ExpandedExpressionName,
                                                 (ExpressionNames.Objects[i] as TUMLClass).Name],
                                                 ExpressionNames.Objects[i] as TUMLClass);
-
           if (i < TableNames.Count - 1) and (TableNames[i] = TableNames[i + 1]) and CheckDbStuff then
             AddError(sUMVTableNameExists,
               [ExpandedDBName(TableNames.Objects[i] as TUMLClass),
@@ -414,9 +455,7 @@ begin
         SourceCodeNames.Free;
         ExpressionNames.Free;
         TableNames.Free;
-
         BoldLog.ProgressMax := UMLModel.Classes.Count + UMLModel.Associations.Count;
-
         for I := 0 to UMLModel.Classes.Count - 1 do
         begin
           ValidateClass(UMLModel.Classes[I]);
@@ -429,10 +468,15 @@ begin
         end;
         ValidateDuplicates(UMLModel);
       end;
+      UMLModel.BoldSystem.CommitTransaction();
+    except
+      UMLModel.BoldSystem.RollbackTransaction();
+      raise;
     end;
   finally
     BoldLog.EndLog;
     BoldModel.EndValidation;
+    UMLModel.BoldSystem.UndoHandlerInterface.Enabled := UndoWasEnabled;
   end;
 end;
 
@@ -812,10 +856,10 @@ begin
     end else begin
       // Search for framework method
       for i := 0 to Length(FrameworkMethods) - 1 do begin
-        if BoldAnsiEqual(TBoldModelEditFrm.GetMethodName(FrameworkMethods[i]),
+        if BoldAnsiEqual(GetMethodName(FrameworkMethods[i]),
             operation.name) then
         begin
-          if TBoldModelEditFrm.GetMethodVisibility(FrameworkMethods[i]) <>
+          if GetMethodVisibility(FrameworkMethods[i]) <>
               operation.visibility then
           begin
             AddHint(sUMVOperationVisibilityChanged,
@@ -888,7 +932,7 @@ begin
     addHint(sUMVInvalidAssociationEndIndirectAndEmbed, [associationEnd.Name,
                                                          associationEnd.Association.name], associationEnd);
 
-  if not (AssociationEnd.association.Derived and not AssociationEnd.isNavigable)and
+  if not AssociationEnd.association.Derived and AssociationEnd.isNavigable and
     associationEnd.multi and
     StringToBoolean(AssociationEnd.GetBoldTV(TAG_EMBED)) then
     addHint(sUMVInvalidAssociationEndMultiAndEmbed, [associationEnd.Name,
@@ -1062,6 +1106,49 @@ begin
       Result := True;
       Exit;
     end;
+end;
+
+class function TBoldUMLModelValidator.GetMethodName(Method: String): String;
+var StartPos, EndPos: Integer;
+begin
+  StartPos := 0;
+  if Pos('function', Method) > 0 then
+    StartPos := Pos('function', Method) + 9
+  else if Pos('procedure', Method) > 0  then
+    StartPos := Pos('procedure', Method) + 10;
+
+  if Pos('(', Method) = 0 then
+  begin
+    if Pos('function', Method) > 0 then
+      EndPos := Pos(':', Method) // function
+    else
+      EndPos := Pos(';', Method) // procedure
+  end
+  else                    // has parameter(s)
+    EndPos := Pos('(', Method);
+
+  Result := Trim(Copy(Method, StartPos, EndPos - StartPos));
+end;
+
+class function TBoldUMLModelValidator.GetMethodVisibility(
+  Method: String): TVisibilityKind;
+var
+  EndPos: Integer;
+  sVisibility: string;
+begin
+  EndPos := Pos('function', Method);
+  if EndPos = 0 then begin
+    EndPos := Pos('procedure', Method);
+  end;
+
+  sVisibility := Copy(Method, 1, EndPos - 2);
+  if BoldAnsiEqual(sVisibility, 'private') then begin
+    Result := vkPrivate;
+  end else if BoldAnsiEqual(sVisibility, 'protected') then begin
+    Result := vkProtected;
+  end else begin
+    Result := vkPublic;
+  end;
 end;
 
 function TBoldUMLModelValidator.GetSQLReservedWordList: TStringlist;

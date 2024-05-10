@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSQLHandle;
@@ -63,7 +63,9 @@ implementation
 
 uses
   SysUtils,
+
   BoldDefs,
+  BoldCoreConsts,
   BoldSubscription,
   BoldSystemRT;
 
@@ -95,11 +97,13 @@ begin
 end;
 
 procedure TBoldSQLHandle.ExecuteSQL;
+const
+  sExecuteSQL = 'ExecuteSQL';
 begin
   if not assigned(StaticSystemHandle) then
-    raise EBold.CreateFmt('%s.ExecuteSQL: %s has no SystemHandle', [classname, name]);
+    raise EBold.CreateFmt(sNoSystemHandle, [classname, sExecuteSQL, name]); // do not localize
   if not StaticSystemHandle.Active then
-    raise EBold.CreateFmt('%s.ExecuteSQL: Systemhandle is not active', [classname]);
+    raise EBold.CreateFmt(sSystemHandleNotActive, [classname, sExecuteSQL, name]);
 
   if ClearBeforeExecute then
     ClearList;
@@ -156,7 +160,7 @@ begin
   begin
 
     if not assigned(StaticSystemHandle) and RaiseException then
-      raise EBold.CreateFmt('%s.EnsureList: %s not connected to a SystemHandle', [ClassName, name]);
+      raise EBold.CreateFmt(sNoSystemHandle, [ClassName, 'EnsureList', name]); // do not localize
 
     ElementTypeInfo := StaticBoldType;
 
@@ -168,9 +172,8 @@ begin
       fObjectList := TBoldMemberFactory.CreateMemberFromBoldType(ListTypeInfo) as TBoldObjectList;
       fObjectList.DuplicateMode := ListMode;
     end
-    else
-      if raiseException then
-        raise EBold.CreateFmt('%s.EnsureList: Unable to create list (%s), cant find valid type', [ClassName, Name]);
+    else if raiseException then
+      raise EBold.CreateFmt(sCannotCreateListDueToInvalidType, [ClassName, Name]);
   end;
 end;
 

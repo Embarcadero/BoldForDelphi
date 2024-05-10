@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -179,20 +186,21 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
   Forms,
   StdCtrls,
   Controls,
   Dialogs,
+
+  BoldCoreConsts,
+  BoldRev,
+  BoldUtils,
   BoldHandles,
-  BoldIndex,
-  BoldIndexableList,
   BoldMetaElementList,
   BoldDefs,
   BoldDefsDT,
   BoldOclPropEditor,
-  BoldTypeNameSelector,
-  BoldCommonConst;
+  BoldTypeNameSelector
+  ;
 
 { TBoldStringSelectionProperty }
 function TBoldStringSelectionProperty.GetAttributes: TPropertyAttributes;
@@ -231,7 +239,7 @@ var
   TypeData: PTypeData;
 begin
   TypeData := GetTypeData(TypeInfo);
-  Result := //(TypeData^.TypeKind = tkClass) and
+  Result :=
             aClass.InheritsFrom(TypeData^.ClassType);
 end;
 
@@ -244,11 +252,9 @@ end;
 procedure TBoldStringListEditor.EditProperty(const PropertyEditor: IProperty; var Continue: Boolean);
 begin
   inherited;
-  // Note:
-  //  Other possiblilities include name mapping the property using
-  //  PropertyEditor.GetName
+
+
   if DerivedFrom(PropertyEditor.GetPropType, TStringList) then
-//  if PropertyEditor.GetPropType^.Name = 'TStringList' then
   begin
     StartTimer;
     PropertyEditor.Edit;
@@ -271,9 +277,9 @@ procedure TBoldStringListEditor.TimerTick(Sender: TObject);
 var
   Button: TButton;
 begin
-  if Screen.ActiveForm.Name = 'StrEditDlg' then // do not localize
+  if Screen.ActiveForm.Name = 'StrEditDlg' then
   begin
-    Button := TButton(Screen.ActiveForm.FindChildControl('CodeWndBtn')); // do not localize
+    Button := TButton(Screen.ActiveForm.FindChildControl('CodeWndBtn'));
     if Assigned(Button) then
       Button.Click;
     FreeAndNil(fTimer);
@@ -305,7 +311,7 @@ end;
 {---TBoldElementSubscribeMethodProperty---}
 function TBoldElementSubscribeMethodProperty.ImplementationTextToInsert: string;
 begin
-  Result := Format('  Element%sSubscribeToExpression(%s%s, Subscriber, False);', [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]); // do not localize
+  Result := Format('  Element%sSubscribeToExpression(%s%s, Subscriber, False);', [BOLDSYM_POINTERDEREFERENCE, BOLDSYM_QUOTECHAR, BOLDSYM_QUOTECHAR]);
 end;
 
 {---TBoldElementFilterMethodProperty---}
@@ -313,11 +319,11 @@ function TBoldElementFilterMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '';
 {$IFDEF BOLD_DELPHI}
-  Result :=                 '  Result := false;' + BOLDCRLF; // do not localize
+  Result :=                 '  Result := false;' + BOLDCRLF;
 {$ENDIF}
-  Result := result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF; // do not localize
-  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF; // do not localize
-  Result := Result + Format('  %s', [BOLDSYM_END]); // do not localize
+  Result := result + Format('  if %s(Element) %s', [BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
+  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
+  Result := Result + Format('  %s', [BOLDSYM_END]);
 end;
 
 function TBoldElementFilterMethodProperty.GetDeltaLines: integer;
@@ -333,10 +339,10 @@ end;
 {---TBoldElementCompareMethodProperty---}
 function TBoldElementCompareMethodProperty.ImplementationTextToInsert: string;
 begin
-  Result :=          Format('  %sResult %s 0;', [BOLDSYM_TYPEINTEGER, BOLDSYM_ASSIGNMENT]) + BOLDCRLF; // do not localize
-  Result := Result + Format('  if %s(item1) %s %s(item2) %s', [BOLDSYM_ASSIGNED, BOLDSYM_AND, BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF; // do not localize
-  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF; // do not localize
-  Result := Result + Format('  %s', [BOLDSYM_END]); // do not localize
+  Result :=          Format('  %sResult %s 0;', [BOLDSYM_TYPEINTEGER, BOLDSYM_ASSIGNMENT]) + BOLDCRLF;
+  Result := Result + Format('  if %s(item1) %s %s(item2) %s', [BOLDSYM_ASSIGNED, BOLDSYM_AND, BOLDSYM_ASSIGNED, BOLDSYM_THEN]) + BOLDCRLF;
+  Result := Result + Format('  %s', [BOLDSYM_BEGIN]) + BOLDCRLF + BOLDCRLF;
+  Result := Result + Format('  %s', [BOLDSYM_END]);
   Result := Result + BOLDSYM_RETURNRESULT;
 end;
 
@@ -361,13 +367,12 @@ var
   ComponentList: IDesignerSelections;
   c: TComponent;
 begin
-  // Can we access a boldhandle?
-  Propinfo := TypInfo.GetPropInfo(Component.ClassInfo, 'BoldHandle'); // do not localize
+  Propinfo := TypInfo.GetPropInfo(Component.ClassInfo, 'BoldHandle');
   if Assigned(PropInfo) then
   begin
     with TBoldOclPropEditForm.Create(nil) do
     try
-      ExpressionPropInfo := TypInfo.GetPropInfo(Component.ClassInfo, 'Expression'); // do not localize
+      ExpressionPropInfo := TypInfo.GetPropInfo(Component.ClassInfo, 'Expression');
       OclExpr := GetStrProp(Component, ExpressionPropinfo);
       BoldHandle := TBoldElementHandle(GetOrdProp(Component, PropInfo));
       if assigned(BoldHandle) then
@@ -380,8 +385,7 @@ begin
       else
         Context := nil;
       if ShowModal = mrOK then
-        //Original line
-//        SetStrProp(Component, ExpressionPropInfo, OclExpr);
+
       begin
         ComponentList := TDesignerSelections.Create;
         (Designer as IDesigner).GetSelections(ComponentList);
@@ -393,7 +397,7 @@ begin
             c := nil;
           if Assigned(c) then
           begin
-            ExpressionPropInfo := TypInfo.GetPropInfo(c.ClassInfo, 'Expression'); // do not localize
+            ExpressionPropInfo := TypInfo.GetPropInfo(c.ClassInfo, 'Expression');
             if Assigned(ExpressionPropInfo) then
             begin
               SetStrProp(c, ExpressionPropInfo, OclExpr);
@@ -410,7 +414,7 @@ end;
 
 function TBoldHandleEditor.GetDefaultMethodName: string;
 begin
-  Result := 'Expression'; // do not localize
+  Result := 'Expression';
 end;
 
 procedure TBoldHandleEditor.ExecuteVerb(Index: Integer);
@@ -467,8 +471,7 @@ begin
           (OclExpr <> GetExpressionFromComponent) then
         begin
           SetExpressionInComponent(OclExpr);
-          // note: "Designer" is the designer of the Ocleditorform
-          // while "self.designer" is the designer of the prop-editor
+
           self.Designer.Modified;
         end;
       finally
@@ -512,7 +515,7 @@ begin
     Variables := GetVariableList(GetComponent(0));
 
     if ShowModal = mrOK then
-    begin
+    begin                                                                                  
       SetValue(OclExpr);
     end;
   finally
@@ -641,5 +644,8 @@ begin
   else
     raise EBold.CreateFmt(sCouldNotGetIBoldOCLComponent, [ClassName, 'GetVariableList']); // do not localize
 end;
+
+initialization
+  BoldRegisterModuleVersion('$Workfile: BoldPropertyEditors.pas $ $Revision: 43 $ $Date: 02-07-23 17:49 $');
 
 end.

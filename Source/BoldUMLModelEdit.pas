@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelEdit;
@@ -9,39 +8,57 @@ uses
   Classes,
   BoldSubscription,
   BoldModel,
-  BoldUMLModelEditForm,
-  BoldUMLModelEditPlugIn;
+  BoldUMLModelEditPlugIn,
+  Vcl.Forms;
 
 type
   { forward declarations }
   TModelEdit = class;
+
+  IBoldModelEditForm = interface(IUnknown)
+  ['{D2275734-8CDE-4B32-9D68-6C3EE4B34824}']
+    procedure SetModelHandle(const Value: TBoldModel);
+    function GetCurrentModelHandle: TBoldModel;
+    property ModelHandle: TBoldModel read GetCurrentModelHandle write SetModelHandle;
+    procedure SaveFormsettingsToRegistry;
+    procedure LoadFormsettingsFromRegistry;
+    function GetPlugInList: TList;
+    procedure SetPluginList(const Value: TList);
+    procedure LoadModelFromFile;
+    procedure SetLoadedFrom(const Value: string);
+    property PlugInList: TList read GetPlugInList write SetPluginList;
+    property LoadedFrom: string write SetLoadedFrom;
+  end;
 
   { TModelEdit }
   TModelEdit = class(TComponent)
   private
     fEditForms: TList;
     fPlugInList: TList;
-    class procedure LoadFormsettingsFromRegistry(aForm: TBoldModelEditFrm);
     property EditForms: TList read FEditForms;
-    function CreateFormForBoldModel(BoldModel: TBoldModel): TBoldModelEditFrm;
+    function CreateFormForBoldModel(BoldModel: TBoldModel): TForm;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create; reintroduce;
     destructor Destroy; override;
-    class procedure SaveFormsettingsToRegistry(aForm: TBoldModelEditFrm);
     property PlugInList: TList read FPlugInList;
     procedure ShowEditFormForBoldModel(BoldModel: TBoldModel);
-    function FindFormForBoldModel(BoldModel: TBoldModel): TBoldModelEditFrm;
+    function FindFormForBoldModel(BoldModel: TBoldModel): TForm;
+    function EnsureFormForBoldModel(BoldModel: TBoldModel): TForm;
   end;
 
 function UMLModelEditor: TModelEdit;
 function UMLModelEditorAssigned: Boolean;
 
+var
+  BoldModelEditFrmClass: TFormClass;
+
 implementation
 
 uses
   SysUtils,
+  BoldRev,
   BoldRegistry,
   Controls,
   BoldUMLModelDataModule,  
@@ -71,21 +88,21 @@ end;
 destructor TModelEdit.Destroy;
 begin
   while EditForms.Count > 0 do
-    TBoldModelEditFrm(EditForms.Items[EditForms.Count - 1]).Free;
+    TForm(EditForms.Items[EditForms.Count - 1]).Free;
   FreeAndNil(FEditForms);
   FreeAndNil(FPlugInList);
   inherited;
 end;
 
-function TModelEdit.FindFormForBoldModel(BoldModel: TBoldModel): TBoldModelEditFrm;
+function TModelEdit.FindFormForBoldModel(BoldModel: TBoldModel): TForm;
 var
   i: Integer;
-  aForm: TBoldModelEditFrm;
+  aForm: TForm;
 begin
   for i := 0 to EditForms.Count - 1 do
   begin
-    aForm := TObject((EditForms.Items[i])) as TBoldModelEditFrm;
-    if aForm.ModelHandle = BoldModel then
+    aForm := TObject((EditForms.Items[i])) as TForm;
+    if (aForm as IBoldModelEditForm).ModelHandle = BoldModel then
     begin
       result := aForm;
       exit;
@@ -94,88 +111,44 @@ begin
   result := nil;
 end;
 
-function TModelEdit.CreateFormForBoldModel(BoldModel: TBoldModel): TBoldModelEditFrm;
+function TModelEdit.CreateFormForBoldModel(BoldModel: TBoldModel): TForm;
 var
-  aForm: TBoldModelEditFrm;
+  aForm: TForm;
 begin
-  EnsureModelEditDataModule;
-  aForm := TBoldModelEditFrm.Create(nil);
+  if not Assigned(BoldModelEditFrmClass) then
+    raise Exception.Create('BoldModelEditFrmClass not set, add BoldUMLModelEdit to uses.');
+  Application.CreateForm(BoldModelEditFrmClass, aForm);
   Aform.FreeNotification(Self);
   EditForms.Add(aForm);
-  aForm.ModelHandle := BoldModel;
-  aForm.PlugInList := PlugInList;
-  LoadFormsettingsFromRegistry(aForm);
+  (aForm as IBoldModelEditForm).ModelHandle := BoldModel;
+  (aForm as IBoldModelEditForm).PlugInList := PlugInList;
+  (aForm as IBoldModelEditForm).LoadFormsettingsFromRegistry;
   result := aForm;
-end;
-
-class procedure TModelEdit.SaveFormsettingsToRegistry(aForm: TBoldModelEditFrm);
-var
-  BoldRegistry: TBoldRegistry;
-  BoldGuard: IBoldGuard;
-begin
-  BoldGuard := TBoldGuard.Create(BoldRegistry);
-  BoldRegistry := TBoldRegistry.Create;
-  try
-    with BoldRegistry do
-    begin
-      OpenKey('\UMLModel');
-      WriteInteger('Width', aForm.Width);
-      WriteInteger('Height', aForm.Height);
-      WriteInteger('Left', aForm.Left);
-      WriteInteger('Top', aForm.Top);
-      WriteInteger('TreeViewWidth', aForm.BoldTreeView1.Width);
-      WriteInteger('ModelHeight', aForm.sbModel.Height);
-      WriteInteger('ClassHeight', aForm.sbClass.Height);
-      WriteInteger('OperationHeight', aForm.sbOperation.Height);
-      WriteInteger('AssociationHeight', aForm.sbAssociation.Height);
-      WriteInteger('AssociationEndHeight', aForm.sbAssociationEnd.Height);
-    end;
-  except
-  end;
-end;
-
-class procedure TModelEdit.LoadFormsettingsFromRegistry(aForm: TBoldModelEditFrm);
-var
-  BoldRegistry: TBoldRegistry;
-  BoldGuard: IBoldGuard;
-begin
-  BoldGuard := TBoldGuard.Create(BoldRegistry);
-  try
-    BoldRegistry := TBoldRegistry.Create;
-    with BoldRegistry do
-    begin
-      OpenKey('\UMLModel');
-      aForm.Width := ReadInteger('Width', 800);
-      aForm.Height := ReadInteger('Height', 600);
-      aForm.Left := ReadInteger('Left', 0);
-      aForm.Top := ReadInteger('Top', 0);
-
-      aForm.BoldTreeView1.Width := ReadInteger('TreeViewWidth', aForm.BoldTreeView1.Width);
-      aForm.sbModel.Height := ReadInteger('ModelHeight', aForm.sbModel.Height);
-      aForm.sbClass.Height := ReadInteger('ClassHeight', aForm.sbClass.Height);
-      aForm.sbOperation.Height := ReadInteger('OperationHeight', aForm.sbOperation.Height);
-      aForm.sbAssociation.Height := ReadInteger('AssociationHeight', aForm.sbAssociation.Height);
-      aForm.sbAssociationEnd.Height := ReadInteger('AssociationEndHeight', aForm.sbAssociationEnd.Height);
-    end;
-  except
-  end;
 end;
 
 procedure TModelEdit.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited;
-  if (AComponent is TBoldModelEditFrm) and (Operation = opRemove) then
-    EditForms.Delete(EditForms.IndexOf(AComponent));
+  if (Operation = opRemove) then
+    EditForms.Remove(AComponent);
 end;
 
 procedure TModelEdit.ShowEditFormForBoldModel(BoldModel: TBoldModel);
 var
-  aForm: TBoldModelEditFrm;
+  aForm: TForm;
 begin
   aForm := FindFormForBoldModel(BoldModel);
   if aForm = nil then
     aForm := CreateFormForBoldModel(BoldModel);
   aForm.Show;
+end;
+
+function TModelEdit.EnsureFormForBoldModel(
+  BoldModel: TBoldModel): TForm;
+begin
+  result := FindFormForBoldModel(BoldModel);
+  if result = nil then
+    result := CreateFormForBoldModel(BoldModel);
 end;
 
 initialization

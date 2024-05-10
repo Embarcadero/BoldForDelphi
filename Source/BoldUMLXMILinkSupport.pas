@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLXMILinkSupport;
@@ -67,6 +74,7 @@ function XMIIdforId(const id: String): TXMIId;
 implementation
 
 uses
+  BoldRev,
   BoldDefs,
   BoldUtils,
   SysUtils,
@@ -223,5 +231,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldUMLXMILinkSupport.pas $ $Revision: 11 $ $Date: 02-07-05 16:23 $');
 
 end.

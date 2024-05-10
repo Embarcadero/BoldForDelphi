@@ -149,7 +149,7 @@ type
 implementation
 
 uses
-  BoldSSExcept, SysUtils, AnsiStrings;
+  BoldSSExcept, SysUtils;
 
 constructor SSYaccTable.Create;
 begin
@@ -218,14 +218,13 @@ end;
 
 procedure SSYacc.SetEof;
 var
-  EofString: PAnsiChar;
+  EofString: String;
 begin
   EndOfInput := True;
-  EofString := AnsiStrings.StrNew(PAnsiChar(SSYaccEofString));
-  EndLexeme := SSLexLexeme.Create(EofString, AnsiStrings.StrLen(EofString), 0, 0);
+  EofString := SSYaccEofString;
+  EndLexeme := SSLexLexeme.Create(EofString, Length(EofString), 0, 0);
   EndLexeme.Token := SSYaccEofToken;
   EndLexeme.RefInc;
-  AnsiStrings.StrDispose(EofString);
 end;
 
 procedure SSYacc.LookupAction(TheToken: Integer);
@@ -601,7 +600,7 @@ end;
 
 procedure SSYacc.SyncErr;
 var
-  ErrorString: PAnsiChar;
+  ErrorString: String;
   i, j: Integer;
   AnException: SSException;
   ErrorLexeme: SSLexLexeme;
@@ -668,10 +667,9 @@ begin
       LookupAction(Lookahead.Token);
       if Action <> ErrorAction then
       begin
-        ErrorString := AnsiStrings.StrNew(PAnsiChar(SSYaccErrorString));
-        ErrorLexeme := SSLexLexeme.Create(ErrorString, AnsiStrings.StrLen(ErrorString), 0, 0);
+        ErrorString := SSYaccErrorString;
+        ErrorLexeme := SSLexLexeme.Create(ErrorString, Length(ErrorString), 0, 0);
         ErrorLexeme.Token := SSYaccErrorToken;
-        AnsiStrings.StrDispose(ErrorString);
         SetElement(StackElement);
         Element.Lexeme := ErrorLexeme;
         Element.State := State;

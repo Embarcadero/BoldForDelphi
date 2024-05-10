@@ -1,5 +1,4 @@
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldSubscription;
 
@@ -77,10 +76,13 @@ const
   bpeEndFetchObjectById = 45;
   bpeStartFetchClass = 46;
   bpeEndFetchClass = 47;
-  bpeStartFetchAllInClassWithRawSQL = 48;
-  bpeEndFetchAllInClassWithRawSQL = 49;
+  bpeStartFetchList = 48;
+  bpeEndFetchList = 49;
   bpeStartFetchAllInClassWithSQL = 50;
   bpeEndFetchAllInClassWithSQL = 51;
+
+  bpeStartFetchEvents = [{bpeStartFetch,} bpeStartFetchList, bpeStartFetchMember, bpeStartFetchObjectById, bpeStartFetchClass, bpeStartFetchAllInClassWithSQL];
+  bpeEndFetchEvents = [{bpeEndFetch,} bpeEndFetchList, bpeEndFetchMember, bpeEndFetchObjectById, bpeEndFetchClass, bpeEndFetchAllInClassWithSQL];
 
   // OSS Events
   boeClassChanged = 52;
@@ -96,6 +98,7 @@ const
   beRedoBlock = 61;
   beUndoSetCheckpoint = 62;
   beUndoChanged = 63;
+  beUndoEvents = [beUndoBlock, beRedoBlock, beUndoSetCheckpoint, beUndoChanged];
 
   bePrepareModify = 38;
   beCompleteModify = 39;
@@ -214,7 +217,7 @@ type
     destructor Destroy; override;
     class procedure StartNotify; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     class procedure EndNotify;
-    procedure BoldForcedDequeuePostNotify;    
+    procedure BoldForcedDequeuePostNotify;
     procedure NotifySubscribersAndClearSubscriptions(Originator: TObject); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
       Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
@@ -333,6 +336,7 @@ type
 end;
 
   {---TBoldSubscribableComponent---}
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldSubscribableComponent = class(TComponent)
   strict private
     fPublisher: TBoldPublisher;
@@ -414,6 +418,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldEventQueue;
 
@@ -571,9 +577,6 @@ procedure TBoldSubscription.ExtendEvents(Events: TBoldSmallEventSet);
 begin
   if (MatchCondition and beBigEventFlag) <> 0 then
     raise EBoldInternal.Create('TBoldSubscription.ExtendEvents called for big event');
-{$IFDEF DEBUG}
-  if Integer(TBoldSmallEventSet(MatchCondition) + Events) <> MatchCondition then
-{$ENDIF}
     MatchCondition := Integer(TBoldSmallEventSet(MatchCondition) + Events);
 end;
 
@@ -617,7 +620,7 @@ begin
   if Assigned(fSubscribableObject) then
     result := fSubscribableObject.ClassName
   else
-    result := ClassName;  
+    result := ClassName;
 end;
 
 function TBoldPublisher.GetDebugInfo: string;
@@ -1209,7 +1212,7 @@ end;
 function TBoldSubscriber.Answer(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
-  raise EBold.CreateFmt('%s.Answer: You have subscribed to a query without implementing the virtual Answer method... (triggered by: %s)', [classname, Originator.Classname]);
+  raise EBold.CreateFmt(sAnswerNotImplemented, [classname, Originator.Classname]);
 end;
 {$ENDIF}
 
@@ -1253,14 +1256,14 @@ begin
     if Assigned(fSubscriptionArray[i].Publisher) and Assigned(fSubscriptionArray[i].Publisher.SubscribableObject) then
       begin
         SubscribableObject := fSubscriptionArray[i].Publisher.SubscribableObject;
-        if fSubscriptionArray[i].Publisher.SubscribableObject is TBoldMemoryManagedObject
+    if SubscribableObject is TBoldMemoryManagedObject
         then
-          result := result + IntToStr(j) + ':' + TBoldMemoryManagedObject(fSubscriptionArray[i].Publisher.SubscribableObject).DebugInfo + #13#10
+      result := result + IntToStr(j) + ':' + TBoldMemoryManagedObject(SubscribableObject).DebugInfo + #13#10
         else
-        if fSubscriptionArray[i].Publisher.SubscribableObject is TComponent then
-          result := result + IntToStr(j) + ':' + TComponent(fSubscriptionArray[i].Publisher.SubscribableObject).Name + #13#10
+    if SubscribableObject is TComponent then
+      result := result + IntToStr(j) + ':' + TComponent(SubscribableObject).Name + #13#10
         else
-          result := result + IntToStr(j) + ':' + fSubscriptionArray[i].Publisher.SubscribableObject.ClassName + #13#10;
+      result := result + IntToStr(j) + ':' + SubscribableObject.ClassName + #13#10;
         inc(j);
       end;
 end;
@@ -1331,7 +1334,7 @@ begin
   else if Assigned(G_PostNotifyQueue) then
     G_PostNotifyQueue.Add(Event, Sender, Receiver)
   else
-    Raise EBold.CreateFmt('%s.DelayTillAfterNotification: Queue not allocated', [ClassName]);
+    raise EBold.CreateFmt(sQueueNotAllocated, [ClassName]);
 end;
 
 procedure TBoldPublisher.PackSubscriptions(dummy: TObject);
@@ -1355,12 +1358,15 @@ begin
     end;
   end;
   fSubscriptionCount := fSubscriptionCount-Gap;
-  if fSubscriptionCount = 0 then
+  if (fSubscriptionCount <> OldCount) then
+  begin
+    if (fSubscriptionCount = 0) and (OldCount <> 0) then
     SetLength(FSubscriptionArray, 0)
   else
   // do not bother if it's less than 9 records
   if (Length(FSubscriptionArray) > 8) and (fSubscriptionCount < Length(FSubscriptionArray) div 2) then
     SetLength(FSubscriptionArray, fSubscriptionCount);
+  end;
   NeedsPacking := false;
   fHoleCount := 0;
 end;

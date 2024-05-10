@@ -39,7 +39,7 @@ type
     function GetBoldDefaultsForClass(const UMLModelName: string; RoseItem: IRoseItem): TBoldTaggedValueList;
     property EffectiveDefaults: TBoldTaggedValuePerClassList read GetEffectiveDefaults;      
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure GetTaggedValues(RoseItem: IRoseItem; UMLElement: TUMLModelElement; AdditionalTools: TStrings);
     procedure SetTaggedValues(RoseItem: IRoseItem; UMLElement: TUMLModelElement; AdditionalTools: TStrings);
     procedure SetTaggedValuesAsDefaultProps(RoseItem: IRoseItem; UMLElement: TUMLModelElement; AdditionalTools: TStrings);
@@ -291,7 +291,7 @@ begin
     SetTaggedValuesForToolAsDefaultProps(RoseItem, UMLElement, AdditionalTools[i])
 end;
 
-destructor TBoldUMLRose98Properties.destroy;
+destructor TBoldUMLRose98Properties.Destroy;
 begin
   FreeAndNil(fEffectiveDefaults);
   inherited;

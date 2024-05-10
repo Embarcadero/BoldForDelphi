@@ -45,6 +45,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldRev;
 
@@ -74,7 +76,7 @@ end;
 procedure TBoldPersistenceHandle.CheckInactive(const Action: String);
 begin
   if Active then
-    raise EBold.CreateFmt('%s Not allowed on active PersistenceHandle', [Action]);
+    raise EBold.CreateFmt(sNotAllowedOnActiveHandle, [Action]);
 end;
 
 constructor TBoldPersistenceHandle.create(Owner: TComponent);
@@ -157,7 +159,5 @@ function TBoldPersistenceHandle.GetHasPersistenceController: Boolean;
 begin
   result := assigned(fPersistenceController);
 end;
-
-initialization
 
 end.

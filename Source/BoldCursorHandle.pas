@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -17,7 +24,6 @@ type
   TBoldCursorHandle = class;
 
   { TBoldCursorHandle }
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldCursorHandle = class(TBoldAbstractListHandle)
   private
     fAutoFirst: Boolean;
@@ -45,7 +51,15 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
+  BoldRev,
   BoldDefs,
+  {$IFDEF ATTRACS}
+  AttracsPerformance,
+  AttracsDefs,
+  AttracsTraceLog,
+  {$ENDIF}
   BoldSystemRT;
 
 { TBoldCursorhandle }
@@ -67,9 +81,16 @@ var
   NewCurrentIndex: integer;
   TheList: TBoldList;
   NewValue: TBoldElement;
+  {$IFDEF ATTRACS}
+  PerformanceMeasurement : TPerformanceMeasurement;
+  HandleLongName, ListTypeName : String;
+  {$ENDIF}
 begin
   if csDestroying in ComponentState then
     raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
+  {$IFDEF ATTRACS}
+  PerformanceMeasurement := TPerformanceMeasurement.ReStart;
+  {$ENDIF}
   fListSubscriber.CancelAllSubscriptions;
 
   if EffectiveRootValue = nil then
@@ -115,6 +136,24 @@ begin
 
   if Assigned(subscriber) and (EffectiveRootValue <> nil) then
     EffectiveRootValue.DefaultSubscribe(Subscriber, breReEvaluate);
+  {$IFDEF ATTRACS}
+  if not PerformanceMeasurement.AcceptableTimeForSmallComputation then
+  begin
+    if Assigned(Self.Owner) then
+      HandleLongName := Owner.Name + '.' + Self.Name
+    else
+      HandleLongName := Self.Name;
+
+    if Assigned(ListType) then
+      ListTypeName :=  ListType.ModelName
+    else
+      ListTypeName := 'Unknown';
+
+     PerformanceMeasurement.WhatMeasured := 'Deriving TBoldExpressionHandle ' + HandleLongName;
+     PerformanceMeasurement.WhatMeasuredParameter := Format('a list of type %s(%d)',[ListTypeName, ListCount]);
+     PerformanceMeasurement.Trace;
+  end; // if not AcceptableTimeForSmallComputation
+  {$ENDIF}
 end;
 
 destructor TBoldCursorhandle.Destroy;
@@ -194,8 +233,8 @@ procedure TBoldCursorhandle.SetCurrentIndex(NewIndex: Integer);
 var
   NewValue: TBoldElement;
 begin
-  if (NewIndex < -1) or (NewIndex >= Count) then
-    raise EBold.CreateFmt('%s.SetCurrentIndex: Index out of bounds. Valid range from -1 to %d. Attempted to set %d', [ClassName, Count-1, NewIndex]);
+  if (NewIndex < -1) or (NewIndex >= Count) then // -1 accepted as "no current element"
+    raise EBold.CreateFmt(sIndexOutOfBounds, [ClassName, Count-1, NewIndex]);
   if (NewIndex = -1) then
     NewValue := nil
   else
@@ -211,5 +250,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldCursorHandle.pas $ $Revision: 25 $ $Date: 02-05-17 6:49 $');
 
 end.

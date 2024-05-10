@@ -197,13 +197,15 @@ type
 implementation
 
 uses
+  Math,
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldDefs,
   BoldTaggedValueSupport,
   BoldStringId,
-  BoldDefaultId,
-  Math;
+  BoldDefaultId;
 
 function _GetTableName(MoldClass: TMoldClass): String;
 begin
@@ -347,7 +349,7 @@ begin
     Result := DT.asDateTime
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     Result := BL.asBlob
-  else raise Exception.Create('Unknown data type');
+  else raise Exception.Create(sUnknownDataType);
 end;
 
 procedure VariantToBoldValue(B: IBoldValue; Value: Variant);
@@ -384,7 +386,7 @@ begin
     DT.asDateTime := Value
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     BL.asBlob := Value
-  else raise Exception.Create('Unknown data type');
+  else raise Exception.Create(sUnknownDataType);
 end;
 
 procedure SetBoldValueToNull(B: IBoldValue);
@@ -400,6 +402,7 @@ var
   DT: IBoldDateTimeContent;
   BL: IBoldBlobContent;
 begin
+  // all the below types support IBoldNullableValue
   if B.QueryInterface(IBoldNullableValue, Nullable) = S_OK then
     Nullable.SetContentToNull
   else if B.QueryInterface(IBoldStringContent, S) = S_OK then
@@ -420,7 +423,7 @@ begin
     DT.asDateTime := 0
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
     BL.asBlob := ''
-  else raise Exception.Create('Unknown data type');
+  else raise Exception.Create(sUnknownDataType);
 end;
 
 function GetKeyCount(MoldClass: TMoldClass): Integer;
@@ -612,7 +615,7 @@ begin
       TBoldStringId(ExternalId).AsString := DBValue;
     end
     else
-      raise Exception.CreateFmt('Unknown vartype when loading an external ID for %s', [MoldClass.name]);
+      raise Exception.CreateFmt(sUnknownVarTypeLoadingObject, [MoldClass.name]);
     ExternalKeys.Add(ExternalId);
     ExternalId.Free;
     BoldQuery.Next;
@@ -692,7 +695,7 @@ begin
     TBoldStringId(Result).AsString := DBValue;
   end
   else
-    raise Exception.CreateFmt('Unknown vartype when loading an external ID for %s', [MoldClass.name]);
+    raise Exception.CreateFmt(sUnknownVarTypeLoadingObject, [MoldClass.name]);
 end;
 
 function TBoldExternalPersistenceControllerSQL.GetMaxFetchBlockSize: integer;
@@ -1064,11 +1067,8 @@ begin
 
 {!!}
     { Sanity check }
-    Assert((W1 <> '') and (W2 <> ''), Format('Role %s does not have any column names!', [
-      Role.Association.name]));
-    Assert(GetCharCount(';', W1) = GetCharCount(';', W2),
-      Format('Role %s does not have an equal amount of columns on both ends!', [
-        Role.Association.name]));
+    Assert((W1 <> '') and (W2 <> ''), Format(sRoleHasNoColumnNames, [Role.Association.name]));
+    Assert(GetCharCount(';', W1) = GetCharCount(';', W2), Format(sRoleEndCountMismatch, [Role.Association.name]));
 {!!}
 
     { Parse SQL }
@@ -1144,9 +1144,8 @@ begin
       TBoldStringId(ExternalId).AsString := DBValue;
     end
     else
-      raise Exception.CreateFmt(
-        'Unknown vartype when loading an external ID for singlelink %s.%s',
-        [MoldClass.name, Role.name]);
+      raise Exception.CreateFmt(sUnknownVarTypeLoadingSingleID, [MoldClass.name, Role.name]);
+
     if Value.QueryInterface(IBoldObjectIdRef, IdRef) = S_OK then
       PersistenceController.SetSingleLink(IdRef, ExternalId,
         Role.OtherEnd.MoldClass);
@@ -1190,9 +1189,8 @@ begin
         ExternalId.Free;
       end
       else
-        raise Exception.CreateFmt(
-          'Unknown vartype when loading an external ID for singlelink %s.%s',
-          [MoldClass.name, Role.name]);
+        raise Exception.CreateFmt(sUnknownVarTypeLoadingSingleID, [MoldClass.name, Role.name]);
+      
       OtherEndQuery.Next;
     end;
     if Value.QueryInterface(IBoldObjectIdListRef, IdRefList) = S_OK then
@@ -1333,7 +1331,7 @@ begin
          FetchObjectList.MoldClass, ObjectContents, Source) then
       FetchObjectList[i].Fetch(Source, ObjectContents)
     else
-      raise Exception.Create('Object no longer exists in database');
+      raise Exception.Create(sObjectNoLongerInDB);
   end;
 end;
 

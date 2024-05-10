@@ -1,5 +1,4 @@
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractListHandle;
 
@@ -60,6 +59,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs;
 
 { TBoldAbstractListHandle }
@@ -80,7 +81,7 @@ begin
   if GetHasPrior then
     CurrentIndex := CurrentIndex - 1
  else
-    raise EBold.CreateFmt('%s: No previous element', [ClassName]);
+    raise EBold.CreateFmt(sNoPreviousElement, [ClassName, name]);
 end;
 
 procedure TBoldAbstractListHandle.Next;
@@ -88,7 +89,7 @@ begin
   if GetHasNext then
     CurrentIndex := CurrentIndex + 1
   else
-    raise EBold.CreateFmt('%s: No next element', [ClassName]);
+    raise EBold.CreateFmt(sNoNextElement, [ClassName, name]);
 end;
 
 procedure TBoldAbstractListHandle.First;
@@ -106,18 +107,27 @@ procedure TBoldAbstractListHandle.RemoveCurrentElement;
 var
   BoldList: TBoldList;
 begin
-  if CurrentIndex = -1 then begin
-    raise EBold.CreateFmt('%s.RemoveCurrentElement: No current element', [ClassName])
-  end else begin
+  if CurrentIndex = -1 then
+  begin
+    raise EBold.CreateFmt(sNoCurrentElement, [ClassName, name])
+  end 
+  else 
+  begin
     BoldList := List;
-    if Assigned(BoldList) and BoldList.Mutable then begin
+    if Assigned(BoldList) and BoldList.Mutable then
+    begin
       BoldList.RemoveByIndex(CurrentIndex);
-    end else begin
+    end
+    else
+    begin
       BoldList := MutableList;
-      if Assigned(BoldList) then begin
+      if Assigned(BoldList) then
+      begin
         BoldList.Remove(CurrentElement);
-      end else begin
-        raise EBold.CreateFmt('%s: Can not remove current Element from an immutable list (in %s)', [classname, name]);
+      end
+      else
+      begin
+        raise EBold.CreateFmt(sCannotRemoveCurrentFromImmutable, [classname, name]);
       end;
     end;;
   end;
@@ -131,7 +141,13 @@ end;
 
 procedure TBoldAbstractListHandle.SetCurrentElement(const Value: TBoldElement);
 begin
-  CurrentIndex := List.IndexOf(Value);
+  if Assigned(List) then
+  begin
+    if CurrentElement <> Value then
+      CurrentIndex := List.IndexOf(Value)
+  end
+  else
+    raise EBold.CreateFmt(sListNotAssigned, [ClassName, Name]);
 end;
 
 function TBoldAbstractListHandle.GetCurrentBoldObject: TBoldObject;
@@ -144,7 +160,7 @@ begin
   else if aCurrentElement = nil then
     Result := nil
   else
-    raise EBold.CreateFmt('%s.CurrentBoldObject: Current element is not a TBoldObject', [ClassName]);
+    raise EBold.CreateFmt(sElementNotBoldObject, [ClassName, 'GetCurrentBoldObject', name]);
 end;
 
 function TBoldAbstractListHandle.GetListElementType: TBoldElementTypeInfo;
@@ -221,5 +237,5 @@ begin
 end;
 
 initialization
-  
+
 end.

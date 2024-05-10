@@ -1,4 +1,4 @@
-
+ï»¿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldNameExpander;
@@ -82,6 +82,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldSharedStrings,
   BoldDefaultTaggedValues;
@@ -196,62 +198,62 @@ begin
   if ((NationalCharConversion = nccDefault) and BoldNameExpanderMapAnsiCharacters) or
     (NationalCharConversion = nccTrue) then
   case ch of
-    'â': result := 'a';
-    'Â': result := 'A';
-    'á': result := 'a';
-    'à': result := 'a';
-    'À': result := 'A';
-    'Á': result := 'A';
-    'Å': result := 'A';
-    'å': result := 'a';
-    'Ä': result := 'A';
-    'ä': result := 'a';
+    'Ã¢': result := 'a';
+    'Ã‚': result := 'A';
+    'Ã¡': result := 'a';
+    'Ã ': result := 'a';
+    'Ã€': result := 'A';
+    'Ã': result := 'A';
+    'Ã…': result := 'A';
+    'Ã¥': result := 'a';
+    'Ã„': result := 'A';
+    'Ã¤': result := 'a';
 
-    'Ö': result := 'O';
-    'ö': result := 'o';
-    'Ó': result := 'O';
-    'ó': result := 'o';
-    'Ò': result := 'O';
-    'ò': result := 'o';
-    'Ô': result := 'O';
-    'ô': result := 'o';
+    'Ã–': result := 'O';
+    'Ã¶': result := 'o';
+    'Ã“': result := 'O';
+    'Ã³': result := 'o';
+    'Ã’': result := 'O';
+    'Ã²': result := 'o';
+    'Ã”': result := 'O';
+    'Ã´': result := 'o';
 
-    'É': result := 'E';
-    'È': result := 'E';
-    'Ê': result := 'E';
-    'Ë': result := 'E';
-    'ë': result := 'e';
-    'é': result := 'e';
-    'è': result := 'e';
-    'ê': result := 'e';
+    'Ã‰': result := 'E';
+    'Ãˆ': result := 'E';
+    'ÃŠ': result := 'E';
+    'Ã‹': result := 'E';
+    'Ã«': result := 'e';
+    'Ã©': result := 'e';
+    'Ã¨': result := 'e';
+    'Ãª': result := 'e';
 
-    'Ü': result := 'U';
-    'ü': result := 'u';
-    'Ú': result := 'U';
-    'Û': result := 'U';
-    'û': result := 'u';
-    'ú': result := 'u';
-    'Ù': result := 'U';
-    'ù': result := 'u';
+    'Ãœ': result := 'U';
+    'Ã¼': result := 'u';
+    'Ãš': result := 'U';
+    'Ã›': result := 'U';
+    'Ã»': result := 'u';
+    'Ãº': result := 'u';
+    'Ã™': result := 'U';
+    'Ã¹': result := 'u';
 
-    'Ñ': result := 'N';
-    'ñ': result := 'n';
+    'Ã‘': result := 'N';
+    'Ã±': result := 'n';
 
-    'Í': result := 'I';
-    'Ì': result := 'I';
-    'Ï': result := 'I';
-    'Î': result := 'I';
-    'î': result := 'i';
-    'í': result := 'i';
-    'ì': result := 'i';
-    'ï': result := 'i';
+    'Ã': result := 'I';
+    'ÃŒ': result := 'I';
+    'Ã': result := 'I';
+    'Ã': result := 'I';
+    'Ã®': result := 'i';
+    'Ã­': result := 'i';
+    'Ã¬': result := 'i';
+    'Ã¯': result := 'i';
 
-    'İ': result := 'Y';
-    'ı': result := 'y';
-    'ÿ': result := 'y';
+    'Ã': result := 'Y';
+    'Ã½': result := 'y';
+    'Ã¿': result := 'y';
 
-    'Ç': result := 'C';
-    'ç': result := 'c';
+    'Ã‡': result := 'C';
+    'Ã§': result := 'c';
 
     else result := '_';
   end
@@ -316,12 +318,12 @@ begin
   if name <> MapCharacters(Name, NationalCharConversion) then
   begin
     result := false;
-    reason := 'Name has invalid characters';
+    reason := sNameHasInvalidChars;
   end;
   if name <> truncateName(Name, MaxIdentifierLength) then
   begin
     result := false;
-    reason := 'Name is too long';
+    reason := sNameTooLong;
   end;
   if result then
   begin
@@ -395,12 +397,12 @@ begin
   if result and (length(name) = 0) then
   begin
     result := false;
-    reason := 'Name can not be empty';
+    reason := sNameCannotBeEmpty;
   end;
   if result and not CharInSet(name[1], ['a'..'z', 'A'..'Z', '_']) then
   begin
     result := false;
-    reason := 'Name must begin with an alpha-character or underscore';
+    reason := sInvalidFirstChar;
   end;
 end;
 
@@ -428,13 +430,13 @@ begin
   if result and (length(name) = 0) then
   begin
     result := false;
-    reason := 'Name can not be empty';
+    reason := sNameCannotBeEmpty;
   end;
 
   if result and not CharInSet(name[1], ['a'..'z', 'A'..'Z', '_']) then
   begin
     result := false;
-    reason := 'Name must begin with an alpha-character or underscore';
+    reason := sInvalidFirstChar;
   end;
 end;
 

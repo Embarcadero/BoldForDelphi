@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListenerThread;
@@ -99,9 +99,11 @@ type
 implementation
 
 uses
+  ActiveX,
   SysUtils,
-  BoldPropagatorConstants,
-  ActiveX;
+
+  BoldCoreConsts,
+  BoldPropagatorConstants;
 
 constructor TBoldListenerThread.Create(CreateSuspended: Boolean);
 begin
@@ -162,9 +164,9 @@ begin
             FBoldListenerCOM.OnExtendLeaseFailed := DoExtendLeaseFailedSynchronized;
           except on E: Exception do
             begin
-              fErrorMessage := Format('%s. You must add the following line to the initialization section of the application: TBoldListenerCOMFactory.Create(ComServer)', [E.Message]);
+              fErrorMessage := Format(sInitializationLineMissing, [E.Message]);
               DoThreadErrorSynchronized(fErrorMessage);
-            end;              
+            end;
           end;
         end;
       try

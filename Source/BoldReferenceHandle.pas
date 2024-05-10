@@ -147,7 +147,7 @@ end;
 procedure TBoldReferenceHandle._Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  if requestedEvent = breObjectDeleted then
+  if (requestedEvent = breObjectDeleted) and (Originator = Value) then
   begin
     if assigned(OnObjectDeleted) then
       OnObjectDeleted(self)

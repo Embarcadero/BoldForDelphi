@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockRegions;
@@ -159,6 +159,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefaultId,
   BoldElements,
   BoldGuard,
@@ -170,9 +172,8 @@ uses
 type
   TBoldRegionIndex = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
   end;
-
 
 procedure NavigateAndSubscribe(Obj: TBoldObject; RoleRT: TBoldRoleRtInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: Integer);
 var
@@ -185,7 +186,8 @@ begin
     if (aMember is TBoldObjectList) or (aMember is TBoldObjectReference) then
       AMember.GetAsList(ResultElement)
     else
-      raise EBoldInternal.CreateFmt('Tried to navigate %s.%s that is not an association', [Obj.BoldClassTypeInfo.ExpressionName, aMember.BoldMemberRTInfo.ExpressionName]);
+      raise EBoldInternal.CreateFmt(sTriedToNavigateNonAssociation, [Obj.BoldClassTypeInfo.ExpressionName, aMember.BoldMemberRTInfo.ExpressionName]);
+
     if assigned(Subscriber) then
       aMember.DefaultSubscribe(Subscriber, RequestedEvent);
   end
@@ -291,7 +293,7 @@ begin
   if assigned(RootLocator) and assigned(RootLocator.BoldObjectID) then
     result := fFactory.RegionId(Definition.CoreDefinition, RootLocator)
   else
-    raise EBoldInternal.Create('TBoldRegion.GetAsString: Region is missing either a locator or an ID');
+    raise EBoldInternal.CreateFmt(sRegionMissingIDOrLocator, [ClassName]);
 end;
 
 procedure TBoldRegion.GetElements(ResultList: TList);
@@ -365,7 +367,7 @@ function TBoldRegionFactory.CoreDefintionFromRegionId(
 begin
   result := fDefinitions.CoreDefinition[Copy(RegionId, Pos('.', RegionId)+1, MaxInt)];
   if not assigned(Result) then
-    raise EBoldInternal.CreateFmt('%s.CoreDefinitionFromRegionId: Erroneous RegionId %s', [classname, RegionId]);
+    raise EBoldInternal.CreateFmt(sBadRegionID, [classname, 'CoreDefintionFromRegionId', RegionId]); // do not localize
 end;
 
 constructor TBoldRegionFactory.Create(Definitions: TBoldRegionDefinitions);
@@ -382,7 +384,6 @@ begin
   inherited;
 end;
 
-
 function TBoldRegionFactory.GetRegion(
   Definition: TBoldRegionCoreDefinition; RootLocator: TBoldObjectLocator): TBoldRegion;
 var
@@ -393,7 +394,7 @@ begin
   begin
     ConcreteDef := Definition.ConcreteDefinitions.FindByRootClass(RootLocator.EnsuredBoldObject.BoldClassTypeInfo);
     if not assigned(ConcreteDef) then
-      raise EBold.CreateFmt('%s.GetRegion: Erroneous region definitions. The region %s does not have %s as root class.', [classname, Definition.Name, RootLocator.EnsuredBoldObject.BoldClassTypeInfo.ExpressionName]);
+      raise EBold.CreateFmt(sBadRegionDefinition, [classname, Definition.Name, RootLocator.EnsuredBoldObject.BoldClassTypeInfo.ExpressionName]);
     result := TBoldRegion.Create(ConcreteDef, RootLocator, Self);
     fLookup.Add(result);
   end;
@@ -452,19 +453,18 @@ var
   AsInt: Integer;
 begin
   ObjId := nil;
-  result := nil;
   try
     if RegionId[1] = 'i' then
     begin
       AsInt := StrToIntDef(Copy(RegionId, 2, Pos('.', RegionId)-1), -1);
       if AsInt = -1 then
-        raise EBoldInternal.CreateFmt('%s.RootObjectFromRegionId: Erroneous RegionId %s', [classname, RegionId]);
+        raise EBoldInternal.CreateFmt(sBadRegionID, [classname, 'RootObjectFromRegionId', RegionId]); // do not localize
       ObjId := TBoldInternalObjectId.CreateWithClassIDandInternalId(AsInt, 0, false);
     end else
     begin
       AsInt := StrToIntDef(Copy(RegionId, 1, Pos('.', RegionId)-1), -1);
       if AsInt = -1 then
-        raise EBoldInternal.CreateFmt('%s.RootObjectFromRegionId: Erroneous RegionId %s', [classname, RegionId]);
+        raise EBoldInternal.CreateFmt(sBadRegionID, [classname, 'RootObjectFromRegionId', RegionId]); // do not localize
       ObjId := TBoldDefaultID.CreateWithClassID(0, false);
       (ObjId as TBoldDefaultId).AsInteger := AsInt;
     end;
@@ -476,7 +476,7 @@ end;
 
 { TBoldRegionIndex }
 
-function TBoldRegionIndex.ItemASKeyString(Item: TObject): string;
+function TBoldRegionIndex.ItemAsKeyString(Item: TObject): string;
 begin
   result := (Item as TBoldRegion).AsString;
 end;
@@ -548,8 +548,7 @@ begin
           assert(ReverseRole.RoleType = rtLinkRole);
         end;
         else
-          raise EBoldInternal.CreateFmt('%s.FetchAndExpandOneLevelParentRegions: unknown roletype of role %s', [
-            ClassName, Navigation.AsString]);
+          raise EBoldInternal.CreateFmt(sUnknownRoleType, [ClassName, Navigation.AsString]);
       end;
       assert(ConcreteDef.RootClass.Conformsto(ReverseRole.ClassTypeInfo));
       assert(ObjectList[0].BoldClassTypeInfo.ConformsTo(ReverseRole.ClassTypeInfo));
@@ -653,7 +652,7 @@ procedure TBoldRegionLookup.ExpandOneLevelRegionsForNavigation(Regions: TBoldReg
             Regions.AddIfNotInLookup(NewRegion);
         end;
         if (Regions.Count > OldRegionsCount) and assigned(BoldRegionExpansionDebugLogHandler) then
-          BoldRegionExpansionDebugLogHandler.LogFmt('%s.%s Added Regions: %d', [
+          BoldRegionExpansionDebugLogHandler.LogFmt(sLogAddedRegions, [
             Region.Root.BoldClassTypeInfo.ExpressionName,
             Navigation.ExpressionName,
             Regions.Count - OldRegionsCount]);
@@ -854,7 +853,7 @@ begin
   if assigned(BoldRegionExpansionDebugLogHandler) then
   begin
     BoldRegionExpansionDebugLogHandler.Separator;
-    BoldRegionExpansionDebugLogHandler.Log('Expanding Parent regions');
+    BoldRegionExpansionDebugLogHandler.Log(sLogExpandingParentRegions);
   end;
   Guard := TBoldGuard.Create(SimilarRegions, LocalNewParentRegions);
   fToBeParentExpanded.AddRegionLookup(RegionsToExpand);
@@ -882,7 +881,7 @@ begin
   if assigned(BoldRegionExpansionDebugLogHandler) then
   begin
     BoldRegionExpansionDebugLogHandler.Separator;
-    BoldRegionExpansionDebugLogHandler.Log('Expanding Subregions');
+    BoldRegionExpansionDebugLogHandler.Log(sLogExpandingSubRegions);
   end;
   Guard := TBoldGuard.Create(SimilarRegions, LocalNewSubregions);
   fToBeSubExpanded.AddRegionLookup(RegionsToExpand);

@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldFilteredHandle;
@@ -21,7 +28,6 @@ type
   TBoldElementFilter = function (Element: TBoldElement): Boolean of object;
 
   { TBoldFilter }
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldFilter = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnFilter: TBoldElementFilter;
@@ -31,8 +37,8 @@ type
     procedure SetPreFetchRoles(const Value: TStrings);
     function StorePreFetchRoles: Boolean;
   public
-    constructor create(owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(owner: TComponent); override;
+    destructor Destroy; override;
     procedure Subscribe(boldElement: TBoldElement; Subscriber: TBoldSubscriber); virtual;
     function Filter(Element: TBoldElement): Boolean; virtual;
     procedure FilterList(List: TBoldList);
@@ -58,19 +64,25 @@ implementation
 
 uses
   SysUtils,
+  BoldRev,
   BoldDefs,
+  {$IFDEF ATTRACS}
+  AttracsPerformance,
+  AttracsDefs,
+  AttracsTraceLog,
+  {$ENDIF}
   BoldSystemRT;
 
 
 {---TBoldFilter---}
 
-constructor TBoldFilter.create(owner: TComponent);
+constructor TBoldFilter.Create(owner: TComponent);
 begin
   inherited;
   fPreFetchRoles := TStringList.Create;
 end;
 
-destructor TBoldFilter.destroy;
+destructor TBoldFilter.Destroy;
 begin
   FreeAndNil(fPreFetchRoles);
   inherited;                 
@@ -127,10 +139,17 @@ var
   ListTypeInfo: TBoldListTypeInfo;
   ClassTypeInfo: TBoldClassTypeInfo;
   MemberRTInfo: TBoldMemberRTInfo;
+  {$IFDEF ATTRACS}
+  PerformanceMeasurement : TPerformanceMeasurement;
+  HandleLongName : String;
+  {$ENDIF}
 
 begin
   if csDestroying in ComponentState then
     raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
+  {$IFDEF ATTRACS}
+  PerformanceMeasurement := TPerformanceMeasurement.ReStart;
+  {$ENDIF}
   if EffectiveRootValue = nil then
     ResultElement.SetOwnedValue(nil)
   else if not Assigned(BoldFilter) then
@@ -171,6 +190,18 @@ begin
     end;
   end;
   SubscribeToValue;
+  {$IFDEF ATTRACS}
+  if not PerformanceMeasurement.AcceptableTimeForSmallComputation then
+  begin
+    if Assigned(Self.Owner) then
+      HandleLongName := Owner.Name + '.' + Self.Name
+    else
+      HandleLongName := Self.Name;
+
+    PerformanceMeasurement.WhatMeasured := 'Deriving TBoldFilteredHandle ' + HandleLongName;
+    PerformanceMeasurement.Trace;
+  end;
+  {$ENDIF}
 end;
 
 function TBoldFilteredHandle.GetStaticBoldType: TBoldElementTypeInfo;
@@ -196,5 +227,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldFilteredHandle.pas $ $Revision: 21 $ $Date: 02-04-29 15:10 $');
 
 end.

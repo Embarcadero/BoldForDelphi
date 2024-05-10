@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListActions;
@@ -8,6 +8,8 @@ interface
 uses
   Classes,
   Controls,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldSubscription,
   BoldSystem,
@@ -147,7 +149,7 @@ end;
 constructor TBoldListHandleNextAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Next';
+  Caption := sNext;
 end;
 
 procedure TBoldListHandleNextAction.ExecuteTarget(Target: TObject);
@@ -169,7 +171,7 @@ end;
 constructor TBoldListHandlePrevAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Prev';
+  Caption := sPrev;
 end;
 
 procedure TBoldListHandlePrevAction.ExecuteTarget(Target: TObject);
@@ -191,7 +193,7 @@ end;
 constructor TBoldListHandleFirstAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'First';
+  Caption := sFirst;
 end;
 
 procedure TBoldListHandleFirstAction.ExecuteTarget(Target: TObject);
@@ -213,7 +215,7 @@ end;
 constructor TBoldListHandleLastAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Last';
+  Caption := sLast;
 end;
 
 procedure TBoldListHandleLastAction.ExecuteTarget(Target: TObject);
@@ -235,7 +237,7 @@ begin
     dmUnlinkAllAndDelete:
       Result := True;
     else
-      raise EBold.CreateFmt('%s.AllowDelete: Unknown deletemode', [ClassName]);
+      raise EBold.CreateFmt(sUnknownDeleteMode, [ClassName, 'AllowDelete']);
   end;
 end;
 
@@ -256,7 +258,7 @@ end;
 constructor TBoldListHandleDeleteAction.Create(AOwner: TComponent);
 begin
   inherited;
-  Caption := 'Delete';
+  Caption := sDelete;
 end;
 
 procedure TBoldListHandleDeleteAction.ExecuteTarget(Target: TObject);

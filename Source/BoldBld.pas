@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldBld;
@@ -22,12 +22,11 @@ type
 
   {---TMoldBLDRW---}
   TMoldBLDRW = class
-    class function ModelFromFile(const filename: string): TMoldModel;
+    class function ModelFromFile(const filename: string): TMoldModel; // returns dynamically allocated model, with parts.
     class procedure ModelToFile(Model: TMoldModel; const filename: string);
     class procedure ModelToStrings(Model: TMoldModel; s: TSTrings);
-    class function StringsToModel(s: TStrings): TMoldModel;
+    class function StringsToModel(s: TStrings): TMoldModel; // returns dynamically allocated model, with parts.
   end;
-
 
 function BooleanToMultiplicityString(Value: Boolean): String;
 
@@ -35,6 +34,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldBase,
   BoldTaggedValueSupport,
@@ -58,8 +59,6 @@ type
   TPClass = class;
 
   TElementClass = class of TElement;
-
-
 
   TElementClassRecord = record
     ElementClass: TElementClass;
@@ -187,7 +186,7 @@ type
   end;
 
 function TypeTableByMoldElement(moldElement: TMoldElement): TElementClassRecord;  forward;
-function TypeTableByName(Name: string): TElementClassRecord;   forward;
+function TypeTableByName(const Name: string): TElementClassRecord;   forward;
 
 {---TMoldBLDRW---}
 class procedure TMoldBLDRW.ModelToStrings(model: TMoldModel; s: TStrings);
@@ -222,7 +221,6 @@ class function TMoldBLDRW.StringsToModel(s:TStrings): TMoldModel;
 var
   reader: TReader;
 begin
-  Result := nil;
   if s.Count = 0 then
       Result := TMoldModel.Create(nil, 'New_Model')
   else
@@ -247,7 +245,7 @@ begin
 
       except
         on e: EBoldBLDParseError do
-          raise EBoldBLDParseError.CreateFmt('%s Line: %d Position: %d', [e.Message, reader.LineNumber, reader.Position]);
+          raise EBoldBLDParseError.CreateFmt(sErrorOnPos, [e.Message, reader.LineNumber, reader.Position]);
       end;
       finally
         Reader.Free;
@@ -403,7 +401,7 @@ end;
 procedure TReader.GetCharacterNotEof;
 begin
   if EOS then
-    raise EBoldBLDParseError.Create('BLD Reader: Unexpected EOF')
+    raise EBoldBLDParseError.Create(sUnexpectedEOF)
   else
     GetCharacter;
 end;
@@ -492,7 +490,7 @@ begin
         StringValue := Copy(TokenBuffer, 1, i);
       end;
       else
-        raise EBoldBLDParseError.CreateFmt('BLD Reader: Bad character %s', [IntToStr(ord(CurrentCharacter))])
+        raise EBoldBLDParseError.CreateFmt(sBadCharacter, [IntToStr(ord(CurrentCharacter))])
   end;
 end;
 
@@ -501,13 +499,13 @@ begin
   if CurrentToken.Kind = t then
     GetToken
   else
-    raise EBoldBLDParseError.Create('BLD Reader: Syntax error');
+    raise EBoldBLDParseError.Create(sMoldSyntaxError);
 end;
 
 procedure TReader.EatKeyword(const keyw: string);
 begin
   if not TryKeyword(keyw) then
-    raise EBoldBLDParseError.CreateFmt('BLD Reader: ''%s'' expected', [keyw]);
+    raise EBoldBLDParseError.CreateFmt(sAKeywordExpected, [keyw]);
 end;
 
 procedure TReader.EatStartBlock(const keyw: string);
@@ -533,7 +531,7 @@ begin
   if CurrentToken.Kind = QSTRING then
     GetToken
   else
-    raise EBoldBLDParseError.Create('BLD Reader: Quoted string expected');
+    raise EBoldBLDParseError.Create(sQuotedStringExpected);
 end;
 
 function TReader.GetKeyword: string;
@@ -542,7 +540,7 @@ begin
   if CurrentToken.Kind = KEYWORD then
     GetToken
   else
-    raise EBoldBLDParseError.Create('BLD Reader: KEYWORD expected');
+    raise EBoldBLDParseError.Create(sKeyWordTokenExpected);
 end;
 
 function TReader.GetInteger: integer;
@@ -551,17 +549,17 @@ begin
   if CurrentToken.Kind = INTVALUE then
     GetToken
   else
-    raise EBoldBLDParseError.Create('BLD Reader: Integer expected');
+    raise EBoldBLDParseError.Create(sIntegerExpected);
 end;
 
 function TReader.GetBoolean: Boolean;
 begin
   Result := False;
-  if (CurrentToken.Kind = KEYWORD) and (CurrentToken.StringValue = 'TRUE') then
+  if (CurrentToken.Kind = KEYWORD) and (CurrentToken.StringValue = 'TRUE') then // do not localize
     Result := True
   else
-  if (CurrentToken.Kind <> KEYWORD) or (CurrentToken.StringValue <> 'FALSE') then
-    raise EBoldBLDParseError.Create('BLD Reader: Boolean expected');
+  if (CurrentToken.Kind <> KEYWORD) or (CurrentToken.StringValue <> 'FALSE') then // do not localize
+    raise EBoldBLDParseError.Create(sBooleanExpected);
   GetToken;
 end;
 
@@ -577,6 +575,7 @@ begin
 end;
 
 {---TModel---}
+
 class procedure TModel.Write(element: TMoldElement; w: TWriter);
 var
   model: TMoldModel;
@@ -725,6 +724,8 @@ begin
 end;
 
 class procedure TPClass.Read(element: TMoldElement; r: TReader);
+var
+  s: string;
 begin
   with element as TMoldClass do
   begin
@@ -759,13 +760,15 @@ begin
     if r.FormatVersion >= 16 then
     begin
       Stereotype := r.GetQuotedString;
-      Constraints.CommaText := r.GetQuotedString;
+      s := r.GetQuotedString;
+      if s <> '' then
+        Constraints.CommaText := s;
     end;
 
     if r.FormatVersion >= 17 then
     begin
       NonDefaultTaggedValuesCommaText := r.GetQuotedString;
-    end;  
+    end;
 
     r.EatStartBlock('Attributes');
     TElementList.Read(element, r);
@@ -801,6 +804,8 @@ begin
 end;
 
 class procedure TAttribute.Read(element: TMoldElement; r: TReader);
+var
+  s: string;
 begin
   with Element as TMoldAttribute do
   begin
@@ -838,7 +843,9 @@ begin
       begin
         if r.formatVersion < 19 then BoldTVByName[TAG_ATTRIBUTEKIND] := TBoldTaggedValueSupport.AttributeKindToString(TBoldAttributeKind(r.GetInteger));
         Stereotype := r.GetQuotedString;
-        Constraints.CommaText := r.GetQuotedString;
+        s := r.GetQuotedString;
+        if s <> '' then
+          Constraints.CommaText := s;
         Visibility := TVisibilityKind(r.GetInteger);
         if r.formatVersion < 19 then {DelphiField := }r.GetQuotedString;
         if r.formatVersion < 19 then BoldTVByName[TAG_DPREAD] := TBoldTaggedValueSupport.DelphiPropertyAccessKindToString(TDelphiPropertyAccessKind(r.GetInteger));
@@ -889,6 +896,8 @@ begin
 end;
 
 class procedure TMethod.Read(element: TMoldElement; r: TReader);
+var
+  s: string;
 begin
   with element as TMoldMethod do
   begin
@@ -909,7 +918,9 @@ begin
     begin
       Stereotype := r.GetQuotedString;
       Visibility := TVisibilityKind(r.GetInteger);
-      Constraints.CommaText := r.GetQuotedString;
+      s := r.GetQuotedString;
+      if s <> '' then
+        Constraints.CommaText := s;
     end
     else
       Visibility := vkPublic;
@@ -954,6 +965,8 @@ begin
 end;
 
 class procedure TRole.Read(element: TMoldElement;r: TReader);
+var
+  s: string;
 begin
   with element as TMoldRole do
   begin
@@ -990,7 +1003,9 @@ begin
     begin
       Stereotype := r.GetQuotedString;
       Multiplicity := r.GetQuotedString;
-      Constraints.CommaText := r.GetQuotedString;
+      s := r.GetQuotedString;
+      if s <> '' then
+        Constraints.CommaText := s;
       Aggregation := TAggregationKind(r.GetInteger);
       Visibility := TVisibilityKind(r.GetInteger);
       Changeability := TChangeableKind(r.GetInteger);
@@ -1067,6 +1082,8 @@ begin
 end;
 
 class procedure TAssociation.Read(element: TMoldElement;r: TReader);
+var
+  s: string;
 begin
   with element as TMoldAssociation do
   begin
@@ -1078,7 +1095,9 @@ begin
     if r.FormatVersion >= 16 then
     begin
       Stereotype := r.GetQuotedString;
-      Constraints.CommaText := r.GetQuotedString;
+      s := r.GetQuotedString;
+      if s <> '' then
+        Constraints.CommaText := s;
     end;
     StdTVByName[TAG_PERSISTENCE] := TV_PERSISTENCE_PERSISTENT;
     if r.FormatVersion >= 17 then
@@ -1120,10 +1139,11 @@ begin
       Result := typetable[i];
       Exit;
     end;
-  raise EBoldInternal.Create('TypeTableByMoldElement: moldElementClass not found in typetable');
+
+  raise EBoldInternal.Create(sMoldElementNotFound);
 end;
 
-function TypeTableByName(name: string): TElementClassRecord;
+function TypeTableByName(const name: string): TElementClassRecord;
 var
   i: integer;
 begin
@@ -1133,7 +1153,7 @@ begin
       Result := typetable[i];
       Exit;
     end;
-  raise EBoldInternal.CreateFmt('TypeTableByName: %s not found in typetable', [name]);
+  raise EBoldInternal.CreateFmt(sNameNotFoundInTypeTable, [name]);
 end;
 
 function BooleanToMultiplicityString(Value: Boolean): String;

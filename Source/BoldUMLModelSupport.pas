@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelSupport;
@@ -43,7 +43,9 @@ type
   TBoldUMLSupport = class(TObject)
   private
     class function NameInListExceptElement(Name: string; List: TUMLModelElementList; UMLElement: TUMLModelElement): Boolean;
+    {$IFNDEF BoldSystemBroadcastMemberEvents}
     class procedure SubscribeToAllMembers(UMLElement: TUMLModelElement; Subscriber: TBoldSubscriber);
+    {$ENDIF}
     class function GetEnsuredPackage(Package: TUMLPackage; QualifiedPackageName: String): TUMLPackage;
   public
     class function UMLModelNameToUMLName(const ModelName: string): string;
@@ -114,6 +116,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldSystemRT,
   BoldNameExpander,
@@ -145,7 +149,7 @@ end;
 class function TBoldUMLSupport.AllModelParts(
   UMLModel: TUMLModel): TUMLModelElementList;
 begin
-  Result := UMLModel.EvaluateExpressionAsNewElement('UMLModelElement.allInstances->select(model=self)') as TUMLModelElementList
+  Result := UMLModel.EvaluateExpressionAsNewElement('UMLModelElement.allInstances->select(model=self)') as TUMLModelElementList;
 end;
 
 class function TBoldUMLSupport.ElementForToolId(UMLModel: TUMLModel;
@@ -204,11 +208,11 @@ var
   BoldGuard: IBoldGuard;
 begin
   BoldGuard := TBoldGuard.Create(List);
-  BoldLog.StartLog('Flattening model');
+  BoldLog.StartLog(sFlatteningModel);
   try
     List :=  UMLModel.EvaluateExpressionAsNewElement
       (
-      'allOwnedElement->select(oclIsKindOf(UMLClass) or oclIsKindOf(UMLAssociation))'
+      'allOwnedElement->select(oclIsKindOf(UMLClass) or oclIsKindOf(UMLAssociation))' // do not localize
       ) as TUMLModelElementList;
     BoldLog.ProgressMax := List.Count;
     for i := 0 to List.Count - 1 do
@@ -363,6 +367,7 @@ begin
      List[i].Delete;
 end;
 
+{$IFNDEF BoldSystemBroadcastMemberEvents}
 class procedure TBoldUMLSupport.SubscribeToAllMembers(UMLElement: TUMLModelElement; Subscriber: TBoldSubscriber);
 {var
   m: integer;
@@ -400,20 +405,26 @@ begin
   end;
   }
 end;
+{$ENDIF}
 
 class procedure TBoldUMLSupport.SubscribeToEntireModel(UMLModel: TUMLModel; Subscriber: TBoldSubscriber);
+{$IFNDEF BoldSystemBroadcastMemberEvents}
 var
   i: integer;
   Parts: TUMLModelElementList;
+{$ENDIF}
 begin
+{$IFDEF BoldSystemBroadcastMemberEvents}
+  UMLModel.BoldSystem.AddSmallSubscription(Subscriber, beBroadcastMemberEvents);
+{$ELSE}
   Parts := AllModelParts(UMLModel);
-
   try
     for i := 0 to Parts.Count - 1 do
       SubscribeToAllMembers(Parts[i], Subscriber);
   finally
     Parts.Free;
   end;
+{$ENDIF}
 end;
 
 class function TBoldUMLSupport.UMLModelNameToUMLName(const ModelName: string): string;
@@ -513,19 +524,20 @@ begin
   TBoldUMLSupport.EnsureBoldTaggedValuesInModel(UMLModel);
   AllClasses := nil;
   AllAssociations := nil;
-  BoldLog.StartLog('Boldifying Model');
+  BoldLog.StartLog(sBoldifyingModel);
   try
     SetBoldifyTaggedValue(UMLModel, TAG_BOLDIFIED, TV_TRUE);
+    // Create root class if it is missing
     RootClassName := UMLModel.GetBoldTV(TAG_ROOTCLASS);
     if RootClassName = '' then
     begin
-      RootClassName := 'BusinessClassesRoot';
+      RootClassName := 'BusinessClassesRoot'; // do not localize
       RootClassImplicitlyNamed := true;
     end
     else
       RootClassImplicitlyNamed := false;
 
-    Rootclass := UMLModel.EvaluateExpressionAsDirectElement(Format('UMLClass.allInstances->select((model=self) and (name=''%s''))->first', [RootClassName])) as TUMLClass;
+    Rootclass := UMLModel.EvaluateExpressionAsDirectElement(Format('UMLClass.allInstances->select((name=''%s'') and (model=self))->first', [RootClassName])) as TUMLClass;
     if not Assigned(RootClass) then
     begin
       RootClass := TUMLClass.Create(UMLModel.BoldSystem);
@@ -542,7 +554,7 @@ begin
     end;
 
     if Assigned(RootClass.SuperClass) then
-      raise EBold.Create('Can''t boldify model where root class has superclass');
+      raise EBold.Create(sCannotBoldifyIfRootClassHasSuperClass);
 
     DefaultSuperClass := GetDefaultSuperClass(UMLModel);
     if not Assigned(DefaultSuperClass) then
@@ -551,7 +563,9 @@ begin
     DefaultLinkSuperClass := GetDefaultLinkSuperClass(UMLModel);
     if not Assigned(DefaultLinkSuperClass) then
       DefaultLinkSuperClass := RootClass;
-    AllAssociations := UMLModel.EvaluateExpressionAsNewElement('UMLAssociation.allInstances->select(model=self)') as TUMLAssociationList;
+
+    // Fixup Associations. Set default multiplicity, name unnamed associationends, create missing link-classes
+    AllAssociations := UMLModel.EvaluateExpressionAsNewElement('UMLAssociation.allInstances->select(model=self)') as TUMLAssociationList; // do not localize
 
     BoldLog.ProgressMax := AllAssociations.Count;
 
@@ -581,6 +595,7 @@ begin
           AssocEnd.SetBoldTV(TAG_EMBED, TV_FALSE);
           SetBoldifyTaggedValue(AssocEnd, TAG_WASEMBEDED, TV_TRUE);
         end;
+        // Name unnamed associationends
         if AssocEnd.IsNavigable then
         begin
           if AssocEnd.name = '' then
@@ -594,13 +609,15 @@ begin
               UnnamedAssociationName := UnnamedAssociationName + AssocEnd.type_.name;
             end
             else
-              AssocEnd.name := Format('Role%d', [ConnectionIndex]);
+              AssocEnd.name := Format('Role%d', [ConnectionIndex]); // do not localize
             SetBoldifyTaggedValue(AssocEnd, TAG_NONAME, TV_TRUE);
           end
           else
             UnnamedAssociationName := UnnamedAssociationName + AssocEnd.name;
         end;
       end;
+
+      // fix implicit names for non named non navigable roles
       for ConnectionIndex := 0 to Association.Connection.Count - 1 do
       begin
         AssocEnd := Association.Connection[ConnectionIndex];
@@ -616,6 +633,8 @@ begin
             UnnamedAssociationName := UnnamedAssociationName + AssocEnd.Name;
         end;
       end;
+
+      // make association transient if either end is transient
       if Association.persistent then
       begin
         for ConnectionIndex := 0 to Association.Connection.Count - 1 do
@@ -629,17 +648,21 @@ begin
           end;
         end;
       end;
+
+      // make association transient if association class is transient
       if Association.persistent and assigned(association.class_) and not association.class_.persistent then
       begin
         Association.persistent := false;
         SetBoldifyTaggedValue(Association, TAG_WASPERSISTENT, TV_TRUE)
       end;
 
+      // Name association if unnamed
       if Association.name = '' then
       begin
         Association.name := UnnamedAssociationName;
         SetBoldifyTaggedValue(Association, TAG_NONAME, TV_TRUE);
       end;
+      // Create link class if needed
       if not Association.Derived and
         (
         (Association.Connection[0].Multi and Association.Connection[1].Multi) or
@@ -651,6 +674,7 @@ begin
         )
         and not assigned(Association.Class_) then
       begin
+        // Note: allowing different names on association and linkclass is not strictly UML.
         LinkClassName := BoldExpandName(Association.getBoldTV(TAG_LINKCLASSNAME), Association.Name, xtDelphi, -1,
           TBoldTaggedValueSupport.StringToNationalCharConversion(UMLModel.GetBoldTV(TAG_NATIONALCHARCONVERSION)));
         if LinkClassName = '' then
@@ -659,26 +683,25 @@ begin
         if not Assigned(Association.Class_) then
         begin
           Association.Class_ := TUMLClass.Create(UMLModel.BoldSystem);
-        Association.Class_.namespace_ := Association.namespace_;
-        Association.Class_.Association := Association;
-        Association.Class_.persistent := Association.persistent;
-        TBoldUMLSupport.EnsureBoldTaggedValues(Association.Class_);
-        if (Association.connection.Count = 2) and
-           (TVIsTrue(Association.Connection[0].type_.getBoldTV(TAG_VERSIONED)) or
-           TVIsTrue(Association.Connection[1].type_.getBoldTV(TAG_VERSIONED))) then
-         Association.Class_.SetBoldTV(TAG_VERSIONED, TV_TRUE);
-        SetBoldifyTaggedValue(Association.Class_, TAG_AUTOCREATED, TV_TRUE);
-        if (LinkClassName = Association.name) then
-          Association.Class_.name := Association.name
-        else
-          Association.Class_.name := TBoldUMLSupport.UniqueName(Association.namespace_, LinkClassName); {will generate new name on collission}
+          Association.Class_.namespace_ := Association.namespace_;
+          Association.Class_.Association := Association;
+          Association.Class_.persistent := Association.persistent;
+          TBoldUMLSupport.EnsureBoldTaggedValues(Association.Class_);
+          if (Association.connection.Count = 2) and
+            (TVIsTrue(Association.Connection[0].type_.getBoldTV(TAG_VERSIONED)) or
+            TVIsTrue(Association.Connection[1].type_.getBoldTV(TAG_VERSIONED))) then
+           Association.Class_.SetBoldTV(TAG_VERSIONED, TV_TRUE);
+          SetBoldifyTaggedValue(Association.Class_, TAG_AUTOCREATED, TV_TRUE);
+          if (LinkClassName = Association.name) then
+            Association.Class_.name := Association.name  // Allow same name on class and association
+          else
+            Association.Class_.name := TBoldUMLSupport.UniqueName(Association.namespace_, LinkClassName); {will generate new name on collission}
         end
       end;
       BoldLog.ProgressStep;
     end;
 
-    
-    AllClasses := UMLModel.EvaluateExpressionAsNewElement('classes') as TUMLClassList;
+    AllClasses := UMLModel.EvaluateExpressionAsNewElement('classes') as TUMLClassList; // do not localize
     BoldLog.ProgressMax := AllClasses.count;
 
     for ClassIndex := 0 to AllClasses.Count - 1 do
@@ -733,6 +756,8 @@ begin
               SetBoldifyTaggedValue(Feature, TAG_WASPERSISTENT, TV_TRUE)
             end;
       end;
+
+      // Fixup inheritance
       if not Assigned(iClass.superclass) and (iClass <> RootClass) then
       begin
         if iClass.isAssociationClass then
@@ -755,15 +780,15 @@ end;
 constructor TBoldUMLBoldify.Create;
 begin
   fPluralSuffix := '';
-  fDefaultNonNavigableMultiplicity :='0..*';
-  fDefaultNavigableMultiplicity  := '0..1';
+  fDefaultNonNavigableMultiplicity := '0..*'; // do not localize
+  fDefaultNavigableMultiplicity  := '0..1'; // do not localize
   fUnembedMulti := True;
   fMakeDerivedTransient := True;
 end;
 
 class function TBoldUMLBoldify.FindClass(Model: TUMLModel; const AClassName: string): TUMLClass;
 begin
-  result := Model.EvaluateExpressionAsDirectElement(Format('UMLClass.allInstances->select((model=self) and (name=''%s''))->first', [AClassName])) as TUMLClass;
+  result := Model.ClassByName[AClassName];
 end;
 
 class function TBoldUMLBoldify.FullTag(const Tag: string): string;
@@ -784,7 +809,8 @@ end;
 
 class function TBoldUMLBoldify.GetDefaultLinkSuperClass(
   Model: TUMLModel): TUMLClass;
-begin 
+begin
+{ TODO : change name to fullname when package support done. }
   Result := model.EvaluateExpressionAsDirectElement(Format('UMLClass.allInstances->select((model=self) and (name=''%s''))->first', [model.GetBoldTV(TAG_DEFAULTLINKCLASSSUPERCLASS)])) as TUMLClass;
   if not Assigned(Result) then
     Result := GetDefaultSuperClass(model);
@@ -792,7 +818,8 @@ end;
 
 class function TBoldUMLBoldify.GetDefaultSuperClass(
   Model: TUMLModel): TUMLClass;
-begin 
+begin
+{ TODO : change name to fullname when package support done. }
   Result := model.EvaluateExpressionAsDirectElement
     (
     Format('UMLClass.allInstances->select((model=self) and (name=''%s''))->first', [model.GetBoldTV(TAG_DEFAULTSUPERCLASS)])
@@ -802,7 +829,9 @@ end;
 class function TBoldUMLBoldify.GetRootClass(Model: TUMLModel): TUMLClass;
 begin
   if not IsBoldified(model) then
-    raise EBold.Create('TBoldUMLBoldify.GetRootClass: can only be called on boldified model');
+    raise EBold.Create(sCanOnlyBeCalledIfBoldified);
+  result := Model.classes.First as TUMLClass;
+  if not result.M_generalization.Empty or (result.model <> Model) then
   Result := model.EvaluateExpressionAsDirectElement('UMLClass.allInstances->select((model=self) and (generalization->isEmpty))->first') as TUMLClass;
 end;
 
@@ -940,6 +969,8 @@ begin
 end;
 
 class procedure TBoldCopyAndClone.BoldCopy(DestinationObject, SourceObject: TBoldObject; Mode: TBoldCopyMode; StripToolId: Boolean);
+
+  // Note, parameter Mode used in subprocedures
   procedure CopyAttribute(DestinationAttr, SourceAttr: TBoldAttribute);
   begin
     if SourceAttr.IsNull and not DestinationAttr.IsNull and not DestinationAttr.CanSetToNull(nil) then
@@ -956,7 +987,7 @@ class procedure TBoldCopyAndClone.BoldCopy(DestinationObject, SourceObject: TBol
     DestinationRtInfo := DestinationRole.BoldRoleRTInfo;
     case mode of
       bcmAttributes:
-        ;
+        ; // no action
       bcmShallow:
         if (DestinationRtInfo.Aggregation <> akComposite) and DestinationRtInfo.RoleRTInfoOfOtherEnd.IsMultiRole then
           DestinationRole.BoldObject := SourceRole.BoldObject;
@@ -984,7 +1015,7 @@ class procedure TBoldCopyAndClone.BoldCopy(DestinationObject, SourceObject: TBol
     DestinationRtInfo := DestinationRole.BoldRoleRTInfo;
     case mode of
       bcmAttributes:
-        ;
+        ; // no action
       bcmShallow:
         if (DestinationRtInfo.Aggregation <> akComposite) and DestinationRtInfo.RoleRTInfoOfOtherEnd.IsMultiRole then
           DestinationRole.AddList(SourceRole);
@@ -996,6 +1027,7 @@ class procedure TBoldCopyAndClone.BoldCopy(DestinationObject, SourceObject: TBol
           begin
             SourceSubObject := SourceRole[i];
             if (SourceSubObject is TUMLTaggedValue) and  (TUMLTaggedValue(SourceSubObject).Tag = BOLDINTERALTVPREFIX + TAG_TOOLID) then
+              // do nothing, i.e. don't include toolid tag.
             else
               DestinationRole.Add(BoldClone(SourceSubObject, bcmDeep, StripToolId));
           end;
@@ -1072,7 +1104,7 @@ begin
           for Index2 := 0 to ParamTypes.Count - 1 do
           begin
             if (UpperCase(ParamTypes[Index2]) <> UpperCase(Operation.Parameter[Index2].typeName)) and
-               (UpperCase(Operation.Parameter[Index2].typeName) <> UpperCase('Return')) then
+               (UpperCase(Operation.Parameter[Index2].typeName) <> UpperCase('Return')) then    // CHECKME // do not localize
             begin
               Result := False;
               Exit;
@@ -1119,7 +1151,5 @@ begin
     NewMethod.SetBoldTV(TAG_DELPHIOPERATIONKIND, TV_DELPHIOPERATIONKIND_OVERRIDE);
   end;
 end;
-
-initialization
 
 end.

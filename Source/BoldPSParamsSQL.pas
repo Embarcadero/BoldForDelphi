@@ -20,13 +20,6 @@ type
     property IgnoreUnknownTables: Boolean read fIgnoreUnknownTables write fIgnoreUnknownTables;
   end;
 
-
 implementation
-
-
-{ TBoldPSSQLParams }
-
-initialization
-
 
 end.

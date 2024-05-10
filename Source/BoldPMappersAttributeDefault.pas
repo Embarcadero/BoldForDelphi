@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -14,6 +21,9 @@ uses
   BoldId,
   BoldTypeNameDictionary,
   BoldValueSpaceInterfaces;
+
+const
+  NULLDATETIMEREPRESENTATION = 0.1;
 
 type
   {forward declarations}
@@ -298,12 +308,15 @@ implementation
 
 uses
   SysUtils,
+  Variants,
+
+  BoldCoreConsts,
+  BoldRev,
   BoldDefs,
   BoldUtils,
   BoldValueInterfaces,
   BoldPMapperLists,
-  BoldDefaultStreamNames,
-  Variants;
+  BoldDefaultStreamNames;
 
 var
   TwoSeconds: TDateTime;
@@ -321,7 +334,7 @@ begin
   if SystemPersistenceMapper.SQLDataBaseConfig.StoreEmptyStringsAsNULL then
   begin
     if (MoldMember as TMoldAttribute).AllowNull then
-      raise EBold.CreateFmt('String attribute must not allow NULL in the model if persistencemapper stores empty strings as NULL (%s.%s)', [
+      raise EBold.CreateFmt(sAttributeMustNotAllowNullIfEmptyStringsStoreAsNull, [
         MoldClass.Name, MoldMember.Name]);
     fAllowNull := True;
   end;
@@ -751,11 +764,8 @@ var
 begin
   EnsureFirstColumn(ColumnIndex);
   aBlob := GetEnsuredValue(ObjectContent) as IBoldBlobContent;
-  if Supports(aBlob, IBoldBlobStreamContent) then
-  begin
-    aBlobStreamContent := aBlob as IBoldBlobStreamContent;
-    aBlobStreamContent.BeginSupressEvents;
-  end;
+  aBlobStreamContent := aBlob as IBoldBlobStreamContent;
+  aBlobStreamContent.BeginSupressEvents;
   try
     if Field.IsNull then
       aBlob.SetContentToNull
@@ -767,8 +777,7 @@ begin
         aBlob.AsBlob :=  Field.AsBlob;
     end;
   finally
-    if Assigned(aBlobStreamContent) then
-      aBlobStreamContent.EndSupressEvents;
+    aBlobStreamContent.EndSupressEvents;
   end;
 end;
 
@@ -931,7 +940,7 @@ var
 begin
   EnsureFirstColumn(ColumnIndex);
   aDateTime := GetValue(ObjectContent) as IBoldDateTimeContent;
-  if Field.IsNull {$IFDEF ConvertZeroDateToDateNil} or (Field.AsDateTime = 0) or (abs(Field.AsDateTime) < TwoSeconds) {$ENDIF} then
+  if Field.IsNull {$IFDEF ConvertZeroDateToDateNil} or (Field.AsDateTime = 0) or(abs(Field.AsDateTime - NULLDATETIMEREPRESENTATION) < TwoSeconds) {$ENDIF} then
     result := (aDateTime as IBoldNullableValue).isNull
   else if (aDateTime as IBoldNullableValue).IsNull then
     result := false
@@ -952,7 +961,11 @@ begin
   EnsureFirstColumn(ColumnIndex);
   aDateTime := GetEnsuredValue(ObjectContent) as IBoldDateTimeContent;
   if aDateTime.IsNull then
+{$IFDEF Attracs}
+    result := NULLDATETIMEREPRESENTATION // TODO: was this workaround for DBX or business reasons ?
+{$ELSE}
     result := null
+{$ENDIF}
   else
     result := aDateTime.AsDateTime;
 end;
@@ -963,7 +976,7 @@ var
 begin
   EnsureFirstColumn(ColumnIndex);
   aDateTime := GetEnsuredValue(ObjectContent) as IBoldDateTimeContent;
-  if Field.IsNull {$IFDEF ConvertZeroDateToDateNil} or (Field.AsDateTime = 0) or (abs(Field.AsDateTime) < TwoSeconds) {$ENDIF} then
+  if Field.IsNull {$IFDEF ConvertZeroDateToDateNil} or (Field.AsDateTime = 0) or (abs(Field.AsDateTime - NULLDATETIMEREPRESENTATION) < TwoSeconds) {$ENDIF} then
     aDateTime.SetContentToNull
   else
   begin
@@ -982,7 +995,11 @@ begin
   EnsureFirstColumn(ColumnIndex);
   aDateTime := GetEnsuredValue(ObjectContent) as IBoldDateTimeContent;
   if aDateTime.IsNull then
+{$IFDEF Attracs}
+    Param.AsDateTime := NULLDATETIMEREPRESENTATION // TODO: was this workaround for DBX or business reasons ?
+{$ELSE}
     SetParamToNullWithDataType(Param, GetColumnBDEFieldType(0))
+{$ENDIF}
   else
     Param.AsDateTime := aDateTime.AsDateTime;
 end;
@@ -1490,7 +1507,10 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldPMappersAttributeDefault.pas $ $Revision: 143 $ $Date: 02-07-23 17:49 $');
+
   TwoSeconds := EncodeTime(0, 0, 2, 0);
+
   with BoldMemberPersistenceMappers do
   begin
     AddDescriptor(TBoldSingleColumnMember, alAbstract);

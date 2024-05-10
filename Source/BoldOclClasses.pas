@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclClasses;
@@ -15,7 +15,6 @@ uses
   BoldSystemRT;
 
 type
-
   TBOCollectionKind = (OCLSet, OCLBag, OCLSequence);
   TBoldOCLIteratorSpecifier = (OclNoIterator, OclSelect, OclReject, OCLCollect, OclIterate, OclExists, OclForAll, OclOrderBy, OclOrderDescending, OclUnique);
 
@@ -72,7 +71,7 @@ type
   public
     constructor Create(OuterScope: TBoldOclEnvironment);
     property Count: integer read GetCount;
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure pushBinding(B: TBoldOclVariableBinding);
     function popBinding: TBoldOclVariableBinding;
     procedure ReplaceBinding(name: string; Binding: TBoldOclVariableBinding);
@@ -92,7 +91,7 @@ type
   public
     procedure VisitTBoldOclNode(N: TBoldOclNode); virtual;
     procedure VisitTBoldOclListCoercion(N: TBoldOclListCoercion); virtual;
-    procedure VisitTBoldOclCollectionLIteral(N: TBoldOclCollectionLIteral); virtual;
+    procedure VisitTBoldOclCollectionLiteral(N: TBoldOclCollectionLIteral); virtual;
     procedure VisitTBoldOclOperation(N: TBoldOclOperation); virtual;
     procedure VisitTBoldOclIteration(N: TBoldOclIteration); virtual;
     procedure VisitTBoldOclMember(N: TBoldOclMember); virtual;
@@ -100,7 +99,7 @@ type
     procedure VisitTBoldOclLiteral(N: TBoldOclLiteral); virtual;
     procedure VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); virtual;
     procedure VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral); virtual;
-    procedure VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral); virtual;
+    procedure VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral); virtual;
     procedure VisitTBoldOclIntLiteral(N: TBoldOclIntLiteral); virtual;
     procedure VisitTBoldOclMomentLiteral(N: TBoldOclMomentLiteral); virtual;
     procedure VisitTBoldOclDateLiteral(N: TBoldOclDateLiteral); virtual;
@@ -138,7 +137,7 @@ type
   TBoldOCLListCoercion = class(TBoldOCLNode)
   public
     Child: TBoldOCLNode;
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure AcceptVisitor(V: TBoldOclVisitor); override;
   end;
 
@@ -197,18 +196,26 @@ type
   TBoldOclVariableBindingExternal = class(TBoldOclVariableBinding)
   private
     fExternalVariable: TBoldExternalVariable;
+    procedure SetExternalVariable(const Value: TBoldExternalVariable);
   protected
     function GetBoldType: TBoldElementTypeInfo; override;
   public
     destructor Destroy; override;
-    property ExternalVariable: TBoldExternalVariable read fExternalVariable write fExternalVariable;
+    property ExternalVariable: TBoldExternalVariable read fExternalVariable write SetExternalVariable;
   end;
 
   { TBoldOclVariableReference }
   TBoldOclVariableReference = class(TBoldOclNode)
+  private
+    fSubscriber: TBoldSubscriber;
+    fVariableBinding: TBoldOclVariableBinding;
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    procedure SetVariableBinding(const Value: TBoldOclVariableBinding);
   public
     VariableName: string;
-    VariableBinding: TBoldOclVariableBinding;
+    property VariableBinding: TBoldOclVariableBinding read fVariableBinding write SetVariableBinding;
+    constructor Create; override;
+    destructor Destroy; override;
     procedure AcceptVisitor(V: TBoldOclVisitor); override;
   end;
 
@@ -294,7 +301,7 @@ type
     class var IX_SymbolName: integer;
   public
     constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
-    destructor destroy; override;
+    destructor Destroy; override;
     property help: TBoldOclSymbolHelp read fHelp;
     property SymbolByName[const name: string]: TBoldOclSymbol read GetSymbol;
     property Symbols[i: Integer]: TBoldOclSymbol read GetSymbolByIndex;
@@ -324,8 +331,16 @@ type
     fIntegerListType,
     fTypeListType: TBoldListTypeInfo;
     fSystemTypeInfo: tBoldSystemTypeInfo;
+  private
+    fEmptyString: TBoldMember;
+    fBooleanFalse: TBoldMember;
+    fBooleanTrue: TBoldMember;
+    fIntegerZero: TBoldMember;
+    fCurrencyZero: TBoldMember;
+    fFloatZero: TBoldMember;
   public
-    constructor create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+    constructor Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+    destructor Destroy; override;
     procedure MakeNew(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
     function CreateNewMember(BoldType: TBoldElementTypeInfo): TBoldMember;
     property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
@@ -361,7 +376,7 @@ type
     procedure TransferOrClone(source, dest: TBoldIndirectElement);
   end;
 
-   ShortCircuitType = (csNone, csAnd, csOr, csIf);
+   ShortCircuitType = (csNone, csAnd, csOr, csIf, csBoldIDIn, csNamedIDIn);
 
   { TBoldOclSymbol }
   TBoldOclSymbol = class(TBoldMemoryManagedObject)
@@ -416,6 +431,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldHashIndexes,
   BoldDefs,
   BoldOclError,
@@ -571,7 +588,7 @@ procedure TBoldOclVisitor.VisitTBoldOclMethod(N: TBoldOclMethod); begin end;
 procedure TBoldOclVisitor.VisitTBoldOclLiteral(N: TBoldOclLiteral); begin end;
 procedure TBoldOclVisitor.VisitTBoldOclStrLiteral(N: TBoldOclStrLiteral); begin end;
 procedure TBoldOclVisitor.VisitTBoldOclNumericLiteral(N: TBoldOclNumericLiteral); begin end;
-procedure TBoldOclVisitor.VisitTBoldOclENumLiteral(N: TBoldOclEnumLiteral); begin end;
+procedure TBoldOclVisitor.VisitTBoldOclEnumLiteral(N: TBoldOclEnumLiteral); begin end;
 procedure TBoldOclVisitor.VisitTBoldOclIntLiteral(N: TBoldOclIntLiteral); begin end;
 procedure TBoldOclVisitor.VisitTBoldOclVariableReference(N: TBoldOclVariableReference); begin end;
 procedure TBoldOclVisitor.VisitTBoldOclVariableBinding(N: TBoldOclVariableBinding); begin end;
@@ -589,7 +606,7 @@ begin
   fList := TList.Create;
 end;
 
-destructor TBoldOCLEnvironment.destroy;
+destructor TBoldOCLEnvironment.Destroy;
 var
   tempBinding: TBoldOclVariableBinding;
 begin
@@ -682,7 +699,6 @@ end;
 function TBoldOclEnvironment.Lookup(const S: string): TBoldOclVariableBinding;
 var
   I: Integer;
-  ResolvedBinding: TBoldOclVariableBinding;
   ExternalVariable: TBoldExternalVariable;
 begin
   I := fList.Count - 1;
@@ -735,33 +751,34 @@ begin
   fBoldType := NewType;
 end;
 
-constructor TBoldOclSymbolHelp.create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+constructor TBoldOclSymbolHelp.Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
 
-procedure SignalError(const Message: String; const args: array of const);
-begin
-  if assigned(BoldSystem) then
-    raise EBoldOclError.CreateFmt(Message, Args);
-  ErrorsEncountered := true;
-end;
+  procedure SignalError(const Message: String; const args: array of const);
+  begin
+    if assigned(BoldSystem) then
+      raise EBoldOclError.CreateFmt(Message, Args);
+    ErrorsEncountered := true;
+  end;
 
-procedure InstallAttribute(const Name: String; var AttrTypeInfo: TBoldAttributeTypeInfo; AttrClass: TClass; Exact: Boolean);
+  procedure InstallAttribute(const Name: String; var AttrTypeInfo: TBoldAttributeTypeInfo; AttrClass: TClass; Exact: Boolean);
 
-begin
-  AttrTypeInfo := SystemTypeInfo.AttributeTypeInfoByExpressionName[Name];
-  if not assigned(AttrTypeINfo) then
-    SignalError('Missing required OCL-type: %s. Update your TypeNameHandle', [Name]);
+  begin
+    AttrTypeInfo := SystemTypeInfo.AttributeTypeInfoByExpressionName[Name];
+    if not assigned(AttrTypeINfo) then
+      SignalError(sMissingOCLType, [Name]);
 
-  if not assigned(AttrTypeInfo.AttributeClass) then
-    SignalError('Missing DelphiType of %s (please install %s)', [Name, AttrTypeInfo.DelphiName])
-  else begin
-    case exact of
-      true: if AttrTypeInfo.AttributeClass <> AttrClass then
-        SignalError('The %s type must BE %s (was: %s). Update your TypeNameHandle', [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
-      false: if not AttrTypeInfo.AttributeClass.InheritsFrom(AttrClass) then
-        SignalError('The %s type must inherit from %s (%s doesn''t).', [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
+    if not assigned(AttrTypeInfo.AttributeClass) then
+      SignalError(sMissingDelphiType, [Name, AttrTypeInfo.DelphiName])
+    else 
+    begin
+      case exact of
+        true: if AttrTypeInfo.AttributeClass <> AttrClass then
+          SignalError(sTypeMustBeX, [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
+        false: if not AttrTypeInfo.AttributeClass.InheritsFrom(AttrClass) then
+          SignalError(sTypeMustInheritFromX, [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
+      end;
     end;
   end;
-end;
 
 begin
   inherited create;
@@ -787,24 +804,27 @@ begin
   fObjectListType := SystemTypeInfo.ListTypeInfoByElement[ObjectType];
   fStringListType := SystemTypeInfo.ListTypeInfoByElement[StringType];
   fIntegerListType := SystemTypeInfo.ListTypeInfoByElement[IntegerType];
+
+  fEmptyString := CreateNewMember(StringType);
+  fEmptyString.AsVariant := '';
+  fBooleanFalse := CreateNewMember(BooleanType);
+  fBooleanFalse.AsVariant := false;
+  fBooleanTrue := CreateNewMember(BooleanType);
+  fBooleanTrue.AsVariant := true;
+  fIntegerZero := CreateNewMember(IntegerType);
+  fIntegerZero.AsVariant := 0;
+  fCurrencyZero := CreateNewMember(CurrencyType);
+  fCurrencyZero.AsVariant := 0;
+  fFloatZero := CreateNewMember(RealType);
+  fFloatZero.AsVariant := 0;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNew(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
 begin
   if el.OwnsValue and assigned(el.Value) then
-  begin
-    if el.value is TBoldAttribute then
-      TBoldAttribute(el.Value).RecycleValue;
-  end
+    TBoldAttribute(el.Value).RecycleValue
   else
-
-  begin
-    if assigned(el.BoldType) and
-      el.BoldType.ConformsTo(NewType) then
-      el.SetOwnedValue(CreateNewMember(el.BoldType))
-    else
-      el.SetOwnedValue(CreateNewMember(NewType))
-  end
+    el.SetOwnedValue(CreateNewMember(NewType));
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewNull(el: TBoldOCLNode;
@@ -817,30 +837,30 @@ end;
 
 procedure TBoldOclSymbolHelp.MakeNewNumeric(El: TBoldOCLNode; value: Double);
 begin
-  MakeNew(el, RealType);
-  Assert(El.Value is TBAFloat);
-  TBAFloat(El.Value).AsFloat := Value;
+  El.SetOwnedValue(fFloatZero.Clone);
+  if Value <> 0 then
+    TBAFloat(El.Value).AsFloat := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewCurrency(El: TBoldOCLNode; value: currency);
 begin
-  MakeNew(el, CurrencyType);
-  Assert(El.Value is TBACurrency);
-  TBACurrency(El.Value).Ascurrency := Value;
+  El.SetOwnedValue(fCurrencyZero.Clone);
+  if Value <> 0 then
+    TBACurrency(El.Value).Ascurrency := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewString(El: TBoldOCLNode; const value: String);
 begin
-  MakeNew(el, StringType);
-  Assert(El.Value is TBAString);
-  TBAString(El.Value).AsString := Value;
+  El.SetOwnedValue(fEmptyString.Clone);
+  if value <> '' then
+    TBAString(El.Value).AsString := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewInteger(El: TBoldOCLNode; value: integer);
 begin
-  MakeNew(el, Integertype);
-  Assert(El.Value is TBAInteger);
-  TBAInteger(El.Value).AsInteger := Value;
+  El.SetOwnedValue(fIntegerZero.Clone);
+  if Value <> 0 then
+    TBAInteger(El.Value).AsInteger := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewTime(El: TBoldOCLNode; value: TDateTime);
@@ -866,9 +886,10 @@ end;
 
 procedure TBoldOclSymbolHelp.MakeNewBoolean(El: TBoldOCLNode; value: Boolean);
 begin
-  MakeNew(el, BooleanType);
-  Assert(El.Value is TBABoolean);
-  TBABoolean(El.Value).AsBoolean := Value;
+  if Value then
+    El.SetOwnedValue(fBooleanTrue.Clone)
+  else
+    El.SetOwnedValue(fBooleanFalse.Clone);
 end;
 
 procedure TBoldOclSymbolHelp.TransferorClone(source, dest: TBoldIndirectElement);
@@ -1033,7 +1054,7 @@ begin
   SetIndexVariable(IX_SymbolName, AddIndex(TSymbolNameIndex.Create));
 end;
 
-destructor TBoldSymbolDictionary.destroy;
+destructor TBoldSymbolDictionary.Destroy;
 begin
   FreeAndNil(fHelp);
   inherited;
@@ -1055,6 +1076,17 @@ begin
   result := TBoldMemberFactory.CreateMemberFromBoldType(BoldType);
   if (result is TBoldObjectList) then
      TBoldObjectList(result).SubscribeToObjectsInList := false;
+end;
+
+destructor TBoldOclSymbolHelp.Destroy;
+begin
+  FreeAndNil(fEmptyString);
+  FreeAndNil(fBooleanFalse);
+  FreeAndNil(fBooleanTrue);
+  FreeAndNil(fIntegerZero);
+  FreeAndNil(fCurrencyZero);
+  FreeAndNil(fFloatZero);
+  inherited;
 end;
 
 function TBoldOclEnvironment.GetBindings(
@@ -1116,7 +1148,7 @@ begin
   fDateTimeValue := Value;
 end;
 
-destructor TBoldOCLListCoercion.destroy;
+destructor TBoldOCLListCoercion.Destroy;
 begin
   FreeAndNil(Child);
   inherited;
@@ -1137,6 +1169,12 @@ begin
     result := nil;
 end;
 
+procedure TBoldOclVariableBindingExternal.SetExternalVariable(
+  const Value: TBoldExternalVariable);
+begin
+  fExternalVariable := Value;
+end;
+
 {$WARNINGS OFF}
 procedure InitDebugMethods;
 var
@@ -1146,6 +1184,31 @@ begin
   env.BindingsAsCommaText;     // This is used to force compiler to include BindingsAsCommaText
 end;
 {$WARNINGS ON}
+
+constructor TBoldOclVariableReference.Create;
+begin
+  inherited;
+  fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
+end;
+
+destructor TBoldOclVariableReference.Destroy;
+begin
+  FreeAndNil(fSubscriber);
+  inherited;
+end;
+
+procedure TBoldOclVariableReference.Receive(Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+begin
+  if Originator = VariableBinding then
+    FreeAndNil(VariableBinding);
+end;
+
+procedure TBoldOclVariableReference.SetVariableBinding(
+  const Value: TBoldOclVariableBinding);
+begin
+  fVariableBinding := Value;
+end;
 
 initialization
   TBoldSymbolDictionary.IX_SymbolName := -1;

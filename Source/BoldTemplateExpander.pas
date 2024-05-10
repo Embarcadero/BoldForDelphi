@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldTemplateExpander;
@@ -75,9 +75,9 @@ type
     procedure SetFileName(const Value: String);
     procedure TemplateChanged(sender: TObject);
   public
-    constructor create(aOwner: Tcomponent); override;
+    constructor Create(aOwner: Tcomponent); override;
     procedure ExpandTemplate;
-    destructor destroy; override;
+    destructor Destroy; override;
     property Variables: TBoldTemplateVariables read fvariables;
     property ExpandedTemplate: TStringList read GetExpandedTemplate;
     property LastExpansion: TStringList read fExpandedTemplate;
@@ -102,14 +102,17 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils;
+
 var
   IX_TemplateVariables: integer = -1;
 
 type
   TBoldTemplatevariableIndex = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
   end;
 
 { TBoldTemplateHolder }
@@ -315,7 +318,7 @@ begin
             Variables.SetVariable(Macroname, IntToStr(OldLoopValue));
           end
           else
-            raise Exception.Create('Unterminated loop in template: ' + MacroName);
+            raise Exception.CreateFmt(sUnterminatedLoop, [MacroName]);
 
         end
         else if Pos('CASE', macroName) = 1 then
@@ -363,8 +366,9 @@ begin
             me := EndLoopPos + Length(MatchMacroName) - 1;
             result := result + BoldExpandTemplate(CaseText.Text, Variables, MacroNamePad);
             CaseText.Free;
-          end else
-            Raise Exception.Create('Unterminated case in template: ' + MacroName);
+          end 
+          else
+            raise Exception.CreateFmt(sUnterminatedCase, [MacroName]);
         end
         else if Pos('MACROSTART', MacroName) = 1 then
         begin
@@ -382,7 +386,7 @@ begin
             Variables.SetVariable(Macroname, MacroText);
           end
           else
-            raise Exception.Create('Unterminated Macro in template: ' + MacroName);
+            raise Exception.CreateFmt(sUnterminatedMacro, [MacroName]);
         end;
 
         if pos('CRLF', upperCase(MacroName)) = 1 then
@@ -417,7 +421,7 @@ end;
 
 { TBoldTemplateHolder }
 
-constructor TBoldTemplateHolder.create(aOwner: Tcomponent);
+constructor TBoldTemplateHolder.Create(aOwner: Tcomponent);
 begin
   inherited;
   fVariables := TBoldTemplateVariables.Create;
@@ -426,7 +430,7 @@ begin
   fExpandedTemplate := TStringList.Create;
 end;
 
-destructor TBoldTemplateHolder.destroy;
+destructor TBoldTemplateHolder.Destroy;
 begin
   FreeAndNil(fVariables);
   FreeAndNil(fTemplate);
@@ -508,7 +512,7 @@ end;
 
 { TBoldTemplatevariableIndex }
 
-function TBoldTemplatevariableIndex.ItemASKeyString(Item: TObject): string;
+function TBoldTemplatevariableIndex.ItemAsKeyString(Item: TObject): string;
 begin
   result := TBoldTemplatevariable(Item).Name;
 end;

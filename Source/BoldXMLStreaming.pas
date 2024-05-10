@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -192,6 +199,9 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
+  BoldRev,
   BoldHashIndexes,
   {$IFDEF OXML}OXmlUtils,{$ENDIF}
   BoldBase64,
@@ -223,7 +233,7 @@ var
 procedure PushFloatSettings;
 begin
   if FloatSettingsPushed then
-    raise EBold.Create('Nested calls to PushFloatSettings not allowed');
+    raise EBold.Create(sCannotNestPushFloat);
   FloatSettingsPushed := true;
   FloatSettingsPushed := true;
   oldDecimalSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator;
@@ -235,9 +245,9 @@ end;
 procedure PopFloatSettings;
 begin
   if not FloatSettingsPushed then
-    raise EBold.Create('Not allowed to call PopFloatSettins without previous call to PushFloatSettings');
-  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator := oldDecimalSeparator;
-  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ThousandSeparator := oldThousandSeparator;
+    raise EBold.Create(sPushNestMismatch);
+  FormatSettings.DecimalSeparator := oldDecimalSeparator;
+  FormatSettings.ThousandSeparator := oldThousandSeparator;
   oldDecimalSeparator := '*';
   oldThousandSeparator := '#';
   FloatSettingsPushed := false;
@@ -274,7 +284,7 @@ begin
     result := fParentRegistry.GetStreamer(Name);
 
   if not assigned(result) then
-    raise EBoldInternal.CreateFmt('%s.GetStreamer: streamer for %s not found', [classname, name]);
+    raise EBoldInternal.CreateFmt(sStreamerNotFound, [classname, name]);
 end;
 
 class function TBoldXMLStreamerRegistry.MainStreamerRegistry: TBoldXMLStreamerRegistry;
@@ -910,14 +920,14 @@ var
   sTagName: string;
 begin
   if not assigned(Document) then
-    raise EBold.CreateFmt('%s.GetRootNode: Streamer is not connected to a Document', [classname]);
+    raise EBold.CreateFmt(sStreamerNotConnected, [classname, 'GetRootNode']); //do not localize
   if not assigned(Document.documentElement) then
-    raise EBold.CreateFmt('%s.GetRootNode: Document does not have root node', [classname]);
+    raise EBold.CreateFmt(sDocumentHasNoRootNode, [classname]);
   sTagName := {$IFDEF OXML}Document.documentElement.NodeName{$ELSE}
       Document.documentElement.tagName{$ENDIF};
   if (Accessor <> '') and (sTagName <> Accessor) then
-    raise EBold.CreateFmt('%s.GetRootNode: Wrong tag name, is %s, should be %s',
-                          [classname, sTagName, Accessor]);
+    raise EBold.CreateFmt(sWrongTagName,
+                          [classname, Document.documentElement.tagName, Accessor]);
 
   result := TBoldXMLNode.Create(self, Document.documentElement, nil);
 end;
@@ -937,9 +947,9 @@ function TBoldXMLStreamManager.NewRootNode(Document:
     string): TBoldXMLNode;
 begin
   if not assigned(Document) then
-    raise EBold.CreateFmt('%s.NewRootNode: Streamer is not connected to a Document', [classname]);
+    raise EBold.CreateFmt(sStreamerNotConnected, [classname, 'NewRootNode']); // do not localize
   if assigned(Document.documentElement) then
-    raise EBold.CreateFmt('%s.NewRootNode: Document already has root node', [classname]);
+    raise EBold.CreateFmt(sDocumentHasRootNode, [classname]);
 
   Document.documentElement := Document.createElement(Accessor);
   result := TBoldXMLNode.Create(self, Document.documentElement, nil);
@@ -1027,6 +1037,7 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldXMLStreaming.pas $ $Revision: 24 $ $Date: 02-06-11 15:08 $');
 
 finalization
   FreeAndNil(G_MainRegistry);

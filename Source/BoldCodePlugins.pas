@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCodePlugins;
@@ -82,6 +82,8 @@ uses
   SysUtils,
   Controls,
   Dialogs,
+
+  BoldCoreConsts,
   BoldGuard,
   BoldDefs,
   BoldLogHandler,
@@ -110,12 +112,12 @@ var
 
 function TUMLCodeGenerator.GetMenuItemName: String;
 begin
-  result := 'Generate Code';
+  result := sGenerateCode;
 end;
 
 function TUMLCodeGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenCodeImage';
+  result := sUMLCodeImage;
 end;
 
 procedure TUMLCodeGenerator.GenerateCode(Generator: TBoldGenerator);
@@ -134,12 +136,12 @@ end;
 
 function TUMLIDLGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenIDLImage';
+  result := sUMLIDLImage;
 end;
 
 function TUMLIDLGenerator.GetMenuItemName: String;
 begin
-  result := 'Generate Borland compatible IDL';
+  result := sUMLBorlandIDL;
 end;
 
 { TUMLMIDLGenerator }
@@ -153,12 +155,12 @@ end;
 
 function TUMLMIDLGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenMIDLImage';
+  result := sUMLGenIDLImage;
 end;
 
 function TUMLMIDLGenerator.GetMenuItemName: String;
 begin
-  result := 'Generate Microsoft (MIDL) compatible IDL';
+  result := sUMLGenMSIDL;
 end;
 
 { TUMLAbstractCodeGenerator }
@@ -176,9 +178,9 @@ begin
   Validator.validate(BoldModel.TypeNameDictionary);
 
   if context.GetCurrentModelHandle.EnsuredUMLModel.Validator.HighestSeverity = sError then
-    raise EBold.Create('Errors in model, can not generate code');
+    raise EBold.Create(sModelError);
 
-  BoldLog.StartLog('Code generation: ' + MenuItemName);
+  BoldLog.StartLog(Format(sCodeGeneration, [MenuItemName]));
   {$IFDEF NO_OTA}
   Generate(BoldModel.MoldModel, BoldModel.TypeNameDictionary, '');
   {$ELSE}
@@ -250,12 +252,12 @@ end;
 
 function TUMLGUIDGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenGUIDs';
+  result := sUMLGenGUIDS;
 end;
 
 function TUMLGUIDGenerator.GetMenuItemName: String;
 begin
-  Result := 'Generate COM/IDL GUIDs';
+  Result := sUMLGenCOMIDL_GUIDS;
 end;
 
 function TUMLGUIDGenerator.GetOptions: TBoldUMLPluginOptions;
@@ -277,12 +279,12 @@ end;
 
 function TUMLPersistenceInterfaceGenerator.GetImageResourceName: String;
 begin
-  result := 'UMLPluginGenPersistenceInterfaceImage';
+  result := sUMLPluginGenInterface;
 end;
 
 function TUMLPersistenceInterfaceGenerator.GetMenuItemName: String;
 begin
-  result := 'Generate Persistence Interfaces';
+  result := sUMLGenInterface;
 end;
 
 initialization

@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSortedHandle;
@@ -17,7 +24,6 @@ type
   TBoldSortedHandle = class;
 
  { TBoldComparer }
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldComparer = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnCompare: TBoldElementCompare;
@@ -55,7 +61,13 @@ implementation
 uses
   SysUtils,
   Classes,
+  BoldRev,
   BoldDefs,
+  {$IFDEF ATTRACS}
+  AttracsPerformance,
+  AttracsDefs,
+  AttracsTraceLog,
+  {$ENDIF}
   BoldSystemRT,
   BoldElementList;
 
@@ -84,9 +96,16 @@ var
   ValueAsListHolder: TBoldIndirectElement;
   SourceList: TBoldList;
   NewList: TBoldList;
+  {$IFDEF ATTRACS}
+  PerformanceMeasurement : TPerformanceMeasurement;
+  HandleLongName : String;
+  {$ENDIF}
 begin
   if csDestroying in ComponentState then
     raise EBold.CreateFmt('%s.DeriveAndSubscribe: %s Handle is in csDestroying state, can not DeriveAndSubscribe.', [classname, name]);
+  {$IFDEF ATTRACS}
+  PerformanceMeasurement := TPerformanceMeasurement.ReStart;
+  {$ENDIF}
   if EffectiveRootValue = nil then
     ResultElement.SetOwnedValue(nil)
   else if not Assigned(BoldComparer) then
@@ -126,6 +145,17 @@ begin
     end;
   end;
   SubscribeToValue;
+  {$IFDEF ATTRACS}
+  if not PerformanceMeasurement.AcceptableTimeForSmallComputation then
+  begin
+    if Assigned(Self.Owner) then
+      HandleLongName := Owner.Name + '.' + Self.Name
+    else
+      HandleLongName := Self.Name;
+    PerformanceMeasurement.WhatMeasured := 'Deriving TBoldSortedHandle ' +  HandleLongName;
+    PerformanceMeasurement.Trace;
+  end;
+  {$ENDIF}
 end;
 
 function TBoldSortedHandle.GetStaticBoldType: TBoldElementTypeInfo;
@@ -169,5 +199,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldSortedHandle.pas $ $Revision: 23 $ $Date: 02-07-23 17:49 $');
 
 end.

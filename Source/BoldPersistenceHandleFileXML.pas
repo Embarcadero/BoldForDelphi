@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceHandleFileXML;
@@ -15,7 +22,6 @@ type
   TBoldPersistenceControllerFileXML = class;
 
   { TBoldPersistenceHandleFileXML }
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldPersistenceHandleFileXML = class(TBoldAbstractPersistenceHandleFile)
   protected
     function CreatePersistenceController: TBoldPersistenceController; override;
@@ -38,6 +44,7 @@ uses
   classes,
   SysUtils,
   BoldDefs,
+  BoldRev,
   {$IFDEF OXML}OXmlPDOM, OTextReadWrite{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldId,
   BoldXMLStreaming,
@@ -151,5 +158,6 @@ end;
 {$ENDIF}
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldPersistenceHandleFileXML.pas $ $Revision: 10 $ $Date: 02-07-23 17:49 $');
 
 end.

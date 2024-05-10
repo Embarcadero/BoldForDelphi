@@ -105,6 +105,21 @@ begin
 
   AddSubscription(Subscriber, bpeStartFetchId, bpeStartFetchId);
   AddSubscription(Subscriber, bpeEndFetchId, bpeEndFetchId);
+
+  AddSubscription(Subscriber, bpeStartFetchObjectById, bpeStartFetchObjectById);
+  AddSubscription(Subscriber, bpeEndFetchObjectById, bpeEndFetchObjectById);
+
+  AddSubscription(Subscriber, bpeStartFetchAllInClassWithSQL, bpeStartFetchAllInClassWithSQL);
+  AddSubscription(Subscriber, bpeEndFetchAllInClassWithSQL, bpeEndFetchAllInClassWithSQL);
+
+  AddSubscription(Subscriber, bpeStartFetchMember, bpeStartFetchMember);
+  AddSubscription(Subscriber, bpeEndFetchMember, bpeEndFetchMember);
+
+  AddSubscription(Subscriber, bpeStartFetchClass, bpeStartFetchClass);
+  AddSubscription(Subscriber, bpeEndFetchClass, bpeEndFetchClass);
+
+  AddSubscription(Subscriber, bpeStartFetchList, bpeStartFetchList);
+  AddSubscription(Subscriber, bpeEndFetchList, bpeEndFetchList);
 end;
 
 end.

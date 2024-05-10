@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -49,7 +56,9 @@ function StringListToVarArray(List: TStringList): variant;
 function IsLocalMachine(const Machinename: WideString): Boolean;
 function GetComputerNameStr: string;
 function TimeStampComp(const Time1, Time2: TTimeStamp): Integer;
-function StrToDateFmt(const S: string; const DateFormat: string; const DateSeparatorChar: char = '/'): TDateTime;
+function StrToDateFmt(const ADateString: string; const ADateFormat: string;
+  const ATimeFormat: string; const ADateSeparatorChar: char = '/';
+  const ADateTimeSeperatorChar: char = ' '): TDateTime;
 function DateToStrFmt(const aDate: TDateTime; DateFormat: string; const DateSeparatorChar: char = '/'): String;
 function BoldParseFormattedDateList(const value: String; const formats: TStrings; var Date: TDateTime): Boolean;
 function BoldParseFormattedDate(const value: String; const formats: array of string; var Date: TDateTime): Boolean;
@@ -79,6 +88,7 @@ var BoldRunningAsDesignTimePackage: boolean = false;
 implementation
 
 uses
+  BoldCoreConsts,
   BoldRev;
 
 {$IFDEF LINUX}
@@ -95,7 +105,7 @@ type
   1: (asInt64: Int64);
   end;
 var
-  CurrentProcess: THANDLE = 0;
+  CurrentProcess: THANDLE = INVALID_HANDLE_VALUE ;
 
 function FileTimeToDateTime(const FileTime: TFileTime): TDateTime;
 const
@@ -161,7 +171,7 @@ function ForceDirectories(Dir: string): Boolean;
 begin
   Result := True;
   if Length(Dir) = 0 then
-    raise Exception.Create('Cannot create directory');
+    raise Exception.Create(sCannotCreateDirectory);
   Dir := ExcludeTrailingPathDelimiter(Dir);
   if (Length(Dir) < 3) or DirectoryExists(Dir)
     or (ExtractFilePath(Dir) = Dir) then Exit;
@@ -300,7 +310,7 @@ end;
 
 function BoldNamesEqual(const name1, name2: string): Boolean;
 begin
-  Result := (CompareText(name1, name2) = 0);
+  Result := (AnsiCompareText(name1, name2) = 0);
 end;
 
 function BoldSeparateStringList(strings: TStringList; const Separator, PreString, PostString: String; AIndex: integer): String;
@@ -605,18 +615,41 @@ begin
     Result := -1;
 end;
 
-function StrToDateFmt(const S: string; const DateFormat: string; const DateSeparatorChar: char = '/'): TDateTime;
+function StrToDateFmt(const ADateString: string; const ADateFormat: string;
+  const ATimeFormat: string; const ADateSeparatorChar: char = '/';
+  const ADateTimeSeperatorChar: char = ' '): TDateTime;
 var
-  PreviousShortDateFormat: string;
-  PreviousDateSeparator: char;
+  sPreviousShortDateFormat: string;
+  sPreviousDateSeparator: char;
+  {$IFDEF BOLD_DELPHI28_OR_LATER}
+  sPreviousShortTimeFormat: string;
+  {$ENDIF}
 begin
-  PreviousShortDateFormat := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat;
-  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := DateFormat;
-  PreviousDateSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator;
-  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := DateSeparatorChar;
-  Result := StrToDateTime(S);
-  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := PreviousShortDateFormat;
-  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := PreviousDateSeparator;
+  sPreviousShortDateFormat := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat;
+  {$IFNDEF BOLD_DELPHI28_OR_LATER}
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := ADateFormat;
+  if ATimeFormat <> '' then
+  begin
+    {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat :=
+      {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat + ADateTimeSeperatorChar + ATimeFormat;
+  end;
+  {$ELSE}
+    FormatSettings.ShortDateFormat := ADateFormat;
+
+    sPreviousShortTimeFormat := FormatSettings.LongTimeFormat;
+    FormatSettings.LongTimeFormat := ATimeFormat;
+  {$ENDIF}
+  sPreviousDateSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := ADateSeparatorChar;
+
+  Result := StrToDateTime(ADateString);
+
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := sPreviousShortDateFormat;
+  {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := sPreviousDateSeparator;
+
+  {$IFDEF BOLD_DELPHI28_OR_LATER}
+  FormatSettings.LongTimeFormat := sPreviousShortTimeFormat;
+  {$ENDIF}
 end;
 
 function DateToStrFmt(const aDate: TDateTime; DateFormat: string; const DateSeparatorChar: char = '/'): String;
@@ -745,4 +778,8 @@ begin
   FormatsList.Free;
 end;
 
+initialization
+finalization
+  if CurrentProcess<>INVALID_HANDLE_VALUE then
+    CloseHandle(CurrentProcess);
 end.

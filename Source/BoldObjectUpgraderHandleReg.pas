@@ -18,7 +18,7 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldObjectUpgraderHandle]);
+    RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldObjectUpgraderHandle]);
 end;
 
 end.

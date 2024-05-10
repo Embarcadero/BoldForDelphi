@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldStringControlPack;
@@ -231,7 +231,7 @@ begin
       GetBoldLastFailureReason.MessageFormatStr := 'String validation failed for %s: %2:s';
     BoldRaiseLastFailure(el, '', 'Unknown reason');
     {$ELSE}
-    raise EBold.Create('String validation failed');
+    raise EBold.Create(sStringValidationFailed);
     {$ENDIF}
   end;
 end;
@@ -297,15 +297,12 @@ procedure TBoldAsStringRenderer.DefaultMakeUptodateAndSetMayModifyAndSubscribe(a
 var
   {$IFDEF BOLDCOMCLIENT} // defaultMakeUpToDate
   e: IBoldElement;
-  {$ELSE}
-  E: TBoldIndirectElement;
   {$ENDIF}
   S: String;
   lFollowerController: TBoldStringFollowerController;
   lRendererData: TBoldStringRendererData;
   lRepresentation: integer;
   lResultElement: TBoldElement;
-  lGuard: IBoldGuard;
 begin
   S := '';
   lRendererData:= aFollower.RendererData as TBoldStringRendererData;

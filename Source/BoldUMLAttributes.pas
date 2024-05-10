@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLAttributes;
@@ -19,9 +19,8 @@ type
   private
     function GetAsChangeableKind: TChangeableKind;
     procedure SetAsChangeableKind(ChangeableKind: TChangeableKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsChangeableKind: TChangeableKind read GetAsChangeableKind write SetAsChangeableKind;
   end;
 
@@ -31,9 +30,8 @@ type
   private
     function GetAsVisibilityKind: TVisibilityKind;
     procedure SetAsVisibilityKind(VisibilityKind: TVisibilityKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsVisibilityKind: TVisibilityKind read GetAsVisibilityKind write SetAsVisibilityKind;
   end;
 
@@ -41,9 +39,8 @@ type
   private
     function GetAsAggregationKind: TAggregationKind;
     procedure SetAsAggregationKind(AggregationKind: TAggregationKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsAggregationKind: TAggregationKind read GetAsAggregationKind write SetAsAggregationKind;
   end;
 
@@ -51,9 +48,8 @@ type
   private
     function getAsScopeKind: TScopeKind;
     procedure setAsScopeKind(ScopeKind: TScopeKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsScopeKind: TScopeKind read getAsScopeKind write setAsScopeKind;
   end;
 
@@ -61,9 +57,8 @@ type
   private
     function getAsParameterDirectionKind: TBoldParameterDirectionKind;
     procedure setAsParameterDirectionKind(ParameterDirectionKind: TBoldParameterDirectionKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsParameterDirectionKInd: TBoldParameterDirectionKind read getAsParameterDirectionKind write setAsParameterDirectionKind;
   end;
 
@@ -71,49 +66,44 @@ type
   private
     function getAsSeverity: TSeverity;
     procedure setAsSeverity(Severity: TSeverity);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsSeverity: TSeverity read getAsSeverity write setAsSeverity;
   end;
 
   TBAOrderingKind = class(TBAValueSet)
   private
-    function getAsOrderingKind: TOrderingKind;
-    procedure setAsOrderingKind(OrderingKind: TOrderingKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
+    function GetAsOrderingKind: TOrderingKind;
+    procedure SetAsOrderingKind(OrderingKind: TOrderingKind);
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsOrderingKind: TOrderingKind read getAsOrderingKind write setAsOrderingKind;
   end;
 
   TBAPseudostateKind = class(TBAValueSet)
   private
-    function getAsPseudostateKind: TPseudostateKind;
-    procedure setAsPseudostateKind(PseudostateKind: TPseudostateKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
+    function GetAsPseudostateKind: TPseudostateKind;
+    procedure SetAsPseudostateKind(PseudostateKind: TPseudostateKind);
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsPseudostateKind: TPseudostateKind read getAsPseudostateKind write setAsPseudostateKind;
   end;
 
   TBACallConcurrencyKind = class(TBAValueSet)
   private
-    function getAsCallConcurrencyKind: TCallConcurrencyKind;
-    procedure setAsCallConcurrencyKind(CallConcurrencyKind: TCallConcurrencyKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
+    function GetAsCallConcurrencyKind: TCallConcurrencyKind;
+    procedure SetAsCallConcurrencyKind(CallConcurrencyKind: TCallConcurrencyKind);
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsCallConcurrencyKind: TCallConcurrencyKind read getAsCallConcurrencyKind write setAsCallConcurrencyKind;
   end;
 
   TBAMessageDirectionKind = class(TBAValueSet)
   private
-    function getAsMessageDirectionKind: TMessageDirectionKind;
-    procedure setAsMessageDirectionKind(MessageDirectionKind: TMessageDirectionKind);
-  protected
-    class function GetValues: TBAValueSetValueList; override;
+    function GetAsMessageDirectionKind: TMessageDirectionKind;
+    procedure SetAsMessageDirectionKind(MessageDirectionKind: TMessageDirectionKind);
   public
+    class function GetValues: TBAValueSetValueList; override;
     property AsMessageDirectionKind: TMessageDirectionKind read getAsMessageDirectionKind write setAsMessageDirectionKind;
   end;
 
@@ -121,6 +111,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldMemberTypeDictionary;
 
 var
@@ -147,16 +139,16 @@ begin
   Result := _ScopeKindValues;
 end;
 
-function TBAScopeKind.getAsScopeKind: TScopeKind;
+function TBAScopeKind.GetAsScopeKind: TScopeKind;
 begin
   case AsInteger of
     1: result := skInstance;
     2: result := skClassifier;
-    else raise EBold.Create('TBAScopeKind.GetAsScopeKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'GetAsScopeKind']); // do not localize
   end;
 end;
 
-procedure TBAScopeKind.setAsScopeKind(ScopeKind: TScopeKind);
+procedure TBAScopeKind.SetAsScopeKind(ScopeKind: TScopeKind);
 begin
   case ScopeKind of
     skInstance: AsInteger := 1;
@@ -177,18 +169,18 @@ begin
   Result := _ParameterDirectionKindValues;
 end;
 
-function TBAParameterDirectionKind.getAsParameterDirectionKind: TBoldParameterDirectionKind;
+function TBAParameterDirectionKind.GetAsParameterDirectionKind: TBoldParameterDirectionKind;
 begin
   case AsInteger of
     1: result := pdIn;
     2: result := pdOut;
     3: Result := pdInout;
     4: Result := pdReturn;
-    else raise EBold.Create('TBAParameterDirectionKind.GetAsParameterDirectionKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'getAsParameterDirectionKind']); // do not localize
   end;
 end;
 
-procedure TBAParameterDirectionKind.setAsParameterDirectionKind(ParameterDirectionKind: TBoldParameterDirectionKind);
+procedure TBAParameterDirectionKind.SetAsParameterDirectionKind(ParameterDirectionKind: TBoldParameterDirectionKind);
 begin
   case ParameterDirectionKind of
     pdIn: AsInteger := 1;
@@ -212,18 +204,18 @@ begin
   Result := _SeverityValues;
 end;
 
-function TBASeverity.getAsSeverity: TSeverity;
+function TBASeverity.GetAsSeverity: TSeverity;
 begin
   case AsInteger of
     0: Result := sNone;
     1: Result := sHint;
     2: result := sWarning;
     3: result := sError;
-    else raise EBold.Create('TBASeverity.GetAsSeverity: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'getAsSeverity']); // do not localize
   end;
 end;
 
-procedure TBASeverity.setAsSeverity(Severity: TSeverity);
+procedure TBASeverity.SetAsSeverity(Severity: TSeverity);
 begin
   case Severity of
     sNone: AsInteger := 0;
@@ -241,7 +233,7 @@ begin
     1: Result := akNone;
     2: Result := akAggregate;
     3: Result := akComposite;
-    else raise EBold.Create('TBAAggregationKind.GetAsAggregationKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'GetAsAggregationKind']); // do not localize
   end;
 end;
 
@@ -275,7 +267,7 @@ begin
     1: Result := vkPrivate;
     2: Result := vkProtected;
     3: Result := vkPublic;
-    else raise EBold.Create('TBAVisibilityKind.GetAsVisibilityKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'GetAsVisibilityKind']); // do not localize
   end;
 end;
 
@@ -308,7 +300,7 @@ begin
     1: Result := ckChangeable;
     2: Result := ckFrozen;
     3: Result := ckAddOnly;
-    else raise EBold.Create('TBAChangeableKind.GetAsChangeableKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'GetAsChangeableKind']); // do not localize
   end;
 end;
 
@@ -335,12 +327,12 @@ end;
 
 { TBAOrderingKind }
 
-function TBAOrderingKind.getAsOrderingKind: TOrderingKind;
+function TBAOrderingKind.GetAsOrderingKind: TOrderingKind;
 begin
   case AsInteger of
     0: Result := okUnordered;
     1: Result := okOrdered;
-    else raise EBold.Create('TBAOrderingKind.GetAsOrderingKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'getAsOrderingKind']); // do not localize
   end;
 end;
 
@@ -349,13 +341,13 @@ begin
   if not Assigned(_OrderingKindValues) then
   begin
     _OrderingKindValues := TBAValueSetValueList.Create;
-    _OrderingKindValues.Add(0, ['unordered']);
-    _OrderingKindValues.Add(1, ['ordered']);
+    _OrderingKindValues.Add(0, ['unordered']); // do not localize
+    _OrderingKindValues.Add(1, ['ordered']); // do not localize
   end;
   Result := _OrderingKindValues;
 end;
 
-procedure TBAOrderingKind.setAsOrderingKind(OrderingKind: TOrderingKind);
+procedure TBAOrderingKind.SetAsOrderingKind(OrderingKind: TOrderingKind);
 begin
   case OrderingKind of
     okUnordered: AsInteger := 0;
@@ -365,7 +357,7 @@ end;
 
 { TBAPseudostateKindKind }
 
-function TBAPseudostateKind.getAsPseudostateKind: TPseudostateKind;
+function TBAPseudostateKind.GetAsPseudostateKind: TPseudostateKind;
 begin
   case AsInteger of
     0: Result := pkInitial;
@@ -376,7 +368,7 @@ begin
     5: Result := pkBranch;
     6: Result := pkJunction;
     7: Result := pkFinal;
-    else raise EBold.Create('TBAOrderingKind.GetAsOrderingKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'getAsPseudostateKind']); // do not localize
   end;
 end;
 
@@ -385,19 +377,19 @@ begin
   if not Assigned(_PseudostateKindValues) then
   begin
     _PseudostateKindValues := TBAValueSetValueList.Create;
-    _PseudostateKindValues.Add(0, ['initial']);
-    _PseudostateKindValues.Add(1, ['deepHistory']);
-    _PseudostateKindValues.Add(2, ['shallowHistory']);
-    _PseudostateKindValues.Add(3, ['join']);
-    _PseudostateKindValues.Add(4, ['fork']);
-    _PseudostateKindValues.Add(5, ['branch']);
-    _PseudostateKindValues.Add(6, ['junction']);
-    _PseudostateKindValues.Add(7, ['final']);
+    _PseudostateKindValues.Add(0, ['initial']); // do not localize
+    _PseudostateKindValues.Add(1, ['deepHistory']); // do not localize
+    _PseudostateKindValues.Add(2, ['shallowHistory']); // do not localize
+    _PseudostateKindValues.Add(3, ['join']); // do not localize
+    _PseudostateKindValues.Add(4, ['fork']); // do not localize
+    _PseudostateKindValues.Add(5, ['branch']); // do not localize
+    _PseudostateKindValues.Add(6, ['junction']); // do not localize
+    _PseudostateKindValues.Add(7, ['final']); // do not localize
   end;
   Result := _PseudostateKindValues;
 end;
 
-procedure TBAPseudostateKind.setAsPseudostateKind(
+procedure TBAPseudostateKind.SetAsPseudostateKind(
   PseudostateKind: TPseudostateKind);
 begin
   case PseudostateKind of
@@ -410,18 +402,17 @@ begin
     pkJunction: AsInteger := 6;
     pkFinal: AsInteger := 7;
   end;
-
 end;
 
 { TBACallConcurrencyKind }
 
-function TBACallConcurrencyKind.getAsCallConcurrencyKind: TCallConcurrencyKind;
+function TBACallConcurrencyKind.GetAsCallConcurrencyKind: TCallConcurrencyKind;
 begin
   case AsInteger of
     0: Result := cckSequential;
     1: Result := cckGuarded;
     2: Result := cckConcurrent;
-    else raise EBold.Create('TBAOrderingKind.GetAsOrderingKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'getAsCallConcurrencyKind']); // do not localize
   end;
 end;
 
@@ -437,7 +428,7 @@ begin
   Result := _CallConcurrencyKindValues;
 end;
 
-procedure TBACallConcurrencyKind.setAsCallConcurrencyKind(
+procedure TBACallConcurrencyKind.SetAsCallConcurrencyKind(
   CallConcurrencyKind: TCallConcurrencyKind);
 begin
   case CallConcurrencyKind of
@@ -449,12 +440,12 @@ end;
 
 { TBAMessageDirectionKind }
 
-function TBAMessageDirectionKind.getAsMessageDirectionKind: TMessageDirectionKind;
+function TBAMessageDirectionKind.GetAsMessageDirectionKind: TMessageDirectionKind;
 begin
   case AsInteger of
     0: Result := mdkActivation;
     1: Result := mdkReturn;
-    else raise EBold.Create('TBAOrderingKind.GetAsOrderingKind: Wrong value.');
+    else raise EBold.CreateFmt(sWrongValue, [ClassName, 'getAsMessageDirectionKind']); // do not localize
   end;
 end;
 
@@ -469,7 +460,7 @@ begin
   Result := _MessageDirectionKindValues;
 end;
 
-procedure TBAMessageDirectionKind.setAsMessageDirectionKind(
+procedure TBAMessageDirectionKind.SetAsMessageDirectionKind(
   MessageDirectionKind: TMessageDirectionKind);
 begin
   case MessageDirectionKind of

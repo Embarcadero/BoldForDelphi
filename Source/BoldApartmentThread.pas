@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldApartmentThread;
@@ -57,10 +57,11 @@ type
 implementation
 
 uses
-  SysUtils,
   ActiveX,
-  BoldThreadSafeLog
-  ;
+  SysUtils,
+
+  BoldCoreConsts,
+  BoldThreadSafeLog;
 
 { apartment handler window }
 function ApartmentThreadWndProc (hWndTarget: HWND; iMessage, wParam, lParam: longint): longint; stdcall;

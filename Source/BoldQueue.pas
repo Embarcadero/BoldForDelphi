@@ -8,7 +8,8 @@ interface
 uses
   Classes,
   BoldBase,
-  BoldEventQueue;
+  BoldEventQueue,
+  BoldLogHandler;
 
 const
   { Queueable }
@@ -93,6 +94,7 @@ type
     procedure AddToDisplayList(Queueable: TBoldQueueable);
     procedure RemoveFromDisplayList(Queueable: TBoldQueueable; ADestroying: boolean);
     procedure EnsureDequeing; virtual;
+    function GetIsActive: boolean; virtual; abstract;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -110,10 +112,17 @@ type
     property PreDisplayCount: integer read GetPreDisplayCount;
     property PostDisplayCount: integer read GetPostDisplayCount;
     property Empty: boolean read GetEmpty;
+    property IsActive: boolean read GetIsActive;
   end;
 
   function BoldQueueFinalized: Boolean;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   function BoldInstalledQueue: TBoldQueue;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+
+var
+  BoldQueueLogHandler: TBoldLogHandler = nil;
+  BoldQueueLogCount: int64 = 0;
+
+procedure BoldLogQueue(const s: String);
 
 implementation
 
@@ -122,6 +131,7 @@ uses
   BoldUtils,
   Forms,
   BoldEnvironment,
+  BoldIsoDateTime,
   BoldGuard;
 
 function BoldQueueFinalized: Boolean;
@@ -132,6 +142,17 @@ end;
 function BoldInstalledQueue: TBoldQueue;
 begin
   result := BoldEnvironment.BoldInstalledQueue;
+end;
+
+procedure BoldLogQueue(const s: String);
+begin
+  Inc(BoldQueueLogCount);
+  if assigned(BoldQueueLogHandler) then
+  begin
+    BoldQueueLogHandler.Log(
+      AsIsoDateTimeMs(now) +':'+
+      format('Queue %3d- %s', [BoldQueueLogCount, s]));
+  end;
 end;
 
 { TBoldQuable }
@@ -163,7 +184,7 @@ end;
 
 procedure TBoldQueueable.AddToApplyList;
 begin
-  if not (BoldQueueFinalized) then
+  if not BoldQueueFinalized and BoldInstalledQueue.IsActive then
     BoldInstalledQueue.AddToApplyList(self);
 end;
 
@@ -175,14 +196,14 @@ end;
 
 procedure TBoldQueueable.AddToDisplayList;
 begin
-  if not BoldQueueFinalized then
+  if not BoldQueueFinalized and BoldInstalledQueue.IsActive then
   begin
     Assert(not IsInDisplayList);
 {$IFDEF BoldQueue_Optimization}
     if ToBeRemovedFromDisplayList then
       ToBeRemovedFromDisplayList := false
     else
-{$ENDIF}    
+{$ENDIF}
       BoldInstalledQueue.AddToDisplayList(self);
     SetElementflag(befIsInDisplayList, True);
   end;
@@ -401,6 +422,7 @@ end;
 
 destructor TBoldQueue.Destroy;
 begin
+  DeActivateDisplayQueue;
   FreeAndNil(fDisplayList);
   FreeAndNil(fApplyList);
   FreeAndNil(fPreDisplayQueue);
@@ -445,6 +467,7 @@ begin
         vPrioritizedQueuable := Queueable.MostPrioritizedQueuableOrSelf;
         if Queueable = vPrioritizedQueuable then
         begin
+          BoldLogQueue('D:'+Queueable.DebugInfo);
           Queueable.Display;
           if Queueable.ToBeRemovedFromDisplayList and (fDisplayList[fDisplayListIndex] = Queueable) then
           begin
@@ -453,7 +476,10 @@ begin
           end;
         end
         else
+        begin
+          BoldLogQueue('D:'+Queueable.DebugInfo);
           vPrioritizedQueuable.Display;
+      end;
       end;
     finally
       fIsDisplaying := false;

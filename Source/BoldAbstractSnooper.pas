@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractSnooper;
@@ -76,6 +76,8 @@ implementation
 
 uses
   Sysutils,
+
+  BoldCoreConsts,
   BoldValueInterfaces,
   BoldFreeStandingValues,
   BoldObjectSpaceExternalEvents;
@@ -201,7 +203,7 @@ var
   MemberValue: IBoldValue;
   sl: TStringList;
 begin
-  assert(assigned(MoldModel), 'Snooper has no Model');
+  assert(assigned(MoldModel), sSnooperNoModel);
   LocalObjectIdList := ObjectIdList.Clone;
   try
     LocalOld_Values := nil;
@@ -258,12 +260,14 @@ begin
                 Events.Add(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectDeleted, MoldClass.ExpandedExpressionName, '', '', LocalObjectIdList[i]));
               end;
               if UseSubscriptions then
-                CancelSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, '', '', '', LocalObjectIdList[i])) ;
-              for j:= 0 to MoldClass.AllBoldMembers.Count - 1 do
               begin
-                MemberName := MoldClass.AllBoldMembers.Items[j].ExpandedExpressionName;
-                if UseSubscriptions and MemberIsNonEmbeddedLink(MoldClass.AllBoldMembers[j], MemberName) then
-                  CancelSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, '', MemberName, '', LocalObjectIdList[i]));
+                CancelSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, '', '', '', LocalObjectIdList[i])) ;
+                for j:= 0 to MoldClass.AllBoldMembers.Count - 1 do
+                begin
+                  MemberName := MoldClass.AllBoldMembers.Items[j].ExpandedExpressionName;
+                  if UseSubscriptions and MemberIsNonEmbeddedLink(MoldClass.AllBoldMembers[j], MemberName) then
+                    CancelSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, '', MemberName, '', LocalObjectIdList[i]));
+                end;
               end;
             end;
         end
@@ -289,13 +293,13 @@ begin
               end;
               if sl.Count > 0 then
               begin
-                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsMemberChanged, MoldClass.ExpandedExpressionName, sl.CommaText, '', LocalObjectIdList[i]));
+                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsMemberChanged, ClassNameFromClassID(LocalObjectIdList[i].TopSortedIndex), sl.CommaText, '', LocalObjectIdList[i]));
               end;
             finally
               sl.free;
             end;
           end;
-          AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, MoldClass.ExpandedExpressionName, '', '', LocalObjectIdList[i]));
+          AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, ClassNameFromClassID(LocalObjectIdList[i].TopSortedIndex), '', '', LocalObjectIdList[i]));
         end;
       end;
     end;
@@ -332,13 +336,13 @@ procedure TBoldAbstractSnooper.GenerateNonEmbeddedStateChangedEvent(OldID, NewID
 begin
   if (Assigned(OldID) and Assigned(NewID) and not(OldID.IsEqual[NewID])) then
   begin
-    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, MoldClass.ExpandedExpressionName, NonEmbeddedLinkName, '', OldID));
-    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, MoldClass.ExpandedExpressionName, NonEmbeddedLinkName, '', NewID));
+    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, ClassNameFromClassID(OldId.TopSortedIndex), NonEmbeddedLinkName, '', OldID));
+    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, ClassNameFromClassID(NewId.TopSortedIndex), NonEmbeddedLinkName, '', NewID));
   end
   else if (Assigned(OldID) and not Assigned(NewID)) then
-    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, MoldClass.ExpandedExpressionName, NonEmbeddedLinkName, '', OldID))
+    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, ClassNameFromClassID(OldId.TopSortedIndex), NonEmbeddedLinkName, '', OldID))
   else if (Assigned(NewID) and not Assigned(OldID)) then
-    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, MoldClass.ExpandedExpressionName, NonEmbeddedLinkName, '', NewID));
+    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, ClassNameFromClassID(NewId.TopSortedIndex), NonEmbeddedLinkName, '', NewID));
 end;
 
 procedure TBoldAbstractSnooper.SetClassesToIgnore(const Value: string);
@@ -447,7 +451,8 @@ begin
       Id := ObjectIdByMemberIndex(Object_Content, j);
       NewId := ObjectIdByMemberIndex(NewObject_Content, j);
       NonEmbeddedLinkName := NonEmbeddedLink.ExpandedExpressionName;
-      GenerateNonEmbeddedStateChangedEvent(Id, NewId, NonEmbeddedLink.MoldClass, NonEmbeddedLinkName);
+      if not fArrayOfClassesToIgnore[NonEmbeddedLink.OtherEnd.MoldClass.TopSortedIndex] then
+        GenerateNonEmbeddedStateChangedEvent(Id, NewId, NonEmbeddedLink.MoldClass, NonEmbeddedLinkName);
     end;
 end;
 

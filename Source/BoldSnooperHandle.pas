@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSnooperHandle;
@@ -61,10 +61,12 @@ type
 implementation
 
 uses
+  Dialogs,
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldPersistenceHandlePassThrough,
-  dialogs,
   BoldRev;
 
 function TBoldSnooperHandle.CreatePersistenceController: TBoldPersistenceController;
@@ -78,8 +80,13 @@ begin
   if Assigned(PropagatorHandle) then
     Snooper.OnPropagatorFailure := PropagatorHandle.DoPropagatorCallFailed
   else
-    raise EBold.CreateFmt('%s.PropagatorHandle not assigned', [ClassName]);
+    raise EBold.CreateFmt(sPropagatorHandleNotAssigned, [ClassName]);
   result := Snooper;
+  Snooper.UseClassEvents := UseClassEvents;
+  Snooper.UseMemberLevelOSS := UseMemberLevelOSS;
+  Snooper.UseSubscriptions := UseSubscriptions;
+  Snooper.ClassesToIgnore := ClassesToIgnore;
+  Subscribe(True);
 end;
 
 constructor TBoldSnooperHandle.Create(Owner: TComponent);

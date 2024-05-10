@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 
@@ -30,7 +30,6 @@ type
     procedure FreeInstance; override;
     property DebugInfo: string read GetDebugInfo;
   end;
-
 
   {-- TBoldInterfacedObject --}
   TBoldInterfacedObject = class(TBoldMemoryManagedObject, IInterface)
@@ -120,8 +119,7 @@ procedure ClearInstanceLog;
 implementation
 
 uses
-  BoldCommonConst,
- 
+  BoldCoreConsts,
   {$IFDEF DebugInstanceCounter}
   BoldIndexableList,
   BoldHashIndexes,
@@ -197,7 +195,7 @@ end;
 {$IFNDEF BOLD_BCB}
 procedure TBoldRefCountedObject.AfterConstruction;
 begin
-  InterlockedDecrement(fRefCount);  // was set by NewInstace
+  AtomicDecrement(fRefCount);  // was set by NewInstace
 end;
 {$ENDIF}
 
@@ -217,12 +215,12 @@ end;
 
 function TBoldRefCountedObject._AddRef: Integer;
 begin
-  Result := InterlockedIncrement(FRefCount);
+  Result := AtomicIncrement(FRefCount);
 end;
 
 function TBoldRefCountedObject._Release: Integer;
 begin
-  Result := InterlockedDecrement(FRefCount);
+  Result := AtomicDecrement(FRefCount);
   if Result = 0 then
     Destroy;
 end;
@@ -427,7 +425,7 @@ procedure TBoldMemoryManagedObject.FreeInstance;
 
   procedure InternalRaise;
   begin
-    raise EBold.Create('TBoldMemoryManagedObject.FreeInstance: Attempt to destroy object after BoldBase Finalization. Inspect/revert recent Uses clause changes.');
+    raise EBold.Create(sObjectDestroyedAfterFinalization);
   end;
 
 begin
@@ -475,4 +473,3 @@ finalization
   Finalized := true;
 
 end.
-

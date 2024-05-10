@@ -55,6 +55,7 @@ begin
                    TBoldLogSQLAction,
                    TBoldLogPMAction,
                    TBoldLogOSSAction,
+                   TBoldLogQueueAction,
                    TBoldLogFormAction,
                    TBoldFormSaverApplyAction,
                    TBoldFormSaverCancelAction,
@@ -71,9 +72,9 @@ end;
 
 procedure Register;
 begin
-  RegisterComponentsOnPalette;
-  RegisterBoldActions;
-  RegisterEditors;
+    RegisterComponentsOnPalette;
+    RegisterBoldActions;
+    RegisterEditors;
 end;
 
 { TTextFileProperty }

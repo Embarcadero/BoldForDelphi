@@ -121,7 +121,8 @@ begin
     FConnectionHandle := Value;
     if Assigned(ConnectionHandle) then
     begin
-      ConnectionHandle.AddSmallSubscription(Subscriber,[bceHandleInit,bceHandleTerm],0);
+      ConnectionHandle.AddSubscription(Subscriber, bceHandleTerm, 0);
+      ConnectionHandle.AddSubscription(Subscriber,bceHandleInit, 0);
       if ConnectionHandle.Connected then
         Receive(Self,bceHandleInit,bceHandleInit);
     end;
@@ -141,8 +142,5 @@ begin
     end;
   end;
 end;
-
-
-initialization
 
 end.

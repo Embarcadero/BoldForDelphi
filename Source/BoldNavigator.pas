@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldNavigator;
@@ -77,7 +77,6 @@ type
     procedure SetImages(const Value: TImageList);
   protected
     Buttons: array[TBoldNavigateBtn] of TBoldNavButton;
-    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure Loaded; override;
     procedure SetActiveButtons;
@@ -100,7 +99,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure assign(Source: TPersistent); override;
+    procedure Assign(Source: TPersistent); override;
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
     procedure BtnClick(index: TBoldNavigateBtn);
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   end;
@@ -159,6 +159,8 @@ implementation
 uses
   SysUtils,
   Dialogs,
+
+  BoldCoreConsts,
   BoldSystemRT,
   BoldUtils,
   BoldGuiResourceStrings,
@@ -685,11 +687,11 @@ begin
     dmUnlinkAllAndDelete:
       Result := True;
     else
-      raise EBold.CreateFmt('%s.MapMinus: Unknown delete mode', [ClassName]);
+      raise EBold.CreateFmt(sUnknownDeleteMode, [ClassName, 'MapMinus']);
   end;
 end;
 
-procedure TBoldCustomNavigator.assign(Source: TPersistent);
+procedure TBoldCustomNavigator.Assign(Source: TPersistent);
 begin
   inherited;
   if Source is TBoldCustomNavigator then

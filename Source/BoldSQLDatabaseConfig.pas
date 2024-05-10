@@ -98,12 +98,12 @@ type
     fBatchQueryEnd: string;
     fBatchQuerySeparator: string;
     fUseBatchQueries: boolean;
-    fUseMultiRowInserts: boolean;
     fSQLforNull: string;
     fEvolveDropsUnknownIndexes: boolean;
     fCreateDatabaseTemplate: string;
     fDropDatabaseTemplate: string;
     fDatabaseExistsTemplate: string;
+    fUnicodeStringPrefix: string;
     procedure SetIfTemplate(const Value: string);
     procedure SetColumnExistsTemplate(const Value: string);
     procedure SetTableExistsTemplate(const Value: string);
@@ -177,6 +177,7 @@ type
     procedure SetCreateDatabaseTemplate(const Value: string);
     procedure SetDropDatabaseTemplate(const Value: string);
     procedure SetDatabaseExistsTemplate(const Value: string);
+    procedure SetUnicodeStringPrefix(const Value: string);
   protected
     procedure DefineProperties(Filer: TFiler); override;
   public
@@ -266,6 +267,7 @@ type
     property ReservedWords: TStringList read fReservedWords write SetReservedWords;
     property EmptyStringMarker: String read fEmptyStringMarker write SetEmptyStringMarker;
     property StoreEmptyStringsAsNULL: Boolean read fStoreEmptyStringsAsNULL write SetStoreEmptyStringsAsNULL;
+    property UnicodeStringPrefix: string read fUnicodeStringPrefix write SetUnicodeStringPrefix;
     property SystemTablePrefix: String read fSystemTablePrefix write SetSystemTablePrefix;
     property QuoteLeftBracketInLike: Boolean read fQuoteLeftBracketInLike write SetQuoteLeftBracketInLike;
     property SqlScriptSeparator: string read FSqlScriptSeparator write SetSqlScriptSeparator;
@@ -344,6 +346,7 @@ begin
   fStoreEmptyStringsAsNULL := Source.StoreEmptyStringsAsNULL;
   fSystemTablePrefix := Source.SystemTablePrefix;
   fEmptyStringMarker := Source.EmptyStringMarker;
+  fUnicodeStringPrefix := Source.UnicodeStringPrefix;
   fAllowMetadataChangesInTransaction := Source.AllowMetadataChangesInTransaction;
   fDbGenerationMode := Source.DBGenerationMode;
   fDefaultStringLength := Source.DefaultStringLength;
@@ -797,6 +800,7 @@ begin
   fStoreEmptyStringsAsNULL := false;
   fSystemTablePrefix := 'BOLD';
   fEmptyStringMarker := '';
+  fUnicodeStringPrefix := '';
   fMultiRowInsertLimit := 1;
   UseParamsForInteger := false;
   UseParamsForEmptyString := false;
@@ -862,6 +866,15 @@ begin
   if fSingleIndexOrderedLinks <> Value then
   begin
     fSingleIndexOrderedLinks := Value;
+    Change;
+  end;
+end;
+
+procedure TBoldSQLDataBaseConfig.SetUnicodeStringPrefix(const Value: string);
+begin
+  if fUnicodeStringPrefix <> Value then
+  begin
+    fUnicodeStringPrefix := Value;
     Change;
   end;
 end;
@@ -973,7 +986,7 @@ begin
       fColumnTypeForTime := 'DATETIME';  // do not localize
       fColumnTypeForDateTime := 'DATETIME';  // do not localize
       fCreateDatabaseTemplate := 'USE MASTER;GO;CREATE DATABASE <DatabaseName>';
-      fDatabaseExistsTemplate := 'IF EXISTS (SELECT name FROM master.sys.databases WHERE name = N''<DatabaseName>'')';
+      fDatabaseExistsTemplate := 'SELECT name FROM master.sys.databases WHERE name = N''<DatabaseName>''';
       fColumnTypeForFloat := 'DECIMAL (28,10)';  // do not localize
       fColumnTypeForCurrency := 'DECIMAL (28,10)';  // do not localize
       fColumnTypeForText := 'VARCHAR(MAX)'; // do not localize
@@ -981,10 +994,13 @@ begin
       FColumnTypeForBlob := 'VARBINARY(MAX)'; // do not localize
       fColumnTypeForInt64 := 'BIGINT'; // do not localize
       fColumnTypeForGuid := 'UNIQUEIDENTIFIER';  // do not localize
+      MaxDbIdentifierLength := 128;
+      fMaxIndexNameLength := 128;
       fLongStringLimit := 4000;
       fMaxBatchQueryLength := 65536 * 1024; // Length of a string containing SQL statements (batch size) 65,536 * Network packet size Default packet size is 4096 bytes
       fMaxBatchQueryParams := 2000;
       fMultiRowInsertLimit := 1000;
+      fSqlScriptStartTransaction := 'BEGIN TRANSACTION';
       fDropColumnTemplate :=
           'DECLARE @CONSTRAINTNAME NVARCHAR(200)'  // do not localize
          +' SELECT @CONSTRAINTNAME=OD.NAME'  // do not localize

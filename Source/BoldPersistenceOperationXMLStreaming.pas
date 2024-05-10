@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceOperationXMLStreaming;
@@ -197,8 +204,9 @@ type
 implementation
 
 uses
-  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
+ {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   SysUtils,
+  BoldRev,
   BoldDefaultStreamNames;
 
 const
@@ -731,5 +739,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldPersistenceOperationXMLStreaming.pas $ $Revision: 12 $ $Date: 02-06-11 15:05 $');
 
 end.

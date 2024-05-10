@@ -67,10 +67,10 @@ type
   TBoldRawSQLCondition = class(TBoldConditionWithClass)
   private
     fSQL: string;
-    fParams: TParams;    
+    fParams: TParams;
   public
     function GetStreamName: string; override;
-    property Params: TParams read fParams write fParams;    
+    property Params: TParams read fParams write fParams;
     property SQL: string read fSQL write fSQL;
   end;
 
@@ -120,7 +120,7 @@ implementation
 uses
   classes,
   {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
-  BoldDefaultStreamNames;   
+  BoldDefaultStreamNames;
 
 const
   BoldNodeName_MaxAnswers = 'MaxAnswers';
@@ -180,7 +180,7 @@ type
 
 const
   SQLConditionName = 'SQLCondition';
-  RawSQLConditionName = 'RawSQLCondition';  
+  RawSQLConditionName = 'RawSQLCondition';
   ClassConditionName = 'ClassCondition';
   TimestampConditionName = 'TimestampCondition';
   OclConditionName = 'OclCondition';
@@ -369,7 +369,7 @@ begin
       if assigned(DataNode) then
       begin
         Buf := DataNode.ReadData;
-        aParam.SetData(PAnsiChar(Buf));
+        aParam.SetData(TValueBuffer(PAnsiChar(Buf)));
       end;
       DataNode.Free;
       aSubNode.Free;

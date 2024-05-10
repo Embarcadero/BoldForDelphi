@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldIsoDateTime;
@@ -32,6 +32,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils;
 
 var
@@ -58,18 +60,18 @@ const
                                         31, 31, 30, 31, 30, 31);
 begin
   if not MatchPattern('####-##-##', s) then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. Should be YYYY-MM-DD', [s]);
+    raise EBold.CreateFmt(sInvalidDateFormatFormat, [s]);
   y := StrToInt(copy(s, 1, 4));
   m := StrToInt(copy(s, 6, 2));
   if m > 12 then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. month > 12', [s]);
+    raise EBold.CreateFmt(sInvalidDateFormatLargeMonth, [s]);
   if m < 1 then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. month < 1', [s]);
+    raise EBold.CreateFmt(sInvalidDateFormatSmallMonth, [s]);
   d := StrToInt(copy(s, 9, 2));
   if d < 1 then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. date < 1', [s]);
+    raise EBold.CreateFmt(sInvalidDateFormatSmallDay, [s]);
   if d > dayspermonth[m] then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. there is only %d days in month %d', [s, daysPerMonth[m], m]);
+    raise EBold.CreateFmt(sInvalidDateFormatBadDay, [s, daysPerMonth[m], m]);
   result := EncodeDate(y, m, d);
 end;
 
@@ -79,7 +81,7 @@ begin
     and not matchPattern('####-##-## ##:##:##', s)
     and not matchPattern('####-##-## ##:##:##:###', s)
     and not matchPattern('####-##-##T##:##:##:###', s) then
-    raise EBold.CreateFmt('ParseISODateTime: Invalid datatime format %s. Should be YYYY-MM-DD HH:MM[:SS][:ZZZ]', [s]);
+    raise EBold.CreateFmt(sInvalidDateTimeFormat, [s]);
   result := ParseIsoDate(copy(s, 1, 10)) + ParseIsoTime(copy(s, 12, MaxInt));
 end;
 
@@ -91,18 +93,17 @@ begin
     and not MatchPattern('##:##:##.###', str)
     and not MatchPattern('##:##:##', str)
     and not MatchPattern('##:##', str) then
-    raise EBold.CreateFmt('ParseISOTime: Invalid time format %s. Should be HH:MM[:SS:ZZZ]', [str]);
+    raise EBold.CreateFmt(sInvalidTimeFormat, [str]);
   h := StrToInt(copy(str, 1, 2));
   if h > 23 then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. h > 23', [str]);
+    raise EBold.CreateFmt(sInvalidTimeFormatLargeHour, [str]);
   m := StrToInt(copy(str, 4, 2));
   if m > 59 then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. m > 59', [str]);
+    raise EBold.CreateFmt(sInvalidTimeFormatLargeMinute, [str]);
   s := StrToInt(copy(str, 7, 2));
   if s > 59 then
-    raise EBold.CreateFmt('ParseISODate: Invalid date format %s. s > 59', [str]);
-  z := StrToIntDef(copy(str, 10, 3),0);
-  result := EncodeTime(h, m, s, z);
+    raise EBold.CreateFmt(sInvalidTimeFormatLargeSecond, [str]);
+  result := EncodeTime(h, m, s, 0);
 end;
 
 function AsISODateTime(d: TDateTime): string;

@@ -1,4 +1,11 @@
 
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelMOFAdapters;
@@ -13,7 +20,7 @@ uses
   BoldSystem,
   BoldAttributes,
   BoldUMLXMILink,
-  Bold_MSXML_TLB,
+  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldUMLModel;
 
 type
@@ -254,6 +261,7 @@ implementation
 
 uses
   SysUtils,
+  BoldRev,
   BoldDefs,
   BoldUMLXMICommon,
   BoldUMLTypes;
@@ -1086,5 +1094,6 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldUMLModelMOFAdapters.pas $ $Revision: 8 $ $Date: 02-09-24 14:37 $');
 
 end.

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldExternalPersistenceHandlesReg;
@@ -12,23 +12,23 @@ implementation
 {$R BoldExternalPersistenceHandles.res}
 
 uses
-  DesignIntf,
-  DesignEditors,
-  TypInfo,
+  Classes,
   Controls,
+  DesignEditors,
+  DesignIntf,
+  SysUtils,
+  TypInfo,
+
+  BoldCoreConsts,
   BoldMeta,
   BoldUtils,
   BoldDefs,
-  SysUtils,
-  Classes,
-
   BoldExternalPersistenceHandleSQLPropEditor,
   BoldExternalPersistenceHandleEventDriven,
   BoldExternalPersistenceControllerConfig,
   BoldExternalPersistenceHandleDataSet,
   BoldExternalPersistenceHandleSQL,
   BoldAbstractPropertyEditors,
-
   BoldIDEConsts;
 
 type
@@ -107,7 +107,7 @@ begin
   if GetComponent(0) = Designer.GetRoot then
   begin
     Result := Designer.GetRootClassName;
-    if (Result <> '') and (Result[1] = 'T') then
+    if (Result <> '') and (Result[1] = 'T') then // do not localize
       Delete(Result, 1, 1);
   end
   else
@@ -121,7 +121,7 @@ begin
         Delete(Result, I, 1);
   end;
   if Result = '' then
-    raise Exception.Create('Can not create name for eventhandler. Assign an expressionname for the config-item first');
+    raise Exception.Create(sCannotCreateNameNow);
   Result := Result + GetTrimmedEventName;
 end;
 
@@ -146,7 +146,7 @@ end;
 
 procedure TBoldExternalPersistenceHandleEditor.EditConfig(const PropertyEditor: IProperty);
 begin
-  if SameText(PropertyEditor.GetName, 'Config') then
+  if SameText(PropertyEditor.GetName, 'Config') then // do not localize
     PropertyEditor.Edit;
 end;
 
@@ -160,7 +160,7 @@ end;
 function TBoldExternalPersistenceHandleEditor.GetVerb(Index: Integer): string;
 begin
   case Index of
-    0: result := 'Edit configuration';
+    0: result := sEditConfiguration;
   end;
 end;
 
@@ -181,7 +181,7 @@ begin
   Handle := GetComponent(0) as TBoldExternalPersistenceHandleSQL;
 
   if not Assigned(Handle.BoldModel) then
-    raise Exception.Create('BoldModel is not assigned!');
+    raise Exception.Create(sBoldModelNotAssigned);
 
   Form := TBoldExternalPersistenceHandleSQLPropEditorForm.Create(nil);
   Form.Initialize(Handle.BoldModel.MoldModel, Handle.ClassesToHandle);

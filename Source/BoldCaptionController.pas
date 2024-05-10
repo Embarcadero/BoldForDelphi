@@ -23,6 +23,7 @@ type
   TBoldCaptionController = class;
 
   {---TBoldCaptionController---}
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldCustomCaptionController = class(TComponent, IBoldOCLComponent)
   private
     { Private declarations }

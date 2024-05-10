@@ -131,7 +131,7 @@ function MakeName( Name : AYaccStackElement; Offs : integer ) : AYaccStackElemen
 begin
   result := AYaccStackElement.CreateOffs( Offs );
   {$IFDEF BOLD_UNICODE}
-  Result.Name := BoldSharedStringManager.GetSharedString(string(AnsiString(Name.Lexeme.Buffer)));
+  Result.Name := BoldSharedStringManager.GetSharedString(Name.Lexeme.Buffer);
   if CharInSet(Result.Name[1], ['A'..'Z']) then Result.NameIsType := true;
   {$ELSE}
   Result.Name := BoldSharedStringManager.GetSharedString(Name.Lexeme.Buffer);
@@ -144,9 +144,9 @@ begin
   result := AYaccStackElement.CreateOffs( Offs );
   if assigned( varName ) then
     {$IFDEF BOLD_UNICODE}
-    result.Name := BoldSharedStringManager.GetSharedString(string(AnsiString(VarName.Lexeme.Buffer)));
+    result.Name := BoldSharedStringManager.GetSharedString(VarName.Lexeme.Buffer);
     {$ELSE}
-    result.Name := BoldSharedStringManager.GetSharedString(string(AnsiString(VarName.Lexeme.Buffer)));
+    result.Name := BoldSharedStringManager.GetSharedString(VarName.Lexeme.Buffer);
     {$ENDIF}
   if assigned( varType ) then begin
     result.DeclaratorTypeList := VarType.List;
@@ -184,7 +184,7 @@ end;
 function MakeSimpleEnumType( Enumeration : AYaccStackElement; Offs : integer ) : AYaccStackElement;
 begin
   raise EBoldOCLAbort.CreateFmt( boeUserSpecifiedEnumsUnImpl, [offs]);
-  result := AYaccStackElement.CreateOffs( offs );
+//  result := AYaccStackElement.CreateOffs( offs );
 end;
 
 function MakeSimplePath( Path : AYaccStackElement; Offs : integer ) : AYaccStackElement;
@@ -215,11 +215,7 @@ begin
 //  value := TBAString.Create(nil);
   if assigned( Str ) then
   begin
-    {$IFDEF BOLD_UNICODE}
-    s := string(AnsiString(Str.Lexeme.Buffer));
-    {$ELSE}
     s := Str.Lexeme.Buffer;
-    {$ENDIF}
     s := StringReplace(s, '\''', '''', [rfReplaceAll]);
     s := StringReplace(s, '\\', '\', [rfReplaceAll]);
     Node.StrValue := BoldSharedStringManager.GetSharedString(s);
@@ -239,11 +235,7 @@ begin
   node := TBoldOCLIntLiteral.create;
 //  value := TBAInteger.Create(nil);
   try
-    {$IFDEF BOLD_UNICODE}
-    Node.IntValue := StrToInt( string(AnsiString(Int.Lexeme.Buffer)) );
-    {$ELSE}
-    Node.IntValue := StrToInt( Int.Lexeme.Buffer );
-    {$ENDIF}
+    Node.IntValue := StrToInt(Int.Lexeme.Buffer);
 //    value.MakeImmutable;
   except
     on eConvertError do
@@ -265,7 +257,7 @@ begin
   result := AYaccStackElement.CreateOffs( offs );
   node := TBoldOCLDateLiteral.create;
   {$IFDEF BOLD_UNICODE}
-  sDate := string(AnsiString(Date.lexeme.buffer));
+  sDate := Date.lexeme.buffer;
   y := StrToInt(copy(sDate, 2, 4));
   m := StrToInt(copy(sDate, 7, 2));
   d := StrToInt(copy(sDate, 10, 2));
@@ -295,7 +287,7 @@ begin
   result := AYaccStackElement.CreateOffs( offs );
   node := TBoldOCLTimeLiteral.create;
   {$IFDEF BOLD_UNICODE}
-  sTime := string(AnsiString(Time.lexeme.buffer));
+  sTime := Time.lexeme.buffer;
   h := StrToInt(copy(sTime, 2, 2));
   m := StrToInt(copy(sTime, 5, 2));
   s := StrToIntDef(copy(sTime, 8, 2), 0);
@@ -326,11 +318,7 @@ begin
   node := TBoldOCLNumericLiteral.create;
 //  value := TBAFloat.Create(nil);
   try
-    {$IFDEF BOLD_UNICODE}
-    TempFloatString := string(AnsiString(Float.Lexeme.Buffer));
-    {$ELSE}
     TempFloatString := Float.Lexeme.Buffer;
-    {$ENDIF}
     if {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator <> '.' then
     begin
       TempFloatString[POs('.', TempFloatString)] := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DecimalSeparator;

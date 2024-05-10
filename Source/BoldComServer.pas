@@ -1,6 +1,5 @@
 
-{ Global compiler directives }
-{$include bold.inc}
+{$Include Bold.inc}
 
 unit BoldComServer;
 
@@ -226,6 +225,7 @@ implementation
 
 uses
   SysUtils,
+  BoldRev,
   BoldIndex,
   BoldHashIndexes,
   BoldComUtils,
@@ -462,7 +462,7 @@ begin
   FConnected := False;
   FActive := False;
   TBoldComServer.Instance.RemoveConnection(Self);
-  BoldEventSenderThreadList.DisconnectClient(Cardinal(FClientInterface)); // does not compile in x64 !!!
+  BoldEventSenderThreadList.DisconnectClient(Cardinal(FClientInterface));
 //  if Assigned(FSenderThread) then
 //  begin
 //    FSenderThread.Terminate;
@@ -1051,6 +1051,7 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldComServer.pas $ $Revision: 25 $ $Date: 02-07-17 7:04 $');
 
 finalization
   FreeAndNil(G_BoldComServer); //CHANGED

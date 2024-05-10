@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRose98TaggedValues;
@@ -33,11 +33,12 @@ type
 
 function Rose98TaggedValueList: TBoldTaggedValuePerClassList;
 
-
 implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefaultTaggedValues,
   BoldDefs,
   BoldUtils,
@@ -102,7 +103,7 @@ begin
     ckAddOnly:
       Result := TV_CHANGEABILITY_ADDONLY;
     else
-      raise EBold.CreateFmt('%s.ChangeableKindToString: Unknown TChangeableKind', [ClassName]);
+      raise EBold.CreateFmt(sWrongValue, [ClassName, 'ChangeableKindToString']); // do not localize
   end;
 end;
 

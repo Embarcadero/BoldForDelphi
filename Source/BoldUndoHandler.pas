@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUndoHandler;
@@ -16,7 +16,6 @@ uses
   BoldSystemRT,
   Classes;
 
-
 type
   {forward declarations}
   TBoldUndoHandler = class;
@@ -26,42 +25,53 @@ type
   TBoldUndoBlock = class(TBoldNonRefCountedObject, IBoldUndoBlock)
   private
     FName: string;
+    FCaption: string;
     FValueSpace: TBoldFreeStandingValueSpace;
+    FUndoBlockList: TBoldUndoBlockList;
     FContainsChanges: Boolean;
     FCreated: TDateTime;
-    procedure GetLinksToObject(const System: TBoldSystem; const ObjectId: TBoldObjectId; const OwnIndexInLinkClass: integer;
-      const SingleLinkClassTypeInfo: TBoldClassTypeInfo; SingleLinkIds: TBoldObjectIdList);
-    procedure AllIdsInClass(const System: TBoldSystem; const ClassTypeInfo: TBoldClassTypeInfo; IdList: TBoldObjectIdList);
+//  Not used currently
+//    procedure GetLinksToObject(const ObjectId: TBoldObjectId; const OwnIndexInLinkClass: integer;
+//      const SingleLinkClassTypeInfo: TBoldClassTypeInfo; SingleLinkIds: TBoldObjectIdList);
+//    procedure AllIdsInClass(const ClassTypeInfo: TBoldClassTypeInfo; IdList: TBoldObjectIdList);
     function GetFSValueSpace: TBoldFreeStandingValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetFSValueSpace(const Value: TBoldFreeStandingValueSpace); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetValueSpace: IBoldValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetContainsChanges: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetContent: String;
+    function GetCaption: String;
     function GetCreated: TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIndex: integer;
+    function GetChangesForObject(ABoldObjectID: TBoldObjectID; AddHeader: boolean): string;
+    function GetObjectCount: integer;
   protected
     function HasObjectContentsForAnyObjectInList(const ObjectList: TBoldObjectList): Boolean;
     procedure HandleMember(const ObjectContents: IBoldObjectContents; MemberIndex: integer; const MemberValue: IBoldValue);
     procedure HandleObject(const Obj: IBoldObjectContents; RegardAsExisting: Boolean);
     function IsDependantOn(Block: TBoldUndoBlock): Boolean;
   public
-    constructor CreateNamedBlock(const BlockName: string; const FSVAlueSpace: TBoldFreeStandingValueSpace = nil);
+    constructor CreateNamedBlock(AUndoBlockList: TBoldUndoBlockList; const BlockName: string; const ACaption: string; const FSVAlueSpace: TBoldFreeStandingValueSpace = nil);
     destructor Destroy; override;
     procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure Merge(Block: TBoldUndoBlock; const Overwrite: Boolean);
     function ValueExists(const ObjectID: TBoldObjectId; const MemberIndex: integer): Boolean; overload;
     function ValueExists(const ObjectID: TBoldObjectID; const MemberIndex: integer; out Value: IBoldValue): Boolean; overload;
-    procedure AddObjectsToList(const System: TBoldSystem; const AList: TBoldList);
+    procedure AddObjectsToList(const AList: TBoldList);
     property BlockName: string read FName;
-    property FSValueSpace: TBoldFreeStandingValueSpace read GetFSValueSpace write setFSVAlueSpace;
+    property FSValueSpace: TBoldFreeStandingValueSpace read GetFSValueSpace write SetFSVAlueSpace;
     property ValueSpace: IBoldValueSpace read GetValueSpace;
     property ContainsChanges: Boolean read GetContainsChanges;
+    property ObjectCount: integer read GetObjectCount;
     property Created: TDateTime read GetCreated;
     property Content: String read GetContent;
+    property Caption: String read GetCaption;
+    property Index: Integer read GetIndex;
   end;
 
   TBoldUndoBlockList = class(TBoldNonRefCountedObject, IBoldUndoList)
   private
+    fBoldUndoHandler: TBoldUndoHandler;
     FList: TStringList;
     function GetBlockByIndex(Index: integer): TBoldUndoBlock;
     function GetBlockByName(const BlockName: string): TBoldUndoBlock;
@@ -75,7 +85,7 @@ type
     function GetContainsChanges: Boolean;
   protected
     procedure Clear;
-    function AddBlock(const BlockName: string; const FSVAlueSpace: TBoldFreeStandingValueSpace = nil): TBoldUndoBlock;
+    function AddBlock(var BlockName: string; const ACaption: string; const FSVAlueSpace: TBoldFreeStandingValueSpace = nil): TBoldUndoBlock;
     property AssertedBlockByName[const BlockName: string]: TBoldUndoBlock read GetAssertedBlockByName;
     property AssertedBlockByIndex[Index: integer]: TBoldUndoBlock read GetAssertedBlockByIndex;
     function AssertedIndexOf(const BlockName: string): integer;
@@ -84,7 +94,7 @@ type
     function GetIsEmpty: boolean;
   public
     procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList);
-    constructor Create;
+    constructor Create(ABoldUndoHandler: TBoldUndoHandler);
     destructor Destroy; override;
     procedure MoveBlock(CurIndex, NewIndex: integer);
     function IndexOf(const BlockName: string): integer; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
@@ -100,6 +110,7 @@ type
     function CanMoveToTop(CurIndex: integer): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure GetDependantBlocks(const BlockName: string; DependantBlocks: TList);
     procedure MergeAll;
+    function GetFirstNonEmptyBlock: TBoldUndoBlock;
     property Count: integer read GetCount;
     property CurrentBlock: TBoldUndoBlock read GetCurrentBlock;
     property ContainsChanges: Boolean read GetContainsChanges;
@@ -112,6 +123,7 @@ type
     FRedoBlocks: TBoldUndoBlockList;
     fUndoState: TBoldUndoState;
     fEnabled: Boolean;
+    fReuseEmptyBlocks: boolean;
 {    function GetFetchedValueOfIndirectMultiLink(const Member: TBoldMember; const OwningObjectId: TBoldObjectId;
        const RoleRTInfo: TBoldRoleRTInfo): TBoldFreeStandingValue;
     function GetFetchedValueOfDirectMultiLink (const Member: TBoldMember; const OwningObjectId: TBoldObjectId;
@@ -124,17 +136,19 @@ type
     function GetRedoList: IBoldUndoList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function CanUndoBlock(const BlockName: string): Boolean;
     function CanRedoBlock(const BlockName: string):Boolean;
-    function GetEnabled: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetEnabled(value: Boolean);
     function GetCurrentUndoBlock: TBoldUndoBlock; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetIsEmpty: boolean;
     function GetCurrentUndoBlockHasChanges: boolean;
+    function GetCurrentUndoBlockCaption: string;
+    procedure ClearCurrentUndoBlock;
+    function GetUniqueBlockName: string;
+  protected
+    function GetEnabled: Boolean; override;
+    procedure SetEnabled(value: Boolean); override;
   public
     constructor Create(System: TBoldSystem); override;
     destructor Destroy; override;
-    function GetUniqueBlockName(const SuggestedName: string): string;
-    procedure SetNamedCheckPoint(const CheckPointName: string);
-    procedure SetCheckPoint;
+    function SetCheckPoint(const ACaption: string = ''): string;
     procedure HandleMember(const ObjectContents: IBoldObjectContents; MemberIndex: integer; const MemberValue: IBoldValue); overload; override;
     procedure HandleObject(const Obj: IBoldObjectContents; RegardAsExisting: Boolean); override;
     procedure UndoBlock(const BlockName: string);
@@ -147,30 +161,36 @@ type
     property UndoBlocks: TBoldUndoBlockList read fUndoBlocks;
     property RedoBlocks: TBoldUndoBlockList read fRedoBlocks;
     property UndoState: TBoldUndoState read fUndoState write fUndoState;
-    property Enabled: Boolean read GetEnabled write SetEnabled;
     property CurrentUndoBlock: TBoldUndoBlock read GetCurrentUndoBlock;
+    property ReuseEmptyBlocks: boolean read fReuseEmptyBlocks write fReuseEmptyBlocks;
+    property CurrentUndoBlockCaption: string read GetCurrentUndoBlockCaption;
   end;
 
 implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldGuard,
-  BoldDomainElement;
+  BoldDomainElement,
+  BoldSubscription;
 
 const
   cUnNamedBlockName = 'Undo';
 
 { TBoldUndoBlock }
 
-constructor TBoldUndoBlock.CreateNamedBlock(const BlockName: string; const FSVAlueSpace: TBoldFreeStandingValueSpace);
+constructor TBoldUndoBlock.CreateNamedBlock(AUndoBlockList: TBoldUndoBlockList; const BlockName: string; const ACaption: string; const FSVAlueSpace: TBoldFreeStandingValueSpace);
 begin
   inherited Create;
+  FUndoBlockList := AUndoBlockList;
   FContainsChanges := false;
   FValueSpace := FSVAlueSpace;
   FCreated := now;
   FName := {FormatDateTime('hh:nn:ss', FCreated) + ' - ' + }BlockName;
+  fCaption := ACaption;
 end;
 
 function TBoldUndoBlock.GetFSValueSpace: TBoldFreeStandingValueSpace;
@@ -178,6 +198,11 @@ begin
   if not Assigned(FValueSpace) then
     FValueSpace := TBoldFreeStandingValueSpace.Create;
   Result := FValueSpace;
+end;
+
+function TBoldUndoBlock.GetIndex: integer;
+begin
+  result := FUndoBlockList.IndexOf(self);
 end;
 
 function TBoldUndoBlock.IsDependantOn(
@@ -261,7 +286,7 @@ begin
 end;
 
 function TBoldUndoBlock.ValueExists(const ObjectID: TBoldObjectId;
-  const MemberIndex: integer): Boolean; 
+  const MemberIndex: integer): Boolean;
 var
   Value: IBoldValue;
 begin
@@ -275,6 +300,11 @@ var
 begin
   ObjectId := ObjectContents.ObjectId;
   FSObjectContents := FSValueSpace.GetFSObjectContentsByObjectId(ObjectId);
+  if not Assigned(FSObjectContents) then
+  begin
+    HandleObject(ObjectContents, true);
+    FSObjectContents := FSValueSpace.GetFSObjectContentsByObjectId(ObjectId);
+  end;
   if not Assigned(FSObjectContents) or (MemberIndex >= FSObjectContents.memberCount) or not Assigned(FSObjectContents.ValueByIndex[MemberIndex]) then
     begin
       FContainsChanges := true;
@@ -303,56 +333,60 @@ begin
   end;
 end;
 
-procedure TBoldUndoBlock.GetLinksToObject(const System: TBoldSystem; const ObjectId: TBoldObjectId; const OwnIndexInLinkClass: integer;
-  const SingleLinkClassTypeInfo: TBoldClassTypeInfo; SingleLinkIds: TBoldObjectIdList);
-var
-  ObjectIds: TBoldObjectIdList;
-  i: integer;
-  LinkValue: IBoldValue;
-begin
-  ObjectIds := TBoldObjectIdList.Create;
-  try
-    AllIdsInClass(System, SingleLinkClassTypeInfo, ObjectIds);
-    for i:= 0 to ObjectIds.Count - 1 do
-      if ValueExists(ObjectIds[i], OwnIndexInLinkClass, LinkValue) and
-        Assigned((LinkValue as IBoldObjectIdRef).Id) and
-        ((LinkValue as IBoldObjectIdRef).Id.IsEqual[ObjectId]) then
-           SingleLinkIds.Add(ObjectIds[i].Clone);
-  except
-    FreeAndNil(ObjectIds);
-  end;
-end;
+// Not used currently
+//procedure TBoldUndoBlock.GetLinksToObject(const ObjectId: TBoldObjectId; const OwnIndexInLinkClass: integer;
+//  const SingleLinkClassTypeInfo: TBoldClassTypeInfo; SingleLinkIds: TBoldObjectIdList);
+//var
+//  ObjectIds: TBoldObjectIdList;
+//  i: integer;
+//  LinkValue: IBoldValue;
+//begin
+//  ObjectIds := TBoldObjectIdList.Create;
+//  try
+//    AllIdsInClass(SingleLinkClassTypeInfo, ObjectIds);
+//    for i:= 0 to ObjectIds.Count - 1 do
+//      if ValueExists(ObjectIds[i], OwnIndexInLinkClass, LinkValue) and
+//        Assigned((LinkValue as IBoldObjectIdRef).Id) and
+//        ((LinkValue as IBoldObjectIdRef).Id.IsEqual[ObjectId]) then
+//           SingleLinkIds.Add(ObjectIds[i].Clone);
+//  except
+//    FreeAndNil(ObjectIds);
+//  end;
+//end;
 
-procedure TBoldUndoBlock.AddObjectsToList(const System: TBoldSystem;
-  const AList: TBoldList);
+procedure TBoldUndoBlock.AddObjectsToList(const AList: TBoldList);
 var
   i: integer;
   ObjectIds: TBoldObjectIdList;
+  Locators: TBoldSystemLocatorList;
   G: IBoldGuard;
 begin
   G := TBoldGuard.Create(ObjectIds);
   ObjectIds := TBoldObjectIdList.Create;
   FSValueSpace.AllObjectIds(ObjectIds, false);
+  Locators := FUndoBlockList.fBoldUndoHandler.System.Locators;
   for i:= 0 to ObjectIds.Count - 1 do
-    AList.Add(System.Locators.ObjectByID[ObjectIds[i]]);
+    AList.Add(Locators.ObjectByID[ObjectIds[i]]);
 end;
 
-procedure TBoldUndoBlock.AllIdsInClass( const System: TBoldSystem;
-  const ClassTypeInfo: TBoldClassTypeInfo; IdList: TBoldObjectIdList);
-var
-  i: integer;
-  ObjectIds: TBoldObjectIdList;
-  G: IBoldGuard;
-begin
-  G := TBoldGuard.Create(ObjectIds);
-  ObjectIds := TBoldObjectIdList.Create;
-  FSValueSpace.AllObjectIds(ObjectIds, True);
-  for i:= 0 to ObjectIds.Count - 1 do
-  begin
-    if (System.Locators.ObjectByID[ObjectIds[i]].BoldClassTypeInfo = ClassTypeInfo) then
-      IdList.Add(ObjectIds[i]);
-  end;
-end;
+// Not used currently
+//procedure TBoldUndoBlock.AllIdsInClass(const ClassTypeInfo: TBoldClassTypeInfo; IdList: TBoldObjectIdList);
+//var
+//  i: integer;
+//  ObjectIds: TBoldObjectIdList;
+//  Locators: TBoldSystemLocatorList;
+//  G: IBoldGuard;
+//begin
+//  G := TBoldGuard.Create(ObjectIds);
+//  ObjectIds := TBoldObjectIdList.Create;
+//  FSValueSpace.AllObjectIds(ObjectIds, True);
+//  Locators := FUndoBlockList.fBoldUndoHandler.System.Locators;
+//  for i:= 0 to ObjectIds.Count - 1 do
+//  begin
+//    if (Locators.ObjectByID[ObjectIds[i]].BoldClassTypeInfo = ClassTypeInfo) then
+//      IdList.Add(ObjectIds[i]);
+//  end;
+//end;
 
 procedure TBoldUndoBlock.HandleObject(const Obj: IBoldObjectContents; RegardAsExisting: Boolean);
 var
@@ -398,9 +432,21 @@ begin
   Result := fName;
 end;
 
+function TBoldUndoBlock.GetObjectCount: integer;
+begin
+  result := FSValueSpace.IdCount;
+end;
+
 function TBoldUndoBlock.GetValueSpace: IBoldValueSpace;
 begin
   result := FSValueSpace as IBoldValueSpace;
+end;
+
+function TBoldUndoBlock.GetCaption: String;
+begin
+  result := fCaption;
+  if (result = '') and ContainsChanges then
+    result := GetChangesForObject(FValueSpace.GetAnyObjectId, false);
 end;
 
 function TBoldUndoBlock.GetContainsChanges: Boolean;
@@ -410,19 +456,127 @@ end;
 
 function TBoldUndoBlock.GetContent: String;
 var
-  i: integer;
-  List: TBoldObjectList;
+  sl: TStringList;
+  ObjectIds: TBoldObjectIdList;
+  G: IBoldGuard;
+  I: Integer;
+  s: string;
 begin
   result := '';
+  G := TBoldGuard.Create(ObjectIds, sl);
+  ObjectIds := TBoldObjectIdList.Create;
+  sl := TStringList.Create;
   if FContainsChanges then
   begin
-    List := TBoldObjectList.Create;
-    try
-      AddObjectsToList(TBoldSystem.DefaultSystem, List);
-      result := List.AsDebugCommaText();
-    finally
-      List.free;
+    FSValueSpace.AllObjectIds(ObjectIds, false);
+    for I := 0 to ObjectIDs.Count -1 do
+    begin
+      s := GetChangesForObject(ObjectIDs[i], true);
+      if s <> '' then
+        sl.Add(s);
     end;
+    result := sl.Text;
+  end;
+end;
+
+function TBoldUndoBlock.GetChangesForObject(ABoldObjectID: TBoldObjectId; AddHeader: boolean): string;
+var
+  vBoldObjectLocator: TBoldObjectLocator;
+  vBoldObject: TBoldObject;
+  vObjectContents: TBoldFreeStandingObjectContents;
+  vClassType: TBoldClassTypeInfo;
+  vBoldValue: IBoldValue;
+  vMember: TBoldMember;
+  i: integer;
+  sl: TStringList;
+  vBoldVariantReadable: IBoldVariantReadable;
+  vBoldObjectIdRef: IBoldObjectIdRef;
+  vBoldObjectIdRefPair: IBoldObjectIdRefPair;
+  vBoldObjectIdListRef: IBoldObjectIdListRef;
+  vBoldFreeStandingIdListPair: IBoldFreeStandingIdListPair;
+  vObjectAsString : string;
+  vValueAsString: string;
+  vMemberAsString: string;
+
+  function IdToString(AId: TBoldObjectId): string;
+  begin
+    if Assigned(AId) then
+      result := aID.AsString
+    else
+     result := 'NIL';
+  end;
+begin
+  result := '';
+  sl := TStringList.Create;
+  try
+    vObjectContents := FValueSpace.GetFSObjectContentsByObjectId(ABoldObjectID);
+    vBoldObjectLocator := FUndoBlockList.fBoldUndoHandler.System.Locators.LocatorByID[ABoldObjectID];
+    vClassType := FUndoBlockList.fBoldUndoHandler.System.GetClassTypeForID(ABoldObjectId);
+    if not Assigned(vBoldObjectLocator) then
+    begin
+      Sl.Add(Format('[%s]:%s deleted', [ABoldObjectID.AsString, vClassType.ExpressionName]));
+    end
+    else
+    if not Assigned(vBoldObjectLocator.BoldObject) then
+    begin
+      Sl.Add(Format('[%s]:%s deleted', [ABoldObjectID.AsString, vClassType.ExpressionName]));
+    end
+    else
+    begin
+      vBoldObject := vBoldObjectLocator.BoldObject;
+      vObjectAsString := vBoldObject.DisplayName;
+      if (vObjectContents.BoldExistenceState = besNotCreated) then
+        vObjectAsString := vObjectAsString + ' Created';
+      for i := 0 to vObjectContents.MemberCount - 1 do
+      begin
+        vBoldValue := vObjectContents.ValueByIndex[i];
+        if Assigned(vBoldValue) then
+        begin
+          vMember := vBoldObject.BoldMembers[i];
+          if vMember.IsEqualToValue(vBoldValue) then
+            continue;
+          vMemberAsString := vMember.AsString;
+          if Supports(vBoldValue, IBoldVariantReadable, vBoldVariantReadable) then
+            vValueAsString := vBoldVariantReadable.asString
+          else
+          if Supports(vBoldValue, IBoldObjectIdRef, vBoldObjectIdRef) then
+          begin
+            vValueAsString := IdToString(vBoldObjectIdRef.Id);
+            if Assigned((vMember as TBoldObjectReference).Locator) then
+              vMemberAsString := (vMember as TBoldObjectReference).Locator.BoldObjectID.AsString
+            else
+              vMemberAsString := 'NIL';
+          end
+          else
+          if Supports(vBoldValue, IBoldObjectIdRefPair, vBoldObjectIdRefPair) then
+          begin
+            vValueAsString := IdToString(vBoldObjectIdRefPair.Id1) + ',' + IdToString(vBoldObjectIdRefPair.Id2);
+          end
+          else
+          if Supports(vBoldValue, IBoldObjectIdListRef, vBoldObjectIdListRef) then
+          begin
+            vValueAsString := IntToStr(vBoldObjectIdListRef.Count);
+            vMemberAsString := (vMember as TBoldObjectList).AsString;
+          end
+          else
+          if Supports(vBoldValue, IBoldFreeStandingIdListPair, vBoldFreeStandingIdListPair) then
+          begin
+            Assert(false, 'Support for IBoldFreeStandingIdListPair not implemented yet.');//vBoldFreeStandingIdListPair.
+          end
+          else
+            Assert(false);
+          if AddHeader then
+            Sl.Add(Format('  %s: ''%s''->''%s''', [vMember.BoldMemberRTInfo.ExpressionName, vValueAsString, vMemberAsString]))
+          else
+            Sl.Add(Format('%s: ''%s''->''%s''', [vMember.BoldMemberRTInfo.DisplayName, vValueAsString, vMemberAsString]));
+        end;
+      end;
+//      if AddHeader and (sl.Count>0) then
+      Sl.Insert(0, vObjectAsString{+#13#10});
+    end;
+  finally
+    result := Trim(sl.Text);
+    sl.free;
   end;
 end;
 
@@ -442,9 +596,10 @@ end;
 constructor TBoldUndoHandler.Create(System: TBoldSystem);
 begin
   inherited;
-  FUndoBlocks := TBoldUndoBlockList.Create;
-  FRedoBlocks := TBoldUndoBlockList.Create;
+  FUndoBlocks := TBoldUndoBlockList.Create(self);
+  FRedoBlocks := TBoldUndoBlockList.Create(self);
   fUndoState := busNormal;
+  ReuseEmptyBlocks := true; // default Bold behavior
   Enabled := false;
 end;
 
@@ -527,13 +682,13 @@ end;
 procedure TBoldUndoHandler.UndoBlock(const BlockName: string);
 begin
   if System.InTransaction then
-    raise EBold.CreateFmt('%s.UndoBlock: the Undo-mechanism can only be invoked outside a transaction', [ClassName]);
+    raise EBold.CreateFmt(sCannotUndoInTransaction, [ClassName, 'UndoBlock']);
   UndoState := busUndoing;
   try
     DoUndoInTransaction(BlockName, UndoBlocks, RedoBlocks);
-    SendExtendedEvent(self, beUndoBlock, [BlockName]);
   finally
     UndoState := busNormal;
+    SendExtendedEvent(self, beUndoBlock, [BlockName]);
   end;
 end;
 
@@ -541,26 +696,34 @@ end;
 procedure TBoldUndoHandler.RedoBlock(const BlockName: string);
 begin
   if System.InTransaction then
-    raise EBold.CreateFmt('%s.RedoBlock: the Undo-mechanism can only be invoked outside a transaction', [ClassName]);
+    raise EBold.CreateFmt(sCannotUndoInTransaction, [ClassName, 'RedoBlock']);
   UndoState := busRedoing;
   try
     DoUndoInTransaction(BlockName, RedoBlocks, UndoBlocks);
-    SendExtendedEvent(self, beRedoBlock, [BlockName]);
   finally
     UndoState := busNormal;
+    SendExtendedEvent(self, beRedoBlock, [BlockName]);
   end;
 end;
 
 procedure TBoldUndoHandler.RedoLatest;
 begin
   if (RedoBlocks.Count > 0) then
+  begin
+    if not CurrentUndoBlock.ContainsChanges then
+      CurrentUndoBlock.FUndoBlockList.RemoveBlock(CurrentUndoBlock.FName);
     RedoBlock(RedoBlocks.CurrentBlock.BlockName);
+  end;
 end;
 
 procedure TBoldUndoHandler.UndoLatest;
 begin
-  if (UndoBlocks.Count > 0) then
-    UndoBlock(CurrentUndoBlock.BlockName);
+  if (UndoBlocks.Count > 0) and (UndoBlocks.GetFirstNonEmptyBlock <> nil) then
+  begin
+    if not CurrentUndoBlock.ContainsChanges then
+      CurrentUndoBlock.FUndoBlockList.RemoveBlock(CurrentUndoBlock.FName);
+    UndoBlock(UndoBlocks.GetFirstNonEmptyBlock.FName {CurrentUndoBlock.BlockName});
+  end;
 end;
 
 procedure TBoldUndoHandler.HandleObject(const Obj: IBoldObjectContents; RegardAsExisting: Boolean);
@@ -571,16 +734,17 @@ begin
     CurrentUndoBlock.HandleObject(Obj, RegardAsExisting);
   end;
 end;
+
 procedure TBoldUndoHandler.DoUndo(UnDoValueSpace: TBoldFreeStandingValueSpace;
                                    RedoValueSpace: TBoldFreeStandingValueSpace);
 type
   TObjectAction=(oaDelete, oaExisingPersistent, oaNewPersistent, oaTransient, oaUse);
 var
   ObjectIds: TBoldObjectIdList;
+  ModifiedMembers: TBoldMemberList;
 
     procedure GetInnerLinkIndices(BoldObject: TBoldObject; var MemberIndex1, MemberIndex2: Integer);
   var
-    i: integer;
     RoleRTInfo: TBoldRoleRTInfo;
   begin
     MemberIndex1 := -1;
@@ -629,11 +793,19 @@ var
         Member0.AsIBoldValue[bdepUnDo].AssignContent(Value0);
         Member1.AsIBoldValue[bdepContents].AssignContent(SavIdValue);
         Member1.AsIBoldValue[bdepUnDo].AssignContent(Value1);
+        ModifiedMembers.Add(Member0);
+        ModifiedMembers.Add(Member1);
       end
       else if Assigned(Value0) then
-        Member0.AsIBoldValue[bdepUnDO].AssignContent(Value0)
+      begin
+        Member0.AsIBoldValue[bdepUnDO].AssignContent(Value0);
+        ModifiedMembers.Add(Member0);
+      end
       else if Assigned(Value1) then
+      begin
         Member1.AsIBoldValue[bdepUnDO].AssignContent(Value1);
+        ModifiedMembers.Add(Member1);
+      end;
     end
     else
     begin
@@ -641,6 +813,8 @@ var
       NilIdValue.BoldPersistenceState := bvpsCurrent;
       Member0.AsIBoldValue[bdepUnDO].AssignContent(NilIdValue);
       Member1.AsIBoldValue[bdepUnDO].AssignContent(NilIdValue);
+      ModifiedMembers.Add(Member0);
+      ModifiedMembers.Add(Member1);
     end;
     Value0 := nil;
     Value1 := nil;
@@ -662,7 +836,10 @@ var
       begin
         BoldMember := BoldObject.BoldMembers[i];
         if BoldMember is TBoldAttribute then
+        begin
           BoldMember.AsIBoldValue[bdepUndo].AssignContent(aValue);
+          ModifiedMembers.Add(BoldMember);
+        end;
       end;
     end;
   end;
@@ -682,6 +859,7 @@ var
         begin
           BoldMember := BoldObject.BoldMembers[RoleRTInfo.Index];
           BoldMember.AsIBoldValue[bDepUndo].AssignContent(aValue);
+          ModifiedMembers.Add(BoldMember);
         end;
       end;
     end;
@@ -757,14 +935,14 @@ var
         bvpsTransient:
           Result := oaTransient;
         else
-          raise EBold.create('Internal error?');
+          raise EBold.create(sInternalError);
         end;
       besNotCreated, besDeleted:
         case FSObjectContents.BoldPersistenceState of
         bvpsCurrent, bvpsModified, bvpsTransient:
           Result := oaDelete;
         else
-          raise EBold.create('Internal error?');
+          raise EBold.create(sInternalError);
        end;
      end;
    end;
@@ -779,10 +957,12 @@ var
   ClassName: string;
   G: IBoldGuard;
 begin
-  G := TBoldGuard.Create(ObjectIds);
+  G := TBoldGuard.Create(ObjectIds, ModifiedMembers);
   ObjectIds := TBoldObjectIdList.Create;
   UndoValueSpace.AllObjectIds(ObjectIds, false);
   SaveOldValues;
+  ModifiedMembers := TBoldMemberList.Create;
+  ModifiedMembers.CloneMembers := false;
   for i:= 0 to ObjectIds.Count - 1 do
   begin
     oid := ObjectIds[i];
@@ -829,6 +1009,9 @@ begin
       DeleteObject(BoldObject);
     end;
   end;
+
+  for i:= 0 to ModifiedMembers.Count - 1 do
+    ModifiedMembers[i].SendExtendedEvent(beValueInvalid, []);
 end;
 
 function TBoldUndoBlockList.IndexOf(const BlockName: string): integer;
@@ -846,20 +1029,24 @@ procedure TBoldUndoHandler.DoUndoInTransaction(BlockName: string;
 var
   aBlock: TBoldUndoBlock;
   RedoValueSpace: TBoldFreeStandingValueSpace;
+  BlockCaption: string;
   G: IBoldGuard;
 begin
   G := TBoldGuard.Create(RedoValueSpace);
   aBlock := FromList.BlockByName[BlockName];
   if Not Assigned(aBlock) then
-    raise EBold.CreateFmt('%s is not a valid blockname for this operation', [BlockName]);
+    raise EBold.CreateFmt(sInvalidBlockName, [BlockName]);
   if not FromList.CanMoveToTop(FromList.IndexOf(BlockName)) then
-    raise EBold.CreateFmt('%s Can''t be moved to top', [BlockName]);
+    raise EBold.CreateFmt(sCannotMoveToTop, [BlockName]);
+
+  BlockCaption := aBlock.Caption;
   RedoValueSpace := TBoldFreeStandingValueSpace.Create;
   System.StartTransaction;
   try
     DoUndo(aBlock.FSValueSpace, RedoValueSpace);
     FromList.InternalRemoveBlock(BlockName);
-    ToList.AddBlock(BlockName).FSValueSpace := RedoValueSpace;
+    if aBlock.ContainsChanges then  // do no transfer empty blocks
+      ToList.AddBlock(BlockName, BlockCaption).FSValueSpace := RedoValueSpace;
     RedoValueSpace := nil;
     System.CommitTransaction;
   except
@@ -882,6 +1069,13 @@ begin
   if UndoBlocks.IsEmpty then
     SetCheckPoint;
   result := UndoBlocks.CurrentBlock;
+end;
+
+function TBoldUndoHandler.GetCurrentUndoBlockCaption: string;
+begin
+  result := '';
+  if UndoBlocks.GetFirstNonEmptyBlock <> nil then
+    result := UndoBlocks.GetFirstNonEmptyBlock.Caption;
 end;
 
 function TBoldUndoHandler.GetCurrentUndoBlockHasChanges: boolean;
@@ -911,15 +1105,17 @@ begin
   Result := FUndoBlocks;
 end;
 
-function TBoldUndoHandler.GetUniqueBlockName(const SuggestedName: string): string;
+function TBoldUndoHandler.GetUniqueBlockName: string;
 var
   i: integer;
+  s: string;
 begin
-   i := 0;
-   Result := SuggestedName;
+   s := cUnNamedBlockName;
+   i := 2;
+   Result := s;
    while ((UndoBlocks.IndexOf(Result) <> -1) or (RedoBlocks.IndexOf(Result) <> -1)) do
    begin
-     Result := Format('%s %d', [SuggestedName, i]);
+     Result := Format('%s %d', [s, i]);
      inc(i);
    end;
 end;
@@ -937,27 +1133,31 @@ begin
   RedoBlocks.ApplytranslationList(IdTranslationList);
 end;
 
-procedure TBoldUndoHandler.SetNamedCheckPoint(const CheckPointName: string);
+function TBoldUndoHandler.SetCheckPoint(const ACaption: string): string;
 begin
-  if Assigned(UndoBlocks.GetBlockByName(CheckPointName)) or Assigned(RedoBlocks.GetBlockByName(CheckPointName)) then
-    raise EBold.CreateFmt('%s.SetCheckPoint: An Undo/Redo block named %s is already defined', [Classname, CheckPointName])
-  else if (not UndoBlocks.IsEmpty and not UndoBlocks.CurrentBlock.ContainsChanges) then
-    UndoBlocks.RenameBlock(CurrentUndoBlock.BlockName, CheckPointName) // reuse/rename if current block is empty
+  if ReuseEmptyBlocks and (not UndoBlocks.IsEmpty and not UndoBlocks.CurrentBlock.ContainsChanges) then
+  begin
+    result := CurrentUndoBlock.BlockName;
+    CurrentUndoBlock.fCaption := ACaption;
+  end
   else
-    UndoBlocks.AddBlock(CheckPointName);
-  SendExtendedEvent(self, beUndoSetCheckpoint, [CheckPointName]);
-end;
-
-procedure TBoldUndoHandler.SetCheckPoint;
-begin
-  if UndoBlocks.IsEmpty or UndoBlocks.CurrentBlock.ContainsChanges then
-    SetNamedCheckPoint(GetUniqueBlockName(cUnNamedBlockName));
+  begin
+    result := GetUniqueBlockName;
+    UndoBlocks.AddBlock(result, ACaption);
+    SendExtendedEvent(self, beUndoSetCheckpoint, [result]);
+  end;
 end;
 
 procedure TBoldUndoHandler.ClearAllUndoBlocks;
 begin
   FUndoBlocks.Clear;
   FRedoBlocks.Clear;
+  SendExtendedEvent(self, beUndoChanged, []);
+end;
+
+procedure TBoldUndoHandler.ClearCurrentUndoBlock;
+begin
+  FUndoBlocks.RemoveBlock(FUndoBlocks.CurrentBlock.BlockName);
   SendExtendedEvent(self, beUndoChanged, []);
 end;
 
@@ -972,7 +1172,7 @@ end;
 
 { TBoldUndoBlockList }
 
-function TBoldUndoBlockList.AddBlock(const BlockName: string;
+function TBoldUndoBlockList.AddBlock(var BlockName: string; const ACaption: string;
   const FSVAlueSpace: TBoldFreeStandingValueSpace): TBoldUndoBlock;
 var
   Idx: integer;
@@ -980,11 +1180,11 @@ begin
   if FList.IndexOf(BlockName) = -1 then
   begin
     Idx := FList.Add(BlockName);
-    Result := TBoldUndoBlock.CreateNamedBlock(BlockName, FSVAlueSpace);
+    Result := TBoldUndoBlock.CreateNamedBlock(self, BlockName, ACaption, FSVAlueSpace);
     FList.Objects[Idx] := Result;
   end
   else
-    raise EBold.CreateFmt('%s.AddBlock: a block named %s already exists', [ClassName, BlockName]);
+    raise EBold.CreateFmt(sBlockNameInUse, [ClassName, BlockName]);
 end;
 
 function TBoldUndoBlockList.CanMoveBlock(CurIndex,
@@ -1028,8 +1228,9 @@ begin
   FList.Clear;
 end;
 
-constructor TBoldUndoBlockList.Create;
+constructor TBoldUndoBlockList.Create(ABoldUndoHandler: TBoldUndoHandler);
 begin
+  fBoldUndoHandler := ABoldUndoHandler;
   FList := TStringList.Create;
 end;
 
@@ -1043,8 +1244,10 @@ end;
 procedure TBoldUndoBlockList.MoveBlock(CurIndex,
   NewIndex: integer);
 begin
+  if CurIndex = NewIndex then
+    exit;
   if not CanMoveBlock(CurIndex, NewIndex) then
-    raise EBold.Create('can''t move Block');
+    raise EBold.Create(sCannotMoveBlock);
    FList.Move(CurIndex, NewIndex);
 end;
 
@@ -1077,20 +1280,20 @@ var
   aBlock: TBoldUndoBlock;
 begin
   if Assigned(GetBlockByName(NewName)) then
-    raise EBold.CreateFmt('Can''t rename block, %s already exists.', [NewName]);
+    raise EBold.CreateFmt(sCannotRenameBlock, [NewName]);
   aBlock := AssertedBlockByName[OldName];
   FList.Strings[IndexOf(OldName)] := NewName;
   aBlock.FName := NewName;
 end;
 
- procedure TBoldUndoBlockList.MergeBlocks(const DestinationBlockName, SourceBlockName: string);
+procedure TBoldUndoBlockList.MergeBlocks(const DestinationBlockName, SourceBlockName: string);
 var
   DestinationBlock, SourceBlock: TBoldUndoBlock;
 begin
   DestinationBlock := AssertedBlockByName[DestinationBlockName];
   SourceBlock := AssertedBlockByName[SourceBlockName];
   if not CanMergeBlock(IndexOf(SourceBlockName), IndexOf(DestinationBlockName)) then
-    raise EBold.Create('Can''t merge blocks');
+    raise EBold.Create(sCannotMergeBlocks);
   DestinationBlock.Merge(SourceBlock, IndexOf(DestinationBlockName) > IndexOf(SourceBlockName));
   InternalRemoveBlock(SourceBlock);
 end;
@@ -1125,9 +1328,6 @@ end;
 function TBoldUndoBlockList.GetCurrentBlock: TBoldUndoBlock;
 begin
   Result := nil;
-{  if (Count = 0) then
-    Result := AddBlock(cUnNamedBlockName)
-  else}
   if Count > 0 then
    Result := FList.Objects[Count - 1] as TBoldUndoBlock;
 end;
@@ -1137,7 +1337,7 @@ function TBoldUndoBlockList.GetAssertedBlockByName(
 begin
   Result := BlockByName[BlockName];
   if not Assigned(Result) then
-    raise EBold.CreateFmt('There is no block named %s', [BlockName]);
+    raise EBold.CreateFmt(sNoSuchBlock, [BlockName]);
 end;
 
 function TBoldUndoBlockList.CanMoveToTop(CurIndex: integer): Boolean;
@@ -1150,7 +1350,7 @@ function TBoldUndoBlockList.AssertedIndexOf(
 begin
   Result := IndexOf(BlockName);
   if Result = -1 then
-    raise EBold.CreateFmt('There is no block named %s', [BlockName]);
+    raise EBold.CreateFmt(sNoSuchBlock, [BlockName]);
 end;
 
 function TBoldUndoBlockList.GetItemByName(const Name: string): IBoldUndoBlock;
@@ -1212,7 +1412,7 @@ begin
   if Assigned(aBlock) then
   begin
     if not Assigned(DependantBlocks) then
-      raise EBold.CreateFmt('%s.GetDependantBlocks: parameter DependantBlocks not assigned', [ClassName]);
+      raise EBold.CreateFmt(sParameterNotDefined, [ClassName]);
     ObjectIds := TBoldObjectIdList.Create;
     aBlock.FSValueSpace.AllObjectIds(ObjectIds, true);
     DependantBlocks.Clear;
@@ -1231,12 +1431,23 @@ begin
   end;
 end;
 
+function TBoldUndoBlockList.GetFirstNonEmptyBlock: TBoldUndoBlock;
+begin
+  if CurrentBlock.ContainsChanges then
+    result := CurrentBlock
+  else
+  if self.Count > 1 then
+    result := self.BlockByIndex[self.Count-2] // 2nd from the end
+  else
+    result := nil;
+end;
+
 function TBoldUndoBlockList.GetAssertedBlockByIndex(
   Index: integer): TBoldUndoBlock;
 begin
   Result := BlockByIndex[Index];
   if not Assigned(Result) then
-    raise EBold.CreateFmt('There is no block with index %d', [Index]);
+    raise EBold.CreateFmt(sNoSuchBlockIndex, [Index]);
 end;
 
 function TBoldUndoBlockList.RemoveBlock(const BlockName: string): Boolean;

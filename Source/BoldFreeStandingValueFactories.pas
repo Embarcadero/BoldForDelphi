@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldFreeStandingValueFactories;
@@ -32,6 +32,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldDefaultStreamNames;
 {--- TBoldFreeStandingObjectContentsFactory ---}
@@ -60,8 +62,8 @@ begin
   ElementClass := TBoldFreeStandingElementClass(fClasses.ObjectByName[ContentName]);
   if Assigned(ElementClass) then
     result := ElementClass.Create
-  else  
-    raise EBold.createFmt('%s.CreateInstance: No freestanding class registered for name %s', [classname, ContentName]);
+  else
+    raise EBold.createFmt(sNoClassregisteredForName, [classname, ContentName]);
 end;
 
 initialization

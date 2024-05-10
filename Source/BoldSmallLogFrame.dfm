@@ -16,6 +16,8 @@ object BoldLogFrame: TBoldLogFrame
     Width = 443
     Height = 17
     Align = alBottom
+    Min = 0
+    Max = 100
     ParentShowHint = False
     Step = 1
     ShowHint = False
@@ -85,9 +87,6 @@ object BoldLogFrame: TBoldLogFrame
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 3
-    DesignSize = (
-      200
-      50)
     object lblTimeLeft: TLabel
       Left = 22
       Top = 16

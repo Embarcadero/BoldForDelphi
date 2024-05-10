@@ -67,6 +67,4 @@ begin
   result := Adaptee as TBoldPersistenceController;
 end;
 
-initialization
-
 end.

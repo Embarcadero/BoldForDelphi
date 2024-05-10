@@ -22,7 +22,7 @@ type
     function CreateObjectUpgrader: TBoldAbstractObjectUpgrader; virtual; abstract;
     function GetHandledObject: TObject; override;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     property ObjectUpgrader: TBoldAbstractObjectUpgrader read GetObjectUpgrader;
   published
     property Config: TBoldObjectUpgraderConfiguration read GetConfig write SetConfig;
@@ -40,7 +40,7 @@ begin
   result := TBoldObjectUpgraderConfiguration;
 end;
 
-destructor TBoldAbstractObjectUpgraderHandle.destroy;
+destructor TBoldAbstractObjectUpgraderHandle.Destroy;
 begin
   FreeAndNil(fObjectUpgrader);
   FreeAndNil(fConfig);

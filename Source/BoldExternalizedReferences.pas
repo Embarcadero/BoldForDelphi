@@ -25,7 +25,7 @@ type
     procedure SetReferencedObject(Referee, Referenced: TObject);
   public
     constructor create;
-    destructor destroy; override;
+    destructor Destroy; override;
     property ManageReferencedObject: Boolean read FManageReferencedObject write SetManageReferencedObject;
     property ReferencedObjects[Referee: TObject]: TObject read GetReferencedObject write SetReferencedObject;
     property Count: integer read GetCount;
@@ -60,7 +60,7 @@ type
   { TBoldExternalizedReferenceHashIndex }
   TBoldExternalizedReferenceHashIndex = class(TBoldObjectHashIndex)
   protected
-    function ItemASKeyObject(Item: TObject): TObject; override;
+    function ItemAsKeyObject(Item: TObject): TObject; override;
   end;
 
 { TBoldExternalizedIndexList }
@@ -83,7 +83,7 @@ begin
   flist := TBoldExternalizedIndexList.Create;
 end;
 
-destructor TBoldExternalizedReferenceList.destroy;
+destructor TBoldExternalizedReferenceList.Destroy;
 begin
   FreeAndNil(fList);
   inherited;
@@ -136,7 +136,7 @@ end;
 
 { TBoldExternalizedReferenceHashIndex }
 
-function TBoldExternalizedReferenceHashIndex.ItemASKeyObject(Item: TObject): TObject;
+function TBoldExternalizedReferenceHashIndex.ItemAsKeyObject(Item: TObject): TObject;
 begin
   Assert(item is TBoldExternalLink);
   result := TBoldExternalLink(item).Referee;

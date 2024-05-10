@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockingHandles;
@@ -62,21 +62,23 @@ type
 implementation
 
 uses
-  BoldUtils,
-  SysUtils;
+  SysUtils,
+
+  BoldCoreConsts,
+  BoldUtils;
 
 { TBoldLockingHandle }
 
 procedure TBoldLockingHandle.Activate;
 begin
   if not assigned(SystemHandle) then
-    raise EBoldInternal.CreateFmt('%s.Activate: Cannot activate Locking without a SystemHandle. Set the Systemhandle property of the %0:s', [classname]);
+    raise EBoldInternal.CreateFmt(sCannotActivateWithoutSystemHandle, [classname]);
   if not assigned(SystemHandle.System) then
-    raise EBoldInternal.CreateFmt('%s.Activate: Cannot activate Locking. The system is not active.', [classname]);
+    raise EBoldInternal.CreateFmt(sCannotActivateWithInActiveSystem, [classname]);
   if not assigned(Listener) then
-    raise EBold.CreateFmt('%s.Activate: Cannot activate Locking without a listener. Set the Listener property of the %0:s', [classname]);
+    raise EBold.CreateFmt(sCannotActivateWithoutListener, [classname]);
   if not assigned(LockManager) then
-    raise EBold.CreateFmt('%s.Activate: Cannot activate Locking without a LockManager. Set the LockManager property of the %0:s', [classname]);
+    raise EBold.CreateFmt(sCannotActivateWithoutLockManager, [classname]);
 
   if not Active then
   begin

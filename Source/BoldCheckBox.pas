@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCheckBox;
@@ -121,6 +121,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldControlPackDefs;
 
 {---TBoldCustomCheckBox---}
@@ -180,7 +182,7 @@ begin
         Perform(CM_CHANGED, 0, 0);
       end
       else
-        raise EBold.CreateFmt('%s.State: Not modifiable', [ClassName]);
+        raise EBold.CreateFmt(sStateNotModifiable, [ClassName]);
     end;
 end;
 

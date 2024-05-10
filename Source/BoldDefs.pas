@@ -109,7 +109,7 @@ type
   TBoldRoleSet = set of TBoldRoleType;
   TBoldDataBaseGenerationMode = (dbgTable, dbgQuery);
   TBoldStorage = (bsInternal, bsPartiallyExternal, bsExternal, bsExternalKey);
-  
+
   TBoldTimeStampType = integer;
 
   TBoldClientID = Integer;
@@ -131,7 +131,7 @@ type
   TBoldAbstractionLevel = (alAbstract, alConcrete);
 
   TBoldAnsiString = {$IFDEF BOLD_UNICODE}AnsiString{$ELSE}string{$ENDIF};
-  TBoldUnicodeString = {$IFDEF BOLD_UNICODE}string{$ELSE}WideString{$ENDIF};  
+  TBoldUnicodeString = {$IFDEF BOLD_UNICODE}string{$ELSE}WideString{$ENDIF};
 
   EBold = class(Exception);
   EBoldDesignTime = class(EBold);
@@ -271,9 +271,6 @@ const
   {$ENDIF}
   {$IFDEF BOLD_DELPHI28}
   BOLD_HOST_IDE_REGISTRYPATH = '\Software\Embarcadero\BDS\22.0\';
-  {$ENDIF}
-  {$IFDEF BOLD_DELPHI29}
-  BOLD_HOST_IDE_REGISTRYPATH = '\Software\Embarcadero\BDS\23.0\';
   {$ENDIF}
 
 const

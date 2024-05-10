@@ -32,8 +32,8 @@ type
     function GetNewComponentName(Comp: Tcomponent; BaseName: string): String;
     {$ENDIF}
   public
-    constructor create(aOwner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
   published
     property DatabaseAdapter: TBoldAbstractDatabaseAdapter read fDatabaseAdapter write SetDatabaseAdapter;
   end;
@@ -41,8 +41,10 @@ type
 implementation
 
 uses
-  BoldDefs,
   SysUtils,
+
+  BoldCoreConsts,
+  BoldDefs,
   BoldRev;
 
 const
@@ -51,13 +53,13 @@ const
 
 { TBoldPersistenceHandleDB }
 
-constructor TBoldPersistenceHandleDB.create(aOwner: Tcomponent);
+constructor TBoldPersistenceHandleDB.Create(aOwner: Tcomponent);
 begin
   inherited;
   fComponentSubscriber := TBoldPassThroughSubscriber.Create(_ReceiveComponentEvents);
 end;
 
-destructor TBoldPersistenceHandleDB.destroy;
+destructor TBoldPersistenceHandleDB.Destroy;
 begin
   FreeAndNil(fComponentSubscriber);
   inherited;                       
@@ -67,7 +69,7 @@ procedure TBoldPersistenceHandleDB.AssertSQLDatabaseconfig(
   Context: String);
 begin
   if not assigned(DatabaseAdapter) then
-    raise EBold.CreateFmt('%s: Unable to %s. There is no DatabaseAdapter available', [classname, Context]);
+    raise EBold.CreateFmt(sNoDatabaseAdapterAvailable, [classname, Context]);
 end;
 
 function TBoldPersistenceHandleDB.GetCustomIndexes: TBoldIndexCollection;

@@ -23,17 +23,17 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents(BOLDPAGENAME_COM,
-    [TBoldComServerHandle,
-     TBoldComServerObjectHandle,
-     TBoldComConnectionHandle,
-     TBoldComClientObjectHandle]);
+    RegisterComponents(BOLDPAGENAME_COM,
+      [TBoldComServerHandle,
+       TBoldComServerObjectHandle,
+       TBoldComConnectionHandle,
+       TBoldComClientObjectHandle]);
 
-  RegisterComponentEditor(TBoldComServerHandle, TBoldComServerHandleComponentEditor);
+    RegisterComponentEditor(TBoldComServerHandle, TBoldComServerHandleComponentEditor);
 
-  RegisterPropertyEditor(TypeInfo(string), TBoldComExportHandle,
-    'ServerClass', TBoldComServerClassPropertyEditor);
-  RegisterPropertyEditor(TypeInfo(String), TBoldComClientObjectHandle, 'Objectname', TBoldObjectNameProperty);
+    RegisterPropertyEditor(TypeInfo(string), TBoldComExportHandle,
+      'ServerClass', TBoldComServerClassPropertyEditor);
+    RegisterPropertyEditor(TypeInfo(String), TBoldComClientObjectHandle, 'Objectname', TBoldObjectNameProperty);
 end;
 
 end.

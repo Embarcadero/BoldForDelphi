@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRose98Support;
@@ -61,11 +61,13 @@ type
 implementation
 
 uses
-  BoldDefs,
+  ActiveX,
   SysUtils,
+
+  BoldCoreConsts,
+  BoldDefs,
   BoldUtils,
   BoldDefaultTaggedValues,
-  ActiveX,
   BoldLogHandler;
 
 class function TBoldRose98Support.FindClassByName(RoseModel: IRoseModel; const Name: string): IRoseClass;
@@ -79,7 +81,7 @@ begin
   begin
     Result := ClsCol.GetAt(1);
     if ClsCol.Count > 1 then
-      raise EBoldImport.CreateFmt('Found multiple classes with name %s, don''t know which one to use', [Name]);
+      raise EBoldImport.CreateFmt(sClassNameNotUnique, [Name]);
   end;
 end;
 
@@ -254,7 +256,7 @@ procedure TBoldRose98Properties.SetBooleanString(RoseItem: IRoseItem; const Name
 begin
   if GetBooleanString(RoseItem, Name, DefaultValue) <> Value then
   begin
-    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, Value]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, Name, Value]);
     RoseItem.OverrideProperty(ToolName, Name, Value);
   end;
 end;
@@ -264,7 +266,7 @@ procedure TBoldRose98Properties.SetBoolean(RoseItem: IRoseItem; const Name: stri
 begin
   if GetBoolean(RoseItem, Name, DefaultValue) <> Value then
   begin
-    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, BooleanToString(Value)]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, Name, BooleanToString(Value)]);
     RoseItem.OverrideProperty(ToolName, Name, BooleanToString(Value));
   end;
 end;
@@ -274,7 +276,7 @@ procedure TBoldRose98Properties.SetInteger(RoseItem: IRoseItem; const Name: stri
 begin
   if GetInteger(RoseItem, Name, DefaultValue) <> Value then
   begin
-    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, IntToStr(Value)]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, Name, IntToStr(Value)]);
     RoseItem.OverrideProperty(ToolName, Name, IntToStr(Value));
   end
 end;
@@ -284,7 +286,7 @@ procedure TBoldRose98Properties.SetString(RoseItem: IRoseItem; const Name, Defau
 begin
   if AnsiCompareText(GetString(RoseItem, Name, DefaultValue),Value) <> 0 then
   begin
-    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, Value]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, Name, Value]);
     RoseItem.OverrideProperty(ToolName, Name, Value);
   end;
 end;
@@ -294,7 +296,7 @@ procedure TBoldRose98Properties.SetText(RoseItem: IRoseItem; const Name, Default
 begin
   if AnsiCompareText(GetString(RoseItem, Name, DefaultValue),Value) <> 0 then
   begin
-    BoldLog.LogFmt('Setting %s.%s to %s', [LoggString, Name, Value]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, Name, Value]);
     RoseItem.OverrideProperty(ToolName, Name, Value);
   end;
 end;
@@ -322,7 +324,7 @@ begin
       2: Result := akAggregate;
     end
   else if RoseRole.Containment.Value = 2 then
-    BoldLog.Log('Warning: containment by value, but not aggregate');
+    BoldLog.Log(sContainmentByValueButNotAggregate);
 end;
 
 class procedure TBoldRose98Support.SetContainment(Aggregation: TAggregationKind; RoseRole, OtherRole: IRoseRole; const LoggString: string);
@@ -336,23 +338,23 @@ begin
       begin
         OtherRole.Aggregate := false;
         RoseRole.Containment.Value := 0;
-        ContainmentName := 'None';
+        ContainmentName := 'None'; // do not localize
       end;
       akComposite:
       begin
         OtherRole.Aggregate := true;
         RoseRole.Containment.Value := 1;
-        ContainmentName := 'Composite';
+        ContainmentName := 'Composite'; // do not localize
       end;
       akAggregate:
       begin
         OtherRole.Aggregate := true;
         RoseRole.Containment.Value := 2;
-        ContainmentName := 'Aggregate';
+        ContainmentName := 'Aggregate'; // do not localize
       end;
     end;
-    BoldLog.LogFmt('Setting %s.containment to %s', [LoggString, ContainmentName]);
-    BoldLog.LogFmt('Setting %s.Aggregate to %s', [LoggString, BooleanToString(aggregation <> aknone)]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, 'containment', ContainmentName]); // do not localize
+    BoldLog.LogFmt(sSettingValue, [LoggString, 'Aggregate', BooleanToString(aggregation <> aknone)]); // do not localize
   end;
 end;
 
@@ -364,7 +366,7 @@ begin
     1: Result := vkProtected;
     2: Result := vkPrivate;
     else
-      BoldLog.Log('Unknown visibility, public is set.');
+      BoldLog.Log(sUnknownVisibility);
   end;
 end;
 
@@ -378,22 +380,22 @@ begin
       vkPublic:
       begin
         ExportControl.Value := 0;
-        VisibilityName := 'public';
+        VisibilityName := 'public'; // do not localize
       end;
       vkProtected:
       begin
         ExportControl.Value := 1;
-        VisibilityName := 'protected';
+        VisibilityName := 'protected'; // do not localize
       end;
       vkPrivate:
       begin
        ExportControl.Value := 2;
-       VisibilityName := 'private';
+       VisibilityName := 'private'; // do not localize
       end;
     end;
-    BoldLog.LogFmt('Setting %s.Visibility to %s', [LoggString, VisibilityName]);
+    BoldLog.LogFmt(sSettingValue, [LoggString, 'Visibility', VisibilityName]); // do not localize
   end;
-end; 
+end;
 
 class function TBoldRose98Support.GetVersion: Double;
 var

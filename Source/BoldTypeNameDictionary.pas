@@ -56,7 +56,9 @@ type
     property Accessor: String read FAccessor write fAccessor;
     property NativeType: String read FNativeType write fNativeType;
     property BoldUnitName: String read fBoldUnitName write fBoldUnitName;
+    {$WARNINGS OFF}
     property UnitName: String read fBoldUnitName write fBoldUnitName stored false;
+    {$WARNINGS ON}
     property ComType: String read fComType write fComType;
     property IDLType: String read fIDLType write fIDLType;
     property ValueInterface: String read fValueInterface write fValueInterface;

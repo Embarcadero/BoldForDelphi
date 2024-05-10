@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldControlPack;
@@ -411,6 +411,8 @@ type
 implementation
 
 uses
+  BoldCoreConsts,
+  BoldRev,
   BoldExceptionHandlers,
   BoldGuiResourceStrings,
 {$IFNDEF BOLDCOMCLIENT}
@@ -559,7 +561,7 @@ end;
 
 procedure TBoldFollowerController.MakeClean(Follower: TBoldFollower);
 begin
-  raise EBoldInternal.CreateFmt('%s.MakeClean not implemented', [ClassName]);
+  raise EBoldInternal.CreateFmt(sNotImplemented, [ClassName, 'MakeClean']); // do not localize
 end;
 
 procedure TBoldFollowerController.Changed;
@@ -905,7 +907,6 @@ var
   ListType: TBoldListTypeInfo;
   RealObjectList: TBoldObjectList;
   ie: TBoldIndirectElement;
-  i: Integer;
 {$ENDIF}
 begin
   if assigned(FOnEnsureFetched) then
@@ -1022,11 +1023,11 @@ begin
   begin
     TheLink := Element as TBoldObjectReference;
     if DraggedObjects.Count = 0 then
-      BoldObject := nil
+        BoldObject := nil
     else if DraggedObjects.Count = 1 then
       BoldObject := DraggedObjects[0]
-    else
-      raise EBold.Create(SCannotDragOverMultipleObjects);
+      else
+        raise EBold.Create(SCannotDragOverMultipleObjects);
     case DropMode of
       bdpInsert, bdpAppend:
         if Assigned(TheLink.BoldObject) and Assigned(BoldObject) then
@@ -1178,6 +1179,8 @@ begin
   fIndex := -1;
 end;
 
+type TBoldAsFollowerListControllerAccess = class(TBoldAsFollowerListController);
+
 constructor TBoldFollower.CreateSubFollower(OwningFollower: TBoldFollower;
     aController: TBoldFollowerController;
     aElement: TBoldElement;
@@ -1196,7 +1199,7 @@ begin
   fIndex := aIndex;
   ResultElementOutOfDate := true;
   if aActive {and not PrioritizedQueuable.IsInDisplayList} and // check MostPrioritizedQueuable instead of PrioritizedQueuable ?
-    not ((aController is TBoldAsFollowerListController) and TBoldAsFollowerListController(aController).PrecreateFollowers) then
+    not ((aController is TBoldAsFollowerListController) and TBoldAsFollowerListControllerAccess(aController).PrecreateFollowers) then
   begin
     fState := bfsActivating;
     MakeUptodateAndSubscribe;
@@ -1455,7 +1458,7 @@ begin
     if Assigned(Element) then
       Element.AddSubscription(Subscriber, beDestroying, beDestroying);
     if Assigned(Element) and (State in bfdNeedResubscribe) then
-      Controller.SubscribeToElement(self);
+    Controller.SubscribeToElement(self);
   end
   else
     AssertedController.MakeUptodateAndSubscribe(Self, State in bfdNeedResubscribe);
@@ -1525,6 +1528,8 @@ begin
     fElement := AElement;
     ElementValid := true;
     MarkSubscriptionOutOfDate;
+    if Assigned(AElement) then
+      AssertedController.SubscribeToElement(self);
     ResultElementOutOfDate := true;
   end;
 end;
@@ -1566,7 +1571,6 @@ procedure TBoldFollower.Display;
   procedure DisplayMulti;
   var
     Followers: TBoldFollowerArray;
-    F: TBoldFollower;
   begin
     Followers := CollectMatching( Controller);
     if Length(Followers) > 1 then
@@ -1597,10 +1601,8 @@ end;
 procedure TBoldFollower.EnsureMulti;
 var
   Followers: TBoldFollowerArray;
-  BoldGuard: IBoldGuard;
 begin
   Followers := CollectMatching(Controller);
-
   if Length(Followers) > 1 then
   try
     Controller.MultiMakeEnsure(Followers);
@@ -2001,9 +2003,7 @@ procedure TBoldFollowerController.MultiMakeEnsure(Followers: TBoldFollowerArray)
 {$IFNDEF BOLDCOMCLIENT}
 var
   BoldType: TBoldClassTypeInfo;
-  ListType: TBoldListTypeInfo;
   ObjectList: TBoldObjectList;
-  ie: TBoldIndirectElement;
   follower: TBoldFollower;
   procedure AddObject(Obj: TBoldObject);
   begin
@@ -2056,18 +2056,8 @@ begin
 end;
 
 function TBoldFollower.GetDebugInfo: string;
-var
-  vFollower: TBoldFollower;
 begin
   result := '';
-{  vFollower := self;
-  repeat
-
-  until ;
-  if Assigned(OwningFollower) then
-    result :=  OwningFollower.GetDebugInfo
-  else
-}
   if Assigned(MatchObject) then
   begin
     if MatchObject is TComponent then

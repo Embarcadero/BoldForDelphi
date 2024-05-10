@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPSDescriptionsSQL;
@@ -198,20 +198,16 @@ var
 implementation
 
 uses
+  Controls,
+  Dialogs,
+  SysUtils,
+  TypInfo,
+
+  BoldCoreConsts,
   BoldGuard,
   BoldNameExpander,
   BoldLogHandler,
   BoldQueryUserDlg,
-  SysUtils,
-  TypInfo,
-  {$IFDEF MSWINDOWS}
-  Controls,
-  Dialogs,
-  {$ENDIF}
-  {$IFDEF LINUX}
-  QControls,
-  QDialogs,
-  {$ENDIF}
   BoldHashIndexes;
 
 var
@@ -280,7 +276,7 @@ var
     try
       if BoldLog.ProcessInterruption then
         exit;
-      BoldLog.LogHeader := 'Creating tables';
+      BoldLog.LogHeader := sCreatingTables;
       BoldLog.ProgressMax := SQLTablesList.Count-1;
       for i := 0 to SQLTablesList.Count - 1 do
       begin
@@ -301,7 +297,7 @@ var
 
 begin
   if not (PSParams is TBoldPSSQLParams) then
-    raise EBold.CreateFmt('%s.CreatePersistentStorage: Unknown type of PSParams: %s', [classname, PSParams.Classname]);
+    raise EBold.CreateFmt(sUnknownPSParamsType, [classname, PSParams.Classname]);
   PSParamsSQL := PSParams as TBoldPSSQLParams;
   CleanPersistentStorage(PSParamsSQL);
   StartMetaDataTransaction(PSParamsSQL);
@@ -318,9 +314,7 @@ begin
   if TableNameList.IndexOf(BoldExpandPrefix(IDTABLE_NAME, '', SQLDatabaseConfig.SystemTablePrefix, SQLDatabaseConfig.MaxDBIdentifierLength, NationalCharConversion)) > -1 then
     Result :=
       BoldCleanDatabaseForced or
-      (MessageDlg('Persistent Storage Seems to Contain a Bold Database. ' +
-                         'Continuing Will Permanently Destroy Data. Continue?',
-                         mtWarning, [mbYes, mbNo], 0) = mrYes);
+      (MessageDlg(sContinueDeleteBoldTables, mtWarning, [mbYes, mbNo], 0) = mrYes);
 end;
 
 procedure TBoldSQLSystemDescription.CleanPersistentStorage(PSParams: TBoldPSSQLParams);
@@ -331,69 +325,68 @@ var
   TableNameList: TStringList;
   Guard: IBoldGuard;
 
-function DeleteTableBDE: boolean;
-var
-  Table: IBoldtable;
-begin
-  try
-    Table := PSParams.DataBase.GetTable;
+  function DeleteTableBDE: boolean;
+  var
+    Table: IBoldtable;
+  begin
     try
-      Table.TableName := TableNameList[i];
-      Table.Exclusive := True;
-      Table.FieldDefs.Update;
-      Table.DeleteTable;
-      Result := True;
+      Table := PSParams.DataBase.GetTable;
+      try
+        Table.TableName := TableNameList[i];
+        Table.Exclusive := True;
+        Table.FieldDefs.Update;
+        Table.DeleteTable;
+        Result := True;
+      finally
+        PSParams.Database.ReleaseTable(table)
+      end;
+    except
+      Result := False;
+    end;
+  end;
+
+  function DeleteTableSQL: boolean;
+  var
+    PsParamsSQL: TBoldPSSQLParams;
+    Query: IBoldExecQuery;
+  begin
+    result := true;
+    PSParamsSQL := PSParams as TBoldPSSQLParams;
+    Query := PSParamsSQL.Database.GetExecQuery;
+    try
+      Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
+      Query.ExecSQL;
     finally
-      PSParams.Database.ReleaseTable(table)
+      PSParamsSQL.Database.ReleaseExecQuery(Query);
     end;
-  except
-    Result := False;
   end;
-end;
 
-function DeleteTableSQL: boolean;
-var
-  PsParamsSQL: TBoldPSSQLParams;
-  Query: IBoldExecQuery;
-begin
-  result := true;
-  PSParamsSQL := PSParams as TBoldPSSQLParams;
-  Query := PSParamsSQL.Database.GetExecQuery;
-  try
-    Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
-    Query.ExecSQL;
-  finally
-    PSParamsSQL.Database.ReleaseExecQuery(Query);
+  function DeleteTable: Boolean;
+  var
+    MayDelete,
+    IsBoldTable: boolean;
+
+  begin
+    Result:=False;
+    IsBoldTable := Knowntables.IndexOf(TableNameList[i]) <> -1 ;
+
+    if not IsBoldTable and (not PSParams.IgnoreUnknownTables) and
+      not (Query in [qrYesAll, qrNoAll]) then
+      Query := QueryUser(sDeleteTable, Format(sDeleteNonBoldTable, [TableNameList[i]]));
+
+    MayDelete := (Query in [qrYes, qrYesAll]) and (not PSParams.IgnoreUnknownTables);
+
+    if IsBoldTable or MayDelete then
+      case EffectiveGenerationMode(PSParams) of
+        dbgTable: result := DeleteTableBDE;
+        dbgQuery: Result := DeleteTableSQL;
+        else result := false;
+      end;
   end;
-end;
-
-function DeleteTable: Boolean;
-var
-  MayDelete,
-  IsBoldTable: boolean;
-
-begin
-  Result:=False;
-  IsBoldTable := Knowntables.IndexOf(TableNameList[i]) <> -1 ;
-
-  if not IsBoldTable and (not PSParams.IgnoreUnknownTables) and
-    not (Query in [qrYesAll, qrNoAll]) then
-    Query := QueryUser('Delete Table', Format('Table %s does not seem to be a Bold table. Do you want to delete it.', [TableNameList[i]]));
-
-  MayDelete := (Query in [qrYes, qrYesAll]) and (not PSParams.IgnoreUnknownTables);
-
-  if IsBoldTable or MayDelete then
-    case EffectiveGenerationMode(PSParams) of
-      dbgTable: result := DeleteTableBDE;
-      dbgQuery: Result := DeleteTableSQL;
-      else result := false;
-    end;
-end;
-
 
 begin
   Guard := TBoldGuard.Create(Knowntables, TableNameList);
-  BoldLog.LogHeader := 'Cleaning Persistent Storage';
+  BoldLog.LogHeader := sCleaningPS;
   Query := qrYes;
 
   TableNameList := TStringList.Create;
@@ -407,7 +400,7 @@ begin
     PSParams.Database.AllTableNames('*', False, TableNameList);
 
     if not ContinueClearPS(TableNameList) then
-      raise EBold.Create('Cleaning of Persistent Storage Aborted');
+      raise EBold.Create(sCleaningPSAborted);
 
     BoldLog.ProgressMax := TableNameList.Count-1;
     for i := 0 to TableNameList.Count - 1 do
@@ -416,13 +409,13 @@ begin
       try
         if DeleteTable then
         begin
-          BoldLog.LogFmt('Deleting Table: %s', [TableNameList[i]]);
+          BoldLog.LogFmt(sDeletingTableX, [TableNameList[i]]);
         end
         else
-          BoldLog.LogFmt('Keeping Table: %s', [TableNameList[i]]);
+          BoldLog.LogFmt(sKeepingTableX, [TableNameList[i]]);
       except
         on e:Exception do
-          BoldLog.LogFmt('Error Deleting Table %s: %s', [TableNameList[i], E.Message], ltError);
+          BoldLog.LogFmt(sErrorDeletingTable, [TableNameList[i], E.Message], ltError);
       end;
       BoldLog.Sync;
       if BoldLog.ProcessInterruption then
@@ -498,12 +491,12 @@ begin
       Result := Result + ', ' + BOLDCRLF;
     s := (ColumnsList[i] as TBoldSQLColumnDescription).GetSQLForColumn(DataBase);
     Result := Result + '  ' + s;
-    BoldLog.Log('Adding column: '+s, ltDetail);
+    BoldLog.Log(Format(sAddingColumn, [s]), ltDetail);
   end;
   if SystemDescription.SQLDatabaseConfig.SupportsConstraintsInCreateTable and Assigned(PrimaryIndex) then
   begin
     Result := Result + ', ' + BOLDCRLF + '  ' + PrimaryIndex.SQLForPrimaryKey;
-    BoldLog.Log('Adding Primary index: '+PrimaryIndex.SQLForPrimaryKey, ltDetail);
+    BoldLog.Log(Format(sAddingPrimaryIndex, [PrimaryIndex.SQLForPrimaryKey]), ltDetail);
   end;
   Result := Result + ')';
 end;
@@ -579,7 +572,7 @@ end;
 
 procedure TBoldSQLTableDescription.CreateTable(PSParams: TBoldPSSQLParams);
 begin
-  BoldLog.LogFmtIndent('Creating Table: %s', [SQLName]);
+  BoldLog.LogFmtIndent(sCreatingTableX, [SQLName]);
   case SystemDescription.EffectiveGenerationMode(PSParams) of
     dbgTable: CreateTableBDE(PSParams);
     dbgQuery: CreateTableSQL(PSParams);
@@ -604,10 +597,10 @@ procedure TBoldSQLTableDescription.DeleteTable(PSParams: TBoldPSSQLParams);
 var
   Table: IBoldTable;
 begin
-  BoldLog.LogFmt('Locating Table: %s', [SQLName]);
+  BoldLog.LogFmt(sLocatingTableX, [SQLName]);
   if TableExists(PSParams) then
   begin
-    BoldLog.LogFmt('Deleting Table: %s', [SQLName]);
+    BoldLog.LogFmt(sDeletingTableX, [SQLName]);
     Table := PSParams.Database.GetTable;
     with table do
     try
@@ -620,7 +613,7 @@ begin
     end;
   end
   else
-    BoldLog.LogFmt('Table %s not Present', [SQLName]);
+    BoldLog.LogFmt(sTableXNotPresent, [SQLName]);
 end;
 
 function TBoldSQLTableDescription.AddColumn(const ColName: string; SQLColType, AllowNullAsSQL: String; ColType: TFieldType; ColSize: Integer; AllowNull: Boolean; const DefaultDBValue: String): TBoldSQLColumnDescription;
@@ -675,7 +668,7 @@ procedure TBoldSQLColumnDescription.CreateBDEColumn(FieldDefs: TFieldDefs);
 var
   FieldDef: TFieldDef;
 begin
-  BoldLog.LogFmt('Adding column: %s [%s, %d]',
+  BoldLog.LogFmt(sAddingColumnInfo,
                  [SQLName,
                   GetEnumName(TypeInfo(TFieldType), Ord(FieldType)), Size], ltDetail);
   FieldDef := FieldDefs.AddFieldDef;
@@ -686,8 +679,8 @@ begin
   if DefaultDBValue <> '' then
   begin
     BoldLog.Separator;
-    BoldLog.LogFmt('Column %s has a default db value (%s)', [SQLName, DefaultDBValue], ltWarning);
-    BoldLog.Log('This is not supported when generating the database using TTable, please use TQuery-method instead if this default value is required');
+    BoldLog.LogFmt(sColumnHasDefaultDBValue, [SQLName, DefaultDBValue], ltWarning);
+    BoldLog.Log(sUnsupportedInTableCreationMode);
     BoldLog.Separator;
   end;
 end;
@@ -785,7 +778,7 @@ var
   SQLName: string;
 begin
   SQLName := GeneratedName;
-  BoldLog.LogFmt('Adding Index: %s on %s', [SQLName, IndexedFields], ltDetail);
+  BoldLog.LogFmt(sAddingIndex, [SQLName, IndexedFields], ltDetail);
   //Conversion of TIndexOptionsEx to TIndexOptions
   if ixPrimary in IndexOptions then begin
     ActualOptions := ActualOptions + [db.ixPrimary];
@@ -948,7 +941,7 @@ procedure TBoldSQLSystemDescription.CommitMetaDataTransaction(PSParams: TBoldPSS
 begin
   if PsParams.Database.InTransaction then
   begin
-    BoldLog.Log('Committing changes to metadata');
+    BoldLog.Log(sCommittingMetaData);
     PsParams.Database.Commit;
   end;
 end;
@@ -957,7 +950,7 @@ procedure TBoldSQLSystemDescription.RollBackMetaDataTransaction(PSParams: TBoldP
 begin
   if PsParams.Database.InTransaction then
   begin
-    BoldLog.Log('Rolling back changes to metadata');
+    BoldLog.Log(sRollBackMetaData);
     PsParams.Database.RollBack;
   end;
 end;

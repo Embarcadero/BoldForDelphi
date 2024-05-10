@@ -104,7 +104,7 @@ type
 
   IBoldDBParam = interface
     ['{FB3D383D-2F7E-49DC-9834-40ABDCAA3445}']
-    // some libraries use non TParam descendant implementations, for those that use TParam, this interface can be implemented 
+    // some libraries use non TParam descendant implementations, for those that use TParam, this interface can be implemented
     function GetParameter: TParam;
     property Parameter: TParam read GetParameter;
   end;
@@ -167,7 +167,7 @@ type
     property AsAnsiString: TBoldAnsiString read GetAsAnsiString write SetAsAnsiString;
     property AsTime: TDateTime read GetAsDateTime write SetAsTime;
     property AsWord: LongInt read GetAsInteger write SetAsWord;
-    property AsWideString: WideString read GetAsWideString write SetAsWideString;    
+    property AsWideString: WideString read GetAsWideString write SetAsWideString;
     property IsNull: Boolean read GetIsNull;
     property Text: string read GetAsString write SetText;
   end;
@@ -177,7 +177,7 @@ type
     procedure Append;
     procedure Close;
     function FieldByUpperCaseName(const FieldName: string): IBoldField;
-    function FieldByName(const FieldName: string): IBoldField;    
+    function FieldByName(const FieldName: string): IBoldField;
     function FindField(const FieldName: string): IBoldField;
     procedure First;
     function GetDataSet: TDataSet;
@@ -214,7 +214,7 @@ type
     procedure ClearParams;
     procedure AssignParams(Params: TParams);
     function ParamByName(const Value: string): IBoldParameter;
-    function FindParam(const Value: string): IBoldParameter;    
+    function FindParam(const Value: string): IBoldParameter;
     function EnsureParamByName(const Value: string): IBoldParameter;
     function GetParamCount: integer;
     function GetParam(i:integer): IBoldParameter;
@@ -261,7 +261,7 @@ type
     procedure ClearParams;
     procedure AssignParams(Params: TParams);
     function ParamByName(const Value: string): IBoldParameter;
-    function FindParam(const Value: string): IBoldParameter;    
+    function FindParam(const Value: string): IBoldParameter;
     function GetUseReadTransactions: boolean;
     procedure SetUseReadTransactions(value: boolean);
     function GetRecNo: integer;
@@ -440,7 +440,7 @@ type
     function Locate(const KeyFields: string; const KeyValues: Variant; Options: TLocateOptions): Boolean;
     procedure Post;
     function GetState: TDataSetState;
-    function GetRecNo: integer; virtual;    
+    function GetRecNo: integer; virtual;
     procedure Reconnect;
   public
     property DataSet: TDataSet read GetDataSet;
@@ -504,13 +504,13 @@ type
     function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
     function InternalGetDatabaseError(const aErrorType: TBoldDatabaseErrorType;
         const E: Exception; sSQL, sServer, sDatabase, sUserName: string;
-        bUseWindowsAuth: Boolean): EBoldDatabaseError;    
+        bUseWindowsAuth: Boolean): EBoldDatabaseError;
   public
     constructor Create(SQLDataBaseConfig: TBoldSQLDatabaseConfig);
     destructor Destroy; override;
-    procedure CreateDatabase(DropExisting: boolean = true); virtual; abstract;
-    procedure DropDatabase; virtual; abstract;
-    function DatabaseExists: boolean; virtual; abstract;
+    procedure CreateDatabase(DropExisting: boolean = true); virtual;
+    procedure DropDatabase; virtual;
+    function DatabaseExists: boolean; virtual;
     property SQLDatabaseConfig: TBoldSQLDatabaseConfig read GetSQLDatabaseConfig;
   end;
 
@@ -566,7 +566,7 @@ procedure kiCLogSQLException(const s: String);
 
 var
   BoldSQLLogHandler: TBoldLogHandler = nil;
-  BoldSQLLogCount: integer = 0;
+  BoldSQLLogCount: int64 = 0;
   BoldSQLMessage: string = '';
   kiCSQLLogHandler: TBoldLogHandler = nil;
   kiCSQLExceptionLogHandler: TBoldLogHandler = nil;
@@ -576,6 +576,8 @@ implementation
 uses
   Variants,
   Windows,
+
+  BoldCoreConsts,
   BoldSharedStrings,
   BoldUtils,
   BoldIsoDateTime;
@@ -825,7 +827,11 @@ end;
 
 procedure TBoldDbParameter.SetAsBlob(const Value: TBoldBlobData);
 begin
-  Parameter.AsBlob := TBlobData(Value);
+  {$IFDEF BOLD_UNICODE}
+  Parameter.AsBlob := BytesOf(Value);
+  {$ELSE}
+  Parameter.AsBlob := Value;
+  {$ENDIF}
 end;
 
 procedure TBoldDbParameter.SetAsBoolean(Value: Boolean);
@@ -948,7 +954,7 @@ function TBoldDataSetWrapper.Createparam(FldType: TFieldType;
   const ParamName: string; ParamType: TParamType;
   Size: integer): IBoldParameter;
 begin
-  raise EBold.CreateFmt('%s.Createparam: Not supported yet... override in this subclass needed', [classname]);
+  raise EBold.CreateFmt(sCreateParamNotImplemented, [classname]);
 end;
 
 function TBoldDataSetWrapper.Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter;
@@ -1017,13 +1023,13 @@ var
   var
     F: integer;
   begin
-    DataSetFieldList.Update;  
+    DataSetFieldList.Update;
     SetLength(fFieldNames, DataSet.FieldCount);
     for F := 0 to DataSet.FieldCount - 1 do
       fFieldNames[F] := AnsiUpperCase(DataSetFieldList.Fields[F].FieldName);
     fNamesInited  := true;
   end;
- 
+
 begin
   DataSetFieldList := DataSet.FieldList;
   if not fNamesInited  then
@@ -1174,7 +1180,7 @@ constructor TBoldFieldWrapper.Create(Field: TField; DatasetWrapper: TBoldDataset
 begin
   inherited create;
   fField := Field;
-  fSavedValue := Field.Value;  
+  fSavedValue := Field.Value;
   fDatasetWrapper := DatasetWrapper;
 end;
 
@@ -1283,7 +1289,7 @@ end;
 procedure TBoldFieldWrapper.ReTarget(Field: TField);
 begin
   fField := Field;
-  fSavedValue := Field.Value;  
+  fSavedValue := Field.Value;
 end;
 
 procedure TBoldFieldWrapper.SetAsInt64(const Value: Int64);
@@ -1356,7 +1362,7 @@ end;
 procedure TBoldFieldWrapper.SetAsVariant(const Value: Variant);
 begin
   Field.AsVariant := value;
-  fSavedValue := Value;  
+  fSavedValue := Value;
 end;
 
 procedure TBoldFieldWrapper.SetAsDate(const Value: TDateTime);
@@ -1377,10 +1383,26 @@ begin
   fSQLDatabaseConfig := SQLDatabaseConfig;
 end;
 
+procedure TBoldDatabaseWrapper.CreateDatabase(DropExisting: boolean);
+begin
+// override in subclass
+end;
+
+function TBoldDatabaseWrapper.DatabaseExists: boolean;
+begin
+  result := false;
+// override in subclass
+end;
+
+procedure TBoldDatabaseWrapper.DropDatabase;
+begin
+// override in subclass
+end;
+
 destructor TBoldDatabaseWrapper.destroy;
 begin
   FreeAndNil(fAllTableNames);
-  inherited;                     
+  inherited;
 end;
 
 function TBoldDatabaseWrapper.GetExecQuery: IBoldExecQuery;
@@ -1681,22 +1703,8 @@ var
 
 begin
   DestParams := Dest.Params;
-  if Source.ParamCount = 0 then
-  begin
-    for i := 0 to Sql.Count - 1 do
+    if Source.ParamCount = 0 then
     begin
-      Line := sql[i];
-      AddLine(Line);
-    end;
-  end
-  else
-  begin
-    SourceParams := Source.Params;
-    if Dest.ParamCount = 0 then
-    begin
-      DestParams.Assign(SourceParams);
-      while TCollectionAccess(DestParams).UpdateCount > 0 do
-        DestParams.EndUpdate;
       for i := 0 to Sql.Count - 1 do
       begin
         Line := sql[i];
@@ -1705,60 +1713,73 @@ begin
     end
     else
     begin
-      FirstParam := Dest.ParamCount;
-      ParamIndex := Dest.ParamCount;
-      Dest.ParamCheck := false;
-      for i := 0 to Sql.Count - 1 do
+    SourceParams := Source.Params;
+      if Dest.ParamCount = 0 then
       begin
-        Line := Sql[i];
-        if line = '' then
-          continue;
-        CurPos := 1;
-        PrevPos := CurPos;
-        Literal := False;
-        repeat
+      DestParams.Assign(SourceParams);
+      while TCollectionAccess(DestParams).UpdateCount > 0 do
+        DestParams.EndUpdate;
+        for i := 0 to Sql.Count - 1 do
+        begin
+          Line := sql[i];
+          AddLine(Line);
+        end;
+      end
+      else
+      begin
+        FirstParam := Dest.ParamCount;
+        ParamIndex := Dest.ParamCount;
+        Dest.ParamCheck := false;
+        for i := 0 to Sql.Count - 1 do
+        begin
+          Line := Sql[i];
+          if line = '' then
+            continue;
+          CurPos := 1;
+          PrevPos := CurPos;
+          Literal := False;
+          repeat
           while CharInSet(CurrentChar, LeadBytes) do Inc(CurPos, 2);
-          if (CurrentChar = ':') and not Literal and (Line[CurPos+1] <> ':') then
-          begin
-            StartPos := CurPos;
-            while (CurrentChar <> #0) and (Literal or not NameDelimiter) do
+            if (CurrentChar = ':') and not Literal and (Line[CurPos+1] <> ':') then
             begin
-              Inc(CurPos);
-              if Curpos > Length(Line) then
-                break;
-              while CharInSet(CurrentChar, LeadBytes) do Inc(CurPos, 2);
-              if IsLiteral then
+              StartPos := CurPos;
+              while (CurrentChar <> #0) and (Literal or not NameDelimiter) do
               begin
-                Literal := not Literal;
+                Inc(CurPos);
+                if Curpos > Length(Line) then
+                  break;
+              while CharInSet(CurrentChar, LeadBytes) do Inc(CurPos, 2);
+                if IsLiteral then
+                begin
+                  Literal := not Literal;
+                end;
               end;
-            end;
-            Name := copy(Line, StartPos+1, CurPos-(StartPos+1));
-            OldParam := SourceParams[ParamIndex-FirstParam];
-            Assert(OldParam.Name = Name);
-            Prefix := 'P'+IntToStr(ParamIndex);
-            NewParamName := prefix {+ Name};
-            NewParam := DestParams.CreateParam(OldParam.DataType, NewParamName, ptUnknown);
-            NewParam.Assign(OldParam);
-            NewParam.Name := NewParamName;
-            AddLine(Copy(Line, PrevPos, StartPos-PrevPos+1));
-            PrevPos := CurPos;
-            SB.Append(NewParamName);
-            inc(ParamIndex);
-          end
-          else
-            if IsLiteral then
-              Literal := not Literal;
-          Inc(CurPos);
-        until CurPos > Length(Line);
-        if PrevPos <= Length(Line) then
-          AddLine(Copy(Line, PrevPos, MaxInt));
+              Name := copy(Line, StartPos+1, CurPos-(StartPos+1));
+              OldParam := SourceParams[ParamIndex-FirstParam];
+              Assert(OldParam.Name = Name);
+              Prefix := 'P'+IntToStr(ParamIndex);
+              NewParamName := prefix {+ Name};
+              NewParam := DestParams.CreateParam(OldParam.DataType, NewParamName, ptUnknown);
+              NewParam.Assign(OldParam);
+              NewParam.Name := NewParamName;
+              AddLine(Copy(Line, PrevPos, StartPos-PrevPos+1));
+              PrevPos := CurPos;
+              SB.Append(NewParamName);
+              inc(ParamIndex);
+            end
+            else
+              if IsLiteral then
+                Literal := not Literal;
+            Inc(CurPos);
+          until CurPos > Length(Line);
+          if PrevPos <= Length(Line) then
+            AddLine(Copy(Line, PrevPos, MaxInt));
+        end;
       end;
     end;
-  end;
-  SB.Append(DatabaseWrapper.SQLDatabaseConfig.BatchQuerySeparator);
-  Dest.AssignParams(DestParams);
-  Dest.SQLStrings.Add(sb.ToString);
-  Inc(fAccumulatedSQLLength, SB.Length + Length(Dest.SQLStrings.LineBreak));
+    SB.Append(DatabaseWrapper.SQLDatabaseConfig.BatchQuerySeparator);
+    Dest.SQLStrings.Add(sb.ToString);
+    Inc(fAccumulatedSQLLength, SB.Length + Length(Dest.SQLStrings.LineBreak));
   SB.Clear;
 end;
 

@@ -8,6 +8,7 @@ unit BoldNumericControlPack;
 interface
 
 uses
+  Classes,
   BoldDefs,
   BoldSubscription,
   BoldElements,

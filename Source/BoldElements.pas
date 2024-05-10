@@ -1,8 +1,8 @@
-
+﻿                                                
 { Global compiler directives }
 {$include bold.inc}
 unit BoldElements;
-                         
+
 interface
 
 uses
@@ -189,14 +189,19 @@ type
     function GetVariableByName(const aName: string): TBoldExternalVariable;
     function GetAsCommaText: string;
   public
-    constructor Create(aOwnsVariables: boolean = true);
+    constructor Create; overload;
+    constructor Create(aOwnsVariables: boolean); overload;
     class function CreateWithStringVariable(AName: string; AValue: string): TBoldExternalVariableList;
     class function CreateWithElementVariable(AName: string; AValue: TBoldElement): TBoldExternalVariableList;
     function GetEnumerator: TBoldExternalVariableListTraverser;
     procedure Add(Variable: TBoldExternalVariable); overload;
-    procedure Add(AName: string; AValue: string); overload;
     procedure Add(AName: string; AValue: TBoldElement); overload;
-    function RefersToVariable(const Ocl: string): boolean;
+    procedure Add(AName: string; AValue: string); overload;
+    procedure AddInteger(AName: string; AValue: integer);
+    procedure AddFloat(AName: string; AValue: Double);
+    procedure AddDateTime(AName: string; AValue: TDateTime);
+    procedure AddDate(AName: string; AValue: TDate);
+    procedure AddTime(AName: string; AValue: TTime);
     property Variables[index: integer]: TBoldExternalVariable read GetVariables; default;
     property VariableByName[const aName: string]: TBoldExternalVariable read GetVariableByName;
     property AsCommaText: string read GetAsCommaText;
@@ -212,7 +217,7 @@ type
     procedure DefineVariable(const VariableName: string; VarValue: TBoldElement; VariableType: TBoldElementTypeInfo; OwnValue, IsConstant: Boolean); overload; virtual; abstract;
     procedure DefineVariable(const VariableName: string; Variable: TBoldExternalVariable ); overload; virtual; abstract;
     procedure UndefineVariable(Variable: TBoldExternalVariable); virtual; abstract;
-    procedure Evaluate(Ocl: string; Root: TBoldElement; Subscriber: TBoldSubscriber = nil; ResubscribeAll: Boolean = false; resultElement: TBoldIndirectElement = nil; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil); virtual; abstract;
+    procedure Evaluate(Ocl: string; Root: TBoldElement; Subscriber: TBoldSubscriber = nil; ResubscribeAll: Boolean = false; resultElement: TBoldIndirectElement = nil; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil; MaxAnswers: integer = -1; Offset: integer = -1); virtual; abstract;
     function ExpressionType(const Ocl: string; Context: TBoldElementTypeInfo; ReRaise: Boolean; const VariableList: TBoldExternalVariableList = nil): TBoldElementTypeInfo; virtual; abstract;
     procedure SetLookupOclDefinition(value: TBoldLookUpOclDefinition); virtual; abstract;
     property Variables[index: integer]: TBoldIndirectElement read GetVariable;
@@ -245,7 +250,7 @@ type
     procedure DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate); virtual; abstract;
     procedure PrepareToDestroy;
     function GetAsVariant: Variant; virtual;
-    procedure SetAsVariant(const Value: Variant); virtual;        
+    procedure SetAsVariant(const Value: Variant); virtual;
     function IsEqual(BoldElement: TBoldElement): Boolean;
     function CompareTo(BoldElement: TBoldElement): Integer;
     function CompareToAs(CompareType: TBoldCompareType; BoldElement: TBoldElement): Integer; virtual;
@@ -264,9 +269,9 @@ type
     procedure GetAsList(ResultList: TBoldIndirectElement); virtual; abstract;
     procedure GetAsValue(resultElement: TBoldIndirectElement); virtual;
     procedure SubscribeToExpression(const Expression: TBoldExpression; Subscriber: TBoldSubscriber; Resubscribe: Boolean = false; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
-    procedure EvaluateExpression(const Expression: TBoldExpression; resultElement: TBoldIndirectElement; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
+    procedure EvaluateExpression(const Expression: TBoldExpression; resultElement: TBoldIndirectElement; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil; MaxAnswers: integer = -1; Offset: integer = -1);
     function EvaluateExpressionAsDirectElement(const Expression: TBoldExpression; const VariableList: TBoldExternalVariableList = nil): TBoldElement;
-    procedure EvaluateAndSubscribeToExpression(const Expression: TBoldExpression; Subscriber: TBoldSubscriber; resultElement: TBoldIndirectElement; Resubscribe: Boolean = false; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
+    procedure EvaluateAndSubscribeToExpression(const Expression: TBoldExpression; Subscriber: TBoldSubscriber; resultElement: TBoldIndirectElement; Resubscribe: Boolean = false; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil; MaxAnswers: integer = -1; Offset: integer = -1);
     function EvaluateExpressionAsString(const Expression: TBoldExpression; Representation: TBoldRepresentation = brDefault; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil): string;
     function EvaluateExpressionAsBoolean(const Expression: TBoldExpression; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil): Boolean;
     function EvaluateExpressionAsInteger(const Expression: TBoldExpression; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil): Integer;
@@ -365,6 +370,7 @@ type
 implementation
 
 uses
+  BoldCoreConsts,
   BoldExternalizedReferences,
   BoldOclError,
   BoldTypeList, // circular reference BoldElements->BoldTypelist->BoldSystem->BoldElements
@@ -409,9 +415,9 @@ begin
   EvaluateAndSubscribeToExpression(Expression, Subscriber, nil, Resubscribe, EvaluateInPS, VariableList);
 end;
 
-procedure TBoldElement.EvaluateExpression(const Expression: TBoldExpression; resultElement: TBoldIndirectElement; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
+procedure TBoldElement.EvaluateExpression(const Expression: TBoldExpression; resultElement: TBoldIndirectElement; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil; MaxAnswers: integer = -1; Offset: integer = -1);
 begin
-  EvaluateAndSubscribeToExpression(Expression, nil, resultElement, False, EvaluateInPS, VariableList);
+  EvaluateAndSubscribeToExpression(Expression, nil, resultElement, False, EvaluateInPS, VariableList, MaxAnswers, Offset);
 end;
 
 function TBoldElement.EvaluateExpressionAsBoolean(
@@ -543,7 +549,7 @@ begin
   if assigned(BoldType) then
     Result := BoldType.Evaluator
   else
-    raise EBold.CreateFmt('%s.GetEvaluator: Element has no type, can not get evaluator', [classname]);
+    raise EBold.CreateFmt(sCannotGetEvaluatorWithoutType, [classname]);
 end;
 
 destructor TBoldElement.Destroy;
@@ -627,7 +633,8 @@ procedure TBoldElement.RegisterModifiedValueHolder(observer: TObject);
     end
     else
       LockedBy := Value.ClassName;
-    raise EBold.CreateFmt('%s: Member already under modification by %s', [self.DisplayName, LockedBy])
+
+    raise EBold.CreateFmt(sMemberAlreadyModified, [self.DisplayName, LockedBy])
   end;
 
 var
@@ -668,31 +675,31 @@ end;
 
 function TBoldElement.CompareToAs(CompareType: TBoldCompareType; BoldElement: TBoldElement): Integer;
 begin
-  raise EBold.CreateFmt('%s.CompareToAs is abstract', [ClassName]);
+  raise EBold.CreateFmt(sLocatedAbstractError, [ClassName, 'CompareToAs']); // do not localize
 end;
 
 procedure TBoldElement.Assign(Source: TBoldElement);
 begin
   if assigned(Source) then
-    raise EBold.CreateFmt('%s.Assign does not support assigning from %s', [ClassName, Source.ClassName])
+    raise EBold.CreateFmt(sAssignNotSupported, [ClassName, Source.ClassName])
   else
-    raise EBold.CreateFmt('%s.Assign does not support assigning nil', [ClassName])
+    raise EBold.CreateFmt(sAssignNilNotSupported, [ClassName])
 end;
 
 procedure TBoldElement.CompareError(BoldElement: TBoldElement);
 begin
   if Assigned(BoldElement) then
-    raise EBold.CreateFmt('%s: Cannot compare with a %s', [ClassName, BoldElement.ClassName])
+    raise EBold.CreateFmt(sCompareNotSupported, [ClassName, BoldElement.ClassName])
   else
-    raise EBold.CreateFmt('%s: Cannot compare to nil', [ClassName]);
+    raise EBold.CreateFmt(sCompareNilNotSupported, [ClassName]);
 end;
 
 procedure TBoldElement.AssignError(BoldElement: TBoldElement);
 begin
   if Assigned(BoldElement) then
-    raise EBold.CreateFmt('%s: Cannot assign a %s', [ClassName, BoldElement.ClassName])
+    raise EBold.CreateFmt(sAssignNotSupported, [ClassName, BoldElement.ClassName])
   else
-    raise EBold.CreateFmt('%s: Cannot assign nil', [ClassName]);
+    raise EBold.CreateFmt(sAssignNilNotSupported, [ClassName]);
 end;
 
 procedure TBoldElement.CompareTypeError(CompType: TBoldCompareType; BoldElement: TBoldElement);
@@ -704,14 +711,12 @@ begin
     ElementName := BoldElement.ClassName
   else
     ElementName := 'nil';
-  raise EBold.CreateFmt('%s: Comparetype ''%s'' not supported when comparing to %s',
-    [ClassName,
-     GetEnumName(TypeInfo(TBoldCompareType), Ord(CompType)),
-     ElementName]);
+  
+  raise EBold.CreateFmt(sInvalidCompareType,  [ClassName,  
+                        GetEnumName(TypeInfo(TBoldCompareType), Ord(CompType)), ElementName]);
 end;
 
-constructor TBoldElement.CreateWithTypeInfo(
-  ElementTypeInfo: TBoldElementTypeInfo);
+constructor TBoldElement.CreateWithTypeInfo(ElementTypeInfo: TBoldElementTypeInfo);
 begin
 
 end;
@@ -723,7 +728,7 @@ end;
 
 procedure TBoldElement.MutableError(const NewValue: string);
 begin
-  raise EBold.CreateFmt('%s: Tried to change the value of an immutable element from ''%s'' to ''%s''', [ClassName, AsString, NewValue]);
+  raise EBold.CreateFmt(sTriedToChangeImmutableElement, [ClassName, AsString, NewValue]);
 end;
 
 procedure TBoldElement.GetAsValue(resultElement: TBoldIndirectElement);
@@ -735,7 +740,7 @@ procedure TBoldElement.EnsureValidString(const Value: string;
   Representation: TBoldRepresentation);
 begin
   if not ValidateString(Value, Representation) then
-    raise EBoldAssertionFailed.CreateFmt('%s.EnsureValidString: String validation failed', [Classname]);
+    raise EBoldAssertionFailed.CreateFmt(ssStringValidationFailedWithClass, [Classname]);
 end;
 
 function TBoldElement.GetAsVariant: Variant;
@@ -770,7 +775,7 @@ end;
 procedure TBoldMetaElement.DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate);
 begin
   if Mutable then
-    raise EBold.CreateFmt('%s.DefaultSubscribe: Subscription on mutable MetaElements is not possible', [ClassName]);
+    raise EBold.CreateFmt(sCannotSubscribeToMutableMetaElements, [ClassName]);
 end;
 
 constructor TBoldMetaElement.Create(const ModelName: string; const ExpressionName: string; const DelphiName: string);
@@ -789,7 +794,7 @@ end;
 
 procedure TBoldMetaElement.GetAsList(ResultList: TBoldIndirectElement);
 begin
-  raise EBoldFeatureNotImplementedYet.Create('TBoldMetaElement.GetAsList has not been implemented yet.');
+  raise EBoldFeatureNotImplementedYet.Create(sMetaElementGetAsListNotImplemented);
 end;
 
 function TBoldMetaElement.GetDisplayName: String;
@@ -859,9 +864,9 @@ begin
     fValue := NewValue;
     toFree.Free;
   end
-  else
-    if OwnsValue then
-      raise EBold.Create('TBoldInDirectElement.SetReferenceValue: New value alread owned!');
+  else if OwnsValue then
+    raise EBold.CreateFmt(sNewValueAlreadyOwned, [ClassName]);
+
   WriteableOwnsValue := False;
 end;
 
@@ -926,19 +931,20 @@ end;
 
 procedure TBoldElement.EvaluateAndSubscribeToExpression(
   const Expression: TBoldExpression; Subscriber: TBoldSubscriber;
-  resultElement: TBoldIndirectElement; Resubscribe: Boolean = false; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
+  resultElement: TBoldIndirectElement; Resubscribe: Boolean = false; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil;
+  MaxAnswers: integer = -1; Offset: integer = -1);
 begin
   try
-    Evaluator.Evaluate(Expression, Self, Subscriber, Resubscribe, resultElement, EvaluateInPS, VariableList);
+    Evaluator.Evaluate(Expression, Self, Subscriber, Resubscribe, resultElement, EvaluateInPS, VariableList, MaxAnswers, Offset);
     if not evaluateInPS and Assigned(resultElement) and Assigned(resultElement.Value) and resultElement.OwnsValue then
       resultElement.Value.MakeImmutable;
     if Assigned(Subscriber) then
       AddSmallSubscription(Subscriber, [beDestroying], breReSubscribe);
   except
     on E: EBoldOCLAbort do
-      raise EBold.CreateFmt('OCL Expression: %s' + BOLDCRLF + 'Error: %s' + BOLDCRLF, [E.Ocl, E.Message]);
+      raise EBold.CreateFmt(sOCLExpressionError, [E.Ocl, BOLDCRLF, E.Message]);
     on E: EBoldOCLError do
-      raise EBold.CreateFmt('OCL Expression: %s' + BOLDCRLF + 'Error: %s' + BOLDCRLF, [E.Ocl, E.Message]);
+      raise EBold.CreateFmt(sOCLExpressionError, [E.Ocl, BOLDCRLF, E.Message]);
   end;
 end;
 
@@ -985,12 +991,42 @@ begin
   Add(TBoldOclVariable.Create(AName, AValue));
 end;
 
-constructor TBoldExternalVariableList.Create(aOwnsVariables: boolean = true);
+procedure TBoldExternalVariableList.AddDate(AName: string; AValue: TDate);
+begin
+  Add(TBoldOclVariable.CreateDateVariable(AName, AValue));
+end;
+
+procedure TBoldExternalVariableList.AddDateTime(AName: string; AValue: TDateTime);
+begin
+  Add(TBoldOclVariable.CreateDateTimeVariable(AName, AValue));
+end;
+
+procedure TBoldExternalVariableList.AddFloat(AName: string; AValue: Double);
+begin
+  Add(TBoldOclVariable.CreateFloatVariable(AName, AValue));
+end;
+
+procedure TBoldExternalVariableList.AddInteger(AName: string; AValue: integer);
+begin
+  Add(TBoldOclVariable.CreateIntegerVariable(AName, AValue));
+end;
+
+procedure TBoldExternalVariableList.AddTime(AName: string; AValue: TTime);
+begin
+  Add(TBoldOclVariable.CreateTimeVariable(AName, AValue));
+end;
+
+constructor TBoldExternalVariableList.Create(aOwnsVariables: boolean);
 begin
   if aOwnsVariables then
     inherited create(4, [bcoDataOwner])
   else
     inherited create(4, []);
+end;
+
+constructor TBoldExternalVariableList.Create;
+begin
+  inherited create(4, [bcoDataOwner]);
 end;
 
 class function TBoldExternalVariableList.CreateWithElementVariable(
@@ -1045,17 +1081,6 @@ end;
 function TBoldExternalVariableList.GetVariables(index: integer): TBoldExternalVariable;
 begin
   result := Items[index] as TBoldExternalVariable;
-end;
-
-function TBoldExternalVariableList.RefersToVariable(const Ocl: string): boolean;
-var
-  i: integer;
-begin
-  result := true;
-  for i := 0 to Count-1 do
-    if BoldCaseIndependentPos(Variables[i].Name, Ocl) > 0 then
-      exit;
-  result :=  false;
 end;
 
 function TBoldMetaElement.IsEqualAs(CompareType: TBoldCompareType;
@@ -1149,7 +1174,8 @@ procedure InitDebugMethods;
 var
   List: TBoldExternalVariableList;
 begin
-  exit;
+  // Used to force compiler to link AsCommaText, so it can be used in debugging
+  exit; 
   List := nil;
   List.AsCommaText;
 end;

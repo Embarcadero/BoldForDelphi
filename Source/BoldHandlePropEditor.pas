@@ -67,6 +67,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils;
   
 { TBoldHandlePropertyEditor }
@@ -110,7 +112,7 @@ begin
   if component is TBoldOclDefinition then
     result := (Component as TBoldOclDefinition).GetContextType
   else
-    raise Exception.CreateFmt('%s.GetContextType: Component is not a TBoldOclDefinition', [ClassName]);
+    raise Exception.CreateFmt(sComnponentNotOCLDefinition, [ClassName]);
 end;
 
 { TBoldTypeNameSelectorForOclDefinition }
@@ -126,7 +128,7 @@ begin
   if component is TBoldOclDefinition then
     result := (Component as TBoldOclDefinition).SystemTypeInfo
   else
-    raise Exception.CreateFmt('%s.GetContextType: Component is not a TBoldOclDefinition', [ClassName]);
+    raise Exception.CreateFmt(sComnponentNotOCLDefinition, [ClassName]);
 end;
 
 { TBoldOclVariablesEditor }

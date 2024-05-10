@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldObjectListControllers;
@@ -8,7 +7,7 @@ interface
 uses
   Classes,
   BoldSystem,
-  BoldObjectSpaceLists,  
+  BoldObjectSpaceLists,
   BoldDomainElement,
   BoldValueInterfaces,
   BoldId,
@@ -136,8 +135,9 @@ implementation
 
 uses
   SysUtils,
+  BoldCoreConsts,
   BoldIndexableList,
-  BoldDefaultStreamNames,  
+  BoldDefaultStreamNames,
   BoldValueSpaceInterfaces;
 
 { TBoldObjectListController }
@@ -162,24 +162,34 @@ end;
 
 procedure TBoldObjectListController.AddLocator(Locator: TBoldObjectLocator);
 begin
-  if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'AddLocator', '');
+  if not Assigned(Locator) then
+    raise EBold.CreateFmt(sCanNotInsertNil, [ClassName, 'AddLocator']);
+  Locator.BoldSystem.StartTransaction;
+  try
+    if not StartModify then
+      BoldRaiseLastFailure(OwningList, 'AddLocator', '');
 
-{$IFNDEF AllowCrossSystemLists}
-  if (BoldSystemCount > 1) and Assigned(BoldSystem) then
-  begin
-    Assert(Assigned(Locator), 'Locator not Assigned');
-    Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
-    if Locator.BoldSystem <> BoldSystem then
-      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.AddLocator: Locator from another system not allowed to be added to %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
+  {$IFNDEF AllowCrossSystemLists}
+    if (BoldSystemCount > 1) and Assigned(BoldSystem) then
+    begin
+      Assert(Assigned(Locator), 'Locator not Assigned');
+      Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
+      if Locator.BoldSystem <> BoldSystem then
+        SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sCrossSystemNotAllowed, [ClassName, 'AddLocator', OwningMember.DisplayName], OwningList));
+    end;
+  {$ENDIF}
+
+    LocatorList.Add(Locator);
+    SubscribeToObjectDeleted(Locator);
+    EndModify;
+    Changed(beItemAdded, [Locator]);
+    if Assigned(Locator.BoldSystem) then
+      Locator.BoldSystem.CommitTransaction();
+  except
+    if Assigned(Locator.BoldSystem) then
+      Locator.BoldSystem.RollbackTransaction;
+    raise;
   end;
-{$ENDIF}
-
-  LocatorList.Add(Locator);
-  SubscribeToObjectDeleted(Locator);
-  Changed(beItemAdded, [Locator]);
-
-  EndModify;
 end;
 
 function TBoldObjectListController.GetCapacity: integer;
@@ -210,7 +220,7 @@ begin
       LocatorList.InitMembersIndex(OwningObjectList, OwningObjectList.BoldRoleRTInfo.Qualifiers);
     end
     else
-      raise EBold.CreateFmt('%s.GetLocatorByQualifiersAndSubscribe: Object list does not have a member index or role is not qualified', [ClassName]);
+      raise EBold.CreateFmt(sRolenotQualified, [ClassName]);
   end;
   result := List.GetLocatorByAttributesAndSubscribe(MemberList, Subscriber);
 end;
@@ -227,50 +237,79 @@ end;
 
 procedure TBoldObjectListController.InsertLocator(index: Integer; Locator: TBoldObjectLocator);
 begin
-  if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'InsertLocator', '');
-{$IFNDEF AllowCrossSystemLists}
-  if (BoldSystemCount > 1) and Assigned(BoldSystem) then
-  begin
-    Assert(Assigned(Locator), 'Locator not Assigned');
-    Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
-    if Locator.BoldSystem <> BoldSystem then
-      SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.InsertLocator: Locator from another system not allowed to be inserted in %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
-  end;
-{$ENDIF}
-  LocatorList.Insert(index, Locator);
-  SubscribeToObjectDeleted(Locator);
-  Changed(beItemAdded, [Locator]);
+  if not Assigned(Locator) then
+    raise EBold.CreateFmt(sCanNotInsertNil, [ClassName, 'InsertLocator']);
+  Locator.BoldSystem.StartTransaction;
+  try
+    if not StartModify then
+      BoldRaiseLastFailure(OwningList, 'InsertLocator', '');
 
-  EndModify;
+  {$IFNDEF AllowCrossSystemLists}
+    if (BoldSystemCount > 1) and Assigned(BoldSystem) then
+    begin
+      Assert(Assigned(Locator), 'Locator not Assigned');
+      Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
+      if Locator.BoldSystem <> BoldSystem then
+        SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sCrossSystemNotAllowed, [ClassName, 'InsertLocator', OwningMember.DisplayName], OwningList));
+    end;
+  {$ENDIF}
+
+    LocatorList.Insert(index, Locator);
+    SubscribeToObjectDeleted(Locator);
+    EndModify;
+    Changed(beItemAdded, [Locator]);
+    Locator.BoldSystem.CommitTransaction();
+  except
+    Locator.BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TBoldObjectListController.Move(CurrentIndex, NewIndex: Integer);
 begin
-  if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'Move', '');
+  if Assigned(BoldSystem) then
+    BoldSystem.StartTransaction;
+  try
+    if not StartModify then
+      BoldRaiseLastFailure(OwningList, 'Move', '');
 
-  LocatorList.Move(CurrentIndex, NewIndex);
-  Changed(beOrderChanged, []);
-
-  EndModify;
+    LocatorList.Move(CurrentIndex, NewIndex);
+    EndModify;
+    Changed(beOrderChanged, []);
+    if Assigned(BoldSystem) then
+      BoldSystem.CommitTransaction();
+  except
+    if Assigned(BoldSystem) then
+      BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TBoldObjectListController.InternalRemoveByIndex(index: Integer);
-var
-  Locator: TBoldObjectLocator;
 begin
-  Locator := LocatorList[Index];
   LocatorList.RemoveByIndex(index);
-  Changed(beItemDeleted, [Locator]);
 end;
 
 procedure TBoldObjectListController.RemoveByIndex(index: Integer);
+var
+  Locator: TBoldObjectLocator;
 begin
-  if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'RemoveByIndex', '');
-  InternalRemoveByIndex(index);
-  EndModify;
+  if Assigned(BoldSystem) then
+    BoldSystem.StartTransaction;
+  try
+    if not StartModify then
+      BoldRaiseLastFailure(OwningList, 'RemoveByIndex', '');
+    Locator := LocatorList[Index];
+    InternalRemoveByIndex(index);
+    EndModify;
+    Changed(beItemDeleted, [Locator]);
+    if Assigned(BoldSystem) then
+      BoldSystem.CommitTransaction();
+  except
+    if Assigned(BoldSystem) then
+      BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TBoldObjectListController.SetCapacity(const Value: integer);
@@ -280,28 +319,33 @@ end;
 
 procedure TBoldObjectListController.SetLocator(index: Integer; Locator: TBoldObjectLocator);
 begin
-  if not StartModify then
-    BoldRaiseLastFailure(OwningList, 'SetLocator', '');
-
   if Locator = nil then
-    RemoveByIndex(index)
-  else
   begin
-{$IFNDEF AllowCrossSystemLists}
-  if (BoldSystemCount > 1) and Assigned(BoldSystem) then
-    begin
-      Assert(Assigned(Locator), 'Locator not Assigned');
-      Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
-      if Locator.BoldSystem <> BoldSystem then
-        SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.SetLocator: Locator from another system not allowed to be inserted in %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
-    end;
-{$ENDIF}
+    RemoveByIndex(index);
+    exit;
+  end;
+  Locator.BoldSystem.StartTransaction;
+  try
+    if not StartModify then
+      BoldRaiseLastFailure(OwningList, 'SetLocator', '');
+  {$IFNDEF AllowCrossSystemLists}
+    if (BoldSystemCount > 1) and Assigned(BoldSystem) then
+      begin
+        Assert(Assigned(Locator), 'Locator not Assigned');
+        Assert(Assigned(Locator.BoldSystem), 'Locator.BoldSystem not Assigned');
+        if Locator.BoldSystem <> BoldSystem then
+          SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('TBoldObjectListController.SetLocator: Locator from another system not allowed to be inserted in %s, Define conditional AllowCrossSystemLists if you want to allow this.', [OwningMember.DisplayName], OwningList));
+      end;
+  {$ENDIF}
     LocatorList[index] := Locator;
     SubscribeToObjectDeleted(Locator);
+    EndModify;
     Changed(beItemReplaced, [Locator, Index]);
+    Locator.BoldSystem.CommitTransaction();
+  except
+    Locator.BoldSystem.RollbackTransaction;
+    raise;
   end;
-
-  EndModify;
 end;
 
 function TBoldObjectListController.GetStreamname: string;
@@ -318,13 +362,20 @@ procedure TBoldObjectListController._ReceiveObjectDeleted(
   RequestedEvent: TBoldRequestedEvent; const Args: array of const);
 
   procedure RemoveAllObjectsFromSystem(System: TBoldSystem);
+  {$IFDEF AllowCrossSystemLists}
   var
     i: Integer;
+    Locator: TBoldObjectLocator;
+  {$ENDIF}
   begin
   {$IFDEF AllowCrossSystemLists}
     for i := Count - 1 downto 0 do
       if LocatorList[i].BoldSystem = System then
+      begin
+        Locator := LocatorList[i];
         InternalRemoveByIndex(i);
+        Changed(beItemDeleted, [Locator]);
+      end;
   {$ELSE}
     LocatorList.Clear;
   {$ENDIF}
@@ -345,13 +396,13 @@ begin
   assert(originator is TBoldObjectList);
   case OriginalEvent of
     beLocatorDestroying,
-    beObjectDeleted:
+    beItemDeleted:
       begin
         assert(High(Args) = 0);
         assert(Args[0].vType = vtObject);
         Assert(Args[0].VObject is TBoldObjectLocator);
         DeletedLocator := TBoldObjectLocator(Args[0].VObject);
-//        Assert(not Assigned(OwningList.Boldtype) or DeletedLocator.BoldObject.BoldClassTypeInfo.BoldIsA(TBoldListTypeInfo(OwningList.Boldtype).ListElementTypeInfo));
+        Assert(not Assigned(OwningList.Boldtype) or DeletedLocator.BoldClassTypeInfo.BoldIsA(OwningObjectList.ListElementTypeInfo));
         RemoveLocator(DeletedLocator);
       end;
     beDestroying:
@@ -359,7 +410,7 @@ begin
         RemoveAllObjectsFromSystem(TBoldSystem(TBoldObjectList(Originator).OwningElement));
       end;
   else
-    raise EBoldInternal.CreateFmt('%s._ReceiveObjectDeleted: Unknown event', [classname]);
+    raise EBoldInternal.CreateFmt(sUnknownEvent, [classname]);
   end;
 end;
 
@@ -367,31 +418,29 @@ procedure TBoldObjectListController.SubscribeToObjectDeleted(Locator: TBoldObjec
 var
   ClassList: TBoldObjectList;
 begin
-  with OwningObjectList do
+  if not (OwningObjectList.SubscribeToLocatorsInList or OwningObjectList.SubscribeToObjectsInList) then
+    exit;
+  if Assigned(FSubscriber) then // if assigned then subscriptions should already have been placed.
+    exit;
+  FSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(_ReceiveObjectDeleted);
+
+  if Assigned(OwningObjectList.ListElementTypeInfo) then
+    ClassList := Locator.BoldSystem.Classes[OwningObjectList.ListElementTypeInfo.TopSortedIndex]
+  else
+    ClassList := Locator.BoldSystem.Classes[0];
+
+  if OwningObjectList.SubscribeToLocatorsInList then
   begin
-    if not (SubscribeToLocatorsInList or SubscribeToObjectsInList) then
-      exit;
-    if Assigned(FSubscriber) then
-      exit
+    // Subscribe to ClassList instead of System to avoid having all subscriptions on system.
+    // When object is deleted, system sends beObjectDeleted, ClassList receives it and sends beItemDeleted instead
+    if OwningObjectList.SubscribeToObjectsInList then
+      ClassList.AddSmallSubscription(FSubscriber, [beLocatorDestroying, beDestroying, beItemDeleted])
     else
-      FSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(_ReceiveObjectDeleted);
-
-    if Assigned(OwningObjectList.BoldType) then
-      ClassList := Locator.BoldSystem.Classes[TBoldClassTypeInfo(TBoldListTypeInfo(OwningObjectList.BoldType).ListElementTypeInfo).TopSortedIndex]
-    else
-      ClassList := Locator.BoldSystem.Classes[0];
-
-    if SubscribeToLocatorsInList then
-    begin
-      if SubscribeToObjectsInList then
-        ClassList.AddSmallSubscription(FSubscriber, [beLocatorDestroying, beDestroying, beObjectDeleted], beLocatorDestroying)
-      else
-        ClassList.AddSmallSubscription(fSubscriber, [beLocatorDestroying], beLocatorDestroying);
-    end
-    else
-      if SubscribeToObjectsInList then
-        ClassList.AddSmallSubscription(FSubscriber, [beDestroying, beObjectDeleted], beLocatorDestroying);
-  end;
+      ClassList.AddSmallSubscription(FSubscriber, [beLocatorDestroying]);
+  end
+  else
+    if OwningObjectList.SubscribeToObjectsInList then
+      ClassList.AddSmallSubscription(FSubscriber, [beDestroying, beItemDeleted]);
 end;
 
 procedure TBoldObjectListController.DropSubscriptions;
@@ -400,18 +449,18 @@ begin
 end;
 
 procedure TBoldObjectListController.Resubscribe;
-var
-  i: integer;
-  LastSystem: TBoldSystem;
-  Locator: TBoldObjectLocator;
+var  Locator: TBoldObjectLocator;
 begin
   Locator := (LocatorList.Any) as TBoldObjectLocator;
   if Assigned(Locator) then
   begin
     SubscribeToObjectDeleted(Locator);
+    {$IFDEF AllowCrossSystemLists}
     if BoldSystemCount > 1 then
     begin
+      var LastSystem: TBoldSystem;
       LastSystem := Locator.BoldSystem;
+      var i: integer;
       for i := 0 to Count - 1 do
       begin
         Locator := Locatorlist[i];
@@ -422,19 +471,30 @@ begin
         end;
       end;
     end;
+   {$ENDIF AllowCrossSystemLists}
   end
 end;
 
 procedure TBoldObjectListController.Clear;
-var
-  i: integer;
 begin
-  with OwningObjectList do
-    if MemberHasSubscribers or IsPartOfSystem then
-      inherited
-    else
-      LocatorList.Clear;
-  DropSubscriptions;
+  if IsEmpty then
+    exit;
+  if Assigned(BoldSystem) then
+    BoldSystem.StartTransaction;
+  try
+    with OwningObjectList do
+      if MemberHasSubscribers or IsPartOfSystem then
+        inherited Clear
+      else
+        LocatorList.Clear;
+    DropSubscriptions;
+    if Assigned(BoldSystem) then
+      BoldSystem.CommitTransaction();
+  except
+    if Assigned(BoldSystem) then
+      BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TBoldObjectListController.AssignContentValue(Source: IBoldValue);
@@ -453,7 +513,7 @@ begin
     Changed(beValueChanged, []);
   end
   else
-    raise EBold.CreateFmt('%s.AssignContentValue: unknown type of source', [classname]);
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, 'AssignContentValue']); // do not localize
 end;
 
 procedure TBoldObjectListController.FreeContent;
@@ -481,12 +541,12 @@ begin
   result := true;
   if result and ClassTypeInfo.IsAbstract then
   begin
-    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('%s is an abstract class', [ClassTypeInfo.ExpressionName], OwningList));
+    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sClassIsAbstract, [ClassTypeInfo.ExpressionName], OwningList));
     result := false;
   end;
   if result and ClassTypeInfo.IsLinkClass then
   begin
-    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt('%s is a LinkClass', [ClassTypeInfo.ExpressionName], OwningList));
+    SetBoldLastFailureReason(TBoldFailureReason.CreateFmt(sClassIsLinkClass, [ClassTypeInfo.ExpressionName], OwningList));
     result := false;
   end;
 end;
@@ -523,7 +583,7 @@ begin
     end
     else
     if Locator.EnsuredBoldObject.BoldClassTypeInfo.BoldIsA(ClassTypeInfo) then
-      DestinationList.AddLocator(Locator);
+        DestinationList.AddLocator(Locator);
   end;
 end;
 
@@ -549,7 +609,6 @@ end;
 function TBoldClassListController.ClosestLoadedClassList: TBoldObjectList;
 var
   SuperClass: TBoldClassTypeInfo;
-  SuperClassList: TBoldObjectList;
 begin
   if fTimestamp <> BOLDMAXTIMESTAMP then
   begin
@@ -572,7 +631,7 @@ procedure TBoldClassListController.MakeDbCurrent;
 var
   SourceList: TBoldObjectList;
 begin
-  if ClassTypeinfo.Persistent and BoldSystem.BoldPersistent then
+  if ClassTypeinfo.Persistent and Assigned(BoldSystem.PersistenceController) then
   begin
     SourceList := ClosestLoadedClassList;
 
@@ -610,55 +669,43 @@ begin
     beObjectCreated:
       begin
         inc(fLoadedObjectCount);
-        if Owninglist.BoldPersistenceState <> bvpsInvalid then
+        if Owninglist.BoldPersistenceState in [bvpsCurrent, bvpsTransient]  then
         begin
-//          Assert(not LocatorList.Includes(BoldObject.BoldObjectLocator), 'Locator already in list on beObjectCreated.');
-          AddLocator(BoldObject.BoldObjectLocator)
+          AddLocator(BoldObject.BoldObjectLocator);
+          Owninglist.Invalidate;
         end;
-        Owninglist.Invalidate;
       end;
     beObjectDeleted:
     begin
-      if Owninglist.BoldPersistenceState <> bvpsInvalid then
+      Dec(fLoadedObjectCount);
+      if Owninglist.BoldPersistenceState in [bvpsCurrent, bvpsTransient]  then
       begin
         if ClassTypeInfo.Persistent and BoldSystem.BoldPersistent then
           LocatorList.Remove(BoldObject.BoldObjectLocator);
+        Owninglist.Invalidate;
       end;
-      Dec(fLoadedObjectCount);
-      Owninglist.Invalidate;
-      OwningList.SendExtendedEvent(Event, [BoldObject.BoldObjectLocator]);
     end;
     beObjectFetched:
     begin
       inc(fLoadedObjectCount);
-      if Owninglist.IsCurrent then
+      if Owninglist.BoldPersistenceState in [bvpsCurrent, bvpsTransient]  then
       begin
-//        Assert(not LocatorList.Includes(BoldObject.BoldObjectLocator), 'Locator already in list on beObjectFetched.');
-        AddLocator(BoldObject.BoldObjectLocator);
-        OwningList.SendExtendedEvent(beValueInvalid, [BoldObject.BoldObjectLocator]);
-      end
-      else
-      if (Owninglist.BoldPersistenceState = bvpsTransient) and (fLoadedObjectCount = count) then
-      begin
-//        Assert(LocatorList.Includes(BoldObject.BoldObjectLocator), 'Locator not already in list on beObjectFetched.');
-        MarkListCurrent;
-        OwningList.SendExtendedEvent(beValueInvalid, [BoldObject.BoldObjectLocator]);
-      end
-      else
-        Owninglist.Invalidate;
+        if not LocatorList.LocatorInList[BoldObject.BoldObjectLocator] then
+          AddLocator(BoldObject.BoldObjectLocator);
+        if (Owninglist.BoldPersistenceState = bvpsTransient) and (fLoadedObjectCount = count) then
+          MarkListCurrent;
+      end;
     end;
     beObjectUnloaded:
     begin
       if not BoldObject.BoldObjectIsDeleted then
       begin
         Dec(fLoadedObjectCount);
-        if Owninglist.BoldPersistenceState = bvpsCurrent then
+        if Owninglist.BoldPersistenceState in [bvpsCurrent, bvpsTransient]  then
         begin
           SetPersistenceState(bvpsTransient);
           OwningList.SendEvent(beValueInvalid);
-        end
-        else
-          Owninglist.Invalidate;
+        end;
       end;
     end;
   end;
@@ -666,7 +713,8 @@ begin
     beObjectCreated: OwningList.SendExtendedEvent(beItemAdded, [BoldObject.BoldObjectLocator]);
     beObjectDeleted: OwningList.SendExtendedEvent(beItemDeleted, [BoldObject.BoldObjectLocator]);
     beObjectFetched: OwningList.SendExtendedEvent(beObjectFetched, [BoldObject.BoldObjectLocator]);
-    beObjectUnloaded: OwningList.SendExtendedEvent(beObjectUnloaded, [BoldObject.BoldObjectLocator])
+    beObjectUnloaded: OwningList.SendExtendedEvent(beObjectUnloaded, [BoldObject.BoldObjectLocator]);
+    beLocatorDestroying: OwningList.SendExtendedEvent(beLocatorDestroying, [BoldObject.BoldObjectLocator])
   else
     raise EBoldInternal.CreateFmt('%s.ReceiveClassEvent: Unknown event: %d', [ClassName, Event]);
   end;
@@ -724,8 +772,8 @@ begin
         result := TBoldObjectList(AtTimeList[i]);
     if not assigned(result) then
     begin
-      result := TBoldObjectList.InternalCreateClassList(BoldSystem, OwningList.BoldType as TBoldListTypeInfo);
-      TBoldClassListController(GetControllerForMember(result)).fTimestamp := Time;
+    result := TBoldObjectList.InternalCreateClassList(BoldSystem, OwningList.BoldType as TBoldListTypeInfo);
+    TBoldClassListController(GetControllerForMember(result)).fTimestamp := Time;
       AtTimeList.Add(result);
     end;
   end;
@@ -788,7 +836,7 @@ var
       PreChange;
       LocatorList.Add(Locator);
       Changed(beItemAdded, [Locator]);
-    end;
+  end;
   end;
 
 {$IFNDEF NoTransientInstancesOfPersistentClass}
@@ -835,13 +883,13 @@ begin
       AddTransientFromSystem(NewList);
 {$ENDIF}
     end;
-    for I := GetCount - 1 downto 0 do
-      if not NewList.IdInList[GetLocator(I).BoldObjectID] then
-        LocatorList.RemoveByIndex(I);
-    for I := 0 to NewList.Count - 1 do
-      InternalAddId(NewList[I]);
+  for I := GetCount - 1 downto 0 do
+    if not NewList.IdInList[GetLocator(I).BoldObjectID] then
+      LocatorList.RemoveByIndex(I);
+  for I := 0 to NewList.Count - 1 do
+    InternalAddId(NewList[I]);
   finally
-    NewList.Free;
+  NewList.Free;
   end;
 end;
 
@@ -924,7 +972,5 @@ begin
   else
    UnsupportedMode(Mode, 'AssignContentValue');
 end;
-
-initialization
 
 end.

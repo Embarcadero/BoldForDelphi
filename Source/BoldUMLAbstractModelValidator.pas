@@ -71,18 +71,34 @@ procedure TBoldUMLAbstractModelValidator.AddViolation(severity: TSeverity; const
 var
   v : TViolation;
 begin
-  v := Validator.Violation.AddNew;
-  v.Severity := severity;
-  v.Description := description;
-  v.modelElement := element;
+  Validator.BoldSystem.StartTransaction();
+  try
+    v := Validator.Violation.AddNew;
+    v.Severity := severity;
+    v.Description := description;
+    v.modelElement := element;
+    Validator.BoldSystem.CommitTransaction()
+  except
+    Validator.BoldSystem.RollbackTransaction();
+    raise;
+  end;
 end;
 
 procedure TBoldUMLAbstractModelValidator.ClearViolations;
 var
   i: integer;
 begin
-  for i := Validator.violation.count-1 downto 0 do
-    Validator.Violation[i].Delete
+  if Validator.violation.Empty then
+    exit;
+  Validator.BoldSystem.StartTransaction();
+  try
+    for i := Validator.violation.count-1 downto 0 do
+      Validator.Violation[i].Delete;
+    Validator.BoldSystem.CommitTransaction()
+  except
+    Validator.BoldSystem.RollbackTransaction();
+    raise;
+  end;
 end;
 
 constructor TBoldUMLAbstractModelValidator.Create(ABoldModel: TBoldModel; SQLDataBaseConfig: TBoldSQLDataBaseConfig; const Language: TBoldModelValidatorSourceLanguage);

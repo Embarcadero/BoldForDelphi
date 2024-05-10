@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAFPDefault;
@@ -15,6 +15,7 @@ uses
   Menus,
   ComCtrls,
   BoldDefs,
+  BoldControlPack,
   BoldControlPackDefs,
   BoldSubscription,
   BoldHandles,
@@ -40,7 +41,12 @@ type
   TBoldDefaultAttributeListAutoFormProvider = class;
   TBoldDefaultObjectListAutoFormProvider = class;
 
-  TFormAFPDefault = class(TForm);
+  TFormAFPDefault = class(TForm)
+  protected
+    procedure CreateParams(var Params: TCreateParams); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+  end;
 
   {---TBoldDefaultFormProvider---}
   TBoldDefaultFormProvider = class(TBoldUserFormProvider)
@@ -48,10 +54,10 @@ type
     fApplyPolicy: TBoldApplyPolicy;
     fOrientation: TBoldOrientation;
     fReusing: boolean;
+  protected
     class procedure DefaultFormDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState; var Accept: Boolean);
     class procedure DefaultFormOnClose(Sender: TObject; var Action: TCloseAction);
     class procedure DefaultReceiveObjectGone(Sender: TObject);
-  protected
     procedure DoGenerateForm; override;
     procedure EnsureForm; override;
     procedure EnsureHandle; override;
@@ -114,6 +120,8 @@ type
     fMemberRTInfoList: TBoldMemberRTInfoList;
     fButtonPanel: TPanel;
     fDragSource: TBoldDropTarget;
+  protected
+    fDisplaySingleRoleButtons: Boolean;
     function GetGoodStringRepresentationForSingleLink(MemberRTInfo: TBoldMemberRTInfo): string;
     function GetLargestWidth: integer;
     function GetMemberRTInfoList: TBoldMemberRTInfoList;
@@ -132,19 +140,17 @@ type
     procedure ChangeNonEmbeddedLinksInclusion(Sender: TObject);
     procedure CreateButtons;
     function CreateDragSource(aParent: TWinControl): TBoldDropTarget;
-    class procedure BoldAsStringRenderer1SetColor(Element: TBoldElement; var AColor: TColor; Representation: Integer; Expression: String);
+    class procedure BoldAsStringRenderer1SetColor(aFollower: TBoldFollower; var AColor: TColor);
     class procedure CloseButtonClick(Sender: TObject);
     class procedure CancelButtonClick(Sender: TObject);
     class procedure OKButtonClick(Sender: TObject);
     class procedure ApplyButtonClick(Sender: TObject);
-  protected
-    fDisplaySingleRoleButtons: Boolean;
     function MemberShouldBeDisplayed(Member: TBoldMemberRTInfo): Boolean; virtual;
     procedure EnsureComponents; override;
-    procedure EnsureObjectVersionControls;
-    procedure EnsureMultiRoleMemberControls;
-    procedure EnsureSingleMemberControls;
-    procedure CreateMethodButtonsForClass;
+    procedure EnsureObjectVersionControls; virtual;
+    procedure EnsureMultiRoleMemberControls; virtual;
+    procedure EnsureSingleMemberControls; virtual;
+    procedure CreateMethodButtonsForClass; virtual;
     property BoldObject: TBoldObject read GetBoldObject;
     property ClassTypeInfo: TBoldClassTypeInfo read GetClassTypeInfo;
     property PageControl: TPageControl read GetPageControl;
@@ -203,15 +209,18 @@ type
 var
   BoldShowConstraintsInAutoFormGrids: boolean = true;
   BoldShowHistoryTabInAutoForms: boolean = false;
+  BoldShowAutoFormInTaskbar: boolean = false;
 
 implementation
 
 {$R BoldAFPDefault.res}
 
 uses
+  Windows,
   SysUtils,
   Dialogs,
   {$IFDEF BOLD_DELPHI16_OR_LATER}UITypes,{$ENDIF}
+  BoldCoreConsts,
   BoldGuiResourceStrings,
   BoldUtils,
   BoldBase,
@@ -903,7 +912,9 @@ begin
         g.EnableColAdjust := true;
         g.Align   := alClient;
         g.BoldAutoColumns := True;
-        g.BoldShowConstraints := BoldShowConstraintsInAutoFormGrids;
+        g.BoldShowConstraints := BoldShowConstraintsInAutoFormGrids
+                                 and (ListHandle.StaticBoldType is TBoldElementTypeInfoWithConstraint)
+                                 and (TBoldElementTypeInfoWithConstraint(ListHandle.StaticBoldType).ConstraintCount>0);
         g.Name    := MakeComponentName('Grid', ClassTypeInfo, Member); // do not localize
         g.Parent  := TabSheet;
         g.BoldHandle := ListHandle;
@@ -1069,7 +1080,7 @@ begin
           RoleButton.Caption := '...';
           RoleButton.Top := BoldEdit.Top;
           RoleButton.Width := 20;
-          RoleButton.Left := BoldEdit.Parent.Width - 8 - RoleButton.Width; //TimeWarp 07/20/01
+          RoleButton.Left := BoldEdit.Parent.Width - 8 - RoleButton.Width;
           RoleButton.Anchors := [akRight, akTop];
           RoleButton.Height := BoldEdit.Height;
           RoleButton.BoldHandle := BoldEdit.BoldHandle;
@@ -1161,23 +1172,12 @@ begin
     result := true;
 end;
 
-class procedure TBoldDefaultObjectAutoFormProvider.BoldAsStringRenderer1SetColor(
-  Element: TBoldElement; var AColor: TColor; Representation: Integer;
-  Expression: String);
-var
-  Result: TBoldIndirectElement;
+class procedure TBoldDefaultObjectAutoFormProvider.BoldAsStringRenderer1SetColor(aFollower: TBoldFollower; var AColor: TColor);
 begin
-  if Assigned(Element) then
+  if Assigned(aFollower.Element) then
   begin
-    Result := TBoldIndirectElement.Create;
-    try
-      Element.EvaluateExpression(Expression, Result);
-      if (Result.Value is TBoldMember) and
-          not (Result.Value as TBoldMember).CanModify then
-          AColor := clBtnShadow;
-    finally
-      Result.Free;
-    end;
+    if (aFollower.Value is TBoldMember) and not (aFollower.Value as TBoldMember).CanModify then
+        AColor := clBtnShadow;
   end;
 end;
 
@@ -1448,13 +1448,13 @@ end;
 
 function TBoldDefaultObjectAutoFormProvider.CreateDragSource(aParent: TWinControl): TBoldDropTarget;
 var
-  Bitmap: TBitmap;
+  Bitmap: Graphics.TBitmap;
 begin
   Result := TBoldDropTarget.Create(Form);
   Result.Parent := aParent;
   Result.Transparent := True;
 
-  Bitmap := TBitmap.Create;
+  Bitmap := Graphics.TBitmap.Create;
   Bitmap.LoadFromResourceName(HInstance, 'DROPTARGETSOURCE');  // do not localize
   Result.Picture.Bitmap.Assign(Bitmap);
   FreeAndNil(Bitmap);
@@ -1612,7 +1612,7 @@ var
   CheckBox: TCheckBox;
   TimeStampColumn: TBoldGridColumn;
 begin
-  if ClassTypeInfo.Versioned or BoldShowHistoryTabInAutoForms then
+  if ClassTypeInfo.Versioned and BoldShowHistoryTabInAutoForms then
   begin
     TabSheet := CreateTabSheet('History', 'tabObjectHistory');  // do not localize
     if ClassTypeInfo.Versioned then
@@ -1659,7 +1659,9 @@ begin
       g.EnableColAdjust := true;
       g.Align   := alClient;
       g.BoldHandle := ListHandle;
-      g.BoldShowConstraints := BoldShowConstraintsInAutoFormGrids;
+      g.BoldShowConstraints := BoldShowConstraintsInAutoFormGrids and
+        (ListHandle.StaticBoldType is TBoldElementTypeInfoWithConstraint)
+        and (TBoldElementTypeInfoWithConstraint(ListHandle.StaticBoldType).ConstraintCount>0);
       TExposedGrid(g).CreateDefaultColumns;
       TimeStampColumn := g.Columns.Add;
 
@@ -1766,10 +1768,24 @@ begin
   result := TBoldObject(Item2).BoldObjectLocator.BoldObjectID.TimeStamp - TBoldObject(Item1).BoldObjectLocator.BoldObjectID.TimeStamp;
 end;
 
+{ TAutoForm }
+
+constructor TFormAFPDefault.Create(AOwner: TComponent);
+begin
+  inherited CreateNew(AOwner);
+end;
+
+procedure TFormAFPDefault.CreateParams(var Params: TCreateParams);
+begin
+  inherited;
+  if BoldShowAutoFormInTaskbar then
+    Params.ExStyle := Params.ExStyle or WS_EX_APPWINDOW;
+end;
+
 initialization
   G_BoldActiveAutoForms := TAutoFormList.Create;
   fReadOnlyStringRenderer := TBoldAsStringRenderer.Create(nil);
-//  fReadOnlyStringRenderer.OnSetColor := TBoldDefaultObjectAutoFormProvider.BoldAsStringRenderer1SetColor; //FIX
+  fReadOnlyStringRenderer.OnSetColor := TBoldDefaultObjectAutoFormProvider.BoldAsStringRenderer1SetColor;
 
   AutoFormProviderRegistry.RegisterProvider(bvtClass, TBoldObject, TBoldDefaultObjectAutoFormProvider);
   AutoFormProviderRegistry.RegisterProvider(bvtSystem, TBoldSystem, TBoldDefaultSystemAutoFormProvider);
@@ -1788,3 +1804,4 @@ finalization
   FreeAndNil(fReadOnlyStringRenderer);
 
 end.
+

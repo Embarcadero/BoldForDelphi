@@ -20,8 +20,8 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents(BOLDPAGENAME_MISC, [TBoldTemplateHolder]);
-  RegisterComponentEditor(TBoldTemplateHolder, TBoldStringListEditor);
+    RegisterComponents(BOLDPAGENAME_MISC, [TBoldTemplateHolder]);
+    RegisterComponentEditor(TBoldTemplateHolder, TBoldStringListEditor);
 end;
 
 end.

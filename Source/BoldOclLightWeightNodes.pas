@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclLightWeightNodes;
@@ -242,8 +242,6 @@ type
     property TimeValue: TDateTime read fMomentValue write fMomentValue;
   end;
 
-
-
   TBoldOLWFloatLiteral = class(TBoldOLWLiteral)
   private
     fFloatValue: Double;
@@ -284,6 +282,7 @@ implementation
 uses
   SysUtils,
   {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
+  BoldCoreConsts,
   BoldXMLStreaming,
   BoldDefaultStreamNames,
   BoldDefs;
@@ -641,7 +640,7 @@ procedure TBoldOLWVariableBinding.AddRef;
 begin
   inc(fRefCount);
   if (fRefCount > 1) and not fIsLoopVar then
-    raise EBold.Create('external variables (and self) can currently only be referenced once');
+    raise EBold.Create(sExternalVarsCanOnlyBeReferencedOnce);
 end;
 
 constructor TBoldOLWVariableBinding.Create(Position: integer; const VariableName: String; TopSortedIndex: integer);

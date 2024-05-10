@@ -42,10 +42,10 @@ type
     Position: integer;
     Id: SSExceptionError;
     constructor Create(TheId: SSExceptionError; FmtStr: string);
-    constructor CreateName(TheId: SSExceptionError; FmtStr: string; Name: PChar);
+    constructor CreateName(TheId: SSExceptionError; FmtStr: string; Name: String);
     constructor CreateLong(TheId: SSExceptionError; TheFmtStr: string; TheLong: Longint);
     constructor CreateLongLongNameLen(TheId: SSExceptionError; FmtStr: string;
-                  Long0, Long1: Longint; TheName: PChar; TheLen: Word);
+                  Long0, Long1: Longint; TheName: String; TheLen: Word);
   end;
 
 implementation
@@ -56,9 +56,9 @@ begin
   Id := TheId;
 end;
 
-constructor SSException.CreateName(TheId: SSExceptionError; FmtStr: string; Name: PChar);
+constructor SSException.CreateName(TheId: SSExceptionError; FmtStr: string; Name: String);
 begin
-  inherited Create(Format(FmtStr, [string(Name)]));
+  inherited Create(Format(FmtStr, [Name]));
   Id := TheId;
   Position := 0;
 end;
@@ -71,14 +71,12 @@ begin
 end;
 
 constructor SSException.CreateLongLongNameLen(TheId: SSExceptionError;
-  FmtStr: string; Long0, Long1: Integer; TheName: PChar; TheLen: Word);
+  FmtStr: string; Long0, Long1: Integer; TheName: String; TheLen: Word);
 var
-  Name: PChar;
+  Name: String;
 begin
-  GetMem(Name, TheLen + 1);
-  StrMove(Name, TheName, TheLen);
-  inherited Create(Format(StringReplace(FmtStr, '%ld', '%d', [rfReplaceAll]), [Long0, Long1, string(Name)]));
-  FreeMem(Name, TheLen + 1);
+  Name := Copy(TheName, 1, TheLen);
+  inherited Create(Format(StringReplace(FmtStr, '%ld', '%d', [rfReplaceAll]), [Long0, Long1, Name]));
   Id := TheId;
   Position := Long1;
 end;

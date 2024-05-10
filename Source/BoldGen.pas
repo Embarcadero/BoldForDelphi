@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGen;
@@ -17,7 +17,6 @@ const
   INDENTSIZE = 2;
   DEBUGGERWORKAROUNDINTERVAL = 50;
   AddVisitorSupport = true;
-
 
 type
   TBoldGenerator = class;
@@ -115,11 +114,12 @@ var
   BoldGeneratorClass: TBoldGeneratorClass = TBoldGenerator;
   BoldCodeGenInitializerClass: TBoldCodeGenInitializerClass = TBoldCodeGenInitializer;
 
-
 implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldMetaSupport,
   BoldNameExpander,
@@ -171,7 +171,7 @@ begin
 
   BoldLog.ProgressMax := MoldModel.Classes.Count * 3;
 
-  BoldLog.LogFmt('Generating in path: %s', [BaseFilePath]);
+  BoldLog.LogFmt(sLogGeneratingInPath, [BaseFilePath]);
   for ComponentIx := 0 to MoldModel.Components.Count - 1 do
   begin
     for TemplateIx := 0 to TemplateList.Count - 1 do
@@ -181,30 +181,30 @@ begin
 
       with TemplateList[TemplateIx] do
       begin
-        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name);
-        BoldLog.LogFmt('Generating file: %s', [ExpandedFileName]);
+        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name); // do not localize
+        BoldLog.LogFmt(sLogGeneratingFile, [ExpandedFileName]);
 
         SetCurrentFileHandler(BaseFilePath, ExpandedFileName, ModuleTypeForFile(ExpandedFileName), true, false);
         BoldFilehandler.Clear;
-        BoldLog.LogHeader := 'Initializing variables';
+        BoldLog.LogHeader := sLogInitializingVars;
         InitializeTemplateForComponent(TemplateList[TemplateIx],
                                        MoldModel,
                                        MoldModel.Components[ComponentIx],
                                        true);
         if BoldLog.ProcessInterruption then
           exit;
-                                       
-        BoldLog.LogHeader := 'Expanding template';
+
+        BoldLog.LogHeader := sLogExpandingTemplate;
         BoldFilehandler.AddStrings(ExpandedTemplate);
       end;
     end;
   end;
 
-  if MoldModel.MainComponent.Name = BoldDefaultTaggedValueList.DefaultForClassAndTag['Model', TAG_UNITNAME] then
+  if MoldModel.MainComponent.Name = BoldDefaultTaggedValueList.DefaultForClassAndTag['Model', TAG_UNITNAME] then // do not localize
   begin
     BoldLog.Separator;
-    BoldLog.Log('You should consider naming your model and base unit', ltWarning);
-    BoldLog.Log('to avoid filename conflicts with other projects', ltWarning);
+    BoldLog.Log(sLogConsiderNameChange1, ltWarning);
+    BoldLog.Log(sLogConsiderNameChange2, ltWarning);
     BoldLog.Separator;
   end;
 end;
@@ -234,12 +234,12 @@ var
 
   procedure internalInitialize;
   begin
-    AddVariable('MEMBERHASNATIVE' + PostFix, '1');
+    AddVariable('MEMBERHASNATIVE' + PostFix, '1'); // do not localize
     if not MoldAttribute.Derived or MoldAttribute.ReverseDerived then
-      AddVariable('MEMBERISSETABLE' + PostFix, '1')
+      AddVariable('MEMBERISSETABLE' + PostFix, '1') // do not localize
     else
-      AddVariable('MEMBERISSETABLE' + PostFix, '0');
-    end;
+      AddVariable('MEMBERISSETABLE' + PostFix, '0'); // do not localize
+  end;
 
   begin
     Mapping := TypeNameDictionary.MappingForModelName[MoldAttribute.BoldType];
@@ -247,11 +247,11 @@ var
     begin
       if UnmappedTypes.IndexOf(MoldAttribute.BoldType) = -1 then
       begin
-        BoldLog.LogFmt('No Delphimapping for type %s', [MoldAttribute.BoldType], ltWarning);
+        BoldLog.LogFmt(sLogNoDelphiMappingForType, [MoldAttribute.BoldType], ltWarning);
         UnmappedTypes.Add(MoldAttribute.BoldType);
       end;
-      Typename := 'TBoldAttribute';
-      ValueInterfacename := 'IBoldNullableValue';
+      Typename := 'TBoldAttribute'; // do not localize
+      ValueInterfacename := 'IBoldNullableValue'; // do not localize
     end else
     begin
       TypeName := Mapping.ExpandedDelphiName;
@@ -262,16 +262,16 @@ var
            (Mapping.IDLType <> '') then
         begin
           internalInitialize;
-          AddVariable('MEMBERNATIVECOMTYPE' + PostFix, Mapping.ExpandedCOMType);
-          AddVariable('MEMBERNATIVEIDLTYPE' + PostFix, Mapping.IDLType);
-          AddVariable('DISPID' + PostFix, IntToHex(MoldAttribute.DispId, 8));
+          AddVariable('MEMBERNATIVECOMTYPE' + PostFix, Mapping.ExpandedCOMType); // do not localize
+          AddVariable('MEMBERNATIVEIDLTYPE' + PostFix, Mapping.IDLType); // do not localize
+          AddVariable('DISPID' + PostFix, IntToHex(MoldAttribute.DispId, 8)); // do not localize
           if CompareText(Mapping.ExpandedCOMType, BoldWideStringTypeName) = 0 then
-            AddVariable('SETMEMBERASCONST' + PostFix, 'const ');
+            AddVariable('SETMEMBERASCONST' + PostFix, 'const '); // do not localize
         end
         else
           if typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1 then
           begin
-            BoldLog.LogFmt('No COM/IDL mapping for type %s, No attribute generated for %s.%s', [MoldAttribute.BoldType, MoldAttribute.MoldClass.Name, MoldAttribute.Name], ltWarning);
+            BoldLog.LogFmt(sLogNoCOMMappingForType, [MoldAttribute.BoldType, MoldAttribute.MoldClass.Name, MoldAttribute.Name], ltWarning);
             typesWithoutNative.Add(MoldAttribute.BoldType);
           end;
       end
@@ -287,7 +287,7 @@ var
         else begin
           if GenerateIDLVariables and (typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1) then
           begin
-            BoldLog.LogFmt('No native mapping for type %s used in attribute %s.%s, only Bold attribute generated', [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
+            BoldLog.LogFmt(sLogNoNativeMappingForType, [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
             typesWithoutNative.Add(MoldAttribute.BoldType);
           end;
         end;
@@ -303,7 +303,7 @@ var
         else begin
           if GenerateIDLVariables and (typesWithoutNative.IndexOf(MoldAttribute.BoldType) = -1) then
           begin
-            BoldLog.LogFmt('No native mapping for type %s used in attribute %s.%s, only Bold attribute generated', [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
+            BoldLog.LogFmt(sNoValueTypeMappingForType, [MoldAttribute.BoldType, MoldAttribute.Name, MoldAttribute.MoldClass.Name], ltWarning);
             typesWithoutNative.Add(MoldAttribute.BoldType);
           end;
         end;
@@ -903,7 +903,9 @@ begin
             SetCurrentFileHandler(BaseFilePath, CurrentIncFileName, mtIncFile, true, true);
             initializeMethodIndex;
           end;
-          BoldLog.LogFmt('Processing class %s, file %s', [CurrentClass.Name, CurrentIncFileName]);
+          BoldLog.LogFmt(sProcessingClassXFileY, [CurrentClass.Name, CurrentIncFileName]);
+
+          // userdefined methods
 
           for i := 0 to CurrentClass.Methods.Count - 1 do
             if CurrentClass.Methods[i].FuncType <> dfAbstractVirtual then
@@ -1194,10 +1196,10 @@ var
 begin
   TargetComponent := nil;
   if not assigned(SuperClass) then
-    raise Exception.Create('MoveClassTreeToComponent: No SuperClass');
+    raise Exception.Create(sMoveToComponent_NoSuperClass);
 
   if not assigned(MoldModel) then
-    raise Exception.Create('MoveClassTreeToComponent: No MoldModel');
+    raise Exception.Create(sMoveToComponent_NoMoldModel);
 
   for i := 0 to MoldModel.Classes.count - 1 do
   begin
@@ -1252,7 +1254,7 @@ begin
       if (MoldModel.Classes[i].Component <> MoldModel.Components[j]) and
         (CompareText(MoldModel.Classes[i].EffectiveIncFileName(BoldGeneratorTemplatesManager.DefaultIncFileExtension), MoldModel.Components[j].Name + '.'+BoldGeneratorTemplatesManager.DefaultIncFileExtension) = 0) then
       begin
-        BoldLog.LogFmt('WARNING! class %s has a file name that collides with another component (%s)!', [MoldModel.Classes[i].Name, MoldModel.Components[j].Name]);
+        BoldLog.LogFmt(sCollidingFileName, [MoldModel.Classes[i].Name, MoldModel.Components[j].Name]);
         result := false;
       end;
     end;
@@ -1318,7 +1320,7 @@ begin
 
   BoldLog.ProgressMax := MoldModel.Classes.Count * 2;
 
-  BoldLog.LogFmt('Generating in path: %s', [BaseFilePath]);
+  BoldLog.LogFmt(sLogGeneratingInPath, [BaseFilePath]);
   for ComponentIx := 0 to MoldModel.Components.Count - 1 do
   begin
     for j := 0 to BoldGeneratorTemplatesManager.ComFileTemplates.Count - 1 do
@@ -1328,17 +1330,17 @@ begin
 
       with BoldGeneratorTemplatesManager.COMFileTemplates[j] do
       begin
-        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name);
-        BoldLog.LogFmt('Generating file %s', [ExpandedFileName]);
+        Variables.SetVariable('COMPONENTNAME', MoldModel.Components[ComponentIx].Name); // do not localize
+        BoldLog.LogFmt(sLogGeneratingFile, [ExpandedFileName]);
 
         SetCurrentFileHandler(BaseFilePath, ExpandedFileName, ModuleTypeForFile(ExpandedFileName), true, false);
         BoldFilehandler.Clear;
-        BoldLog.LogHeader := 'Initializing variables';
+        BoldLog.LogHeader := sLogInitializingVars;
         InitializeTemplateForComponent(BoldGeneratorTemplatesManager.COMFileTemplates[j], MoldModel, MoldModel.Components[ComponentIx], true);
         if BoldLog.ProcessInterruption then
           exit;
 
-        BoldLog.LogHeader := 'Expanding template';
+        BoldLog.LogHeader := sLogExpandingTemplate;
         BoldFilehandler.AddStrings(ExpandedTemplate);
       end;
     end;
@@ -1446,7 +1448,7 @@ begin
     TemplateList.free;
   end
   else
-    raise EBold.create('No template defined for PersistenceInterfaces');
+    raise EBold.create(sNoTemplateForPersistenceInterfaces);
 end;
 
 function TBoldGenerator.ModuleTypeForFile(const FileName: string): TBoldModuleType;

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCollections;
@@ -21,7 +21,7 @@ type
 
   TBoldUniqueNameItemIndex = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
   end;
 
   { TBoldUniquelyNamedCollectionItem }
@@ -63,7 +63,7 @@ type
     property ItemIndex: TBoldUniqueNameItemIndex read GetItemIndex;
   public
     constructor Create(AOwner: TPersistent; ItemClass: TBoldUniquelyNamedCollectionItemClass);
-    destructor destroy; override;
+    destructor Destroy; override;
     property ItemByName[const Name: String]: TBoldUniquelyNamedCollectionItem read GetItemByName;
   end;
 
@@ -72,6 +72,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldIndex,
   BoldRev;
@@ -81,7 +83,7 @@ uses
 procedure TBoldUniquelyNamedCollectionItem.EnsureNameUnique(const Value: string);
 begin
   if assigned(Collection.ItemByName[value]) then
-    raise EBold.CreateFmt('There is already an item with name "%s"', [value]);
+    raise EBold.CreateFmt(sDuplicateName, [value]);
 end;
 
 function TBoldUniquelyNamedCollectionItem.GetCollection: TBoldCollectionWithUniquelyNamedItems;
@@ -115,7 +117,7 @@ end;
 
 { TBoldUniqueNameItemIndex }
 
-function TBoldUniqueNameItemIndex.ItemASKeyString(Item: TObject): string;
+function TBoldUniqueNameItemIndex.ItemAsKeyString(Item: TObject): string;
 begin
   assert(item is TBoldUniquelyNamedCollectionItem);
   result := TBoldUniquelyNamedCollectionItem(item).UniqueName;
@@ -128,7 +130,7 @@ begin
   inherited Create(aOwner, ItemClass);
 end;
 
-destructor TBoldCollectionWithUniquelyNamedItems.destroy;
+destructor TBoldCollectionWithUniquelyNamedItems.Destroy;
 begin
   FreeAndNil(fItemIndex);
   inherited;

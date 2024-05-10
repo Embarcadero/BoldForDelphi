@@ -492,6 +492,4 @@ begin
   fanInterface := anInterface;
 end;
 
-initialization
-
 end.

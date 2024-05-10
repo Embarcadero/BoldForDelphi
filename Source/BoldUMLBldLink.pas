@@ -142,11 +142,14 @@ function TBoldUMLBldLink.ImportModel(UMLModel: TUMLModel): Boolean;
 var
   MoldModel: TMoldModel;
   G: IBoldGuard;
+  UndoWasActive: boolean;
 begin
   G := TBoldGuard.Create(MoldModel);
   Result := False;
   if not Assigned(UMLModel) then
     raise EBoldImport.CreateFmt('%s.ImportModel: Must have an UMLModel to import to.', [className]);
+  UndoWasActive := UMLModel.BoldSystem.UndoHandlerInterface.Enabled;
+  UMLModel.BoldSystem.UndoHandlerInterface.Enabled := false;
   BoldInstalledQueue.DeActivateDisplayQueue;
   try
     UMLModel.BoldSystem.StartTransaction;
@@ -175,6 +178,7 @@ begin
       end;
     end;
   finally
+    UMLModel.BoldSystem.UndoHandlerInterface.Enabled := UndoWasActive;
     BoldInstalledQueue.ActivateDisplayQueue;
   end;
 end;

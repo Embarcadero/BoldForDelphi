@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldThread;
@@ -47,9 +47,10 @@ implementation
 uses
   SysUtils,
   Messages,
+
+  BoldCoreConsts,
   BoldPropagatorConstants, 
-  BoldThreadSafeLog, 
-  BoldRev;
+  BoldThreadSafeLog;
 
 function WaitForObject (iHandle : THandle; iTimeOut : dword) : TWaitResult;
 begin
@@ -172,10 +173,10 @@ begin
     if (wr <> wrSignaled) then
     begin
       TerminateThread (Handle, 1);
-      BoldLogError('%s.WaitForQuit: thread was force terminated', [ClassName]);
+      BoldLogError(sThreadWasForcedTerminated, [ClassName]);
     end;
   except on E:Exception do
-    BoldLogError('%s.WaitForQuit: %s', [ClassName, E.Message]);
+    BoldLogError(sErrorWaitForQuit, [ClassName, E.Message]);
   end;
 end;
 
@@ -204,7 +205,5 @@ begin
   FreeAndNil(fReadyEvent);
   inherited;
 end;
-
-initialization
 
 end.

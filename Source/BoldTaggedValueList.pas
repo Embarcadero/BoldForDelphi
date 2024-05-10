@@ -123,7 +123,7 @@ begin
   if assigned(def) then
     result := Def.DefaultValue
   else
-    raise EBoldInternal.CreateFmt('%s.GetDefaultValueForTag: Unknown tag "%s"', [ClassName, Tag]);
+    result := '';
 end;
 
 function TBoldTaggedValueList.GetDefinition(const i: integer): TBoldTaggedValueDefinition;

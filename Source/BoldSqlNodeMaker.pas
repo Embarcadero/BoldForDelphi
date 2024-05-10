@@ -70,7 +70,11 @@ begin
   for i := fSQLVarBindings.Count-1 downto 0 do
   begin
     if TBoldSqlVariableBinding(fSQLVarBindings[i]).IsExternal then
+    begin
+      TBoldSqlVariableBinding(fSQLVarBindings[i]).DecRef;
+        if TBoldSqlVariableBinding(fSQLVarBindings[i]).RefCount = 0 then
       TBoldSqlVariableBinding(fSQLVarBindings[i]).Free;
+    end;
     fSQLVarBindings[i] := nil;
   end;
   FreeAndNil(fSqlVarbindings);

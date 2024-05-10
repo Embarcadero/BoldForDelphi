@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldObjectUpgrader;
@@ -7,6 +7,8 @@ interface
 
 uses
   Classes,
+
+  BoldCoreConsts,
   BoldId,
   BoldSystem,
   BoldSystemRT,
@@ -203,9 +205,9 @@ begin
     aSystemTypeInfo := SystemTypeInfo;
     aPController := PersistenceController;
     if not assigned(aSystemTypeInfo) then
-      raise EBold.CreateFmt('%s.GetBoldSystem: Missing System Type Info', [classname]);
+      raise EBold.CreateFmt(sMissingTypeInfo, [classname]);
     if not assigned(aPController) then
-      raise EBold.CreateFmt('%s.GetBoldSystem: Missing Persistence Controller', [classname]);
+      raise EBold.CreateFmt(sMissingPersistenceController, [classname]);
     fBoldSystem := TBoldSystem.CreateWithTypeInfo(nil, aSystemTypeInfo, aPController)
   end;
   result := fBoldSystem;
@@ -234,7 +236,7 @@ end;
 procedure TBoldObjectUpgrader.ReleaseBoldSystem;
 begin
   if (fNestingLevel <> 0) then
-    raise EBold.CreateFmt('%s.ReleaseBoldSystem: can not release the system while in an upgrade operation', [classname]);
+    raise EBold.CreateFmt(sCannotReleaseInOperation, [classname]);
   FreeAndNil(fBoldSystem);
 end;
 

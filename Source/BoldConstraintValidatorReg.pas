@@ -1,4 +1,4 @@
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldConstraintValidatorReg;
 
@@ -13,7 +13,7 @@ uses
   DesignIntf,
 
   BoldConstraintValidator,
-
+  BoldCoreConsts,
   BoldDefs,
   BoldElements,
   BoldSystemRt,
@@ -60,7 +60,7 @@ end;
 
 function TBoldConstraintValidatorEditor.GetDefaultMethodName: string;
 begin
-  Result := 'Constraints';
+  Result := sConstraints;
 end;
 
 end.

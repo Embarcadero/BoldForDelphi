@@ -665,7 +665,7 @@ procedure TBoldPersistenceControllerSystem._LocatorDestroyedReceived(
   const Args: array of const);
 begin
   assert(Length(Args) = 1, 'Error in Args');
-  TBoldIdLocatorMapping(fMapping).RemoveByLocator((Args[0].VObject as TBoldObject).BoldObjectLocator);
+  TBoldIdLocatorMapping(fMapping).RemoveByLocator((Args[0].VObject as TBoldObjectLocator));
 end;
 
 end.

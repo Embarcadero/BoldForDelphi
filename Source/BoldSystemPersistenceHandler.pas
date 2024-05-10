@@ -1,8 +1,9 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemPersistenceHandler;
-
+// This unit contains implementations of functions in TBoldSystem related to persistence
+// which could resonably have been separated, but are provided on TBoldSystem for user convenience
 
 interface
 
@@ -70,12 +71,13 @@ type
     procedure Add(Timestamp: TBoldTimestampType; ClockTime: TDateTime);
   end;
 
-
 implementation
 
 uses
   Classes,
   SysUtils,
+
+  BoldCoreConsts,
   BoldSubscription,
   BoldValueInterfaces,
   BoldValueSpaceInterfaces,
@@ -200,8 +202,9 @@ var
   OldCount: Integer; //PATCH
 begin
 {$IFDEF NoEnsureEnclosure}
+  result := true;
   exit;
-{$ENDIF}
+{$ELSE}
   ListIsEnclosure := true;
   i := 0;
   while i < ObjectList.Count do
@@ -249,6 +252,7 @@ begin
     //PATCH MOVED UP  Inc(i);
   end;
   result := ListIsEnclosure;
+{$ENDIF}
 end;
 
 procedure TBoldSystemPersistenceHandler.FetchMembersWithObjects(
@@ -298,7 +302,7 @@ begin
   vMemberIdList := TBoldMemberIdList.Create;
   try
     sl.CommaText := AMemberCommaList;
-    vLeastCommonClassType := aBoldObjectList.LeastCommonClassType(System);
+    vLeastCommonClassType := aBoldObjectList.LeastCommonClassType;
     for i := 0 to sl.Count - 1 do
     begin
       j := vLeastCommonClassType.MemberIndexByExpressionName[sl[i]];
@@ -348,23 +352,27 @@ begin
     begin
       CommonClass := CommonClass.LeastCommonSuperClass(ObjectList[I].BoldClassTypeInfo);
       if ObjectList[I].BoldSystem <> System then
-        raise EBoldFeatureNotImplementedYet.Create('Can''t Fetch with link objects from multiple systems');
+        raise EBoldFeatureNotImplementedYet.Create(sCannotFetchWithLinksFromMultipleSystems);
     end;
 
     if not Assigned(CommonClass) then
-      raise EBold.CreateFmt('%s.FetchLinksWithObjects: Objects have no common superClass', [ClassName]);
+      raise EBold.CreateFmt(sNoCommonSuperClass, [ClassName]);
 
     MemberRTInfo := CommonClass.MemberRTInfoByExpressionName[LinkName];
     if not (MemberRTInfo is TBoldRoleRTInfo) then
-      raise EBold.CreateFmt('%s.FetchLinksWithObjects: class %s has no role called %s', [ClassName, CommonClass.ExpressionName, LinkName]);
+      raise EBold.CreateFmt(sNoRoleCalledX, [ClassName, CommonClass.ExpressionName, LinkName]);
 
     roleRTInfo := MemberRTInfo as TBoldRoleRTInfo;
 
     if not roleRTInfo.IsStoredInObject and RoleRTInfo.Persistent and (RoleRTInfo.RoleType = rtRole) then
     begin
       for I := 0 to ObjectList.Count - 1 do
+      begin
+        if ObjectList.Locators[i].BoldObjectID.NonExisting then
+          continue;
         if ObjectList[I].BoldMembers[roleRTInfo.index].BoldPersistenceState = bvpsInvalid then
           FetchList.Add(ObjectList[I]);
+      end;
       if FetchList.count > 0 then
       begin
         MemberIdList.Add(TBoldMemberId.Create(MemberRTInfo.index));
@@ -374,17 +382,19 @@ begin
     FetchList.Clear;
     for I := 0 to ObjectList.Count - 1 do
     begin
+      if ObjectList.Locators[i].BoldObjectID.NonExisting then
+        continue;
       if roleRTInfo.IsMultiRole then
       begin
-          Assert(ObjectList[I].BoldMembers[roleRTInfo.index] is TBoldObjectList);
-          MultiLink := TBoldObjectList(ObjectList[I].BoldMembers[roleRTInfo.index]);
+        Assert(ObjectList[I].BoldMembers[roleRTInfo.index] is TBoldObjectList);
+        MultiLink := TBoldObjectList(ObjectList[I].BoldMembers[roleRTInfo.index]);
         for J := 0 to MultiLink.Count - 1 do
           InternalAddLocator(MultiLink.Locators[J]);
       end
       else
       begin
-          Assert(ObjectList[I].BoldMembers[roleRTInfo.index] is TBoldObjectReference);
-          SingleLink := TBoldObjectReference(ObjectList[I].BoldMembers[roleRTInfo.index]);
+        Assert(ObjectList[I].BoldMembers[roleRTInfo.index] is TBoldObjectReference);
+        SingleLink := TBoldObjectReference(ObjectList[I].BoldMembers[roleRTInfo.index]);
         InternalAddLocator(SingleLink.Locator);
       end;
     end;
@@ -396,16 +406,17 @@ end;
 procedure TBoldSystemPersistenceHandler.FetchObjectById(BoldObjectId: TBoldObjectId);
 var
   ObjectList: TBoldObjectList;
+  Guard: IBoldguard;
 begin
-  PersistenceController.SendExtendedEvent(bpeStartFetchObjectById, [BoldObjectId]);
+  Guard := TBoldGuard.Create(ObjectList);
   ObjectList := TBoldObjectList.Create;
   ObjectList.SubscribeToObjectsInList := false;
   ObjectList.duplicateMode := bldmAllow;
+  ObjectList.AddLocator(System.EnsuredLocatorByID[BoldObjectID]);
+  PersistenceController.SendExtendedEvent(bpeStartFetchObjectById, [BoldObjectId]);
   try
-    ObjectList.AddLocator(System.EnsuredLocatorByID[BoldObjectID]);
     PMFetch(ObjectList, nil);
   finally
-    ObjectList.Free;
     PersistenceController.SendExtendedEvent(bpeEndFetchObjectById, [BoldObjectId]);
   end;
 end;
@@ -415,10 +426,14 @@ var
   I: Integer;
   Locator: TBoldObjectLocator;
   ObjectIdList: TBoldObjectIdList;
+  Guard: IBoldGuard;
 begin
   if not assigned(PersistenceController) then
-    raise EBold.Create('Unable to fetch object ID''s. No PersistenceController...');
+    raise EBold.CreateFmt(sNoPersistenceController, ['GetAllWithCondition']);
+
+  Guard := TBoldguard.Create(ObjectidList);
   ObjectIdList := TBoldObjectIdList.Create;
+  PersistenceController.SendExtendedEvent(bpeStartFetchList, [aList]);
   try
     PersistenceController.PMFetchIDListWithCondition(ObjectIdList, System.AsIBoldvalueSpace[bdepPMIn], fmNormal, Condition, NOTVALIDCLIENTID);
     for I := ObjectIdList.Count - 1 downto 0 do
@@ -429,7 +444,7 @@ begin
     end;
     aList.FillFromIDList(ObjectIdList, system);
   finally
-    ObjectIdList.Free;
+    PersistenceController.SendExtendedEvent(bpeEndFetchList, [aList]);
   end;
 end;
 
@@ -468,11 +483,11 @@ begin
     Condition.Params := PArams;
     LocalParams := nil;
   end;
-  PersistenceController.SendExtendedEvent(bpeStartFetchAllInClassWithRawSQL, [aList, AClass, Condition]);
+  PersistenceController.SendExtendedEvent(bpeStartFetchAllInClassWithSQL, [aList, AClass, Condition]);
   try
     GetAllWithCondition(aList, Condition);
   finally
-    PersistenceController.SendExtendedEvent(bpeEndFetchAllInClassWithRawSQL, [aList, AClass, Condition]);
+    PersistenceController.SendExtendedEvent(bpeEndFetchAllInClassWithSQL, [aList, AClass, Condition]);
   end;
 end;
 
@@ -496,10 +511,10 @@ begin
     if Assigned(ClassTypeInfo) then
       Condition.TopSortedIndex := ClassTypeInfo.TopSortedIndex
     else
-      raise EBold.CreateFmt('%s.GetAllInClassWithSQL: "%s" is not a class in the model', [classname, aClass.ClassName]);
+      raise EBold.CreateFmt(sNoSuchClassInModel, [classname, aClass.ClassName]);
   end
   else
-    raise EBold.CreateFmt('%s.GetAllInClassWithSQL: Must not be called without a class-parameter', [classname]);
+    raise EBold.CreateFmt(sClassParameterMissing, [classname]);
 
   if not assigned(Params) then
   begin
@@ -529,9 +544,9 @@ var
   Precondition: TBoldOptimisticLockingPrecondition;
 begin
   if System.InTransaction then
-    raise EBold.Create('Can not update the database while in a transaction');
+    raise EBold.Create(sCannotUpdateWhileInTransaction);
   if not assigned(PersistenceController) then
-    raise EBold.Create('Unable to UpdateDatabaseWithList. No PersistenceController.');
+    raise EBold.CreateFmt(sNoPersistenceController, ['UpdateDatabaseWithList']);
 
   System.DelayObjectDestruction;
   ObjectsToUpdate := ObjectList.Clone as TBoldObjectList;
@@ -557,17 +572,18 @@ begin
           FreeAndNil(PreCondition);
       end;
 
-
+      //TODO: in the future, call another function to add optimistic locking data for optimistic region locking
+      //TODO: If the model wants optimistic locking, but none of the classes of objects to be updated,
+      //      the precondition should be freed.
 
       try
-
         if assigned(System.PessimisticLockHandler) and not System.PessimisticLockHandler.EnsureLocks then
-          raise EBold.CreateFmt('%s.UpdateDatabaseWithList: Not allowed to update. No longer holding the required locks.', [classname]);
+          raise EBold.CreateFmt(sRequiredLocksNotHeld, [classname]);
         BoldClearLastfailure;
 
         try
           if not StartUpdateForAll(ObjectsToUpdate) then
-            BoldRaiseLastFailure(System, 'UpdateDatabaseWithList', 'StartUpdate failed');
+            BoldRaiseLastFailure(System, 'UpdateDatabaseWithList', sStartUpdateFailed); // do not localize
 
           PersistenceController.PMUpdate(ObjectIdList, System.AsIBoldvalueSpace[bdepPMOut], System.OptimisticLockHandler.OldValues, Precondition, aTranslationList, fTimeStampOfLatestUpdate, fTimeOfLatestUpdate, NOTVALIDCLIENTID);
           if assigned(Precondition) and Precondition.Failed then
@@ -639,7 +655,6 @@ var
   MemberId: TBoldMemberId;
   Guard: IBoldguard;
 begin
-  PersistenceController.SendExtendedEvent(bpeStartFetchMember, [Member]);
   Guard := TBoldGuard.Create(ObjectList, MemberIdList);
   ObjectList := TBoldObjectList.Create;
   ObjectList.SubscribeToObjectsInList := false;
@@ -651,8 +666,12 @@ begin
     MemberId := TBoldMemberId.Create(Member.BoldMemberRTInfo.index);
     MemberIdList.Add(MemberId);
   end;
-  PMFetch(ObjectList, MemberIdList);
-  PersistenceController.SendExtendedEvent(bpeEndFetchMember, [Member]);
+  PersistenceController.SendExtendedEvent(bpeStartFetchMember, [Member]);
+  try
+    PMFetch(ObjectList, MemberIdList);
+  finally
+    PersistenceController.SendExtendedEvent(bpeEndFetchMember, [Member]);
+  end;
 end;
 
 procedure TBoldSystemPersistenceHandler.FetchClass(ClassList: TBoldObjectList; Time: TBoldTimestampType);
@@ -661,17 +680,18 @@ var
   Condition: TBoldConditionWithClass;
   ClassTypeInfo: TBoldClassTypeInfo;
   ListInterface: IBoldObjectIdListRef;
+  Guard: IBoldguard;
 begin
   if not assigned(PersistenceController) then
-    raise EBold.Create('Unable to fetch object ID''s. No PersistenceController.');
-  ClassTypeInfo := (ClassList.BoldType as TBoldListTypeInfo).ListElementTypeInfo as TBoldClassTypeInfo;
-  PersistenceController.SendExtendedEvent(bpeStartFetchClass, [ClassTypeInfo]);
-  ObjectIdList := TBoldObjectIdList.Create;
+    raise EBold.CreateFmt(sNoPersistenceController, ['FetchClass']);
 
+  ClassTypeInfo := (ClassList.BoldType as TBoldListTypeInfo).ListElementTypeInfo as TBoldClassTypeInfo;
+  Guard := TBoldGuard.Create(ObjectIdList, Condition);
+  ObjectIdList := TBoldObjectIdList.Create;
   Condition := TBoldConditionWithClass.Create;
   Condition.TopSortedIndex := ClassTypeInfo.TopSortedIndex;
   Condition.Time := Time;
-
+  PersistenceController.SendExtendedEvent(bpeStartFetchClass, [ClassTypeInfo]);
   try
     PersistenceController.PMFetchIDListWithCondition(ObjectIdList, System.AsIBoldvalueSpace[bdepPMIn], fmNormal, Condition, NOTVALIDCLIENTID);
     ClassList.ProxyInterface(IBoldObjectIdListRef, bdepPMIn, ListInterface);
@@ -717,15 +737,20 @@ var
   ObjectIdList: TBoldObjectIdList;
   Guard: IBoldGuard;
 begin
-  if not assigned(PersistenceController) then
-    raise EBold.Create('Unable to PMFetch. No PersistenceController...');
-  if (Objectlist.Count > 0) then
-  begin
-    Guard := TBoldguard.Create(ObjectidList);
-    ObjectIdList := Objectlist.CreateObjectIdList(true);
-    PersistenceController.PMFetch(ObjectIdList, System.AsIBoldvalueSpace[bdepPMIn], MemberIdList, fmNormal, NOTVALIDCLIENTID);
-    EndFetchForAll(ObjectList, MemberIdList);
-  end;
+    if not assigned(PersistenceController) then
+      raise EBold.Create('Unable to PMFetch. No PersistenceController...');
+    if (Objectlist.Count > 0) then
+    begin
+      Guard := TBoldguard.Create(ObjectidList);
+      ObjectIdList := Objectlist.CreateObjectIdList(true);
+      PersistenceController.SendExtendedEvent(bpeStartFetchList, [ObjectList, MemberIdList]);
+      try
+        PersistenceController.PMFetch(ObjectIdList, System.AsIBoldvalueSpace[bdepPMIn], MemberIdList, fmNormal, NOTVALIDCLIENTID);
+        EndFetchForAll(ObjectList, MemberIdList);
+      finally
+        PersistenceController.SendExtendedEvent(bpeEndFetchList, [ObjectList, MemberIdList]);
+      end;
+    end;
 end;
 
 { TBoldTimeMappingCache }

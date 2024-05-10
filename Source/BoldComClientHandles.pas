@@ -452,7 +452,8 @@ begin
     FConnectionHandle := Value;
     if Assigned(ConnectionHandle) then
     begin
-      ConnectionHandle.AddSmallSubscription(ConnectionSubscriber,[bceHandleInit,bceHandleTerm],0);
+      ConnectionHandle.AddSubscription(ConnectionSubscriber, bceHandleInit, 0);
+      ConnectionHandle.AddSubscription(ConnectionSubscriber, bceHandleTerm, 0);
       if Connected then
         DoConnect;
     end;

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMeta;
@@ -157,11 +157,12 @@ type
   public
     constructor Create(Parent: TMoldElement; const Name: string); override;
     destructor Destroy; override;
+    procedure UpdateMemberIndexes;
     function GetClassByName(const name: string): TMoldClass;
     function FindRoleByClassNameAndName(const boldclassName, roleName: string): TMoldRole;
     procedure EnsureLinkRoles;
     procedure EnsureTopSorted;
-    procedure TrimRemoved;
+    function TrimRemoved: boolean;
     function CRC: string;
     procedure EnsureCRC;
     property Classes: TMoldClassList read FClasses;
@@ -422,7 +423,6 @@ type
     function GetMemberExists: boolean; virtual;
     function GetColumnName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetTypeStreamName: string; virtual; abstract;
-    function GetIndex: integer;
   protected
     function GetEffectiveDelayedFetch: Boolean; virtual;
     function GetModel: TMoldModel; override;
@@ -451,7 +451,7 @@ type
     property Storage: TBoldStorage read GetStorage;
     property IsAttribute: boolean read GetIsAttribute;
     property IsRole: boolean read GetIsRole;
-    property Index: integer read GetIndex;
+    property Index: integer read fIndex;
   end;
 
   {---TMoldAttribute---}
@@ -589,7 +589,7 @@ type
   protected
     function GetEffectiveDelayedFetch: Boolean; override;
     function GetModel: TMoldModel; override;
-    procedure setMoldClass(NewMoldClass: TMoldClass); override;
+    procedure SetMoldClass(NewMoldClass: TMoldClass); override;
     function GetEffectivePersistent: Boolean; override;
     function GetDeleteAction: TDeleteAction; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetEffectiveDeleteAction: TDeleteAction; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
@@ -706,12 +706,13 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefaultStreamNames,
   BoldDefaultTaggedValues,
   BoldGuard,
   BoldHashIndexes,
   BoldMetaSupport,
-  BoldMoldConsts,
   BoldNameExpander,
   BoldSharedStrings,
   BoldUMLTaggedValues,
@@ -741,14 +742,14 @@ var
 begin
   Result := 0;
   for i := 1 to Length(S) do
-    Result := ((Result shl 3) and 2147483647) or
-              (Result shr (32-3)) xor ord(S[i]);
+  Result := ((Result shl 3) and 2147483647) or
+            (Result shr (32-3)) xor ord(S[i]);
 end;
 
 function SumCRCs(CRC1, CRC2: Cardinal): Cardinal;
 begin
   result := ((CRC1 shl 3) and 2147483647) or
-               (CRC1 shr (32-3)) xor CRC2;
+             (CRC1 shr (32-3)) xor CRC2;
 end;
 
 {---TNameIndex---}
@@ -985,7 +986,6 @@ function TMoldClass.GetModel: TMoldModel;
 begin
   Result := FModel;
 end;
-
 
 procedure TMoldClass.NameChanged;
 begin
@@ -1338,13 +1338,6 @@ begin
   end;
 end;
 
-function TMoldMember.GetIndex: integer;
-begin
-  if (fIndex = -1) and Assigned(FMoldClass) then
-    fIndex := FMoldClass.AllBoldMembers.IndexOf(self);
-  result := fIndex;
-end;
-
 procedure TMoldMember.SetMoldClass(NewMoldClass: TMoldClass);
 begin
   fMoldClass := NewMoldClass;
@@ -1574,7 +1567,7 @@ begin
   end;
 end;
 
-procedure TMoldRole.setMoldClass(NewMoldClass: TMoldClass);
+procedure TMoldRole.SetMoldClass(NewMoldClass: TMoldClass);
 begin
   if RoleType = rtRole then
   begin
@@ -1644,7 +1637,7 @@ var
 begin
   if HasLinkRole and not assigned(fRelatedRole) then
   begin
-    if Association.Roles.IndexOf(self) = 1 then
+    if Association.Roles[1] = self then
       OtherEnd.EnsureLinkRole;
     if MoldClass.ChildTo(OtherEnd.MoldClass) or otherEnd.MoldClass.ChildTo(MoldClass) then
       RelatedName:= Name + Association.LinkClass.name
@@ -2171,7 +2164,8 @@ begin
     rtLinkRole: Result := (GetUpperLimitForMultiplicity(Multiplicity) > 1) or (fRelatedRole.Qualifiers.Count > 0);
     rtInnerLinkRole: Result := false;
     else
-      raise EBold.CreateFmt('%s.GetMulti: Unknown roletype for %s.%s', [ClassName, MoldClass.Name, Name]);
+      // there are only three rolekinds, this mainly to fool compiler hints;
+      raise EBold.CreateFmt(sUnknownMoldRoleType, [ClassName, MoldClass.Name, Name]);
   end;
 end;
 
@@ -2649,7 +2643,7 @@ begin
   end;
 end;
 
-procedure TMoldModel.TrimRemoved;
+function TMoldModel.TrimRemoved: boolean;
 var
   ClassList: TMoldClassList;
   AssocList: TMoldAssociationList;
@@ -2657,7 +2651,7 @@ var
   var
     i: integer;
   begin
-    if ClassList.IndexOf(MoldClass) = -1 then
+    if not ClassList.Includes(MoldClass)then
     begin
       ClassList.Add(MoldClass);
       for i := 0 to MoldClass.Roles.Count-1 do
@@ -2669,7 +2663,7 @@ var
 
   procedure RemoveAssoc(MoldAssoc: TMoldAssociation; ClassList: TMoldClassList; AssocList: TMoldAssociationList);
   begin
-    if AssocList.IndexOf(MoldAssoc) = -1 then
+    if not AssocList.Includes(MoldAssoc) then
     begin
       AssocList.Add(MoldAssoc);
       if assigned(MoldAssoc.LinkClass) then
@@ -2680,7 +2674,7 @@ var
   i: integer;
 begin
   if fLinkRolesEnsured then
-    raise EBold.Create('Can not trim removed elements after the linkroles have been ensured...');
+    raise EBold.Create(sCannotTrimAfterLinkRolesEnsured);
 
   ClassList := TMoldClassList.Create;
   AssocList := TMoldAssociationList.Create;
@@ -2694,12 +2688,27 @@ begin
       if Associations[i].EvolutionState = esRemoved then
         RemoveAssoc(Associations[i], ClassList, AssocList);
   finally
+    result := (not ClassList.IsEmpty) or (not AssocList.IsEmpty);
     FreeAndNil(ClassList);
     freeAndNil(AssocList);
   end;
 
   for i := 0 to Classes.Count-1 do
     Classes[i].trimRemoved;
+end;
+
+procedure TMoldModel.UpdateMemberIndexes;
+var
+  i: integer;
+  MoldClass: TMoldClass;
+  j: Integer;
+begin
+  for i := 0 to Classes.Count-1 do
+  begin
+    MoldClass := Classes[i];
+    for j := 0 to MoldClass.AllBoldMembers.Count -1 do
+      MoldClass.AllBoldMembers[j].fIndex := j;
+  end;
 end;
 
 function TMoldModel.GetUMLClassName: string;
@@ -2767,7 +2776,7 @@ end;
 function TMoldElement.GetDispId: integer;
 begin
   if not HasDispId then
-    raise EBold.Create('member has no Dispid');
+    raise EBold.Create(sMemberHasNoDispID);
   if not Model.DispIdsAssigned then
     Model.AssignDispIds;
   Result := fDispId;
@@ -3069,7 +3078,6 @@ var
 begin
   G := TBoldGuard.Create(StringList);
   StringList := TStringList.Create;
-
   if Assigned(fTaggedValues) then
     TaggedValues.AddToStrings(StringList);
   if Assigned(fBoldTaggedValues) then
@@ -3112,6 +3120,8 @@ var
   Tag: string;
   NamedValueListEntry: TBoldNamedValueListEntry;
 begin
+  Values.Capacity := DefaultBoldTVList.Count;
+  Tags.Capacity := DefaultBoldTVList.Count;
   for i := 0 to DefaultBoldTVList.Count-1 do
   begin
     Tag := DefaultBoldTVList.Definition[i].Tag;

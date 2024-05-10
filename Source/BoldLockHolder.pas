@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockHolder;
@@ -38,7 +38,7 @@ type
 }
   TBoldLockList = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
   public
     destructor Destroy; override;
     procedure Add(Item: TObject); override;
@@ -90,12 +90,13 @@ type
     property LockManager: IBoldLockManager read fLockManager write fLockManager;
   end;
 
-
 implementation
 
 uses
   ComObj,
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldIndex,
   BoldLockingDefs,
@@ -187,7 +188,8 @@ var
   ConflictingUsers: TStringList;
 begin
   if not assigned(fDequeuer) then
-    raise EBold.CreateFmt('%s.LockDatabase: there is no dequeuer available', [classname]);
+    raise EBold.CreateFmt(sNoDequeuerAvailable, [classname]);
+
   SharedLocks := TBoldLockList.Create;
   ExclusiveLocks := TBoldLockList.Create;
   Conflicts := TStringList.Create;
@@ -219,7 +221,7 @@ end;
 procedure TBoldLockHolder.WaitForWakeup;
 begin
   if fWakeUpEvent.WaitFor(Timeout) <> wrSignaled then
-    raise EBold.CreateFmt('%s.WaitForWakeUp: Operation timed out', [ClassName]);
+    raise EBold.CreateFmt(sOperationTimedOut, [ClassName]);
   fWakeUpEvent.ResetEvent;
 end;
 
@@ -252,7 +254,7 @@ end;
 procedure TBoldLockList.Add(Item: TObject);
 begin
   if not (Item is TBoldLock) then
-    raise EBold.CreateFmt('%s.Add: Item should be TBoldLock, but is %s', [classname, Item.classname]);
+    raise EBold.CreateFmt(sWrongItemType, [classname, Item.classname]);
   inherited;
 end;
 
@@ -307,7 +309,7 @@ begin
   result := assigned(FindByString(Name));
 end;
 
-function TBoldLockList.ItemASKeyString(Item: TObject): string;
+function TBoldLockList.ItemAsKeyString(Item: TObject): string;
 begin
   result := (Item as TBoldLock).Name;
 end;
@@ -315,7 +317,6 @@ end;
 procedure TBoldLockList.RemoveList(List: TBoldLockList);
 var
   aTraverser: TBoldIndexTraverser;
-  aLock: TBoldLock;
 begin
   if (count = 0) or (List.Count = 0) then
     exit;

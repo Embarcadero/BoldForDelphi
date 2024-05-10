@@ -999,7 +999,7 @@ begin
   for i := length(temp) downto 1 do
     if temp[i] = '''' then
       insert('''', temp, i);
-  result := '''' + temp + '''';
+  result := Query.SQLDatabaseConfig.UnicodeStringPrefix + '''' + temp + '''';
 end;
 
 { TBoldSQLWCFInteger }

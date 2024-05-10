@@ -29,28 +29,30 @@ var
 implementation
 
 uses
+  Dialogs,
   SysUtils,
-  toolsapi,
+  ToolsApi,
+
+  BoldCoreConsts,
   BoldOTACodeGen,
   BoldWAdatamodule,
   BoldWAMainForm,
-  BoldIDEMenus,
-  dialogs;
+  BoldIDEMenus;
 
 var
   AttributeWizardInitialized: Boolean = false;
 
 procedure Register;
 begin
-  InitExpert;
-  RegisterPackageWizard(AttributeWizard);
+    InitExpert;
+    RegisterPackageWizard(AttributeWizard);
 end;
 
 procedure InitExpert;
 begin
   dmAttributeWizard := TdmAttributeWizard.Create(nil);
-  AttributeWizard := TAttributeWizard.Create('Bold.AttributeWizard', 'Bold Attribute Wizard', [], 3, 'Bold');
-  BoldMenuExpert;
+  AttributeWizard := TAttributeWizard.Create('Bold.AttributeWizard', sBoldAttributeWizard, [], 3, 'Bold'); // do not localize
+  BoldMenuExpert;  // ensure "Bold" menu has been created
   AttributeWizard.AddMenuItem(dmAttributeWizard.AttributeWizardMenu);
   AttributeWizardInitialized := true;
 end;
@@ -91,7 +93,7 @@ begin
     NewModule := Creator.CreateUnit(FullName, Template.ExpandedTemplate.Text, nil);
   except
     on e: Exception do
-      MessageDlg(Format('Unable to create unit %s, check unit name (Reason: %s)', [FullName, e.Message]), mtError, [mbOk], 0);
+      MessageDlg(Format(sUnableToCreateUnit, [FullName, e.Message]), mtError, [mbOk], 0);
   end;
 
 

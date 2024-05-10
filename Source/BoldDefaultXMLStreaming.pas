@@ -1,3 +1,10 @@
+﻿
+/////////////////////////////////////////////////////////
+//                                                     //
+//              Bold for Delphi                        //
+//    Copyright (c) 2002 BoldSoft AB, Sweden           //
+//                                                     //
+/////////////////////////////////////////////////////////
 
 { Global compiler directives }
 {$include bold.inc}
@@ -264,9 +271,12 @@ type
 implementation
 
 uses
+  SysUtils,
+
+  BoldCoreConsts,
   BoldHashIndexes,
   {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
-  SysUtils,
+  BoldRev,
   BoldDefaultStreamNames;
 
 const
@@ -321,7 +331,7 @@ end;
 function TBoldDefaultXMLStreamManager.GetClassStreamer(TopSortedIndex: Integer): TBoldXMLClassStreamer;
 begin
   if TopSortedIndex >= fClassStreamers.Count then
-    raise EBold.CreateFmt('%s.GetClassStreamer: Not a valid index', [classname]);
+    raise EBold.CreateFmt(sInvalidIndex, [classname]);
 
   result := TBoldXMLClassStreamer(fClassStreamers.Items[TopSortedIndex]);
 end;
@@ -331,7 +341,7 @@ begin
   result := fClassStreamers.StreamerByName[Name] as TBoldXMLClassStreamer;
 
   if not assigned(result) then
-    raise EBold.CreateFmt('%s.GetClassStreamerByName: Unrecognized class name %s', [classname, name]);
+    raise EBold.CreateFmt(sUnrecognizedClassName, [classname, 'GetClassStreamerByName', name]); // Do not localize
 end;
 
 procedure TBoldDefaultXMLStreamManager.ReadValueSpace(const ValueSpace: IBoldValueSpace; Node: TBoldXMLNode);
@@ -735,7 +745,7 @@ begin
   result := fMemberStreamers.StreamerByName[Name] as TBoldXMLMemberStreamer;
 
   if not assigned(result) then
-    raise EBold.CreateFmt('%s.GetMemberStreamerByName: Unrecognized class name %s', [classname, name]);
+    raise EBold.CreateFmt(sUnrecognizedClassName, [classname, 'GetMemberStreamerByName', name]); // do not localize
 end;
 
 procedure TBoldXMLClassStreamer.ReadObject(Node: TBoldXMLNode; const ValueSpace: IBoldValueSpace);
@@ -1084,6 +1094,7 @@ begin
 end;
 
 initialization
+  BoldRegisterModuleVersion('$Workfile: BoldDefaultXMLStreaming.pas $ $Revision: 36 $ $Date: 02-07-17 7:04 $');
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLStringContentStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLIntegerContentStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLFloatContentStreamer.Create);

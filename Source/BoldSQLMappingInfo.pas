@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSQLMappingInfo;
@@ -175,10 +175,12 @@ type
 implementation
 
 uses
-  BoldIndex,
-  BoldLogHandler,
   StrUtils,
   SysUtils,
+
+  BoldCoreConsts,
+  BoldIndex,
+  BoldLogHandler,
   BoldUtils,
   BoldHashIndexes,
   BoldPMapperLists,
@@ -188,12 +190,12 @@ type
 
   TBoldClassMappingIndex = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
   end;
 
   TBoldMemberMappingIndex = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
     function KeyStringForExpressionNames(const ClassExpressionName, MemberName: string): string;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure FindAllByExpressionNames(const ClassExpressionName, MemberName: string; aList: TList);
   end;
@@ -367,8 +369,8 @@ begin
   end;
   if not Result then
 // If new mapper inherits from old mapper we assume they are compatible
-    Result := BoldMemberPersistenceMappers.DescriptorByDelphiName[MapperName].MemberPersistenceMapperClass.InheritsFrom(
-      BoldMemberPersistenceMappers.DescriptorByDelphiName[Mapping.MapperName].MemberPersistenceMapperClass);
+    Result := (BoldMemberPersistenceMappers.DescriptorByDelphiName[MapperName].MemberPersistenceMapperClass.IsCompatibleWith(
+      BoldMemberPersistenceMappers.DescriptorByDelphiName[Mapping.MapperName].MemberPersistenceMapperClass));
 end;
 
 constructor TBoldMemberMappingInfo.create(const ClassExpressionName,
@@ -444,7 +446,7 @@ end;
 
 { TBoldClassMappingIndex }
 
-function TBoldClassMappingIndex.ItemASKeyString(Item: TObject): string;
+function TBoldClassMappingIndex.ItemAsKeyString(Item: TObject): string;
 begin
   result := (Item as TBoldClassMappingInfo).ClassExpressionName;
 end;
@@ -457,7 +459,7 @@ begin
   FindAllByString(KeyStringForExpressionNames(ClassExpressionName, MemberName), aList);
 end;
 
-function TBoldMemberMappingIndex.ItemASKeyString(Item: TObject): string;
+function TBoldMemberMappingIndex.ItemAsKeyString(Item: TObject): string;
 var
   MappingInfo: TBoldMemberMappingInfo;
 begin
@@ -569,7 +571,7 @@ begin
     raise EBoldInternal.CreateFmt('%s.AddTypeIdMapping: ClassExpressionName is empty (dbtype: %d)', [ClassName, dbType]);
   OldMapping := GetDbTypeMapping(ClassExpressionName);
   if (OldMapping <> -1) and (OldMapping <> dbtype) then
-    raise EBold.CreateFmt('%s.AddTypeIdMapping: The class %s has multiple db types (%d and %d)', [classname, ClassExpressionName, dbtype, oldMapping]);
+    raise EBold.CreateFmt(sMultipleDBTypes, [classname, ClassExpressionName, dbtype, oldMapping]);
   if OldMapping = -1 then
   begin
     fDbTypeMapping.AddMapping(TBoldDbTypeMappingInfo.create(ClassExpressionName, DbType));
@@ -603,7 +605,8 @@ var
 begin
   if BoldLog.ProcessInterruption then
     exit;
-  BoldLog.Log('Writing mapping information to database');
+
+  BoldLog.Log(sLogWritingMappingToDB);
   if not Database.Connected then
     Database.Open;
   Database.StartTransaction;

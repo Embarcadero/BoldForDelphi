@@ -56,7 +56,7 @@ type
     fPartOf: TBoldMemberID;
   public
     constructor create(partOf: TBoldMemberID; OwnspartOf: Boolean; IndexInMemberList: integer);
-    destructor destroy; override;
+    destructor Destroy; override;
   end;
 
   {---TBoldObjectId---}
@@ -142,7 +142,9 @@ type
     class var IX_ObjectID: integer;
     function GetObjectIDIndex: TBoldObjectIDHashIndex;
     function GetHasInexactIds: boolean;
-    function GetHasNonExistingIds: boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasNonExistingIds: boolean;
+    function GetFirst: TBoldObjectId;
+    function GetLast: TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
     function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetIDByID(ObjectID: TBoldObjectId): TBoldObjectId;
@@ -172,6 +174,8 @@ type
     property IdInList[Objectid: TBoldObjectId]: Boolean read GetIdInList;
     property HasInexactIds: boolean read GetHasInexactIds;
     property HasNonExistingIds: boolean read GetHasNonExistingIds;
+    property First: TBoldObjectId read GetFirst;
+    property Last: TBoldObjectId read GetLast;
   end;
 
   {---TBoldMemberIdList---}
@@ -196,9 +200,8 @@ type
     function GetCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetTranslateToOldId(NewID: TBoldObjectId): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetTranslateToNewId(OldID: TBoldObjectId): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-
-    function GetTranslateToOldId(Index: integer): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTranslateToNewId(Index: integer): TBoldObjectId; overload;{$IFDEF BOLD_INLINE} inline; {$ENDIF}
+//    function GetTranslateToOldId(Index: integer): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+//    function GetTranslateToNewId(Index: integer): TBoldObjectId; overload;{$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetCapacity: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     procedure SetCapacity(const Value: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
   protected
@@ -222,8 +225,8 @@ type
   private
     fIdList: TBoldObjectIdList;
   public
-    constructor create(msg: string; args: array of const; IdList: TBoldObjectIdList);
-    destructor destroy; override;
+    constructor Create(msg: string; args: array of const; IdList: TBoldObjectIdList);
+    destructor Destroy; override;
     property IdList: TBoldObjectIdList read fIdList;
   end;
 
@@ -385,7 +388,7 @@ begin
   fOwnsPartOf := OwnsPartOf;
 end;
 
-destructor TBoldSubMemberId.destroy;
+destructor TBoldSubMemberId.Destroy;
 begin
   if fOwnsPartOf then
   begin
@@ -544,17 +547,37 @@ end;
 function TBoldObjectIdList.GetIndexByID(ObjectID: TBoldObjectId): Integer;
 var
   InternalId: TBoldObjectId;
+  i: integer;
 begin
-  InternalId := GetIdByID(ObjectID);
-  if assigned(InternalId) then
-    Result := IndexOf(InternalId)
+  result := -1;
+  if Count < 10 then
+  begin
+    for i := 0 to Count - 1 do
+      if ObjectId.IsEqual[TBoldObjectId(Items[i])] then
+      begin
+        Result := i;
+        exit;
+      end;
+  end
   else
-    result := -1;
+  begin
+    InternalId := TBoldObjectId(ObjectIDIndex.FindByID(ObjectID));;
+    if assigned(InternalId) then
+      Result := IndexOf(InternalId);
+  end;
 end;
 
 function TBoldObjectIdList.GetObjectId(index: Integer): TBoldObjectId;
 begin
   Result := TBoldObjectId(Items[index]);
+end;
+
+function TBoldObjectIdList.GetLast: TBoldObjectId;
+begin
+  if IsEmpty then
+    result := nil
+  else
+    result := GetObjectID(Count-1);
 end;
 
 procedure TBoldObjectIdList.Add(ObjectID: TBoldObjectId);
@@ -613,6 +636,14 @@ end;
 function TBoldObjectIdList.GetCount: integer;
 begin
   result := count;
+end;
+
+function TBoldObjectIdList.GetFirst: TBoldObjectId;
+begin
+  if IsEmpty then
+    result := nil
+  else
+    result := GetObjectID(0);
 end;
 
 function TBoldObjectIdList.Clone: TBoldObjectIdList;
@@ -817,6 +848,7 @@ begin
   end;}
 end;
 
+{
 function TBoldIDTranslationList.GetTranslateToOldId(Index: integer): TBoldObjectId;
 begin
   result := fOldIds[Index];
@@ -826,6 +858,7 @@ function TBoldIDTranslationList.GetTranslateToNewId(Index: integer): TBoldObject
 begin
   Result := GetNewId(Index);
 end;
+}
 
 function TBoldIDTranslationList.GetStreamName: string;
 begin
@@ -837,9 +870,15 @@ procedure TBoldObjectIdList.ExactifyIds(
 var
   i: integer;
 begin
-  for i := 0 to count - 1 do
+  Assert(TranslationList.count <= Count);
+  for i := 0 to TranslationList.count - 1 do
     if not ObjectIds[i].TopSortedIndexExact then
-      Items[i] := TranslationList.TranslateToNewId[ObjectIds[i]].Clone;
+    begin
+      if TranslationList.OldIds[i].IsEqual[ObjectIds[i]] then
+        Items[i] := TranslationList.NewIds[i].Clone
+      else
+        Items[i] := TranslationList.TranslateToNewId[ObjectIds[i]].Clone;
+    end;
 end;
 
 procedure TBoldObjectIdList.ApplyTranslationList(
@@ -867,7 +906,6 @@ begin
     end;
 end;
 
-{ TBoldClassIdWithExpressionName }
 function TBoldObjectId.GetNonExisting: Boolean;
 begin
   Result := false;
@@ -880,13 +918,13 @@ end;
 
 { EBoldUpdateFailedForIdList }
 
-constructor EBoldOperationFailedForIdList.create(msg: string; args: array of const; IdList: TBoldObjectIdList);
+constructor EBoldOperationFailedForIdList.Create(msg: string; args: array of const; IdList: TBoldObjectIdList);
 begin
   inherited createfmt(msg, args);
   fIdList := IdList.Clone;
 end;
 
-destructor EBoldOperationFailedForIdList.destroy;
+destructor EBoldOperationFailedForIdList.Destroy;
 begin
   FreeAndNil(fIdList);
   inherited;

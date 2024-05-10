@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldVariableHandle;
@@ -41,6 +41,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldSubscription,
   BoldDefs,
   BoldSystemRT,
@@ -99,7 +101,7 @@ begin
   begin
     Result := StaticSystemTypeInfo.ElementTypeInfoByExpressionName[ValueTypeName];
     if assigned(result) and not (result.BoldValueType in [bvtAttr, bvtList]) then
-      raise EBold.CreateFmt('%s.GetStaticBoldType: Only lists and attributes are allowed as types (expr: %s)', [ClassName, ValueTypeName]);
+      raise EBold.CreateFmt(sOnlyListsAndAttributeTypesAllowed, [ClassName, ValueTypeName]);
   end
   else
     result := nil;
@@ -110,9 +112,9 @@ begin
   if not (csDesigning in ComponentState) and not (csLoading in ComponentState) then
   begin
 //    if not assigned(StaticSystemHandle) then
-//      raise EBold.CreateFmt('%s.Getvalue: %s is not connected to a systemhandle', [classname, name]);
+//      raise EBold.CreateFmt(sNoSystemHandle, [classname, 'GetValue', name]); // do not localize
     if not assigned(StaticBoldType) then
-      raise EBold.CreateFmt('%s.Getvalue: The ValueTypeName of %s does not seem to be valid (%s)', [classname, name, ValueTypeName]);
+      raise EBold.CreateFmt(sValueTypeNameInvalid, [classname, name, ValueTypeName]);
   end;
 
   if {not (csDesigning in ComponentState) and}

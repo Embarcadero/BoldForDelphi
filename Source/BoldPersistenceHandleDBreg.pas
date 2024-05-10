@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceHandleDBreg;
@@ -14,6 +14,9 @@ implementation
 uses
   Classes,
   Dialogs,
+  SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldDbActions,
   DesignEditors,
@@ -23,7 +26,6 @@ uses
 {$ELSE}
   ActnList,
 {$ENDIF}
-  SysUtils,
   BoldPersistenceHandleDB,
   BoldIDEConsts;
 
@@ -65,11 +67,11 @@ begin
   begin
     try
       TBoldPersistenceHandleDB(Component).CreateDataBaseSchema;
-      showmessage('Database schema generated');
+      showmessage(sSchemaGenerated);
     except
       on e: Exception do
       begin
-        Showmessage('Database schema generation failed: '+BOLDCRLF+BOLDCRLF+e.message);
+        Showmessage(Format(sSchemaGenerationFailed, [BOLDCRLF, BOLDCRLF, e.message]));
       end;
     end;
   end;
@@ -78,7 +80,7 @@ end;
 function TBoldPersistenceHandleDBEditor.GetVerb(Index: Integer): string;
 begin
   case Index of
-    0: Result := 'Generate Database Schema...';
+    0: Result := sGenerateSchema;
   end;
 end;
 

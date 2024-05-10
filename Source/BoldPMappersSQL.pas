@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersSQL;
@@ -191,13 +191,15 @@ type
 implementation
 
 uses
+  SysUtils,
+  Variants,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldPSParamsSQL,
   BoldNameExpander,
   BoldValueInterfaces,
   BoldDefaultStreamNames,
-  Variants,
-  SysUtils,
   {$IFDEF RIL}
   {$IFNDEF BOLD_UNICODE}
   StringBuilder,
@@ -272,7 +274,7 @@ begin
     raise EBoldInternal.CreateFmt('%s: No event that provides an IBoldDatabase', [classname]);
   result := fOnGetDatabase;
   if not assigned(result) then
-    raise EBold.CreateFmt('%s: No database', [classname]);
+    raise EBold.CreateFmt(sNoDatabase, [classname]);
 end;
 
 procedure TBoldSystemSQLMapper.StartSQLBatch;
@@ -573,16 +575,16 @@ begin
           if assigned(Table) then
             case SQLStyle of
               ssColumns: SQL.Append(Column.SQLName);
-              ssParameters: SQL.Append(Format(':%s', [Column.SQLName]));
-              ssValues: SQL.Append(Format('%s = :%0:s', [Column.SQLName]));
+              ssParameters: SQL.Append(Format(':%s', [Column.SQLName])); // do not localize
+              ssValues: SQL.Append(Format('%s = :%0:s', [Column.SQLName])); // do not localize
               else
-                raise EBold.Create('unimplememnted');
+                raise EBold.Create(sUnimplemented);
             end
           else
             case SQLStyle of
-              ssColumns: SQL.Append(Format('%s.%s', [TableAlias(Column.TableDescription, useAlias), Column.SQLName]))
+              ssColumns: SQL.Append(Format('%s.%s', [TableAlias(Column.TableDescription, useAlias), Column.SQLName])) // do not localize
               else
-                raise EBold.Create('unimplememnted');
+                raise EBold.Create(sUnimplemented);
             end;
         end;
       end;
@@ -936,7 +938,7 @@ end;
 
 function TBoldMemberSQLMapper.GetColumnSize(ColumnIndex: Integer): Integer;
 begin
-  raise EBold.CreateFmt('%s.GetColumnSize: illegal index', [ClassName]);
+  raise EBold.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnSize', ColumnIndex]); // do not localize
 end;
 
 function TBoldMemberSQLMapper.GetInitialColumnName(ColumnIndex: Integer): string;
@@ -1007,18 +1009,18 @@ end;
 
 procedure TBoldMemberSQLMapper.ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt('%s.ValueToParam: illegal call', [classname]);
+  raise EBold.CreateFmt(sIllegalCall, [classname, 'ValueToParam']); // do not localize
 end;
 
 function TBoldMemberSQLMapper.ValueAsVariant(const ObjectContent: IBoldObjectContents;
   ColumnIndex: Integer; TranslationList: TBoldIdTranslationList): variant;
 begin
-  raise EBold.CreateFmt('%s.ValueAsVariant: Illegal call', [classname]);
+  raise EBold.CreateFmt(sIllegalCall, [classname, 'ValueAsVariant']); // do not localize
 end;
 
 procedure TBoldMemberSQLMapper.ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex: Integer);
 begin
-  raise EBold.CreateFmt('%s.ValueFromField: Illegal call', [classname]);
+  raise EBold.CreateFmt(sIllegalCall, [classname, 'ValueFromField']); // do not localize
 end;
 
 procedure TBoldMemberSQLMapper.ValueToQuery(const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace; const Query: IBoldExecQuery; TranslationList: TBoldIdTranslationList; DBStorageMode: TBoldDBStorageMode);
@@ -1037,7 +1039,7 @@ begin
       if Assigned(aParam) then
         ValueToParam(ObjectContent, aParam, ColumnIndex, translationList)
       else
-        raise EBoldInternal.CreateFmt('%s.ValueToQuery: Some columns not found in table (%d:%s)', [classname, ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]);
+        raise EBoldInternal.CreateFmt(sSomeColumnsNotInTable, [classname, 'ValueToQuery', ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]); // do not localize
     end;
   end;
 end;
@@ -1058,7 +1060,7 @@ begin
       if Assigned(aField) then
         ValueFromField(OwningObjectId, ObjectContent, ValueSpace, TranslationList, aField, ColumnIndex)
       else
-        raise EBoldInternal.CreateFmt('%s.ValueFromQuery: Some columns not found in table (%d:%s).' + ErrorMsg, [classname, ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]);
+        raise EBoldInternal.CreateFmt(sSomeColumnsNotInTable, [classname, 'ValueFromQuery', ColumnIndex, ColumnDescriptions[ColumnIndex].SQLName]); // do not localize
     end;
   end;
 end;
@@ -1069,7 +1071,7 @@ end;
 
 function TBoldMemberSQLMapper.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
 begin
-  raise EBold.CreateFmt('%s.GetColumnBDEFieldType: illegal index', [ClassName]);
+  raise EBold.CreateFmt(sIllegalColumnIndex, [ClassName, 'GetColumnBDEFieldType', ColumnIndex]); // do not localize
 end;
 
 procedure TBoldSystemSQLMapper.CloseDataBase;

@@ -55,8 +55,8 @@ type
     property Element: TBoldElement read GetElement;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
-    constructor create(owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(owner: TComponent); override;
+    destructor Destroy; override;
     procedure DoStartDrag(var DragObject: TDragObject); override;
     procedure DoEndDrag(Target:TObject; X, Y: Integer); override;
     procedure MouseDown(BUTTON: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -109,7 +109,7 @@ begin
     DraggedObject.BoldType.ConformsTo(BoldHandle.StaticBoldType);
 end;
 
-constructor TBoldDropTarget.create(owner: TComponent);
+constructor TBoldDropTarget.Create(owner: TComponent);
 begin
   inherited;
   FRepresentations := TBoldTreeFollowerController.Create(self);
@@ -120,7 +120,7 @@ begin
   AfterMakeUptoDate(fHandleFollower.Follower);
 end;
 
-destructor TBoldDropTarget.destroy;
+destructor TBoldDropTarget.Destroy;
 begin
   FreeAndNil(FHandleFollower);
   FreeAndNil(FRepresentations);

@@ -7,6 +7,8 @@ interface
 
 uses
   Classes,
+
+  BoldCoreConsts,
   BoldElements,
   BoldPropertyEditors;
 
@@ -34,7 +36,7 @@ begin
     else
       Result := nil
   else
-    raise EBold.CreateFmt('%s.GetContextType: Incoming component is not a BoldComboBox', [ClassName]);
+    raise EBold.CreateFmt(sComponentNotComboBox, [ClassName]);
 end;
 
 end.

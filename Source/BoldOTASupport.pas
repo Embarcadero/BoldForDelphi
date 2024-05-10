@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOTASupport;
@@ -72,6 +72,8 @@ uses
   SysUtils,
   IniFiles,
   Registry,
+
+  BoldCoreConsts,
   BoldLogHandler,
   BoldUtils,
   BoldRev;
@@ -204,7 +206,7 @@ begin
   end;
 
   if not assigned(result) then
-    raise EBoldDesignTime.CreateFmt('Unable to get module for %s', [filename]);
+    raise EBoldDesignTime.CreateFmt(sUnableToGetModule, [filename]);
 end;
 
 function BoldFilePathForComponent(component: TComponent): string;

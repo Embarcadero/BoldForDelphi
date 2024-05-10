@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractExternalPersistenceController;
@@ -435,7 +435,5 @@ begin
   if assigned(fOnFailUpdates) then
     fOnFailUpdates(self);
 end;
-
-initialization
 
 end.

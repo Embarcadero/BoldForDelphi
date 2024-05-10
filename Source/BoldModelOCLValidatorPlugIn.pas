@@ -34,7 +34,11 @@ uses
   BoldUMLModel,
   BoldModel,
   BoldUMLPlugInCallBacks,
+{$IFDEF BoldDevEx}
+  BoldUMLModelValidationFormCx,
+{$ELSE}
   BoldUMLModelValidationForm,
+{$ENDIF}
   BoldUMLOCLValidator;
 
 var
@@ -44,7 +48,11 @@ var
 
 procedure TUMLOCLValidator.Execute(Context: IUMLModelPlugInContext);
 var
+{$IFDEF BoldDevEx}
+  frmValidation: TfrmValidationCx;
+{$ELSE}
   frmValidation: TfrmValidation;
+{$ENDIF}
 begin
   frmValidation := EnsureValidationForm(context.GetCurrentModelHandle, G_ValidationFormDefaultOwner, nil);
   frmValidation.ValidationProc := TUMLOCLValidatorCallBack.Validate;

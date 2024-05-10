@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////
+﻿/////////////////////////////////////////////////////////
 
 
 unit BoldTreeView;
@@ -257,7 +257,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils, BoldQueue;
+  BoldUtils, BoldQueue, Types;
 
 {---TBoldTreeNode---}
 
@@ -641,7 +641,7 @@ begin
       Follower.EnsureDisplayable;
       //If EnsureDisplayable creates childnodes they will create a node to this follower too.
       if (Level <= AutoExpandLevels) and Assigned(Follower.ControlData) then
-        (Follower.ControlData as TBoldTreeNode).Expand(False); //CHECKME beh�vs detta?
+        (Follower.ControlData as TBoldTreeNode).Expand(False); //CHECKME behövs detta?
     finally
       EndUpdate;
     end;
@@ -1265,7 +1265,7 @@ end;
 
 procedure TBoldTreeNode.UpdateIcon;
 begin
-  if assigned(Follower) and assigned(Follower.Controller) and assigned(Follower.SubFollowers[1]) then
+  if assigned(Follower) and not (csRecreating in TreeView.ControlState) and assigned(Follower.Controller) and assigned(Follower.SubFollowers[1]) then
     Follower.SubFollowers[1].MarkValueOutOfDate;
 end;
 

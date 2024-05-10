@@ -33,6 +33,7 @@ type
     fUMLModelMode: TUMLModelMode;
     fUMLModelAsString: string;
     fSystemHandle: TBoldSystemHandle;
+    fDataTypes: TUMLDataTypeList;
     fModelChangedSubscriber: TBoldPassthroughSubscriber;
     fEditableModel: boolean;
     fValidateNesting: integer;
@@ -41,11 +42,12 @@ type
     procedure AssertDesignTime;
     procedure ReadUMLModelAsString(Reader: TReader);
     procedure WriteUMLModelAsString(Writer: TWriter);
-    procedure UMLModelFromString(ModelAsString: string);
+    procedure UMLModelFromString(const ModelAsString: string);
     function GetEnsuredUMLModel: TUMLModel;
     function GetUMLModel: TUMLModel;
     procedure UMLModelChangedRecieve(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     function GetIsValidating: boolean;
+    function GetDataTypes: TUMLDataTypeList;
   protected
     procedure DefineProperties(Filer: TFiler); override;
     procedure SubscribeToUMLModel;
@@ -58,6 +60,7 @@ type
   public
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
+    procedure Assign(Source: TPersistent); override;
     procedure EnsureTypes;
     function UMLModelToString: string;
     procedure StartValidation;
@@ -65,6 +68,8 @@ type
     property UMLModel: TUMLModel read GetUMLModel;
     property EnsuredUMLModel: TUMLModel read GetEnsuredUMLModel;
     property IsValidating: boolean read GetIsValidating;
+    property SystemHandle: TBoldSystemHandle read fSystemHandle;
+    property DataTypes: TUMLDataTypeList read GetDataTypes;
   published
     property UMLModelMode: TUMLModelMode read fUMLModelMode write fUMLModelMode;
     property Boldify: TBoldUMLBoldify read FBoldify write SetBoldify;
@@ -103,6 +108,7 @@ uses
   BoldUMLModelConverter,
   BoldUMLModelValidator,
   BoldUMLUtils,
+  BoldHandles,
   BoldGuard;
 
 var
@@ -116,6 +122,17 @@ begin
 end;
 
 { TBoldModel }
+
+procedure TBoldModel.Assign(Source: TPersistent);
+begin
+  if Source is TBoldModel then
+  begin
+    EnsureUMLModel;
+    self.UMLModelFromString(TBoldModel(Source).UMLModelToString)
+  end
+  else
+    inherited;
+end;
 
 constructor TBoldModel.Create(owner: TComponent);
 begin
@@ -136,6 +153,7 @@ begin
     TheModelList.RemoveModel(Self);
   if Assigned(fSystemhandle) then
     fSystemHandle.Active := False;
+  FreeAndNil(fDataTypes);
   FreeAndNil(fBoldify);
   FreeAndNil(fSystemHandle);
   FreeAndNil(fModelChangedSubscriber);
@@ -152,41 +170,66 @@ procedure TBoldModel.EnsureTypes;
 var
   Index: Integer;
   BoldMemberTypeList: TBoldMemberTypeList;
+  UMLDataTypes: TUMLDataTypeList;
 
   procedure EnsureDataType(const modelName: string);
   var
-    aType: TUMLGeneralizableElement;
+    aType: TUMLDataType;
+    i: integer;
   begin
-    aType := EnsuredUMLModel.EvaluateExpressionAsDirectElement
-    (
-      Format('allOwnedElement->select(OCLIsKindOf(UMLGeneralizableElement) and (name=''%s''))->first', [modelName])
-    ) as TUMLGeneralizableElement;
+    aType := nil;
+    for i := 0 to UMLDataTypes.Count - 1 do
+    begin
+      if SameText(UMLDataTypes[i].name, modelName) then
+        aType := UMLDataTypes[i];
+    end;
     if not Assigned(aType) then
     begin
       aType := TUMLDataType.Create(EnsuredUMLModel.BoldSystem);
       TBoldUMLSupport.EnsureBoldTaggedValues(aType);
       aType.namespace_ := EnsuredUMLModel;
       aType.Name := modelName;
+      if Assigned(EnsuredUMLModel.BoldSystem.BoldSystemTypeInfo.AttributeTypeInfoByExpressionName[modelName]) then
+      begin
+        aType.isAbstract := EnsuredUMLModel.BoldSystem.BoldSystemTypeInfo.AttributeTypeInfoByExpressionName[modelName].IsAbstract;
+      end;
     end;
+    fDataTypes.Add(aType as TUMLDataType);
   end;
 
 begin
   BoldMemberTypeList := BoldMemberTypes;
-
-  with TypeNameDictionary do
-  begin
-    for Index := 0 to Count - 1 do
+  FreeAndNil(fDataTypes);
+  fDataTypes := TUMLDataTypeList.CreateWithTypeInfo(EnsuredUMLModel.BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByClass[TUMLDataType]);
+  EnsuredUMLModel.BoldSystem.StartTransaction();
+  try
+    UMLDataTypes := EnsuredUMLModel.BoldSystem.ClassByObjectClass[TUMLDataType] as TUMLDataTypeList;
+    with TypeNameDictionary do
     begin
-      if Mapping[index].ModelName = DEFAULTNAME then
-      else if Assigned(BoldMemberTypeList.DescriptorByDelphiName[Mapping[Index].ExpandedDelphiName]) then
+      for Index := 0 to Count - 1 do
       begin
-        if BoldMemberTypeList.DescriptorByDelphiName[Mapping[index].ExpandedDelphiName].AbstractionLevel = alConcrete then
+        if Mapping[index].ModelName = DEFAULTNAME then
+        else if Assigned(BoldMemberTypeList.DescriptorByDelphiName[Mapping[Index].ExpandedDelphiName]) then
+        begin
+          if BoldMemberTypeList.DescriptorByDelphiName[Mapping[index].ExpandedDelphiName].AbstractionLevel = alConcrete then
+            EnsureDataType(Mapping[index].ModelName);
+        end
+        else
           EnsureDataType(Mapping[index].ModelName);
-      end
-      else
-        EnsureDataType(Mapping[index].ModelName);
+      end;
+      EnsuredUMLModel.BoldSystem.CommitTransaction();
     end;
+  except
+    EnsuredUMLModel.BoldSystem.RollbackTransaction();
+    raise;
   end;
+end;
+
+function TBoldModel.GetDataTypes: TUMLDataTypeList;
+begin
+  if not Assigned(fDataTypes) or fDataTypes.Empty then
+    EnsureTypes;
+  result := fDataTypes;
 end;
 
 function TBoldModel.GetEnsuredUMLModel: TUMLModel;
@@ -207,31 +250,40 @@ begin
 end;
 
 procedure TBoldModel.EnsureUMLModel;
+var
+  dmModelEdit: TdmModelEdit;
 begin
   if not Assigned(fUMLModel) then
   begin
     BoldLog.StartLog('Initializing UML meta model');
     BoldLog.Sync;
-    EnsureModelEditDataModule;
+    dmModelEdit := TdmModelEdit.Create(self);
     fSystemHandle := TBoldSystemHandle.Create(nil);
     fSystemHandle.AutoActivate := False;
     fSystemHandle.SystemTypeInfoHandle := dmModelEdit.BoldSystemTypeInfoHandle1;
     fSystemHandle.Active := True;
     BoldLog.EndLog;
-    case UMLModelMode of
-      ummNone:
-      begin
-        fUMLModel := TUMLModel.Create(fSystemHandle.System);
-        TBoldModelConverter.MoldModelToUML(RawMoldModel, fUMLModel);
+    fSystemHandle.System.StartTransaction();
+    try
+      case UMLModelMode of
+        ummNone:
+        begin
+          fUMLModel := TUMLModel.Create(fSystemHandle.System);
+          TBoldModelConverter.MoldModelToUML(RawMoldModel, fUMLModel);
+        end;
+        ummDesignTime:
+        begin
+          AssertDesignTime;
+          UMLModelFromString(fUMLModelAsString);
+        end;
+        ummRunTime: UMLModelFromString(fUMLModelAsString);
       end;
-      ummDesignTime:
-      begin
-        AssertDesignTime;
-        UMLModelFromString(fUMLModelAsString);
-      end;
-      ummRunTime: UMLModelFromString(fUMLModelAsString);
+      fUMLModelAsString := '';
+      fSystemHandle.System.CommitTransaction();
+    except
+      fSystemHandle.System.RollbackTransaction();
+      raise;
     end;
-    fUMLModelAsString := '';
   end;
 end;
 
@@ -250,7 +302,7 @@ begin
   Dec(fValidateNesting);
 end;
 
-procedure TBoldModel.UMLModelFromString(ModelAsString: string);
+procedure TBoldModel.UMLModelFromString(const ModelAsString: string);
 begin
   if ModelAsString <> '' then
   begin

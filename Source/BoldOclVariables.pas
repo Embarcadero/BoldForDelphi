@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 
@@ -118,7 +118,7 @@ type
     function GetDisplayName: string; override;
   public
     constructor Create(Collection: TCollection); override;
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     function LinksToHandle(Handle: TBoldElementHandle): Boolean;
     property TupleList: TBoldVariableTupleList read GetTupleList;
@@ -143,8 +143,11 @@ type
     constructor CreateWithTypeInfo(const aName: string; AValue: TBoldElement; aBoldElementTypeInfo: TBoldElementTypeInfo);
     constructor CreateFromIndirectElement(const aName: string; aBoldIndirectElement: TBoldIndirectElement);
     constructor CreateStringVariable(const aName: string; const aValue: string);
+    constructor CreateIntegerVariable(const aName: string; const aValue: integer);
+    constructor CreateFloatVariable(const aName: string; const aValue: Double);
     constructor CreateDateVariable(const aName: string; const aValue: TDate);
     constructor CreateDateTimeVariable(const aName: string; const aValue: TDateTime);
+    constructor CreateTimeVariable(const aName: string; const aValue: TTime);
     destructor Destroy; override;
     property BoldIndirectElement: TBoldIndirectElement read GetBoldIndirectElement;
   end;
@@ -153,6 +156,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldSystem,
   BoldRootedHandles,
@@ -431,9 +436,6 @@ end;
 
 procedure TBoldOclVariables._Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-var
-  vVariable: TBoldExternalVariable;
-  i: integer;
 begin
   if (Originator = fGlobalSystemHandle) then
   begin
@@ -572,7 +574,7 @@ begin
   fBoldHandleSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveHandleEvent);
 end;
 
-destructor TBoldVariableTuple.destroy;
+destructor TBoldVariableTuple.Destroy;
 begin
   FreeAndNil(fBoldHandleSubscriber);
   inherited;
@@ -611,7 +613,7 @@ begin
   if value <> fBoldHandle then
   begin
     if assigned(value) and Value.RefersToComponent(TupleList.OwningDefinition) then
-      raise EBold.CreateFmt('%s.SetBoldHandle: %s can not be linked to %s. Circular reference', [classname, TupleList.OwningDefinition.name, value.name]);
+      raise EBold.CreateFmt(sCircularReference, [classname, 'SetBoldHandle', TupleList.OwningDefinition.name, value.name]);
     FBoldHandle := Value;
     fBoldHandleSubscriber.CancelAllSubscriptions;
     if assigned(value) then
@@ -637,9 +639,9 @@ begin
   begin
     vNewName := LowerCase(Copy(Value,1,1)) + Copy(Value,2,MaxInt);
     if not (Collection as TBoldVariableTupleList).NameIsUnique(vNewName) then
-      raise EBold.CreateFmt('Can''t rename variable to "%s", name already exists', [vNewName]);
+      raise EBold.CreateFmt(sNameNotUnique, [vNewName]);
     if not (Collection as TBoldVariableTupleList).NameIsValid(vNewName) then
-      raise EBold.Create('Invalid variable name, only alphanum characters and underscore valid');
+      raise EBold.Create(sIllegalCharsInName);
     FVariableName := vNewName;
     Changed;
   end;
@@ -729,6 +731,17 @@ begin
     BoldIndirectElement.SetReferenceValue(aValue);
 end;
 
+constructor TBoldOclVariable.CreateFloatVariable(const aName: string;
+  const aValue: Double);
+var
+  vFloat: TBAFloat;
+begin
+  inherited Create(aName);
+  vFloat := TBAFloat.Create;
+  vFloat.AsFloat := aValue;
+  BoldIndirectElement.SetOwnedValue(vFloat);
+end;
+
 constructor TBoldOclVariable.CreateFromIndirectElement(const aName: string;
   aBoldIndirectElement: TBoldIndirectElement);
 begin
@@ -752,6 +765,27 @@ begin
   vString := TBAString.Create;
   vString.AsString := aValue;
   BoldIndirectElement.SetOwnedValue(vString);
+end;
+
+constructor TBoldOclVariable.CreateTimeVariable(const aName: string;
+  const aValue: TTime);
+var
+  vTime: TBATime;
+begin
+  inherited Create(aName);
+  vTime := TBATime.Create;
+  vTime.AsTime := aValue;
+  BoldIndirectElement.SetOwnedValue(vTime);
+end;
+
+constructor TBoldOclVariable.CreateIntegerVariable(const aName: string; const aValue: integer);
+var
+  vInteger: TBAinteger;
+begin
+  inherited Create(aName);
+  vInteger := TBAinteger.Create;
+  vInteger.Asinteger := aValue;
+  BoldIndirectElement.SetOwnedValue(vInteger);
 end;
 
 constructor TBoldOclVariable.CreateDateTimeVariable(const aName: string;

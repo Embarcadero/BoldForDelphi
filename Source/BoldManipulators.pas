@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldManipulators;
@@ -93,8 +93,12 @@ type
 
 implementation
 
+{$R *.res}
+
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldUtils,
   BoldId,
   BoldDefaultId,
@@ -236,7 +240,7 @@ procedure TBoldManipulator.SetValue(IdString: string; const  NewValue: string);
       NewId := OnDecrypt(NewId);
     NewElement := ElementForRawIdString(StripMapping(NewId));
     if (NewElement is TBoldObject) then
-      r.BoldObject := TBoldObject(NewElement);
+      r.BoldObject := TBoldObject(NewElement);  // FIXME error handling
   end;
 
 var
@@ -256,13 +260,13 @@ begin
       else if (Element is TBoldObjectReference) then
         SetObjectReference(TBoldObjectReference(Element), NewValue)
       else if (Element is TBoldObjectList) then
-        raise EBold.Create('Can''t set Multilink from value')
+        raise EBold.Create(sCannotSetMultiLinkFromValue)
       else if (Element is TBoldObject) then
-        raise EBold.Create('Can''t set Object from value');
+        raise EBold.Create(sCannotSetObjectFromValue);
     end;
   end
   else
-    Mappers.ItemByname[Mapping].SetFromString(Element, NewValue);
+    Mappers.ItemByname[Mapping].SetFromString(Element, NewValue);  // FIXME error handling
 end;
 
 function TBoldManipulator.StripMapping(const IdString: string): string;
@@ -300,7 +304,7 @@ begin
   if Assigned(BoldSystemhandle) then
     Result := IdStringForElement(BoldSystemHandle.System.CreateNewObjectByExpressionName(ClassName))
   else
-    raise EBold.CreateFmt('%s.CreateObject: The manipulator is not connected to a systemhandle', [classname]);
+    raise EBold.CreateFmt(sNoSystemHandle, [classname, 'CreateObject', Name]); // do not localize
 end;
 
 procedure TBoldManipulator.DeleteObject(IdString: string);
@@ -337,7 +341,7 @@ begin
   else if Assigned(Element.BoldType) then
     Result := Element.BoldType.ExpressionName
   else
-    raise EBold.CreateFmt('%s.DefaultTagForElement: Element lacks type information', [ClassName]);
+    raise EBold.CreateFmt(sElementLacksTypeInfo, [ClassName]);
 end;
 
 { TBoldManipulatorMapper }
@@ -379,7 +383,7 @@ begin
       result := Items[i];
       Exit;
     end;
-  raise EBold.CreateFmt('Unknown mapping: %s', [Name]);
+  raise EBold.CreateFmt(sUnknownMapping, [Name]);
 end;
 
 function TBoldManipulatorMapperCollection.GetItems(Index: integer): TBoldManipulatorMapper;

@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclSymbolImplementations;
@@ -14,8 +14,15 @@ procedure RegisterOCLOperation(OperationClass: TBoldOclSymbolClass);
 implementation
 
 uses
-  SysUtils,
+  Classes,
   DateUtils,
+  Math,
+  System.RegularExpressions,
+  System.RegularExpressionsCore,
+  SysUtils,
+  Variants,
+
+  BoldCoreConsts,
   BoldElements,
   BoldAttributes,
   BoldOclError,
@@ -24,13 +31,8 @@ uses
   BoldTypeList,
   BoldSystemRT,
   BoldSystem,
-  Classes,
-  Variants,
-  Math,
   BoldSubscription,
   BoldValueSpaceInterfaces,
-  System.RegularExpressions,
-  System.RegularExpressionsCore,
   BoldIsoDateTime;
 
 var
@@ -132,6 +134,20 @@ type
   end;
 
   TBOS_Round = class(TBoldOclSymbol)
+  protected
+    procedure Init; override;
+  public
+    procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
+  end;
+
+  TBOS_SimpleRound = class(TBoldOclSymbol)
+  protected
+    procedure Init; override;
+  public
+    procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
+  end;
+
+  TBOS_SimpleRoundTo = class(TBoldOclSymbol)
   protected
     procedure Init; override;
   public
@@ -887,14 +903,19 @@ type
     procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
   end;
 
-  TBOS_ObjectTimeStamp = class(TBoldOclSymbol)
+  TBOS_ObjectTime = class(TBoldOclSymbol)
   protected
     procedure Init; override;
   public
     procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
   end;
 
-
+  TBOS_ObjectTimeStamp = class(TBoldOclSymbol)
+  protected
+    procedure Init; override;
+  public
+    procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
+  end;
 
   TBOS_AllInstancesAtTime = class(TBoldOclSymbol)
   protected
@@ -1020,6 +1041,24 @@ type
     procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
   end;
 
+  TBOS_BoldIDIn = class(TBoldOclSymbol)
+  protected
+    procedure Init; override;
+    function GetShortCircuitType: ShortCircuitType; override;
+  public
+    procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
+  end;
+
+type
+  TBOS_NamedIdIn = class(TBoldOclSymbol)
+  protected
+    procedure Init; override;
+    function GetShortCircuitType: ShortCircuitType; override;
+  public
+    procedure Evaluate(const Params: TBoldOclSymbolParameters); override;
+  end;
+
+
 procedure TBOS_Equal.Init;
 begin
   InternalInit('=', [nil, nil], tbodNo, HELP.BooleanType, False, 100, true);
@@ -1073,6 +1112,16 @@ end;
 procedure TBOS_Round.Init;
 begin
   InternalInit('round', [HELP.NumericType], tbodNo, HELP.IntegerType, True, 109);
+end;
+
+procedure TBOS_SimpleRound.Init;
+begin
+  InternalInit('simpleRound', [HELP.NumericType], tbodNo, HELP.IntegerType, True, 109);
+end;
+
+procedure TBOS_SimpleRoundTo.Init;
+begin
+  InternalInit('simpleRoundTo', [HELP.NumericType, HELP.IntegerType], tbodNo, HELP.IntegerType, True, 109);
 end;
 
 procedure TBOS_strToInt.Init;
@@ -1554,6 +1603,11 @@ begin
   InternalInit('objectTimeStamp', [help.ObjectType], tbodNo, Help.IntegerType, True, 182);
 end;
 
+procedure TBOS_ObjectTime.Init;
+begin
+  InternalInit('boldTime', [help.ObjectType], tbodNo, Help.IntegerType, True, 182);
+end;
+
 procedure TBOS_allInstancesAtTime.Init;
 begin
   InternalInit('allInstancesAtTime', [help.TypeType, help.IntegerType], tbodObjectList, nil, True, 183);
@@ -1643,7 +1697,7 @@ begin
     if Str = '' then
       str := (Params.nodes[1] as TBoldOClEnumLiteral).Name
     else
-      raise EBoldOclRunTimeError.CreateFmt('%d: Enum literals can not be compared to other enum literals (%s and %s)',
+      raise EBoldOclRunTimeError.CreateFmt(sCannotCompareEnumLiterals,
         [0, str, (Params.nodes[1] as TBoldOClEnumLiteral).Name]);
   end
   else if Params.Values[1] is TBAValueSet then
@@ -1782,6 +1836,21 @@ begin
   HELP.MakeNewInteger(Params.Result, Round(XNumeric(Params.values[0])));
 end;
 
+procedure TBOS_SimpleRound.Evaluate(const Params: TBoldOclSymbolParameters);
+begin
+  HELP.MakeNewNumeric(Params.Result, math.Floor((XNumeric(Params.values[0])+0.5)));
+end;
+
+procedure TBOS_SimpleRoundTo.Evaluate(const Params: TBoldOclSymbolParameters);
+var
+  Value: double;
+  Digits: TRoundToRange;
+begin
+  Value := XNumeric(Params.values[0]);
+  Digits := Trunc(XNumeric(Params.values[1]));
+  HELP.MakeNewNumeric(Params.Result, math.SimpleRoundTo( Value, Digits ));
+end;
+
 procedure TBOS_StrToInt.Evaluate(const Params: TBoldOclSymbolParameters);
 begin
   HELP.MakeNewInteger(Params.Result, StrToInt(XString(Params.values[0])));
@@ -1901,12 +1970,12 @@ end;
 
 procedure TBOS_ToUpper.Evaluate(const Params: TBoldOclSymbolParameters);
 begin
-  HELP.MakeNewString(Params.Result, AnsiUpperCase(XString(Params.values[0])));
+  HELP.MakeNewString(Params.Result, XString(Params.values[0]).ToUpper);
 end;
 
 procedure TBOS_toLower.Evaluate(const Params: TBoldOclSymbolParameters);
 begin
-  HELP.MakeNewString(Params.Result, AnsiLowerCase(XString(Params.values[0])));
+  HELP.MakeNewString(Params.Result, XString(Params.values[0]).ToLower);
 end;
 
 procedure TBOS_SubString.Evaluate(const Params: TBoldOclSymbolParameters);
@@ -2837,7 +2906,7 @@ begin
     if assigned(Params.System) then
       Params.Result.SetReferenceValue(Params.System.Classes[ClassTypeInfo.TopSortedIndex])
     else
-      raise EBoldOclRunTimeError.Create('0: Unable to get allInstances. This evaluator has no system');
+      raise EBoldOclRunTimeError.Create(sUnableToGetAllInstances);
 
   end else if Params.values[0] is TBoldAttributeTypeInfo then
   begin
@@ -2899,7 +2968,7 @@ begin
       Params.Result.SetReferenceValue(ClassList);
   end
   else
-    raise EBoldOclRunTimeError.Create('0: Unable to get allLoadedObjects. This evaluator has no system');
+    raise EBoldOclRunTimeError.Create(sUnableToGetAllLoadedObjects);
 end;
 
 procedure TBOS_EmptyList.Evaluate(const Params: TBoldOclSymbolParameters);
@@ -3073,8 +3142,6 @@ begin
 end;
 
 procedure TBOS_RegExpMatch.Evaluate(const Params: TBoldOclSymbolParameters);
-var
-  RegExp: TRegEx;
 begin
   Help.MakeNewBoolean(Params.Result, TRegEx.IsMatch(XString(Params.values[0]), XString(Params.values[1]), []));
 end;
@@ -3185,9 +3252,17 @@ var
   Obj: TBoldObject;
 begin
   Obj := Params.values[0] as TBoldObject;
-  Help.MakeNewInteger(Params.Result, Obj.BoldObjectLocator.BoldObjectId.TimeStamp);
+  Help.MakeNewInteger(Params.Result, Obj.BoldTimeStamp);
+  Obj.AddSubscription(Params.Subscriber, beObjectTimestampChanged, breReEvaluate);
 end;
 
+procedure TBOS_ObjectTime.Evaluate(const Params: TBoldOclSymbolParameters);
+var
+  Obj: TBoldObject;
+begin
+  Obj := Params.values[0] as TBoldObject;
+  Help.MakeNewInteger(Params.Result, Obj.BoldObjectLocator.BoldObjectId.TimeStamp);
+end;
 
 procedure TBOS_AllInstancesAtTime.Evaluate(const Params: TBoldOclSymbolParameters);
 var
@@ -3202,10 +3277,10 @@ begin
     if assigned(Params.System) then
       Params.Result.SetReferenceValue(Params.System.Classes[ClassTypeInfo.TopSortedIndex].atTime(NewTime))
     else
-      raise EBoldOclRunTimeError.Create('0: Unable to get allInstances. This evaluator has no system');
+      raise EBoldOclRunTimeError.Create(sUnableToGetAllInstances);
   end
   else
-    raise EBoldOclRunTimeError.Create('0: AllInstancesAtTime only allowed on classes');
+    raise EBoldOclRunTimeError.Create(sAllInstancesAtTimeOnlyAllowedOnClasses);
 end;
 
 procedure TBOS_Existing.Evaluate(const Params: TBoldOclSymbolParameters);
@@ -3220,7 +3295,6 @@ var
   OutList: TBoldList;
   aIncommingListObject,
   aOutListObject: TBoldObjectList;
-  aClasses: TBoldClassTypeInfoList;
   iTopSortedIndex: Integer;
   Locator: TBoldObjectLocator;
   FilterType: TBoldElementTypeInfo;
@@ -3234,7 +3308,6 @@ begin
     if OutList is TBoldObjectList then begin
       aIncommingListObject := TBoldObjectList(IncomingList);
       aOutListObject := TBoldObjectList(OutList);
-      aClasses := Help.SystemTypeInfo.TopSortedClasses;
       iTopSortedIndex := -1;
       aIncommingListObject.EnsureObjects;
       for i := 0 to aIncommingListObject.Count - 1 do begin
@@ -3408,6 +3481,7 @@ var
 begin
   lStringList := TStringList.Create;
   try
+    lStringList.StrictDelimiter := true;
     lStringList.CommaText := (Params.Values[0].AsString);
     lBoldMemberList := Help.CreateNewMember(GetListTypeInfo) as TBoldMemberList;
     lElementTypeInfo := GetListTypeInfo.ListElementTypeInfo;
@@ -3754,6 +3828,108 @@ begin
     Help.MakeNewNumeric(Params.Result, Sqrt(XNumeric(Params.values[0])));
 end;
 
+{ TBOS_BoldIDIn }
+
+procedure TBOS_BoldIDIn.Evaluate(const Params: TBoldOclSymbolParameters);
+var
+  sIDList: string;
+  aObj: TBoldObject;
+  sBoldID: string;
+  bResult: Boolean;
+  aIDList: TStringList;
+  i: Integer;
+begin
+  sIDList := XString(Params.values[1]);
+
+  sBoldID := '-1';
+  if Params.values[0] is TBoldObject then begin
+    aObj := TBoldObject(Params.values[0]);
+    if Assigned(aObj.BoldObjectLocator) then begin
+      sBoldID := aObj.BoldObjectLocator.AsString;
+    end;
+  end;
+
+  bResult := False;
+  if sBoldID <> '-1' then begin
+    aIDList := TStringList.Create;
+    try
+      aIDList.Delimiter := ',';
+      aIDList.DelimitedText := sIDList;
+      for i := 0 to aIDList.Count - 1 do begin
+        if sBoldID = Trim(aIDList[i]) then begin
+          bResult := True;
+          Break;
+        end;
+      end;
+    finally
+      aIDList.Free;
+    end;
+  end;
+
+  HELP.MakeNewBoolean(Params.Result, bResult);
+
+end;
+
+function TBOS_BoldIDIn.GetShortCircuitType: ShortCircuitType;
+begin
+  Result := csBoldIDIn;
+end;
+
+procedure TBOS_BoldIDIn.Init;
+begin
+  InternalInit('boldIDIn', [Help.ObjectType, Help.StringType], tbodNo, HELP.BooleanType, True, 274);//, 'Returns true if the object has one of the given ids.'); // do not localize
+end;
+
+{ TBOS_NamedIdIn }
+
+procedure TBOS_NamedIdIn.Evaluate(const Params: TBoldOclSymbolParameters);
+var
+  sIDList: string;
+  aObj: TBoldObject;
+  sNamedIDValue: string;
+  bResult: Boolean;
+  aIDList: TStringList;
+  i: Integer;
+begin
+  sIDList := XString(Params.values[2]);
+
+  sNamedIDValue := '-1';
+  if Params.values[0] is TBoldObject then begin
+    aObj := TBoldObject(Params.values[0]);
+    sNamedIDValue := aObj.EvaluateExpressionAsString(XString(Params.Values[1]));
+  end;
+
+  bResult := False;
+  if sNamedIDValue <> '-1' then begin
+    aIDList := TStringList.Create;
+    try
+      aIDList.Delimiter := ',';
+      aIDList.DelimitedText := sIDList;
+      for i := 0 to aIDList.Count - 1 do begin
+        if sNamedIDValue = Trim(aIDList[i]) then begin
+          bResult := True;
+          Break;
+        end;
+      end;
+    finally
+      aIDList.Free;
+    end;
+  end;
+
+  HELP.MakeNewBoolean(Params.Result, bResult);
+
+end;
+
+function TBOS_NamedIdIn.GetShortCircuitType: ShortCircuitType;
+begin
+  Result := csNamedIDIn;
+end;
+
+procedure TBOS_NamedIdIn.Init;
+begin
+  InternalInit('namedIDIn', [Help.ObjectType, Help.StringType, Help.StringType], tbodNo, HELP.BooleanType, True, 275);//, 'Returns true if the object has one of the given ids.'); // do not localize
+end;
+
 initialization
   RegisterOclOperation(TBOS_Equal);
   RegisterOclOperation(TBOS_NotEqual);
@@ -3766,6 +3942,8 @@ initialization
   RegisterOclOperation(TBOS_Abs);
   RegisterOclOperation(TBOS_Floor);
   RegisterOclOperation(TBOS_Round);
+  RegisterOclOperation(TBOS_SimpleRound);
+  RegisterOclOperation(TBOS_SimpleRoundTo);
   RegisterOclOperation(TBOS_strToInt);
   RegisterOclOperation(TBOS_strToFloat);
   RegisterOclOperation(TBOS_Min);
@@ -3865,8 +4043,9 @@ initialization
   RegisterOclOperation(TBOS_StrToDate);
   RegisterOclOperation(TBOS_StrToTime);
   RegisterOclOperation(TBOS_AtTime);
-  RegisterOclOperation(TBOS_ObjectTimeStamp);
+  RegisterOclOperation(TBOS_ObjectTime);
   RegisterOclOperation(TBOS_AllInstancesAtTime);
+  RegisterOclOperation(TBOS_ObjectTimeStamp);
   RegisterOclOperation(TBOS_Existing);
   RegisterOclOperation(TBOS_FilterOnType);
   RegisterOclOperation(TBOS_BoldTime);
@@ -3891,6 +4070,8 @@ initialization
   RegisterOclOperation(TBOS_BoldId);
   RegisterOclOperation(TBOS_Power);
   RegisterOclOperation(TBOS_Sqrt);
+  RegisterOclOperation(TBOS_BoldIDIn);
+  RegisterOclOperation(TBOS_NamedIDIn);
 
 finalization
   FreeAndNil(G_OCLOperations);

@@ -12,12 +12,13 @@ procedure TUMLModel.Clear;
 begin
   BoldSystem.StartTransaction();
   try
-  while ownedElement.Count > 0 do
-    ownedElement[ownedElement.Count-1].Delete;
-  while M_taggedValue.Count > 0 do
-    M_taggedValue[M_taggedValue.Count-1].Delete;
-  finally
+    Validator.Violation.DeleteObjects;
+    M_ownedElement.DeleteObjects;
+    M_taggedValue.DeleteObjects;
     BoldSystem.CommitTransaction();
+  except
+    BoldSystem.RollbackTransaction();
+    raise;
   end;
 end;
 
@@ -27,7 +28,6 @@ begin
     Result := Association.Connection[0]
   else
     Result := Association.Connection[1];
-
 end;
 
 function TUMLAttribute.IsQualifier: Boolean;
@@ -93,9 +93,6 @@ end;
 function TUMLModelElement.FindTaggedValue(TagName: String): TUMLTaggedValue;
 begin
   Result := TaggedValue[TagName];
-  // if it's not assigned/found, try to find it with the first char uppercase...
-  if not Assigned(Result) then
-    Result := TaggedValue[AnsiUpperCase(TagName[1]) + Copy(TagName, 2, MaxInt)];
 end;
 
 function TUMLModelElement.GetTaggedValue(TagName: String): String;
@@ -104,7 +101,7 @@ var
 begin
   aTaggedValue := FindTaggedValue( TagName );
   if Assigned(aTaggedValue) then
-    Result := Trim(aTaggedValue.Value)
+    Result := aTaggedValue.Value
   else
     Result := '';
 end;
@@ -156,7 +153,6 @@ begin
   Validator := TValidator.Create(BoldSystem);
 end;
 
-
 function TUMLAttribute.EffectivePersistent: Boolean;
 begin
   Result := Persistent and Owner.Persistent;
@@ -175,7 +171,7 @@ var
 begin
   aTaggedValue := FindTaggedValue(BOLDTVPREFIX + TagName );
   if Assigned(aTaggedValue) then
-    Result := Trim(aTaggedValue.Value)
+    Result := aTaggedValue.Value
   else
     Result := '';
 end;
@@ -295,16 +291,16 @@ begin
   SubscribeToExpression('stereotype.Name', Subscriber);
 end;
 
-function GetElementByName(UMLModel: TUMLModel; Name: String; ClassExpressionName: String): TUMLModelElement;
+function GetElementByName(UMLModel: TUMLModel; Name: String; UMLClass: TBoldObjectClass): TUMLModelElement;
 var
   ElementList: TUMLModelElementList;
   i: integer;
 begin
   result := nil;
-  ElementList := UMLModel.BoldSystem.ClassByExpressionName[ClassExpressionName] as TUMLModelElementList;
+  ElementList := UMLModel.BoldSystem.ClassByObjectClass[UMLClass] as TUMLModelElementList;
   for i := 0 to ElementList.Count-1 do
   begin
-    if (ElementList[i].Name = Name) and (ElementList[i].Model = UMLModel) then
+    if (SameText(ElementList[i].Name, name)) and (ElementList[i].Model = UMLModel) then
     begin
       result := ElementList[i];
       exit;
@@ -324,7 +320,7 @@ begin
   begin
     if not assigned(model) then
       raise EBold.Create('Can''t set StereotypeName in for Element not belonging to model');
-    aStereoType := GetElementByName(Model, Newname, 'UMLStereotype') as TUMLStereoType;
+    aStereoType := GetElementByName(Model, Newname, TUMLStereotype) as TUMLStereoType;
 //    model.EvaluateExpressionAsDirectElement
 //    (
 //      Format('allOwnedElement->filterOnType(UMLStereotype)->select(name=''%s'')->first', [NewName])
@@ -391,7 +387,6 @@ end;
 
 procedure TUMLParameter._typeName_ReverseDerive(DerivedObject: TObject);
 var
-//  aType: TUMLGeneralizableElement;
   aType: TUMLClassifier;
   NewName: string;
 begin
@@ -402,12 +397,9 @@ begin
   begin
     if not assigned(model) then
       raise EBold.Create('Can''t set typeName for Parameter not belonging to model');
-    aType := GetElementByName(Model, Newname, 'UMLGeneralizableElement') as TUMLClassifier;
-
-//    model.EvaluateExpressionAsDirectElement
-//    (
-//      Format('allOwnedElement->filterOnType(UMLGeneralizableElement)->select(name=''%s'')->first', [NewName])
-//    ) as TUMLGeneralizableElement;
+    aType := GetElementByName(Model, Newname, TUMLDataType) as TUMLClassifier;
+    if not Assigned(aType) then
+      aType := GetElementByName(Model, Newname, TUMLGeneralizableElement) as TUMLClassifier;
     if not Assigned(aType) then
     begin
       aType := TUMLDataType.Create(BoldSystem);
@@ -440,11 +432,7 @@ begin
   begin
     if not assigned(model) then
       raise EBold.Create('Can''t set typeName for StructuralFeature not belonging to model');
-    aType := GetElementByName(Model, Newname, 'UMLGeneralizableElement') as TUMLClassifier;
-//    model.EvaluateExpressionAsDirectElement
-//    (
-//      Format('allOwnedElement->filterOnType(UMLGeneralizableElement)->select(name=''%s'')->first', [NewName])
-//    ) as TUMLGeneralizableElement;
+    aType := GetElementByName(Model, Newname, TUMLDataType) as TUMLClassifier;
     if not Assigned(aType) then
     begin
       aType := TUMLDataType.Create(BoldSystem);
@@ -453,7 +441,7 @@ begin
     end;
     type_ := aType;
   end;
-end;              
+end;
 
 procedure TUMLModelElement._derived_DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
 begin
@@ -486,4 +474,15 @@ begin
     Ordering := okUnordered;
 end;
 
+procedure TUMLClassifier._superclasses_DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
+var
+  vClass: TUMLClassifier;
+begin
+  vClass := self;
+  repeat
+    vClass := vClass.SuperClass;
+    if Assigned(vClass) then
+      M_superclasses.Insert(0, vClass);
+  until vClass = nil ;
+end;
 

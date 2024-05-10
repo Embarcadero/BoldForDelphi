@@ -1,4 +1,4 @@
-
+﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldIndexableList;
@@ -100,7 +100,7 @@ type
     procedure AddToAllNonOrderedIndexes(item: TObject);
     procedure RemoveFromAllNonOrderedIndexes(item: TObject);
     function GetUnorderedIndexCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure _DebugInfo(Index: Integer);
+//    procedure _DebugInfo(Index: Integer);
   protected
     property Items[I: Integer]: TObject read GetItem write SetItem;
     property UnorderedIndexCount: integer read GetUnorderedIndexCount;
@@ -123,6 +123,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs;
 
 procedure SetIndexVariable(var Index: integer; GivenPosition: integer);
@@ -201,6 +203,7 @@ begin
   result := iloSupportsNil in fOptions;
 end;
 
+(*
 procedure TBoldIndexableList._DebugInfo(Index: Integer);
 var
   Info: string;
@@ -214,6 +217,7 @@ begin
       Info := Info+Format('Indexes[%d] = nil '#13#10, [I]);
 //  asm nop; end; //Breakpoint here!
 end;
+*)
 
 function TBoldIndexableList.GetItem(Index: integer): TObject;
 begin
@@ -328,7 +332,7 @@ var
   i: Integer;
 begin
   if not (ilodestroying in fOptions) and (AssignedIndexCount = 1) then
-    raise EBold.CreateFmt('%s.RemoveAndfreeIndex: Can not remove the last index unless during destruction', [classname]);
+    raise EBold.CreateFmt(sCannotRemoveLastIndex, [classname]);
   if Assigned(BoldIndex) then
   begin
     if BoldIndex.SupportsNilItems then
@@ -422,7 +426,7 @@ end;
 procedure TBoldUnOrderedIndexableList.SetIndex(I: Integer; const Value: TBoldIndex);
 begin
   if value.Count <> 0 then
-    raise EBold.CreateFmt('%s.SetIndex: Can not set an index that is not empty (%s)', [ClassName, value.ClassName]);
+    raise EBold.CreateFmt(sCannotSetNonEmptyIndex, [ClassName, value.ClassName]);
   if Assigned(fIndexes[i]) and TBoldIndex(fIndexes[i]).SupportsNilItems then
     KnowsSupportsNil := false;
   fIndexes[i] := Value;

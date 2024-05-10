@@ -1,5 +1,4 @@
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldObjectSpaceExternalEvents;
 
@@ -48,6 +47,8 @@ implementation
 
 uses
   SysUtils,
+
+  BoldCoreConsts,
   BoldDefs,
   BoldIsoDateTime;
 
@@ -96,18 +97,19 @@ begin
     EXTERNAL_EVENT_OBJECTCREATED: Result := bsObjectCreated;
     EXTERNAL_EVENT_LOCKLOST: Result := bsLockLost;
     else
+    begin
       if Pos(EXTERNAL_EVENT_GOTLOCK, Event) = 1 then
         Result := bsGotLocks
-
       else
-        raise EBold.CreateFmt('Invalid event: %s', [Event]);
+        raise EBold.CreateFmt(sInvalidEvent, [Event]);
+    end;
   end
 end;
 
 class procedure TBoldObjectSpaceExternalEvent.GetID(const Event: TBoldExternalEvent;
  ObjectID: TBoldDefaultID; AClassName: string);
 var
-  p, IDAsInt: Integer;
+  IDAsInt: Integer;
   IDAsString: String;
 begin
   if assigned(ObjectId) then
@@ -125,7 +127,7 @@ begin
       IDAsInt := StrToInt(IDAsString);
       ObjectID.AsInteger := IDAsInt;
     except
-      raise EBold.CreateFmt('Invalid ID, %s is not an valid integer.', [IDAsString]);
+      raise EBold.CreateFmt(sInvalidID, [IDAsString]);
     end;
   end;
 end;

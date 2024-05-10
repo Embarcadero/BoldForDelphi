@@ -102,7 +102,6 @@ uses
   BoldUMLModelConverter,
   BoldUMLModelEdit,
   BoldUMLModelSupport,
-  BoldUMLModelEditForm,
   BoldUMLModelUpdater,
   BoldUMLUtils,
   BoldGuard;
@@ -296,7 +295,6 @@ begin
 end;
 
 initialization
-
   _LinkExporter   := TUMLLinkExporter.Create(true);
   _LinkImporter   := TUMLLinkImporter.Create(true);
 

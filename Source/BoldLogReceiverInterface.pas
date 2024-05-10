@@ -32,9 +32,86 @@ type
     property LogHeader: string write SetLogHeader;
   end;
 
+  TBoldLogReceiver = class(TInterfacedObject, IBoldLogReceiver)
+  protected
+    procedure SetProgress(const Value: integer); virtual;
+    procedure SetLogHeader(const Value: string); virtual;
+    procedure SetProgressMax(const Value: integer); virtual;
+    procedure Clear; virtual;
+    procedure Hide; virtual;
+    procedure Log(const s: string; LogType: TBoldLogType); virtual;
+    procedure ProgressStep; virtual;
+    procedure Show; virtual;
+    procedure Sync; virtual;
+    procedure ProcessInterruption; virtual;
+    procedure StartLog(const sessionName: String); virtual;
+    procedure EndLog; virtual;
+  public
+    function LogTypeToString(ALogType: TBoldLogType): string;
+  end;
+
 implementation
 
+{ TBoldLogReceiver }
 
+procedure TBoldLogReceiver.Clear;
+begin
+end;
+
+procedure TBoldLogReceiver.EndLog;
+begin
+end;
+
+procedure TBoldLogReceiver.Hide;
+begin
+end;
+
+procedure TBoldLogReceiver.Log(const s: string; LogType: TBoldLogType);
+begin
+end;
+
+function TBoldLogReceiver.LogTypeToString(ALogType: TBoldLogType): string;
+begin
+  case ALogType of
+   ltInfo: result := 'Info';
+   ltDetail: result := 'Detail';
+   ltWarning: result := 'Warning';
+   ltError: result := 'Error';
+   ltSeparator: result := BoldCRLF;
+  end;
+end;
+
+procedure TBoldLogReceiver.ProcessInterruption;
+begin
+end;
+
+procedure TBoldLogReceiver.ProgressStep;
+begin
+end;
+
+procedure TBoldLogReceiver.SetLogHeader(const Value: string);
+begin
+end;
+
+procedure TBoldLogReceiver.SetProgress(const Value: integer);
+begin
+end;
+
+procedure TBoldLogReceiver.SetProgressMax(const Value: integer);
+begin
+end;
+
+procedure TBoldLogReceiver.Show;
+begin
+end;
+
+procedure TBoldLogReceiver.StartLog(const sessionName: String);
+begin
+end;
+
+procedure TBoldLogReceiver.Sync;
+begin
+end;
 
 initialization
 
