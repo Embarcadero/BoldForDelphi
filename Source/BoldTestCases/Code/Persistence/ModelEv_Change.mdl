@@ -1,0 +1,1653 @@
+
+(object Petal
+    version    	43
+    _written   	"Rose 6.5.9232.10"
+    charSet    	0)
+
+(object Design "Logical View"
+    is_unit    	TRUE
+    is_loaded  	TRUE
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Bold"
+	    name       	"cg_style"
+	    value      	"default"))
+    quid       	"3A599CD8004B"
+    defaults   	(object defaults
+	rightMargin 	0.250000
+	leftMargin 	0.250000
+	topMargin  	0.250000
+	bottomMargin 	0.500000
+	pageOverlap 	0.250000
+	clipIconLabels 	TRUE
+	autoResize 	TRUE
+	snapToGrid 	TRUE
+	gridX      	16
+	gridY      	16
+	defaultFont 	(object Font
+	    size       	10
+	    face       	"Arial"
+	    bold       	FALSE
+	    italics    	FALSE
+	    underline  	FALSE
+	    strike     	FALSE
+	    color      	0
+	    default_color 	TRUE)
+	showMessageNum 	1
+	showClassOfObject 	TRUE
+	notation   	"Unified")
+    root_usecase_package 	(object Class_Category "Use Case View"
+	quid       	"3A599CD80060"
+	exportControl 	"Public"
+	global     	TRUE
+	logical_models 	(list unit_reference_list)
+	logical_presentations 	(list unit_reference_list
+	    (object UseCaseDiagram "Main"
+		quid       	"3A599CDD0360"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    root_category 	(object Class_Category "Logical View"
+	quid       	"3A599CD8005F"
+	exportControl 	"Public"
+	global     	TRUE
+	subsystem  	"Component View"
+	quidu      	"3A599CD80073"
+	logical_models 	(list unit_reference_list
+	    (object Class "NewA"
+		attributes 	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FormerNames"
+			value      	(value Text "A")))
+		quid       	"3A599D360368"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"3A5B080A0239"
+			supplier   	"Logical View::B"
+			quidu      	"3A599D380021"))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "a1"
+			quid       	"3A599D66029E"
+			type       	"string"
+			exportControl 	"Public")
+		    (object ClassAttribute "a2"
+			attributes 	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"DelayedFetch"
+				value      	TRUE))
+			quid       	"3A599D6C013F"
+			type       	"integer"
+			exportControl 	"Public")))
+	    (object Class "B"
+		quid       	"3A599D380021"
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "NewB1"
+			attributes 	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"FormerNames"
+				value      	(value Text "b1")))
+			quid       	"3A599D720205"
+			type       	"string"
+			exportControl 	"Public")
+		    (object ClassAttribute "SubB1"
+			quid       	"3A5B085B03A8"
+			type       	"string"
+			exportControl 	"Public")))
+	    (object Class "C"
+		attributes 	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"TableMapping"
+			value      	("TableMappingSet" 2)))
+		quid       	"3A599D3902EA"
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "C1"
+			quid       	"3A599E9D0115"
+			type       	"string"
+			exportControl 	"Public"))
+		abstract   	TRUE)
+	    (object Class "SubB"
+		quid       	"3A599D8C02CB"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"3A599D9400D8"
+			supplier   	"Logical View::NewSubB"
+			quidu      	"3A5B063E031E"))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "b2"
+			quid       	"3A5B088F0321"
+			type       	"integer"
+			exportControl 	"Public")))
+	    (object Class "CSub"
+		quid       	"3A599DB00056"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"3A599DC803D6"
+			supplier   	"Logical View::C"
+			quidu      	"3A599D3902EA"))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "CSub1"
+			quid       	"3A599EA5008A"
+			type       	"String"
+			exportControl 	"Public")))
+	    (object Class "CSubSub1"
+		quid       	"3A599DB502A2"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"3A599DC4022B"
+			supplier   	"Logical View::C"
+			quidu      	"3A599D3902EA")))
+	    (object Class "CSubSub2"
+		attributes 	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"TableMapping"
+			value      	("TableMappingSet" 1)))
+		quid       	"3A599DBC0194"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"3A599DC602A6"
+			supplier   	"Logical View::CSub"
+			quidu      	"3A599DB00056"))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "CSubSub1"
+			quid       	"3A599E7C02F8"
+			type       	"String"
+			exportControl 	"Public")))
+	    (object Class "NewSubB"
+		quid       	"3A5B063E031E"
+		superclasses 	(list inheritance_relationship_list
+		    (object Inheritance_Relationship
+			quid       	"3A5B064703C1"
+			supplier   	"Logical View::B"
+			quidu      	"3A599D380021"))
+		class_attributes 	(list class_attribute_list
+		    (object ClassAttribute "NewSubB1"
+			attributes 	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"DefaultDBValue"
+				value      	(value Text 
+|"hå"
+				)))
+			quid       	"3A5B064D0149"
+			type       	"String"
+			exportControl 	"Public")))
+	    (object Association "$UNNAMED$0"
+		quid       	"3A599D550023"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$1"
+			quid       	"3A599D5501C8"
+			supplier   	"Logical View::B"
+			quidu      	"3A599D380021"
+			client_cardinality 	(value cardinality "n")
+			is_navigable 	TRUE)
+		    (object Role "anotherRole"
+			attributes 	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"FormerNames"
+				value      	(value Text "aRole")))
+			quid       	"3A599D5501D2"
+			label      	"anotherRole"
+			supplier   	"Logical View::NewA"
+			quidu      	"3A599D360368"
+			client_cardinality 	(value cardinality "n")
+			is_navigable 	TRUE)))
+	    (object Association "$UNNAMED$2"
+		quid       	"3A599DD201D1"
+		roles      	(list role_list
+		    (object Role "$UNNAMED$3"
+			quid       	"3A599DD203C6"
+			supplier   	"Logical View::B"
+			quidu      	"3A599D380021"
+			client_cardinality 	(value cardinality "0..1")
+			is_navigable 	TRUE)
+		    (object Role "$UNNAMED$4"
+			quid       	"3A599DD203C7"
+			supplier   	"Logical View::C"
+			quidu      	"3A599D3902EA"
+			client_cardinality 	(value cardinality "n")
+			is_navigable 	TRUE))))
+	logical_presentations 	(list unit_reference_list
+	    (object ClassDiagram "Main"
+		quid       	"3A599CDE00A4"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list
+		    (object ClassView "Class" "Logical View::CSub" @1
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(656, 832)
+			label      	(object ItemLabel
+			    Parent_View 	@1
+			    location   	(503, 751)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	306
+			    justify    	0
+			    label      	"CSub")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599DB00056"
+			compartment 	(object Compartment
+			    Parent_View 	@1
+			    location   	(503, 809)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	312)
+			width      	324
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CSubSub1" @2
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(240, 1184)
+			label      	(object ItemLabel
+			    Parent_View 	@2
+			    location   	(121, 1133)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	238
+			    justify    	0
+			    label      	"CSubSub1")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599DB502A2"
+			width      	256
+			height     	126
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::CSubSub2" @3
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(912, 1200)
+			label      	(object ItemLabel
+			    Parent_View 	@3
+			    location   	(723, 1119)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	378
+			    justify    	0
+			    label      	"CSubSub2")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599DBC0194"
+			compartment 	(object Compartment
+			    Parent_View 	@3
+			    location   	(723, 1177)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	384)
+			width      	396
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::SubB" @4
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(1392, 832)
+			label      	(object ItemLabel
+			    Parent_View 	@4
+			    location   	(1270, 751)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	244
+			    justify    	0
+			    label      	"SubB")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599D8C02CB"
+			compartment 	(object Compartment
+			    Parent_View 	@4
+			    location   	(1270, 809)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	250)
+			width      	262
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::NewA" @5
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(240, 368)
+			label      	(object ItemLabel
+			    Parent_View 	@5
+			    location   	(118, 262)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	244
+			    justify    	0
+			    label      	"NewA")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599D360368"
+			compartment 	(object Compartment
+			    Parent_View 	@5
+			    location   	(118, 320)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	250)
+			width      	262
+			height     	236
+			annotation 	8
+			autoResize 	TRUE)
+		    (object ClassView "Class" "Logical View::B" @6
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(912, 144)
+			label      	(object ItemLabel
+			    Parent_View 	@6
+			    location   	(759, 38)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	306
+			    justify    	0
+			    label      	"B")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599D380021"
+			compartment 	(object Compartment
+			    Parent_View 	@6
+			    location   	(759, 99)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	3
+			    max_width  	303)
+			width      	324
+			height     	236
+			annotation 	8
+			autoResize 	TRUE)
+		    (object AssociationViewNew "$UNNAMED$0" @7
+			location   	(415, 96)
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A599D550023"
+			roleview_list 	(list RoleViews
+			    (object RoleView "$UNNAMED$1" @8
+				Parent_View 	@7
+				location   	(15, -640)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"3A599D5501C8"
+				client     	@7
+				supplier   	@6
+				vertices   	(list Points
+				    (415, 96)
+				    (415, 112)
+				    (750, 112))
+				line_style 	3
+				origin_attachment 	(415, 96)
+				terminal_attachment 	(750, 112)
+				label      	(object SegLabel @9
+				    Parent_View 	@8
+				    location   	(715, 166)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	1))
+			    (object RoleView "anotherRole" @10
+				Parent_View 	@7
+				location   	(15, -640)
+				label      	(object SegLabel @11
+				    Parent_View 	@10
+				    location   	(208, 115)
+				    anchor     	1
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	246
+				    justify    	0
+				    label      	"+anotherRole"
+				    pctDist    	0.614943
+				    height     	43
+				    orientation 	1)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"3A599D5501D2"
+				client     	@7
+				supplier   	@5
+				vertices   	(list Points
+				    (415, 96)
+				    (415, 80)
+				    (250, 80)
+				    (250, 250))
+				line_style 	3
+				origin_attachment 	(415, 96)
+				terminal_attachment 	(250, 250)
+				label      	(object SegLabel @12
+				    Parent_View 	@10
+				    location   	(304, 214)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	0))))
+		    (object ClassView "Class" "Logical View::C" @13
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(576, 544)
+			font       	(object Font
+			    italics    	TRUE)
+			label      	(object ItemLabel
+			    Parent_View 	@13
+			    location   	(462, 463)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	228
+			    justify    	0
+			    label      	"C")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A599D3902EA"
+			compartment 	(object Compartment
+			    Parent_View 	@13
+			    location   	(462, 521)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	234)
+			width      	246
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @14
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A599DC803D6"
+			client     	@1
+			supplier   	@13
+			line_style 	0)
+		    (object AssociationViewNew "$UNNAMED$2" @15
+			location   	(809, 458)
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A599DD201D1"
+			roleview_list 	(list RoleViews
+			    (object RoleView "$UNNAMED$3" @16
+				Parent_View 	@15
+				location   	(-7, -630)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"3A599DD203C6"
+				client     	@15
+				supplier   	@6
+				line_style 	3
+				origin_attachment 	(809, 458)
+				terminal_attachment 	(809, 262)
+				label      	(object SegLabel @17
+				    Parent_View 	@16
+				    location   	(863, 283)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"0..1"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	1))
+			    (object RoleView "$UNNAMED$4" @18
+				Parent_View 	@15
+				location   	(-7, -630)
+				stereotype 	TRUE
+				line_color 	3342489
+				quidu      	"3A599DD203C7"
+				client     	@15
+				supplier   	@13
+				vertices   	(list Points
+				    (809, 458)
+				    (809, 544)
+				    (699, 544))
+				line_style 	3
+				origin_attachment 	(809, 458)
+				terminal_attachment 	(699, 544)
+				label      	(object SegLabel @19
+				    Parent_View 	@18
+				    location   	(720, 598)
+				    anchor     	2
+				    anchor_loc 	1
+				    nlines     	1
+				    max_width  	15
+				    justify    	0
+				    label      	"*"
+				    pctDist    	0.900000
+				    height     	54
+				    orientation 	0))))
+		    (object ClassView "Class" "Logical View::NewSubB" @20
+			ShowCompartmentStereotypes 	TRUE
+			IncludeAttribute 	TRUE
+			IncludeOperation 	TRUE
+			ShowOperationSignature 	TRUE
+			location   	(1456, 544)
+			label      	(object ItemLabel
+			    Parent_View 	@20
+			    location   	(1264, 463)
+			    fill_color 	13434879
+			    nlines     	1
+			    max_width  	384
+			    justify    	0
+			    label      	"NewSubB")
+			icon_style 	"Icon"
+			line_color 	3342489
+			fill_color 	13434879
+			quidu      	"3A5B063E031E"
+			compartment 	(object Compartment
+			    Parent_View 	@20
+			    location   	(1264, 524)
+			    icon_style 	"Icon"
+			    fill_color 	13434879
+			    anchor     	2
+			    nlines     	2
+			    max_width  	381)
+			width      	402
+			height     	186
+			annotation 	8
+			autoResize 	TRUE)
+		    (object InheritView "" @21
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A599D9400D8"
+			client     	@4
+			supplier   	@20
+			line_style 	0)
+		    (object InheritView "" @22
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A5B064703C1"
+			client     	@20
+			supplier   	@6
+			line_style 	0)
+		    (object InheritView "" @23
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A599DC602A6"
+			client     	@3
+			supplier   	@1
+			line_style 	0)
+		    (object InheritView "" @24
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A599DC4022B"
+			client     	@2
+			supplier   	@13
+			line_style 	0)
+		    (object InheritView "" @25
+			stereotype 	TRUE
+			line_color 	3342489
+			quidu      	"3A5B080A0239"
+			client     	@5
+			supplier   	@6
+			line_style 	0)))))
+    root_subsystem 	(object SubSystem "Component View"
+	quid       	"3A599CD80073"
+	physical_models 	(list unit_reference_list)
+	physical_presentations 	(list unit_reference_list
+	    (object Module_Diagram "Main"
+		quid       	"3A599CDD0324"
+		title      	"Main"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    process_structure 	(object Processes
+	quid       	"3A599CD80074"
+	ProcsNDevs 	(list
+	    (object Process_Diagram "Deployment View"
+		quid       	"3A599CD80091"
+		title      	"Deployment View"
+		zoom       	100
+		max_height 	28350
+		max_width  	21600
+		origin_x   	0
+		origin_y   	0
+		items      	(list diagram_item_list))))
+    properties 	(object Properties
+	attributes 	(list Attribute_Set
+	    (object Attribute
+		tool       	"Bold"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"GenerateMultiplicityConstraints"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"InterfaceUses"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ImplementationUses"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"CopyrightNotice"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DefaultSuperClass"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DefaultLinkClassSuperClass"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UnitName"
+			value      	(value Text "ModelEv"))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"RootClass"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"PMapper"
+			value      	"<Default>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ModelName"
+			value      	(value Text "ModelEv"))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DefaultMemberInfoClass"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UseXFiles"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UseTimestamp"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UseGlobalId"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UseReadOnly"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UseClockLog"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UpdateWholeObjects"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLocking"
+			value      	("OptimisticLockingSet" 1))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLockingSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"<Default>"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Off"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Member"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Class"
+				value      	3)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"TimeStamp"
+				value      	4)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Constraints"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"NationalCharConversionEnum"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"<Default>"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"True"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"False"
+				value      	2)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"PTYVersionSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"1"
+				value      	0)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UseModelVersion"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ModelVersion"
+			value      	0)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"MaxDBIdentifierLength"
+			value      	-1)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"NationalCharConversion"
+			value      	("NationalCharConversionEnum" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"PTYVersion"
+			value      	("PTYVersionSet" 0))))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FileName"
+			value      	"MODULE FILE")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"UnitName"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Imported"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"TableMapping"
+			value      	("TableMappingSet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"TableMappingSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Own"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Parent"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Children"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Imported"
+				value      	3)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiName"
+			value      	"T<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ExpressionName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"TableName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"PMapper"
+			value      	"<Default>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DefaultStringRepresentation"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DerivationExpressions"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Constraints"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Versioned"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLocking"
+			value      	("OptimisticLockingSet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLockingSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"<Default>"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Off"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Member"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Class"
+				value      	3)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"TimeStamp"
+				value      	4)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"EvolutionStateEnum"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"ToBeRemoved"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Removed"
+				value      	2)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"EvolutionState"
+			value      	("EvolutionStateEnum" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FormerNames"
+			value      	"")))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Length"
+			value      	255)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"AllowNULL"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelayedFetch"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ColumnName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ExpressionName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"PMapper"
+			value      	"<Default>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"MemberInfoClass"
+			value      	"<Default>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DerivationOCL"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ReverseDerive"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"AttributeKind"
+			value      	("AttributeKindSet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"AttributeKindSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Bold"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Delphi"
+				value      	1)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiField"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiPropertyRead"
+			value      	("DelphiPropertySet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiPropertyWrite"
+			value      	("DelphiPropertySet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiPropertySet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"None"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Field"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"PrivateMethod"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"ProtectedVirtualMethod"
+				value      	2)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Constraints"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLocking"
+			value      	("OptimisticLockingSet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLockingSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"<Default>"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Off"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Member"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Class"
+				value      	3)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"TimeStamp"
+				value      	4)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"EvolutionStateEnum"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"ToBeRemoved"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Removed"
+				value      	2)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"RemovalState"
+			value      	("RemovalStateEnum" 200))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"EvolutionState"
+			value      	("EvolutionStateEnum" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FormerNames"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DefaultDBValue"
+			value      	"")))
+	    (object Attribute
+		tool       	"BoldStdUML"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"BoldStdUML"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"BoldStdUML"
+			name       	"Persistence"
+			value      	("PersistenceSet" 0))
+		    (object Attribute
+			tool       	"BoldStdUML"
+			name       	"PersistenceSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"BoldStdUML"
+				name       	"Persistent"
+				value      	0)
+			    (object Attribute
+				tool       	"BoldStdUML"
+				name       	"Transient"
+				value      	1)))))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Association"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"LinkClassId"
+			value      	-1)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"LinkClassName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"EvolutionStateEnum"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Normal"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"ToBeRemoved"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Removed"
+				value      	2)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FormerNames"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"EvolutionState"
+			value      	("EvolutionStateEnum" 0))))
+	    (object Attribute
+		tool       	"BoldStdUML"
+		name       	"default__Association"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"BoldStdUML"
+			name       	"Persistence"
+			value      	("PersistenceSet" 0))
+		    (object Attribute
+			tool       	"BoldStdUML"
+			name       	"PersistenceSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"BoldStdUML"
+				name       	"Persistent"
+				value      	0)
+			    (object Attribute
+				tool       	"BoldStdUML"
+				name       	"Transient"
+				value      	1)))))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Ordered"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ColumnName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ExpressionName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Embed"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"MemberInfoClass"
+			value      	"<Default>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DerivationOCL"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DeleteAction"
+			value      	("DeleteActions" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DeleteActions"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"<Default>"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Allow"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Prohibit"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Cascade"
+				value      	3)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Changeability"
+			value      	("ChangeabilityKind" 1))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ChangeabilityKind"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"addOnly"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"changeable"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"frozen"
+				value      	2)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLocking"
+			value      	("OptimisticLockingSet" 0))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OptimisticLockingSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"<Default>"
+				value      	0)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Off"
+				value      	1)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Member"
+				value      	2)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Class"
+				value      	3)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"TimeStamp"
+				value      	4)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Constraints"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FormerNames"
+			value      	"")))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"DelphiName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"ExpressionName"
+			value      	"<Name>")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OperationKind"
+			value      	("BoldOperationKindSet" 200))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"OverrideInAllSubclasses"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"BoldOperationKindSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Common"
+				value      	200)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Virtual"
+				value      	201)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Abstract"
+				value      	204)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Dynamic"
+				value      	203)
+			    (object Attribute
+				tool       	"Bold"
+				name       	"Override"
+				value      	202)))
+		    (object Attribute
+			tool       	"Bold"
+			name       	"IsClassMethod"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"Bold"
+			name       	"Constraints"
+			value      	(value Text ""))))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"Bold"
+			name       	"CopyrightNotice"
+			value      	"")
+		    (object Attribute
+			tool       	"Bold"
+			name       	"FileName"
+			value      	"<Name>.inc")))
+	    (object Attribute
+		tool       	"Bold"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CreateMissingDirectories"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Editor"
+			value      	("EditorType" 100))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"IncludePath"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"StopOnError"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"EditorType"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"BuiltIn"
+				value      	100)
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"WindowsShell"
+				value      	101)))))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Class"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ArrayDimensions"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ConstValue"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ImplementationType"
+			value      	"")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Module-Spec"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"AdditionalIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CmIdentification"
+			value      	(value Text "  %X% %Q% %Z% %W%"))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CopyrightNotice"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"InclusionProtectionSymbol"
+			value      	"AUTO GENERATE")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Module-Body"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"AdditionalIncludes"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CmIdentification"
+			value      	(value Text "  %X% %Q% %Z% %W%"))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CopyrightNotice"
+			value      	(value Text ""))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"InclusionProtectionSymbol"
+			value      	"AUTO GENERATE")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Operation"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Context"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"OperationIsOneWay"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ArrayDimensions"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CaseSpecifier"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"IsReadOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Order"
+			value      	"")))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Role"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"ArrayDimensions"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"CaseSpecifier"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"GenerateForwardReference"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"IsReadOnly"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"Order"
+			value      	"")
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"BoundedRoleType"
+			value      	("AssocTypeSet" 47))
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"AssocTypeSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"Array"
+				value      	24)
+			    (object Attribute
+				tool       	"CORBA"
+				name       	"Sequence"
+				value      	47)))))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"default__Uses"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"CORBA"
+			name       	"GenerateForwardReference"
+			value      	FALSE)))
+	    (object Attribute
+		tool       	"CORBA"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"DDL"
+		name       	"propertyId"
+		value      	"809135966")
+	    (object Attribute
+		tool       	"DDL"
+		name       	"default__Project"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Directory"
+			value      	"AUTO GENERATE")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DataBase"
+			value      	("DataBaseSet" 800))
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DataBaseSet"
+			value      	(list Attribute_Set
+			    (object Attribute
+				tool       	"DDL"
+				name       	"ANSI"
+				value      	800)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Oracle"
+				value      	801)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"SQLServer"
+				value      	802)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Sybase"
+				value      	803)
+			    (object Attribute
+				tool       	"DDL"
+				name       	"Watcom"
+				value      	804)))
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKeyColumnName"
+			value      	"Id")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKeyColumnType"
+			value      	"NUMBER(5)")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"ViewName"
+			value      	"V_")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"TableName"
+			value      	"T_")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"InheritSuffix"
+			value      	"_V")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DropClause"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"BaseViews"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"DDLScriptFilename"
+			value      	"DDL1.SQL")))
+	    (object Attribute
+		tool       	"DDL"
+		name       	"default__Attribute"
+		value      	(list Attribute_Set
+		    (object Attribute
+			tool       	"DDL"
+			name       	"ColumnType"
+			value      	"VARCHAR")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Length"
+			value      	"")
+		    (object Attribute
+			tool       	"DDL"
+			name       	"NullsOK"
+			value      	TRUE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"PrimaryKey"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"Unique"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"CompositeUnique"
+			value      	FALSE)
+		    (object Attribute
+			tool       	"DDL"
+			name       	"CheckConstraint"
+			value      	"")))
+	    (object Attribute
+		tool       	"DDL"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"ModelRun"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Rose Model Integrator"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Rose Web Publisher"
+		name       	"HiddenTool"
+		value      	FALSE)
+	    (object Attribute
+		tool       	"Version Control"
+		name       	"HiddenTool"
+		value      	FALSE))
+	quid       	"3A599CD80075"))

@@ -1,0 +1,93 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{15006ec9-0d1e-4626-afb8-206b5c7b0806}</ProjectGuid>
+    <MainSource>AutoTestProj.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>AutoTestProj.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+    <DCC_DcuOutput>dcuRelease</DCC_DcuOutput>
+    <DCC_ObjOutput>dcuRelease</DCC_ObjOutput>
+    <DCC_HppOutput>dcuRelease</DCC_HppOutput>
+    <DCC_UnitSearchPath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_UnitSearchPath>
+    <DCC_ResourcePath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_ResourcePath>
+    <DCC_ObjPath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_ObjPath>
+    <DCC_IncludePath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_DcuOutput>dcuDebug</DCC_DcuOutput>
+    <DCC_ObjOutput>dcuDebug</DCC_ObjOutput>
+    <DCC_HppOutput>dcuDebug</DCC_HppOutput>
+    <DCC_UnitSearchPath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_UnitSearchPath>
+    <DCC_ResourcePath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_ResourcePath>
+    <DCC_ObjPath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_ObjPath>
+    <DCC_IncludePath>$(BDS)\lib\Debug;$(BDS)\Lib\Debug\Indy9;$(AttracsRepoRoot)\Attracs-Bold\;$(AttracsRepoRoot)\Attracs-Common\components\core;$(AttracsRepoRoot)\Attracs-Common\components\ZLib;$(AttracsRepoRoot)\Attracs-Common\components\Oxml;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\SQLServer;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\PostgreSQL;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\TDS;$(AttracsRepoRoot)\Attracs-Common\components\UniDAC\Source\UniProviders\Interbase</DCC_IncludePath>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject xmlns=""> <Delphi.Personality>   <Parameters>
+      <Parameters Name="UseLauncher">False</Parameters>
+      <Parameters Name="LoadAllSymbols">True</Parameters>
+      <Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+    </Parameters>
+    <VersionInfo>
+      <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+      <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+      <VersionInfo Name="MajorVer">1</VersionInfo>
+      <VersionInfo Name="MinorVer">0</VersionInfo>
+      <VersionInfo Name="Release">0</VersionInfo>
+      <VersionInfo Name="Build">0</VersionInfo>
+      <VersionInfo Name="Debug">False</VersionInfo>
+      <VersionInfo Name="PreRelease">False</VersionInfo>
+      <VersionInfo Name="Special">False</VersionInfo>
+      <VersionInfo Name="Private">False</VersionInfo>
+      <VersionInfo Name="DLL">False</VersionInfo>
+      <VersionInfo Name="Locale">2077</VersionInfo>
+      <VersionInfo Name="CodePage">1252</VersionInfo>
+    </VersionInfo>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
+    <Excluded_Packages>
+      <Excluded_Packages Name="C:\Attracs\Attracs-Online\Components\Bpl\AttracsComponents2007.bpl">Attracs Components for Delphi 2007</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\bin\dclofficexp100.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="$(BDS)\Bin\dclcrcontrols105.bpl">File c:\program files (x86)\codegear\rad studio\5.0\Bin\dclcrcontrols105.bpl not found</Excluded_Packages>
+    </Excluded_Packages>
+    <Source>
+      <Source Name="MainSource">AutoTestProj.dpr</Source>
+    </Source>
+  </Delphi.Personality> </BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="AutoTestProj.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="....\BoldTestCases\Code\ClientGUICom\joho_ClientGuiAndHandles.pas" />
+    <DCCReference Include="...\BoldTestCases\Code\ClientGUICom\joho_ClientGuiAndHandles.pas" />
+    <DCCReference Include="..\..\BoldTestCases\Code\ClientGUICom\joho_ClientGuiAndHandles.pas" />
+    <DCCReference Include="..\..\Code\ClientGUICom\joho_ClientGuiAndHandles.pas" />
+    <DCCReference Include="..\BoldTestCases\Code\ClientGUICom\joho_ClientGuiAndHandles.pas" />
+  </ItemGroup>
+</Project>

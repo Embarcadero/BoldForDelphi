@@ -1,0 +1,392 @@
+(object Petal version 40)
+
+(list Attribute_Set
+  (object Attribute tool "Bold" name "roseId"     value "753117540")
+  (object Attribute tool "Bold" name "propertyId" value "809135966")
+
+  ############################################################
+  ####  Model definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Project" value
+    (list Attribute_Set
+
+      ## Enum Declarations
+
+      (object Attribute tool "Bold" name "OptimisticLockingSet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "<Default>"                       value 0)
+          (object Attribute tool "Bold" name "Off"                             value 1)
+          (object Attribute tool "Bold" name "ModifiedMembers"                 value 2)
+          (object Attribute tool "Bold" name "AllMembers"                      value 3)
+          (object Attribute tool "Bold" name "TimeStamp"                       value 4)
+        )
+      )
+
+      (object Attribute tool "Bold" name "NationalCharConversionEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "<Default>"                       value 0)
+          (object Attribute tool "Bold" name "True"                            value 1)
+          (object Attribute tool "Bold" name "False"                           value 2)
+        )
+      )
+
+      ## Enum Declarations
+
+      ## This enum has only one value and is used to ensure the correct PTY-version when importing to BfD
+      (object Attribute tool "Bold" name "PTYVersionSet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "6.4"                             value 0)
+        )
+      )
+
+      ## Tagged values for Model
+
+      (object Attribute tool "Bold" name "GenerateMultiplicityConstraints" value TRUE)
+      (object Attribute tool "Bold" name "InterfaceUses"                   value (value Text ""))
+      (object Attribute tool "Bold" name "ImplementationUses"              value (value Text ""))
+      (object Attribute tool "Bold" name "CopyrightNotice"                 value (value Text ""))
+      (object Attribute tool "Bold" name "DefaultSuperClass"               value "")
+      (object Attribute tool "Bold" name "DefaultLinkClassSuperClass"      value "")
+      (object Attribute tool "Bold" name "UnitName"                        value "BusinessClasses")
+      (object Attribute tool "Bold" name "RootClass"                       value "")
+      (object Attribute tool "Bold" name "PMapper"                         value "<Default>")
+      (object Attribute tool "Bold" name "UseXFiles"                       value TRUE)
+      (object Attribute tool "Bold" name "UseTimestamp"                    value TRUE)
+      (object Attribute tool "Bold" name "UseGlobalId"                     value TRUE)
+      (object Attribute tool "Bold" name "UseReadOnly"                     value TRUE)
+      (object Attribute tool "Bold" name "UseModelVersion"                 value FALSE)
+      (object Attribute tool "Bold" name "ModelVersion"                    value 0)
+      (object Attribute tool "Bold" name "UseClockLog"                     value TRUE)
+      (object Attribute tool "Bold" name "UpdateWholeObjects"              value FALSE)
+      (object Attribute tool "Bold" name "OptimisticLocking"               value ("OptimisticLockingSet" 1))
+      (object Attribute tool "Bold" name "NationalCharConversion"          value ("NationalCharConversionEnum" 0))
+      (object Attribute tool "Bold" name "GUID"                            value "")
+      (object Attribute tool "Bold" name "TypeLibVersion"                  value "1.0")
+      (object Attribute tool "Bold" name "RegionDefinitions"               value (value Text ""))
+      (object Attribute tool "Bold" name "GenerateDefaultRegions"          value FALSE)
+      (object Attribute tool "Bold" name "ModelName"                       value "BusinessClasses")
+      (object Attribute tool "Bold" name "Constraints"                     value (value Text ""))
+      (object Attribute tool "Bold" name "PTYVersion"                      value ("PTYVersionSet" 0))
+
+      ## removed tagged values
+      ## (object Attribute tool "Bold" name "DefaultMemberInfoClass" value "")
+    )
+  )
+
+  ############################################################
+  ####  Class definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Class" value
+    (list Attribute_Set
+
+      ## Enum Declarations
+
+      (object Attribute tool "Bold" name "EvolutionStateEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Normal"                          value 0)
+          (object Attribute tool "Bold" name "ToBeRemoved"                     value 1)
+          (object Attribute tool "Bold" name "Removed"                         value 2)
+        )
+      )
+
+      (object Attribute tool "Bold" name "TableMappingSet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Own"                             value 0)
+          (object Attribute tool "Bold" name "Parent"                          value 1)
+          (object Attribute tool "Bold" name "Children"                        value 2)
+          (object Attribute tool "Bold" name "Imported"                        value 3)
+        )
+      )
+
+      (object Attribute tool "Bold" name "OptimisticLockingSet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "<Default>"                       value 0)
+          (object Attribute tool "Bold" name "Off"                             value 1)
+          (object Attribute tool "Bold" name "ModifiedMembers"                 value 2)
+          (object Attribute tool "Bold" name "AllMembers"                      value 3)
+          (object Attribute tool "Bold" name "TimeStamp"                       value 4)
+        )
+      )
+
+      (object Attribute tool "Bold" name "ClassStorageEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Internal"                        value 0)
+          (object Attribute tool "Bold" name "PartiallyExternal"               value 1)
+          (object Attribute tool "Bold" name "External"                        value 2)
+        )
+      )
+
+      ## Tagged values for Class
+
+      (object Attribute tool "Bold" name "FileName"                        value "")
+      (object Attribute tool "Bold" name "UnitName"                        value "")
+      (object Attribute tool "Bold" name "Imported"                        value FALSE)
+      (object Attribute tool "Bold" name "TableMapping"                    value ("TableMappingSet" 0))
+      (object Attribute tool "Bold" name "DelphiName"                      value "T<Name>")
+      (object Attribute tool "Bold" name "CPPName"                         value "<Name>")
+      (object Attribute tool "Bold" name "ExpressionName"                  value "<Name>")
+      (object Attribute tool "Bold" name "TableName"                       value "<Name>")
+      (object Attribute tool "Bold" name "EvolutionState"                  value ("EvolutionStateEnum" 0))
+      (object Attribute tool "Bold" name "PMapper"                         value "<Default>")
+      (object Attribute tool "Bold" name "DefaultStringRepresentation"     value "")
+      (object Attribute tool "Bold" name "DerivationExpressions"           value (value Text ""))
+      (object Attribute tool "Bold" name "Versioned"                       value FALSE)
+      (object Attribute tool "Bold" name "OptimisticLocking"               value ("OptimisticLockingSet" 0))
+      (object Attribute tool "Bold" name "FormerNames"                     value (value Text ""))
+      (object Attribute tool "Bold" name "InterfaceName"                   value "I<Name>")
+      (object Attribute tool "Bold" name "GUID"                            value "")
+      (object Attribute tool "Bold" name "GenerateDefaultRegion"           value TRUE)
+      (object Attribute tool "Bold" name "Storage"                         value ("ClassStorageEnum" 0))
+      (object Attribute tool "Bold" name "Constraints"                     value (value Text ""))
+
+    )
+  )
+
+  ############################################################
+  ####  Attribute definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Attribute" value
+    (list Attribute_Set
+
+      ## Enum Declarations
+
+      (object Attribute tool "Bold" name "AttributeKindSet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Bold"                            value 0)
+          (object Attribute tool "Bold" name "Delphi"                          value 1)
+        )
+      )
+
+      (object Attribute tool "Bold" name "DelphiPropertySet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "None"                            value 0)
+          (object Attribute tool "Bold" name "Field"                           value 1)
+          (object Attribute tool "Bold" name "PrivateMethod"                   value 2)
+          (object Attribute tool "Bold" name "ProtectedVirtualMethod"          value 3)
+        )
+      )
+
+      (object Attribute tool "Bold" name "EvolutionStateEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Normal"                          value 0)
+          (object Attribute tool "Bold" name "ToBeRemoved"                     value 1)
+          (object Attribute tool "Bold" name "Removed"                         value 2)
+        )
+      )
+
+      (object Attribute tool "Bold" name "AttributeStorageEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Internal"                        value 0)
+          (object Attribute tool "Bold" name "External"                        value 1)
+          (object Attribute tool "Bold" name "ExternalKey"                     value 2)
+        )
+      )
+
+      ## Tagged values for Attribute
+
+      (object Attribute tool "Bold" name "Length"                          value 255)
+      (object Attribute tool "Bold" name "AllowNULL"                       value TRUE)
+      (object Attribute tool "Bold" name "DelayedFetch"                    value FALSE)
+      (object Attribute tool "Bold" name "ColumnName"                      value "<Name>")
+      (object Attribute tool "Bold" name "ExpressionName"                  value "<Name>")
+      (object Attribute tool "Bold" name "DelphiName"                      value "<Name>")
+      (object Attribute tool "Bold" name "CPPName"                         value "<Name>")
+      (object Attribute tool "Bold" name "PMapper"                         value "<Default>")
+      (object Attribute tool "Bold" name "DerivationOCL"                   value (value Text ""))
+      (object Attribute tool "Bold" name "VirtualDerive"                   value TRUE)
+      (object Attribute tool "Bold" name "ReverseDerive"                   value FALSE)
+      (object Attribute tool "Bold" name "AttributeKind"                   value ("AttributeKindSet" 0))
+      (object Attribute tool "Bold" name "DelphiField"                     value FALSE)
+      (object Attribute tool "Bold" name "DelphiPropertyRead"              value ("DelphiPropertySet" 0))
+      (object Attribute tool "Bold" name "DelphiPropertyWrite"             value ("DelphiPropertySet" 0))
+      (object Attribute tool "Bold" name "EvolutionState"                  value ("EvolutionStateEnum" 0))
+      (object Attribute tool "Bold" name "FormerNames"                     value (value Text ""))
+      (object Attribute tool "Bold" name "DefaultDBValue"                  value "")
+      (object Attribute tool "Bold" name "Storage"                         value ("AttributeStorageEnum" 0))
+      (object Attribute tool "Bold" name "Constraints"                     value (value Text ""))
+
+      ## removed tagged values
+      ## (object Attribute tool "Bold" name "MemberInfoClass" value "<Default>")
+    )
+  )
+
+  ############################################################
+  ####  Attribute definitions STDUML
+  ############################################################
+
+  (object Attribute tool "BoldStdUML" name "roseId"     value "753117540")
+  (object Attribute tool "BoldStdUML" name "propertyId" value "809135966")
+
+
+  (object Attribute tool "BoldStdUML" name "default__Attribute" value
+    (list Attribute_Set
+
+        ## Enum Declarations
+
+        (object Attribute tool "BoldStdUML" name	"PersistenceSet" value
+          (list Attribute_Set
+            (object Attribute tool "BoldStdUML" name "persistent" value	0)
+            (object Attribute tool "BoldStdUML" name "transient"  value	1)
+        )
+      )
+
+      (object Attribute tool "BoldStdUML" name "persistence" value ("PersistenceSet" 0))
+    )
+  )
+
+  ############################################################
+  ####  Association definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Association" value
+    (list Attribute_Set
+
+      ## Enum Declarations
+      (object Attribute tool "Bold" name "EvolutionStateEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Normal"                          value 0)
+          (object Attribute tool "Bold" name "ToBeRemoved"                     value 1)
+          (object Attribute tool "Bold" name "Removed"                         value 2)
+        )
+      )
+
+      (object Attribute tool "Bold" name "AssociationStorageEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Internal"                        value 0)
+          (object Attribute tool "Bold" name "External"                        value 1)
+        )
+      )
+
+      ## Tagged values for Association
+
+      (object Attribute tool "Bold" name "LinkClassName"                   value "<Name>")
+      (object Attribute tool "Bold" name "FormerNames"                     value (value Text ""))
+      (object Attribute tool "Bold" name "EvolutionState"                  value ("EvolutionStateEnum" 0))
+      (object Attribute tool "Bold" name "Storage"                         value ("AssociationStorageEnum" 0))
+
+      ## removed tagged values:
+      ## (object Attribute tool "Bold" name "LinkClassId"    value -1)
+    )
+  )
+
+  ############################################################
+  ####   Association definitions STDUML
+  ############################################################
+
+    (object Attribute tool "BoldStdUML" name "roseId"     value "753117540")
+    (object Attribute tool "BoldStdUML" name "propertyId" value "809135966")
+
+    (object Attribute tool "BoldStdUML" name "default__Association" value
+      (list Attribute_Set
+        (object Attribute tool "BoldStdUML" name	"PersistenceSet" value
+          (list Attribute_Set
+            (object Attribute tool "BoldStdUML" name "persistent" value	0)
+            (object Attribute tool "BoldStdUML" name "transient"  value	1)
+        )
+      )
+
+      (object Attribute tool "BoldStdUML" name "persistence" value ("PersistenceSet" 0))
+    )
+  )
+
+  ############################################################
+  ####  AssociationEnd definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Role" value
+    (list Attribute_Set
+
+      (object Attribute tool "Bold" name "DeleteActions" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "<Default>"                       value 0)
+          (object Attribute tool "Bold" name "Allow"                           value 1)
+          (object Attribute tool "Bold" name "Prohibit"                        value 2)
+          (object Attribute tool "Bold" name "Cascade"                         value 3)
+        )
+      )
+
+      (object Attribute tool "Bold" name "ChangeabilityKind" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "addOnly"                         value 0)
+          (object Attribute tool "Bold" name "changeable"                      value 1)
+          (object Attribute tool "Bold" name "frozen"                          value 2)
+        )
+      )
+
+      (object Attribute tool "Bold" name "DefaultRegionModeAssociationEnum" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Default"                         value 0)
+          (object Attribute tool "Bold" name "None"                            value 1)
+          (object Attribute tool "Bold" name "Existence"                       value 2)
+          (object Attribute tool "Bold" name "Cascade"                         value 3)
+          (object Attribute tool "Bold" name "IndependentCascade"              value 4)
+        )
+      )
+
+      ## Tagged values for AssociationEnd
+
+      (object Attribute tool "Bold" name "Ordered"                         value FALSE)
+      (object Attribute tool "Bold" name "ColumnName"                      value "<Name>")
+      (object Attribute tool "Bold" name "ExpressionName"                  value "<Name>")
+      (object Attribute tool "Bold" name "DelphiName"                      value "<Name>")
+      (object Attribute tool "Bold" name "CPPName"                         value "<Name>")
+      (object Attribute tool "Bold" name "Embed"                           value TRUE)
+      (object Attribute tool "Bold" name "DerivationOCL"                   value (value Text ""))
+      (object Attribute tool "Bold" name "VirtualDerive"                   value TRUE)
+      (object Attribute tool "Bold" name "DeleteAction"                    value ("DeleteActions" 0))
+      (object Attribute tool "Bold" name "FormerNames"                     value (value Text ""))
+      (object Attribute tool "Bold" name "DefaultRegionMode"               value ("DefaultRegionModeAssociationEnum" 0))
+      (object Attribute tool "Bold" name "Changeability"                   value ("ChangeabilityKind" 1))
+      (object Attribute tool "Bold" name "Constraints"                     value (value Text ""))
+
+      ## removed tagged values
+      ## (object Attribute tool	"Bold" name	"MemberInfoClass" value	"<Default>")
+    )
+  )
+
+  ############################################################
+  ####  Operation definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Operation" value
+    (list Attribute_Set
+
+      ## Enum Declarations
+
+      (object Attribute tool "Bold" name "BoldOperationKindSet" value
+        (list Attribute_Set
+          (object Attribute tool "Bold" name "Common"                          value 200)
+          (object Attribute tool "Bold" name "Virtual"                         value 201)
+          (object Attribute tool "Bold" name "Abstract"                        value 204)
+          (object Attribute tool "Bold" name "Dynamic"                         value 203)
+          (object Attribute tool "Bold" name "Override"                        value 202)
+        )
+      )
+
+      ## Tagged values for Operation
+
+      (object Attribute tool "Bold" name "DelphiName"                      value "<Name>")
+      (object Attribute tool "Bold" name "CPPName"                         value "<Name>")
+      (object Attribute tool "Bold" name "ExpressionName"                  value "<Name>")
+      (object Attribute tool "Bold" name "OperationKind"                   value ("BoldOperationKindSet" 200))
+      (object Attribute tool "Bold" name "OverrideInAllSubclasses"         value FALSE)
+      (object Attribute tool "Bold" name "Constraints"                     value (value Text ""))
+      (object Attribute tool "Bold" name "IsClassMethod"                   value FALSE)
+
+    )
+  )
+
+  ############################################################
+  ####  Module definitions
+  ############################################################
+
+  (object Attribute tool "Bold" name "default__Module-Spec" value
+    (list Attribute_Set
+      (object Attribute tool "Bold" name "CopyrightNotice" value "")
+      (object Attribute tool "Bold" name "FileName"        value "<Name>.inc")
+    )
+  )
+)
