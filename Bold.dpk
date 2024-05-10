@@ -32,7 +32,7 @@ package Bold;
 {$IMPLICITBUILD OFF}
 
 requires
-  vcldesigner,
+  designide,
   soaprtl,
   dbrtl,
   inet;
@@ -56,7 +56,7 @@ contains
   BoldObjectUpgraderHandleReg in 'Source\BoldObjectUpgraderHandleReg.pas',
   BoldEnvironmentIDE in 'Source\BoldEnvironmentIDE.pas',
   BoldOTASupport in 'Source\BoldOTASupport.pas',
-//  BoldComReg in 'Source\BoldComReg.pas',
+  BoldComReg in 'Source\BoldComReg.pas',
   BoldAttributeWizard in 'Source\BoldAttributeWizard.pas',
   BoldXMLReg in 'Source\BoldXMLReg.pas',
   BoldXMLDispatcherReg in 'Source\BoldXMLDispatcherReg.pas',

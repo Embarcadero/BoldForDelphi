@@ -47,7 +47,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_BplOutput>$(AttracsRepoRoot)\BPL</DCC_BplOutput>
-        <DCC_UnitSearchPath>$(BoldDelphi)\Source;$(BoldDelphi)\Source\Forms;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_F>false</DCC_F>
         <DCC_S>false</DCC_S>
         <GenPackage>true</GenPackage>
@@ -57,13 +56,14 @@
         <GenDll>true</GenDll>
         <DCC_E>false</DCC_E>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
-        <DCC_Description>Bold for Delphi</DCC_Description>
+        <DCC_Description>Attracs Components for Delphi 10.1 Berlin</DCC_Description>
         <SanitizedProjectName>Bold</SanitizedProjectName>
         <DCC_K>false</DCC_K>
         <DesignOnlyPackage>true</DesignOnlyPackage>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
         <VerInfo_Locale>2077</VerInfo_Locale>
         <DCC_DUPLICATE_CTOR_DTOR>false</DCC_DUPLICATE_CTOR_DTOR>
+        <DCC_UnitSearchPath>$(BoldDelphi)\Source;$(BoldDelphi)\Source\Forms;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DllPrefix>dcl</DllPrefix>
         <DllPrefixDefined>true</DllPrefixDefined>
         <DllVersion>28</DllVersion>
@@ -106,7 +106,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="vcldesigner.dcp"/>
+        <DCCReference Include="designide.dcp"/>
         <DCCReference Include="soaprtl.dcp"/>
         <DCCReference Include="dbrtl.dcp"/>
         <DCCReference Include="inet.dcp"/>
@@ -128,6 +128,7 @@
         <DCCReference Include="Source\BoldObjectUpgraderHandleReg.pas"/>
         <DCCReference Include="Source\BoldEnvironmentIDE.pas"/>
         <DCCReference Include="Source\BoldOTASupport.pas"/>
+        <DCCReference Include="Source\BoldComReg.pas"/>
         <DCCReference Include="Source\BoldAttributeWizard.pas"/>
         <DCCReference Include="Source\BoldXMLReg.pas"/>
         <DCCReference Include="Source\BoldXMLDispatcherReg.pas"/>
@@ -149,11 +150,6 @@
         <DCCReference Include="Source\BoldManipulatorReg.pas"/>
         <DCCReference Include="Source\BoldUMXMILinkreg.pas"/>
         <DCCReference Include="Source\BoldDbPlugins.pas"/>
-        <DCCReference Include="Source\Forms\BoldUMLModelDataModule.pas">
-            <Form>dmModelEdit</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -184,7 +180,8 @@
                 <Platform value="Win64">False</Platform>
             </Platforms>
             <Deployment Version="4">
-                <DeployFile LocalName="..\Bin\BPL\dclBold.28.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\Bin\BPL\Bold.bpl" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="..\..\Bin\BPL\dclBold.28.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>Bold.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
