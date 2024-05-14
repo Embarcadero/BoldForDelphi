@@ -10,8 +10,7 @@ uses
   BoldAdvancedPropagator,
   BoldPropagatorServer,
   dialogs,
-  forms
-  ;
+  forms;
 
 implementation
 

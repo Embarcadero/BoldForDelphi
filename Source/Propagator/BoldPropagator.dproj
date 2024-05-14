@@ -1,11 +1,11 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{E40B5154-A760-41BA-96B4-AD7A1DADFB9D}</ProjectGuid>
-        <MainSource>Bold.dpk</MainSource>
+        <ProjectGuid>{C805C0E0-CEC3-497E-BC04-E00D22A0A637}</ProjectGuid>
+        <MainSource>BoldPropagator.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
-        <AppType>Package</AppType>
+        <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
         <ProjectVersion>19.5</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -46,114 +46,106 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_BplOutput>$(AttracsRepoRoot)\BPL</DCC_BplOutput>
-        <DCC_F>false</DCC_F>
-        <DCC_S>false</DCC_S>
-        <GenPackage>true</GenPackage>
-        <DCC_N>false</DCC_N>
-        <DCC_ImageBase>00400000</DCC_ImageBase>
-        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
-        <GenDll>true</GenDll>
         <DCC_E>false</DCC_E>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
-        <DCC_Description>Attracs Components for Delphi 10.1 Berlin</DCC_Description>
-        <SanitizedProjectName>Bold</SanitizedProjectName>
+        <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
-        <DesignOnlyPackage>true</DesignOnlyPackage>
-        <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
-        <VerInfo_Locale>2077</VerInfo_Locale>
-        <DCC_DUPLICATE_CTOR_DTOR>false</DCC_DUPLICATE_CTOR_DTOR>
-        <DCC_UnitSearchPath>$(BoldDelphi)\Source;$(BoldDelphi)\Source\Forms;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DllPrefix>dcl</DllPrefix>
-        <DllPrefixDefined>true</DllPrefixDefined>
-        <DllVersion>28</DllVersion>
+        <DCC_N>true</DCC_N>
+        <DCC_S>false</DCC_S>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_DebugInformation>1</DCC_DebugInformation>
+        <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
+        <DCC_UsePackage>vcl;rtl;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;vclx;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;vclshlctrls;IntrawebDB_50_70;Intraweb_50_70;Rave50CLX;Rave50VCL;$(DCC_UsePackage)</DCC_UsePackage>
+        <SanitizedProjectName>BoldPropagator</SanitizedProjectName>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1053</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UnitAlias>Windows=WinApi.Windows;Messages=WinApi.Messages;WinInet=WinApi.WinInet;Registry=System.Win.Registry;ActiveX=WinApi.ActiveX;SysUtils=System.SysUtils;Classes=System.Classes;Math=Borland.Delphi.Math;SyncObjs=System.SyncObjs;Contnrs=System.Contnrs;Variants=System.Variants;forms=Vcl.forms;Buttons=Vcl.Buttons;controls=Vcl.controls;dialogs=Vcl.dialogs;stdctrls=Vcl.stdctrls;AppEvnts=Vcl.AppEvnts;Graphics=Vcl.Graphics;ExtCtrls=Vcl.ExtCtrls;ComCtrls=Vcl.ComCtrls;Menus=Vcl.Menus;ImgList=Vcl.ImgList;db=Data.db;$(DCC_UnitAlias)</DCC_UnitAlias>
+        <DCC_UnitSearchPath>$(BoldDelphi)\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_ExeOutput>$(BoldDelphi)\Bin</DCC_ExeOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_UsePackage>xmlrtl;rtl;vclactnband;vclx;vcl;vclimg;DbxCommonDriver;dbrtl;soaprtl;inet;vcldb;dsnap;dbexpress;adortl;dxCoreRS24;cxLibraryRS24;dxGDIPlusRS24;dxThemeRS24;cxDataRS24;cxPageControlRS24;cxEditorsRS24;dxLayoutControlRS24;dxComnRS24;dxBarRS24;cxGridRS24;fs24;FixInsight_10_1;frx24;frxe24;dxCoreRS26;cxLibraryRS26;dxGDIPlusRS26;dxComnRS26;dxBarRS26;cxGridRS26;frx26;fs26;frxe26;frx27;fs27;frxe27;dxCoreRS27;cxLibraryRS27;dxGDIPlusRS27;dxComnRS27;dxBarRS27;cxGridRS27;dxCoreRS28;cxLibraryRS28;dxGDIPlusRS28;dxComnRS28;dxBarRS28;cxGridRS28;$(DCC_UsePackage)</DCC_UsePackage>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_Namespace>Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <Icon_MainIcon>BoldPropagator_Icon.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
+        <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
+        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_UsePackage>xmlrtl;rtl;vclactnband;vclx;vcl;vclimg;DbxCommonDriver;dbrtl;soaprtl;inet;vcldb;dsnap;dbexpress;adortl;dxCoreRS24;cxLibraryRS24;dxGDIPlusRS24;dxThemeRS24;cxDataRS24;cxPageControlRS24;cxEditorsRS24;dxLayoutControlRS24;dxComnRS24;dxBarRS24;cxGridRS24;dxCoreRS26;cxLibraryRS26;dxGDIPlusRS26;dxComnRS26;dxBarRS26;cxGridRS26;dxCoreRS27;cxLibraryRS27;dxGDIPlusRS27;dxComnRS27;dxBarRS27;cxGridRS27;dxCoreRS28;cxLibraryRS28;dxGDIPlusRS28;dxComnRS28;dxBarRS28;cxGridRS28;$(DCC_UsePackage)</DCC_UsePackage>
+        <Icon_MainIcon>BoldPropagator_Icon.ico</Icon_MainIcon>
+        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
+        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
-        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
-        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
         <DCC_Optimize>false</DCC_Optimize>
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_RangeChecking>true</DCC_RangeChecking>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <DCC_BplOutput>$(BoldDelphi)\Bin\BPL\</DCC_BplOutput>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
-        <DCC_Description>Bold for Delphi</DCC_Description>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="designide.dcp"/>
-        <DCCReference Include="soaprtl.dcp"/>
-        <DCCReference Include="dbrtl.dcp"/>
-        <DCCReference Include="inet.dcp"/>
-        <DCCReference Include="Source\BoldAwareGuiReg.pas"/>
-        <DCCReference Include="Source\BoldHandleReg.pas"/>
-        <DCCReference Include="Source\BoldReg.pas"/>
-        <DCCReference Include="Source\BoldModelReg.pas"/>
-        <DCCReference Include="Source\BoldCodePlugins.pas"/>
-        <DCCReference Include="Source\BoldPersistenceHandleReg.pas"/>
-        <DCCReference Include="Source\BoldTypeNameHandleReg.pas"/>
-        <DCCReference Include="Source\BoldUMLModelEditReg.pas"/>
-        <DCCReference Include="Source\BoldGeneratorTemplatesDelphi.pas"/>
-        <DCCReference Include="Source\BoldComponentValidatorIDE.pas"/>
-        <DCCReference Include="Source\BoldUMLModelHandleReg.pas"/>
-        <DCCReference Include="Source\BoldUMLRose98Linkreg.pas"/>
-        <DCCReference Include="Source\BoldPersistenceHandleDBreg.pas"/>
-        <DCCReference Include="Source\BoldPersistenceHandleSystemReg.pas"/>
-        <DCCReference Include="Source\BoldPersistenceNotifierReg.pas"/>
-        <DCCReference Include="Source\BoldObjectUpgraderHandleReg.pas"/>
-        <DCCReference Include="Source\BoldEnvironmentIDE.pas"/>
-        <DCCReference Include="Source\BoldOTASupport.pas"/>
-        <DCCReference Include="Source\BoldComReg.pas"/>
-        <DCCReference Include="Source\BoldAttributeWizard.pas"/>
-        <DCCReference Include="Source\BoldXMLReg.pas"/>
-        <DCCReference Include="Source\BoldXMLDispatcherReg.pas"/>
-        <DCCReference Include="Source\BoldConstraintValidatorReg.pas"/>
-        <DCCReference Include="Source\BoldHandlesPropagationReg.pas"/>
-        <DCCReference Include="Source\BoldExternalObjectSpaceEventHandlerReg.pas"/>
-        <DCCReference Include="Source\BoldConcurrencyControlReg.pas"/>
-        <DCCReference Include="Source\BoldPropagatorHandleCOMReg.pas"/>
-        <DCCReference Include="Source\BoldUMLBldLink.pas"/>
-        <DCCReference Include="Source\BoldHTTPClientPersistenceHandleReg.pas"/>
-        <DCCReference Include="Source\BoldHTTPServerPersistenceHandlePassthroughReg.pas"/>
-        <DCCReference Include="Source\BoldExternalPersistenceHandlesReg.pas"/>
-        <DCCReference Include="Source\BoldExternalPersistenceHandleSQLPropEditor.pas"/>
-        <DCCReference Include="Source\BoldComPersistenceHandleReg.pas"/>
-        <DCCReference Include="Source\BoldPersistenceHandleFileReg.pas"/>
-        <DCCReference Include="Source\BoldSamplesReg.pas"/>
-        <DCCReference Include="Source\BoldAFPPluggableReg.pas"/>
-        <DCCReference Include="Source\BoldLockingReg.pas"/>
-        <DCCReference Include="Source\BoldManipulatorReg.pas"/>
-        <DCCReference Include="Source\BoldUMXMILinkreg.pas"/>
-        <DCCReference Include="Source\BoldDbPlugins.pas"/>
-        <DCCReference Include="Source\Forms\BoldUMLModelDataModule.pas">
-            <Form>dmModelEdit</Form>
+        <DCCReference Include="Enterprise\BoldEnqueuer.pas"/>
+        <DCCReference Include="Enterprise\BoldClientHandler.pas"/>
+        <DCCReference Include="Enterprise\BoldPropagatorMainForm.pas">
+            <Form>PropagatorMainForm</Form>
+        </DCCReference>
+        <DCCReference Include="Enterprise\BoldListNodes.pas"/>
+        <DCCReference Include="Enterprise\BoldIndexedList.pas"/>
+        <DCCReference Include="Enterprise\BoldPropagatorSubscriptions.pas"/>
+        <DCCReference Include="Common\BoldPropagatorGUIDs.pas"/>
+        <DCCReference Include="Enterprise\BoldSubscriptionHandler.pas"/>
+        <DCCReference Include="Enterprise\BoldAbstractOutputQueueHandler.pas"/>
+        <DCCReference Include="Enterprise\BoldOutputQueueHandler.pas"/>
+        <DCCReference Include="Enterprise\BoldPriorityListEnlister.pas"/>
+        <DCCReference Include="Enterprise\BoldClientNotifierHandler.pas"/>
+        <DCCReference Include="Enterprise\BoldClientQueue.pas"/>
+        <DCCReference Include="Enterprise\BoldAdvancedPropagator.pas"/>
+        <DCCReference Include="Enterprise\BoldPropagatorCleanup.pas"/>
+        <DCCReference Include="Common\BoldPropagatorInterfaces_TLB.pas"/>
+        <DCCReference Include="Enterprise\BoldPropagatorUIManager.pas"/>
+        <DCCReference Include="Enterprise\BoldPropagatorApplication.pas"/>
+        <DCCReference Include="Enterprise\BoldLockManager.pas"/>
+        <DCCReference Include="Enterprise\BoldLockManagerAdmin.pas"/>
+        <DCCReference Include="Enterprise\BoldLockManagerCOM.pas"/>
+        <DCCReference Include="..\Common\COM\BoldThreadedComObjectFactory.pas"/>
+        <DCCReference Include="Enterprise\BoldLockManagerAdminCOM.pas"/>
+        <DCCReference Include="Enterprise\BoldLockList.pas"/>
+        <DCCReference Include="Enterprise\BoldServerHandlesDataMod.pas">
+            <Form>dmServerHandles</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
+        <DCCReference Include="Enterprise\BoldLockManagerExportHandle.pas"/>
+        <DCCReference Include="Enterprise\BoldLockManagerAdminExportHandle.pas"/>
+        <DCCReference Include="Enterprise\BoldAdvancedPropagatorCOM.pas"/>
+        <DCCReference Include="Enterprise\BoldPropagatorServer.pas"/>
+        <DCCReference Include="Enterprise\BoldClientHandlerExportHandle.pas"/>
+        <DCCReference Include="Enterprise\BoldEnqueuerExportHandle.pas"/>
+        <DCCReference Include="Enterprise\BoldClientHandlerCOM.pas"/>
+        <DCCReference Include="Enterprise\BoldEnqueuerCOM.pas"/>
+        <DCCReference Include="..\Common\COM\BoldApartmentThread.pas"/>
+        <DCCReference Include="Common\BoldObjectMarshaler.pas"/>
+        <DCCReference Include="PropagatorConsts.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -168,11 +160,11 @@
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
-        <Borland.ProjectType>Package</Borland.ProjectType>
+        <Borland.ProjectType/>
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">Bold.dpk</Source>
+                    <Source Name="MainSource">BoldPropagator.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k280.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
@@ -184,15 +176,18 @@
                 <Platform value="Win64">False</Platform>
             </Platforms>
             <Deployment Version="4">
-                <DeployFile LocalName="..\..\Bin\BPL\Bold.bpl" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="..\..\Bin\BPL\dclBold.28.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="BoldPropagator.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>Bold.bpl</RemoteName>
+                        <RemoteName>BoldPropagator.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
+                    <Platform Name="iOSSimulator">
+                        <Operation>1</Operation>
+                    </Platform>
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -482,6 +477,7 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -490,14 +486,17 @@
                 </DeployClass>
                 <DeployClass Name="DependencyFramework">
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
                     <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
@@ -506,15 +505,30 @@
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="DependencyModule">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="iOSSimARM64">
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
@@ -537,14 +551,17 @@
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
@@ -570,12 +587,15 @@
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -590,9 +610,44 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectOSXDebug"/>
-                <DeployClass Name="ProjectOSXEntitlements"/>
-                <DeployClass Name="ProjectOSXInfoPList"/>
+                <DeployClass Name="ProjectOSXDebug">
+                    <Platform Name="OSX64">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXEntitlements">
+                    <Platform Name="OSX32">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSX64">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectOSXInfoPList">
+                    <Platform Name="OSX32">
+                        <RemoteDir>Contents</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSX64">
+                        <RemoteDir>Contents</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>Contents</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -629,12 +684,15 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX32">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -669,9 +727,41 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSEntitlements"/>
-                <DeployClass Name="ProjectiOSInfoPList"/>
-                <DeployClass Name="ProjectiOSLaunchScreen"/>
+                <DeployClass Name="ProjectiOSEntitlements">
+                    <Platform Name="iOSDevice32">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimARM64">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSInfoPList">
+                    <Platform Name="iOSDevice32">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSDevice64">
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimARM64">
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="ProjectiOSLaunchScreen">
+                    <Platform Name="iOSDevice64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="iOSSimARM64">
+                        <RemoteDir>..\$(PROJECTNAME).launchscreen</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                </DeployClass>
                 <DeployClass Name="ProjectiOSResource">
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
@@ -908,11 +998,10 @@
                 <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimARM64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
             </Deployment>
