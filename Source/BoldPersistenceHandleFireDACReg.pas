@@ -1,6 +1,7 @@
 { Global compiler directives }
-{$include bold.inc}
 unit BoldPersistenceHandleFireDACReg;
+
+{$include bold.inc}
 
 interface
 
@@ -18,7 +19,6 @@ uses
 
 procedure Register;
 begin
-
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterFireDAC]);
 end;
 
