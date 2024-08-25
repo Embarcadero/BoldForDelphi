@@ -86,7 +86,6 @@ begin
 end;
 
 initialization
-
   _UMLOCLValidator := TUMLOCLValidator.Create(true);
 
 finalization

@@ -61,6 +61,4 @@ begin
   Close;
 end;
 
-initialization
-
 end.

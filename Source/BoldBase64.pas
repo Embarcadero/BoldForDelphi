@@ -76,9 +76,6 @@ const
 
 implementation
 
-uses
-  BoldRev;
-
 const
   AlphabetLength = 64;
   Alphabet: array[1..AlphabetLength] of AnsiChar = (

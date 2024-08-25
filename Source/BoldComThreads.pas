@@ -245,6 +245,4 @@ begin
   SetEvent(FWaitEvent);
 end;
 
-initialization
-
 end.

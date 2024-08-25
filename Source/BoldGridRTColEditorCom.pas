@@ -212,6 +212,4 @@ begin
   {$ENDIF}
 end;
 
-initialization
-
 end.

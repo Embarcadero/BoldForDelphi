@@ -204,6 +204,7 @@ const
   sRelatedObjectNotLoaded = '%s.GetRegionsForRemoteMember: The related object (of %s) is not loaded. Unable to ensure optimistic locking consistency';
 
 // BoldSystemPersistenceHandler
+  sUpdateDbRentry = 'TBoldSystemPersistenceHandler.UpdateDatabaseWithList: Already updating db.';
   sCannotFetchWithLinksFromMultipleSystems = 'Can''t Fetch with link objects from multiple systems';
   sNoCommonSuperClass = '%s.FetchLinksWithObjects: Objects have no common superClass';
   sNoRoleCalledX = '%s.FetchLinksWithObjects: class %s has no role called %s';
@@ -361,7 +362,9 @@ const
 // BoldSystem
   sReasonUnknown = 'Reason unknown';
   sFailureMessage = '%s.%s failed: %s';
+  sObjectFromAnotherSystem = '%s Objects from wrong system passed to %s.';
   sBoldObjectAssigned = '%s.Destroy: BoldObject assigned';
+  sLocatorNotFound = '%s.%s. Locator not found for ID: %s';
   sNoSuchClass = '%s.%s: System contains no class named: %s';
   sCannotCreateInexact = 'Can not create objects with approximate type. ID: %s Class: %s';
   sClassDoesNotBelongHere = '%s.GetAllInClass: %s does not belong to this system';
@@ -387,6 +390,7 @@ const
   sIllegalDirectDestruction = '%s.Destroy: Can''t destroy a BoldObject directly. Call Id.Unload to unload from memory or Delete to delete object';
   sNoPersistentMembers = '%s.MarkObjectDirty: There are no persistent members';
   sObjectIsreadOnly = 'Object is read only';
+  sObjectHasRelations = 'Object is related to other objects';
   sDeniedCascadeDelete = 'Related object via associationEnd: %s has denied cascade delete.';
   sDeniedDeleteFromProhibit = 'Object is related to other objects via associationEnd: %s and has DeleteAction set to daProhibit.';
   sDeniedCascadeDeleteLink = 'LinkObject: %s denied cascade delete.';
@@ -820,7 +824,7 @@ const
   sCommentRemoveSpaceLinkObjects = '-- Clean Linkobjects (%s) with space pointers';
   sLogBrokenLinkObjects = 'The following Linkobjects (class %s) have empty links in one direction:';
   sCommentRemoveBrokenLinkObjects = '-- Clean Linkobjects (%s) with broken links';
-  sLogObjectsWithBrokenLinks = 'The following objects of class %s have invalid links in %s:';
+  sLogObjectsWithBrokenLinks = 'The following objects of class %s have %d invalid links in %s:';
   sCommentCleanRelation = '-- Clean relation (%s.%s) ';
   sLogObjectsWithWrongLinks = 'The following %d objects of class %s have singlelinks (%s) pointing to objects that don''t point back (they might point elsewhere):';
   sLogObjectsWithIllegalType = 'The following invalid types occur in the objects listed below:';
@@ -1134,9 +1138,9 @@ const
   sUMLGenInterface = 'Generate Persistence Interfaces';
 
 // BoldConstraintValidator
-  sVMOnModifyRequirements = '%s: vmOnModify mode requires BoldSystemBroadcastMemberEvents conditional define.';
   sConstraints = 'Constraints';
 
 implementation
 
 end.
+

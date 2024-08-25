@@ -178,6 +178,4 @@ begin
 end;
 {$ENDIF}
 
-initialization
-
 end.

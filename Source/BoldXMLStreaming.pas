@@ -1,12 +1,4 @@
-﻿
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldXMLStreaming;
 
@@ -201,7 +193,6 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldRev,
   BoldHashIndexes,
   {$IFDEF OXML}OXmlUtils,{$ENDIF}
   BoldBase64,
@@ -1037,7 +1028,6 @@ begin
 end;
 
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldXMLStreaming.pas $ $Revision: 24 $ $Date: 02-06-11 15:08 $');
 
 finalization
   FreeAndNil(G_MainRegistry);

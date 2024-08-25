@@ -550,7 +550,6 @@ uses
   BoldEnvironment,
   BoldListControlPackCom,
   BoldMath,
-  BoldRev,
   TypInfo;
 
 const
@@ -640,7 +639,7 @@ begin
   Grid := TBoldCustomGridCom(Owner);
   Grid.SetSelection(grid.DataRow(grid.Row), [], true, false);
   if (Key in [#32..#255]) and
-    not Grid.Columns[Grid.Col].BoldProperties.ValidateCharacter(Key, Grid.CurrentCellFollower) then
+    not Grid.Columns[Grid.Col].BoldProperties.ValidateCharacter(AnsiChar(Key), Grid.CurrentCellFollower) then
   begin
     MessageBeep(0);
     Key := BOLDNULL;
@@ -1926,7 +1925,7 @@ end;
 function TBoldCustomGridCom.CanEditAcceptKey(KEY: Char): Boolean;
 begin
   Result := Assigned(CurrentCellFollower) and
-            TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).ValidateCharacter(KEY, CurrentCellFollower);
+            TBoldStringFollowerControllerCom(CurrentCellFollower.Controller).ValidateCharacter(AnsiChar(KEY), CurrentCellFollower);
 end;
 
 function TBoldCustomGridCom.CanEditModify: Boolean;
@@ -3073,9 +3072,5 @@ begin
           CellFollowers[i, TopRow].EnsureMulti;
   end;
 end;
-
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldGridCom.pas $ $Revision: 26 $ $Date: 02-08-05 15:12 $');
 
 end.

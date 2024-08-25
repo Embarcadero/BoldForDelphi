@@ -63,8 +63,7 @@ type
 implementation
 
 uses
-  BoldEnvironment,
-  BoldRev;
+  BoldEnvironment;
 
 const
   { Signature that is sent with every UDP propagation to identify ourselves }
@@ -157,6 +156,4 @@ begin
                    SIdentification + SendQueue.Dequeue);
 end;
 
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldUDPModificationBroadcaster.pas $ $Revision: 5 $ $Date: 02-08-09 9:57a $');
 end.

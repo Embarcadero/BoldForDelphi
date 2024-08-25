@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldEnvironmentVCL;
@@ -9,6 +9,7 @@ implementation
 
 uses
   SysUtils,
+  UITypes,
   Classes,
   Windows,
   Messages,
@@ -20,8 +21,7 @@ uses
   BoldCoreConsts,
   BoldDefs,
   BoldQueue,
-  BoldEnvironment,
-  BoldRev;
+  BoldEnvironment;
 
 type
   { forward declarations }
@@ -34,7 +34,7 @@ type
   TBoldAppEventQueue = class(TBoldQueue)
   private
     fAppEvents: TApplicationEvents;
-    fBoldQueueActive: Boolean;
+    fBoldQueueActiveNesting: Integer;
     fQueueDisplayMode: TBoldAppEventQueueDisplayMode;
     procedure ApplicationEventsOnIdle(Sender: TObject; var Done: Boolean);
     procedure ApplicationEventsOnMessage(var Msg: TMsg; var Handled: Boolean);
@@ -43,6 +43,7 @@ type
     function GetIsActive: boolean; override;
     property AppEvents: TApplicationEvents read GetAppEvents;
   public
+    constructor Create; override;
     destructor Destroy; override;
     procedure ActivateDisplayQueue; override;
     procedure DeActivateDisplayQueue; override;
@@ -57,7 +58,7 @@ type
     function GetQueueClass: TBoldQueueClass; override;
   public
     procedure HandleDesigntimeException(Sender: TObject); override;
-    procedure UpdateDesigner(Sender: TObject);override;
+    procedure UpdateDesigner(Sender: TObject); override;
     function IsFormOrDataModule(Sender: TObject): Boolean;override;
     function AskUser(const Text: string): Boolean; override;
     procedure ProcessMessages; override;
@@ -114,8 +115,6 @@ end;
 
 procedure TBoldVCLEnvironmentConfiguration.TriggerQueueMechanism;
 begin
-
-
   PostMessage(Application.Handle, WM_PAINT, 0, 0);
 end;
 
@@ -151,31 +150,24 @@ end;
 
 { TBoldAppEventQueue }
 
-procedure TBoldAppEventQueue.ActivateDisplayQueue;
-begin
-  inherited;
-  fBoldQueueActive := true;
-  case QueueDisplayMode of
-    dmOnIdle: AppEvents.OnIdle := ApplicationEventsOnIdle;
-    dmOnMessage: AppEvents.OnMessage := ApplicationEventsOnMessage;
-  end;
-end;
-
 procedure TBoldAppEventQueue.ApplicationEventsOnIdle(Sender: TObject; var Done: Boolean);
+var
+  PreviousCount: integer;
 begin
-  PerformPreDisplayQueue;
+  if IsActive and not Empty then
   try
-    if fBoldQueueActive then
-    begin
+    PerformPreDisplayQueue;
+    repeat
+      PreviousCount := DisplayCount;
       case DisplayMode of
         dmDisplayOne: Done := not DisplayOne;
         dmDisplayAll: Done := not DisplayAll;
         else
           raise EBoldInternal.CreateFmt(sUnknownDisplayMode, [classname]);
       end;
-      if Done then
-        PerformPostDisplayQueue;
-    end;
+    until (DisplayCount = 0) or (DisplayCount = PreviousCount); // stop if count did not change in last loop run
+    if Done then
+      PerformPostDisplayQueue;
   except
     Application.HandleException(nil);
   end;
@@ -189,10 +181,28 @@ begin
   Handled := false;
 end;
 
+constructor TBoldAppEventQueue.Create;
+begin
+  inherited;
+  fBoldQueueActiveNesting := 0;
+end;
+
+procedure TBoldAppEventQueue.ActivateDisplayQueue;
+begin
+  inherited;
+  if fBoldQueueActiveNesting > 0 then
+    Dec(fBoldQueueActiveNesting);
+  if fBoldQueueActiveNesting = 0 then
+    case QueueDisplayMode of
+      dmOnIdle: AppEvents.OnIdle := ApplicationEventsOnIdle;
+      dmOnMessage: AppEvents.OnMessage := ApplicationEventsOnMessage;
+    end;
+end;
+
 procedure TBoldAppEventQueue.DeActivateDisplayQueue;
 begin
   inherited;
-  fBoldQueueActive := false;
+  Inc(fBoldQueueActiveNesting);
   if Assigned(fAppEvents) then
   begin
     AppEvents.OnIdle := nil;
@@ -215,7 +225,7 @@ end;
 
 function TBoldAppEventQueue.GetIsActive: boolean;
 begin
-  result := fBoldQueueActive;
+  result := fBoldQueueActiveNesting = 0;
 end;
 
 initialization

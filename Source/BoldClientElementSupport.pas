@@ -28,11 +28,7 @@ type
     property ContextType: IBoldElementTypeInfo read GetContextType;
     property Expression: String read GetExpression write SetExpression;
   end;
- 
 
 implementation
-
-
-initialization
 
 end.

@@ -74,7 +74,6 @@ function XMIIdforId(const id: String): TXMIId;
 implementation
 
 uses
-  BoldRev,
   BoldDefs,
   BoldUtils,
   SysUtils,
@@ -229,8 +228,5 @@ function TUUIdIndex.ItemAsKeyString(Item: TObject): string;
 begin
   Result := (Item as TBoldXMIObjectItem).xmiid.uuid;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldUMLXMILinkSupport.pas $ $Revision: 11 $ $Date: 02-07-05 16:23 $');
 
 end.

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceHandlePassthrough;
@@ -30,15 +29,12 @@ type
     property NextPersistenceHandle: TBoldPersistenceHandle read fNextPersistenceHandle write {fNextPersistenceHandle}SetNextPersistenceHandle;
   end;
 
-
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPersistenceControllerPassthroughHandle }
-
 
 procedure TBoldPersistenceHandlePassthrough.SetActive(Value: Boolean);
 begin

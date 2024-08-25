@@ -40,8 +40,7 @@ uses
   BoldComObjectSpace,
   BoldComObjectSpace_TLB,
   BoldComUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 {-- TBoldListHandleCom --------------------------------------------------------}
 

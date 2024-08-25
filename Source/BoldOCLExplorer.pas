@@ -15,7 +15,8 @@ uses
   BoldPlaceableListSubscriber, BoldControlPack, BoldElements,
   BoldStringControlPack, cxSpinEdit, cxCheckBox, BoldDerivedHandle,
   cxLookAndFeels, cxLookAndFeelPainters, BoldVariantControlPack,
-  cxGridCustomPopupMenu, cxGridPopupMenu, cxNavigator, BoldRawSQLHandle;
+  cxGridCustomPopupMenu, cxGridPopupMenu, cxNavigator, BoldRawSQLHandle,
+  dxDateRanges, dxScrollbarAnnotations, dxBarBuiltInMenu, System.Actions;
 
 type
   TOclExplorerForm = class(TForm)
@@ -123,8 +124,7 @@ type
     { Private declarations }
     Procedure UpdateStatus;
     procedure EditOCL(ListHandle: TBoldListHandle);
-    procedure ExportBoldListToStringList(BoldList: TBoldListHandle; StringList:
-        TStrings);
+//    procedure ExportBoldListToStringList(BoldList: TBoldListHandle; StringList: TStrings);
     procedure SetBoldSystem(const Value: TBoldSystem);
   protected
     procedure CreateParams(var Params: TCreateParams); override;
@@ -200,7 +200,7 @@ begin
   UpdateStatus;
 end;
 
-procedure TOclExplorerForm.ExportBoldListToStringList(BoldList: TBoldListHandle;
+(*procedure TOclExplorerForm.ExportBoldListToStringList(BoldList: TBoldListHandle;
     StringList: TStrings);
 var Counter: Integer;
 begin
@@ -255,7 +255,7 @@ try
 except
 end;
 end;
-
+*)
 
 procedure TOclExplorerForm.CloseApplicationActionExecute(Sender: TObject);
 begin
@@ -265,7 +265,7 @@ end;
 procedure TOclExplorerForm.ShowDebuggerActionExecute(Sender: TObject);
 begin
   Assert(assigned(FBoldSystem));
-  with TBoldSystemDebuggerFrm.CreateWithSystem(application,fSystemHandle) do
+  with TBoldSystemDebuggerFrm.CreateWithSystem(application,fSystemHandle.System) do
     show;
 end;
 
@@ -284,7 +284,7 @@ begin
   FBoldSystem := Value;
 end;
 
-procedure TOclExplorerForm.FormCreate(Sender: TObject); // brk
+procedure TOclExplorerForm.FormCreate(Sender: TObject);
 begin
   if BoldSystem = nil then
     BoldSystem:= TBoldSystem.DefaultSystem;

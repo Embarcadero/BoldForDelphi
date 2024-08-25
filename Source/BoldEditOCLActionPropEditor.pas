@@ -43,6 +43,4 @@ begin
   Designer.GetComponentNames(GetTypeData(GetPropType), FilterOnInterface);
 end;
 
-initialization
-
 end.

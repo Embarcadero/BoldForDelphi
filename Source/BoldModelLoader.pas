@@ -32,8 +32,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 var
   G_ModelLoader: TBoldModelLoader = nil;

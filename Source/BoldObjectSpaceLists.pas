@@ -7,7 +7,7 @@ interface
 
 uses
   Classes,
-  BoldSubscription,  
+  BoldSubscription,
   BoldSystem,
   BoldSystemRT,
   BoldIndex,
@@ -23,8 +23,8 @@ type
   TBoldObjectAttributeIndexList = class(TBoldIndexableList)
   private
     class var IX_BoldQualifiers: integer;
-    function GetHasMembersIndex: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMembersIndex: TBoldMembersHashIndex; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasMembersIndex: Boolean;
+    function GetMembersIndex: TBoldMembersHashIndex;
   protected
     procedure NotifyMemberIndexBad; virtual;
     procedure EnsureLazyCreateIndexes; virtual;
@@ -32,16 +32,16 @@ type
   public
     procedure InitMembersIndex(ObjectList: TBoldObjectList; MemberList: TBoldMemberRTInfoList);
     property HasMembersIndex: Boolean read GetHasMembersIndex;
-    function GetLocatorByAttributesAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLocatorByAttributesAndSubscribe(MemberList: TBoldMemberList; Subscriber: TBoldSubscriber): TBoldObjectLocator;
   end;
 
 {---TBoldObjectLocatorList---}
   TBoldObjectLocatorList = class(TBoldObjectAttributeIndexList)
   private
     class var IX_BoldObjectLocator: integer;
-    function GetLocatorIndex: TBoldLocatorHashIndex; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetLocators(index: Integer): TBoldObjectLocator; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetLocators(index: Integer; Value: TBoldObjectLocator); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLocatorIndex: TBoldLocatorHashIndex;
+    function GetLocators(index: Integer): TBoldObjectLocator;
+    procedure SetLocators(index: Integer; Value: TBoldObjectLocator);
     function GetLocatorInList(Locator: TBoldObjectLocator): Boolean;
     property LocatorIndex: TBoldLocatorHashIndex read GetLocatorIndex;
   protected
@@ -49,9 +49,9 @@ type
   public
     constructor Create;
     constructor CreateFromObjectList(BoldObjectList: TBoldObjectList);
-    procedure Add(NewLocator: TBoldObjectLocator); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Add(NewLocator: TBoldObjectLocator);
     function Clone: TBoldObjectLocatorList;
-    procedure Ensure(NewLocator: TBoldObjectLocator); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Ensure(NewLocator: TBoldObjectLocator);
     procedure FillObjectList(BoldObjectList: TBoldObjectList);
     procedure MergeObjectList(BoldObjectList: TBoldObjectList);
     property Locators[index: Integer]: TBoldObjectLocator read GetLocators write SetLocators; default;
@@ -62,7 +62,7 @@ type
   TBoldMembersHashIndex = class(TBoldHashIndex)
   private
     FMemberIndexList: TList;
-    fMemberSubscriber: TBoldPassThroughSubscriber;
+    fMemberSubscriber: TBoldExtendedPassthroughSubscriber;
     fOwner: TBoldObjectAttributeIndexList;
     fObjectList: TBoldObjectList;
     fStringCompareMode: TBoldStringCompareMode;
@@ -70,9 +70,9 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function LocatorFromItem(Item: TObject): TBoldObjectLocator; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ObjectFromItem(Item: TObject): TBoldObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure _receiveMemberChanged(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); virtual;
+    function LocatorFromItem(Item: TObject): TBoldObjectLocator;
+    function ObjectFromItem(Item: TObject): TBoldObject;
+    procedure _ReceiveEvent(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); virtual;
   public
     constructor Create(Owner: TBoldObjectAttributeIndexList; ObjectList: TBoldObjectList; Members: TBoldMemberRTInfoList; AStringCompareMode: TBoldStringCompareMode = bscCaseDependent);
     destructor Destroy; override;
@@ -102,7 +102,7 @@ type
 
 function TBoldMembersHashIndex.LocatorFromItem(Item: TObject): TBoldObjectLocator;
 begin
-  Assert(not Assigned(Item) or (Item is TBoldObjectLocator));
+  Assert(not Assigned(Item) or (Item is TBoldObjectLocator), Item.ClassName);
   result := TBoldObjectLocator(Item);
 end;
 
@@ -145,7 +145,7 @@ begin
   FMemberIndexList.Capacity := Members.Count;
   for i := 0 to Members.Count - 1 do
     FMemberIndexList.Add(TBoldMemberId.create(Members[i].index));
-  fMemberSubscriber := TBoldPassThroughSubscriber.Create(_receiveMemberChanged);
+  fMemberSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(_ReceiveEvent);
   fOwner := Owner;
   fObjectList := ObjectList;
 end;
@@ -230,12 +230,12 @@ begin
   end;
 end;
 
-procedure TBoldMembersHashIndex._receiveMemberChanged(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+procedure TBoldMembersHashIndex._ReceiveEvent(Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
 var
   Locator: TBoldObjectLocator;
 begin
-  if OriginalEvent = beValueChanged then
+  if Options.RehashOnChange and not (Originator as TBoldMember).BoldSystem.IsDestroying then
   begin
     Locator := (Originator as TBoldMember).OwningObject.BoldObjectLocator;
     if not IsCorrectlyIndexed(Locator) then
@@ -245,11 +245,13 @@ begin
       Add(locator);
       AutoResize := true;
     end;
+  end
+  else
+  begin
+    if Assigned(fObjectList) then
+      fObjectList.SendEvent(beQualifierChanged);
+    fOwner.NotifyMemberIndexBad;
   end;
-  if assigned(fObjectList) then
-    fObjectList.SendEvent(beQualifierChanged);
-  if OriginalEvent <> beValueChanged then
-  fOwner.NotifyMemberIndexBad;
 end;
 
 procedure TBoldMembersHashIndex.Clear(DestroyObjects: Boolean = false);

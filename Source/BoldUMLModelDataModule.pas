@@ -51,10 +51,10 @@ end;
 
 procedure EnsureModelEditDataModule;
 begin
-  if not assigned(dmModelEdit) then
+  if not DataModuleEnsured then
   begin
-    dmModelEdit := TdmModelEdit.Create(nil);
     DataModuleEnsured := true;
+    dmModelEdit := TdmModelEdit.Create(nil);
   end;
 end;    
 

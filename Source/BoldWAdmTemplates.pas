@@ -28,9 +28,6 @@ var
 
 implementation
 
-
 {$R *.dfm}
-
-initialization
 
 end.

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMetaElementList;
@@ -7,7 +6,10 @@ interface
 
 uses
   BoldElements,
-  BoldIndexableList;
+  BoldIndexableList,
+  BoldHashIndexes,
+  SysUtils
+  ;
 
 type
   { forward declarations }
@@ -16,17 +18,17 @@ type
 
   TBoldMetaElementListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldMetaElement;
     property Current: TBoldMetaElement read GetCurrent;
   end;
 
   { TBoldMetaElementList }
   TBoldMetaElementList = class(TBoldIndexableList)
   private
-    function GetItem(index: Integer): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: string): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByDelphiName(const DelphiName: string): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByModelName(const ModelName: string): TBoldMetaElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldMetaElement;
+    function GetItemByExpressionName(const ExpressionName: string): TBoldMetaElement;
+    function GetItemByDelphiName(const DelphiName: string): TBoldMetaElement;
+    function GetItemByModelName(const ModelName: string): TBoldMetaElement;
     class var IX_ExpressionName: integer;
     class var IX_DelphiName: integer;
     class var IX_ModelName: integer;
@@ -42,17 +44,17 @@ type
 
   TBoldElementTypeInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldElementTypeInfo;
     property Current: TBoldElementTypeInfo read GetCurrent;
   end;
 
   { TBoldElementTypeInfoList }
   TBoldElementTypeInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByDelphiName(const DelphiName: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByModelName(const ModelName: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldElementTypeInfo;
+    function GetItemByExpressionName(const ExpressionName: string): TBoldElementTypeInfo;
+    function GetItemByDelphiName(const DelphiName: string): TBoldElementTypeInfo;
+    function GetItemByModelName(const ModelName: string): TBoldElementTypeInfo;
   public
     function GetEnumerator: TBoldElementTypeInfoListTraverser;
     procedure Add(Item: TBoldElementTypeInfo);
@@ -65,8 +67,9 @@ type
 implementation
 
 uses
-  BoldHashIndexes,
-  BoldRev;
+  BoldIndex,
+  BoldDefs
+  ;
 
 type
   {---TExpressionNameIndex---}

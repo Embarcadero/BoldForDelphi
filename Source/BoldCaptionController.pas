@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCaptionController;
@@ -69,8 +68,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 type
   {---TWinControlWithCaption---}
@@ -183,7 +181,5 @@ function TBoldCustomCaptionController.GetVariableList: TBoldExternalVariableList
 begin
   result := BoldProperties.VariableList;
 end;
-
-initialization
 
 end.

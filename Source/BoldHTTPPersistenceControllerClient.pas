@@ -127,6 +127,4 @@ begin
   fhttpSoapService.WebConnection := Value;
 end;
 
-initialization
-
 end.

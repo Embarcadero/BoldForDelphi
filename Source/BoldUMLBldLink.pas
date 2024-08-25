@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLBldLink;
@@ -61,9 +60,7 @@ var
 function TBoldUMLBldLink.ExportModel(UMLModel: TUMLModel): Boolean;
 var
   ModelAsStrings: TStringList;
-  vToolId1, vToolID2:String;
   G: IBoldGuard;
-  i,j: integer;
 begin
   Result := True;
   G := TBoldGuard.Create(MoldModel, ModelAsStrings);
@@ -150,7 +147,7 @@ begin
     raise EBoldImport.CreateFmt('%s.ImportModel: Must have an UMLModel to import to.', [className]);
   UndoWasActive := UMLModel.BoldSystem.UndoHandlerInterface.Enabled;
   UMLModel.BoldSystem.UndoHandlerInterface.Enabled := false;
-  BoldInstalledQueue.DeActivateDisplayQueue;
+  TBoldQueueable.DeActivateDisplayQueue;
   try
     UMLModel.BoldSystem.StartTransaction;
     try
@@ -179,7 +176,7 @@ begin
     end;
   finally
     UMLModel.BoldSystem.UndoHandlerInterface.Enabled := UndoWasActive;
-    BoldInstalledQueue.ActivateDisplayQueue;
+    TBoldQueueable.ActivateDisplayQueue;
   end;
 end;
 

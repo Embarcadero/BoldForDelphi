@@ -592,6 +592,4 @@ begin
   Result := Result + Format('  %s', [BOLDSYM_END]);  // do not localize
 end;
 
-initialization
-  
 end.

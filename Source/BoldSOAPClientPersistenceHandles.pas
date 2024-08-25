@@ -6,6 +6,7 @@ unit BoldSOAPClientPersistenceHandles;
 interface
 
 uses
+  Classes,
   BoldAbstractComClientPersistenceHandles,
   BoldAbstractModel,
   BoldPersistenceController;

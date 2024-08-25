@@ -9,7 +9,8 @@ uses
   Classes,
   BoldSubscription,
   BoldElements,
-  BoldHandles;
+  BoldHandles,
+  BoldSystem;
 
 type
   { forward declaration of classes }
@@ -30,6 +31,7 @@ type
     function GetValue: TBoldElement; override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; override;
+    function GetBoldSystem: TBoldSystem; override;
     procedure SetValue(NewValue: TBoldElement); override;
     function GetCanSetValue: boolean; override;
     procedure DoAssign(Source: TPersistent); override;
@@ -48,8 +50,7 @@ implementation
 uses
   SysUtils,
   BoldSystemRT,
-  BoldSystem,
-  BoldRev;
+  BoldDomainElement;
 
 const
   breValueDestroyed = 42;
@@ -82,6 +83,14 @@ begin
   end;
 end;
 
+function TBoldReferenceHandle.GetBoldSystem: TBoldSystem;
+begin
+  if Value is TBoldDomainElement then
+    result := TBoldDomainElement(Value).BoldSystem as TBoldSystem
+  else
+    result := inherited;
+end;
+
 function TBoldReferenceHandle.GetCanSetValue: boolean;
 begin
   result := true;
@@ -89,7 +98,7 @@ end;
 
 function TBoldReferenceHandle.GetStaticBoldType: TBoldElementTypeInfo;
 begin
-  if Assigned(StaticSystemTypeInfo) then
+  if Assigned(StaticSystemTypeInfo) and (StaticValueTypeName <> '') then
     Result := StaticSystemTypeInfo.ElementTypeInfoByExpressionName[StaticValueTypeName]
   else
     Result := nil;
@@ -162,7 +171,5 @@ begin
       OnValueDestroyed(self);
   end;
 end;
-
-initialization
 
 end.

@@ -36,8 +36,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPersistenceHandleDBX }
 
@@ -85,7 +84,5 @@ procedure TBoldPersistenceHandleDBX.SetUserName(const Value: string);
 begin
   raise Exception.Create('Can not set username directly on PersistenceHandleDBX, set it on the SQLConnection');
 end;
-
-initialization
 
 end.

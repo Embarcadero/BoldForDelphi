@@ -75,7 +75,9 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  BoldHashIndexes;
+  BoldHashIndexes,
+  BoldIndex
+  ;
 
 var
   G_BoldGeneratedCodes: TBoldGeneratedCodeList = nil;

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldId;
@@ -63,9 +62,9 @@ type
   TBoldObjectId = class(TBoldID)
   private
     FClassId: integer;
-    function GetTopSortedIndex: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTopSortedIndexExact: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetClassIdData(TopSortedIndex: integer; Exact: boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTopSortedIndex: integer;
+    function GetTopSortedIndexExact: Boolean;
+    procedure SetClassIdData(TopSortedIndex: integer; Exact: boolean);
   protected
     function GetIsStorable: Boolean; virtual; abstract;
     function GetHash: Cardinal; virtual; abstract;
@@ -75,7 +74,7 @@ type
   public
     constructor CreateWithClassID(TopSortedIndex: integer; Exact: Boolean); virtual;
     function CloneWithClassId(TopSortedIndex: integer; Exact: Boolean): TBoldObjectid; virtual; abstract;
-    function Clone: TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Clone: TBoldObjectId;
     property TopSortedIndex: integer read getTopSortedIndex;
     property TopSortedIndexExact: Boolean read GetTopSortedIndexExact;
     property IsStorable: Boolean read GetIsStorable;
@@ -133,7 +132,7 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function FindById(BoldObjectId: TBoldObjectId): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindById(BoldObjectId: TBoldObjectId): TObject;
   end;
 
   {---TBoldObjectIdList---}
@@ -144,27 +143,27 @@ type
     function GetHasInexactIds: boolean;
     function GetHasNonExistingIds: boolean;
     function GetFirst: TBoldObjectId;
-    function GetLast: TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLast: TBoldObjectId;
   protected
-    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: integer;
     function GetIDByID(ObjectID: TBoldObjectId): TBoldObjectId;
     function GetIndexByID(ObjectID: TBoldObjectId): Integer;
-    function GetObjectId(index: Integer): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIdInList(ObjectID: TBoldObjectId): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetObjectId(index: Integer): TBoldObjectId;
+    function GetIdInList(ObjectID: TBoldObjectId): Boolean;
+    function GetStreamName: string;
     property ObjectIDIndex: TBoldObjectIDHashIndex read GetObjectIDIndex;
   public
     constructor Create;
-    procedure Add(ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddAndAdopt(ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddIfNotInList(ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddList(ObjectIdList: TBoldObjectIdList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function AddAndGetID(aBoldObjectId: TBoldObjectId): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Insert(Index: integer; ObjectID: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Add(ObjectID: TBoldObjectId);
+    procedure AddAndAdopt(ObjectID: TBoldObjectId);
+    procedure AddIfNotInList(ObjectID: TBoldObjectId);
+    procedure AddList(ObjectIdList: TBoldObjectIdList);
+    function AddAndGetID(aBoldObjectId: TBoldObjectId): TBoldObjectId;
+    procedure Insert(Index: integer; ObjectID: TBoldObjectId);
     function ContainsSameIDs(List: TBoldObjectIdList): Boolean;
     function Clone: TBoldObjectIdList;
-    procedure Remove(Id: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ReplaceID(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Remove(Id: TBoldObjectId);
+    procedure ReplaceID(OldId, NewId: TBoldObjectId);
     procedure ExactifyIds(TranslationList: TBoldIDTranslationList);
     procedure ApplyTranslationList(TranslationList: TBoldIdTranslationList);
     procedure RemoveNonExistingIds;
@@ -180,9 +179,9 @@ type
 
   {---TBoldMemberIdList---}
   TBoldMemberIdList = class(TBoldIdList, IBoldStreamable)
-    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetStreamName: string;
   protected
-    function GetMemberIds(Index: Integer): TBoldMemberId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMemberIds(Index: Integer): TBoldMemberId;
   public
     function IsEqual(AList: TBoldMemberIdList): boolean;
     function HasId(AId: TBoldMemberId): boolean;
@@ -195,23 +194,23 @@ type
   private
     fOldIds: TBoldObjectIdList;
     fNewIds: TBoldObjectIdList;
-    function GetOldId(index: Integer): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetNewId(index: Integer): TBoldObjectId; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTranslateToOldId(NewID: TBoldObjectId): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTranslateToNewId(OldID: TBoldObjectId): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-//    function GetTranslateToOldId(Index: integer): TBoldObjectId; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-//    function GetTranslateToNewId(Index: integer): TBoldObjectId; overload;{$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetCapacity: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetCapacity(const Value: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetOldId(index: Integer): TBoldObjectId;
+    function GetNewId(index: Integer): TBoldObjectId;
+    function GetCount: Integer;
+    function GetTranslateToOldId(NewID: TBoldObjectId): TBoldObjectId; overload;
+    function GetTranslateToNewId(OldID: TBoldObjectId): TBoldObjectId; overload;
+//    function GetTranslateToOldId(Index: integer): TBoldObjectId; overload;
+//    function GetTranslateToNewId(Index: integer): TBoldObjectId; overload;
+    function GetCapacity: Integer;
+    procedure SetCapacity(const Value: Integer);
   protected
-    function GetStreamName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetStreamName: string;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure AddTranslation(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddTranslationAdoptNew(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddTranslationAdoptBoth(OldId, NewId: TBoldObjectId); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddTranslation(OldId, NewId: TBoldObjectId);
+    procedure AddTranslationAdoptNew(OldId, NewId: TBoldObjectId);
+    procedure AddTranslationAdoptBoth(OldId, NewId: TBoldObjectId);
     property Count: Integer read GetCount;
     property TranslateToOldId[NewID: TBoldObjectId]: TBoldObjectId read GetTranslateToOldId;
     property TranslateToNewId[OldID: TBoldObjectId]: TBoldObjectId read GetTranslateToNewId;

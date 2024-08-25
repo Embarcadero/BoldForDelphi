@@ -46,8 +46,7 @@ implementation
 
 uses
   Classes,
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldSqlNodeMaker }
 

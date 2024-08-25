@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldTaggedValueList;
@@ -176,7 +175,5 @@ function TBoldTaggedValueDefinitionIndex.ItemAsKeyString(Item: TObject): string;
 begin
   result := TBoldTaggedValueDefinition(item).Tag;
 end;
-
-initialization
 
 end.

@@ -31,7 +31,8 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils,
+  Classes;
 
 { TBoldAbstractObjectUpgraderHandle }
 

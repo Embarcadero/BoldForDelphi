@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockRegions;
@@ -74,7 +73,7 @@ type
 
   TBoldRegionLookupTraverser = class(TBoldIndexableListTraverser)
   private
-    function GetRegion: TBoldRegion; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetRegion: TBoldRegion;
   public
     property Region: TBoldRegion read GetRegion;
     property Current: TBoldRegion read GetRegion;
@@ -91,7 +90,7 @@ type
     constructor Create;
     function CreateTraverser: TBoldRegionLookupTraverser;
     function GetEnumerator: TBoldRegionLookupTraverser;
-    function FindByID(RegionId: string): TBoldRegion; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByID(RegionId: string): TBoldRegion;
     procedure AddRegionLookup(Regions: TBoldRegionLookup);
     procedure AddRegionLookupWithFilter(Regions: TBoldRegionLookup; Filter: TBoldRegionLookup);
     procedure AddRegionList(Regions: TBoldRegionList);
@@ -103,7 +102,7 @@ type
   TBoldOrderedRegionLookup = class(TBoldRegionLookup)
   private
     class var IX_RegionOrder: integer;
-    function GetFirstRegion: TBoldRegion; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFirstRegion: TBoldRegion;
   public
     constructor Create;
     property FirstRegion: TBoldRegion read GetFirstRegion;
@@ -164,10 +163,9 @@ uses
   BoldDefaultId,
   BoldElements,
   BoldGuard,
-  BoldHashIndexes,
   BoldId,
-  BoldIndex,
-  BoldRev;
+  BoldHashIndexes,
+  BoldIndex;
 
 type
   TBoldRegionIndex = class(TBoldStringHashIndex)

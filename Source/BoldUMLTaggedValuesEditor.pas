@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLTaggedValuesEditor;
@@ -34,11 +33,10 @@ uses
   BoldControlPack,
   BoldStringControlPack,
   BoldPlaceableSubscriber,
-  ToolWin, Menus, ImgList;
+  ToolWin, Menus, ImgList, System.ImageList;
 
 const
   WM_REFRESHGUI = WM_USER + 123;
-
 
 type
   TfrmBoldUMLTaggedValuesEditor = class(TForm)
@@ -92,7 +90,7 @@ type
     procedure RefreshGUI(var Message: TMessage); message WM_REFRESHGUI;
     procedure DoMessage(Control: TControl; Msg: Cardinal);
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure SwitchMode(ReadOnly: Boolean);
   end;
 
@@ -335,7 +333,5 @@ procedure TfrmBoldUMLTaggedValuesEditor.Paste1Click(Sender: TObject);
 begin
   DoMessage(ActiveControl, WM_PASTE);
 end;
-
-initialization
 
 end.

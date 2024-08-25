@@ -1,4 +1,4 @@
-﻿{ Global compiler directives }
+{ Global compiler directives }
 {$include bold.inc}
 unit BoldDbEvolutorScript;
 
@@ -260,8 +260,7 @@ uses
 
   BoldCoreConsts,
   BoldGuard,
-  BoldUtils,
-  Boldrev;
+  BoldUtils;
 
 { TBoldAddTable }
 
@@ -406,7 +405,6 @@ begin
     if not DataBase.Connected then
       DataBase.Open;
     Execute;
-
   finally
     if not WasOpen then
       DataBase.Close;
@@ -628,8 +626,6 @@ begin
   finally
     MoveDataSignatures.free;
   end;
-
-
 end;
 
 procedure TBoldDataBaseEvolutorScript.DropIndex(const IndexName: String; const TableNAme: String);
@@ -770,6 +766,8 @@ begin
 end;
 
 procedure TBoldDataBaseEvolutorScript.CommitTransaction;
+const
+  sCommittingToDB = 'Committing changes to database';
 begin
   if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
     exit;
@@ -783,6 +781,8 @@ begin
 end;
 
 procedure TBoldDataBaseEvolutorScript.RollBackTransaction;
+const
+  sRollingBackDB = 'Rolling back database changes';
 begin
   if not fSQLDataBaseConfig.AllowMetadataChangesInTransaction then
     exit;

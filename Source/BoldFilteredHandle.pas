@@ -1,11 +1,3 @@
-
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldFilteredHandle;
@@ -28,6 +20,7 @@ type
   TBoldElementFilter = function (Element: TBoldElement): Boolean of object;
 
   { TBoldFilter }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldFilter = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnFilter: TBoldElementFilter;
@@ -64,7 +57,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldDefs,
   {$IFDEF ATTRACS}
   AttracsPerformance,
@@ -72,7 +64,6 @@ uses
   AttracsTraceLog,
   {$ENDIF}
   BoldSystemRT;
-
 
 {---TBoldFilter---}
 
@@ -225,8 +216,5 @@ begin
     MarkSubscriptionOutOfdate;
   end;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldFilteredHandle.pas $ $Revision: 21 $ $Date: 02-04-29 15:10 $');
 
 end.

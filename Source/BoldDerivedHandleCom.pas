@@ -113,6 +113,4 @@ begin
   result := 'TBoldDerivedHandle';
 end;
 
-initialization
-
 end.

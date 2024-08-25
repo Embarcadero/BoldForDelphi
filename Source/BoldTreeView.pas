@@ -1,7 +1,4 @@
-﻿/////////////////////////////////////////////////////////
-
-
-unit BoldTreeView;
+﻿unit BoldTreeView;
 
 {$UNDEF BOLDCOMCLIENT}
 {$INCLUDE bold.inc}
@@ -257,7 +254,9 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils, BoldQueue, Types;
+  BoldUtils,
+  BoldQueue,
+  Types;
 
 {---TBoldTreeNode---}
 

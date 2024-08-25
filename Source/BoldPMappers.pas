@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPMappers;
@@ -114,7 +113,7 @@ type
     function CommonSuperClassObjectMapper(ObjectIdList: TBoldObjectIdList): TBoldObjectPersistenceMapper;
     procedure CreatePersistentStorage; override;
     function GetCorrectTime: TDateTime;
-    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber);
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []);
     procedure ReserveNewIds(const ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                             TranslationList: TBoldIdTranslationList);
 
@@ -252,8 +251,8 @@ type
     property MemberIndex: Integer read fMemberIndex;
     property ContentName: string read fContentName;
     property ExpressionName: string read fExpressionName;
-    function GetValue(const ObjectContents: IBoldObjectContents): IBoldValue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEnsuredValue(const ObjectContents: IBoldObjectContents): IBoldValue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetValue(const ObjectContents: IBoldObjectContents): IBoldValue;
+    function GetEnsuredValue(const ObjectContents: IBoldObjectContents): IBoldValue;
     function IsDirty(const ObjectContents: IBoldObjectContents): Boolean; virtual;
     function ShouldFetch(const ObjectContents: IBoldObjectContents): Boolean; virtual;
     procedure PMCreate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;
@@ -272,7 +271,7 @@ type
   { TBoldObjectPersistenceMapperList }
   TBoldObjectPersistenceMapperList = class(TBoldIndexableList)
   private
-    function GetItem(index: Integer): TBoldObjectPersistenceMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldObjectPersistenceMapper;
   public
     property Items[index: Integer]: TBoldObjectPersistenceMapper read GetItem; default;
   end;
@@ -281,8 +280,8 @@ type
   TBoldMemberPersistenceMapperList = class(TBoldIndexableList)
   private
     class var IX_MemberMapper: integer;
-    function GetItem(index: Integer): TBoldmemberPersistenceMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMemberMapperByExpressionName(ExpressionName: string): TBoldMemberPersistenceMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldmemberPersistenceMapper;
+    function GetMemberMapperByExpressionName(ExpressionName: string): TBoldMemberPersistenceMapper;
   public
     constructor Create;
     property Items[index: Integer]: TBoldMemberPersistenceMapper read GetItem; default;
@@ -306,7 +305,6 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-
   BoldCoreConsts,
   BoldGuard,
   BoldDefaultStreamNames,
@@ -363,7 +361,7 @@ begin
         ObjectMapperName := DefaultObjectMapperName;      
       ObjectMapperDescriptor := BoldObjectPersistenceMappers.DescriptorByName[ObjectMapperName];
       if not assigned(ObjectMapperDEscriptor) then
-        raise EBold.CreateFmt(sUnableToFindPMapperForClass, [ObjectMapperName, MoldClass.Name]);
+        raise EBold.CreateFmt('Unable to find PersistenceMapper (%s) for class %s', [ObjectMapperName, MoldClass.Name]);
       ObjectPMapper := ObjectMapperDescriptor.ObjectPersistenceMapper.CreatefromMold(MoldClass, Self, TypeNameDictionary);
     end
     else
@@ -399,7 +397,7 @@ begin
     with ObjectPersistenceMappers[(BoldCondition as TBoldConditionWithClass).TopSortedIndex] do
       PMFetchWithCondition(ObjectIdList, ValueSpace, BoldCondition, FetchMode, TranslationList)
   else
-    raise EBold.CreateFmt(sConditionMustBeConditionWithClass , [ClassName, BoldCondition.Classname]);
+    raise EBold.CreateFmt('%s.PMFetchClassWithCondition: Condition must be a ConditionWithClass, not a %s', [ClassName, BoldCondition.Classname]);
 end;
 
 function tBoldSystemPersistenceMapper.NextExternalObjectId(const ValueSpace: IBoldValueSpace; ObjectID: TBoldObjectId): TBoldObjectId;
@@ -532,8 +530,11 @@ begin
     Exit;
   Guard := TBoldGuard.Create(ModifiedObjectIDList, NewObjectIDList, DeletedObjectIDList);
   DeletedObjectIDList := TBoldObjectIdList.Create;
+  DeletedObjectIDList.OwnsEntries := false;
   NewObjectIDList := TBoldObjectIdList.Create;
+  NewObjectIDList.OwnsEntries := false;
   ModifiedObjectIDList := TBoldObjectIdList.Create;
+  ModifiedObjectIDList.OwnsEntries := false;
 
   // downto order is important here - Daniel
   for i := ObjectIDList.Count - 1 downto 0 do
@@ -542,11 +543,11 @@ begin
     if ObjectContents.BoldPersistenceState = bvpsModified then
     begin
       if ObjectContents.BoldExistenceState = besDeleted then
-        DeletedObjectIDList.Add(ObjectIDList[i])
+        DeletedObjectIDList.AddAndAdopt(ObjectIDList[i])
       else
-        NewObjectIDList.Add(ObjectIDList[i]);
+        NewObjectIDList.AddAndAdopt(ObjectIDList[i]);
     end else
-      ModifiedObjectIDList.Add(ObjectIDList[i]);
+      ModifiedObjectIDList.AddAndAdopt(ObjectIDList[i]);
   end;
 
   ReserveNewIds(ValueSpace, ObjectIdList, TranslationList);
@@ -632,13 +633,13 @@ begin
   if MoldClass.Versioned and
      assigned(MoldClass.SuperClass) and
      not MoldClass.SuperClass.Versioned then
-    raise EBold.CreateFmt(sSuperClassNotVersioned, [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
+    raise EBold.CreateFmt('Class %s is versioned, but not it''s superclass %s', [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
 
   if Assigned(MoldClass.SuperClass) then
   begin
     fSuperClass := SystemPersistenceMapper.ObjectPersistencemappers[MoldClass.SuperClass.TopSortedIndex];
     if not Assigned(fSuperClass) then
-      raise EBold.CreateFmt(sSuperClassNotPersistent, [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
+      raise EBold.CreateFmt('Class %s has a nonpersistent superclass %s', [MoldClass.ExpandedExpressionName, MoldClass.SuperClass.ExpandedExpressionname]);
     SuperClass.fHasSubClasses := true;
   end;
 
@@ -809,10 +810,10 @@ begin
               MapperName := Mapping.ExpandedMapperName;
           end;
 
-          raise EBold.CreateFmt(  sUnableToFindPMapperForX+ BOLDCRLF +
-            sUnableReason1 + BOLDCRLF +
-            sUnableReason2 + BOLDCRLF +
-            sUnableReason3, [
+          raise EBold.CreateFmt('Unable to find persistence mapper for %s.%s (type: %s, mapper: %s). possible reasons: '+BOLDCRLF +
+            '* Typo'+BOLDCRLF+
+            '* The mapper is not correctly installed in the initialization clause'+BOLDCRLF+
+            '* The unit with the mapper is not included in the project', [
             MoldAttribute.MoldClass.ExpandedExpressionName,
             MoldAttribute.ExpandedExpressionName,
             MoldAttribute.BoldType,
@@ -849,7 +850,7 @@ begin
             begin
               MemberDescriptor := BoldMemberPersistenceMappers.DescriptorByDelphiName[MoldRole.PMapperName];
               if not assigned(MemberDescriptor) then
-                raise EBold.CreateFmt(sUnableToFindPMapperForXY, [MoldRole.MoldClass.ExpandedExpressionName, MoldRole.ExpandedExpressionName, MoldRole.PMappername]);
+                raise EBold.CreateFmt('Unable to find PersistenceMapper for %s.%s (mapper: %s)', [MoldRole.MoldClass.ExpandedExpressionName, MoldRole.ExpandedExpressionName, MoldRole.PMappername]);
             end;
           end;
           rtLinkRole: if MoldRole.MainRole.EffectivePersistent then
@@ -924,7 +925,7 @@ begin
 
   fExpressionName := MoldMember.ExpandedExpressionName;
   if assigned(Owner.MemberPersistenceMappers.MemberMapperByExpressionName[fExpressionName]) then
-    raise EBold.CreateFmt(sDuplicatePMappersForXInY, [fExpressionName, Owner.ExpressionName]);
+    raise EBold.CreateFmt('Duplicate memberMappers called "%s" in class %s', [fExpressionName, Owner.ExpressionName]);
 
   if MoldMember is TMoldAttribute then
   begin
@@ -958,22 +959,22 @@ end;
 
 procedure TBoldMemberPersistenceMapper.PMCreate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMCreate', classname, 'PMCreate']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMCreate', classname, 'PMCreate']);
 end;
 
 procedure TBoldMemberPersistenceMapper.PMUpdate(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace;TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMUpDate', classname, 'PMUpDate']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMUpDate', classname, 'PMUpDate']);
 end;
 
 procedure TBoldMemberPersistenceMapper.PMDelete(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; TranslationList: TBoldIdTranslationList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMDelete', classname, 'PMDelete']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMDelete', classname, 'PMDelete']);
 end;
 
 procedure TBoldMemberPersistenceMapper.PMFetch(ObjectIdList: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; FetchMode: Integer; TranslationList: TBoldIdTranslationList; FailureList: TBoldObjectIdList);
 begin
-  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMFetch', classname, 'PMFetch']); // do not localize
+  raise EBold.CreateFmt(sCallToAbstractMethodOnCustomMapper, ['TBoldMemberPersistenceMapper', 'PMFetch', classname, 'PMFetch']);
 end;
 
 { TBoldMemberPersistenceMapperList }
@@ -1027,7 +1028,7 @@ begin
     begin
       MapperIndex := MemberMapperIndexByMemberIndex[MemberIdList[i].MemberIndex];
       if MapperIndex = -1 then
-        raise EBold.CreateFmt('%s.BuildMemberFetchLists: MemberMapperIndexByMemberIndex not found. Possibly TimeStamp tag not selected in the model', [classname]);
+        raise EBold.CreateFmt('%s.BuildMemberFetchLists: MemberMapperIndexByMemberIndex not found for memberIndex %d', [classname, MemberIdList[i].MemberIndex]);
       TestAdd(MemberPersistenceMappers[MapperIndex]);
     end
   else
@@ -1056,16 +1057,21 @@ begin
 end;
 
 procedure TBoldSystemPersistenceMapper.SubscribeToPersistenceEvents(
-  Subscriber: TBoldSubscriber);
+  Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
-  AddSubscription(Subscriber, bpeStartFetch, bpeStartFetch);
-  AddSubscription(Subscriber, bpeEndFetch, bpeEndFetch);
-  AddSubscription(Subscriber, bpeFetchObject, bpeFetchObject);
-  AddSubscription(Subscriber, bpeFetchMember, bpeFetchMember);
-  AddSubscription(Subscriber, bpeUpdateObject, bpeUpdateObject);
-  AddSubscription(Subscriber, bpeCreateObject, bpeCreateObject);
-  AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
-  AddSubscription(Subscriber, bpeFetchId, bpeFetchId);
+  if Events <> [] then
+    AddSmallSubscription(Subscriber, Events)
+  else
+  begin
+    AddSubscription(Subscriber, bpeStartFetch, bpeStartFetch);
+    AddSubscription(Subscriber, bpeEndFetch, bpeEndFetch);
+    AddSubscription(Subscriber, bpeFetchObject, bpeFetchObject);
+    AddSubscription(Subscriber, bpeFetchMember, bpeFetchMember);
+    AddSubscription(Subscriber, bpeUpdateObject, bpeUpdateObject);
+    AddSubscription(Subscriber, bpeCreateObject, bpeCreateObject);
+    AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
+    AddSubscription(Subscriber, bpeFetchId, bpeFetchId);
+  end;
 end;
 
 { TBoldMemberMapperIndex }
@@ -1081,7 +1087,7 @@ var
   i: Integer;
 begin
   if ObjectIdList.Count = 0 then
-    raise EBold.CreateFmt(sObjectIDListIsEmpty, [classname]);
+    raise EBold.CreateFmt('%s.CommonSuperClassObjectMapper: ObjectIdList is empty', [classname]);
 
   result := ObjectPersistenceMappers[ObjectIdList[0].TopSortedIndex];
   for i := 1 to ObjectIdList.Count - 1 do

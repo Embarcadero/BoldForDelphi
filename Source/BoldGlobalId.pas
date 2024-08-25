@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGlobalId;
@@ -31,7 +30,6 @@ type
     property ClassExpressionName: string read fClassExpressionName;
     property AsString: String read GetAsString;
   end;
-
 
 implementation
 

@@ -107,13 +107,12 @@ uses
   AttracsTraceLog,
   AttracsDefs,
   AttracsPerformance,
-   {$IFNDEF NO_PERFORMANCE_COUNTERS}
+   {$IFDEF BOLD_PERFORMANCE_COUNTERS}
      BoldSystemPerf,
    {$ENDIF}
   {$ENDIF}
   BoldCoreConsts,
-  BoldSystem,
-  BoldRev;
+  BoldSystem;
 
 { TBoldDeriver }
 procedure TBoldAbstractDeriver.Derive;
@@ -173,7 +172,7 @@ begin
   // and if too long and the SubscriptionSaver is enabled, add this member as slow and save the subscriptions
   PerformanceMeasurement.EndMeasurement;
 
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   BoldSystemPerfObject.BoldEventPluggedDeriver_DoDeriveAndSubscribe(PerformanceMeasurement.TimeTaken);
   {$ENDIF}
   if not PerformanceMeasurement.AcceptableTimeForSmallComputation then
@@ -387,8 +386,5 @@ function TBoldDeriver.GetInternalDeriverState: TBoldDeriverState;
 begin
   Result := FInternalDeriverState;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDeriver.pas $ $Revision: 26 $ $Date: 02-04-30 15:04 $');
 
 end.

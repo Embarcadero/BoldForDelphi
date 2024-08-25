@@ -82,14 +82,13 @@ var
 
   function BoldEffectiveEnvironment: TBoldEnvironmentConfiguration;
   function BoldEnvironmentsFinalized: Boolean;
-  function BoldInstalledQueue: TBoldQueue; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  function BoldInstalledQueue: TBoldQueue;
 
 implementation
 
 uses
   SysUtils,
-  BoldEnvironmentVCL,   // Don't remove this!
-  BoldRev;
+  BoldEnvironmentVCL;   // Don't remove this!
 
 const
   UnsupportedFunction = '%s: function unsupported in environment configuration %s';

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldExternalizedReferences;
@@ -35,7 +34,7 @@ implementation
 
 uses
   SysUtils,
-  BoldRev;
+  BoldIndex;
 
 type
   { TBoldExternalLink }
@@ -54,7 +53,7 @@ type
     class var IX_ExternalRef: integer;
   public
     constructor Create;
-    function FindByReferee(Referee: TObject): TBoldExternalLink; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByReferee(Referee: TObject): TBoldExternalLink;
   end;
 
   { TBoldExternalizedReferenceHashIndex }

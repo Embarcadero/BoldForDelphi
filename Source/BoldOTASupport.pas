@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOTASupport;
@@ -75,8 +75,7 @@ uses
 
   BoldCoreConsts,
   BoldLogHandler,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 function GetProjectSearchPath(Project: IOTAProject): String;
 var
@@ -251,9 +250,6 @@ begin
 end;
 
 function GetOTAProject: IOTAProject;
-var
-  i: integer;
-  CurrentModule: IOTAModule;
 begin
   result := (BorlandIDEServices as IOTAModuleServices).GetActiveProject;
   if OTADEBUG then

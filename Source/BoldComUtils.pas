@@ -100,7 +100,6 @@ implementation
 uses
   SysUtils,
   Variants,
-  BoldRev,
   ComObj,
   Windows;
 
@@ -355,7 +354,6 @@ begin
 end;
 
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldComUtils.pas $ $Revision: 21 $ $Date: 02-07-17 7:04 $');
 
 finalization
   if NeedToUninitialize then CoUninitialize;

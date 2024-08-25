@@ -122,6 +122,4 @@ begin
   Result := G_TypeLibrary;
 end;
 
-initialization
-
 end.

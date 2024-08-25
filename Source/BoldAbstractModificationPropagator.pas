@@ -37,7 +37,7 @@ type
     FBoldNotificationPropagator: TBoldAbstractNotificationPropagator;
     fClientId: TBoldClientid;
   public
-    constructor Create(MoldModel: TMoldModel; ClientId: TBoldClientId);
+    constructor Create(MoldModel: TMoldModel; ClientId: TBoldClientId); reintroduce;
     procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     procedure TransmitEvents(const ClientID: TBoldClientID); override;
     property BoldNotificationPropagator: TBoldAbstractNotificationPropagator read FBoldNotificationPropagator write FBoldNotificationPropagator;

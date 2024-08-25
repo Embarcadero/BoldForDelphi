@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMLAttributes;
@@ -91,9 +90,7 @@ type
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     procedure ReceiveEventFromOwned(originator: TObject; originalEvent: TBoldEvent; const Args: array of const); override;
-{$IFNDEF BOLD_NO_QUERIES}
     function ReceiveQueryFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; override;
-{$ENDIF}    
     function StringClass: TBAStringClass; virtual;
     procedure Initialize; override;
   public
@@ -407,11 +404,11 @@ class function TBALanguage.GetValues: TBAValueSetValueList;
 begin
   result := nil;
   if TBoldSystem.DefaultSystem <> nil then
-    if TBoldSystem.DefaultSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[BoldMLLanguageClassName] <> nil then
-    begin
-      EnsureLanguageList;
-      result := _BoldLanguageList;
-    end;
+  if TBoldSystem.DefaultSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[BoldMLLanguageClassName] <> nil then
+  begin
+    EnsureLanguageList;
+    result := _BoldLanguageList;
+  end;
 end;
 {--- TBAMLString ---}
 
@@ -682,7 +679,7 @@ procedure TBAMLValueSet.SubscribeToStringRepresentation(
 begin
   Values[AsInteger].SubscribeToStringRepresentation(Representation, subscriber, requestedEvent);
 end;
-{$IFNDEF BOLD_NO_QUERIES}
+
 function TBAMLString.ReceiveQueryFromOwned(Originator: TObject;
   OriginalEvent: TBoldEvent; const Args: array of const;
   Subscriber: TBoldSubscriber): Boolean;
@@ -691,7 +688,7 @@ begin
   if OriginalEvent = bqMayModify then
     result := CanModify;
 end;
-{$ENDIF}
+
 procedure TBAMLString.AssignContentValue(const Source: IBoldValue);
 var
   s: IBoldBlobContent;

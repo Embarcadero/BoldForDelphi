@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractPartiallyExternalPC;
@@ -38,7 +38,7 @@ type
     procedure FindMoldRoleByName(ObjectContents: IBoldObjectContents; ExpressionName: String; var MoldRole: TMoldRole; var Index: integer);
   public
     constructor Create(MoldModel: TMoldModel; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; AUpdateBoldDatabaseFirst: boolean);
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure SetMultiLink(MultiLink: IBoldObjectIdListref; ExternalKeys: TBoldObjectIdList; MoldClassOfOtherEnd: TMoldClass);
     procedure SetSingleLink(SingleLink: IBoldObjectIdRef; ExternalKey: TBoldObjectId; MoldClassOfOtherEnd: TMoldClass);
     procedure TranslateExternalKeysToInternalIds(MoldClass: TMoldClass; ExternalKeys, InternalIds: TBoldObjectIdList);
@@ -81,7 +81,7 @@ var
   Guard: IBoldGuard;
   UpdateIdList: TBoldObjectIdList;
   TimeStamp: Integer;
-  TimeOfTimeStamp: TDateTime;
+  TimeOfLatestUpdate: TDateTime;
 begin
   Guard := TBoldguard.Create(TranslationList, NewId, UpdateIdlist);
   TranslationList := TBoldIDTranslationList.Create;
@@ -105,7 +105,8 @@ begin
   NewObject := nil;
 
   UpdateIdList.Add(NewId);
-  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfTimeStamp, -1);
+  TimeOfLatestUpdate := now;
+  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfLatestUpdate, -1);
   Id := TranslationList.TranslateToNewId[NewId].Clone;
   Ids.Add(Id);
   NewExternalObjects.Add(Id);
@@ -125,7 +126,7 @@ var
   Guard: IBoldGuard;
   UpdateIdList: TBoldObjectIdList;
   TimeStamp: Integer;
-  TimeOfTimeStamp: TDateTime;
+  TimeOfLatestUpdate: TDateTime;
 begin
   Guard := TBoldguard.Create(TranslationList, NewId, UpdateIdlist);
   TranslationList := TBoldIDTranslationList.Create;
@@ -151,7 +152,8 @@ begin
     UpdateIdList.Add(NewId);
   end;
 
-  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfTimeStamp, -1);
+  TimeOfLatestUpdate := now;
+  NextPersistenceController.PMUpdate(UpdateIdList, ValueSpace, nil, nil, TranslationList, TimeStamp, TimeOfLatestUpdate, -1);
 
   for i := 0 to ExternalIDlist.Count - 1 do
   begin
@@ -189,7 +191,7 @@ begin
     raise EBold.CreateFmt(sNotSupportedWithNoKeys, [classname, MoldClass.ExpandedExpressionName]);
 
   result := format('%s.%s in (', [
-    BoldExpandName(ExternalKey.MoldClass.Tablename, ExternalKey.MoldClass.Name, xtSQL, -1, nccFalse),
+    BoldExpandName(ExternalKey.MoldClass.ExternalTableName, ExternalKey.MoldClass.Name, xtSQL, -1, nccFalse),
     BoldExpandName(ExternalKey.ColumnName, ExternalKey.name, xtSQL, -1, nccFalse)]);
   Mapping := TypeNameDictionary.MappingForModelName[ExternalKey.BoldType];
   KeyIsString := assigned(Mapping) and SameText(Mapping.ExpandedContentsName, BoldContentName_String);

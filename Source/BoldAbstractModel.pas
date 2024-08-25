@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAbstractModel;
@@ -57,7 +57,6 @@ implementation
 
 uses
   SysUtils,
-
   BoldCoreConsts,
   BoldBld,
   BoldGuard,
@@ -318,7 +317,5 @@ procedure TBoldAbstractModel.EnsureMoldModelCurrent;
 begin
 
 end;
-
-initialization
 
 end.

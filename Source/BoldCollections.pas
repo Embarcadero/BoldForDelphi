@@ -75,8 +75,7 @@ uses
 
   BoldCoreConsts,
   BoldDefs,
-  BoldIndex,
-  BoldRev;
+  BoldIndex;
 
 { TBoldUniquelyNamedCollectionItem }
 

@@ -73,7 +73,6 @@ type
     procedure SetImages(const Value: TImageList);
   protected
     Buttons: array[TBoldNavigateBtn] of TBoldNavButton;
-    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
     procedure KeyDown(var Key: Word; Shift: TShiftState); override;
     procedure Loaded; override;
     procedure SetActiveButtons;
@@ -96,7 +95,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure assign(Source: TPersistent); override;
+    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
+    procedure Assign(Source: TPersistent); override;
     procedure BtnClick(index: TBoldNavigateBtn);
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   end;
@@ -677,7 +677,7 @@ begin
   end;
 end;
 
-procedure TBoldCustomNavigatorCom.assign(Source: TPersistent);
+procedure TBoldCustomNavigatorCom.Assign(Source: TPersistent);
 begin
   inherited;
   if Source is TBoldCustomNavigatorCom then
@@ -735,7 +735,5 @@ begin
   FImages := Value;
   FixButtonGlyphs;
 end;
-
-initialization
 
 end.

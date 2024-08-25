@@ -148,6 +148,8 @@ type
     property IgnoreModelChanges: Boolean read FIgnoreModelChanges write SetIgnoreModelChanges;
   public
     constructor Create(AOwner: TComponent); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure AfterConstruction; override;
     procedure EditOclExpression(Element: TUMLModelElement; TaggedValue: String; Context: TUMLModelElement);
     property ModelHandle: TBoldModel read FModelHandle write SetModelHandle;
     property CurrentModel: TUMLModel read GetCurrentModel;
@@ -161,12 +163,19 @@ var
 implementation
 
 uses
+  System.UITypes,
   BoldSystem, BoldDefs, BoldPMapperLists, BoldAttributes,
   BoldUMLModelDataModule, BoldDefaultTaggedValues, BoldUtils,
   BoldTaggedValueSupport, Variants, BoldUMLModelSupport, BoldUMLOCLEditor,
   Winapi.Windows, BoldAbstractModel, BoldSystemHandle, RTLConsts;
 
 {$R *.dfm}
+
+procedure TdmBoldUMLModelEditorHandles.AfterConstruction;
+begin
+  inherited;
+  Assert((dmBoldUMLModelEditorHandles = nil) or (dmBoldUMLModelEditorHandles = self));
+end;
 
 function TdmBoldUMLModelEditorHandles.bcrAutoCreatedGetAsCheckBoxState(
   aFollower: TBoldFollower): TCheckBoxState;
@@ -286,14 +295,19 @@ procedure TdmBoldUMLModelEditorHandles.bdhTypesForAttributeDeriveAndSubscribe(
   ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber);
 begin
   if not Assigned(ModelHandle) then
+  begin
+    ResultElement.SetReferenceValue(nil);
     exit;
+  end;
   ResultElement.SetReferenceValue(ModelHandle.DataTypes);
   if Assigned(subscriber) then
   begin
-    ModelHandle.UMLModel.DefaultSubscribe(Subscriber);
     ModelHandle.AddSubscription(Subscriber, beModelChanged);
     ModelHandle.DataTypes.SubscribeToExpression('', Subscriber);
     (ResultElement.Value as TBoldList).DefaultSubscribe(Subscriber);
+    ResultElement.Value.AddSmallSubscription(Subscriber, [beDestroying]);
+    ModelHandle.DataTypes.AddSmallSubscription(Subscriber,  [beDestroying]);
+    ModelHandle.DataTypes.DefaultSubscribe(Subscriber{, breReSubscribe});
   end;
 end;
 
@@ -347,7 +361,6 @@ procedure TdmBoldUMLModelEditorHandles.EditOclExpression(
   Element: TUMLModelElement; TaggedValue: String; Context: TUMLModelElement);
 var
   res: String;
-  lPrevIgnoreModelChanges: Boolean;
   Tag: TUMLTaggedValue;
   Value: string;
 begin
@@ -460,14 +473,35 @@ begin
     result := nil;
 end;
 
+procedure TdmBoldUMLModelEditorHandles.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited;
+  if (AComponent = fModelHandle) and (Operation = opRemove) then
+    fModelHandle := nil;
+end;
+
 procedure TdmBoldUMLModelEditorHandles.SetModelHandle(const Value: TBoldModel);
 var
   index: integer;
 begin
+  if FModelHandle = Value then
+    exit;
+  if Assigned(FModelHandle) then
+    FModelHandle.RemoveFreeNotification(self);
   FModelHandle := Value;
+  if Assigned(FModelHandle) then
+    FModelHandle.FreeNotification(self);
+
   for index := 0 to ComponentCount-1 do
     if Components[index] is TBoldNonSystemHandle then
       (Components[index] as TBoldNonSystemHandle).StaticSystemHandle := Value.SystemHandle;
+
+  for index := 0 to ComponentCount-1 do
+    if Components[index] is TBoldRootedHandle then
+      if (Components[index] as TBoldRootedHandle).RootHandle = nil then
+// (Components[index] as TBoldRootedHandle).RootHandle := behModel;
+        raise Exception.CreateFmt('Error Message' , [TBoldRootedHandle(Components[index]).Name]);
 end;
 
 procedure TdmBoldUMLModelEditorHandles.SetIgnoreModelChanges(

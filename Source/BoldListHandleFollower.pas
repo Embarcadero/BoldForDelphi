@@ -58,12 +58,14 @@ uses
 procedure TBoldListHandleFollower.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  case RequestedEvent of
-  breHandleNil:
-     BoldHandle := nil;
-  breListIdentityChanged,
-  breHandleIndexChanged:
+  case OriginalEvent of
+    beValueIdentityChanged:
      FollowerValueCurrent := False;
+    beDestroying:
+    begin
+      Assert(Originator = BoldHandle);
+      BoldHandle := nil;
+    end;
   end;
 end;
 
@@ -116,19 +118,16 @@ procedure TBoldListHandleFollower.SetFollowerValueCurrent(value: Boolean);
     end;
   end;
 
-  procedure Subscribe;
-  begin
-    if Assigned(BoldHandle) then
-    begin
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breListIdentityChanged);
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breHandleIndexChanged);
-    end;
-  end;
-
   procedure SubscribeToHandleReference;
   begin
     if assigned(fBoldHandle) then
-      BoldHandle.AddSmallSubscription(Subscriber, [beDestroying], breHandleNil);
+      BoldHandle.AddSmallSubscription(Subscriber, [beDestroying]);
+  end;
+
+  procedure Subscribe;
+  begin
+    if assigned(fBoldHandle) then
+      BoldHandle.AddSmallSubscription(Subscriber, [beDestroying, beValueIdentityChanged]);
   end;
 
 begin
@@ -136,8 +135,8 @@ begin
   begin
     if Value then
     begin
-      PropagateValue;
       RemoveFromDisplayList(false);
+      PropagateValue;
       Subscribe;
     end
     else

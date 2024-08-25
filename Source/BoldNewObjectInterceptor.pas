@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldNewObjectInterceptor;
@@ -167,7 +166,5 @@ begin
   if Element is TBoldSystem then
     (Element as TBoldSystem).Classes[0].DefaultSubscribe(Subscriber, breReEvaluate);
 end;
-
-initialization
 
 end.

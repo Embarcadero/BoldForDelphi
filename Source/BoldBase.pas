@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 
@@ -99,10 +99,10 @@ type
   private
     fStateAndFlagBank: cardinal;
   protected
-    procedure SetInternalState(Mask, shift, value: cardinal); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetInternalState(Mask, shift: cardinal): cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetElementFlag(Flag: TBoldElementFlag; Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetElementFlag(Flag: TBoldElementFlag): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetInternalState(Mask, shift, value: cardinal);
+    function GetInternalState(Mask, shift: cardinal): cardinal;
+    procedure SetElementFlag(Flag: TBoldElementFlag; Value: Boolean);
+    function GetElementFlag(Flag: TBoldElementFlag): Boolean;
     property StateAndFlagBank: cardinal read fStateAndFlagBank;  // allow reading in subclasses
   end;
 
@@ -144,8 +144,8 @@ type
   public
     function LiveInstances: int64;
     function MemoryUsage: int64;
-    procedure InstanceCreated;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure InstanceDestroyed;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure InstanceCreated;
+    procedure InstanceDestroyed;
     property BoldClass: TClass read fClass;
     property CreatedInstances: int64 read fCreatedInstances;
     property DestroyedInstances: int64 read fDestroyedInstances;
@@ -154,7 +154,7 @@ type
 
   TBoldClassStatsList = class(TBoldIndexableList)
   private
-    function GetClassStats(const index: integer): TBoldClassStats; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetClassStats(const index: integer): TBoldClassStats;
     class var IX_Class: integer;
   public
     constructor Create;
@@ -195,7 +195,7 @@ end;
 {$IFNDEF BOLD_BCB}
 procedure TBoldRefCountedObject.AfterConstruction;
 begin
-  AtomicDecrement(fRefCount);  // was set by NewInstace
+  InterlockedDecrement(fRefCount);  // was set by NewInstace
 end;
 {$ENDIF}
 
@@ -215,12 +215,12 @@ end;
 
 function TBoldRefCountedObject._AddRef: Integer;
 begin
-  Result := AtomicIncrement(FRefCount);
+  Result := InterlockedIncrement(FRefCount);
 end;
 
 function TBoldRefCountedObject._Release: Integer;
 begin
-  Result := AtomicDecrement(FRefCount);
+  Result := InterlockedDecrement(FRefCount);
   if Result = 0 then
     Destroy;
 end;

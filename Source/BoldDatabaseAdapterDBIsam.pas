@@ -82,6 +82,4 @@ begin
   InternalDatabase := value;
 end;
 
-initialization
-
 end.

@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclSymbolImplementations;
@@ -14,13 +13,13 @@ procedure RegisterOCLOperation(OperationClass: TBoldOclSymbolClass);
 implementation
 
 uses
-  Classes,
+  SysUtils,
   DateUtils,
+  Classes,
+  Variants,
   Math,
   System.RegularExpressions,
   System.RegularExpressionsCore,
-  SysUtils,
-  Variants,
 
   BoldCoreConsts,
   BoldElements,
@@ -2312,7 +2311,7 @@ begin
   else
     for i := 0 to List.Count - 1 do
       if not TBoldAttribute(List[i]).IsNull then
-        Sum := Sum + XNumeric(List[i]);
+      Sum := Sum + XNumeric(List[i]);
 
   if ListElementType.ConformsTo(HELP.IntegerType) then
     HELP.MakeNewInteger(Params.Result, Round(Sum))
@@ -2369,10 +2368,10 @@ begin
   for i := 0 to List.Count - 1 do
   begin
     if not TBoldAttribute(List[i]).IsNull then
-    begin
+  begin
       if VarIsNull(Min) or (Min > XNumeric(List[i])) then
         Min := XNumeric(List[i]);
-    end;
+  end;
   end;
   if VarIsNull(Min) then
     HELP.MakeNewNull(Params.Result, Params.Result.BoldType)
@@ -2400,7 +2399,7 @@ begin
   begin
     for i := 0 to List.Count - 1 do
       if not TBoldAttribute(List[i]).IsNull then
-        Sum := Sum + XNumeric(List[i]);
+      Sum := Sum + XNumeric(List[i]);
     HELP.MakeNewNumeric(Params.Result, Sum / List.Count);
   end;
 end;
@@ -3243,7 +3242,7 @@ begin
   if (Params.values[1] as TBAInteger).IsNull then
     NewTime := maxInt
   else
-    NewTime := (Params.values[1] as TBAInteger).AsInteger;
+  NewTime := (Params.values[1] as TBAInteger).AsInteger;
   Params.Result.SetReferenceValue(OldObject.AtTime(NewTime));
 end;
 
@@ -3436,6 +3435,7 @@ begin
   sl := TStringList.Create;
   try
     List := XList(Params.values[0]);
+    List.EnsureRange();
     for i := 0 to List.Count - 1 do
       sl.Add(XString(List[i]));
     HELP.MakeNewString(Params.Result, sl.CommaText);
@@ -3733,8 +3733,8 @@ begin
     Params.Result.SetReferenceValue(nil)
   else
   begin
-    i := SecondsBetween(XDateTime(Params.Values[0]),XDateTime(Params.Values[1]));
-    Help.MakeNewInteger(Params.Result,i);
+  i := SecondsBetween(XDateTime(Params.Values[0]),XDateTime(Params.Values[1]));
+  Help.MakeNewInteger(Params.Result,i);
   end;
 end;
 
@@ -3776,8 +3776,8 @@ begin
     Params.Result.SetReferenceValue(nil)
   else
   begin
-    i := MinutesBetween(XDateTime(Params.Values[0]),XDateTime(Params.Values[1]));
-    Help.MakeNewInteger(Params.Result,i);
+  i := MinutesBetween(XDateTime(Params.Values[0]),XDateTime(Params.Values[1]));
+  Help.MakeNewInteger(Params.Result,i);
   end;
 end;
 
@@ -3798,8 +3798,8 @@ begin
     Params.Result.SetReferenceValue(nil)
   else
   begin
-    i := HoursBetween(XDateTime(Params.Values[0]),XDateTime(Params.Values[1]));
-    Help.MakeNewInteger(Params.Result,i);
+  i := HoursBetween(XDateTime(Params.Values[0]),XDateTime(Params.Values[1]));
+  Help.MakeNewInteger(Params.Result,i);
   end;
 end;
 

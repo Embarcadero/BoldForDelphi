@@ -13,8 +13,10 @@ function ResourceNameToModelName(aRequestedResource: String) : String;
 function ModelNameToResourceName(aModelName: String) : String;
 
 implementation
+
 uses
-  SysUtils, BoldSystemRT;
+  SysUtils,
+  BoldSystemRT;
 
 
 

@@ -87,8 +87,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 const
   InitRepeatPause = 400; { pause before repeat timer (ms)}
@@ -229,7 +228,5 @@ begin
     DrawFocusRect(Canvas.Handle, R);
   end;
 end;
-
-
 
 end.

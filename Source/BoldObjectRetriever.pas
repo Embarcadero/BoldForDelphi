@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldObjectRetriever;
@@ -68,7 +67,5 @@ begin
     end;
   end;
 end;
-
-
 
 end.

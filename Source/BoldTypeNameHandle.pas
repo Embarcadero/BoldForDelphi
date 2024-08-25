@@ -51,6 +51,4 @@ begin
   FDictionary.Assign(Value);
 end;
 
-initialization
-
 end.

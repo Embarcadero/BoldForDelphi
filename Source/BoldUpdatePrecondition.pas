@@ -29,9 +29,9 @@ type
   private
     fFreeStandingValueSpace: TBoldFreeStandingValueSpace;
     fFailureList: TBoldObjectIdList;
-    function GetValueSpace: IBoldValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetFreeStandingValueSpace: TBoldFreeStandingValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetFailureList: TBoldObjectIdList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetValueSpace: IBoldValueSpace;
+    function GetFreeStandingValueSpace: TBoldFreeStandingValueSpace;
+    function GetFailureList: TBoldObjectIdList;
     function GetHasOptimisticLocks: Boolean; // do not inline it causes problems in D2007 at least
   protected
     function GetStreamName: string; override;

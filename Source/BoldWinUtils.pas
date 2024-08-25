@@ -27,6 +27,4 @@ begin
   Result := ParentRect.Bottom - ChildRect.Bottom;
 end;
 
-initialization
-
 end.

@@ -1,4 +1,4 @@
-﻿unit BoldAFP;
+unit BoldAFP;
 
 interface
 
@@ -338,5 +338,4 @@ finalization
   FreeAndNil(G_AutoFormProviderRegistry);
 
 end.
-
 

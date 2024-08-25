@@ -158,7 +158,7 @@ type
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    procedure Changed; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Changed;
     function MayModify(aFollower: TBoldFollower): Boolean; virtual;
     procedure HoldsChangedValue(Follower: TBoldFollower); virtual;
     procedure ReleaseChangedValue(Follower: TBoldFollower); virtual;
@@ -192,22 +192,22 @@ type
     fControlData: TObject;
     FSubscriber: TBoldSubscriber;
     FIndirectElement: TBoldIndirectElement;
-    function GetActive: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetActive: Boolean;
     procedure SetActive(Value: Boolean);
-    function GetElementValid: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetElementValid: Boolean;
     procedure SetElementValid(Value: Boolean);
-    function GetSubFollower(index: Integer): TBoldFollower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSubFollower(index: Integer): TBoldFollower;
     function GetEnsuredSubFollower(Index: Integer): TBoldFollower;
-    function GetSubFollowerCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetCurrentIndex: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSubFollowerCount: Integer;
+    function GetCurrentIndex: Integer;
     procedure SetCurrentIndex(index: integer);
     procedure SetElement(AElement: TBoldElement);
     procedure SetState(AValue: TBoldFollowerState);
-    function GetRendererData: TBoldRendererData; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRendererData: TBoldRendererData;
     function CollectMatchingDownwards(Followers: TBoldFollowerArray; MatchController: TBoldFollowerController): TBoldFollowerArray;
-    function GetAssertedController: TBoldFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetCurrentSubFollower: TBoldFollower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIsDirty: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAssertedController: TBoldFollowerController;
+    function GetCurrentSubFollower: TBoldFollower;
+    function GetIsDirty: Boolean;
     function GetValue: TBoldElement;
     function GetSubFollowerAssigned(index: Integer): boolean;
   protected
@@ -219,8 +219,8 @@ type
     procedure MakeClean;
     {State handling}
     procedure MarkDirty;
-    procedure MarkClean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure MarkEnsured; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure MarkClean;
+    procedure MarkEnsured;
     function CollectMatching(MatchController: TBoldFollowerController): TBoldFollowerArray;
     function CollectMatchingSiblings(WindowSize: Integer): TBoldFollowerArray;
     property Ensured: Boolean index befFollowerEnsured read GetElementFlag write SetElementFlag;
@@ -241,11 +241,11 @@ type
     function CheckIfInHierarchy(aElement: TBoldElement; aController: TBoldFollowerController): Boolean;
     procedure ControlledValueChanged;
     procedure DiscardChange; override;
-    function Displayable: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Displayable: Boolean;
     procedure EnsureDisplayable;
     function ExistInOwner: Boolean;
-    function MayChange: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function MayModify: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function MayChange: Boolean;
+    function MayModify: Boolean;
     procedure EnsureMulti;
     procedure EnsureSiblings;
     property Active: Boolean read GetActive write SetActive;
@@ -292,7 +292,7 @@ type
     fApplyException: TBoldApplyExceptionEvent;
     fDisplayException: TBoldDisplayExceptionEvent;
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    function GetRendererDataClass: TBoldRendererDataClass; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRendererDataClass: TBoldRendererDataClass;
     procedure SetRepresentation(Value: TBoldRepresentation);
     procedure SetExpression(const Value: string);
     procedure SetUntypedRenderer(NewRender: TBoldRenderer);
@@ -308,7 +308,7 @@ type
     function GetVariableList: TBoldExternalVariableList; virtual;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); virtual;
     procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray); virtual;
-    procedure Changed; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Changed;
     procedure DoAssign(Source: TPersistent); virtual;
     function DoApplyException(E: Exception; Elem: TBoldElement; var Discard: Boolean): Boolean;
     function DoDisplayException(E: Exception; Elem: TBoldElement): Boolean;
@@ -325,14 +325,14 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure MakeClean(Follower: TBoldFollower); virtual;
-    function MayModify(Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure HoldsChangedValue(Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ReleaseChangedValue(Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function MayModify(Follower: TBoldFollower): Boolean;
+    procedure HoldsChangedValue(Follower: TBoldFollower);
+    procedure ReleaseChangedValue(Follower: TBoldFollower);
     function GetVariableListAndSubscribe(Subscriber: TBoldSubscriber): TBoldExternalVariableList;
     procedure StartDrag(Follower: TBoldFollower);
     procedure EndDrag;
     procedure MakeUptodateAndSubscribe(aFollower: TBoldFollower; Subscribe: Boolean);
-    procedure SubscribeToElement(aFollower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SubscribeToElement(aFollower: TBoldFollower);
     procedure MultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray);
     function DragOver(Follower: TBoldFollower; ReceivingElement: TBoldElement; dropindex: Integer): Boolean; virtual;
     procedure DragDrop(Follower: TBoldFollower; ReceivingElement: TBoldElement; dropindex: Integer); virtual;
@@ -412,7 +412,6 @@ implementation
 
 uses
   BoldCoreConsts,
-  BoldRev,
   BoldExceptionHandlers,
   BoldGuiResourceStrings,
 {$IFNDEF BOLDCOMCLIENT}
@@ -2052,7 +2051,8 @@ end;
 procedure TBoldFollower.AddToDisplayList;
 begin
   if Assigned(Controller) then
-    inherited AddToDisplayList;
+    if not ((MatchObject is TComponent) and (csDestroying in TComponent(MatchObject).ComponentState)) then
+      inherited AddToDisplayList;
 end;
 
 function TBoldFollower.GetDebugInfo: string;

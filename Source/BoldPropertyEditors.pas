@@ -192,7 +192,6 @@ uses
   Dialogs,
 
   BoldCoreConsts,
-  BoldRev,
   BoldUtils,
   BoldHandles,
   BoldMetaElementList,
@@ -644,8 +643,5 @@ begin
   else
     raise EBold.CreateFmt(sCouldNotGetIBoldOCLComponent, [ClassName, 'GetVariableList']); // do not localize
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldPropertyEditors.pas $ $Revision: 43 $ $Date: 02-07-23 17:49 $');
 
 end.

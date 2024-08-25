@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemComparer;
@@ -48,18 +47,16 @@ type
     property MillisecondRounding: integer read fMillisecondRounding write fMillisecondRounding default 0;
   end;
 
-
 implementation
 
 uses
   SysUtils,
-  BoldRev,
+  DateUtils,
+
   BoldUtils,
-  BoldAttributes,
-  DateUtils;
+  BoldAttributes;
 
 { TBoldSystemComparer }
-
 
 function TBoldSystemComparer.CompareAttributes(Left,
   Right: TBoldAttribute): string;
@@ -115,14 +112,14 @@ var
 begin
   Ordered := Left.BoldRoleRTInfo.IsOrdered;
   Left.EnsureObjects;
-  if Left.Count <> Right.Count then
+{  if Left.Count <> Right.Count then
     Result := Format(
         'multilinks have different count : %s:%d <> %s:%d', [
         FullMemberName(Left),
         left.Count,
         FullMemberName(right),
         right.Count])
-  else if Left.Empty then
+  else} if Left.Empty then
     exit
   else if Ordered then
   begin

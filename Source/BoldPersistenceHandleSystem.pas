@@ -10,7 +10,8 @@ uses
   BoldPersistenceController,
   BoldPersistenceControllerSystem,
   BoldPersistenceHandle,
-  BoldSubscription;
+  BoldSubscription,
+  Classes;
 
 type
   [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
@@ -38,9 +39,7 @@ implementation
 
 uses
   SysUtils,
-  BoldHandles,
-  
-  BoldRev;
+  BoldHandles;
 
 { TBoldPersistenceHandleSystem }
 
@@ -108,7 +107,5 @@ begin
     PersistenceControllerSystem.BoldSystem := nil;
   PlaceSubscriptions;
 end;
-
-initialization
 
 end.

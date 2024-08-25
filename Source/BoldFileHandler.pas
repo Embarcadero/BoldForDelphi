@@ -96,8 +96,7 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  Dialogs,
-  BoldRev;
+  Dialogs;
 
 var
   G_FileHandlerList: TBoldObjectArray;

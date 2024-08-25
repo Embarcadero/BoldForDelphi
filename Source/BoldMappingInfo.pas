@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMappingInfo;
@@ -358,7 +357,5 @@ begin
     sl.free;
   end;
 end;
-
-
 
 end.

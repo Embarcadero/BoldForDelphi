@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPropertiesControllerPropertyEditors;
@@ -12,14 +11,11 @@ uses
   BoldAbstractPropertyEditors;
 
 type
-
-
   TPropertyNameProperty = class(TBoldStringProperty)
   public
     function  GetAttributes: TPropertyAttributes; override;
     procedure GetValues(Proc: TGetStrProc); override;
   end;
-
 
   TVCLComponentProperty = class(TBoldComponentProperty)
   public
@@ -69,9 +65,9 @@ var
     for I := 0 to Count - 1 do
     begin
       if Path = '' then
-        NewPath := PropList[I]^.Name
+        NewPath := String(PropList[I]^.Name)
       else
-        NewPath := Path + '.' + PropList[I]^.Name;
+        NewPath := Path + '.' + String(PropList[I]^.Name);
 
       if (PropList[I]^.PropType^.Kind <> tkClass) then
       begin
@@ -81,7 +77,7 @@ var
       else
       begin
         if Assigned(LastObject) then
-          NewObj := TObject(GetOrdProp(LastObject, PropList[I]^.Name));
+          NewObj := TObject(GetOrdProp(LastObject, String(PropList[I]^.Name)));
 
         if NewObj is TCollection then
           for J := 0 to TCollection(NewObj).Count - 1 do

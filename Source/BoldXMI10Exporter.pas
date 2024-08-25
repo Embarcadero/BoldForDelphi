@@ -62,7 +62,6 @@ type
 implementation
 
 uses
-  BoldRev,
   BoldDefs,
   BoldUtils,
   BoldUMLTypes;
@@ -408,8 +407,5 @@ begin
   FreeAndNil(fProcessedDTD);
   inherited;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldXMI10Exporter.pas $ $Revision: 4 $ $Date: 02-07-05 16:23 $');
 
 end.

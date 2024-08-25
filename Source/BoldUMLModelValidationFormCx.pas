@@ -140,10 +140,8 @@ procedure TfrmValidationCx.tvViolationsCustomDrawCell(
   Sender: TcxCustomGridTableView; ACanvas: TcxCanvas;
   AViewInfo: TcxGridTableDataCellViewInfo; var ADone: Boolean);
 begin
-  ADone := not Assigned(BoldPlaceableSubscriber1.BoldHandle);
-  if not ADone then
-    if AViewInfo.GridRecord.Values[1] = 'Error' then
-      ACanvas.SetBrushColor($008080FF);
+  if AViewInfo.GridRecord.Values[1] = 'Error' then
+    ACanvas.SetBrushColor($008080FF);
 end;
 
 procedure TfrmValidationCx.tvViolationsDblClick(Sender: TObject);
@@ -190,8 +188,6 @@ procedure TfrmValidationCx.BoldPlaceableSubscriber1Receive(
   OriginalEvent: TBoldEvent; RequestedEvent: Integer);
 begin
   Timer1.Enabled := true;
-  tvViolations.DataController.BoldHandle := nil;
-  BoldPlaceableSubscriber1.BoldHandle := nil;
 end;
 
 procedure TfrmValidationCx.Validate;
@@ -245,9 +241,7 @@ end;
 procedure TfrmValidationCx.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
-  BoldPlaceableSubscriber1.BoldHandle := behViolations;
   visible := (blhViolations.Count > 0);
-  tvViolations.DataController.BoldHandle := blhViolations;
 end;
 
 end.

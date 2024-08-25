@@ -64,7 +64,6 @@ type
     procedure CopyLinks(ASource: TBoldObject; MemberIdList: TBoldMemberIdList; ATouchedList: TBoldObjectList);
     procedure CopyAssociationObjects;
     procedure SetReference(SourceObject, DestinationObject: TBoldObject); overload;
-    procedure SetReference(SourceLocator, DestinationLocator: TBoldObjectLocator); overload;
     function SkipLink(AMultiLink: TBoldRoleRTInfo): boolean;
     procedure GetLastUsedId;
     function OtherEndIsSingleLink(ARoleTypeInfo: TBoldRoleRtInfo): boolean;
@@ -210,11 +209,9 @@ var
   Link1,Link2: TBoldRoleRTInfo;
   ClassList: TBoldObjectList;
   BatchList, DestinationList: TBoldObjectList;
-  i, j, c, m, iStart, iEnd: integer;
-  s: string;
+  i, j, c, iStart, iEnd: integer;
   g: IBoldGuard;
   found: boolean;
-  obj: TObject;
   CountBefore, Reused: Integer;
   DestinationClassList: TBoldObjectList;
   TopSortedClasses: TBoldClassTypeInfoList;
@@ -335,14 +332,15 @@ begin
               TBoldObjectReference(LinkObject1.BoldMembers[Link1.IndexOfOtherEnd]).BoldObject := LinkObject2;
               DestinationObject := TBoldObject(DestinationClassList.last);
               SetReference(SourceObject, DestinationObject);
-            end;
+            end
+            else
+              raise Exception.Create('TBoldSystemMerger.CopyAssociationObjects: Unexpected condition.');
             TBoldCopyAndClone.BoldCopy(DestinationObject, SourceObject, bcmAttributes, false);
           end;
       end;
       DestinationSystem.CommitTransaction();
       if DelayProcessing then
       begin
-        DelayProcessing := false;
         break;
       end;
       Report('Writing %d objects', [DestinationSystem.DirtyObjects.Count]);
@@ -375,9 +373,8 @@ var
   FetchList: TBoldObjectList;
   DestinationMultilink: TBoldObjectList;
   Locator: TBoldObjectLocator;
-  i, j, k, c, m, iStart, iEnd, indexInDestinationList: integer;
+  j, k, m, indexInDestinationList: integer;
   Skip: boolean;
-  BO: TBoldObject;
   MultiLinkBeforeChanges: TBoldObjectList;
 begin
   if MemberIdList.Count = 0 then
@@ -675,7 +672,7 @@ var
   BatchList: TBoldObjectList;
   TempList: TBoldObjectList;
   DestinationList: TBoldObjectList;
-  i,j, iStart,iEnd, CountBefore, reused: integer;
+  i, iStart,iEnd, CountBefore, reused: integer;
   AttributeList: TBoldMemberIdList;
   DelayedFetchedList: TBoldMemberIdList;
   g: IBoldGuard;
@@ -792,30 +789,15 @@ end;
 procedure TBoldSystemMerger.SecondPass;
 var
   SourceLocator: TBoldObjectLocator;
-  DestinationLocator: TBoldObjectLocator;
-  SourceOtherEnd: TBoldObject;
-  SourceLinkObject: TBoldObject;
-  SourceObject, DestinationObject: TBoldObject;
-  DestinationOtherEnd: TBoldObject;
-  DestinationLinkObject: TBoldObject;
-  SourceObject1, SourceObject2: TBoldObject;
-  LinkObject1, LinkObject2: TBoldObject;
   ClassTypeInfo: TBoldClassTypeInfo;
-  RoleRTInfo: TBoldRoleRTInfo;
-  Link1,Link2: TBoldRoleRTInfo;
-  SourceList: TBoldObjectList;
   ClassList: TBoldObjectList;
   DestinationList: TBoldObjectList;
-  DestinationMultilink: TBoldObjectList;
   BatchList: TBoldObjectList;
   FilteredList: TBoldObjectList;
   MemberIdList: TBoldMemberIdList;
-  i, j, c, m, iStart, iEnd: integer;
-  s: string;
+  i, c, iStart, iEnd: integer;
   g: IBoldGuard;
   Comparer: TBoldSystemComparer;
-  found: boolean;
-  obj: TObject;
 begin
   g := TBoldGuard.Create(BatchList, MemberIdList, DestinationList, Comparer);
   BatchList := TBoldObjectList.Create;
@@ -902,14 +884,6 @@ begin
   DestinationSystem.UpdateDatabase;
 end;
 
-procedure TBoldSystemMerger.SetReference(SourceLocator,
-  DestinationLocator: TBoldObjectLocator);
-begin
-  if Assigned(Mapping.ReferencedObjects[SourceLocator]) and (Mapping.ReferencedObjects[SourceLocator] <> DestinationLocator) then
-    raise Exception.Create('Locator already mapped');
-  Mapping.ReferencedObjects[SourceLocator] := DestinationLocator;
-end;
-
 function TBoldSystemMerger.SkipLink(AMultiLink: TBoldRoleRTInfo): boolean;
 begin
   result := SkipppedLinks.IndexOf(AMultiLink.DisplayName) <> -1;
@@ -948,7 +922,7 @@ var
   ClassTypeInfo: TBoldClassTypeInfo;
   BatchList: TBoldObjectList;
   TempList: TBoldObjectList;
-  i,j,c, iStart,iEnd: integer;
+  i, c, iStart,iEnd: integer;
   DestinationList: TBoldObjectList;
   DestinationLocator: TBoldObjectLocator;
   g: IBoldGuard;

@@ -38,7 +38,7 @@ type
     procedure InternalTransferproperties(const target: TBoldPersistenceHandleDB); override;
     {$ENDIF}
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     function GetDataBaseInterface: IBoldDatabase; override;
   published
     property DatabaseName: string read FDatabaseName write SetDatabaseName;
@@ -49,8 +49,7 @@ implementation
 
 uses
   Dialogs,
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPersistenceHandleSQLDirect }
 
@@ -157,7 +156,5 @@ procedure TBoldPersistenceHandleSQLDirect.SetEffectiveDataBase(const Value: TSDD
 begin
   FEffectiveDatabase := Value;
 end;
-
-initialization
 
 end.

@@ -323,6 +323,4 @@ begin
   fUnitName_Locked := (Trim(edExpressionName.text) = Trim(edUnitName.Text));
 end;
 
-initialization
-
 end.

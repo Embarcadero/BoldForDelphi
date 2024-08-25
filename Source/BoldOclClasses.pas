@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclClasses;
@@ -296,7 +296,7 @@ type
   TBoldSymbolDictionary = class(TBoldIndexableList)
   private
     fhelp: TBoldOclSymbolHelp;
-    function GetSymbol(const Name: string): TBoldOclSymbol; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSymbol(const Name: string): TBoldOclSymbol;
     function GetSymbolByIndex(index: Integer): TBoldOclSymbol;
     class var IX_SymbolName: integer;
   public
@@ -339,7 +339,7 @@ type
     fCurrencyZero: TBoldMember;
     fFloatZero: TBoldMember;
   public
-    constructor Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+    constructor Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem; var AErrorsEncountered: Boolean);
     destructor Destroy; override;
     procedure MakeNew(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
     function CreateNewMember(BoldType: TBoldElementTypeInfo): TBoldMember;
@@ -398,17 +398,17 @@ type
                                        IsPostfix: Boolean;
                                        HelpContext: integer;
                                        ArgsNeedCommonType: Boolean = false);
-    function GetFormalArguments(index: integer): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetNumberOfArgs: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFormalArguments(index: integer): TBoldElementTypeInfo;
+    function GetNumberOfArgs: integer;
     procedure Init; virtual; abstract;
-    class function XBoolean(Elem: TBoldElement): Boolean; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XCurrency(Elem: TBoldElement): Currency; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XInteger(Elem: TBoldElement): Integer; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XList(Elem: TBoldElement): tBoldList; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XDateTime(Elem: TBoldElement): TDateTime; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XNumeric(Elem: TBoldElement): Double; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XString(Elem: TBoldElement): String; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function XType(Elem: TBoldElement): TBoldElementTypeInfo; static; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function XBoolean(Elem: TBoldElement): Boolean; static;
+    class function XCurrency(Elem: TBoldElement): Currency; static;
+    class function XInteger(Elem: TBoldElement): Integer; static;
+    class function XList(Elem: TBoldElement): tBoldList; static;
+    class function XDateTime(Elem: TBoldElement): TDateTime; static;
+    class function XNumeric(Elem: TBoldElement): Double; static;
+    class function XString(Elem: TBoldElement): String; static;
+    class function XType(Elem: TBoldElement): TBoldElementTypeInfo; static;
     property Help: TBoldOclSymbolHelp read fHelp;
   public
     constructor Create(Help: TBoldOclSymbolHelp);
@@ -430,13 +430,14 @@ type
 implementation
 
 uses
+  System.Types,
   SysUtils,
 
   BoldCoreConsts,
-  BoldHashIndexes,
   BoldDefs,
   BoldOclError,
-  BoldAttributes;
+  BoldAttributes,
+  BoldHashIndexes;
 
 procedure TBoldOclNode.AcceptVisitor(V: TBoldOclVisitor);
 begin
@@ -751,38 +752,38 @@ begin
   fBoldType := NewType;
 end;
 
-constructor TBoldOclSymbolHelp.Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+constructor TBoldOclSymbolHelp.Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem; var AErrorsEncountered: Boolean);
 
   procedure SignalError(const Message: String; const args: array of const);
   begin
-    if assigned(BoldSystem) then
+    if assigned(ABoldSystem) then
       raise EBoldOclError.CreateFmt(Message, Args);
-    ErrorsEncountered := true;
+    AErrorsEncountered := true;
   end;
 
   procedure InstallAttribute(const Name: String; var AttrTypeInfo: TBoldAttributeTypeInfo; AttrClass: TClass; Exact: Boolean);
 
   begin
-    AttrTypeInfo := SystemTypeInfo.AttributeTypeInfoByExpressionName[Name];
-    if not assigned(AttrTypeINfo) then
+  AttrTypeInfo := SystemTypeInfo.AttributeTypeInfoByExpressionName[Name];
+  if not assigned(AttrTypeINfo) then
       SignalError(sMissingOCLType, [Name]);
 
-    if not assigned(AttrTypeInfo.AttributeClass) then
+  if not assigned(AttrTypeInfo.AttributeClass) then
       SignalError(sMissingDelphiType, [Name, AttrTypeInfo.DelphiName])
-    else 
+    else
     begin
-      case exact of
-        true: if AttrTypeInfo.AttributeClass <> AttrClass then
+    case exact of
+      true: if AttrTypeInfo.AttributeClass <> AttrClass then
           SignalError(sTypeMustBeX, [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
-        false: if not AttrTypeInfo.AttributeClass.InheritsFrom(AttrClass) then
+      false: if not AttrTypeInfo.AttributeClass.InheritsFrom(AttrClass) then
           SignalError(sTypeMustInheritFromX, [Name, AttrClass.ClassName, AttrTypeInfo.AttributeClass.ClassName]);
-      end;
     end;
+  end;
   end;
 
 begin
-  inherited create;
-  fSystemTypeInfo := SystemTypeInfo;
+  inherited Create;
+  fSystemTypeInfo := ASystemTypeInfo;
   fTypeType := SystemTypeInfo.BoldType as TBoldTypeTypeInfo;
   InstallAttribute('Numeric', fNumericType, TBANumeric, true);
   InstallAttribute('Float', fRealType, TBAFloat, false);
@@ -839,28 +840,28 @@ procedure TBoldOclSymbolHelp.MakeNewNumeric(El: TBoldOCLNode; value: Double);
 begin
   El.SetOwnedValue(fFloatZero.Clone);
   if Value <> 0 then
-    TBAFloat(El.Value).AsFloat := Value;
+  TBAFloat(El.Value).AsFloat := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewCurrency(El: TBoldOCLNode; value: currency);
 begin
   El.SetOwnedValue(fCurrencyZero.Clone);
   if Value <> 0 then
-    TBACurrency(El.Value).Ascurrency := Value;
+  TBACurrency(El.Value).Ascurrency := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewString(El: TBoldOCLNode; const value: String);
 begin
   El.SetOwnedValue(fEmptyString.Clone);
   if value <> '' then
-    TBAString(El.Value).AsString := Value;
+  TBAString(El.Value).AsString := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewInteger(El: TBoldOCLNode; value: integer);
 begin
   El.SetOwnedValue(fIntegerZero.Clone);
   if Value <> 0 then
-    TBAInteger(El.Value).AsInteger := Value;
+  TBAInteger(El.Value).AsInteger := Value;
 end;
 
 procedure TBoldOclSymbolHelp.MakeNewTime(El: TBoldOCLNode; value: TDateTime);

@@ -443,6 +443,4 @@ begin
   result := GetApplication.Version;
 end;
 
-initialization
-
 end.

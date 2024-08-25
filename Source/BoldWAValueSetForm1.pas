@@ -18,7 +18,7 @@ uses
   Buttons,
   ToolWin,
   BoldWAInterfaces,
-  ActnList;
+  ActnList, System.Actions;
 
 type
   TStageType = (stBegin, stIntermediate, stFinal);
@@ -444,7 +444,5 @@ begin
   bbInsert.SetFocus;
   tsValues.Parent.HelpContext := tsValues.HelpContext;  
 end;
-
-initialization
 
 end.

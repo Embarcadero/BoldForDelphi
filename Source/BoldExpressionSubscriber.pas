@@ -815,7 +815,7 @@ constructor TBoldSpan.Create(UmlClass: TBoldClassTypeInfo);
 begin
   Inherited Create(UmlClass);
   fRefCount := 1;
-  fSPanNo := fNextSpanNo;  
+  fSPanNo := fNextSpanNo;
   INC(fNextSpanNo);
 end;
 
@@ -974,7 +974,7 @@ begin
         result := Member;
       exit;
     end;
-  end;  
+  end;
 end;
 
 function TBoldRoleNode.ShallowClone: TBoldSpanNode;
@@ -1211,7 +1211,7 @@ begin
     BoldNamesEqual(OperationName, 'floor') or
     BoldNamesEqual(OperationName, 'round') or
     BoldNamesEqual(OperationName, 'strToInt') or
-    BoldNamesEqual(OperationName, 'strToFloat') or    
+    BoldNamesEqual(OperationName, 'strToFloat') or
     BoldNamesEqual(OperationName, 'toUpper') or
     BoldNamesEqual(OperationName, 'toLower') or
     BoldNamesEqual(OperationName, 'strToDate') or
@@ -1272,7 +1272,7 @@ begin
     BoldNamesEqual(OperationName, 'or') or
     BoldNamesEqual(OperationName, 'min') or
     BoldNamesEqual(OperationName, 'max') or
-    BoldNamesEqual(OperationName, 'mod') or    
+    BoldNamesEqual(OperationName, 'mod') or
     BoldNamesEqual(OperationName, 'like') or
     BoldNamesEqual(OperationName, 'sqlLike') or
     BoldNamesEqual(OperationName, 'sqlLikeCaseInsensitive') or
@@ -1304,7 +1304,7 @@ begin
     BoldNamesEqual(OperationName, 'reverseCollection') or
     BoldNamesEqual(OperationName, 'asSet') or
     BoldNamesEqual(OperationName, 'orderby') or
-    BoldNamesEqual(OperationName, 'subSequence') or    
+    BoldNamesEqual(OperationName, 'subSequence') or
     BoldNamesEqual(OperationName, 'orderdescending')
   then
   begin
@@ -1327,7 +1327,7 @@ begin
        Arg0Value[i].AddSubNode(ClassFilterNode);
        Result[i] := ClassFilterNode;
     end;
-  end                                                             
+  end
   else if
     BoldNamesEqual(OperationName, 'allinstances') or
     BoldNamesEqual(OperationName, 'allLoadedObjects')
@@ -1576,7 +1576,7 @@ end;
 function TBoldAllInstancesNode.GetAsString: string;
 begin
   if fLoadedOnly then
-    Result := UmlClass.ExpressionName + '.AllLoadedObjects' 
+    Result := UmlClass.ExpressionName + '.AllLoadedObjects'
   else
     Result := UmlClass.ExpressionName + '.AllInstances';
 end;
@@ -1601,3 +1601,4 @@ begin
 end;
 
 end.
+

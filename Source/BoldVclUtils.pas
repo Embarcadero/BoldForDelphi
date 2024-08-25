@@ -119,6 +119,4 @@ begin
   Result := (length(trim(str)) = 0);
 end;
 
-initialization
-
 end.

@@ -22,8 +22,7 @@ type
   {---TBoldStringKey---}
   TBoldStringKey = class
   public
-    class function HashString(const KeyString: String; CompareMode: TBoldStringCompareMode): Cardinal;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    class function HashBuffer(const P: PChar; const Length: Integer; const CompareMode: TBoldStringCompareMode): Cardinal;
+    class function HashString(const KeyString: String; CompareMode: TBoldStringCompareMode): Cardinal;
   end;
 
   {---TBoldStringHashIndex---}
@@ -34,8 +33,8 @@ type
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
    public
-    function FindByString(const KeyString: string): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure FindAllByString(const KeyString: string; List: TList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByString(const KeyString: string): TObject;
+    procedure FindAllByString(const KeyString: string; List: TList);
   end;
 
   {---TBoldCaseSensitiveStringHashIndex---}
@@ -46,7 +45,7 @@ type
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
   public
-    function FindByString(const KeyString: string): TObject;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByString(const KeyString: string): TObject;
   end;
 
   {---TBoldObjectHashIndex---}
@@ -56,10 +55,10 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    class function HashObject(KeyObject: TObject): Cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function HashObject(KeyObject: TObject): Cardinal;
   public    
-    function FindByObject(KeyObject: TObject): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure FindAllByObject(const KeyObject: TObject; List: TList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByObject(KeyObject: TObject): TObject;
+    procedure FindAllByObject(const KeyObject: TObject; List: TList);
   end;
 
   {---TBoldClassHashIndex---}
@@ -69,9 +68,9 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    class function HashClass(KeyClass: TClass): Cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class function HashClass(KeyClass: TClass): Cardinal;
   public
-    function FindByClass(KeyClass: TClass): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByClass(KeyClass: TClass): TObject;
  end;
 
    {---TBoldGuidHashIndex---}
@@ -83,9 +82,9 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function HashGUID(const KeyGUID: TGUID): Cardinal; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function HashGUID(const KeyGUID: TGUID): Cardinal;
   public
-    function FindByGUID(const KeyGUID: TGUID): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByGUID(const KeyGUID: TGUID): TObject;
  end;
 
   {---TBoldCardinalHashIndex---}
@@ -95,7 +94,7 @@ type
     function HashItem(Item: TObject): Cardinal; override;
     function Match(const Key; Item:TObject):Boolean; override;
     function Hash(const Key): Cardinal; override;
-    function FindByCardinal(const KeyCardinal: Cardinal): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FindByCardinal(const KeyCardinal: Cardinal): TObject;
   end;
 
 
@@ -104,64 +103,25 @@ implementation
 uses
   Windows,
   BoldUtils,
-  BoldRev;
-
-{$IFDEF USEGLOBALCHARBUFFER}
-const
-  InitialBufferSize = 256;
-var
-  _PBuffer: PChar;
-  _PBufferLength: integer = InitialBufferSize;
-{$ENDIF}
-
-class function TBoldStringKey.HashBuffer(const P: PChar; const Length: Integer; const CompareMode: TBoldStringCompareMode): Cardinal;
-{$IFNDEF USEGLOBALCHARBUFFER}
-  function LIHash: Cardinal; // Separate function to avoid string handling overhead in main func
-  var
-    PUpper: PChar;
-  begin
-    GetMem(PUpper, Length * SizeOf(Char));
-    try
-      Move(P^, PUpper^, Length * SizeOf(Char));
-      CharUpperBuff(PUpper, Length);  // FIXME provide method in BoldUtils
-      Result := HashBuffer(PUpper, Length, bscCaseDependent);
-    finally
-      Freemem(PUpper);
-    end;
-  end;
-{$ENDIF}
-var
-  i: integer;
-begin
-  Result := 0;
-  case CompareMode of
-    bscCaseDependent:
-      for i := 0 to Length-1 do
-        Result := ((Result shl 3) and 2147483647) or
-                  (Result shr (32-3)) xor ord(P[i]);
-    bscCaseIndependent:
-      for i := 0 to Length-1 do
-        Result := ((Result shl 3) and 2147483647) or
-                  (Result shr (32-3)) xor (ord(P[i]) or 32);
-    else
-      {$IFDEF USEGLOBALCHARBUFFER}
-      if Length > _PBufferLength then begin
-        Freemem(_PBuffer);
-        GetMem(_PBuffer, Length * SizeOf(Char));
-        _PBufferLength := Length;
-      end;
-      Move(P^, _PBuffer^, Length * SizeOf(Char));
-      CharUpperBuff(_PBuffer, Length);  // FIXME provide method in BoldUtils
-      Result := HashBuffer(_PBuffer, Length, bscCaseDependent);
-      {$ELSE}
-      Result := LIHash;
-      {$ENDIF}
-  end;
-end;
+  SysUtils;
 
 class function TBoldStringKey.HashString(const KeyString: String; CompareMode: TBoldStringCompareMode): Cardinal;
+var
+  i:integer;
+  _Len: integer;
 begin
-  Result := HashBuffer(PChar(KeyString), Length(KeyString), Comparemode);
+   Result := 0;
+   _Len:= length(KeyString);
+   case CompareMode of
+     bscCaseDependent:
+       for i := 1 to _Len do
+         Result := ((Result shl 3) and 2147483647) or (Result shr (29)) xor ord(KeyString[i]);
+     bscCaseIndependent:
+       for i := 1 to _Len do
+         Result := ((Result shl 3) and 2147483647) or (Result shr (29)) xor (ord(KeyString[i]) or 32);
+    else
+      Result:= HashString(AnsiUppercase(KeyString),bscCaseDependent);
+   end;
 end;
 
 {---TBoldStringHashIndex---}
@@ -338,16 +298,6 @@ procedure TBoldObjectHashIndex.FindAllByObject(const KeyObject: TObject; List: T
 begin
   FindAll(KeyObject, List);
 end;
-
-initialization
-{$IFDEF USEGLOBALCHARBUFFER}
-  GetMem(_PBuffer, InitialBufferSize * SizeOf(Char));
-{$ENDIF}
-finalization
-{$IFDEF USEGLOBALCHARBUFFER}
-  Freemem(_PBuffer);
-  _PBufferLength := 0;
-{$ENDIF}
 
 end.
 

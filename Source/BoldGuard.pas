@@ -42,9 +42,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
-
 constructor TBoldGuard.Create(var v0);
 begin
   fObjectVariable[0] := @TObject(v0);
@@ -218,6 +215,4 @@ begin
   inherited;
 end;
 
-initialization
-  
 end.

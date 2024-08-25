@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldBld;
@@ -1163,7 +1162,5 @@ begin
   else
     Result := '1';
 end;
-
-initialization
 
 end.

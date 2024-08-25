@@ -8,7 +8,8 @@ interface
 uses
   Variants,
   BoldUMLModelLink,
-  BoldUMLModel;
+  BoldUMLModel,
+  Classes;
 
 type
   { forward declarations }
@@ -94,7 +95,7 @@ begin
   if not Assigned(UMLModel) then
     raise EBoldImport.CreateFmt('%s.ImportModel: Must have an UMLModel to import to.', [className]);
   Importer := TBoldUMLXMIImporter.Create(Self, UMLModel);
-  BoldInstalledQueue.DeActivateDisplayQueue;
+  TBoldQueueable.DeActivateDisplayQueue;
   try
     UMLModel.BoldSystem.StartTransaction;
     try
@@ -118,7 +119,7 @@ begin
       end;
     end;
   finally
-    BoldInstalledQueue.ActivateDisplayQueue;
+    TBoldQueueable.ActivateDisplayQueue;
   end;
 end;
 

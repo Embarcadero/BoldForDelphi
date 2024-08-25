@@ -18,8 +18,8 @@ type
   TBoldDefaultID = class(TBoldExternalObjectID)
   protected
     fDBValue: integer;
-    procedure SetAsInteger(NewValue: integer);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetAsInteger: Integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetAsInteger(NewValue: integer);
+    function GetAsInteger: Integer;
     function GetAsString: string; override;
     function GetHash: cardinal; override;
     function GetStreamName: string; override;

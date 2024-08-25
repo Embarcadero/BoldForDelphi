@@ -17,10 +17,6 @@ type
   TBoldVariableDefinition = class(TBoldOclVariables)
   end;
 
-
 implementation
-
-
-initialization
 
 end.

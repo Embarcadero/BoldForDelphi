@@ -41,8 +41,7 @@ uses
   BoldCoreConsts,
   BoldDefaultTaggedValues,
   BoldDefs,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 var
  G_Rose98TaggedValues: TBoldTaggedValuePerClassList = nil;

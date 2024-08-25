@@ -57,10 +57,8 @@ type
     function GetCurrentBoldElement: IBoldElement;
     function GetCurrentBoldObject: IBoldObject;
     function GetBoldList: IBoldList;
-    function GetItemIndex: Integer;
     function GetBoldHandleIndexLock: Boolean;
     procedure SetBoldHandleIndexLock(Value: Boolean);
-    procedure SetItemIndex(Value: Integer);
     procedure SetSelected(index: Integer; V: Boolean);
     procedure InternalSetSelected(index: integer; v: Boolean);
     procedure SetSelection(aRow: Integer; Shift: TShiftState);
@@ -75,6 +73,8 @@ type
     procedure WMSize(var Message: TWMSize); message WM_SIZE;
     function GetMutableList: IBoldList;
   protected
+    function GetItemIndex: Integer; override;
+    procedure SetItemIndex(const Value: Integer); override;
     procedure DefaultSetFontAndColor(Index: integer); virtual;
     procedure Click; override;
     procedure DblClick; override;
@@ -246,7 +246,7 @@ begin
   Result := inherited ItemIndex;
 end;
 
-procedure TBoldCustomListBoxCom.SetItemIndex(Value: Integer);
+procedure TBoldCustomListBoxCom.SetItemIndex(const Value: Integer);
 begin
   fHandleFollower.SetFollowerIndex(value);
   inherited ItemIndex := Value;
@@ -578,7 +578,5 @@ begin
     fBoldProperties.SetSelected(Follower, index, V);
   end;
 end;
-
-initialization
 
 end.

@@ -23,10 +23,4 @@ type
 
 implementation
 
-uses
-  BoldRev
-  ;
-
-initialization
-
 end.

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelUpdater;
@@ -61,7 +60,5 @@ begin
     end;
   end;
 end;
-
-initialization
 
 end.

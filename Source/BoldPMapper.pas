@@ -26,6 +26,4 @@ procedure TBoldPersistenceMapper.CreatePersistentStorage;
 begin
 end;
 
-initialization
-
 end.

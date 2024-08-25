@@ -1,4 +1,4 @@
-﻿
+
 /////////////////////////////////////////////////////////
 //                                                     //
 //              Bold for Delphi                        //
@@ -53,7 +53,6 @@ uses
   Forms,
 
   BoldCoreConsts,
-  BoldRev,
   BoldDefsDT,
   BoldAbout;
 
@@ -88,8 +87,8 @@ begin
 end;
 
 procedure TBoldMenuExpert.ActionHelp(Sender: TObject);
-var
-  HelpHandle: HWND;
+//var
+//  HelpHandle: HWND;
 begin
 //FIXME PORT ###What happened to the helpfile property?
 { -- temproary removed during porting
@@ -156,7 +155,6 @@ begin
   AddMenuItem('BoldHelpMenu', sHelp, ActionHelp); // do not localize
   AddMenuItem('BoldAboutDelimiterMenu', '-', nil); // do not localize
   AddMenuItem('BoldAboutMenu', sAbout, ActionAbout); // do not localize
-  // in D7, the menu must have items before it is added to the main menu
   MainMenu.Items.Insert(I, fBoldMenu);
 end;
 
@@ -198,8 +196,5 @@ begin
     fBoldMenu.Remove(anItem);
   anItem := nil;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldIDEMenus.pas $ $Revision: 15 $ $Date: 02-07-16 14:52 $');
 
 end.

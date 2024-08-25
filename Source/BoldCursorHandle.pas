@@ -1,11 +1,3 @@
-﻿
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCursorHandle;
@@ -24,6 +16,7 @@ type
   TBoldCursorHandle = class;
 
   { TBoldCursorHandle }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldCursorHandle = class(TBoldAbstractListHandle)
   private
     fAutoFirst: Boolean;
@@ -53,7 +46,6 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldRev,
   BoldDefs,
   {$IFDEF ATTRACS}
   AttracsPerformance,
@@ -248,8 +240,5 @@ begin
     ValueIdentityChanged;
   end;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldCursorHandle.pas $ $Revision: 25 $ $Date: 02-05-17 6:49 $');
 
 end.

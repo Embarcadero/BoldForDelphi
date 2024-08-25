@@ -13,9 +13,6 @@ function MinIntValue(const Data: array of Integer): Integer;
 
 implementation
 
-uses
-  BoldRev;
-
 function Floor(X: Extended): Integer;
 begin
   Result := Integer(Trunc(X));
@@ -63,7 +60,5 @@ begin
     if Result > Data[I] then
       Result := Data[I];
 end;
-
-initialization
 
 end.

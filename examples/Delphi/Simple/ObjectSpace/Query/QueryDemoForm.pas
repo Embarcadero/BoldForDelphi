@@ -3,36 +3,43 @@ unit QueryDemoForm;
 interface
 
 uses
-  SysUtils,
-  Classes,
-  Controls,
-  Forms,
-  Dialogs,
-  ExtCtrls,
-  BoldNavigator,
-  StdCtrls,
-  ActnList,
-  Grids,
-  BoldGrid,
-  BoldListBox,
-  Boldhandles,
-  BoldSystemHandle,
-  BoldSubscription,
-  BoldModel,
-  BoldElements,
-  BoldSystem,
-  BoldHandle,
-  BoldRootedHandles,
+  // VCL
+  Data.DB,
+  System.Classes,
+  System.Actions,
+  System.SysUtils,
+  Vcl.ActnList,
+  Vcl.Controls,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.Forms,
+  Vcl.Grids,
+  Vcl.StdCtrls,
+
+  // Bold
+  BoldAbstractDatabaseAdapter,
   BoldAbstractListHandle,
+  BoldAbstractModel,
+  BoldAbstractPersistenceHandleDB,
+  BoldActions,
   BoldCursorHandle,
+  BoldDBActions,
+  BoldElements,
+  BoldGrid,
+  BoldHandle,
+  BoldHandleAction,
+  BoldHandles,
+  BoldListBox,
   BoldListHandle,
+  BoldModel,
+  BoldNavigator,
+  BoldNavigatorDefs,
   BoldPersistenceHandle,
   BoldPersistenceHandleDB,
-  BoldHandleAction,
-  BoldActions,
-  BoldDBActions, BoldAbstractModel, BoldNavigatorDefs,
-  BoldIBDatabaseAction, DB, IBDatabase, BoldAbstractDatabaseAdapter,
-  BoldDatabaseAdapterIB, BoldAbstractPersistenceHandleDB;
+  BoldRootedHandles,
+  BoldSubscription,
+  BoldSystem,
+  BoldSystemHandle;
 
 type
   TfrmQueryDemo = class(TForm)
@@ -55,11 +62,7 @@ type
     ActionList1: TActionList;
     Button1: TButton;
     BoldActivateSystemAction1: TBoldActivateSystemAction;
-    Button2: TButton;
     BoldPersistenceHandleDB1: TBoldPersistenceHandleDB;
-    BoldDatabaseAdapterIB1: TBoldDatabaseAdapterIB;
-    IBDatabase1: TIBDatabase;
-    BoldIBDatabaseAction1: TBoldIBDatabaseAction;
     procedure btnLockClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -108,7 +111,7 @@ end;
 procedure TfrmQueryDemo.FormCreate(Sender: TObject);
 begin
   // Initialize the Subscriber we will use for locking objects
-  LockSubscriber := TBoldPassthroughSubscriber.CreateWithReceiveAndAnswer(nil, AnswerFalse);
+  LockSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithReceiveAndAnswer(nil, AnswerFalse);
 end;
 
 procedure TfrmQueryDemo.FormDestroy(Sender: TObject);

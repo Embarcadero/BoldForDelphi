@@ -715,6 +715,7 @@ uses
   BoldLogHandlerForm,
   System.Variants,
   System.IOUtils,
+  System.UITypes,
   BoldQueryUserDlg,
   BoldUMLAttributeEditor,
   BoldUMLAssociationEditor,
@@ -840,6 +841,8 @@ begin
   mnuOverrideModelMethods.Visible := False;
   mnuOverrideInAllSubclasses.Visible := False;
   OpenOtherEnd.Visible := false;
+  if CurrentElement = nil then
+    exit;
   if (CurrentElement is TUMLPackage) or (ActiveGrid = tvPackages) then
   begin
     if not (CurrentElement is TUMLModel) and not (CurrentElement is TUMLClass) then
@@ -1865,7 +1868,6 @@ end;
 procedure TBoldModelEditFrmCx.SaveFileAs1Click(Sender: TObject);
 var
   UMLLinkClass: TBoldUMLModelLinkClass;
-  CursorGuard: IBoldCursorGuard;
 begin
   ApplyGUI;
   if fIsExecutingPlugin then
@@ -2005,7 +2007,6 @@ end;
 
 function TBoldModelEditFrmCx.DumpHandles(AHandle: TBoldElementHandle): string;
 var
-  i: integer;
   st: string;
 begin
   result := 'ModelHandle:' + FModelHandle.Name + '='+FModelHandle.UMLModel.AsString + ';SystemHandle='+ FModelHandle.SystemHandle.Name+BoldCRLF;
@@ -2135,7 +2136,7 @@ end;
 constructor TBoldModelEditFrmCx.Create(AOnwer: TComponent);
 begin
 //  fdmModelEdit := TdmModelEdit.Create(self);
-  dmBoldUMLModelEditorHandles := TdmBoldUMLModelEditorHandles.Create(self);
+//  dmBoldUMLModelEditorHandles := TdmBoldUMLModelEditorHandles.Create(self);
   if (csDesigning in ComponentState) then
     RegisterFindGlobalComponentProc(FindGlobalComponent);
   inherited;
@@ -2355,9 +2356,6 @@ begin
 end;
 
 procedure TBoldModelEditFrmCx.FileOpen1BeforeExecute(Sender: TObject);
-var
-  UMLLinkClass: TBoldUMLModelLinkClass;
-  CursorGuard: IBoldCursorGuard;
 begin
   ApplyGUI;
   if fIsExecutingPlugin then
@@ -2862,7 +2860,6 @@ procedure TBoldModelEditFrmCx.LoadModelFromFile;
 var
   CursorGuard: IBoldCursorGuard;
   UMLLinkClass: TBoldUMLModelLinkClass;
-  vSystemHandle: TBoldSystemHandle;
 begin
   if fIsExecutingPlugin then
   begin
@@ -2871,6 +2868,7 @@ begin
   end;
   fIsExecutingPlugin := true;
   CursorGuard := TBoldCursorGuard.Create;
+  TBoldQueueable.DeActivateDisplayQueue;
   try
     if Assigned(CurrentModel) then
     begin
@@ -2904,12 +2902,13 @@ begin
     BoldPropertyMapper1.Enabled := true;
     fSelectionHistory.Clear;
     fSelectionHistoryIndex := -1;
+    TBoldQueueable.ActivateDisplayQueue;
   end;
 end;
 
 procedure TBoldModelEditFrmCx.Loggform1Click(Sender: TObject);
 begin
-  Boldlog.Show;
+  BoldLogForm.Show;
 end;
 
 procedure TBoldModelEditFrmCx.Tools1Click(Sender: TObject);
@@ -3224,7 +3223,7 @@ var
 begin
   if FModelHandle <> Value then
   try
-    BoldInstalledQueue.DeActivateDisplayQueue;
+    TBoldQueueable.DeActivateDisplayQueue;
     if Assigned(Value) then
       Value.FreeNotification(Self);
     fModelHandle := Value;
@@ -3249,7 +3248,8 @@ begin
     fModelHandle.MoldModel;
     ModelNeedsValidation := True;
     SubscribeToModelChanges;
-    TBoldUndoHandler(CurrentModel.BoldSystem.UndoHandler).ReuseEmptyBlocks := false;
+    if Assigned(CurrentModel) and Assigned(CurrentModel.BoldSystem) then
+      TBoldUndoHandler(CurrentModel.BoldSystem.UndoHandler).ReuseEmptyBlocks := false;
 
     for i := 0 to BoldHandle.BoldHandleList.Count - 1 do
       if (BoldHandleList[i] is TBoldAbstractPersistenceHandleDB) then
@@ -3262,8 +3262,9 @@ begin
     fSelectionHistory.Clear;
     fSelectionHistoryIndex := -1;
   finally
-    BoldInstalledQueue.ActivateDisplayQueue;
-    CurrentModel.BoldSystem.UndoHandlerInterface.Enabled := true;
+    TBoldQueueable.ActivateDisplayQueue;
+    if Assigned(CurrentModel) and Assigned(CurrentModel.BoldSystem) then
+      CurrentModel.BoldSystem.UndoHandlerInterface.Enabled := true;
   end;
 end;
 

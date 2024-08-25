@@ -7,7 +7,9 @@ interface
 
 uses
   BoldIndexableList,
-  BoldDefs;
+  BoldDefs,
+  BoldHashIndexes
+  ;
 
 type
   TBoldMemberTypeList = class;
@@ -18,9 +20,9 @@ type
   private
     class var IX_MemberName: integer;
     class var IX_MemberClass: integer;
-    function GetDescriptorByClass(BoldMemberClass: TClass): TBoldMemberTypeDescriptor; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMemberTypeDescriptors(index: integer): TBoldMemberTypeDescriptor; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDescriptorByDelphiName(const DelphiName: string): TBoldMemberTypeDescriptor; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDescriptorByClass(BoldMemberClass: TClass): TBoldMemberTypeDescriptor;
+    function GetMemberTypeDescriptors(index: integer): TBoldMemberTypeDescriptor;
+    function GetDescriptorByDelphiName(const DelphiName: string): TBoldMemberTypeDescriptor;
   public
     constructor Create;
     procedure AddMemberTypeDescriptor(MemberClass: TClass;
@@ -52,7 +54,8 @@ implementation
 
 uses
   SysUtils,
-  BoldHashIndexes;
+  BoldIndex
+  ;
 
 var
   G_BoldMemberTypes: TBoldMemberTypeList;

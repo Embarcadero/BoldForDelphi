@@ -31,6 +31,4 @@ begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterAdvantage]);
 end;
 
-initialization
-
 end.

@@ -22,7 +22,8 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils;
+  BoldUtils,
+  BoldCoreConsts;
 
 { TBoldOLLEHandleComponentEditor }
 

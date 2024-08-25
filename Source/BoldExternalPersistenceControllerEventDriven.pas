@@ -40,7 +40,7 @@ type
     function GetMaxFetchBlockSize: integer; override;
   public
     constructor Create(MoldModel: TMoldModel; Config: TBoldExternalPersistenceConfigItems; TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer; UpdateBoldDatabaseFirst: boolean);
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
     property Config: TBoldExternalPersistenceConfigItems read fConfig;
   end;
 
@@ -228,7 +228,7 @@ begin
   result := Config.FindExpressionName(MoldClass.ExpandedExpressionName);
 end;
 
-procedure TBoldExternalPersistenceControllerEventDriven.SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber);
+procedure TBoldExternalPersistenceControllerEventDriven.SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
   inherited;
 end;

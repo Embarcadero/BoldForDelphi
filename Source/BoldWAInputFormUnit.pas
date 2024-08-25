@@ -114,6 +114,4 @@ begin
     CanClose := true;
 end;
 
-initialization
-
 end.

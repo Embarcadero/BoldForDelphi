@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldObjectUpgraderHandle;
@@ -48,8 +47,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 const
   breSystemTypeInfoHandleDestroying = 100;
@@ -152,6 +150,5 @@ begin
     breSystemTypeInfoHandleChanged, brePersistenceHandleDeactivating] then
     ObjectUpgrader.ReleaseBoldSystem;
 end;
-
 
 end.

@@ -70,8 +70,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 var
   G_BoldGeneratorTemplateManager: TBoldGeneratorTemplateManager;

@@ -55,7 +55,7 @@ type
       Config: TBoldExternalPersistenceConfigDataSetItems;
       TypeNameDictionary: TBoldTypeNameDictionary;
       OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent; MaxFetchBlockSize: integer);
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
     property Config: TBoldExternalPersistenceConfigDataSetItems read fConfig;
   end;
 
@@ -240,7 +240,7 @@ begin
   else if B.QueryInterface(IBoldDateTimeContent, DT) = S_OK then
     DT.asDateTime := Value
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
-    BL.asBlob := Value
+    BL.asBlob := AnsiString(Value)
   else raise Exception.Create(sUnknownDataType);
 end;
 
@@ -459,7 +459,6 @@ procedure TBoldExternalPersistenceControllerDataSet.FetchObject(
 
               if not VarIsNull(DBValue) then
               begin
-                ExternalKey := nil;
                  // the type of the field MUST match the type of the internal ID
                 if VarType(DBValue) in [varInteger, varSmallint, varSingle, varDouble] then
                 begin
@@ -617,7 +616,7 @@ begin
   result := Config.FindExpressionName(MoldClass.ExpandedExpressionName);
 end;
 
-procedure TBoldExternalPersistenceControllerDataSet.SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber);
+procedure TBoldExternalPersistenceControllerDataSet.SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
   inherited;
 end;

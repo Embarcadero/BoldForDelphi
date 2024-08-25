@@ -173,6 +173,4 @@ begin
   Size := 0;
 end;
 
-initialization
-
 end.

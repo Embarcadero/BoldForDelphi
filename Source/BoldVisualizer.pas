@@ -580,6 +580,7 @@ begin
 end;
 
 initialization
+
 finalization
   RemoveVisualizer;
 end.

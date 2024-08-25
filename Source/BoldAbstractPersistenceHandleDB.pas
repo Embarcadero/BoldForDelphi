@@ -1,4 +1,4 @@
-﻿
+
 /////////////////////////////////////////////////////////
 //                                                     //
 //              Bold for Delphi                        //
@@ -79,7 +79,6 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldRev,
   BoldPSParamsSQL,
   BoldLogHandler,
   BoldPSDescriptionsSQL,
@@ -360,8 +359,5 @@ begin
   if not assigned(SQLDatabaseConfig) then
     raise EBold.CreateFmt(sMissingSQLDatabaseConfig, [classname, Context]);
 end;
-
-initialization
-   BoldRegisterModuleVersion('$Workfile: BoldAbstractPersistenceHandleDB.pas $ $Revision: 6 $ $Date: 02-08-02 8:42 $');
 
 end.

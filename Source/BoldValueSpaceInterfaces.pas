@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldValueSpaceInterfaces;
@@ -73,13 +72,11 @@ type
 procedure BoldApplyPartialValueSpace(const DestVS, SourceVS: IBoldValueSpace; ObjectidList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList;
   ForceCurrent: Boolean; PersistenceStatesToIgnore: TBoldValuePersistenceStateSet = [bvpsInvalid]);
 
-
 implementation
 
 uses
   SysUtils,
-  BoldGuard,
-  BoldRev;
+  BoldGuard;
 
 procedure BoldApplyPartialValueSpace(const DestVS, SourceVS: IBoldValueSpace; ObjectidList: TBoldObjectIdList; MemberIdList: TBoldMemberIdList; ForceCurrent: Boolean; PersistenceStatesToIgnore: TBoldValuePersistenceStateSet = [bvpsInvalid]);
 var
@@ -148,7 +145,5 @@ begin
     end;
   end;
 end;
-
-initialization
 
 end.

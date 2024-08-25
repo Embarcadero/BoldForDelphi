@@ -1,22 +1,6 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldAttributeWideString;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 interface
 
@@ -79,8 +63,7 @@ uses
   Windows,
   SysUtils,
   { Bold }
-  BoldMemberTypeDictionary,
-  BoldRev;
+  BoldMemberTypeDictionary;
 
 {******************************************************************************}
 {* TBAWideString                                                              *}

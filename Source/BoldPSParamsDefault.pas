@@ -12,11 +12,6 @@ type
   TBoldPSDefaultParams = class(TBoldPSSQLParams)
   end;
 
-
 implementation
-
-
-
-initialization
 
 end.

@@ -18,7 +18,7 @@ type
   private
     fBoldIndexableLoadedObjectsList: TBoldIndexableLoadedObjectsList;
   protected
-    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); override;
+    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
     function GetHandledObject: TObject; override;
   public
     destructor Destroy; override;
@@ -76,7 +76,7 @@ begin
 end;
 
 procedure TBoldIndexableLoadedObjectsHandle._Receive(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
 begin
   if (Originator = StaticSystemHandle) and (OriginalEvent = beDestroying) then
     FreeAndNil(fBoldIndexableLoadedObjectsList);

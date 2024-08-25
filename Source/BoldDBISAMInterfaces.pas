@@ -112,8 +112,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 { TBoldDBISAMQuery }
 

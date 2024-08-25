@@ -78,7 +78,6 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldRev,
   BoldUtils;
 
 { TBoldXMLProducer }
@@ -213,8 +212,5 @@ begin
     for i:= 0 to XMLAttributes.Count - 1 do
       Result.setAttribute(WideString(XMLAttributes.Names[i]), WideString(XMLAttributes.Strings[i]));
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldXMLProducers.pas $ $Revision: 9 $ $Date: 3/20/01 2:20p $');
 
 end.

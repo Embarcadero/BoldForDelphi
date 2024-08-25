@@ -1,6 +1,3 @@
-/////////////////////////////////////////////////////////
-
-
 unit BoldComboBox;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -71,6 +68,7 @@ type
     fProcessingClick: Integer;    
     fOnSelectChangedIsCalled:Boolean;
     fAutoSearch: boolean;
+    FUseMouseWheel: Boolean;
     function GetBoldHandle: TBoldElementHandle;
     procedure SetBoldHandle(value: TBoldElementHandle);
     function GetFollower: TBoldFOllower;
@@ -120,6 +118,8 @@ type
     function GetVariableList: TBoldExternalVariableList;
     function GetExpression: TBoldExpression;
   protected
+    function DoMouseWheel(Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint): Boolean; override;
+
     function HandleApplyException(E: Exception; Elem: TBoldElement; var discard: Boolean): boolean;
     procedure Change; override;
     function ComboAllowsTextEditing(BoldProperties: TBoldStringFollowerController; Follower: TBoldFollower): Boolean; virtual;
@@ -163,6 +163,7 @@ type
     destructor Destroy; override;
     procedure DragDrop(Source: TObject; X, Y: Integer); override;
     property SelectedElement: TBoldElement read GetSelectedElement;
+    property UseMouseWheel: Boolean read FUseMouseWheel write FUseMouseWheel;
   end;
 
   [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
@@ -233,6 +234,7 @@ type
     property OnMeasureItem;
     property OnStartDock;
     property OnStartDrag;
+    property UseMouseWheel default False;
     {$ENDIF}
   end;
 
@@ -420,6 +422,7 @@ begin
   FFont := TFont.Create;
   FFont.OnChange := FontChanged;
   FColor := clWindow;
+  FUseMouseWheel := False;
 end;
 
 procedure TBoldCustomComboBox.CreateWnd;
@@ -449,6 +452,18 @@ procedure TBoldCustomComboBox.DoEndDrag(Target: TObject; X, Y: Integer);
 begin
   BoldProperties.EndDrag;
   inherited DoEndDrag(Target, X, Y);
+end;
+
+function TBoldCustomComboBox.DoMouseWheel(Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint): Boolean;
+begin
+  if FUseMouseWheel then
+  begin
+    Result := inherited;
+  end else
+  begin
+    Result := True;
+  end;
 end;
 
 procedure TBoldCustomComboBox.DoStartDrag(var DragObject: TDragObject);

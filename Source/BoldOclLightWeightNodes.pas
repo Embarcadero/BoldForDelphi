@@ -70,15 +70,15 @@ type
   private
     fList: TList;
     fOwnsObjects: Boolean;
-    function GetItem(index: Integer): TBoldOLWNode; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure PutItem(index: Integer; Value: TBoldOLWNode); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetItem(index: Integer): TBoldOLWNode;
+    procedure PutItem(index: Integer; Value: TBoldOLWNode);
     function GetStreamName: string;
-    function GetCount: integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetIndexOf(Node: TBoldOLWNode): integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetCount: integer;
+    function GetIndexOf(Node: TBoldOLWNode): integer;
   public
     constructor Create;
     destructor Destroy; override;
-    function Add(Item: TBoldOLWNode): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Add(Item: TBoldOLWNode): Integer;
     procedure TraverseList(V: TBoldOLWNodeVisitor); virtual;
     property Items[index: Integer]: TBoldOLWNode read GetItem write PutItem; default;
     property Count: integer read GetCount;
@@ -1545,7 +1545,6 @@ begin
 end;
 
 initialization
-
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLOCLConditionStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLOLWNodeListStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLOLWTypeNodeStreamer.Create);

@@ -37,6 +37,4 @@ uses
 
 {$R *.dfm}
 
-initialization
-
 end.

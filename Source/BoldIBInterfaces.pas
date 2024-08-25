@@ -139,7 +139,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   {$IFDEF ATTRACS}
   AttracsDefs,
   AttracsPerformance,
@@ -767,6 +766,4 @@ begin
   result := true;
 end;
 
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldIBInterfaces.pas $ $Revision: 37 $ $Date: 02-06-05 10:52 $');
 end.

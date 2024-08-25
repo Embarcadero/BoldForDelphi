@@ -297,6 +297,4 @@ begin
     ServerHandle.Classes.GetClassNames(List);
 end;
 
-initialization
-
 end.

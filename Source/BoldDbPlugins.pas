@@ -83,6 +83,7 @@ uses
   Classes,
   Controls,
   SysUtils,
+  System.UITypes,
   BoldDefs,
   BoldHandle,
   BoldDbEvolutorForm,
@@ -162,8 +163,10 @@ end;
 procedure TBoldDbValidatorPlugIn.ExecuteValidator(Validator: TBoldDbValidator; context: IUMLModelPlugInContext);
 begin
   Validator.PersistenceHandle := GetValidPersistenceHandle(context);
-  if Validator.Execute then
-    ShowMessage('Database validated OK');
+  Validator.Execute;
+
+//  if Validator.Execute then
+//    ShowMessage('Database validated OK');
 end;
 
 function TBoldDbValidatorPlugIn.GetOptions: TBoldUMLPluginOptions;
@@ -273,7 +276,6 @@ begin
 end;
 
 initialization
-
   _DBGenerator    := TUMLDBGenerator.Create(true);
   _dbStructureValidator := TBolddbStructureValidatorPlugin.Create(true);
   _dbDataValidator := TBolddbDataValidatorPlugin.Create(true);

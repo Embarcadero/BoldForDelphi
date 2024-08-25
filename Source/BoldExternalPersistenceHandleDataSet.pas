@@ -83,6 +83,4 @@ begin
     Config.Assign(Value);
 end;
 
-initialization
-
 end.

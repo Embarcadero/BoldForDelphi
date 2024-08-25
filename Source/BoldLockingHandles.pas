@@ -9,9 +9,7 @@ uses
   Classes,
   BoldDefs,
   BoldSubscription,
- {$IFNDEF BOLD_NO_QUERIES}
   BoldLockHandler,
- {$ENDIF}
   BoldLockHolder,
   BoldListenerHandle,
   BoldAbstractLockManagerHandle,
@@ -25,9 +23,7 @@ type
     fActive: Boolean;
     fSubscriber: TBoldPassthroughSubscriber;
     FSystemHandle: TBoldAbstractSystemHandle;
- {$IFNDEF BOLD_NO_QUERIES}
     fLockHandler: TBoldPessimisticLockHandler;
- {$ENDIF}
     fLockHolder: TBoldLockHolder;
     FListener: TBoldListenerHandle;
     FLockManager: TBoldAbstractLockManagerHandle;
@@ -45,9 +41,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
- {$IFNDEF BOLD_NO_QUERIES}
     property LockHandler: TBoldPessimisticLockHandler read fLockHandler;
- {$ENDIF}
     property LockHolder: TBoldLockHolder read GetLockHolder;
     property Active: Boolean read fActive;
   published
@@ -82,12 +76,10 @@ begin
 
   if not Active then
   begin
- {$IFNDEF BOLD_NO_QUERIES}
     fLockHandler := TBoldPessimisticLockHandler.CreateWithLockHolder(FSystemHandle.System, LockHolder);
     fLockHandler.OnActivityStart := OnActivityStart;
     fLockHandler.OnActivityEnd := OnActivityEnd;
     fLockHandler.OnProgress := OnProgress;
- {$ENDIF}
     fActive := True;
   end;
 end;
@@ -115,9 +107,7 @@ begin
   if Active then
   begin
     FreeAndNil(fLockHolder);
- {$IFNDEF BOLD_NO_QUERIES}
     FreeAndNil(fLockHandler);
- {$ENDIF}
     fActive := false;
   end;
 end;
@@ -205,7 +195,5 @@ begin
       Listener := nil;
   end;
 end;
-
-initialization
 
 end.

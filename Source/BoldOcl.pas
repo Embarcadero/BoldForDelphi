@@ -70,7 +70,7 @@ type
   TBoldOClDictionary = class(TBoldIndexableList)
   private
     class var IX_OCLEntry: integer;
-    function GetOcl(const Expr: string): TBoldOclEntry; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetOcl(const Expr: string): TBoldOclEntry;
   public
     constructor Create;
     procedure AddOcl(ENTRY: TBoldOclEntry);
@@ -118,7 +118,7 @@ type
     function GetVariable(index: integer): TBoldIndirectElement; override;
     function GetVariableByName(const aName: string): TBoldIndirectElement; override;
   public
-    constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
+    constructor Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem);
     destructor Destroy; override;
     property GlobalEnv: TBoldOclEnvironment read GetGlobalEnv;
     property SymbolTable: TBoldSymbolDictionary read fsymbolTable;
@@ -150,6 +150,7 @@ type
     property DateType: TBoldAttributeTypeInfo read fDateType;
     property TimeType: TBoldAttributeTypeInfo read fTimeType;
     property DateTimeType: TBoldAttributeTypeInfo read fDateTimeType;
+    property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
   end;
 
 var
@@ -191,7 +192,6 @@ uses
   BoldOclSymbolImplementations,
   BoldORed,
   BoldMath,
-  BoldRev,
 {$IFDEF ATTRACS}
   AttracsTraceLog,
 {$ENDIF}
@@ -246,19 +246,19 @@ begin
   begin
     ClassInfo := fSystemTypeInfo.TopSortedClasses[i];
     vLength := 0;
-    for j := 0 to ClassInfo.AllMembers.Count - 1 do
+    for j := 0 to ClassInfo.AllMembersCount - 1 do
       vLength := Max(vLength, Length(ClassInfo.AllMembers[j].ExpressionName));
     fMaxMemberNameArray[i] := vLength;
   end;
 end;
 
-constructor TBoldOcl.Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
+constructor TBoldOcl.Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem);
 var
   FalseConst: TBABoolean;
   MaxTimeStamp: TBAInteger;
 begin
-  fSystemTypeInfo := SystemTypeInfo;
-  fBoldSystem := BoldSystem;
+  fSystemTypeInfo := ASystemTypeInfo;
+  fBoldSystem := ABoldSystem;
   fOclDictionary := TBoldOclDictionary.Create;
   fCanEvaluate := true;
   fSymbolTable := TBoldSymbolDictionary.Create(SystemTypeInfo, BoldSystem, fCanEvaluate);
@@ -304,6 +304,7 @@ end;
 
 destructor TBoldOcl.Destroy;
 begin
+  SendEvent(beDestroying);
   FreeAndNil(fOclDictionary);
   FreeAndNil(fSymbolTable);
   FreeAndNil(fGlobalEnv);
@@ -1345,7 +1346,6 @@ begin
 end;
 
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldOcl.pas $ $Revision: 155 $ $Date: 02-08-03 7:31 $');
   TBoldOClDictionary.IX_OCLEntry := -1;
 
 finalization
@@ -1353,4 +1353,3 @@ finalization
   FreeAndNil(G_OclScannerTable);
 
 end.
-

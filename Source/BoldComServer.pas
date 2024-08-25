@@ -1,6 +1,3 @@
-
-{$Include Bold.inc}
-
 unit BoldComServer;
 
 interface
@@ -17,8 +14,7 @@ uses
   BoldIndexableList,
   BoldComObj,
   BoldComConnection,
-  BoldThreadedComObjectFactory
-  ;
+  BoldThreadedComObjectFactory;
 
 const
   // Server events
@@ -38,7 +34,6 @@ type
   TBoldComServer = class;
 
   TBoldComServerConnectionClass = class of TBoldComServerConnection;
-
   TBoldComServerConnectionEvent = procedure(Sender: TBoldComServerConnection; var Disconnect: Boolean);
 
   {-- TBoldComServerSubscriber --}
@@ -106,13 +101,11 @@ type
   TBoldComServerEventSenderThread = class(TThread)
   private
     FOwner: TBoldComServerConnection;
-    FClientInterfaceCookie: Cardinal;
   protected
     procedure Execute; override;
     procedure SendEventFailure;
   public
-    constructor Create(aOwner: TBoldComServerConnection; aClientInterfaceCookie: Cardinal);
-    property ClientInterfaceCookie: Cardinal read FClientInterfaceCookie;
+    constructor Create(aOwner: TBoldComServerConnection);
   end;
 
   {-- TBoldComServerConnection --}
@@ -120,9 +113,9 @@ type
   private
     FActive: Boolean;
     FClientId: string;
-    FClientInterface: IBoldClient; //TODO WARNING! Contains InterfaceCookie
-//TODO    FSenderThread: TBoldComServerEventSenderThread; //NEW
-//TODO    FHasClientInterface: Boolean; //NEW//TODO    FClientInterfaceCookie: DWORD; //NEW
+    FClientInterface: IBoldClient;
+    FSenderThread: TBoldComServerEventSenderThread;
+    FClientInterfaceCookie: DWORD;
     FConnected: Boolean;
     FDestroying: Boolean;
     FEventQueue: TBoldComServerEventQueue;
@@ -137,12 +130,13 @@ type
     function GetSubscriber(SubscriberId: Integer): TBoldComServerSubscriber;
     procedure RemoveSubscriber(SubscriberId: Integer);
     procedure PushEvent(SubscriberId: integer; Originator: TObject; OriginalEvent, RequestedEvent: TBoldevent);
-//TODO    function GetClientInterface: IBoldClient;
-//TODO    function GetClientInterface(out aClient: IBoldClient): Boolean;
-//TODO    function DoSendQueuedEvents: Boolean; //NEW
-//TODO    procedure DoSendEventFailure; //NEW
+    function GetSenderThread: TBoldComServerEventSenderThread;
+    function GetClientInterfaceFromGIT(out aClient: IBoldClient): Boolean;
     property Subscribers: TBoldComServerSubscriberList read FSubscribers;
-
+    property SenderThread: TBoldComServerEventSenderThread read GetSenderThread;
+  protected
+    procedure DoSendEventFailure;
+    function DoSendQueuedEvents(aClient: IBoldClient): Boolean;
   public
     destructor Destroy; override;
     procedure Disconnect;
@@ -151,7 +145,7 @@ type
     procedure SendQueuedEvents;
     property Active: Boolean read FActive;
     property ClientId: string read FClientId;
-    property ClientInterface: IBoldClient read FClientInterface; //TODO WARNING! Contains InterfaceCookie
+    property ClientInterface: IBoldClient read FClientInterface;
     property Connected: Boolean read FConnected;
     property EventQueue: TBoldComServerEventQueue read FEventQueue;
     property OnSendEventFailure: TBoldComServerConnectionEvent read fOnSendEventFailure write fOnSendEventFailure;
@@ -198,7 +192,6 @@ type
     procedure GetObjectInfo(const ClassId: TGUID; ObjectNames, ClassNames: TStrings);
     procedure RemoveConnection(Connection: TBoldComServerConnection);
     procedure SendQueuedEvents;
-  protected
   public
     constructor Create;
     destructor Destroy; override;
@@ -214,7 +207,7 @@ var
   //Set to true to enable client callbacks in separate worker threads.
   BoldAsynchronousClientCallbackOnServerEvent: Boolean = False;
 
-{$DEFINE BOLDCOMCALLBACKDEBUG}
+{.$DEFINE BOLDCOMCALLBACKDEBUG}
 {$IFDEF BOLDCOMCALLBACKDEBUG}
 //Functions used for performance testing of callbacks
 function CallStats: string;
@@ -225,11 +218,11 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldIndex,
   BoldHashIndexes,
   BoldComUtils,
   Variants,
+  BoldMemoryManager,
   BoldApartmentThread;
 
 const
@@ -245,33 +238,14 @@ type
                                     out ppv): HResult; stdcall;
   end;
 
-  TBoldEventSenderThreadList = class(TBoldCardinalHashIndex)
-  protected
-    function ItemAsKeyCardinal(Item: TObject): Cardinal; override;
-  public
-    function FindEventSenderThreadByCookie(ClientInterfaceCookie: Cardinal): TBoldComServerEventSenderThread;
-    function FindClientInterfaceByCookie(ClientInterfaceCookie: Cardinal): IBoldClient;
-    procedure ConnectClient(const ServerConnection: TBoldComServerConnection; const Client: IBoldClient; var ClientInterfaceCookie: Cardinal);
-    procedure DisconnectClient(var ClientInterfaceCookie: Cardinal);
-  end;
-
 var
   G_GlobalInterfaceTable: IGlobalInterfaceTable;
-  G_BoldEventSenderThreadList: TBoldEventSenderThreadList;
 
 function GlobalInterfaceTable: IGlobalInterfaceTable;
 begin
   if not Assigned(G_GlobalInterfaceTable) then
     OleCheck(CoCreateInstance(CLSID_StdGlobalInterfaceTable, nil, CLSCTX_INPROC_SERVER, IGlobalInterfaceTable, G_GlobalInterfaceTable));
   Result := G_GlobalInterfaceTable;
-end;
-
-function BoldEventSenderThreadList: TBoldEventSenderThreadList;
-
-begin
-  if not Assigned(G_BoldEventSenderThreadList) then
-    G_BoldEventSenderThreadList := TBoldEventSenderThreadList.Create;;
-  Result := G_BoldEventSenderThreadList;
 end;
 
 {$IFDEF BOLDCOMCALLBACKDEBUG}
@@ -284,7 +258,7 @@ var
 function CallStats: string;
 begin
   if CallCount>0 then
-    Result := Format('Total:%.1fs Min:%.0fms Max:%.0fms Avg:%.0fms Count:%d',
+    Result := Format(sCallStats,
                      [CallTime, CallMin*1000, CallMax*1000, CallTime/CallCount*1000, CallCount]);
 end;
 
@@ -377,7 +351,7 @@ begin
       Result[J+2] := Item^.EventData.OriginalEvent;
       Result[J+3] := Item^.EventData.RequestedEvent;
       Inc(J,4);
-      FreeMem(Item, sizeof(TBoldComEventQueueItem));
+      BoldMemoryManager_.DeAllocateMemory(Item, SizeOf(TBoldComEventQueueItem));
     end;
   end
   else
@@ -462,18 +436,17 @@ begin
   FConnected := False;
   FActive := False;
   TBoldComServer.Instance.RemoveConnection(Self);
-  BoldEventSenderThreadList.DisconnectClient(Cardinal(FClientInterface));
-//  if Assigned(FSenderThread) then
-//  begin
-//    FSenderThread.Terminate;
-//    FSenderThread.FOwner := nil;
-//    FSenderThread.Resume;
-//  end;
-//  if Assigned(FClientInterface) then
-//  begin
-//    GlobalInterfaceTable.RevokeInterfaceFromGlobal(FClientInterfaceCookie);
-//    FClientInterfaceCookie := 0;
-//  end;
+  if Assigned(FSenderThread) then
+  begin
+    FSenderThread.Terminate;
+    FSenderThread.FOwner := nil;
+    FSenderThread.Resume;
+  end;
+  if Assigned(FClientInterface) and BoldAsynchronousClientCallbackOnServerEvent then
+  begin
+    GlobalInterfaceTable.RevokeInterfaceFromGlobal(FClientInterfaceCookie);
+    FClientInterfaceCookie := 0;
+  end;
   FClientInterface := nil;
   FClientId := '';
   RemoveSubscriber(-1);
@@ -516,24 +489,20 @@ begin
   end;
 end;
 
-procedure {TBoldComServerConnection.}DoSendEventFailure(Self: TBoldComServerConnection);
+procedure TBoldComServerConnection.DoSendEventFailure;
 var
   AskDisconnect: Boolean;
 begin
-  with Self do
-  begin
-    AskDisconnect := True;
-    if Assigned(FOnSendEventFailure) then
-      OnSendEventFailure(Self, AskDisconnect);
-    if AskDisconnect then
-      ClientDisconnect;
-  end;
+  AskDisconnect := True;
+  if Assigned(FOnSendEventFailure) then
+    OnSendEventFailure(Self, AskDisconnect);
+  if AskDisconnect then
+    ClientDisconnect;
 end;
 
-function {TBoldComServerConnection.}DoSendQueuedEvents(Self: TBoldComServerConnection): Boolean;
+function TBoldComServerConnection.DoSendQueuedEvents(aClient: IBoldClient): Boolean;
 var
   Data: OleVariant;
-  vClient: IBoldClient;
 {$IFDEF BOLDCOMCALLBACKDEBUG}
   CounterStart, CounterStop, CounterFreq: Int64; //TEST
   ElapsedTime: Double; //TEST
@@ -541,60 +510,51 @@ var
 begin
   //NOTE This method can be called from a worker thread and must be threadsafe!
   Result := False;
-  if Self.Connected and (Cardinal(Self.FClientInterface)<>0) then
+  if Connected and Assigned(aClient) then
   begin
-    Data := Self.FEventQueue.GetAllEvents;
+    Data := FEventQueue.GetAllEvents;
     if not VarIsEmpty(Data) then
     begin
 
-      vClient := BoldEventSenderThreadList.FindClientInterfaceByCookie(Cardinal(Self.FClientInterface));
-      if Assigned(vClient) then
-      begin
 {$IFDEF BOLDCOMCALLBACKDEBUG}
-        QueryPerformanceCounter(CounterStart);
+      QueryPerformanceCounter(CounterStart);
 {$ENDIF}
 
-        vClient.OnServerEvent(EVENT_SUBSCRIPTION,Data);
+      aClient.OnServerEvent(EVENT_SUBSCRIPTION,Data);
 
 {$IFDEF BOLDCOMCALLBACKDEBUG}
-        QueryPerformanceCounter(CounterStop); 
-        QueryPerformanceFrequency(CounterFreq);
-        ElapsedTime := ((CounterStop-CounterStart)/CounterFreq);
-        CallTime := CallTime+ElapsedTime;
-        if ElapsedTime<CallMin then
-          CallMin := ElapsedTime;
-        if ElapsedTime>CallMax then
-          CallMax := ElapsedTime;
-        InterlockedIncrement(CallCount);
+      QueryPerformanceCounter(CounterStop);
+      QueryPerformanceFrequency(CounterFreq);
+      ElapsedTime := ((CounterStop-CounterStart)/CounterFreq);
+      CallTime := CallTime+ElapsedTime;
+      if ElapsedTime<CallMin then
+        CallMin := ElapsedTime;
+      if ElapsedTime>CallMax then
+        CallMax := ElapsedTime;
+      InterlockedIncrement(CallCount);
 {$ENDIF}
 
-      end;
       Result := True;
     end;
   end
   else
-    Self.FEventQueue.Clear;
+    FEventQueue.Clear;
 end;
 
-
 procedure TBoldComServerConnection.SendQueuedEvents;
-var
-  vSenderThread: TBoldComServerEventSenderThread;
 begin
   if FEventQueue.Count>0 then
   begin
     if BoldAsynchronousClientCallbackOnServerEvent then
     begin
-      vSenderThread := BoldEventSenderThreadList.FindEventSenderThreadByCookie(Cardinal(FClientInterface));
-      if Assigned(vSenderThread) then
-        vSenderThread.Resume;
+      SenderThread.Resume;
     end
     else
     begin
       try
-        DoSendQueuedEvents(Self);
+        DoSendQueuedEvents(FClientInterface);
       except
-        DoSendEventFailure(Self);
+        DoSendEventFailure;
       end;
     end;
   end;
@@ -663,6 +623,12 @@ begin
   EventQueue.Push(EventData);
 end;
 
+function TBoldComServerConnection.GetClientInterfaceFromGIT(out aClient: IBoldClient): Boolean;
+begin
+  Result := False;
+  if Assigned(FClientInterface) and BoldAsynchronousClientCallbackOnServerEvent then
+    Result := Succeeded(GlobalInterfaceTable.GetInterfaceFromGlobal(FClientInterfaceCookie, IID_IBoldClient, aClient));
+end;
 
 function TBoldComServerConnection.ClientConnect(const ClientId: string;
   Flags: Integer; const Client: IBoldClient): Boolean;
@@ -673,7 +639,10 @@ begin
   if Active and (not Assigned(C) or (C = Self)) then
   begin
     FClientId := ClientId;
-    BoldEventSenderThreadList.ConnectClient(Self, Client, Cardinal(FClientInterface)); //NEW
+    FClientInterfaceCookie := 0;
+    if BoldAsynchronousClientCallbackOnServerEvent then
+      GlobalInterfaceTable.RegisterInterfaceInGlobal(Client, IID_IBoldClient, FClientInterfaceCookie);
+    FClientInterface := Client;
     FConnected := True;
     Result := True;
   end
@@ -688,12 +657,9 @@ begin
     FConnected := False;
     RemoveSubscriber(-1);
     FEventQueue.Clear;
-    BoldEventSenderThreadList.DisconnectClient(Cardinal(FClientInterface));
-//    if Assigned(FClientInterface) then
-//    begin
-//      GlobalInterfaceTable.RevokeInterfaceFromGlobal(FClientInterfaceCookie);
-//      FClientInterfaceCookie := 0;
-//    end;
+    if Assigned(FClientInterface) and BoldAsynchronousClientCallbackOnServerEvent then
+      GlobalInterfaceTable.RevokeInterfaceFromGlobal(FClientInterfaceCookie);
+    FClientInterfaceCookie := 0;
     FClientInterface := nil;
     FClientId := '';
     Result := True;
@@ -710,15 +676,22 @@ end;
 
 function TBoldComServerConnection.Execute(const Name: string; Params: OleVariant): OleVariant;
 begin
-  if CompareText(Name,'CancelSubscriptions') = 0 then
+  if CompareText(Name,'CancelSubscriptions') = 0 then // do not localize
     CancelSubscriptions(Params)
-  else if CompareText(Name,'RemoveSubscriber') = 0 then
+  else if CompareText(Name,'RemoveSubscriber') = 0 then // do not localize
     RemoveSubscriber(Params);
 end;
 
 function TBoldComServerConnection.GetSubscriber(SubscriberId: Integer): TBoldComServerSubscriber;
 begin
   Result := Subscribers.SubscriberById[SubscriberId];
+end;
+
+function TBoldComServerConnection.GetSenderThread: TBoldComServerEventSenderThread;
+begin
+  if not Assigned(FSenderThread) then
+    FSenderThread := TBoldComServerEventSenderThread.Create(Self);
+  Result := FSenderThread;
 end;
 
 {-- TBoldServerConnectionFactory ----------------------------------------------}
@@ -753,7 +726,7 @@ begin
       // create the category
       CatInfo.catid := CATID_BoldServer;
       CatInfo.lcid := 409;
-      StringToWideChar('BoldServer Classes',CatInfo.szDescription,127);
+      StringToWideChar('BoldServer Classes', CatInfo.szDescription,127); // do not localize
       Reg.RegisterCategories(1,@CatInfo);
     end;
     if Assigned(CatDesc) then
@@ -920,7 +893,7 @@ begin
       // create the category
       CatInfo.catid := CATID_BoldServer;
       CatInfo.lcid := 409;
-      StringToWideChar('BoldServer Classes',CatInfo.szDescription,127);
+      StringToWideChar('BoldServer Classes',CatInfo.szDescription,127); // do not localize
       Reg.RegisterCategories(1,@CatInfo);
     end;
     if Assigned(CatDesc) then
@@ -963,13 +936,11 @@ begin
   Result := TBoldComServerSubscriber(Item).SubscriberId;
 end;
 
-//NEW Class
 { TBoldComServerEventSenderThread }
 
-constructor TBoldComServerEventSenderThread.Create(aOwner: TBoldComServerConnection; aClientInterfaceCookie: Cardinal);
+constructor TBoldComServerEventSenderThread.Create(aOwner: TBoldComServerConnection);
 begin
   FOwner := aOwner;
-  FClientInterfaceCookie := aClientInterfaceCookie;
   FreeOnTerminate := True;
   inherited Create(True);
 end;
@@ -977,18 +948,22 @@ end;
 procedure TBoldComServerEventSenderThread.SendEventFailure;
 begin
   if not Terminated then
-    DoSendEventFailure(FOwner);
+    FOwner.DoSendEventFailure;
 end;
 
 procedure TBoldComServerEventSenderThread.Execute;
+var
+  vClient: IBoldClient;
 begin
   CoInitialize(nil);
   repeat
     try
-      while (not Terminated) and {FOwner.}DoSendQueuedEvents(FOwner) do {loop};
+      if (not Terminated) and FOwner.GetClientInterfaceFromGIT(vClient) then
+        while (not Terminated) and FOwner.DoSendQueuedEvents(vClient) do {loop};
+      vClient := nil;
     except
       if not Terminated then
-      Synchronize(SendEventFailure);
+        Synchronize(SendEventFailure);
     end;
     if not Terminated then
       Suspend;
@@ -996,65 +971,10 @@ begin
   CoUninitialize;
 end;
 
-{ TBoldEventSenderThreadList }
-procedure TBoldEventSenderThreadList.ConnectClient(const ServerConnection: TBoldComServerConnection; const Client: IBoldClient; var ClientInterfaceCookie: Cardinal);
-var
-  vSenderThread: TBoldComServerEventSenderThread;
-begin
-  if ClientInterfaceCookie<>0 then
-    DisconnectClient(ClientInterfaceCookie);
-  if Assigned(Client) then
-  begin
-    OleCheck(GlobalInterfaceTable.RegisterInterfaceInGlobal(Client, IID_IBoldClient, ClientInterfaceCookie));
-    vSenderThread := TBoldComServerEventSenderThread.Create(ServerConnection, ClientInterfaceCookie);
-    Add(vSenderThread);
-  end;
-end;
-
-procedure TBoldEventSenderThreadList.DisconnectClient(var ClientInterfaceCookie: Cardinal);
-var
-  vSenderThread: TBoldComServerEventSenderThread;
-begin
-  if ClientInterfaceCookie<>0 then
-  begin
-    vSenderThread := FindEventSenderThreadByCookie(ClientInterfaceCookie);
-    if Assigned(vSenderThread) then
-    begin
-      Remove(vSenderThread);
-      vSenderThread.Terminate;
-      vSenderThread.FOwner := nil;
-      vSenderThread.FClientInterfaceCookie := 0;
-      vSenderThread.Resume;
-    end;
-    OleCheck(GlobalInterfaceTable.RevokeInterfaceFromGlobal(ClientInterfaceCookie));
-    ClientInterfaceCookie := 0;
-  end;
-end;
-
-function TBoldEventSenderThreadList.FindClientInterfaceByCookie(ClientInterfaceCookie: Cardinal): IBoldClient;
-begin
-  Result := nil;
-  if ClientInterfaceCookie<>0 then
-    OleCheck(GlobalInterfaceTable.GetInterfaceFromGlobal(ClientInterfaceCookie, IID_IBoldClient, Result));
-end;
-
-function TBoldEventSenderThreadList.FindEventSenderThreadByCookie(ClientInterfaceCookie: Cardinal): TBoldComServerEventSenderThread;
-begin
-  Result := TBoldComServerEventSenderThread(Find(ClientInterfaceCookie));
-  Assert(not Assigned(Result) or (Result is TBoldComServerEventSenderThread));
-end;
-
-function TBoldEventSenderThreadList.ItemAsKeyCardinal(Item: TObject): Cardinal;
-begin
-  Assert(Item is TBoldComServerEventSenderThread);
-  Result := TBoldComServerEventSenderThread(Item).ClientInterfaceCookie;
-end;
-
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldComServer.pas $ $Revision: 25 $ $Date: 02-07-17 7:04 $');
 
 finalization
-  FreeAndNil(G_BoldComServer); //CHANGED
-  FreeAndNil(G_BoldEventSenderThreadList); //NEW
+  FreeAndNil(G_BoldComServer);
 end.
+
 

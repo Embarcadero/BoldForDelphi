@@ -75,7 +75,7 @@ type
     property Publisher: TBoldPublisher read GetPublisher;
   public
     constructor Create(Collection: TCollection); override;
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     {$IFDEF BOLDCOMCLIENT}
     function GetElement(Element: IBoldElement; Subscriber: TBoldComClientSubscriber; Resubscribe: Boolean): IBoldElement;
@@ -557,7 +557,7 @@ begin
   end;
 end;
 
-destructor TBoldGenericListPartCom.destroy;
+destructor TBoldGenericListPartCom.Destroy;
 begin
   if assigned(fPublisher) then
     fPublisher.NotifySubscribersAndClearSubscriptions(self);
@@ -581,7 +581,7 @@ end;
 function TBoldGenericListPartCom.GetPublisher: TBoldPublisher;
 begin
   if not assigned(fPublisher) then
-    fPublisher := TBoldPublisher.create;
+    fPublisher := TBoldPublisher.create(fPublisher);
   result := fPublisher;
 end;
 

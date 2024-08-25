@@ -59,9 +59,7 @@ uses
   Controls,
   Forms,
   BoldActionDefs,
-  SysUtils,
-  BoldRev;
-
+  SysUtils;
 
 { TBoldIBDatabaseAction }
 

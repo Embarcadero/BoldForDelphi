@@ -118,6 +118,7 @@ uses
   Forms,
   Menus, // for TextToShortCut
   SysUtils,
+  System.UITypes,
 
   BoldCoreConsts,
   BoldDefs,

@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldSQLHandle;
 
@@ -65,9 +64,9 @@ uses
   SysUtils,
 
   BoldDefs,
-  BoldCoreConsts,
   BoldSubscription,
-  BoldSystemRT;
+  BoldSystemRT,
+  BoldCoreConsts;
 
 constructor TBoldSQLHandle.Create(Owner: TComponent);
 begin

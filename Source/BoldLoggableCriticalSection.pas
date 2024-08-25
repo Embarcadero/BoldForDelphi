@@ -14,6 +14,8 @@ type
   TBoldLoggableCriticalSection = class(TCriticalSection)
   private
     fName: String;
+    lName: String;
+    uName: String;
   public
     constructor Create(name: string);
     procedure Acquire; override;
@@ -28,7 +30,7 @@ uses
 
 procedure TBoldLoggableCriticalSection.Acquire;
 begin
-  BoldLogThread('L='+fName);
+  BoldLogThread(LName);
   inherited;
 end;
 
@@ -36,12 +38,14 @@ constructor TBoldLoggableCriticalSection.Create(name: string);
 begin
   inherited create;
   fName := Name;
+  lName := 'L=' + fName;
+  uName := 'U=' + fName;
 end;
 
 procedure TBoldLoggableCriticalSection.Release;
 begin
   inherited;
-  BoldLogThread('U=' + fName);
+  BoldLogThread(UName);
 end;
 
 end.

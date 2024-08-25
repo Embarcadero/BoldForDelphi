@@ -9,7 +9,9 @@ uses
   BoldBase,
   BoldIndexableList,
   BoldSubscription,
-  BoldElements;
+  BoldElements,
+  BoldHashIndexes
+  ;
 
 type
   {forward declarations of all classes}
@@ -38,9 +40,7 @@ type
     function MayCommit: Boolean; virtual;
     function GetBoldSystem: TBoldDomainElement; virtual;
     procedure ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const); virtual;
-{$IFNDEF BOLD_NO_QUERIES}
     function ReceiveQueryFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; virtual;
-{$ENDIF}
     procedure StateError(S: string); virtual;
   public
     constructor CreateWithOwner(OwningElement: TBoldDomainElement); virtual;
@@ -50,9 +50,7 @@ type
     function CanCommit: Boolean;
     procedure SendEvent(OriginalEvent: TBoldEvent); override;
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const); override;
-{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean; override;
-{$ENDIF}
     property BoldDirty: Boolean read GetBoldDirty;
     property BoldPersistent: Boolean index befPersistent read GetElementFlag;
     property OwningElement: TBoldDomainElement read FOwningElement;
@@ -65,7 +63,7 @@ type
     fMode:  TBoldDomainElementProxyMode;
   protected
     procedure UnsupportedMode(Mode: TBoldDomainElementProxyMode; Func: string);
-    procedure Retarget(Mode:  TBoldDomainElementProxyMode); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Retarget(Mode:  TBoldDomainElementProxyMode);
   public
     constructor Create(Mode:  TBoldDomainElementProxyMode);
     property Mode: TBoldDomainElementProxyMode read fMode;
@@ -74,7 +72,7 @@ type
   { TBoldDomainElementCollectionTraverser }
   TBoldDomainElementCollectionTraverser = class(TBoldIndexableListTraverser)
   private
-    function GetItem: TBoldDomainElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem: TBoldDomainElement;
   public
     property Item: TBoldDomainElement read GetItem;
     property Current: TBoldDomainElement read GetItem;
@@ -89,8 +87,8 @@ type
   public
     constructor Create;
     function GetEnumerator: TBoldDomainElementCollectionTraverser;
-    procedure Add(item: TBoldDomainElement); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function Includes(item: TBoldDomainElement): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Add(item: TBoldDomainElement);
+    function Includes(item: TBoldDomainElement): Boolean;
     function CreateTraverser: TBoldDomainElementCollectionTraverser;
   end;
 
@@ -99,8 +97,8 @@ implementation
 uses
   SysUtils,
   BoldDefs,
-  BoldIndex,
-  BoldHashIndexes;
+  BoldIndex
+  ;
 
 type
   TBoldDomainElementCollectionIndex = class(TBoldObjectHashIndex)
@@ -178,7 +176,6 @@ begin
   inherited;
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldDomainElement.SendQuery(
   OriginalEvent: TBoldEvent; const Args: array of const;
   Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean;
@@ -188,20 +185,17 @@ begin
     result := OwningElement.ReceiveQueryFromOwned(Originator, OriginalEvent, Args, Subscriber);
   result := result and inherited SendQuery(OriginalEvent, Args, Subscriber, Originator);
 end;
-{$ENDIF}
 
 procedure TBoldDomainElement.ReceiveEventFromOwned(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const);
 begin
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldDomainElement.ReceiveQueryFromOwned(Originator: TObject;
   OriginalEvent: TBoldEvent; const Args: array of const;
   Subscriber: TBoldSubscriber): Boolean;
 begin
   result := True;
 end;
-{$ENDIF}
 
 procedure TBoldDomainElement.SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const);
 begin

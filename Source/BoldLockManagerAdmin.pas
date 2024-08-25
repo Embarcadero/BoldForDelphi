@@ -167,6 +167,4 @@ begin
   LockManager.Suspended := Value;
 end;
 
-initialization
-
 end.

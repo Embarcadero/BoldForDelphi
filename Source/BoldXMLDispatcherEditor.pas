@@ -7,9 +7,7 @@ interface
 
 uses
   DesignEditors,
-  DesignIntf,
-  BoldRev;
-
+  DesignIntf;
 
 type
   { forward declarations }
@@ -58,7 +56,5 @@ function TBoldXMLDispatcherEditor.GetVerbCount: Integer;
 begin
   Result := 1;
 end;
-
-initialization
 
 end.

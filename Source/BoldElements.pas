@@ -1,4 +1,3 @@
-﻿                                                
 { Global compiler directives }
 {$include bold.inc}
 unit BoldElements;
@@ -57,6 +56,7 @@ const
   befInDelayDestructionList         = BoldElementFlag13;
   befDiscarding                     = BoldElementFlag14;
   befDeleting                       = BoldElementFlag15;
+  befCreating                       = BoldElementFlag16;
 
   {flags for BoldMember}
   befIsNull                         = BoldElementFlag4;
@@ -67,14 +67,15 @@ const
   befEnsuringCurrent                = BoldElementFlag9;
   befOwnedByObject                  = BoldElementFlag10;
   befPreFetched                     = BoldElementFlag11;
+  befIsInitializing                 = BoldElementFlag12;
 
   {flags for BoldObjectList}
-  befAdjusted                       = BoldElementFlag12;
-  befSubscribeToObjectsInList       = BoldElementFlag13;
-  befSubscribeToLocatorsInList      = BoldElementFlag14;
+  befAdjusted                       = BoldElementFlag13;
+  befSubscribeToObjectsInList       = BoldElementFlag14;
+  befSubscribeToLocatorsInList      = BoldElementFlag15;
 
   {flags for BoldObjectReference}
-  befHasOldValues                   = BoldElementFlag12;
+  befHasOldValues                   = BoldElementFlag13;
 
   {flags for BoldElementTypeInfo}
   BoldValueTypeShift = 24;
@@ -164,16 +165,21 @@ type
   private
     fName: String;
     fEvaluator: TBoldEvaluator;
+    fSubscriber: TBoldPassthroughSubscriber;
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetSubscriber: TBoldPassthroughSubscriber;
+    procedure SetEvaluator(const Value: TBoldEvaluator);
+    property Subscriber: TBoldPassthroughSubscriber read GetSubscriber;
   protected
     function GetValue: TBoldElement; virtual; abstract;
     function GetValueType: TBoldElementTypeInfo; virtual; abstract;
   public
-    constructor Create(const Name: String);
+    constructor Create(AEvaluator: TBoldEvaluator; const AName: String);
     destructor Destroy; override;
     property Value: TBoldElement read GetValue;
     property Name: String read fName;
     property ValueType: TBoldElementTypeInfo read GetValueType;
-    property Evaluator: TBoldEvaluator read fEvaluator write fEvaluator;
+    property Evaluator: TBoldEvaluator read fEvaluator write SetEvaluator;
   end;
 
   TBoldExternalVariableListTraverser = class(TBoldArrayTraverser)
@@ -191,24 +197,24 @@ type
   public
     constructor Create; overload;
     constructor Create(aOwnsVariables: boolean); overload;
-    class function CreateWithStringVariable(AName: string; AValue: string): TBoldExternalVariableList;
+    class function CreateWithStringVariable(AName: string; AValue: string; AEvaluator: TBoldEvaluator = nil): TBoldExternalVariableList;
     class function CreateWithElementVariable(AName: string; AValue: TBoldElement): TBoldExternalVariableList;
     function GetEnumerator: TBoldExternalVariableListTraverser;
     procedure Add(Variable: TBoldExternalVariable); overload;
     procedure Add(AName: string; AValue: TBoldElement); overload;
-    procedure Add(AName: string; AValue: string); overload;
-    procedure AddInteger(AName: string; AValue: integer);
-    procedure AddFloat(AName: string; AValue: Double);
-    procedure AddDateTime(AName: string; AValue: TDateTime);
-    procedure AddDate(AName: string; AValue: TDate);
-    procedure AddTime(AName: string; AValue: TTime);
+    procedure Add(AName: string; AValue: string; AEvaluator: TBoldEvaluator = nil); overload;
+    procedure AddInteger(AName: string; AValue: integer; AEvaluator: TBoldEvaluator = nil);
+    procedure AddFloat(AName: string; AValue: Double; AEvaluator: TBoldEvaluator = nil);
+    procedure AddDateTime(AName: string; AValue: TDateTime; AEvaluator: TBoldEvaluator = nil);
+    procedure AddDate(AName: string; AValue: TDate; AEvaluator: TBoldEvaluator = nil);
+    procedure AddTime(AName: string; AValue: TTime; AEvaluator: TBoldEvaluator = nil);
     property Variables[index: integer]: TBoldExternalVariable read GetVariables; default;
     property VariableByName[const aName: string]: TBoldExternalVariable read GetVariableByName;
     property AsCommaText: string read GetAsCommaText;
   end;
 
   {---TBoldEvaluator---}
-  TBoldEvaluator = class(TBoldMemoryManagedObject)
+  TBoldEvaluator = class(TBoldSubscribableObject)
   protected
     function GetVariableCount: integer; virtual; abstract;
     function GetVariable(index: integer): TBoldIndirectElement; virtual; abstract;
@@ -230,7 +236,7 @@ type
   strict private
     function GetModifiedValueHolder: TObject;
     procedure SetModifiedValueHolder(Value: TObject);
-    function GetMutable: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMutable: Boolean;
   protected
     function GetDisplayName: String; virtual;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; virtual;
@@ -263,9 +269,9 @@ type
     procedure SubscribeToStringRepresentation(Representation: TBoldRepresentation; Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate); virtual;
     function ObserverMayModify(Observer: TObject): Boolean; virtual;
     function ObserverMayModifyAsString(Representation: TBoldRepresentation; observer: TBoldSubscriber): Boolean; virtual;
-    procedure RegisterModifiedValueHolder(observer: TObject); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure UnRegisterModifiedValueHolder(observer: TObject); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure MakeImmutable; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure RegisterModifiedValueHolder(observer: TObject);
+    procedure UnRegisterModifiedValueHolder(observer: TObject);
+    procedure MakeImmutable;
     procedure GetAsList(ResultList: TBoldIndirectElement); virtual; abstract;
     procedure GetAsValue(resultElement: TBoldIndirectElement); virtual;
     procedure SubscribeToExpression(const Expression: TBoldExpression; Subscriber: TBoldSubscriber; Resubscribe: Boolean = false; EvaluateInPS: Boolean = false; const VariableList: TBoldExternalVariableList = nil);
@@ -618,7 +624,7 @@ end;
 
 procedure TBoldElement.RegisterModifiedValueHolder(observer: TObject);
 
-  procedure InternalRaise(Self: TBoldElement; Value: TObject); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+  procedure InternalRaise(Self: TBoldElement; Value: TObject);
   var
     LockedBy: string;
   begin
@@ -711,8 +717,8 @@ begin
     ElementName := BoldElement.ClassName
   else
     ElementName := 'nil';
-  
-  raise EBold.CreateFmt(sInvalidCompareType,  [ClassName,  
+
+  raise EBold.CreateFmt(sInvalidCompareType,  [ClassName,
                         GetEnumName(TypeInfo(TBoldCompareType), Ord(CompType)), ElementName]);
 end;
 
@@ -772,7 +778,7 @@ begin
 end;
 
 {---TBoldMetaElement---}
-procedure TBoldMetaElement.DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate);
+procedure TBoldMetaElement.DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent);
 begin
   if Mutable then
     raise EBold.CreateFmt(sCannotSubscribeToMutableMetaElements, [ClassName]);
@@ -960,18 +966,49 @@ end;
 
 { TBoldExternalVariable }
 
-constructor TBoldExternalVariable.Create(const Name: String);
+constructor TBoldExternalVariable.Create(AEvaluator: TBoldEvaluator; const AName: String);
 begin
   inherited Create;
-  fName := Name;
+  Evaluator := AEvaluator;
+  fName := AName;
 end;
 
 destructor TBoldExternalVariable.Destroy;
+var
+  vEvaluator: TBoldEvaluator;
 begin
-  if Assigned(fEvaluator) then
-    fEvaluator.UndefineVariable(self);
-  fEvaluator := nil;
+  fSubscriber.Free;
+  vEvaluator := fEvaluator;
+  if Assigned(vEvaluator) then
+  begin
+    fEvaluator := nil;
+    vEvaluator.UndefineVariable(self);
+  end;
   inherited;
+end;
+
+function TBoldExternalVariable.GetSubscriber: TBoldPassthroughSubscriber;
+begin
+  if not Assigned(fSubscriber) then
+    fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
+  result := fSubscriber;
+end;
+
+procedure TBoldExternalVariable.Receive(Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+begin
+  fEvaluator := nil;
+end;
+
+procedure TBoldExternalVariable.SetEvaluator(const Value: TBoldEvaluator);
+begin
+  if fEvaluator <> Value then
+  begin
+    fEvaluator := Value;
+    Subscriber.CancelAllSubscriptions;
+    if Assigned(fEvaluator) then
+      fEvaluator.AddSmallSubscription(Subscriber, [beDestroying]);
+  end;
 end;
 
 { TBoldExternalOclVariableList }
@@ -981,9 +1018,9 @@ begin
   inherited Add(Variable);
 end;
 
-procedure TBoldExternalVariableList.Add(AName, AValue: string);
+procedure TBoldExternalVariableList.Add(AName, AValue: string; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateStringVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateStringVariable(AName, AValue, AEvaluator));
 end;
 
 procedure TBoldExternalVariableList.Add(AName: string; AValue: TBoldElement);
@@ -991,29 +1028,29 @@ begin
   Add(TBoldOclVariable.Create(AName, AValue));
 end;
 
-procedure TBoldExternalVariableList.AddDate(AName: string; AValue: TDate);
+procedure TBoldExternalVariableList.AddDate(AName: string; AValue: TDate; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateDateVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateDateVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddDateTime(AName: string; AValue: TDateTime);
+procedure TBoldExternalVariableList.AddDateTime(AName: string; AValue: TDateTime; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateDateTimeVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateDateTimeVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddFloat(AName: string; AValue: Double);
+procedure TBoldExternalVariableList.AddFloat(AName: string; AValue: Double; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateFloatVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateFloatVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddInteger(AName: string; AValue: integer);
+procedure TBoldExternalVariableList.AddInteger(AName: string; AValue: integer; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateIntegerVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateIntegerVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddTime(AName: string; AValue: TTime);
+procedure TBoldExternalVariableList.AddTime(AName: string; AValue: TTime; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateTimeVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateTimeVariable(AName, AValue, AEvaluator));
 end;
 
 constructor TBoldExternalVariableList.Create(aOwnsVariables: boolean);
@@ -1037,10 +1074,10 @@ begin
 end;
 
 class function TBoldExternalVariableList.CreateWithStringVariable(AName,
-  AValue: string): TBoldExternalVariableList;
+  AValue: string; AEvaluator: TBoldEvaluator): TBoldExternalVariableList;
 begin
   result := TBoldExternalVariableList.Create;
-  result.Add(TBoldOclVariable.CreateStringVariable(AName, AValue));
+  result.Add(TBoldOclVariable.CreateStringVariable(AName, AValue, AEvaluator));
 end;
 
 function TBoldExternalVariableList.GetAsCommaText: string;
@@ -1175,7 +1212,7 @@ var
   List: TBoldExternalVariableList;
 begin
   // Used to force compiler to link AsCommaText, so it can be used in debugging
-  exit; 
+  exit;
   List := nil;
   List.AsCommaText;
 end;

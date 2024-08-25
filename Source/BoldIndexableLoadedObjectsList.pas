@@ -56,7 +56,7 @@ type
   private
     fStringCompareMode: TBoldStringCompareMode;
   protected
-    procedure _receiveMemberChanged(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); override;
+    procedure _ReceiveEvent(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
   public
     property StringCompareMode: TBoldStringCompareMode read fStringCompareMode write fStringCompareMode;
   end;
@@ -117,14 +117,13 @@ begin
     if not AClass.ConformsTo(IndexedMembers[i].ClassTypeInfo) then
       raise Exception.CreateFmt('Member %s does not exist in class %s.', [IndexedMembers[i].DisplayName, AClass.DisplayName]);
   inherited Create;
-  fStringCompareMode := AStringCompareMode;  
+  fStringCompareMode := AStringCompareMode;
   fMembers := TBoldMemberRTInfoList.Create;
   fMembers.OwnsEntries := false;
   for i := 0 to length(IndexedMembers) - 1 do
     fMembers.Add(IndexedMembers[i]);
   fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(ObjectChangeReceive);
-  fBoldSystem.AddSmallSubscription(fSubscriber, [{beObjectCreated,} beCompleteModify, beObjectFetched, beObjectDeleted, beObjectUnloaded, beObjectDeleted, beDestroying], beDestroying);
-  fBoldSystem.AddSubscription(fSubscriber, beCompleteModify, beCompleteModify);
+  fBoldSystem.Classes[0].AddSmallSubscription(fSubscriber, [beCompleteModify, beObjectFetched, beObjectDeleted, beObjectUnloaded, beDestroying], beDestroying);
   InitMembersIndex(nil, fMembers);
   AddLoadedObjects;
 end;
@@ -196,11 +195,14 @@ procedure TBoldIndexableLoadedObjectsList.ObjectChangeReceive(Originator: TObjec
   const Args: array of const);
 begin
   // beObjectCreated is too early and attributes won't be set yet, so we use beCompleteModify
-  if ((OriginalEvent = beCompleteModify) or (OriginalEvent = beObjectFetched)) and (args[0].VObject is TBoldObject) then
-    Add(args[0].VObject as TBoldObject)
-  else
   case OriginalEvent of
-    beObjectUnloaded, beObjectDeleted: Remove(args[0].VObject as TBoldObject);
+    beObjectFetched: Add(Originator as TBoldObject);
+    beCompleteModify:
+      begin
+        if (Originator is TBoldObject) then
+          Add(Originator as TBoldObject); // only handle Objects, members should be handled by inherited code
+      end;
+    beObjectUnloaded, beObjectDeleted: Remove(Originator as TBoldObject);
     beDestroying:
       begin
         fSubscriber.CancelAllSubscriptions;
@@ -212,8 +214,8 @@ end;
 
 { TBoldReusableMembersHashIndex }
 
-procedure TBoldReusableMembersHashIndex._receiveMemberChanged(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+procedure TBoldReusableMembersHashIndex._ReceiveEvent(Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
 var
   Locator: TBoldObjectLocator;
 begin

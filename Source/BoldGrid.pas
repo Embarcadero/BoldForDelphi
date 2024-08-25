@@ -83,9 +83,9 @@ type
   TBoldGridColumns = class(TCollection)
   private
     fGrid: TBoldCustomGrid;
-    function GetColumn(index: Integer): TBoldGridColumn; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure MoveColumn(FromIndex, ToIndex: Longint); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetColumn(index: Integer; Value: TBoldGridColumn); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetColumn(index: Integer): TBoldGridColumn;
+    procedure MoveColumn(FromIndex, ToIndex: Longint);
+    procedure SetColumn(index: Integer; Value: TBoldGridColumn);
   protected
     function GetOwner: TPersistent; override;
   public
@@ -258,15 +258,15 @@ type
     fPostDisplayEventSet: boolean;
     procedure EnsureOneFixedCol;
     function GetBoldHandle: TBoldAbstractListHandle;
-    function GetBoldList: TBoldList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetCurrentBoldElement: TBoldElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetFollower: TBoldFOllower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetOptions: TGridOptions; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetBoldList: TBoldList;
+    function GetCurrentBoldElement: TBoldElement;
+    function GetFollower: TBoldFOllower;
+    function GetOptions: TGridOptions;
     function GetSelected(DataRow: integer): Boolean;
     procedure SetBoldHandle(value: TBoldAbstractListHandle);
-    procedure SetColumns(Value: TBoldGridColumns); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetController(Value: TBoldListAsFollowerListController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetOptions(val: TGridOptions); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetColumns(Value: TBoldGridColumns);
+    procedure SetController(Value: TBoldListAsFollowerListController);
+    procedure SetOptions(val: TGridOptions);
     procedure SetSelection(aRow: Integer; Shift: TShiftState; ForceClearOfOtherRows: Boolean; IgnoreToggles: Boolean);
     procedure TypeMayHaveChanged;
     function CellFont(Column: TBoldGridColumn): TFont;
@@ -282,7 +282,7 @@ type
     function GetCellFollower(ListCol, DataRow: Integer): TBoldFollower;
     function GetCurrentCellFollower: TBoldFollower;
     function GetMultiSelect: Boolean;
-    function GetRowFollower(DataRow: Integer): TBoldFollower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRowFollower(DataRow: Integer): TBoldFollower;
     procedure InvalidateFromRow(DisplayDataRow: Longint);
     procedure SetCurrentRow(DataRow: Integer);
     procedure SetMultiSelect(V: Boolean);
@@ -295,14 +295,14 @@ type
     function ColumnIsCheckBox(col: integer): Boolean;
     procedure WMChar(var Msg: TWMChar); message WM_CHAR;
     {$ENDIF}
-    function GetMutableList: TBoldList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMutableList: TBoldList;
     function GetShowTitleRow: Boolean;
     procedure SetShowTitleRow(const Value: Boolean);
     function GetTitleRow: integer;
     procedure GetActiveRange(var FirstActive, LastActive: integer);
     property MultiSelect: Boolean read GetMultiSelect write SetMultiSelect;
     procedure EnsureRowActive(DataRow: integer);
-    procedure DisplayAvailableFollowers; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure DisplayAvailableFollowers;
     function GetCellText(col, row: integer): string;
     procedure _FontChanged(Sender: TObject);
     procedure PostDisplayEvent(Sender: TObject);
@@ -321,8 +321,8 @@ type
     procedure ColWidthsChanged; override;
     function CreateColumns: TBoldGridColumns; dynamic;
     procedure CreateDefaultColumns; virtual;
-    function DataRow(GridRow: Integer): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GridRow(Datarow: Integer): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function DataRow(GridRow: Integer): Integer;
+    function GridRow(Datarow: Integer): Integer;
     procedure DblClick; override;
     procedure DefaultColumns;
     procedure DeleteAllColumns;
@@ -535,6 +535,8 @@ implementation
 uses
   SysUtils,
   Forms,
+  System.Types,
+  System.UITypes,
   {$IFNDEF BOLDCOMCLIENT}
   BoldAttributes,
   BoldSystemRT,
@@ -544,9 +546,10 @@ uses
   BoldEnvironment,
   BoldDefs,
   BoldListControlPack,
-  BoldUtils,  
+  BoldUtils,
   TypInfo,
-  BoldMath, BoldQueue;
+  BoldMath,
+  BoldQueue;
 
 const
   ColumnTitleValues = [cvTitleColor..cvTitleFont];
@@ -3105,8 +3108,5 @@ begin
           CellFollowers[i, TopRow].EnsureMulti;
   end;
 end;
-
-
-initialization
 
 end.

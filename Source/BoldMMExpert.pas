@@ -127,6 +127,7 @@ var
 begin
   G := TBoldGuard.Create(Importer, Boldify, MoldModel);
   EnsureModelEditDataModule;
+  dmModelEdit.bshUMLModel.Active := true;
   UMLModel := TUMLModel.Create(dmModelEdit.bshUMLModel.System);
   Boldify := TBoldUMLBoldify.Create;
   ModelAsStrings := TStringList.Create;

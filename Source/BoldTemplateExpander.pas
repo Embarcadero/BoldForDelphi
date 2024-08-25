@@ -526,7 +526,4 @@ begin
   result := TBoldTemplateHolder(inherited items[index]);
 end;
 
-
-initialization
-
 end.

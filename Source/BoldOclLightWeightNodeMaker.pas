@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclLightWeightNodeMaker;
@@ -68,7 +67,8 @@ uses
   BoldDefs,
   BoldElements,
   BoldAttributes,
-  BoldOcl;
+  BoldOcl,
+  BoldBase;
 
 { TBoldOLWNodeMaker }
 

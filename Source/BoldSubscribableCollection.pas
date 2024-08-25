@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSubscribableCollection;
@@ -25,15 +24,11 @@ type
   public
     constructor Create(ItemClass: TCollectionItemClass); virtual;
     destructor Destroy; override;
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent);
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SendEvent(OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const);
-{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
-{$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
   end;
 
@@ -48,30 +43,25 @@ type
   public
     constructor Create(Collection: TCollection); override;
     destructor Destroy; override;
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent);
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SendEvent(OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const);
-{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
-{$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
   end;
 
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 {---TBoldSubscribableCollection---}
 
 constructor TBoldSubscribableCollection.Create(ItemClass: TCollectionItemClass);
 begin
   inherited Create(ItemClass);
-  fPublisher := TBoldPublisher.Create;
+  fPublisher := TBoldPublisher.Create(fPublisher);
 end;
 
 procedure TBoldSubscribableCollection.FreePublisher;
@@ -107,12 +97,10 @@ begin
     fPublisher.SendExtendedEvent(Self, OriginalEvent, []);
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribableCollection.SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
   result := not Assigned(fPublisher) or fPublisher.SendQuery(Self, OriginalEvent, Args, Subscriber);
 end;
-{$ENDIF}
 
 procedure TBoldSubscribableCollection.SendExtendedEvent(
   OriginalEvent: TBoldEvent;
@@ -123,7 +111,7 @@ end;
 
 function TBoldSubscribableCollection.GetHasSubscribers: Boolean;
 begin
-  result := assigned(fPublisher) and Publisher.HasSubscribers;
+  result := assigned(fPublisher) and fPublisher.HasSubscribers;
 end;
 
 {---TBoldSubscribableCollectionItem---}
@@ -131,7 +119,7 @@ end;
 constructor TBoldSubscribableCollectionItem.Create(Collection: TCollection);
 begin
   inherited;
-  fPublisher := TBoldPublisher.Create;
+  fPublisher := TBoldPublisher.Create(fPublisher);
 end;
 
 procedure TBoldSubscribableCollectionItem.FreePublisher;
@@ -166,12 +154,11 @@ begin
   if Assigned(fPublisher) then
     fPublisher.SendExtendedEvent(Self, OriginalEvent, []);
 end;
-{$IFNDEF BOLD_NO_QUERIES}
+
 function TBoldSubscribableCollectionItem.SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
   result := not Assigned(fPublisher) or fPublisher.SendQuery(Self, OriginalEvent, Args, Subscriber);
 end;
-{$ENDIF}
 
 procedure TBoldSubscribableCollectionItem.SendExtendedEvent(
   OriginalEvent: TBoldEvent;
@@ -182,9 +169,7 @@ end;
 
 function TBoldSubscribableCollectionItem.GetHasSubscribers: Boolean;
 begin
-  result := assigned(fPublisher) and Publisher.HasSubscribers;
+  result := assigned(fPublisher) and fPublisher.HasSubscribers;
 end;
-
-
 
 end.

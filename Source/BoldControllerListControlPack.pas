@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldControllerListControlPack;
@@ -22,21 +21,21 @@ type
   TBoldControllerList = class(TBoldAsFollowerListController)
   private
     FList: TList;
-    function GetCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetSubController(index: Integer): TBoldFollowerController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: Integer;
+    function GetSubController(index: Integer): TBoldFollowerController;
   protected
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
     function GetEffectiveRenderer: TBoldRenderer; override;
-    function GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEffectiveDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer;
     class function PrecreateFollowers: boolean; override;
   public
     constructor Create(aOwningComponent: TComponent);
     destructor Destroy; override;
-    procedure Add(BoldFollowerController: TBoldFollowerController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Delete(index: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Remove(BoldFollowerController: TBoldFollowerController); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Move(CurIndex, ToIndex: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function IndexOf(BoldFollowerController: TBoldFollowerController): integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Add(BoldFollowerController: TBoldFollowerController);
+    procedure Delete(index: Integer);
+    procedure Remove(BoldFollowerController: TBoldFollowerController);
+    procedure Move(CurIndex, ToIndex: Integer);
+    function IndexOf(BoldFollowerController: TBoldFollowerController): integer;
     property Count: Integer read GetCount;
     property Items[index: Integer]: TBoldFollowerController read GetSubController; default;
   published
@@ -54,8 +53,8 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  System.Types,
+  SysUtils;
 
 var
   DefaultDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRenderer;

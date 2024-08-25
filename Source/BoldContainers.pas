@@ -51,13 +51,13 @@ type
     procedure AddItems(const Items; NumItems: Integer);
     procedure EnsureCapacity;
     function GetCapacity: Integer;
-    procedure MoveItems(FromIndex, ToIndex, NumItems: Integer); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure MoveItems(FromIndex, ToIndex, NumItems: Integer);
     procedure SetCapacity(Value: Integer);
   protected
-    function Add(const Item): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Add(const Item): Integer;
     function AddArray(BoldArray: TBoldArray): Integer;
     procedure Dispose(Index: Integer); virtual;
-    procedure Get(Index: Integer; var Item); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure Get(Index: Integer; var Item);
     function GetCount: Integer; override;
     function GetGrowDelta: Integer; virtual;
     function GetItemSize: Integer; virtual; abstract;
@@ -76,7 +76,7 @@ type
     procedure DeleteRange(FromIndex, ToIndex: integer);
     procedure Exchange(Index1, Index2: Integer);
     procedure Move(FromIndex, ToIndex: Integer);
-    procedure Pack; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure Pack;
     procedure Sort(Compare: TBoldArraySortCompare; SortMode: TBoldSortMode =
         BoldDefaultSortMode); overload;
     procedure Sort(CompareFunc: TBoldArraySortCompare; FirstIndex, LastIndex:
@@ -88,16 +88,16 @@ type
   { TBoldPointerArray }
   TBoldPointerArray = class(TBoldArray)
   private
-    function Get(Index: Integer): Pointer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Put(Index: Integer; Item: Pointer); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Get(Index: Integer): Pointer;
+    procedure Put(Index: Integer; Item: Pointer);
   protected
     function GetItemSize: Integer; override;
   public
-    function Add(Item: Pointer): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function IndexOf(Item: Pointer): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Insert(Index: Integer; Item: Pointer); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function Remove(Item: Pointer): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function RemoveWithNil(Item: Pointer): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Add(Item: Pointer): Integer;
+    function IndexOf(Item: Pointer): Integer;
+    procedure Insert(Index: Integer; Item: Pointer);
+    function Remove(Item: Pointer): Integer;
+    function RemoveWithNil(Item: Pointer): Integer;
     property Items[Index: Integer]: Pointer read Get write Put; default;
   end;
 
@@ -117,18 +117,18 @@ type
   { TBoldObjectArray }
   TBoldObjectArray = class(TBoldArray)
   private
-    function Get(Index: Integer): TObject; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Put(Index: Integer; Item: TObject); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Get(Index: Integer): TObject;
+    procedure Put(Index: Integer; Item: TObject);
   protected
     procedure Dispose(Index: Integer); override;
     function GetItemSize: Integer; override;
   public
     function GetEnumerator: TBoldArrayTraverser;
-    function Add(Item: TObject): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function IndexOf(Item: TObject): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Insert(Index: Integer; Item: TObject); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function Remove(Item: TObject): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function RemoveWithNil(Item: TObject): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Add(Item: TObject): Integer;
+    function IndexOf(Item: TObject): Integer;
+    procedure Insert(Index: Integer; Item: TObject);
+    function Remove(Item: TObject): Integer;
+    function RemoveWithNil(Item: TObject): Integer;
     property Items[Index: Integer]: TObject read Get write Put; default;
   end;
 
@@ -142,25 +142,25 @@ type
     function GetItemSize: Integer; override;
   public
     function Add(const Item: IUnknown): Integer;
-    function IndexOf(const Item: IUnknown): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function IndexOf(const Item: IUnknown): Integer;
     procedure Insert(Index: Integer; const Item: IUnknown);
-    function Remove(const Item: IUnknown): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function RemoveWithNil(const Item: IUnknown): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Remove(const Item: IUnknown): Integer;
+    function RemoveWithNil(const Item: IUnknown): Integer;
     property Items[Index: Integer]: IUnknown read Get write Put; default;
   end;
 
   { TBoldIntegerArray }
   TBoldIntegerArray = class(TBoldArray)
   private
-    function Get(Index: Integer): integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Put(Index: Integer; const Item: integer); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Get(Index: Integer): integer;
+    procedure Put(Index: Integer; const Item: integer);
   protected
     procedure Dispose(Index: Integer); override;
     function GetItemSize: Integer; override;
   public
-    function Add(const Item: integer): Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function Add(const Item: integer): Integer;
     function IndexOf(const Item: integer): Integer;
-    procedure Insert(Index: Integer; const Item: integer); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure Insert(Index: Integer; const Item: integer);
     function Remove(const Item: integer): Integer;
     property Items[Index: Integer]: integer read Get write Put; default;
   end;
@@ -173,8 +173,7 @@ resourcestring
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 {-- TBoldContainer ------------------------------------------------------------}
 
@@ -965,8 +964,5 @@ begin
   if Result then
     Inc(FIndex);
 end;
-
-
-initialization
 
 end.

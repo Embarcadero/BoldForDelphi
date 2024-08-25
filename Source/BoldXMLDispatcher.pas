@@ -112,8 +112,7 @@ uses
   ActiveX,
   Windows,
 
-  BoldCoreConsts,
-  BoldRev;
+  BoldCoreConsts;
 
 const
   breProducerDestroying = 100;
@@ -357,6 +356,4 @@ begin
     Producer := nil;
 end;
 
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldXMLDispatcher.pas $ $Revision: 10 $ $Date: 01-04-12 22:59 $');
 end.

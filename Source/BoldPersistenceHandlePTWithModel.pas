@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceHandlePTWithModel;
@@ -30,8 +29,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 const
   breModelDestroyed = 42;

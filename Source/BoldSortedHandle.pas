@@ -1,11 +1,3 @@
-
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSortedHandle;
@@ -13,6 +5,7 @@ unit BoldSortedHandle;
 interface
 
 uses
+  Classes,
   BoldSubscription,
   BoldElements,
   BoldSystem,
@@ -24,6 +17,7 @@ type
   TBoldSortedHandle = class;
 
  { TBoldComparer }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldComparer = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnCompare: TBoldElementCompare;
@@ -60,8 +54,6 @@ implementation
 
 uses
   SysUtils,
-  Classes,
-  BoldRev,
   BoldDefs,
   {$IFDEF ATTRACS}
   AttracsPerformance,
@@ -197,8 +189,5 @@ begin
   if assigned(OnFinishSort) then
     OnFinishSort(list);
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldSortedHandle.pas $ $Revision: 23 $ $Date: 02-07-23 17:49 $');
 
 end.

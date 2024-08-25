@@ -187,6 +187,4 @@ begin
   ValueTypeName := Reader.ReadString;
 end;
 
-initialization
-  
 end.

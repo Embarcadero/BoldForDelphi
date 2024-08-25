@@ -59,6 +59,8 @@ end;
 { TBoldConstraintValidatorEditor }
 
 function TBoldConstraintValidatorEditor.GetDefaultMethodName: string;
+const
+  sConstraints = 'Constraints';
 begin
   Result := sConstraints;
 end;

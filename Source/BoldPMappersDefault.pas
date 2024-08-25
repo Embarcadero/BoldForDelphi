@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersDefault;
 
@@ -65,8 +64,8 @@ type
     fNewTimeStampEvent: TGetNewTimeStampEvent;
     fIDIncrementEvent: TIDIncrementEvent;
     fCompatibilityMode: boolean;
-    function GetPSSystemDescription: TBoldDefaultSystemDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetRootClassObjectPersistenceMapper: TBoldObjectDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPSSystemDescription: TBoldDefaultSystemDescription;
+    function GetRootClassObjectPersistenceMapper: TBoldObjectDefaultMapper;
     procedure GetChangePointsQuery(Query: IBoldQuery; IdList: TBoldObjectIdList; StartTime: TBoldTimestampType; EndTime: TBoldTimestampType; NameSpace: TBoldSqlnameSpace);
   protected
     function CreatePSParams: TBoldPSParams; override;
@@ -144,7 +143,7 @@ type
     fQueryCache: TQueryCache;
     fPMCreateCache: TPMCreateCache;
     fSingleLinkList: TBoldMemberIdList;
-    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
     procedure PMUpdateStopTime(ObjectIDList: TBoldObjectIdList);
     procedure GetChangePoints(ObjectIDList: TBoldObjectIdList; Condition: TBoldChangePointCondition; NameSpace: TBoldSqlnameSpace);
     procedure PMMultiPurposeRetrieveExactIdList(ObjectsToFetch: TBoldObjectIdList; const ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; TranslationList: TBoldIdTranslationList; MissingList: TBoldObjectIdList; FailureList: TBoldObjectIdList; TimeStamp: TBoldTimeStampType);
@@ -195,8 +194,8 @@ type
   TBoldMemberDefaultMapper = class(TBoldMemberSQLMapper)
   private
     procedure GenerateMappingInfo(MoldClass: TMoldClass; MoldMember: TMoldMember);
-    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetObjectPersistenceMapper: TBoldObjectDefaultMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSystemPersistenceMapper: TBoldSystemDefaultMapper;
+    function GetObjectPersistenceMapper: TBoldObjectDefaultMapper;
   protected
     FColumnIndex: Boolean;
     function CheckEitherNull(const field: IBoldField; const Value: IBoldValue; var Equal: Boolean): Boolean;
@@ -1335,7 +1334,7 @@ begin
           TickCounter := 0;
         end;
         inc(Row);
-        if UseParams or (i = ObjectIDList.Count-1) or (Row = Limit) or (aQuery.ParamCount + aQuery.BatchQueryParamCount >= SystemPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams) then
+        if UseParams or (i = ObjectIDList.Count-1) or (Row = Limit) or (aQuery.Params.Count + aQuery.BatchQueryParamCount >= SystemPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams) then
         begin
           if not UseParams then
             SB.Append(')');
@@ -1594,7 +1593,8 @@ begin
   finally
     aQuery.SQLStrings.Clear;
     aQuery.ClearParams;
-    aQuery.SQLStrings.EndUpdate;
+    if aQuery.SQLStrings.Updating then
+      aQuery.SQLStrings.EndUpdate;
     SystemPersistenceMapper.ReleaseExecQuery(aQuery);
   end;
 

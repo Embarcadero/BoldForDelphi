@@ -111,9 +111,9 @@ type
   TBoldVariantFollowerController = class(TBoldSingleFollowerController)
   private
     FNilRepresentation: Variant;
-    function GetRenderer: TBoldCustomAsVariantRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRenderer: TBoldCustomAsVariantRenderer;
     procedure SetRenderer(Value: TBoldCustomAsVariantRenderer);
-    function GetEffectiveAsVariantRenderer: TBoldCustomAsVariantRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEffectiveAsVariantRenderer: TBoldCustomAsVariantRenderer;
     procedure SetNilRepresentation(const Value: Variant);
     function IsNilRepresentationStored: boolean;
   protected
@@ -125,16 +125,16 @@ type
   public
     constructor Create(aOwningComponent: TComponent); reintroduce;
     procedure MakeClean(Follower: TBoldFollower); override;
-    function GetCurrentAsVariant(Follower: TBoldFollower): Variant; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetAsVariant(const Value: Variant; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ValidateVariant(const Value: Variant; Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ValidateCharacter(C: Char; aFollower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetFont(EffectiveFont, Font: TFont; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetColor(var EffectiveColor: TColor; Color: TColor; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrentAsVariant(Follower: TBoldFollower): Variant;
+    procedure SetAsVariant(const Value: Variant; Follower: TBoldFollower);
+    function ValidateVariant(const Value: Variant; Follower: TBoldFollower): Boolean;
+    function ValidateCharacter(C: Char; aFollower: TBoldFollower): Boolean;
+    procedure SetFont(EffectiveFont, Font: TFont; Follower: TBoldFollower);
+    procedure SetColor(var EffectiveColor: TColor; Color: TColor; Follower: TBoldFollower);
     function MayHaveChanged(const NewValue: Variant; Follower: TBoldFollower): boolean;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
-    function GetAsVariant(aFollower: TBoldFollower): Variant; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetAsString(aFollower: TBoldFollower): String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAsVariant(aFollower: TBoldFollower): Variant;
+    function GetAsString(aFollower: TBoldFollower): String;
   published
     property Renderer: TBoldCustomAsVariantRenderer read GetRenderer write SetRenderer;
     property NilRepresentation: Variant read FNilRepresentation write SetNilRepresentation stored IsNilRepresentationStored;
@@ -671,5 +671,3 @@ finalization
   FreeAndNil(DefaultAsVariantRenderer);
 
 end.
-
-

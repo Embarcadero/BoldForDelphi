@@ -170,6 +170,4 @@ begin
     Remove(TClassInfo(fList[Index]));
 end;
 
-initialization
-
 end.

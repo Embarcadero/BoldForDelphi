@@ -29,9 +29,8 @@ uses
   SysUtils,
   {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   BoldDefs,
-  BoldXMLStreaming,
-  BoldRev
-  ;
+  BoldXMLStreaming;
+
 { TBoldPersistenceControllerSOAPAdapterCore }
 
 constructor TBoldPersistenceControllerSOAPAdapterCore.Create(Model: TMoldModel);
@@ -113,7 +112,5 @@ begin
     PMOperation.Free;
   end;
 end;
-
-initialization
 
 end.

@@ -174,13 +174,13 @@ begin
   begin
     BoldSystemHandle.AddSmallSubscription(Subscriber, [beDestroying], beDestroying);
     BoldSystemHandle.AddSmallSubscription(Subscriber, [beValueIDentityChanged], beValueIDentityChanged);
-  end;
-  if BoldSystemHandle.Active then
-  begin
-    BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beUndoChanged, beUndoChanged);
-    BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beUndoBlock, beUndoBlock);
-    BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beRedoBlock, beRedoBlock);
-    BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beUndoSetCheckpoint, beUndoSetCheckpoint);
+    if BoldSystemHandle.Active then
+    begin
+      BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beUndoChanged, beUndoChanged);
+      BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beUndoBlock, beUndoBlock);
+      BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beRedoBlock, beRedoBlock);
+      BoldSystemHandle.System.UndoHandler.AddSubscription(Subscriber, beUndoSetCheckpoint, beUndoSetCheckpoint);
+    end;
   end;
 end;
 

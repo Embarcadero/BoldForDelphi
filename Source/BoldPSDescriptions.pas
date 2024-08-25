@@ -37,6 +37,4 @@ begin
   fOwner := aOwner;
 end;
 
-initialization
-
 end.

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPlaceableSubscriber;
@@ -51,9 +50,6 @@ type
   end;
 
 implementation
-
-uses
-  BoldRev;
 
 {---TBoldPlaceableSubscriber---}
 
@@ -139,7 +135,7 @@ begin
   fValueSubscriber.CancelAllSubscriptions;
   if Assigned(BoldHandle) and not (csDesigning in BoldHandle.ComponentState) then
     if not (csDestroying in ComponentState) and not (csDestroying in BoldHandle.ComponentState) and assigned(BoldHandle.Value) then
-      SubscribeToElement(BoldHandle.Value, fValueSubscriber);
+    SubscribeToElement(BoldHandle.Value, fValueSubscriber);
 end;
 
 procedure TBoldPlaceableSubscriber.SetDelayEventsUntilPostNotify(const Value: Boolean);

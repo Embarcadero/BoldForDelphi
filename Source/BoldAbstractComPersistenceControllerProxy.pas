@@ -25,7 +25,7 @@ type
     destructor Destroy; override;
     procedure Connect(const Provider: IBoldProvider; const ObjectName: string); virtual; abstract;
     procedure Disconnect; virtual;
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
     property Connected: Boolean read GetIsConnected;
   end;
 
@@ -60,12 +60,10 @@ begin
   end;
 end;
 
-procedure TBoldAbstractComPersistenceControllerProxy.SubscribeToPeristenceEvents(
-  Subscriber: TBoldSubscriber);
+procedure TBoldAbstractComPersistenceControllerProxy.SubscribeToPersistenceEvents(
+  Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
   inherited;
 end;
-
-initialization
 
 end.

@@ -122,6 +122,4 @@ begin
   result := fSQLDatabaseConfig;
 end;
 
-initialization
-
 end.

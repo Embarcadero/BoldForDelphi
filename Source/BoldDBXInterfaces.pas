@@ -147,12 +147,11 @@ uses
   SqlTimSt,
   BoldDefs,
   SysUtils,
-  BoldRev,
   {$IFDEF ATTRACS}
   AttracsDefs,
   AttracsPerformance,
   AttracsTraceLog,
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   BoldSystemPerf,
   {$ENDIF}
   {$ENDIF}
@@ -299,7 +298,7 @@ begin
   end;
 
 {$IFDEF ATTRACS}
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   PerformanceMeasurement.EndMeasurement;
   BoldSystemPerfObject.BoldDBXQuery_ExecSQL(PerformanceMeasurement.TimeTaken);
   {$ENDIF}
@@ -396,7 +395,7 @@ begin
     end;
   end;
 {$IFDEF ATTRACS}
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   PerformanceMeasurement.EndMeasurement;
   BoldSystemPerfObject.BoldDBXQuery_Open(PerformanceMeasurement.TimeTaken);
   {$ENDIF}
@@ -801,6 +800,4 @@ begin
   Parameter.AsSQLTimeStamp := DateTimetoSQLTimeStamp(value);
 end;
 
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDBXInterfaces.pas $ $Revision: 11 $ $Date: 02-07-28 1:34 $');
 end.

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListControlPack;
@@ -32,22 +31,22 @@ type
     fOnAfterDeleteItem: TBoldSubFollowerEvent;
     fOnReplaceItem: TBoldSubFollowerEvent;
   protected
-    procedure DoBeforeInsertItem(index: Integer; OwningFollower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure DoAfterInsertItem(index: Integer; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure DoBeforeDeleteItem(index: Integer; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure DoAfterDeleteItem(index: Integer; OwningFollower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure DoReplaceItem(index: Integer; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure DoBeforeInsertItem(index: Integer; OwningFollower: TBoldFollower);
+    procedure DoAfterInsertItem(index: Integer; Follower: TBoldFollower);
+    procedure DoBeforeDeleteItem(index: Integer; Follower: TBoldFollower);
+    procedure DoAfterDeleteItem(index: Integer; OwningFollower: TBoldFollower);
+    procedure DoReplaceItem(index: Integer; Follower: TBoldFollower);
     procedure CleanRendererData(RendererData: TBoldRendererData); override;
     class function PrecreateFollowers: boolean; virtual;
   public
     constructor Create(aOwningComponent: TComponent);
     procedure SetActiveRange(Follower: TBoldFollower; FirstActive: Integer; LastActive: Integer; RangeBuffer: Integer = 1);
     procedure SelectAll(Follower: TBoldFollower; SetSelect: Boolean); {Maybe make available in renderer?}
-    procedure SelectRange(Follower: TBoldFollower; index: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetSelected(Follower: TBoldFollower; index: Integer; Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ToggleSelected(Follower: TBoldFollower; index: Integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSelectedToList(Follower: TBoldFollower; BoldList: TBoldList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetSelected(Follower: TBoldFollower; index: Integer): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SelectRange(Follower: TBoldFollower; index: Integer);
+    procedure SetSelected(Follower: TBoldFollower; index: Integer; Value: Boolean);
+    procedure ToggleSelected(Follower: TBoldFollower; index: Integer);
+    procedure AddSelectedToList(Follower: TBoldFollower; BoldList: TBoldList);
+    function GetSelected(Follower: TBoldFollower; index: Integer): Boolean;
     property OnBeforeInsertItem: TBoldSubFollowerEvent read fOnBeforeInsertItem write fOnBeforeInsertItem;
     property OnAfterInsertItem: TBoldSubFollowerEvent read fOnAfterInsertItem write fOnAfterInsertItem;
     property OnBeforeDeleteItem: TBoldSubFollowerEvent read fOnBeforeDeleteItem write fOnBeforeDeleteItem;
@@ -72,14 +71,14 @@ type
     FPrevSelected: Integer;
     function GetSelectedCount: Integer;
     procedure SetSelected(index: Integer; V: Boolean);
-    function GetSelected(index: Integer): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function UnsafeGetSelected(index: Integer): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSelected(index: Integer): Boolean;
+    function UnsafeGetSelected(index: Integer): Boolean;
     procedure Insert(ListFollowerController: TBoldAsFollowerListController; Index: Integer; Follower: TBoldFollower);
     procedure Delete(ListFollowerController: TBoldAsFollowerListController; index: Integer);
     procedure Replace(ListFollowerController: TBoldAsFollowerListController; index: Integer; Follower: TBoldFollower);
     function GetBoldList: TBoldList;
   protected
-    function UnsafeGetSubFollower(Index: Integer): TBoldFollower; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function UnsafeGetSubFollower(Index: Integer): TBoldFollower;
     procedure EnsureSubfollowersDisplayable; override;
     function GetSubFollowerCount: Integer; override;
     function GetSubFollower(Index: Integer): TBoldFollower; override;

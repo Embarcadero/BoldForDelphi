@@ -856,7 +856,4 @@ begin
   FreeAndNil(fCachedQuery);
 end;
 
-
-initialization
-
 end.

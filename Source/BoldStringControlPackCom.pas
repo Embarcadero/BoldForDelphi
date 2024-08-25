@@ -127,11 +127,10 @@ uses
   BoldControlPackDefs,
   {$IFNDEF BOLDCOMCLIENT}
   BoldComObjectSpace_TLB,
-  BoldDomainElement,
+  BoldDomainElement
   {$ELSE}
-  Variants,
-  {$ENDIF}
-  BoldRev;
+  Variants
+  {$ENDIF};
 
 var
   DefaultAsStringRenderer: TBoldAsStringRendererCom;

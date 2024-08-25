@@ -14,12 +14,9 @@ type
 
 implementation
 
-
 constructor TBoldPSParams.Create;
 begin
   inherited;
 end;
-
-initialization
 
 end.

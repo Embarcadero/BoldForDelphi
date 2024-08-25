@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListActions;
@@ -111,8 +110,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 { TBoldListHandleAction }
 
@@ -346,7 +344,5 @@ begin
   inherited;
   BoldHandle.List.Move(BoldHandle.CurrentIndex, BoldHandle.CurrentIndex+1);
 end;
-
-initialization
 
 end.

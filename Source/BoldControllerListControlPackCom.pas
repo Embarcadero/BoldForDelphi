@@ -52,8 +52,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 var
   DefaultDisplayPropertyListRenderer: TBoldControllerListAsFollowerListRendererCom;

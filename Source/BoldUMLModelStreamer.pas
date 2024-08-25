@@ -27,8 +27,7 @@ uses
   BoldGuard,
   BoldDefs,
   BoldValueSpaceInterfaces,
-  BoldID,
-  BoldRev;
+  BoldID;
 
 { TUMLModelStreamer }
 
@@ -123,7 +122,5 @@ begin
   Result := anXMLDoc.documentElement.xml;
 end;
 {$ENDIF}
-
-initialization
 
 end.

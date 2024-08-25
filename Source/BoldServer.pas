@@ -41,8 +41,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 var
   G_BoldServerApplication: TBoldServerApplication = nil;

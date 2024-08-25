@@ -168,6 +168,4 @@ begin
   Result := '(Open model editor)';
 end;
 
-initialization
-
 end.

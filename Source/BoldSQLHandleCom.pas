@@ -53,8 +53,7 @@ uses
   BoldComObjectSpace,
   BoldComObjectSpace_TLB,
   BoldComUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 constructor TBoldSQLHandleCom.Create(Owner: TComponent);
 begin

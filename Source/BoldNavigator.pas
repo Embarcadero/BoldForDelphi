@@ -756,6 +756,4 @@ begin
     fBoldProperties.SetActiveRange(Follower, BoldHandle.CurrentIndex, BoldHandle.CurrentIndex)
 end;
 
-initialization
-
 end.

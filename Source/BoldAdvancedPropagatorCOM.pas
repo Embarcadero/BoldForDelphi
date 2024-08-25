@@ -84,6 +84,4 @@ begin
   inherited Create(ComServer, TBoldAdvancedPropagatorCOM, ClassID, ClassName, Description, ciMultiInstance, tmFree);
 end;
 
-initialization
-
 end.

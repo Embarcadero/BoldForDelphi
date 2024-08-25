@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLogForm;
@@ -34,14 +34,12 @@ type
     mnuCloseLogForm: TMenuItem;
     Panel1: TPanel;
     ProgressBar1: TProgressBar;
-    mnuShowAll: TMenuItem;
     ImageList1: TImageList;
     mnuClearLog: TMenuItem;
     mnuAddSeparator: TMenuItem;
     procedure cmdSaveClick(Sender: TObject);
     procedure cmdCloseClick(Sender: TObject);
     procedure mnuCopyClick(Sender: TObject);
-    procedure mnuShowAllClick(Sender: TObject);
     procedure mnuAddSeparatorClick(Sender: TObject);
     procedure mnuClearLogClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -51,8 +49,6 @@ type
     { Private declarations }
     fLogStrings: TStrings;
     function GetLogLines: TStrings;
-  protected
-    function ShowAllLines: boolean;
   public
     { Public declarations }
     procedure AddLog(const s: string);
@@ -66,8 +62,6 @@ implementation
 
 uses
   SysUtils,
-
-  BoldCoreConsts,
   BoldUtils;
 
 {$R *.dfm}
@@ -85,7 +79,7 @@ begin
   while Strings.Count > cMaxLines do
     Strings.Delete(0);
   Strings.Add(s);
-  UpdateView;
+    UpdateView;
 end;
 
 procedure TBoldLogForm.Clear;
@@ -133,17 +127,6 @@ begin
   Log.Perform(EM_SCROLLCARET, 0, 0);
 end;
 
-procedure TBoldLogForm.mnuShowAllClick(Sender: TObject);
-begin
-  mnuShowAll.Checked := not mnuShowAll.Checked;
-  UpdateView;
-end;
-
-function TBoldLogForm.ShowAllLines: boolean;
-begin
-  Result := mnuShowAll.Checked;
-end;
-
 function TBoldLogForm.GetLogLines: TStrings;
 begin
   result := Log.Lines;
@@ -153,10 +136,10 @@ procedure TBoldLogForm.SaveLog;
 begin
   with TSaveDialog.Create(nil) do
   try
-    DefaultExt := 'log'; // do not localize
-    Filter := Format('%s (*.log)|*.log|%s (*.txt)|*.txt|%s (*.*)|*.*', [sLogFiles, sTextFiles, sAllFiles]); // do not localize
+    DefaultExt := 'log';
+    Filter := 'Log files (*.log)|*.log|Text files (*.txt)|*.txt|All files (*.*)|*.*';
     Options := [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofNoReadOnlyReturn];
-    Title := sSaveLogAs;
+    Title := 'Save Log As';
     if Execute then
       LogLines.SaveToFile(FileName);
   finally

@@ -1,4 +1,4 @@
-﻿
+
 /////////////////////////////////////////////////////////
 //                                                     //
 //              Bold for Delphi                        //
@@ -27,6 +27,7 @@ type
   TBoldExpressionHandleClass = class of TBoldExpressionHandle;       
 
   {---TBoldExpressionHandle---}
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldExpressionHandle = class(TBoldRootedHandle, IBoldOCLComponent)
   function IBoldOCLComponent.GetContextType = GetStaticRootType;
   private
@@ -78,8 +79,7 @@ uses
   {$IFDEF SpanFetch}
   AttracsSpanFetchManager,
   {$ENDIF}
-  BoldCoreConsts,
-  BoldRev;
+  BoldCoreConsts;
 
 const
   breVariablesDestroyed = 200;
@@ -142,7 +142,7 @@ begin
       try
       begin
   {$IFDEF SpanFetch}
-      if UsePrefetch and not EvaluateInps then
+      if UsePrefetch and not EvaluateInps and Assigned(BoldSystem) and BoldSystem.BoldPersistent then
         FetchOclSpan(RootValue, Expression, vars);
   {$ENDIF}
         if Assigned(RootValue.BoldType) then // ValueSetValue has no BoldType
@@ -217,6 +217,8 @@ begin
     self.Expression := Expression;
     self.Variables := Variables;
     self.EvaluateInPS := EvaluateInPS;
+    self.InPSMaxAnswers := InPSMaxAnswers;
+    self.InPSOffset := InPSOffset;
   end;
 end;
 
@@ -227,10 +229,12 @@ end;
 constructor TBoldExpressionHandle.Create(owner: TComponent);
 begin
   inherited;
-  fVariablesSubscriber := TBoldPassthroughSubscriber.create(_VariablesReceive);
+  fVariablesSubscriber := TBoldPassthroughSubscriber.Create(_VariablesReceive);
   fUsePrefetch := true;
   fMaxAnswers := -1;
   fOffset := -1;
+  InPSOffset := -1;
+  InPSMaxAnswers := -1;
 end;
 
 destructor TBoldExpressionHandle.Destroy;
@@ -259,7 +263,5 @@ begin
     result := Component = variables;
 end;
 
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldExpressionHandle.pas $ $Revision: 27 $ $Date: 02-08-08 9:21 $');
 end.
 

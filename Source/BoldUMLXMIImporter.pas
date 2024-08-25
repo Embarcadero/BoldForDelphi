@@ -81,7 +81,6 @@ type
 implementation
 
 uses
-  BoldRev,
   BoldDefs,
   BoldUtils,
   BoldGuard,
@@ -695,8 +694,5 @@ begin
   else
     BoldAttribute.AsString := AttributeValue;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldUMLXMIImporter.pas $ $Revision: 7 $ $Date: 02-08-02 10:02 $');
 
 end.

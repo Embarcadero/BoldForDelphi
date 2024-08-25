@@ -287,6 +287,4 @@ begin
 end;
 
 
-initialization
-
 end.

@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldPSDescriptionsDefault;
 
@@ -73,8 +72,7 @@ uses
   BoldDefs,
   BoldLogHandler,
   BoldNameExpander,
-  BoldMath,
-  BoldRev;
+  BoldMath;
 
 {---TBoldDefaultSystemDescription---}
 
@@ -124,7 +122,6 @@ begin
       raise EBold.CreateFmt(sUnknownGenerationMode, [ClassName, 'AddFirstClock']); // do not localize
   end;
 end;
-
 
 procedure TBoldDefaultSystemDescription.AddFirstID(PSParams: TBoldPSDefaultParams);
   procedure AddFirstIdUsingTable;
@@ -426,7 +423,5 @@ procedure TBoldDefaultSystemDescription.SetXFilestable(
 begin
   FXFilestable := Value;
 end;
-
-initialization
 
 end.

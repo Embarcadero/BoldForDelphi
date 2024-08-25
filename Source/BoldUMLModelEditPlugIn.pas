@@ -116,6 +116,4 @@ begin
     OnExecute(Context);
 end;
 
-initialization
-
 end.

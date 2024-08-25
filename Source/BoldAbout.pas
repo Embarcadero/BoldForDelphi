@@ -1,4 +1,4 @@
-﻿unit BoldAbout;
+unit BoldAbout;
 
 interface
 
@@ -18,8 +18,7 @@ uses
   ExtCtrls,
   Menus,
   ImgList,
-  Graphics,
-  System.ImageList;
+  Graphics;
 
 type
   TfrmAboutBold = class(TForm)
@@ -357,30 +356,9 @@ begin
     Result := ReadURL(Result);
 end;
 
-{
-// Activating a timer with this event when a deployment key is invalid
-// causes an AV in a releasebuild...
-// Can't say why, in a Dev-build it works fine
-
-procedure TfrmAboutBold.Timer1Timer(Sender: TObject);
-var
-  i: integer;
-const
-  ImageShifter: array[0..5] of integer = (0, 1, 2, 3, 5, 4);
-begin
-  for i := 0 to lvLicenses.Items.count - 1 do
-    lvLicenses.items[i].ImageIndex := ImageShifter[lvLicenses.items[i].ImageIndex];
-end;
-}
-
 function TfrmAboutBold.GetEffectiveLogo: TImage;
 begin
-  {$IFDEF BOLD_BCB}
-  result := imageLogoBCB;
-  {$ENDIF}
-  {$IFDEF BOLD_DELPHI}
   result := imageLogoDelphi;
-  {$ENDIF}
 end;
 
 end.

@@ -21,9 +21,6 @@ type
 
 implementation
 
-
 {$R *.DFM}
-
-initialization
 
 end.

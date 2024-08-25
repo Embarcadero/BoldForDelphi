@@ -36,9 +36,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
-
 var
   G_BoldExceptionHandlers: TList = nil;
 

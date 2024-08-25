@@ -150,6 +150,4 @@ begin
   result := assigned(anItem) and (anItem.UpgradeOlderThanVersion > Version);
 end;
 
-initialization
-
 end.

@@ -35,7 +35,7 @@ type
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
-    procedure AddPersistenceSubscription(Subscriber: TBoldSubscriber); virtual;
+    procedure AddPersistenceSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); virtual;
     procedure ReleasePersistenceController;
     property Active: Boolean read GetActive write SetActive;
     property PersistenceController: TBoldPersistenceController read GetPersistenceController;
@@ -47,8 +47,7 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 function TBoldPersistenceHandle.GetHandledObject: TObject;
 begin
@@ -122,36 +121,17 @@ begin
     SendExtendedEvent(Originator, OriginalEvent, Args);
 end;
 
-procedure TBoldPersistenceHandle.AddPersistenceSubscription(Subscriber: TBoldSubscriber);
+procedure TBoldPersistenceHandle.AddPersistenceSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []);
 begin
   PersistenceSubscriber.CancelAllSubscriptions;
-  PersistenceController.AddSmallSubscription(fPersistenceSubscriber, [beDestroying], beDestroying);
-  PersistenceController.SubscribeToPeristenceEvents(fPersistenceSubscriber);
-  AddSubscription(Subscriber, bpeFetchId, bpeFetchId);
-  AddSubscription(Subscriber, bpeFetchObject, bpeFetchObject);
-  AddSubscription(Subscriber, bpeFetchMember, bpeFetchMember);
-  AddSubscription(Subscriber, bpeCreateObject, bpeCreateObject);
-  AddSubscription(Subscriber, bpeUpdateObject, bpeUpdateObject);
-  AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
-  AddSubscription(Subscriber, bpeStartFetchId, bpeStartFetchId);
-  AddSubscription(Subscriber, bpeStartFetch, bpeStartFetch);
-  AddSubscription(Subscriber, bpeStartUpdate, bpeStartUpdate);
-  AddSubscription(Subscriber, bpeEndFetchId, bpeEndFetchId);
-  AddSubscription(Subscriber, bpeEndFetch, bpeEndFetch);
-  AddSubscription(Subscriber, bpeEndUpdate, bpeEndUpdate);
-
-  AddSubscription(Subscriber, bpeStartFetchMember, bpeStartFetchMember);
-  AddSubscription(Subscriber, bpeEndFetchMember, bpeEndFetchMember);
-  AddSubscription(Subscriber, bpeStartFetchObjectById, bpeStartFetchObjectById);
-  AddSubscription(Subscriber, bpeEndFetchObjectById, bpeEndFetchObjectById);
-  AddSubscription(Subscriber, bpeStartFetchClass, bpeStartFetchClass);
-  AddSubscription(Subscriber, bpeEndFetchClass, bpeEndFetchClass);
+  PersistenceController.AddSmallSubscription(fPersistenceSubscriber, [beDestroying]);
+  PersistenceController.SubscribeToPersistenceEvents(fPersistenceSubscriber);
 end;
 
 procedure TBoldPersistenceHandle.ReleasePersistenceController;
 begin
   Active := false;
-  FreeAndNil(fPersistenceSubscriber);  
+  FreeAndNil(fPersistenceSubscriber);
   FreeAndNil(fPersistenceController);
 end;
 

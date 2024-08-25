@@ -1,4 +1,4 @@
-﻿
+
 /////////////////////////////////////////////////////////
 //                                                     //
 //              Bold for Delphi                        //
@@ -24,8 +24,7 @@ uses
   BoldElementList,
   BoldDomainElement,
   BoldId,
-  BoldDefs,
-  BoldOSSMessage;
+  BoldDefs;
 
 type
   TBoldClassChangedEvent = procedure (TheClass: TBoldObjectList) of object;
@@ -36,6 +35,8 @@ type
   TBoldDoDisconnectEvent = procedure(aMessage: String; RemainDisconnectedMSec: integer) of object;
   TBoldExternalObjectSpaceEventHandler = class;
   TBoldFailedOSSMessageEvent = procedure(AMessage: String; AException: Exception) of object;
+  TBoldInvalidOSSMessageEvent = procedure(const aMsg: String) of object;
+  TBoldOSSGetClientsEvent = procedure(const aMsg: String) of object;
 
   EOSS = class(EBold)
   end;
@@ -51,6 +52,7 @@ type
 
   TIdListArray = array of TBoldObjectIdList;
 
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldExternalObjectSpaceEventHandler = class(TBoldStringDequeuer)
   private
     fBoldSystemHandle: TBoldSystemHandle;
@@ -66,6 +68,8 @@ type
     fOnEmbeddedStateChanged: TBoldEmbeddedStateChangedEvent;
     fOnNonEmbeddedStateChanged: TBoldNonEmbeddedStateChangedEvent;
     fOnObjectDeleted: TBoldEmbeddedStateChangedEvent;
+    fOnInvalidOSSMessageEvent: TBoldInvalidOSSMessageEvent;
+    fBoldOSSGetClientsEvent: TBoldOSSGetClientsEvent;
     fKeepClassesCurrent: boolean;
     fObjectFetchArray: TIdListArray;
     fIdFetchArray: TIdListArray;
@@ -77,14 +81,15 @@ type
     function GetObjectByID(ObjectID: TBoldDefaultID): TBoldObject;
     procedure Subscribe(const DoSubscribe: Boolean);
   protected
+    procedure DoInvalidOSSMessage(const aMsg: String);
     procedure HandleMessage(const aMsg: String); override;
-    procedure HandleObjectMessage(const AOSSMessage: TBoldOSSMessage);
-    procedure ClassChanged(const ClassName: String); virtual;
-    procedure MemberChanged(const ClassName, MemberName: String; ObjectID: TBoldDefaultID); virtual;
-    procedure EmbeddedStateOfObjectChanged(const ClassName: String; ObjectID: TBoldDefaultID); virtual;
-    procedure NonEmbeddedStateOfObjectChanged(const ClassName: String; const MemberName: String; ObjectID: TBoldDefaultID); virtual;
-    procedure ObjectCreated(const ClassName: String; ObjectId: TBoldDefaultID); virtual;
-    procedure ObjectDeleted(const ClassName: String;ObjectId: TBoldDefaultID); virtual;
+//    procedure HandleObjectMessage(const AOSSMessage: TBoldOSSMessage);
+    procedure ClassChanged(const AClassName: String); virtual;
+    procedure MemberChanged(const AClassName, AMemberName: String; AObjectID: TBoldDefaultID); virtual;
+    procedure EmbeddedStateOfObjectChanged(const AClassName: String; AObjectID: TBoldDefaultID); virtual;
+    procedure NonEmbeddedStateOfObjectChanged(const AClassName: String; const AMemberName: String; AObjectID: TBoldDefaultID); virtual;
+    procedure ObjectCreated(const AClassName: String; AObjectId: TBoldDefaultID); virtual;
+    procedure ObjectDeleted(const AClassName: String; AObjectId: TBoldDefaultID); virtual;
     procedure LockLost(const LockName: String); virtual;
     procedure Conflict(AElement: TBoldDomainElement); virtual;
     procedure ClearFetchList;
@@ -113,16 +118,22 @@ type
     property KeepClassesCurrent: boolean read fKeepClassesCurrent write fKeepClassesCurrent default true;
     property UseMemberLevelOSS: boolean read fUseMemberLevelOSS write fUseMemberLevelOSS;
     property OnFailedMessage: TBoldFailedOSSMessageEvent read FOnFailedMessage write FOnFailedMessage;
+    property OnInvalidOSSMessage: TBoldInvalidOSSMessageEvent read fOnInvalidOSSMessageEvent write fOnInvalidOSSMessageEvent;
+    property OnGetClientsEvent: TBoldOSSGetClientsEvent read fBoldOSSGetClientsEvent write fBoldOSSGetClientsEvent;
   end;
 
 implementation
 
 uses
-  BoldCoreConsts,
   BoldObjectSpaceExternalEvents,
   BoldValueSpaceInterfaces,
-  BoldRev,
-  BoldSystemRT;
+  BoldSystemRT,
+  Windows,
+  BoldElements,
+  BoldMetaElementList,
+  BoldIndex,
+  BoldIndexableList,
+  BoldHashIndexes;
 
 { TBoldDequeuer }
 
@@ -171,115 +182,77 @@ end;
 
 procedure TBoldExternalObjectSpaceEventHandler.HandleMessage(const aMsg: String);
 var
-  ClassName, MemberName, LockName: String;
-  SubsType: TBoldObjectSpaceSubscriptionType;
-  ObjectID, ExactId: TBoldDefaultID;
-  temp: string;
-  vEvents: TStringList;
+  vClassName, vMemberName, vLockName: String;
+  vSubsType: TBoldObjectSpaceSubscriptionType;
+  vObjectID, vExactId: TBoldDefaultID;
   vEvent: string;
-  i: integer;
-begin
-  if not assigned(fBoldSystemHandle) then
-    raise EBold.CreateFmt(sEventHandlerNotConnected, [self.ClassName, name]);
-  if not assigned(fBoldSystemHandle.System) then
-    raise EBold.CreateFmt(sSystemHandleNotActive, [self.ClassName, 'HandleMessage', fBoldSystemHandle.name]);
-  vEvents := TStringList.Create;
-  vEvents.CommaText := aMsg;
-  ExactId := nil;
-  ObjectID := TBoldDefaultID.Create;
-  try
-    for I := 0 to vEvents.Count - 1 do
-    begin
-      vEvent := Trim(vEvents[i]);
-      if pos('DISCONNECT:', vEvent) = 1 then
-      begin
-        if Assigned(fPropagatorHandle) then
-          fPropagatorHandle.Connected := false;
-        if assigned(OnDoDisconnect) then
-        begin
-          temp := copy(vEvent, pos(':', vEvent)+1, maxint);
-          OnDoDisconnect(
-            copy(temp, pos(':', temp)+1, maxint),
-            StrToIntDef(copy(temp, 1, pos(':', temp)-1), -1)
-          );
-        end;
-      end
-      else
-      begin
-        try
-          SubsType := TBoldObjectSpaceExternalEvent.DecodeExternalEvent(vEvent,
-                                                                        ClassName,
-                                                                        MemberName,
-                                                                        LockName,
-                                                                        ObjectID);
-          try
-            if (ClassName <> '') then
-              ExactId := ObjectID.CloneWithClassId(BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassName].TopSortedIndex, true) as TBoldDefaultID
-            else
-              ExactId := ObjectID.Clone as TBoldDefaultId;
-            case SubsType of
-              bsClassChanged: ClassChanged(ClassName);
-              bsMemberChanged: MemberChanged(ClassName, MemberName, ExactId);
-              bsEmbeddedStateOfObjectChanged: EmbeddedStateOfObjectChanged(ClassName, ExactId);
-              bsObjectCreated: ObjectCreated(ClassName, ExactId);
-              bsObjectDeleted: ObjectDeleted(ClassName, ExactId);
-              bsNonEmbeddedStateOfObjectChanged: NonEmbeddedStateOfObjectChanged(ClassName, MemberName, ExactId);
-              bsLockLost: LockLost(LockName);
-            end;
-          finally
-            FreeAndNil(ExactId);
-          end;
-        except
-          on e: exception do
-            FOnFailedMessage(aMsg, e);
-        end;
-      end;
-    end;
-  finally
-    vEvents.free;
-    FreeAndNil(ObjectID);
-  end;
-end;
-
-procedure TBoldExternalObjectSpaceEventHandler.HandleObjectMessage(
-  const AOSSMessage: TBoldOSSMessage);
-var
   vEvents: TStringList;
-  vEvent: string;
   i: integer;
 begin
   if not assigned(fBoldSystemHandle) then
     raise EBold.CreateFmt('%s.HandleMessage: The Eventhandler (%s) is not connected to a systemhandle. Unable to handle messages', [self.ClassName, name]);
   if not assigned(fBoldSystemHandle.System) then
     raise EBold.CreateFmt('%s.HandleMessage: The systemhandle (%s) is not active. Unable to handle messages', [self.ClassName, fBoldSystemHandle.name]);
+
   vEvents := TStringList.Create;
-  vEvents.Text := AOSSMessage.Events;
+  vEvents.CommaText := aMsg;
+  vExactId := nil;
+  vObjectID := TBoldDefaultID.Create;
   try
-    case AOSSMessage.MessageType of
-      mtFail:; // TODO: anything to do here ? maybe at least call event OnFail
-      mtSync :
-        begin
-          for I := 0 to vEvents.count-1 do
-          begin
-            vEvent := vEvents[i];
-            HandleMessage(vEvent);
+    for I := 0 to vEvents.Count - 1 do
+    begin
+      vEvent := Trim(vEvents[i]);
+      begin
+        try
+          vSubsType := TBoldObjectSpaceExternalEvent.DecodeExternalEvent(vEvent,
+                                                                        vClassName,
+                                                                        vMemberName,
+                                                                        vLockName,
+                                                                        vObjectID);
+          try
+            if (vClassName <> '') then
+              vExactId := vObjectID.CloneWithClassId(BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[vClassName].TopSortedIndex, true) as TBoldDefaultID
+            else
+              vExactId := vObjectID.Clone as TBoldDefaultId;
+            case vSubsType of
+              bsClassChanged: ClassChanged(vClassName);
+              bsMemberChanged: MemberChanged(vClassName, vMemberName, vExactId);
+              bsEmbeddedStateOfObjectChanged: EmbeddedStateOfObjectChanged(vClassName, vExactId);
+              bsObjectCreated: ObjectCreated(vClassName, vExactId);
+              bsObjectDeleted: ObjectDeleted(vClassName, vExactId);
+              bsNonEmbeddedStateOfObjectChanged: NonEmbeddedStateOfObjectChanged(vClassName, vMemberName, vExactId);
+              bsLockLost: LockLost(vLockName);
+            end;
+          finally
+            FreeAndNil(vExactId);
           end;
+        except
+          on e: exception do
+            FOnFailedMessage(vEvent, e);
         end;
+      end;
     end;
   finally
     vEvents.free;
+    FreeAndNil(vObjectID);
   end;
 end;
 
-procedure TBoldExternalObjectSpaceEventHandler.ClassChanged(const ClassName: String);
+procedure TBoldExternalObjectSpaceEventHandler.DoInvalidOSSMessage(
+  const aMsg: String);
+begin
+  if Assigned(OnInvalidOSSMessage) then
+    OnInvalidOSSMessage(aMsg);
+end;
+
+procedure TBoldExternalObjectSpaceEventHandler.ClassChanged(const AClassName: String);
 var
   ClassTypeInfo: TBoldClassTypeInfo;
   ClassList: TBoldObjectList;
 begin
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassName];
+  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
   if not Assigned(ClassTypeInfo) then
-    raise EOSS.CreateFmt(sClassNotInSystem, [ClassName]);
-
+    raise EOSS.CreateFmt('Cannot find the class %s in the system.', [AClassName]);
   if Assigned(fOnClassChangedEvent) then
   begin
     ClassList := BoldSystem.Classes[ClassTypeInfo.TopSortedIndex];
@@ -291,15 +264,15 @@ begin
     ClassList.Invalidate;
     ClassTypeInfo := ClassTypeInfo.SuperClassTypeInfo;
   until not Assigned(ClassTypeInfo);
-  SendExtendedEvent(self, boeClassChanged, [ClassName]);
+  SendExtendedEvent(self, boeClassChanged, [AClassName]);
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.EmbeddedStateOfObjectChanged(
-  const ClassName: String; ObjectID: TBoldDefaultID);
+  const AClassName: String; AObjectID: TBoldDefaultID);
 var
   CurrObj: TBoldObject;
 begin
-  CurrObj := GetObjectByID(ObjectID);
+  CurrObj := GetObjectByID(AObjectID);
   if Assigned(fOnEmbeddedStateChanged) then
     fOnEmbeddedStateChanged(CurrObj)
   else
@@ -312,12 +285,12 @@ begin
       else
       begin
         if CurrObj.ObjectHasSubscribers then
-          FetchObject(ObjectId);
+          FetchObject(AObjectId);
         CurrObj.Invalidate;
       end;
     end;
   end;
-  SendExtendedEvent(self, boeEmbeddedStateOfObjectChanged, [CurrObj, className, ObjectId, CurrObj]);
+  SendExtendedEvent(self, boeEmbeddedStateOfObjectChanged, [CurrObj, AClassName, AObjectId, CurrObj]);
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.ClearFetchList;
@@ -412,21 +385,21 @@ begin
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.NonEmbeddedStateOfObjectChanged(
-  const ClassName: String; const MemberName: String; ObjectID: TBoldDefaultID);
+  const AClassName: String; const AMemberName: String; AObjectID: TBoldDefaultID);
 var
   CurrObj: TBoldObject;
   CurrMember: TBoldMember;
   i: integer;
 begin
   CurrMember := nil;
-  CurrObj := GetObjectByID(ObjectID);
+  CurrObj := GetObjectByID(AObjectID);
   if Assigned(CurrObj) then
   begin
-//    if CurrObj.BoldClassTypeInfo.ExpressionName <> ClassName then
-//      raise EOSS.CreateFmt('Object %s is %s, but expected type is %s.', [ObjectID.AsString, CurrObj.BoldClassTypeInfo.ExpressionName, ClassName]);
-    i := CurrObj.BoldMemberIndexByExpressionName[MemberName];
+//    if CurrObj.BoldClassTypeInfo.ExpressionName <> AClassName then
+//      raise EOSS.CreateFmt('Object %s is %s, but expected type is %s.', [AObjectID.AsString, CurrObj.BoldClassTypeInfo.ExpressionName, AClassName]);
+    i := CurrObj.BoldMemberIndexByExpressionName[AMemberName];
     if i = -1 then
-      raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [CurrObj.DisplayName, MemberName]);
+      raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [CurrObj.DisplayName, AMemberName]);
     CurrMember := CurrObj.BoldMemberIfAssigned[i];
   end;
   if Assigned(CurrMember) then
@@ -443,7 +416,7 @@ begin
       CurrMember.Invalidate;
     end;
   end;
-  SendExtendedEvent(self, boeNonEmbeddedStateOfObjectChanged, [ObjectID, CurrObj, CurrMember, ClassName, MemberName]);
+  SendExtendedEvent(self, boeNonEmbeddedStateOfObjectChanged, [AObjectID, CurrObj, CurrMember, AClassName, AMemberName]);
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.Conflict(
@@ -466,9 +439,12 @@ var
   CurrLocator: TBoldObjectLocator;
 begin
   Result := nil;
-  CurrLocator := fBoldSystemHandle.System.Locators.LocatorByID[ObjectID];
-  if Assigned(CurrLocator) then
-    Result := CurrLocator.BoldObject;
+  if Assigned(BoldSystem) then
+  begin
+    CurrLocator := fBoldSystemHandle.System.Locators.LocatorByID[ObjectID];
+    if Assigned(CurrLocator) then
+      Result := CurrLocator.BoldObject;
+  end;
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.LockLost(const LockName: String);
@@ -478,7 +454,7 @@ begin
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.MemberChanged(
-  const ClassName, MemberName: String; ObjectID: TBoldDefaultID);
+  const AClassName, AMemberName: String; AObjectID: TBoldDefaultID);
 var
   CurrObj: TBoldObject;
   CurrMember: TBoldMember;
@@ -489,9 +465,11 @@ var
   vHasConflicts: boolean;
 begin
 //  CurrMember := nil;
-  CurrObj := GetObjectByID(ObjectID);
-//  if Assigned(CurrObj) and (CurrObj.BoldClassTypeInfo.ExpressionName <> ClassName) then
-//    raise EOSS.CreateFmt('Object %s is %s, but expected type is %s.', [ObjectID.AsString, CurrObj.BoldClassTypeInfo.ExpressionName, ClassName]);
+  CurrObj := GetObjectByID(AObjectID);
+  if not Assigned(CurrObj) then
+    exit;
+  if CurrObj.BoldClassTypeInfo.ExpressionName <> AClassName then
+    raise EOSS.CreateFmt('Object %s is %s, but expected type is %s.', [AObjectID.AsString, CurrObj.BoldClassTypeInfo.ExpressionName, AClassName]);
   if Assigned(CurrObj) and UseMemberLevelOSS then
   begin
 //    if CurrObj.BoldDirty then
@@ -504,13 +482,13 @@ begin
 
       sl := TStringList.Create;
       try
-        sl.CommaText := MemberName;
+        sl.CommaText := AMemberName;
         vHasConflicts := false;
         for i := 0 to sl.Count - 1 do
         begin
           j := CurrObj.BoldMemberIndexByExpressionName[sl[i]];
           if j = -1 then
-            raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [CurrObj.DisplayName, MemberName]);
+            raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [CurrObj.DisplayName, AMemberName]);
           CurrMember := CurrObj.BoldMemberIfAssigned[j];
           if Assigned(CurrMember) then
           begin
@@ -519,7 +497,9 @@ begin
             begin
               vHasConflicts := true;
               Conflict(CurrMember);
-            end;
+            end
+            else
+              CurrMember.Invalidate;
           end;
         end;
         if vHasConflicts then
@@ -547,8 +527,8 @@ begin
           end;
         end;
 }
-        if not vHasConflicts then
-          FetchObject(ObjectId);
+//        if not vHasConflicts then
+//          FetchObject(ObjectId);
 //          BoldSystem.FetchMembersWithObject(CurrObj, sl.CommaText);
       finally
         sl.free;
@@ -556,20 +536,20 @@ begin
 
 //    end;
   end;
-  SendExtendedEvent(self, boeMemberChanged, [ClassName, MemberName, ObjectId, CurrObj]);
+  SendExtendedEvent(self, boeMemberChanged, [AClassName, AMemberName, AObjectId, CurrObj]);
 end;
 
-procedure TBoldExternalObjectSpaceEventHandler.ObjectCreated(const ClassName: String;
-  ObjectId: TBoldDefaultID);
+procedure TBoldExternalObjectSpaceEventHandler.ObjectCreated(const AClassName: String;
+  AObjectId: TBoldDefaultID);
 var
   ClassTypeInfo: TBoldClassTypeInfo;
   ClassList: TBoldObjectList;
   BoldObject: TBoldObject;
   Handled: boolean;
 begin
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassName];
+  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
   if not Assigned(ClassTypeInfo) then
-    raise EOSS.CreateFmt('Cannot find the class %s in the system.', [ClassName]);
+    raise EOSS.CreateFmt('Cannot find the class %s in the system.', [AClassName]);
   BoldObject := nil;
   Handled := false;
   repeat
@@ -579,8 +559,8 @@ begin
       if not Handled then
       begin
         case ClassList.BoldPersistenceState of
-          bvpsCurrent: FetchObject(ObjectId);
-          bvpsTransient: FetchId(ObjectId);
+          bvpsCurrent: FetchObject(AObjectId);
+          bvpsTransient: FetchId(AObjectId);
         end;
         Handled := true;
       end;
@@ -589,19 +569,19 @@ begin
       ClassList.Invalidate;
     ClassTypeInfo := ClassTypeInfo.SuperClassTypeInfo;
   until not Assigned(ClassTypeInfo);
-  SendExtendedEvent(self, boeObjectCreated, [ClassName, ObjectId, BoldObject]);
+  SendExtendedEvent(self, boeObjectCreated, [AClassName, AObjectId, BoldObject]);
 end;
 
-procedure TBoldExternalObjectSpaceEventHandler.ObjectDeleted(const ClassName: String; ObjectId: TBoldDefaultID);
+procedure TBoldExternalObjectSpaceEventHandler.ObjectDeleted(const AClassName: String; AObjectId: TBoldDefaultID);
 var
   ClassTypeInfo: TBoldClassTypeInfo;
 //  ClassList: TBoldObjectList;
   CurrObj: TBoldObject;
 begin
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassName];
+  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
   if not Assigned(ClassTypeInfo) then
-    raise EOSS.CreateFmt('Cannot find the class %s in the system.', [ClassName]);
-  CurrObj := GetObjectByID(ObjectID);
+    raise EOSS.CreateFmt('Cannot find the class %s in the system.', [AClassName]);
+  CurrObj := GetObjectByID(AObjectID);
   if Assigned(CurrObj) then
   begin
     if Assigned(fOnObjectDeleted) then
@@ -616,7 +596,7 @@ begin
         CurrObj.SendEvent(beObjectDeleted);
     end;
   end;
-  SendExtendedEvent(self, boeObjectDeleted, [ClassName, ObjectId, CurrObj]);
+  SendExtendedEvent(self, boeObjectDeleted, [AClassName, AObjectId, CurrObj]);
 end;
 
 procedure TBoldExternalObjectSpaceEventHandler.Notification(
@@ -673,8 +653,5 @@ begin
   FList.free;
   inherited;
 end;
-
-initialization
-   BoldRegisterModuleVersion('$Workfile: BoldExternalObjectSpaceEventHandler.pas $ $Revision: 18 $ $Date: 02-05-24 17:28 $');
 
 end.

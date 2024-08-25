@@ -122,6 +122,7 @@ uses
   SysUtils,
   BoldUtils,
   Dialogs,
+  System.UITypes,
   BoldLogHandler,
   BoldUMLDelphiSupport,
   BoldUMLRose98Support,
@@ -520,7 +521,7 @@ begin
     raise EBoldImport.CreateFmt('%s.ImportModel: Must have an UMLModel to import to.', [className]);
   fUMLModel := UMLModel;
   fMapping.UMLModel := UMLModel;
-  BoldInstalledQueue.DeActivateDisplayQueue;
+  TBoldQueueable.DeActivateDisplayQueue;
 
   try
     UMLModel.BoldSystem.StartTransaction;
@@ -579,7 +580,7 @@ begin
       end;
     end;
   finally
-    BoldInstalledQueue.ActivateDisplayQueue;
+    TBoldQueueable.ActivateDisplayQueue;
     fRoseModel := nil;
   end;
 end;

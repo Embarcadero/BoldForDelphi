@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceControllerDefault;
@@ -50,7 +49,7 @@ type
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     property PersistenceMapper: TBoldSystemDefaultMapper read GetPersistenceMapper;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
@@ -247,11 +246,11 @@ begin
   PersistenceMapper.PMSetReadonlyness(ReadOnlyList, WriteableList);
 end;
 
-procedure TBoldPersistenceControllerDefault.SubscribeToPeristenceEvents(
-  Subscriber: TBoldSubscriber);
+procedure TBoldPersistenceControllerDefault.SubscribeToPersistenceEvents(
+  Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
-  Inherited;
-  PersistenceMapper.SubscribeToPersistenceEvents(Subscriber);
+  inherited;
+  PersistenceMapper.SubscribeToPersistenceEvents(Subscriber, Events);
 end;
 
 procedure TBoldPersistenceControllerDefault.ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
@@ -335,9 +334,5 @@ function TBoldPersistenceControllerDefault.InTransaction: Boolean;
 begin
   Result := PersistenceMapper.Database.InTransaction;
 end;
-
-initialization
-
-
 
 end.

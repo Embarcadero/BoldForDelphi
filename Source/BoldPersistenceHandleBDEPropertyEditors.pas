@@ -46,6 +46,4 @@ begin
   Sessions.GetSessionNames(List);
 end;
 
-initialization
-
 end.

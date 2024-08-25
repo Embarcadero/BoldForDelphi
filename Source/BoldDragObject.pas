@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDragObject;
@@ -588,7 +587,6 @@ begin
 end;
 
 initialization
-
   ControlProviderList.Add(TBoldControlProviderForClass.Create);
   ControlProviderList.Add(TBoldControlProviderForOperation.Create);
   ControlProviderList.Add(TBoldControlProviderForAssociationEndMulti.Create);

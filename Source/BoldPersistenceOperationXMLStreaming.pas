@@ -206,7 +206,6 @@ implementation
 uses
  {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
   SysUtils,
-  BoldRev,
   BoldDefaultStreamNames;
 
 const
@@ -737,8 +736,5 @@ procedure TBoldPMTimeForTimestampOperation.WriteOutParams(XMLNode: TBoldXMLNode)
 begin
   XMLNode.WriteSubNodeString(BoldNodeName_ClockTime, DateTimeToStr(ClockTime));
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldPersistenceOperationXMLStreaming.pas $ $Revision: 12 $ $Date: 02-06-11 15:05 $');
 
 end.

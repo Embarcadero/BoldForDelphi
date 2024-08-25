@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLMMLink;
@@ -40,6 +39,7 @@ const
   MM_LINKDESC: string = 'ModelMaker Project Bundle (*.mpb)';
 
 implementation
+
 uses
   SysUtils,
   Classes,
@@ -143,7 +143,7 @@ begin
   Result := False;
   if not Assigned(UMLModel) then
     raise EBoldImport.CreateFmt('%s.ImportModel: Must have an UMLModel to import to.', [className]);
-  BoldInstalledQueue.DeActivateDisplayQueue;
+  TBoldQueueable.DeActivateDisplayQueue;
   try
     UMLModel.BoldSystem.StartTransaction;
     try
@@ -170,7 +170,7 @@ begin
       end;
     end;
   finally
-    BoldInstalledQueue.ActivateDisplayQueue;
+    TBoldQueueable.ActivateDisplayQueue;
   end;
 end;
 

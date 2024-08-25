@@ -49,15 +49,16 @@ implementation
 
 uses
   SysUtils,
+  Toolsapi,
+  ShellAPI,
+  Windows,
+  Dialogs,
+  BoldCoreConsts,
   BoldUtils,
   BoldDefsDT,
   BoldRegistry,
   BoldIDEMenus,
-  BoldGuard,
-  Toolsapi,
-  ShellAPI,
-  windows,
-  dialogs;
+  BoldGuard;
 
 procedure Register;
 begin
@@ -69,7 +70,7 @@ begin
   try
     dmMenus := TDMExpertMenus.Create(nil);
     BoldMenuExpert;
-    GettingStartedExpert := TBoldGettingStartedExpert.Create('BoldGettingStartedExpert', sGettingStarted, [], 5, 'Bold');
+    GettingStartedExpert := TBoldGettingStartedExpert.Create('BoldGettingStartedExpert', 'GettingStarted', [], 5, 'Bold');
     GettingStartedExpert.AddMenuItem(dmMenus.GettingStartedMenu);
   except on E: Exception do
     showmessage(Format('InitExpert: ', [E.Message]));

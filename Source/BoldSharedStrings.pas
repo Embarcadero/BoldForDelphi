@@ -19,7 +19,7 @@ type
   TBoldSharedStringHolder = class(TBoldMemoryManagedObject)
   private
     fValue: String;
-    function GetExternalRefCount: integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetExternalRefCount: integer;
   public
     constructor Create(const s: String);
     property ExternalRefCount: integer read GetExternalRefCount;
@@ -29,7 +29,7 @@ type
   TBoldSharedStringCache = class(TBoldUnOrderedIndexableList)
   private
     class var IX_StringHolderValue: integer;
-    function GetHolderByValue(const s: String): TBoldSharedStringHolder; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetHolderByValue(const s: String): TBoldSharedStringHolder;
   public
     constructor Create;
     property HolderByValue[const s: String]: TBoldSharedStringHolder read GetHolderByValue;
@@ -39,7 +39,7 @@ type
   TBoldSharedAnsiStringHolder = class(TBoldMemoryManagedObject)
   private
     fValue: AnsiString;
-    function GetExternalRefCount: integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetExternalRefCount: integer;
   public
     constructor Create(const s: AnsiString);
     property ExternalRefCount: integer read GetExternalRefCount;

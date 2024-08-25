@@ -52,16 +52,18 @@ function UMLModelEditor: TModelEdit;
 function UMLModelEditorAssigned: Boolean;
 
 var
-  BoldModelEditFrmClass: TFormClass;
+  BoldModelEditFrmClass: TFormClass = nil; //TBoldModelEditFrm;
 
 implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldRegistry,
   Controls,
-  BoldUMLModelDataModule,  
+  System.Types,
+  BoldUMLModelDataModule,
+  BoldUMLModelEditorHandlesDataModule,
+  BoldUMLModelEditForm,
   BoldGuard;
 
 var G_ModelEditor: TModelEdit = nil;
@@ -69,7 +71,11 @@ var G_ModelEditor: TModelEdit = nil;
 function UMLModelEditor: TModelEdit;
 begin
   if not assigned(G_ModelEditor) then
+  begin
     G_ModelEditor := TModelEdit.Create;
+    if not Assigned(BoldModelEditFrmClass) then
+      BoldModelEditFrmClass := TBoldModelEditFrm;
+  end;
   result := G_ModelEditor;
 end;
 
@@ -117,6 +123,8 @@ var
 begin
   if not Assigned(BoldModelEditFrmClass) then
     raise Exception.Create('BoldModelEditFrmClass not set, add BoldUMLModelEdit to uses.');
+  if not Assigned(dmBoldUMLModelEditorHandles) then
+    Application.CreateForm(TdmBoldUMLModelEditorHandles, dmBoldUMLModelEditorHandles);
   Application.CreateForm(BoldModelEditFrmClass, aForm);
   Aform.FreeNotification(Self);
   EditForms.Add(aForm);

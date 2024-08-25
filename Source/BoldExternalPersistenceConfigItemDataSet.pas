@@ -40,10 +40,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
-
-
 constructor TBoldExternalPersistenceConfigDataSetItem.Create(AOwner: TCollection);
 begin
   inherited Create(AOwner);
@@ -93,7 +89,5 @@ function TBoldExternalPersistenceConfigDataSetItems.GetItem(
 begin
   result := inherited GetItem(Index) as TBoldExternalPersistenceConfigDataSetItem;
 end;
-
-initialization
 
 end.

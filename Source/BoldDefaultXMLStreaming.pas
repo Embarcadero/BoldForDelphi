@@ -1,11 +1,3 @@
-﻿
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDefaultXMLStreaming;
@@ -276,7 +268,6 @@ uses
   BoldCoreConsts,
   BoldHashIndexes,
   {$IFDEF OXML}OXmlPDOM{$ELSE}Bold_MSXML_TLB{$ENDIF},
-  BoldRev,
   BoldDefaultStreamNames;
 
 const
@@ -1094,7 +1085,6 @@ begin
 end;
 
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDefaultXMLStreaming.pas $ $Revision: 36 $ $Date: 02-07-17 7:04 $');
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLStringContentStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLIntegerContentStreamer.Create);
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLFloatContentStreamer.Create);

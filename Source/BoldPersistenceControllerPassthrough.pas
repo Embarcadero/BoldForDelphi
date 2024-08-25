@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceControllerPassthrough;
 
@@ -23,10 +22,14 @@ type
   { TBoldPersistenceControllerPassthrough }
   TBoldPersistenceControllerPassthrough = class(TBoldPersistenceController)
   private
+    fSubscriber: TBoldPassthroughSubscriber;
     fNextPersistenceController: TBoldPersistenceController;
-    function GetNextPersistenceController: TBoldPersistenceController; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetNextPersistenceController: TBoldPersistenceController;
+    procedure SetNextPersistenceController(const Value: TBoldPersistenceController);
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
   public
     constructor Create;
+    destructor Destroy; override;
     procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
@@ -34,7 +37,7 @@ type
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                   TranslationList: TBoldIdTranslationList); override;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
@@ -44,8 +47,7 @@ type
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
     function DatabaseInterface: IBoldDatabase; override;
-    property NextPersistenceController: TBoldPersistenceController read getNextPersistenceController
-              write fNextPersistenceController;
+    property NextPersistenceController: TBoldPersistenceController read GetNextPersistenceController write SetNextPersistenceController;
   end;
 
 implementation
@@ -53,8 +55,7 @@ implementation
 uses
   SysUtils,
 
-  BoldCoreConsts,
-  BoldRev;
+  BoldCoreConsts;
 
   { TBoldPersistenceControllerPassthrough }
 
@@ -63,6 +64,17 @@ function TBoldPersistenceControllerPassthrough.CanEvaluateInPS(sOCL: string;
   const aVariableList: TBoldExternalVariableList): Boolean;
 begin
   Result := NextPersistenceController.CanEvaluateInPS(sOCL, aSystem, aContext, aVariableList);
+end;
+
+procedure TBoldPersistenceControllerPassthrough.SetNextPersistenceController(const Value: TBoldPersistenceController);
+begin
+  if fNextPersistenceController <> value then
+  begin
+    fNextPersistenceController := Value;
+    FreeAndNil(fSubscriber);
+    fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
+    fNextPersistenceController.AddSubscription(fSubscriber, beDestroying);
+  end;
 end;
 
 procedure TBoldPersistenceControllerPassthrough.StartTransaction;
@@ -91,6 +103,12 @@ begin
     Result := fNextPersistenceController.DatabaseInterface
   else
     result := nil;
+end;
+
+destructor TBoldPersistenceControllerPassthrough.Destroy;
+begin
+  FreeAndNil(fSubscriber);
+  inherited;
 end;
 
 function TBoldPersistenceControllerPassthrough.getNextPersistenceController: TBoldPersistenceController;
@@ -156,10 +174,17 @@ begin
     TranslationList, TimeStamp, TimeOfLatestUpdate, BoldClientID);
 end;
 
-procedure TBoldPersistenceControllerPassthrough.SubscribeToPeristenceEvents(
-  Subscriber: TBoldSubscriber);
+procedure TBoldPersistenceControllerPassthrough.SubscribeToPersistenceEvents(
+  Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
-  NextPersistenceController.SubscribeToPeristenceEvents(Subscriber);
+  NextPersistenceController.SubscribeToPersistenceEvents(Subscriber, Events);
+end;
+
+procedure TBoldPersistenceControllerPassthrough.Receive(Originator: TObject; OriginalEvent: TBoldEvent;
+  RequestedEvent: TBoldRequestedEvent);
+begin
+  if Originator = fNextPersistenceController then
+    fNextPersistenceController := nil;
 end;
 
 procedure TBoldPersistenceControllerPassthrough.ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
@@ -179,7 +204,5 @@ procedure TBoldPersistenceControllerPassthrough.PMTimestampForTime(
 begin
   NextPersistenceController.PMTimestampForTime(ClockTime, Timestamp);
 end;
-
-initialization
 
 end.

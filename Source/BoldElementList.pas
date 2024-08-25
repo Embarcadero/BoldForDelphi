@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldElementList;
@@ -56,8 +55,7 @@ uses
   BoldDefs,
   BoldSubscription,
   BoldSystemRT,
-  BoldIndexableList,
-  BoldRev;
+  BoldIndexableList;
 
 type
   { TBoldIndexableElementList }

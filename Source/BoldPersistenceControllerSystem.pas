@@ -59,7 +59,8 @@ uses
   BoldDefaultId,
   BoldSystemRT,
   BoldIndex,
-  BoldLogHandler;
+  BoldLogHandler,
+  BoldGuard;
 
 type
   { TBoldIdLocatorPair }
@@ -94,15 +95,15 @@ type
     class var IX_MappingIdIndex: integer;
     class var IX_MappingLocatorIndex: integer;
     fNextId: Integer;
-    function GetLocatorById(ID: TBoldObjectId): TBoldObjectLocator; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetIdByLocator(Locator: TBoldObjectLocator): TBoldObjectId; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetPairByLocator(Locator: TBoldObjectLocator): TBoldIdLocatorPair; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetLocatorById(ID: TBoldObjectId): TBoldObjectLocator;
+    function GetIdByLocator(Locator: TBoldObjectLocator): TBoldObjectId;
+    function GetPairByLocator(Locator: TBoldObjectLocator): TBoldIdLocatorPair;
   public
     constructor Create;
-    procedure AddPair(Id: TBoldObjectId; Locator: TBoldObjectLocator); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure AddPair(Id: TBoldObjectId; Locator: TBoldObjectLocator);
     procedure ExactifyClassForLocator(Locator: TBoldObjectLocator; ExactClassId: Integer);
     function EnsuredIdByLocator(Locator: TBoldObjectLocator): TBoldObjectId;
-    procedure RemoveByLocator(Locator: TBoldObjectLocator); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure RemoveByLocator(Locator: TBoldObjectLocator);
     property LocatorById[ID: TBoldObjectId]: TBoldObjectLocator read GetLocatorById;
     property IdByLocator[Locator: TBoldObjectLocator]: TBoldObjectId read GetIdByLocator;
   end;
@@ -293,7 +294,7 @@ var
   aValue: IBoldValue;
   aRoleRT: TBoldRoleRTInfo;
   Ids1, Ids2: TBoldObjectIdList;
-  aMemberId: TBoldMemberId;
+  Guard: IBoldGuard;
 begin
   aValue := BoldMember.AsIBoldValue[bdepContents];
   Assert(Assigned(aValue));
@@ -311,18 +312,16 @@ begin
         aRoleRT := BoldMember.BoldMemberRTInfo as TBoldRoleRTInfo;
         if aRoleRT.IsMultiRole then
         begin
+          Guard := TBoldGuard.Create(Ids1, Ids2);
           if aRoleRT.IsIndirect then
           begin
             Ids1 := ExtractNewIdList(BoldMember.OwningObject.BoldMembers[aRoleRT.IndexOfLinkObjectRole] as TBoldObjectList);
             Ids2 := ExtractNewIdList(BoldMember as TBoldObjectList);
             (aValue as IBoldObjectIdListRefPair).SetFromIdLists(Ids1, Ids2);
-            Ids1.Free;
-            Ids2.Free;
           end else
           begin
             Ids1 := ExtractNewIdList(BoldMember as TBoldObjectList);
             (aValue as IBoldObjectIdListRef).SetFromIdList(Ids1);
-            Ids1.Free;
           end;
         end else
         begin
@@ -333,7 +332,7 @@ begin
           else
             (aValue as IBoldObjectIdRef).SetFromId(
                 TBoldIdLocatorMapping(fMapping).EnsuredIdByLocator((BoldMember as TBoldObjectReference).Locator)
-                , false); //? 
+                , false); //?
         end;
       end;
     end;
@@ -548,7 +547,7 @@ procedure TBoldPersistenceControllerSystem.PMUpdate(
         TBoldObjectReference(Member).Locator := nil;
     end
     else
-      Member.AsIBoldValue[bdRemove].AssignContent(Value); 
+      Member.AsIBoldValue[bdRemove].AssignContent(Value);
   end;
 
 var

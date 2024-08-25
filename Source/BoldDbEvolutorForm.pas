@@ -47,6 +47,7 @@ type
     fMappingInfoScript: TStringList;
     fWarnings: TStringList;
     fSessionName: String;
+    FEnabled: Boolean;
     procedure SqlScriptChange(Sender: TObject);
     procedure MappingInfoScriptChange(Sender: TObject);
     procedure SetProgress(const Value: integer);
@@ -65,6 +66,8 @@ type
     function GetSQLScript: TStrings;
     function GetWarnings: TStrings;
     procedure UpdateWarningCount(Sender: TObject);
+    procedure SetEnabled(const Value: Boolean);
+    function GetEnabled: Boolean;
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
@@ -72,7 +75,7 @@ type
     property SQLScript: TStrings read GetSQLScript;
     property MappingInfoScript: TStrings read GetMappingInfoScript;
     property Warnings: TStrings read GetWarnings;
-
+    property Enabled: Boolean read GetEnabled write SetEnabled;
     { Public declarations }
   end;
 
@@ -143,6 +146,11 @@ begin
   ProgressBar1.Refresh;
 end;
 
+procedure TfrmBoldDbEvolutor.SetEnabled(const Value: Boolean);
+begin
+  FEnabled := Value;
+end;
+
 procedure TfrmBoldDbEvolutor.SetLogHeader(const Value: string);
 begin
 end;
@@ -201,6 +209,11 @@ end;
 procedure TfrmBoldDbEvolutor.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := caFree;
+end;
+
+function TfrmBoldDbEvolutor.GetEnabled: Boolean;
+begin
+  Result := FEnabled;
 end;
 
 function TfrmBoldDbEvolutor.GetMappingInfoScript: TStrings;

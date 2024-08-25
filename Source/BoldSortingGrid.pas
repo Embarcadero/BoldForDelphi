@@ -77,8 +77,8 @@ implementation
 uses
   SysUtils,
   Graphics,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
+
 { TBoldSortingGrid }
 
 function TBoldSortingGrid.AdjustStringForNumericCompare(s: String): String;

@@ -15,8 +15,11 @@ uses
   ExtCtrls,
   BoldLogReceiverInterface,
   BoldLogHandler,
+  Messages,
   BoldDefs;
 
+const
+  WM_REFRESHGUI = WM_USER + 201;
 type
   TBoldLogFrame = class(TFrame, IBoldLogReceiver)
     pgLog: TProgressBar;
@@ -39,6 +42,7 @@ type
     fSessionName: string;
     fHighestSeverity: TBoldLogType;
     fProgressPosition: integer;
+    fEnabled: Boolean;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -54,16 +58,20 @@ type
     procedure CalculateTimeLeft;
     procedure ProcessInterruption;
     procedure DoRefresh;
+    procedure RefreshGUI(var Message: TMessage); message WM_REFRESHGUI;
+    function GetEnabled: Boolean;
+    procedure SetEnabled(const Value: Boolean);
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
     class function CreateSmallLogForm(Caption: string): TForm;
-    { Public declarations }
+    property Enabled: Boolean read GetEnabled write SetEnabled;
   end;
 
 implementation
 
 uses
+  Windows,
   SysUtils,
 
   BoldCoreConsts,
@@ -153,6 +161,11 @@ begin
 end;
 
 
+function TBoldLogFrame.GetEnabled: Boolean;
+begin
+  Result := fEnabled;
+end;
+
 procedure TBoldLogFrame.Hide;
 begin
   visible := false;
@@ -191,11 +204,22 @@ begin
   end;
 end;
 
+procedure TBoldLogFrame.RefreshGUI(var Message: TMessage);
+begin
+  DoRefresh;
+  Show;
+end;
+
 procedure TBoldLogFrame.SetProgress(const Value: integer);
 begin
   pgLog.position := Value;
   fProgressPosition := Value;
   CalculateTimeLeft;
+end;
+
+procedure TBoldLogFrame.SetEnabled(const Value: Boolean);
+begin
+
 end;
 
 procedure TBoldLogFrame.SetLogHeader(const Value: string);
@@ -220,9 +244,10 @@ begin
   lblLogMainHeader.Caption := SessionName;
   fSessionName := SessionName;
   DoRefresh;
-  Show;
+  PostMessage(Handle, WM_REFRESHGUI, 0, 0);
+//  Show;
   fStartTime := now;
-  Timer1.Enabled := false; 
+  Timer1.Enabled := false;
   btnStop.Enabled := true;
   fHighestSeverity := ltInfo;
 end;
@@ -246,7 +271,7 @@ end;
 
 procedure TBoldLogFrame.ProcessInterruption;
 begin
-  application.ProcessMessages;
+  Application.ProcessMessages;
 end;
 
 procedure TBoldLogFrame.Sync;

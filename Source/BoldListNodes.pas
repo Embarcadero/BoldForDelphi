@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListNodes;
@@ -30,12 +29,12 @@ type
 
   TBoldAbstractLinkNode = class(TBoldMultiIndexedListNode)
   protected
-    function getNext(Index: integer): TBoldMultiIndexedListNode; virtual; abstract;
-    procedure setNext(Index: integer; Value: TBoldMultiIndexedListNode); virtual; abstract;
-    function getPrevious(Index: integer): TBoldMultiIndexedListNode; virtual; abstract;
-    procedure setPrevious(Index: integer; Value: TBoldMultiIndexedListNode); virtual; abstract;
-    function getIndexNode(Index: integer): TBoldIndexNode; virtual;
-    function getNumberOfIndices: integer; virtual; abstract;
+    function GetNext(Index: integer): TBoldMultiIndexedListNode; virtual; abstract;
+    procedure SetNext(Index: integer; Value: TBoldMultiIndexedListNode); virtual; abstract;
+    function GetPrevious(Index: integer): TBoldMultiIndexedListNode; virtual; abstract;
+    procedure SetPrevious(Index: integer; Value: TBoldMultiIndexedListNode); virtual; abstract;
+    function GetIndexNode(Index: integer): TBoldIndexNode; virtual;
+    function GetNumberOfIndices: integer; virtual; abstract;
   public
     procedure InsertAfter(const Index: integer; NewNode: TBoldAbstractLinkNode);
     procedure InsertBefore(const Index: integer; NewNode: TBoldAbstractLinkNode);
@@ -114,7 +113,5 @@ begin
     Previous[Index] := nil;
   end;
 end;
-
-initialization
 
 end.

@@ -27,11 +27,11 @@ type
     function GetAutoMoveOnRemoveCurrent: boolean;
     procedure SetAutoMoveOnRemoveCurrent(const Value: boolean);
   protected
-    function GetItem: TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem: TObject;
   public
     constructor Create(IndexTraverser: TBoldIndexTraverser);
     destructor Destroy; override;
-    function MoveNext: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function MoveNext: Boolean;
     property Item: TObject read GetItem;
     property CurrentIndex: integer read fCurrentIndex;
     property Current: TObject read GetItem;
@@ -45,21 +45,21 @@ type
     fIndexes: array of TBoldIndex;
     fOptions: TBoldIndexableListOptionsSet;
     fFirstNilSupportingIndex: Integer;
-    function GetCount: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIndex(Index: Integer): TBoldIndex; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: Integer;
+    function GetIndex(Index: Integer): TBoldIndex;
     procedure SetIndex(I: Integer; const Value: TBoldIndex);
     function GetAny: TObject;
-    function GetOwnsEntries: boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetOwnsEntries(const Value: boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetOwnsEntries: boolean;
+    procedure SetOwnsEntries(const Value: boolean);
     function FirstNilSupportingIndex: TBoldIndex;
     function FirstAssignedIndex: TBoldIndex;
-    function GetKnowsSupportsNil: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetSupportsNil: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetKnowsSupportsNil(const Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetSupportsNil(const Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure CalculateSupportsNil; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetKnowsSupportsNil: Boolean;
+    function GetSupportsNil: Boolean;
+    procedure SetKnowsSupportsNil(const Value: Boolean);
+    procedure SetSupportsNil(const Value: Boolean);
+    procedure CalculateSupportsNil;
     function GetAssignedIndexCount: integer;
-    function GetIndexCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIndexCount: integer;
     function GetCapacity: integer;
     procedure SetCapacity(const Value: integer);
     function GetIsEmpty: boolean;
@@ -68,7 +68,7 @@ type
     function AddIndex(BoldIndex: TBoldIndex): integer;
     procedure AddToAllIndexes(Item: TObject);
     procedure RemoveAndFreeIndex(var BoldIndex: TBoldIndex; DestroyObjects: Boolean);
-    procedure RemoveFromAllIndexes(Item: TObject);
+    function RemoveFromAllIndexes(Item: TObject): boolean;
     procedure SetIndexCapacity(NewCapacity: integer);
     function TraverserClass: TBoldIndexableListTraverserClass; virtual;
     property IndexCount: integer read GetIndexCount;
@@ -82,7 +82,7 @@ type
     procedure Add(Item: TObject);
     procedure Clear;
     procedure ItemChanged(Item: TObject);
-    procedure Remove(Item: TObject);
+    function Remove(Item: TObject): boolean;
     function CreateTraverser: TBoldIndexableListTraverser;
     function GetEnumerator: TBoldIndexableListTraverser;
     property Count: integer read GetCount;
@@ -95,11 +95,11 @@ type
   TBoldIndexableList = class(TBoldUnOrderedIndexableList)
   private
     fIndexIndex: TBoldIntegerIndex;
-    function GetItem(Index: integer): TObject; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(Index: integer): TObject;
     procedure SetItem(Index: integer; value: TObject);
     procedure AddToAllNonOrderedIndexes(item: TObject);
     procedure RemoveFromAllNonOrderedIndexes(item: TObject);
-    function GetUnorderedIndexCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetUnorderedIndexCount: integer;
 //    procedure _DebugInfo(Index: Integer);
   protected
     property Items[I: Integer]: TObject read GetItem write SetItem;
@@ -110,9 +110,9 @@ type
     procedure RemoveByIndex(Index: Integer);
     procedure Sort(Compare: TIntegerIndexSortCompare);
     procedure Exchange(Index1, Index2: integer);
-    function IndexOf(Item: TObject): integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function IndexOf(Item: TObject): integer;
     procedure Insert(Index: Integer; Item: TObject);
-    function Includes(Item: TObject): boolean;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Includes(Item: TObject): boolean;
     procedure RemoveList(AList: TBoldIndexableList);
   end;
 
@@ -337,9 +337,7 @@ begin
   begin
     if BoldIndex.SupportsNilItems then
       KnowsSupportsNil := false;
-
-    if DestroyObjects then
-      BoldIndex.Clear(DestroyObjects);
+    BoldIndex.Clear(DestroyObjects);
     for i := 0 to IndexCount - 1 do
       if fIndexes[i] =  BoldIndex then
       begin
@@ -366,14 +364,19 @@ begin
       Indexes[i].Add(Item);
 end;
 
-procedure TBoldUnOrderedIndexableList.RemoveFromAllIndexes(Item: TObject);
+function TBoldUnOrderedIndexableList.RemoveFromAllIndexes(Item: TObject): boolean;
 var
   i: integer;
 begin
   if Assigned(Item) then
+  begin
+    result := (IndexCount > 0);
     for i := 0 to IndexCount-1 do
       if Assigned(Indexes[i]) then
-        Indexes[i].Remove(Item);
+        result := Indexes[i].Remove(Item) and result;
+  end
+  else
+    result := false;
 end;
 
 procedure TBoldUnOrderedIndexableList.Add(Item: TObject);
@@ -389,13 +392,12 @@ begin
   AddToAllIndexes(Item);
 end;
 
-procedure TBoldUnOrderedIndexableList.Remove(Item: TObject);
+function TBoldUnOrderedIndexableList.Remove(Item: TObject): boolean;
 begin
-  RemoveFromAllIndexes(item);
+  result := RemoveFromAllIndexes(item);
   if OwnsEntries then
     item.free;
 end;
-
 
 procedure TBoldUnOrderedIndexableList.ItemChanged(Item: TObject);
 var
@@ -405,7 +407,6 @@ begin
     if Assigned(Indexes[i]) then
       Indexes[i].ItemChanged(Item);
 end;
-
 
 procedure TBoldUnOrderedIndexableList.Clear;
 var
@@ -418,7 +419,7 @@ begin
   for i := 0 to IndexCount-1 do
     if assigned(Indexes[i]) then
     begin
-      Indexes[i].Clear(OwnsEntries and (IndicesToGo=1));
+      Indexes[i].Clear(OwnsEntries and (IndicesToGo=1)); // only free from one (last) index
       dec(IndicesToGo);
     end;
 end;
@@ -644,7 +645,5 @@ function TBoldIndexableListTraverser.MoveNext: Boolean;
 begin
   result := fIndexTraverser.MoveNext;
 end;
-
-initialization
 
 end.

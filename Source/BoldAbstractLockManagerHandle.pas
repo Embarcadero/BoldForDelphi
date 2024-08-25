@@ -22,7 +22,4 @@ type
 
 implementation
 
-
-initialization
-
 end.

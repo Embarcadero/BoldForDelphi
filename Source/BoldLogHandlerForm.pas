@@ -21,8 +21,11 @@ type
   private
     fLogForm: TBoldLogForm;
     fSessionName: String;
+    FEnabled: Boolean;
     function GetLogForm: TBoldLogForm;
     procedure HideProgressBar;
+    procedure SetEnabled(const Value: Boolean);
+    function GetEnabled: Boolean;
   protected
     property LogForm: TBoldLogForm read GetLogForm;
     procedure SetProgress(const Value: integer);
@@ -30,6 +33,7 @@ type
     procedure SetProgressMax(const Value: integer);
     procedure ProcessInterruption;
   public
+    procedure AfterConstruction; override;
     destructor Destroy; override;
     procedure Clear;
     procedure Hide;
@@ -40,7 +44,10 @@ type
     procedure StartLog(const SessionName: String);
     procedure EndLog;
     procedure SaveLog;
+    property Enabled: Boolean read GetEnabled write SetEnabled;
   end;
+
+function BoldLogForm: IBoldLogReceiver;
 
 implementation
 
@@ -54,15 +61,33 @@ uses
 var
   LogHandlerForm: TBoldLogHandlerReceiver;
 
+function BoldLogForm: IBoldLogReceiver;
+begin
+  if not Assigned(LogHandlerForm) then
+    LogHandlerForm := TBoldLogHandlerReceiver.Create;
+  result := LogHandlerForm;
+end;
+
 { TBoldLogHandlerReceiver }
+
+procedure TBoldLogHandlerReceiver.AfterConstruction;
+begin
+  inherited;
+  BoldLog.RegisterLogReceiver(self as IBoldLogReceiver);
+end;
 
 procedure TBoldLogHandlerReceiver.Clear;
 begin
   LogForm.Clear;
 end;
 
-destructor TBoldLogHandlerReceiver.destroy;
+destructor TBoldLogHandlerReceiver.Destroy;
 begin
+  if self = LogHandlerForm then
+  begin
+    BoldLog.UnregisterLogReceiver(self);
+    LogHandlerForm := nil;
+  end;
   FreeAndNil(fLogForm);
   inherited;
 end;
@@ -71,6 +96,11 @@ procedure TBoldLogHandlerReceiver.EndLog;
 begin
   Log(format(sLogDone, [AsIsoDateTimeMs(now), fSessionName]));
   Hideprogressbar;
+end;
+
+function TBoldLogHandlerReceiver.GetEnabled: Boolean;
+begin
+  Result := FEnabled;
 end;
 
 function TBoldLogHandlerReceiver.GetLogForm: TBoldLogForm;
@@ -107,6 +137,11 @@ procedure TBoldLogHandlerReceiver.SetProgress(const Value: integer);
 begin
   if LogForm.Visible then
     LogForm.ProgressBar1.Position := Value;
+end;
+
+procedure TBoldLogHandlerReceiver.SetEnabled(const Value: Boolean);
+begin
+  FEnabled := Value;
 end;
 
 procedure TBoldLogHandlerReceiver.SetLogHeader(const Value: string);
@@ -149,12 +184,5 @@ begin
   if LogForm.Visible then
     Application.ProcessMessages;
 end;
-
-initialization
-  LogHandlerForm := TBoldLogHandlerReceiver.Create;
-  BoldLog.RegisterLogReceiver(LogHandlerForm as IBoldLogReceiver);
-
-finalization
-  BoldLog.UnregisterLogReceiver(LogHandlerForm as IBoldLogReceiver);
 
 end.

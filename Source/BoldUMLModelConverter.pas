@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelConverter;
 
@@ -311,6 +310,7 @@ begin
       TargetUMLModel.BoldSystem.CommitTransaction;
     except
       TargetUMLModel.BoldSystem.RollBackTransaction;
+      raise;
     end;
   end;
 end;
@@ -324,7 +324,7 @@ begin
   MoldElementToUMLElement(MoldModel, UMLModel);
   BoldLog.StartLog(sConvertingModelToUML);
   BoldLog.ProgressMax := MoldModel.Classes.Count + MoldModel.Associations.Count;
-  BoldInstalledQueue.DeactivateDisplayQueue;
+  TBoldQueueable.DeactivateDisplayQueue;
   TBoldUMLBoldify.SetRootClassName(UMLModel, MoldModel.RootClass.Name);
   try
     BoldLog.LogHeader := 'Processing classes';
@@ -356,34 +356,17 @@ begin
         BoldLog.Sync;
     end;
   finally
-    BoldInstalledQueue.ActivateDisplayQueue;
+    TBoldQueueable.ActivateDisplayQueue;
   end;
   BoldLog.EndLog;
 end;
 
 procedure TBoldModelConverter.MoldElementToUMLElement(MoldElement: TMoldElement; UMLElement: TUMLModelElement);
-
-  procedure InternalSetValue(AElement: TBoldAttribute; const StringValue: string);
-  var
-    TempValue: TBoldFreeStandingValue;
-    StringContent: IBoldStringContent;
-  begin
-    TempValue := FreeStandingValueFactory.CreateInstance('String') as TBoldFreeStandingValue;
-    try
-      StringContent := (TempValue as IBoldStringContent);
-      StringContent.asString := StringValue;
-      TempValue.BoldPersistenceState := AElement.BoldPersistenceState;
-      AElement.AsIBoldValue[bdepContents].AssignContent(StringContent);
-    finally
-      StringContent := nil;
-      TempValue.free;
-    end;
-  end;
-
 var
   I: Integer;
   G: IBoldGuard;
   Tags, Values: TStringList;
+  vTaggedValue: TUMLTaggedValue;
 begin
   G := TBoldGuard.Create(Tags, Values);
   Tags := TStringList.Create;
@@ -396,17 +379,16 @@ begin
     for i := 0 to MoldElement.Constraints.Count-1 do
       with Constraint.AddNew as TUMLConstraint do
       begin
-        InternalSetValue(M_Name, MoldElement.Constraints.Names[i]);
-        InternalSetValue(M_Body, MoldElement.Constraints.Values[Name]);
+        Name := MoldElement.Constraints.Names[i];
+        Body := MoldElement.Constraints.Values[Name];
       end;
     MoldElement.AddAllTaggedValues(Tags, Values);
     for i := 0 to Tags.Count-1 do
     begin
-      with M_TaggedValue.AddNew do
-      begin
-        InternalSetValue(M_tag, Tags[i]);
-        InternalSetValue(M_Value, Values[i]);
-      end;
+      vTaggedValue := TUMLTaggedValue.Create(BoldSystem);
+      vTaggedValue.tag := Tags[i];
+      vTaggedValue.value := Values[i];
+      M_TaggedValue.Add(vTaggedValue);
     end;
   end;
 end;
@@ -614,7 +596,5 @@ begin
   Result.Name := name;
   UMLModel.OwnedElement.Add(Result);
 end;
-
-initialization
 
 end.

@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDbEvolutor;
@@ -94,16 +93,16 @@ type
 implementation
 
 uses
-  DB,
+  Db,
   SysUtils,
 
-  BoldCoreConsts,
   BoldDefs,
   BoldMath,
   BoldnameExpander,
   BoldLogHandler,
   BoldDbInterfaces,
   BoldUtils,
+  BoldCoreConsts,
   BoldGuard;
 
 { TBoldDataBaseEvolutor }
@@ -1015,7 +1014,5 @@ begin
   Info.AddStrings(PreScript.InternalLog);
   Info.AddStrings(Script.InternalLog);
 end;
-
-initialization
 
 end.

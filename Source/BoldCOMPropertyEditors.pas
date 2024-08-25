@@ -16,13 +16,13 @@ type
   { TBoldElementCOMSubscribeMethodProperty }
   TBoldElementCOMSubscribeMethodProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
   { TBoldCOMMethodNoPurposeProperty }
   TBoldCOMMethodNoPurposeProperty = class(TBoldOneLinerWithEvalMethodProperty)
   public
-    function TextToInsert: string; override;
+    function ImplementationTextToInsert: string; override;
   end;
 
 implementation
@@ -30,17 +30,15 @@ implementation
 
 { TBoldCOMMethodNoPurposeProperty }
 
-function TBoldCOMMethodNoPurposeProperty.TextToInsert: string;
+function TBoldCOMMethodNoPurposeProperty.ImplementationTextToInsert: string;
 begin
   Result := '  // This method server no purpose on COM clients';
 end;
 
 { TBoldElementCOMSubscribeMethodProperty }
-function TBoldElementCOMSubscribeMethodProperty.TextToInsert: string;
+function TBoldElementCOMSubscribeMethodProperty.ImplementationTextToInsert: string;
 begin
   Result := '  Element.SubscribeToExpression('''', Subscriber.ClientID, Subscriber.SubscriberID, False, True);';
 end;
-
-initialization
 
 end.

@@ -55,8 +55,8 @@ type
     function GetIBoldDataBase: IBoldDataBase;
     function GetAllTables: TBoldSQLTableDescriptionList;
     function GetPSSystemDescription: TBoldSQLSystemDescription;
-    function GetRootClassObjectPersistenceMapper: TBoldObjectSQLMapper; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMappingInfo: TBoldSQLMappingInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRootClassObjectPersistenceMapper: TBoldObjectSQLMapper;
+    function GetMappingInfo: TBoldSQLMappingInfo;
     procedure InitializeTopSortedIndexForBoldDbType;
   protected
     procedure InitializeBoldDbType; virtual; abstract;
@@ -200,11 +200,6 @@ uses
   BoldNameExpander,
   BoldValueInterfaces,
   BoldDefaultStreamNames,
-  {$IFDEF RIL}
-  {$IFNDEF BOLD_UNICODE}
-  StringBuilder,
-  {$ENDIF}
-  {$ENDIF}
   BoldRev;
   
 {---TBoldSystemSQLMapper---}
@@ -1048,7 +1043,6 @@ procedure TBoldMemberSQLMapper.ValueFromQuery(OwningObjectId: TBoldObjectId; con
 var
   aField    : IBoldField;
   ColumnIndex: Integer;
-  ErrorMsg  : String;
 begin
   if ShouldFetch(ObjectContent) then
   begin
@@ -1291,7 +1285,5 @@ begin
       fTopSortedIndexForBoldDbType[DbType] := i;
     end;
 end;
-
-initialization
 
 end.

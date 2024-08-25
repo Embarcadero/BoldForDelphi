@@ -57,8 +57,6 @@ type
     function ParseEntityDecl: Boolean;
     function ParseContentSpec: Boolean;
     function ParseMixedOrChildren: Boolean;
-    function ParseMixed: Boolean;
-    function ParseChildren: Boolean;
     function ParseMixed2: Boolean;
     function ParseChildren2: Boolean;
     function ParseCp: Boolean;
@@ -144,11 +142,6 @@ begin
     result := true;
   end else
     result := false;
-end;
-
-function TBoldDTDParser.ParseChildren: Boolean;
-begin
-  EBold.Create('Not implemented');
 end;
 
 function TBoldDTDParser.ParseChildren2: Boolean;
@@ -279,16 +272,8 @@ begin
             ParseToken(dtComment);
 end;
 
-function TBoldDTDParser.ParseMixed: Boolean;
-begin
-
-  raise EBold.Create('Not implemented');
-end;
-
 function TBoldDTDParser.ParseMixed2: Boolean;
 begin
-
-
   result := ParseToken(dtPCDataDecl);
   if result then
   begin

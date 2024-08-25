@@ -11,6 +11,7 @@ uses
   BoldDeriver,
   BoldElements,
   BoldSystemRt,
+  BoldSystem,
   BoldHandles;
 
 type
@@ -43,6 +44,7 @@ type
     function GetRootTypeName: string;
     function GetIsCurrent: boolean;
   protected
+    function GetBoldSystem: TBoldSystem; override;
     procedure SubscribeToValue;
     procedure EffectiveRootValueChanged; virtual;
     function EffectiveRootValue: TBoldElement;
@@ -91,10 +93,9 @@ implementation
 
 uses
   SysUtils,
-
-  BoldCoreConsts,
   BoldDefs,
-  BoldEnvironment;
+  BoldEnvironment,
+  BoldCoreConsts;
 
 const
   breFreeHandle = 42;
@@ -148,9 +149,6 @@ begin
   else
   if (RootHandle is TBoldAbstractSystemHandle) then
     Result := RootHandle as TBoldAbstractSystemHandle
-  else
-  if Assigned(RootHandle) then
-    Result := nil
   else
     Result := inherited GetStaticSystemHandle;
 end;
@@ -229,6 +227,7 @@ begin
     Result := InternalRootHandle.Value
   else
     Result := nil;
+  Assert(not Assigned(Result) or (Result is TBoldElement));
 end;
 
 procedure TBoldRootedHandle._ReceiveFromRoot(Originator: TObject;
@@ -405,7 +404,17 @@ end;
 
 procedure TBoldRootedHandle.SetRootHandle(const Value: TBoldElementHandle);
 begin
-  InternalRootHandle := value;
+  if InternalRootHandle <> value then
+    InternalRootHandle := value;
+end;
+
+function TBoldRootedHandle.GetBoldSystem: TBoldSystem;
+begin
+  result := nil;
+  if Assigned(RootHandle) then
+    result := RootHandle.BoldSystem;
+  if not Assigned(result) then
+    result := inherited;
 end;
 
 function TBoldRootedHandle.GetIsCurrent: boolean;
@@ -438,7 +447,5 @@ begin
   if not result and (Component is TBoldElementHandle) then
     result := IsRootLinkedTo(Component as TBoldElementHandle);
 end;
-
-initialization
 
 end.

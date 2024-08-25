@@ -17,7 +17,6 @@ uses
   BoldIDESupport,
   BoldVersionInfo,
   BoldDatabaseAdapterSQLDirect,
-  BoldPersistenceHandleSQLDirect,
   BoldIDEConsts;    
 
 procedure Register;
@@ -26,10 +25,7 @@ begin
     BoldBuildVersionNumberMajor,
     BoldBuildVersionNumberMinor,
     BoldBuildTarget]));
-  RegisterComponents(BOLDPAGENAME_DEPRECATED, [TBoldPersistenceHandleSQLDirect]);
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterSQLDirect]);
 end;
-
-initialization
 
 end.

@@ -57,8 +57,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 
 {-- TBoldViewJPEGAdapter --}

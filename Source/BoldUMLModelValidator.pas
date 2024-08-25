@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelValidator;
@@ -109,7 +108,8 @@ uses
   BoldPMappers,
   BoldDefaultTaggedValues,
   BoldDefaultStreamNames,
-  BoldAttributes;
+  BoldAttributes,
+  BoldModel;
 
 resourcestring
   // Validator errors
@@ -149,7 +149,7 @@ resourcestring
   sUMVAttributeUnknownMapper = 'Attribute "%s" has unknown persistence mapper (%s)';
   sUMVAttributeCantStore = 'Attribute "%s" can''t be stored, incompatible persistence mapper';
   sUMVOperationVirtualOperationMissing = 'Overridden operation "%s" has no virtual operation in superclass';
-  sUMVOperationVisibilityChanged = 'Overridden operation "%s" has different visibility than the inherited operation in superclass';
+  sUMVOperationVisibilityChanged = 'Overridden operation "%s" has lower visibility than the inherited operation in superclass';
   sUMVAssociationEndIsMultiWithOtherEndComposite = 'Association end "%s" is multi, but other end is composite';
   sUMVAssociationEndUnknownClass = 'Association end "%s" in association "%s" not associated with any class';
   sUMVAssociationEndUnknownMapper = 'Unknown association end persistence mapper (%s) in association "%s"';
@@ -370,6 +370,8 @@ begin
       NationalCharConversion);
 end;
 
+type TBoldModelAccess = class(TBoldModel);
+
 procedure TBoldUMLModelValidator.Validate(TypeNameDictionary: TBoldTypeNameDictionary);
 var
   I: Integer;
@@ -392,7 +394,7 @@ begin
   BoldLog.StartLog('Validating the model');
   UndoWasEnabled := UMLModel.BoldSystem.UndoHandlerInterface.Enabled;
   UMLModel.BoldSystem.UndoHandlerInterface.Enabled := false;
-  BoldModel.StartValidation;
+  TBoldModelAccess(BoldModel).StartValidation;
   try
     UMLModel.BoldSystem.StartTransaction();
     try
@@ -475,7 +477,7 @@ begin
     end;
   finally
     BoldLog.EndLog;
-    BoldModel.EndValidation;
+    TBoldModelAccess(BoldModel).EndValidation;
     UMLModel.BoldSystem.UndoHandlerInterface.Enabled := UndoWasEnabled;
   end;
 end;
@@ -849,7 +851,7 @@ begin
       aClass := aClass.superclass;
     end;
     if bInheritedOperationFound then begin
-      if operation.visibility <> aFeature.visibility then begin
+      if Ord(operation.visibility) < Ord(aFeature.visibility) then begin
         AddHint(sUMVOperationVisibilityChanged,
             [Operation.owner.name + '.' + Operation.name], Operation);
       end;
@@ -859,8 +861,7 @@ begin
         if BoldAnsiEqual(GetMethodName(FrameworkMethods[i]),
             operation.name) then
         begin
-          if GetMethodVisibility(FrameworkMethods[i]) <>
-              operation.visibility then
+          if Ord(GetMethodVisibility(FrameworkMethods[i])) > Ord(operation.visibility) then
           begin
             AddHint(sUMVOperationVisibilityChanged,
                 [Operation.owner.name + '.' + Operation.name], Operation);
@@ -1170,7 +1171,5 @@ begin
   FreeAndNil(fSQLReservedWordList);
   inherited;
 end;
-
-initialization
 
 end.

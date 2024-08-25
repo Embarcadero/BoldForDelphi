@@ -148,8 +148,7 @@ uses
   StdCtrls,
   BoldDefs,
   BoldControlPackDefs,
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 {---TBoldCustomRichEditCom---}
 constructor TBoldCustomRichEditCom.Create(AOwner: TComponent);
@@ -389,9 +388,5 @@ function TBoldCustomRichEditCom.GetFollower: TBoldFollowerCom;
 begin
   Result := fHandleFollower.Follower;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldRichEditCom.pas $ $Revision: 17 $ $Date: 02-08-05 15:12 $');
-
 
 end.

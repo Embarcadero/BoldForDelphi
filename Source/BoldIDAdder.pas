@@ -34,9 +34,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
-
 { TBoldIDAdder }
 
 constructor TBoldIDAdder.Create;
@@ -82,7 +79,5 @@ begin
   BoldClientID := Self.BoldClientID;
   inherited;
 end;
-
-initialization
 
 end.

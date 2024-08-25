@@ -1,11 +1,3 @@
-﻿
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersAttributeDefault;
@@ -61,9 +53,11 @@ type
   {TBoldPMAnsiString}
   TBoldPMAnsiString = class(TBoldPMString)
   protected
+    function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField;
         ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList:
         TBoldIdTranslationList): Boolean; override;
+    function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
   public
     procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent:
         IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList:
@@ -311,7 +305,6 @@ uses
   Variants,
 
   BoldCoreConsts,
-  BoldRev,
   BoldDefs,
   BoldUtils,
   BoldValueInterfaces,
@@ -352,7 +345,28 @@ end;
 
 function TBoldPMString.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
 begin
-  Result := ftMemo; // Changed from ftString to ftMemo as MSSQL truncates string params to 8000
+  if SystemPersistenceMapper.SQLDataBaseConfig.TreatStringFieldAsUnicode then
+  begin
+    if SystemPersistenceMapper.SQLDataBaseConfig.IsSQLServerEngine then
+    begin
+      // Changed from ftWideString to ftWideMemo as MSSQL truncates
+      // string params to 8000
+      Result := ftWideMemo;
+    end else
+    begin
+      Result := ftWideString
+    end;
+  end else
+  begin
+    if SystemPersistenceMapper.SQLDataBaseConfig.IsSQLServerEngine then
+    begin
+      // Changed from ftString to ftMemo as MSSQL truncates string params to 8000
+      Result := ftMemo;
+    end else
+    begin
+      Result := ftString;
+    end;
+  end;
 end;
 
 function TBoldPMString.GetColumnSize(ColumnIndex: Integer): Integer;
@@ -1276,6 +1290,17 @@ begin
   end;
 end;
 
+function TBoldPMAnsiString.GetColumnBDEFieldType(
+  ColumnIndex: Integer): TFieldType;
+begin
+  Result := ftString;
+end;
+
+function TBoldPMAnsiString.GetColumnTypeAsSQL(ColumnIndex: Integer): string;
+begin
+  Result := SystemPersistenceMapper.SQLDataBaseConfig.GetColumnTypeForAnsiString(GetColumnSize(ColumnIndex));
+end;
+
 procedure TBoldPMAnsiString.ValueFromField(OwningObjectId: TBoldObjectId;
     const ObjectContent: IBoldObjectContents; const ValueSpace: IBoldValueSpace;
     TranslationList: TBoldIdTranslationList; const Field: IBoldField; ColumnIndex:
@@ -1507,8 +1532,6 @@ begin
 end;
 
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldPMappersAttributeDefault.pas $ $Revision: 143 $ $Date: 02-07-23 17:49 $');
-
   TwoSeconds := EncodeTime(0, 0, 2, 0);
 
   with BoldMemberPersistenceMappers do

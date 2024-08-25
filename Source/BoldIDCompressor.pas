@@ -61,7 +61,7 @@ uses
   BoldIndexableList,
   BoldBase,
   BoldElements,
-  BoldMetaElementList
+  BoldMetaElementList,
   BoldDomainElement,
   BoldIndex,
   BoldDefaultId;
@@ -150,7 +150,7 @@ begin
     fOnProgress(0, j);
   repeat
     i := SourceObjectList.Count;
-    SystemHandle.System.GetAllInClassWithSQL(SourceObjectList, BoldSystem.BoldSystemTypeInfo.RootClassTypeInfo, '', 'Bold_ID', nil, true, IdFetchBlockSize, i);
+    SystemHandle.System.GetAllInClassWithSQL(SourceObjectList, TBoldObjectClass(BoldSystem.BoldSystemTypeInfo.RootClassTypeInfo.ObjectClass), '', 'Bold_ID', nil, true, IdFetchBlockSize, i);
     if Assigned(fOnProgress) then
       fOnProgress(SourceObjectList.Count, j);
   until i = SourceObjectList.Count;

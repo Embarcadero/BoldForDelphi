@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldModel;
@@ -57,14 +56,14 @@ type
     procedure EnsureMoldModelCurrent; override;
     property UMLModelExposed: Boolean read FUMLModelExposed;
     property UMLModelMoreCurrent: Boolean read GetUMLModelMoreCurrent;
+    procedure StartValidation;
+    procedure EndValidation;
   public
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure EnsureTypes;
     function UMLModelToString: string;
-    procedure StartValidation;
-    procedure EndValidation;
     property UMLModel: TUMLModel read GetUMLModel;
     property EnsuredUMLModel: TUMLModel read GetEnsuredUMLModel;
     property IsValidating: boolean read GetIsValidating;
@@ -97,8 +96,8 @@ function TheModelList: TBoldModelList;
 implementation
 
 uses
-  BoldUMLModelDataModule,
   SysUtils,
+  BoldUMLModelDataModule,
   BoldLogHandler,
   BoldUMLModelStreamer,
   BoldDefs,
@@ -109,7 +108,8 @@ uses
   BoldUMLModelValidator,
   BoldUMLUtils,
   BoldHandles,
-  BoldGuard;
+  BoldGuard,
+  BoldSystem;
 
 var
   G_ModelList: TBoldModelList = nil;
@@ -199,8 +199,10 @@ var
 
 begin
   BoldMemberTypeList := BoldMemberTypes;
-  FreeAndNil(fDataTypes);
-  fDataTypes := TUMLDataTypeList.CreateWithTypeInfo(EnsuredUMLModel.BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByClass[TUMLDataType]);
+  if not assigned(fDataTypes) then
+    fDataTypes := TUMLDataTypeList.CreateWithTypeInfo(EnsuredUMLModel.BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByClass[TUMLDataType])
+  else
+    fDataTypes.Clear;
   EnsuredUMLModel.BoldSystem.StartTransaction();
   try
     UMLDataTypes := EnsuredUMLModel.BoldSystem.ClassByObjectClass[TUMLDataType] as TUMLDataTypeList;
@@ -369,10 +371,12 @@ var
   FlattenState, BoldifyState: Boolean;
   i: integer;
   G: IBoldGuard;
+  TransactionHandler: IBoldTransactionHandler;
 begin
   G := TBoldGuard.Create(Validator, Errors);
   if UMLModelMoreCurrent then
   begin
+    TransactionHandler := EnsuredUMLModel.BoldSystem.CreateTransactionHandler;
     FlattenState := TBoldUMLSupport.IsFlattened(UMLModel);
     BoldifyState := Boldify.IsBoldified(UMLModel);
     if not FlattenState then
@@ -403,6 +407,7 @@ begin
       Boldify.UnBoldify(UMLModel);
 
     SubscribeToUMLModel;
+    TransactionHandler.Commit;
   end;
 end;
 

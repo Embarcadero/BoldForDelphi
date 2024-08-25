@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPageControl;
@@ -110,7 +109,5 @@ begin
   else
     result := nil;
 end;
-
-initialization
 
 end.

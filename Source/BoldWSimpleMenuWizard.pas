@@ -168,6 +168,4 @@ procedure TSimpleMenuWizard.Initialize;
 begin
 end;
 
-initialization
-
 end.

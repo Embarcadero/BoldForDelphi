@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLAbstractModelValidator;
@@ -49,8 +48,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 procedure TBoldUMLAbstractModelValidator.AddError(description: String; args: array of const; element: TUMLModelElement);
 begin
@@ -73,10 +71,10 @@ var
 begin
   Validator.BoldSystem.StartTransaction();
   try
-    v := Validator.Violation.AddNew;
-    v.Severity := severity;
-    v.Description := description;
-    v.modelElement := element;
+  v := Validator.Violation.AddNew;
+  v.Severity := severity;
+  v.Description := description;
+  v.modelElement := element;
     Validator.BoldSystem.CommitTransaction()
   except
     Validator.BoldSystem.RollbackTransaction();
@@ -92,7 +90,7 @@ begin
     exit;
   Validator.BoldSystem.StartTransaction();
   try
-    for i := Validator.violation.count-1 downto 0 do
+  for i := Validator.violation.count-1 downto 0 do
       Validator.Violation[i].Delete;
     Validator.BoldSystem.CommitTransaction()
   except
@@ -131,7 +129,5 @@ begin
     if Validator.Violation[i].Severity > result then
       result := Validator.violation[i].Severity;
 end;
-
-initialization
 
 end.

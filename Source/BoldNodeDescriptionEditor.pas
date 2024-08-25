@@ -18,7 +18,7 @@ uses
   DesignIntf,
   BoldNodeControlPack,
   Menus,
-  BoldSubscription, ImgList;
+  BoldSubscription, ImgList, System.ImageList;
 
 type
 
@@ -486,7 +486,5 @@ begin
         fTreeProperties.NodeDescriptions[j].Index := fTreeProperties.NodeDescriptions[i].Index;
   UpdateTree;
 end;
-
-initialization
 
 end.

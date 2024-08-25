@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPersistenceHandleDB_deprecated;
@@ -36,7 +35,7 @@ type
     procedure SetDataBaseEngine(const Value: TBoldDataBaseEngine); virtual;
     procedure SetPassword(const Value: string); virtual;
     procedure SetUserName(const Value: string); virtual;
-    function GetSQLDataBaseConfig: TBoldSQLDataBaseConfig; override;
+    function GetSQLDatabaseConfig: TBoldSQLDataBaseConfig; override;
     function GetCustomIndexes: TBoldIndexCollection; override;
     {$IFDEF T2H}
     property EmptyStringMarker;
@@ -47,8 +46,8 @@ type
     {$ENDIF}
     procedure DefineProperties(Filer: TFiler); override;
   public
-    constructor create(Owner: TComponent); override;
-    destructor destroy; override;
+    constructor Create(Owner: TComponent); override;
+    destructor Destroy; override;
   published
     property Username: string read fusername write SetUserName;
     property Password: string read fPassword write SetPassword;
@@ -183,7 +182,5 @@ begin
     inc(i);
   result := BaseName + inttostr(i);
 end;
-
-initialization
   
 end.

@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGen;
@@ -24,11 +23,9 @@ type
   TBoldCodeGenInitializer = class;
   TBoldCodeGenInitializerClass = class of TBoldCodeGenInitializer;
 
-
   TBoldFunctionContent = (fcHeader, fcBody);
   TBoldEnsureFlag = (efEnsure, efAdd);
   TMoldClassFilterFunction = function (MoldClass: TMoldClass): Boolean of object;
-
 
   {TBoldGenerator}
   TBoldGenerator = class
@@ -239,7 +236,7 @@ var
       AddVariable('MEMBERISSETABLE' + PostFix, '1') // do not localize
     else
       AddVariable('MEMBERISSETABLE' + PostFix, '0'); // do not localize
-  end;
+    end;
 
   begin
     Mapping := TypeNameDictionary.MappingForModelName[MoldAttribute.BoldType];
@@ -568,7 +565,6 @@ var
     Attribute: TMoldAttribute;
     Member: TMoldMember;
     MemberPostFix: String;
-    MethodCount : Integer;
   begin
     AddVariable('CLASSNAME' + PostFix, MoldClass.ExpandedDelphiName);
     if MoldClass.GUID <> '' then
@@ -1463,7 +1459,5 @@ begin
   else
     Result := mtText;
 end;
-
-initialization
 
 end.

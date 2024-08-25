@@ -70,7 +70,6 @@ type
     procedure GetPropagationEvents(EventList: TStringList); override;
   end;
 
- {$IFNDEF BOLD_NO_QUERIES}
   TBoldPessimisticLockHandler = class(TBoldAbstractPessimisticLockHandler)
   private
     fRequiredShared: TBoldRegionList;
@@ -120,31 +119,18 @@ type
     property OnActivityEnd: TNotifyEvent read fOnActivityEnd write fOnActivityEnd;
     property OnProgress: TBoldLockManagerProgressEvent read fOnActivityPropgress write fOnActivityPropgress;
   end;
- {$ENDIF}
 
 implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldUtils,
   BoldLockingDefs,
   BoldObjectSpaceExternalEvents,
   BoldDefaultID,
   BoldIndex,
-  {$IFDEF BOLD_LICENSE}
-  Windows,
-  Registry,
-  BoldMD5,
-  {$ENDIF}
   BoldElements;
 
-{$IFDEF BOLD_LICENSE}
-{$IFNDEF BOLD_DEVELOPERIDE}
-{$R BoldSoftDeploymentKey-CMS-4.0.0.0.res}
-{$ENDIF}
-{$Include BoldDeploymentKeyControl.inc}
-{$ENDIF}  
 
 function NewRegionListFromStrings(Locks: TStrings; Factory: TBoldRegionFactory): TBoldRegionList;
 var
@@ -166,7 +152,6 @@ end;
 
 { TBoldPessimisticLockHandler }
 
-{$IFNDEF BOLD_NO_QUERIES}
 constructor TBoldPessimisticLockHandler.CreateWithLockHolder(System: TBoldSystem; LockHolder: TBoldAbstractLockHolder);
 begin
   inherited Create(System);
@@ -179,28 +164,15 @@ begin
 
   fParentsChangedRegions := TBoldRegionList.Create;
   fSubregionsChangedRegions := TBoldRegionList.Create;
+
   fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithReceiveAndAnswer(_ReceiveRolledBack, _AnswerMayCommit);
   System.AddSubscription(fSubscriber, bqMayCommit, bqMayCommit);
   System.AddSubscription(fSubscriber, beRolledBack, beRolledBack);
+
   System.PessimisticLockHandler := self;
 
   fLockHolder := LockHolder;
   Factory.OnRegionChanged := _RegionChanged;
-  {$IFDEF BOLD_LICENSE}
-  case TBoldDeploymentKeyControl.CheckDeploymentKey('CMS', '4.0.0.0') of
-    bdksMissing:
-      raise EBoldLicenseError.Create('Deployment key for Concurrency Management Server release 4.0.0.0 is missing');
-    bdksValid:
-      ;
-    bdksExpired:
-      raise EBoldLicenseError.Create('Deployment key for Concurrency Management Server release 4.0.0.0 has expired');
-    bdksEvaluation:
-      MessageBox(0, pchar('This application is compiled using an evaluation key for Concurrency Management Server release 4.0.0.0'), 'Bold Evaluation Version', MB_OK);
-    else {bdksInvalid}
-      raise EBoldLicenseError.Create('Deployment key for Concurrency Management Server release 4.0.0.0 is invalid');
-  end;
-  {$ENDIF}
-
 end;
 
 destructor TBoldPessimisticLockHandler.Destroy;
@@ -633,7 +605,6 @@ begin
   if AddSharedRegions then
     Add(fLockHolder.HeldShared);
 end;
-  {$ENDIF}
 
 { TBoldFailureGetLocksFailed }
 
@@ -682,7 +653,6 @@ begin
   inherited;
 end;
 
-
  { BoldEmptyLockHolder }
 
 constructor TBoldEmptyLockHolder.Create;
@@ -727,8 +697,5 @@ end;
 procedure TBoldEmptyLockHolder.Release(Locks: TBoldLockList);
 begin
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldLockHandler.pas $ $Revision: 42 $ $Date: 02-06-06 9:01 $');
 
 end.

@@ -71,9 +71,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
-
+  SysUtils;
 
 { TBoldAbstractDatabaseAdapter }
 

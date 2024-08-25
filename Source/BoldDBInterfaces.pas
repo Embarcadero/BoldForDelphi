@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDBInterfaces;
@@ -16,7 +15,8 @@ uses
   BoldSQLDatabaseConfig,
   WideStrings,
   BoldLogHandler,
-  BoldDefs;
+  BoldDefs,
+  Variants;
 
 const
   cInitialBatchBufferSize = 1024*64; // 64 kb
@@ -244,7 +244,7 @@ type
     function GetBatchQueryParamCount: integer;
     property RowsAffected: integer read GetRowsAffected;
     property Implementor: TObject read GetImplementor;
-    property SQLText: String read GetSQLText;
+    property SQLText: String read GetSQLText write AssignSQLText;
     property SQLStrings: TStrings read GetSQLStrings;
     property UseReadTransactions: boolean read GetUseReadTransactions write SetUseReadTransactions;
     property BatchQueryParamCount: integer read GetBatchQueryParamCount;
@@ -329,6 +329,7 @@ type
     procedure CreateDatabase(DropExisting: boolean = true);
     procedure DropDatabase;
     function DatabaseExists: boolean;
+    function CreateAnotherDatabaseConnection: IBoldDatabase;
   end;
 
   TBoldParameterWrapper = class(TBoldRefCountedObject)
@@ -343,42 +344,42 @@ type
   TBoldDbParameter = class(TBoldParameterWrapper, IBoldParameter)
   private
     FParameter: TParam;
-    function GetAsVariant: Variant; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsVariant(const NewValue: Variant); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetName: String; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Clear; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetDataType: TFieldType; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetDataType(Value: TFieldType); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsBCD: Currency; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsBlob: TBoldBlobData; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsBoolean: Boolean; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsCurrency: Currency; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsFloat: Double; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsInteger: Longint; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsMemo: string; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetAsVariant: Variant;
+    procedure SetAsVariant(const NewValue: Variant);
+    function GetName: String;
+    procedure Clear;
+    function GetDataType: TFieldType;
+    procedure SetDataType(Value: TFieldType);
+    function GetAsBCD: Currency;
+    function GetAsBlob: TBoldBlobData;
+    function GetAsBoolean: Boolean;
+    function GetAsCurrency: Currency;
+    function GetAsFloat: Double;
+    function GetAsInteger: Longint;
+    function GetAsMemo: string;
     function GetAsString: string;
     function GetAsAnsiString: TBoldAnsiString;
     function GetAsWideString: WideString;
-    function GetAsInt64: Int64; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetIsNull: Boolean; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsBCD(const Value: Currency); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsBlob(const Value: TBoldBlobData); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsBoolean(Value: Boolean); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsCurrency(const Value: Currency); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsDate(const Value: TDateTime); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsFloat(const Value: Double); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsInteger(Value: Longint); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsMemo(const Value: string); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetAsInt64: Int64;
+    function GetIsNull: Boolean;
+    procedure SetAsBCD(const Value: Currency);
+    procedure SetAsBlob(const Value: TBoldBlobData);
+    procedure SetAsBoolean(Value: Boolean);
+    procedure SetAsCurrency(const Value: Currency);
+    procedure SetAsDate(const Value: TDateTime);
+    procedure SetAsFloat(const Value: Double);
+    procedure SetAsInteger(Value: Longint);
+    procedure SetAsMemo(const Value: string);
     procedure SetAsString(const Value: string);
     procedure SetAsAnsiString(const Value: TBoldAnsiString);
     procedure SetAsWideString(const Value: Widestring);
-    procedure SetAsSmallInt(Value: LongInt); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsTime(const Value: TDateTime); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsInt64(const Value: Int64); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsWord(Value: LongInt); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetText(const Value: string); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure AssignFieldValue(const source: IBoldField); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Assign(const source: IBoldParameter); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure SetAsSmallInt(Value: LongInt);
+    procedure SetAsTime(const Value: TDateTime);
+    procedure SetAsInt64(const Value: Int64);
+    procedure SetAsWord(Value: LongInt);
+    procedure SetText(const Value: string);
+    procedure AssignFieldValue(const source: IBoldField);
+    procedure Assign(const source: IBoldParameter);
     function GetParameter: TParam;
   protected
     property Parameter: TParam read GetParameter;
@@ -415,25 +416,25 @@ type
   protected
     function GetFieldWrapperClass: TBoldFieldWrapperClass; virtual;
     function GetDataSet: TDataSet; virtual; abstract;
-    function GetEof: Boolean; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetEof: Boolean;
     function GetFields(Index: integer): IBoldField;
-    function GetFieldCount: integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetFieldValue(const FieldName: string): Variant; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetFieldValue(const FieldName: string; const Value: Variant); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetFieldDefs: TFieldDefs; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Append; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetFieldCount: integer;
+    function GetFieldValue(const FieldName: string): Variant;
+    procedure SetFieldValue(const FieldName: string; const Value: Variant);
+    function GetFieldDefs: TFieldDefs;
+    procedure Append;
     function ParamByName(const Value: string): IBoldParameter; virtual; abstract;
     function FindParam(const Value: string): IBoldParameter; virtual; abstract;
-    function Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; virtual;
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; virtual;
+    function CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; virtual;
+    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; virtual;
     function EnsureParamByName(const Value: string): IBoldParameter; virtual;
     procedure Close; virtual;
     function FieldByName(const FieldName: string): IBoldField; virtual;
     function FieldByUpperCaseName(const FieldNameUpper: string): IBoldField;
     function FindField(const FieldName: string): IBoldField;
-    procedure First; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Delete; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure Next; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure First;
+    procedure Delete;
+    procedure Next;
     procedure Open; virtual;
     procedure Edit;
     function MoveBy(Distance: integer): integer;
@@ -466,7 +467,7 @@ type
     function GetSqlText: string; virtual; abstract;
     procedure AssignSQLText(const SQL: string); virtual; abstract;
     function GetSQLStrings: TStrings; virtual; abstract;
-    function GetSqlLength: integer;
+    function GetSQLLength: integer;
     function ParamsContainBlob: Boolean;
     function GetBatchQueryParamCount: integer;
     procedure BatchExecSQL;
@@ -478,7 +479,7 @@ type
   public
     constructor Create(DatabaseWrapper: TBoldDatabaseWrapper); override;
     destructor Destroy; override;
-    property SqlText: string read GetSqlText write AssignSQLText;
+    property SQLText: string read GetSQLText write AssignSQLText;
     property SQLStrings: TStrings read GetSQLStrings;
     property Params: TParams read GetParams;
   end;
@@ -501,7 +502,7 @@ type
     procedure ReleaseQuery(var Query: IBoldQuery); virtual; abstract;
     function GetExecQuery: IBoldExecQuery; virtual;
     procedure ReleaseExecQuery(var Query: IBoldExecQuery); virtual;
-    function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetSQLDatabaseConfig: TBoldSQLDatabaseConfig;
     function InternalGetDatabaseError(const aErrorType: TBoldDatabaseErrorType;
         const E: Exception; sSQL, sServer, sDatabase, sUserName: string;
         bUseWindowsAuth: Boolean): EBoldDatabaseError;
@@ -519,40 +520,40 @@ type
     fSavedValue: Variant;
     fField: TField;
     fDatasetWrapper: TBoldDataSetWrapper;
-    function GetField: TField; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsVariant: Variant; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetField: TField;
+    function GetAsVariant: Variant;
     procedure SetAsVariant(const Value: Variant);
     procedure SetAsString(const Value: String);
     function GetAsAnsiString: TBoldAnsiString;
     procedure SetAsAnsiString(const Value: TBoldAnsiString);
-    function GetAsWideString: TBoldUnicodeString; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsWideString(const Value: TBoldUnicodeString); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsInteger: Integer; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsInteger(const Value: Integer); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsBoolean: Boolean; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsCurrency: Currency; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsDateTime: TDateTime; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsFloat: Double; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetIsNull: Boolean; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsBoolean(const Value: Boolean); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsCurrency(const Value: Currency); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsDateTime(const Value: TDateTime); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsFloat(const Value: Double); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetFieldName: String; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsDate: TDateTime; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsTime: TDateTime; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsTime(const Value: TDateTime); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsDate(const Value: TDateTime); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsBlob(const Value: TBoldAnsiString); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsBlob: TBoldAnsiString; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    function GetAsInt64: Int64; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
-    procedure SetAsInt64(const Value: Int64); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetAsWideString: TBoldUnicodeString;
+    procedure SetAsWideString(const Value: TBoldUnicodeString);
+    function GetAsInteger: Integer;
+    procedure SetAsInteger(const Value: Integer);
+    function GetAsBoolean: Boolean;
+    function GetAsCurrency: Currency;
+    function GetAsDateTime: TDateTime;
+    function GetAsFloat: Double;
+    function GetIsNull: Boolean;
+    procedure SetAsBoolean(const Value: Boolean);
+    procedure SetAsCurrency(const Value: Currency);
+    procedure SetAsDateTime(const Value: TDateTime);
+    procedure SetAsFloat(const Value: Double);
+    function GetFieldName: String;
+    function GetAsDate: TDateTime;
+    function GetAsTime: TDateTime;
+    procedure SetAsTime(const Value: TDateTime);
+    procedure SetAsDate(const Value: TDateTime);
+    procedure SetAsBlob(const Value: TBoldAnsiString);
+    function GetAsBlob: TBoldAnsiString;
+    function GetAsInt64: Int64;
+    procedure SetAsInt64(const Value: Int64);
   protected
     function GetAsString: String; virtual;
     property DataSetWrapper: TBoldDatasetWrapper read fDatasetWrapper;
   public
     constructor Create(Field: TField; DatasetWrapper: TBoldDatasetWrapper);
-    procedure ReTarget(Field: TField); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ReTarget(Field: TField);
     property Field: TField read GetField;
     property FieldName: String read GetFieldName;
   end;
@@ -574,7 +575,6 @@ var
 implementation
 
 uses
-  Variants,
   Windows,
 
   BoldCoreConsts,
@@ -950,14 +950,14 @@ begin
      DataSet.Close;
 end;
 
-function TBoldDataSetWrapper.Createparam(FldType: TFieldType;
+function TBoldDataSetWrapper.CreateParam(FldType: TFieldType;
   const ParamName: string; ParamType: TParamType;
   Size: integer): IBoldParameter;
 begin
   raise EBold.CreateFmt(sCreateParamNotImplemented, [classname]);
 end;
 
-function TBoldDataSetWrapper.Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter;
+function TBoldDataSetWrapper.CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter;
 begin
   result := Createparam(FldType, Paramname, ptUnknown, 0);
 end;
@@ -1713,12 +1713,10 @@ begin
     end
     else
     begin
-    SourceParams := Source.Params;
+      SourceParams := Source.Params;
       if Dest.ParamCount = 0 then
       begin
-      DestParams.Assign(SourceParams);
-      while TCollectionAccess(DestParams).UpdateCount > 0 do
-        DestParams.EndUpdate;
+        DestParams.Assign(SourceParams);
         for i := 0 to Sql.Count - 1 do
         begin
           Line := sql[i];

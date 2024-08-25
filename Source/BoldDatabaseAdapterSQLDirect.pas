@@ -1,11 +1,3 @@
-
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDatabaseAdapterSQLDirect;
@@ -49,8 +41,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 { TBoldDatabaseAdapterSQLDirect }
 
@@ -105,8 +96,5 @@ begin
   Value.AfterDisconnect := DoOnDisconnect;
   InternalDatabase := value;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDatabaseAdapterSQLDirect.pas $ $Revision: 1 $ $Date: 02-07-26 12:16 $');
 
 end.

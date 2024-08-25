@@ -21,7 +21,7 @@ uses
   ActnList,
   BoldAbstractPropertyEditors,
   DesignIntf,
-  TypInfo;
+  TypInfo, System.Actions;
 
 const
   INDEX_OBJECTNAME = 0;
@@ -307,8 +307,6 @@ function TBoldObjectNameProperty.GetAttributes: TPropertyAttributes;
 begin
   Result := [paDialog, paRevertable];
 end;
-
-
 
 initialization
 

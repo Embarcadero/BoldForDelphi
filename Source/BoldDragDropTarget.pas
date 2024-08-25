@@ -76,11 +76,11 @@ implementation
 uses
   Graphics,
   SysUtils,
-  BoldAttributes,
+ 
   {$IFNDEF BOLDCOMCLIENT}
   BoldGui,
   {$ENDIF}
-  BoldRev;
+  BoldAttributes;
 
 { TBoldDropTarget }
 

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSQLQuery;
@@ -66,8 +65,8 @@ type
     fColumnReferences: TBoldObjectArray;
     fQuery: TBoldSQLQuery;
     fAliasName: String;
-    function GetAliasName: String;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTableAliasDeclaration: String;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAliasName: String;
+    function GetTableAliasDeclaration: String;
     procedure EnsureColumnExists(const ColumnName, Operation: String);
   public
     constructor Create(Query: TBoldSQLQuery);
@@ -310,7 +309,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function GetUnusedParamNumber: integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetUnusedParamNumber: integer;
 
     function GetUniqueAlias(const TableName: String): String;
   end;
@@ -335,10 +334,10 @@ type
     fMainTable: TBoldSqlTableReference;
     fIgnoreHistoricObjects: Boolean;
     fSQLDatabaseConfig: TBoldSQLDatabaseConfig;
-    function GetColumnToRetrieve(Index: Integer): TBoldSQLColumnReference;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetJoin(index: integer): TBoldSQLJoin;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetColumnToRetrieve(Index: Integer): TBoldSQLColumnReference;
+    function GetJoin(index: integer): TBoldSQLJoin;
     function GetUniqueAlias(const TableName: String): String;
-    function GetWCF(index: integer): TBoldSqlWCF;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetWCF(index: integer): TBoldSqlWCF;
     procedure GenerateSelect(Strings: TStrings);
     procedure EnsureTableExists(tableName, Operation: String);
     function GetAsString: string;
@@ -357,9 +356,9 @@ type
     procedure GenerateSQL(Strings: TStrings);
     function AddParam(const name: string=''): TParam;
     function HastableReferenceInList(TableReference: TBoldSQLTablereference): boolean;
-    procedure RetrieveCountStar;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddWCF(WCF: TBoldSqlWCF);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ClearColumnsToRetrieve;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure RetrieveCountStar;
+    procedure AddWCF(WCF: TBoldSqlWCF);
+    procedure ClearColumnsToRetrieve;
     procedure SetLimit(const Top: Boolean = True; const Limit: Integer = 1);
     property Mode: TBoldSQLQueryMode read fMode;
     property SystemDescription: TBoldSQLSystemDescription read fSystemDescription;
@@ -375,11 +374,11 @@ type
   { TBoldSqlTableReferenceList }
   TBoldSqlTableReferenceList = class(TBoldObjectArray)
   private
-    function Get(Index: Integer): TBoldSqlTableReference;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Put(Index: Integer; const Value: TBoldSqlTableReference);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Get(Index: Integer): TBoldSqlTableReference;
+    procedure Put(Index: Integer; const Value: TBoldSqlTableReference);
   public
-    function Add(Item: TBoldSqlTableReference): Integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Insert(Index: Integer; Item: TBoldSqlTableReference);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Add(Item: TBoldSqlTableReference): Integer;
+    procedure Insert(Index: Integer; Item: TBoldSqlTableReference);
     property Items[Index: Integer]: TBoldSqlTableReference read Get write Put; default;
   end;
 
@@ -1326,7 +1325,5 @@ begin
     end;
   end;
 end;
-
-initialization
 
 end.

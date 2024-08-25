@@ -16,8 +16,7 @@ uses
   QForms,
   QExtCtrls,
   BoldEnvironment,
-  BoldQueue,
-  BoldRev;
+  BoldQueue;
 
 type
   TBoldCLXEnvironmentConfiguration = class(TBoldEnvironmentConfiguration)

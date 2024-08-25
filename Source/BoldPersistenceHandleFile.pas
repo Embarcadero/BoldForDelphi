@@ -77,9 +77,8 @@ implementation
 uses
   Dialogs,
   SysUtils,
-
-  BoldCoreConsts,
-  BoldDefaultId;
+  BoldDefaultId,
+  BoldCoreConsts;
 
 { TBoldPersistenceControllerFile }
 
@@ -119,7 +118,7 @@ begin
     begin
       ReadValueSpace;
       FixupValueSpace;
-      fFileTimestamp := FileDateToDateTime(FileAge(FileName))
+      FileAge(FileName, fFileTimestamp);
     end
     else
       fFileTimeStamp := 0;
@@ -219,7 +218,7 @@ begin
   EnsureValueSpace;
 
   if fileexists(Filename) then
-    NewTimeStamp := FileDateToDateTime(FileAge(FileName))
+    FileAge(FileName, NewTimeStamp)
   else
     NewTimeStamp := 0;
   TimeOfLatestUpdate := now;
@@ -250,7 +249,7 @@ begin
 
   WriteValueSpace;
   
-  fFileTimestamp := FileDateToDateTime(FileAge(FileName));
+  FileAge(FileName, fFileTimestamp);
 end;
 
 procedure TBoldPersistenceControllerFile.UnloadLocalValueSpace;
@@ -310,8 +309,5 @@ procedure TBoldAbstractPersistenceHandleFile.SetFileName(const Value: String);
 begin
   FFileName := Value;
 end;
-
-
-initialization
 
 end.

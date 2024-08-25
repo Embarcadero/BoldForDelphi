@@ -34,14 +34,14 @@ type
 //    procedure GetLinksToObject(const ObjectId: TBoldObjectId; const OwnIndexInLinkClass: integer;
 //      const SingleLinkClassTypeInfo: TBoldClassTypeInfo; SingleLinkIds: TBoldObjectIdList);
 //    procedure AllIdsInClass(const ClassTypeInfo: TBoldClassTypeInfo; IdList: TBoldObjectIdList);
-    function GetFSValueSpace: TBoldFreeStandingValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetFSValueSpace(const Value: TBoldFreeStandingValueSpace); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetValueSpace: IBoldValueSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetContainsChanges: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFSValueSpace: TBoldFreeStandingValueSpace;
+    procedure SetFSValueSpace(const Value: TBoldFreeStandingValueSpace);
+    function GetName: string;
+    function GetValueSpace: IBoldValueSpace;
+    function GetContainsChanges: Boolean;
     function GetContent: String;
     function GetCaption: String;
-    function GetCreated: TDateTime; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCreated: TDateTime;
     function GetIndex: integer;
     function GetChangesForObject(ABoldObjectID: TBoldObjectID; AddHeader: boolean): string;
     function GetObjectCount: integer;
@@ -53,7 +53,7 @@ type
   public
     constructor CreateNamedBlock(AUndoBlockList: TBoldUndoBlockList; const BlockName: string; const ACaption: string; const FSVAlueSpace: TBoldFreeStandingValueSpace = nil);
     destructor Destroy; override;
-    procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList);
     procedure Merge(Block: TBoldUndoBlock; const Overwrite: Boolean);
     function ValueExists(const ObjectID: TBoldObjectId; const MemberIndex: integer): Boolean; overload;
     function ValueExists(const ObjectID: TBoldObjectID; const MemberIndex: integer; out Value: IBoldValue): Boolean; overload;
@@ -79,9 +79,9 @@ type
     function GetCurrentBlock: TBoldUndoBlock;
     function GetAssertedBlockByName(const BlockName: string): TBoldUndoBlock;
     function GetAssertedBlockByIndex(Index: integer): TBoldUndoBlock;
-    function GetItem(Index: integer): IBoldUndoBlock; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const Name: string): IBoldUndoBlock; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTopBlock: IBoldUndoBlock; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(Index: integer): IBoldUndoBlock;
+    function GetItemByName(const Name: string): IBoldUndoBlock;
+    function GetTopBlock: IBoldUndoBlock;
     function GetContainsChanges: Boolean;
   protected
     procedure Clear;
@@ -97,8 +97,8 @@ type
     constructor Create(ABoldUndoHandler: TBoldUndoHandler);
     destructor Destroy; override;
     procedure MoveBlock(CurIndex, NewIndex: integer);
-    function IndexOf(const BlockName: string): integer; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function IndexOf(Block: TBoldUndoBlock): integer; overload; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function IndexOf(const BlockName: string): integer; overload;
+    function IndexOf(Block: TBoldUndoBlock): integer; overload;
     function RemoveBlock(const BlockName: string): Boolean;
     procedure RenameBlock(const OldName, NewName: string);
     procedure MoveToTop(const BlockName: string);
@@ -107,7 +107,7 @@ type
     property BlockByName[const BlockName: string]: TBoldUndoBlock read GetBlockByName;
     function CanMoveBlock(CurIndex, NewIndex: integer): Boolean;
     function CanMergeBlock(CurIndex, NewIndex: integer): Boolean;
-    function CanMoveToTop(CurIndex: integer): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function CanMoveToTop(CurIndex: integer): Boolean;
     procedure GetDependantBlocks(const BlockName: string; DependantBlocks: TList);
     procedure MergeAll;
     function GetFirstNonEmptyBlock: TBoldUndoBlock;
@@ -132,11 +132,11 @@ type
     procedure DoUndo(UnDoValueSpace: TBoldFreeStandingValueSpace;
                       RedoValueSpace: TBoldFreeStandingValueSpace);
     procedure DoUndoInTransaction(BlockName: string; FromList, ToList: TBoldUndoBlockList);  // Don't make blockname const!
-    function GetUndoList: IBoldUndoList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetRedoList: IBoldUndoList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetUndoList: IBoldUndoList;
+    function GetRedoList: IBoldUndoList;
     function CanUndoBlock(const BlockName: string): Boolean;
     function CanRedoBlock(const BlockName: string):Boolean;
-    function GetCurrentUndoBlock: TBoldUndoBlock; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrentUndoBlock: TBoldUndoBlock;
     function GetIsEmpty: boolean;
     function GetCurrentUndoBlockHasChanges: boolean;
     function GetCurrentUndoBlockCaption: string;
@@ -157,7 +157,7 @@ type
     procedure RedoLatest;
     procedure ApplytranslationList(IdTranslationList: TBoldIdTranslationList); override;
     procedure PrepareUpdate(const ObjectList: TBoldObjectList); override;
-    procedure ClearAllUndoBlocks; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure ClearAllUndoBlocks;
     property UndoBlocks: TBoldUndoBlockList read fUndoBlocks;
     property RedoBlocks: TBoldUndoBlockList read fRedoBlocks;
     property UndoState: TBoldUndoState read fUndoState write fUndoState;
@@ -1327,9 +1327,13 @@ end;
 
 function TBoldUndoBlockList.GetCurrentBlock: TBoldUndoBlock;
 begin
-  Result := nil;
   if Count > 0 then
-   Result := FList.Objects[Count - 1] as TBoldUndoBlock;
+    Result := FList.Objects[Count - 1] as TBoldUndoBlock
+  else
+  begin
+    fBoldUndoHandler.SetCheckPoint();
+    Result :=  fBoldUndoHandler.CurrentUndoBlock;
+  end;
 end;
 
 function TBoldUndoBlockList.GetAssertedBlockByName(

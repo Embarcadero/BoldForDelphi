@@ -47,8 +47,7 @@ uses
   BoldPMappersSQL,
   BoldPmappersDefault,
   BoldPMappersLinkDefault,
-  BoldPMappersAttributeDefault,
-  BoldRev;
+  BoldPMappersAttributeDefault;
 
 { TBoldSqlQueryGenerator }
 
@@ -238,7 +237,5 @@ procedure TBoldSqlQueryGenerator.VisitTBoldSqlTimeLiteral(
 begin
   n.WCF := TBoldSQLWCFTime.Create(n.TimeValue);
 end;
-
-initialization
 
 end.

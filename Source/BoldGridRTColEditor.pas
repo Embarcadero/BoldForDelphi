@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldGridRTColEditor;
@@ -114,7 +113,6 @@ begin
         cbxSetFont.Checked := False;
         cbxSetColor.Checked := False;
       end;
-
     end
     else
     begin
@@ -211,7 +209,5 @@ begin
   end;
   {$ENDIF}
 end;
-
-initialization
 
 end.

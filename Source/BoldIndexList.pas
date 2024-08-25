@@ -21,9 +21,9 @@ type
   private
     fIndexOrder: integer;
   protected
-    function getItem(Key: variant): TBoldIndexNode; virtual; abstract;
-    procedure setItem(Key: variant; Value: TBoldIndexNode); virtual; abstract;
-    function getCount: integer; virtual; abstract;
+    function GetItem(Key: variant): TBoldIndexNode; virtual; abstract;
+    procedure SetItem(Key: variant; Value: TBoldIndexNode); virtual; abstract;
+    function GetCount: integer; virtual; abstract;
     function InsertINode(Key: variant): TBoldIndexNode; virtual; abstract;
     procedure DeleteINode(iNode: TBoldIndexNode);
   public
@@ -41,8 +41,8 @@ type
   private
     fNumberOfIndices: integer;
   protected
-    function getIndexList(Index: integer): TBoldIndexList; virtual; abstract;
-    procedure setIndexList(Index: integer; const Value: TBoldIndexList); virtual; abstract;
+    function GetIndexList(Index: integer): TBoldIndexList; virtual; abstract;
+    procedure SetIndexList(Index: integer; const Value: TBoldIndexList); virtual; abstract;
     property Indices[Index: integer]: TBoldIndexList read getIndexList write setIndexList;
   public
     constructor Create;
@@ -156,7 +156,5 @@ procedure TBoldAbstractMultiIndexedList.RemoveKey(IndexOrder: integer;
 begin
   Indices[IndexOrder].RemoveKey(Key);
 end;
-
-initialization
 
 end.

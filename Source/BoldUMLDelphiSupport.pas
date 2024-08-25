@@ -22,8 +22,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 { TBoldUMLDelphiSupport }
 

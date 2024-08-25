@@ -52,7 +52,7 @@ type
     class function DefaultGetAsCheckBoxStateAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): TCheckBoxState; virtual;
     class procedure DefaultSetAsCheckBoxState(Element: IBoldElement; newValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
     class function DefaultValidateCheckBoxState(Element: IBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;  VariableList: IBoldExternalVariableList): Boolean; virtual;
-    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
     function DefaultIsChanged(RendererData: TBoldCheckBoxRendererDataCom; NewValue: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression;  VariableList: IBoldExternalVariableList): Boolean;
     function GetAsCheckBoxStateAndSubscribe(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): TCheckBoxState; virtual;
     procedure SetAsCheckBoxState(Element: IBoldElement; Value: TCheckBoxState; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
@@ -149,7 +149,7 @@ begin
 end;
 
 { TBoldAsCheckBoxStateRendererCom }
-procedure TBoldAsCheckBoxStateRendererCom.MakeUpToDateANdSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
+procedure TBoldAsCheckBoxStateRendererCom.MakeUptoDateANdSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
 var
   s: TCheckBoxState;
   Controller: TBoldCheckBoxStateFollowerControllerCom;

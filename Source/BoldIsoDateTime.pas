@@ -80,6 +80,7 @@ begin
      if not matchPattern('####-##-## ##:##', s)
     and not matchPattern('####-##-## ##:##:##', s)
     and not matchPattern('####-##-## ##:##:##:###', s)
+    and not matchPattern('####-##-##T##:##:##', s)
     and not matchPattern('####-##-##T##:##:##:###', s) then
     raise EBold.CreateFmt(sInvalidDateTimeFormat, [s]);
   result := ParseIsoDate(copy(s, 1, 10)) + ParseIsoTime(copy(s, 12, MaxInt));
@@ -87,7 +88,7 @@ end;
 
 function ParseISOTime(const str: string): TDateTime;
 var
-  h, m, s, z: integer;
+  h, m, s: integer;
 begin
   if not MatchPattern('##:##:##:###', str)
     and not MatchPattern('##:##:##.###', str)

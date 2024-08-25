@@ -44,8 +44,7 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 const
   breDatabaseAdapterDestroying = 100;

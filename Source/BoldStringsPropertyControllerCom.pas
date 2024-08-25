@@ -260,6 +260,4 @@ begin
     PropertyName := '';
 end;
 
-initialization
-
 end.

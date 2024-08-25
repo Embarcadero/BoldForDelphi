@@ -44,8 +44,8 @@ type
    public
      constructor Create(OwningFollower: TBoldFollower); override;
      destructor Destroy; override;
-     procedure AddOwnedElement(Element: TBoldElement); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-     procedure FreeAllOwnedElements; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+     procedure AddOwnedElement(Element: TBoldElement);
+     procedure FreeAllOwnedElements;
   end;
 
   { TBoldGenericListPart }
@@ -61,11 +61,11 @@ type
     fEnabled: Boolean;
     fName: String;
     fPublisher: TBoldPublisher;
-    function GetPublisher: TBoldPublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetContextType: TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPublisher: TBoldPublisher;
+    function GetContextType: TBoldElementTypeInfo;
 
-    procedure SetElementExpression(const Value: TBoldExpression); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetControllerExpression(const Value: TBoldExpression); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetElementExpression(const Value: TBoldExpression);
+    procedure SetControllerExpression(const Value: TBoldExpression);
     procedure SetInterpretAsList(Value: Boolean);
     procedure SetEnabled(const Value: Boolean);
     property Publisher: TBoldPublisher read GetPublisher;
@@ -98,14 +98,14 @@ type
   TBoldGenericListParts = class(TCollection)
   private
     FOwner: TBoldGenericListController;
-    function GetPart(Index: Integer): TBoldGenericListPart; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetPart(Index: Integer; Value: TBoldGenericListPart); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPart(Index: Integer): TBoldGenericListPart;
+    procedure SetPart(Index: Integer; Value: TBoldGenericListPart);
   protected
     function GetOwner: TPersistent; override;
     procedure Update(Item: TCollectionItem); override;
   public
     constructor Create(aOwner: TBoldGenericListController);
-    function Add: TBoldGenericListPart; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Add: TBoldGenericListPart;
     property Items[Index: Integer]: TBoldGenericListPart read GetPart write SetPart; default;
   end;
 
@@ -125,13 +125,13 @@ type
   private
     FParts: TBoldGenericListParts;
     FGetFollowerControllerByName: TGetFollowerControllerByNameEvent;
-    procedure SetParts(Value: TBoldGenericListParts); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetRenderer: TBoldGenericAsListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetRenderer(Value: TBoldGenericAsListRenderer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetParts(Value: TBoldGenericListParts);
+    function GetRenderer: TBoldGenericAsListRenderer;
+    procedure SetRenderer(Value: TBoldGenericAsListRenderer);
   protected
     class function PrecreateFollowers: boolean; override;
     function GetEffectiveRenderer: TBoldRenderer; override;
-    function GetEffectiveGenericAsListRenderer: TBoldGenericAsListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEffectiveGenericAsListRenderer: TBoldGenericAsListRenderer;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
     procedure DoAssign(Source: TPersistent); override;
     property EffectiveGenericAsListRenderer: TBoldGenericAsListRenderer read GetEffectiveGenericAsListRenderer;
@@ -140,7 +140,7 @@ type
                        GetFollowerControllerByNameFunc: TGetFollowerControllerByNameEvent);
     destructor Destroy; override;
     function FindPartByName(const Name: string): TBoldGenericListPart;
-    function CanHaveSubFollowers: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function CanHaveSubFollowers: Boolean;
   published
     property Parts: TBoldGenericListParts read FParts write SetParts;
     property Renderer: TBoldGenericAsListRenderer read GetRenderer write SetRenderer;
@@ -584,7 +584,7 @@ end;
 function TBoldGenericListPart.GetPublisher: TBoldPublisher;
 begin
   if not assigned(fPublisher) then
-    fPublisher := TBoldPublisher.create;
+    fPublisher := TBoldPublisher.Create(fPublisher);
   result := fPublisher;
 end;
 

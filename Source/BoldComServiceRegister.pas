@@ -170,6 +170,4 @@ begin
   RegisterClassFactories(False, AppID, [AppID]);
 end;
 
-initialization
-
 end.

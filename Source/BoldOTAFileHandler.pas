@@ -83,8 +83,7 @@ uses
 
   BoldCoreConsts,
   BoldUtils,
-  BoldLogHandler,
-  BoldRev;
+  BoldLogHandler;
 
 constructor TBoldOTAFileHandler.create(const FileName: string; ModuleType: TBoldModuleType; ShowFileInGuiIfPossible: Boolean; OnInitializeFileContents: TBoldInitializeFileContents);
 begin

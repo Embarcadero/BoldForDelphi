@@ -31,12 +31,12 @@ type
   private
     fClients: TBoldObjectArray;
   protected
-    function getItem(Key: variant): TBoldIndexNode; override;
-    procedure setItem(Key: variant; Value: TBoldIndexNode); override;
-    function getCount: integer; override;
+    function GetItem(Key: variant): TBoldIndexNode; override;
+    procedure SetItem(Key: variant; Value: TBoldIndexNode); override;
+    function GetCount: integer; override;
     function InsertINode(Key: variant): TBoldIndexNode; override;
-    function getClient(Index: Integer): TObject;
-    procedure setClient(Index: Integer; Value: TObject);
+    function GetClient(Index: Integer): TObject;
+    procedure SetClient(Index: Integer; Value: TObject);
     property Clients[Index: Integer]: TObject read getClient write setClient;
   public
     constructor Create(const IndexOrder: integer); override;
@@ -46,16 +46,16 @@ type
 
   TBoldExternalEventIndex = class(TBoldStringHashIndex)
   protected
-    function ItemASKeyString(Item: TObject): string; override;
+    function ItemAsKeyString(Item: TObject): string; override;
   end;
 
   TBoldExternalEventHashTable = class(TBoldUnorderedIndexableList)
   private
     class var IX_EventName: integer;
-    function GetItemByEventName(EventName: string): TBoldEventNameIndexNode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByEventName(EventName: string): TBoldEventNameIndexNode;
   public
     constructor Create;
-    procedure Add(Item: TBoldEventNameIndexNode); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Add(Item: TBoldEventNameIndexNode);
     property ItemsByEventName[ExpressionName: string]: TBoldEventNameIndexNode read GetItemByEventName;
   end;
 
@@ -170,7 +170,7 @@ begin
 end;
 
   {TBoldExternalEventIndex}
-function  TBoldExternalEventIndex.ItemASKeyString(Item: TObject): string;
+function  TBoldExternalEventIndex.ItemAsKeyString(Item: TObject): string;
 begin
   assert(item is TBoldEventNameIndexNode, 'Element is not of type TBoldEventNameIndexNode');
   Result := TBoldEventNameIndexNode(Item).EventName;

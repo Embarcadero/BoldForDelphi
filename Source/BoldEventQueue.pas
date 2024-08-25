@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldEventQueue;
@@ -27,19 +26,19 @@ type
     property Event: TNotifyEvent read fEvent;
     property Sender: Tobject read fSender;
     property Receiver: TObject read fReceiver;
-    procedure SendEvent; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SendEvent;
   end;
 
   { TBoldEventQueue }
   TBoldEventQueue = class(TBoldMemoryManagedObject)
   private
     fItemIndex: TBoldEventQueueItemReceiverIndex;
-    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: integer;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Add(Event: TNotifyEvent; Sender: TObject; Receiver: TObject);
-    procedure DequeueOne; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure DequeueOne;
     procedure DequeueAll;
     procedure RemoveAllForReceiver(Receiver: TObject);
     property Count: integer read GetCount;
@@ -140,7 +139,5 @@ function TBoldEventQueueItemReceiverIndex.ItemASKeyObject(Item: TObject): TObjec
 begin
   result := TBoldEventQueueItem(Item).Receiver;
 end;
-
-initialization
 
 end.

@@ -7,7 +7,9 @@ interface
 
 uses
   BoldIndexableList,
-  BoldSqlNodes, System.Classes, Data.DB;
+  BoldSqlNodes,
+  System.Classes,
+  Data.DB;
 
 type
   TBSS_Symbol = class(TBoldSqlSymbol)
@@ -18,7 +20,7 @@ type
   {---TBoldSymbolDictionary---}
   TBoldSqlSymbolDictionary = class(TBoldIndexableList)
   private
-    function GetSymbol(const Name: string): TBSS_Symbol; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetSymbol(const Name: string): TBSS_Symbol;
     function GetSymbolByIndex(index: Integer): TBSS_Symbol;
     class var IX_SymbolName: integer;
   public
@@ -34,15 +36,16 @@ implementation
 uses
   SysUtils,
 
-  BoldCoreConsts,
   BoldPMappersSql,
   BoldSQLQuery,
-  BoldHashIndexes,
   BoldPMappersDefault,
   BoldDefs,
   BoldContainers,
   BoldPSDescriptionsSQL,
-  BoldPMappersLinkDefault;
+  BoldPMappersLinkDefault,
+  BoldHashIndexes,
+  BoldIndex,
+  BoldCoreConsts;
 
 var
   SqlSymbols: TBoldSqlSymbolDictionary;

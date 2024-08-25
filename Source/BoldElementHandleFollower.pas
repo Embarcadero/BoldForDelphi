@@ -53,10 +53,15 @@ uses
 procedure TBoldElementHandleFollower.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
-  if RequestedEvent = breHandleNil then
-    BoldHandle := nil
-  else
-    FollowerValueCurrent := false;
+  case OriginalEvent of
+    beValueIdentityChanged:
+     FollowerValueCurrent := False;
+    beDestroying:
+    begin
+      Assert(Originator = BoldHandle);
+      BoldHandle := nil;
+    end;
+  end;
 end;
 
 constructor TBoldElementHandleFollower.Create(AMatchObject: TObject;
@@ -100,16 +105,16 @@ procedure TBoldElementHandleFollower.SetFollowerValueCurrent(value: Boolean);
       Follower.Element := nil;
   end;
 
-  procedure Subscribe;
-  begin
-    if Assigned(BoldHandle) then
-      BoldHandle.AddSmallSubscription(Subscriber, [beValueIdentityChanged], breValueIdentityChanged);
-  end;
-
   procedure SubscribeToHandleReference;
   begin
-    if assigned(BoldHandle) then
-      BoldHandle.AddSmallSubscription(Subscriber, [beDestroying], breHandleNil);
+    if assigned(fBoldHandle) then
+      BoldHandle.AddSmallSubscription(Subscriber, [beDestroying]);
+  end;
+
+  procedure Subscribe;
+  begin
+    if assigned(fBoldHandle) then
+      BoldHandle.AddSmallSubscription(Subscriber, [beDestroying, beValueIdentityChanged]);
   end;
 
 begin

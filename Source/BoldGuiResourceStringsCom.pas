@@ -33,7 +33,4 @@ resourcestring
 
 implementation
 
-
-initialization
-
 end.

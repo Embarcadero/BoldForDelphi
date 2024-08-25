@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCustomBlobMapper;
@@ -54,7 +53,7 @@ uses
 {const
   MemberNameColumn = 'MEMBERNAME';
   }
-  
+
 const
   BLOBDATA_TABLENAME = 'BLOBDATATABLE';
   BLOBDATA_DATACOLUMNNAME = 'BLOBDATA';

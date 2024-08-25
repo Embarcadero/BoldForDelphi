@@ -117,6 +117,4 @@ begin
   CoDisconnectObject(self, 0);
 end;
 
-initialization
-
 end.

@@ -18,7 +18,4 @@ const
 
 implementation
 
-
-initialization
-
 end.

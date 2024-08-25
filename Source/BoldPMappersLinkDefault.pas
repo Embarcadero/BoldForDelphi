@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersLinkDefault;
 
@@ -1620,4 +1619,3 @@ finalization
   {end - finalization}
 
 end.
-

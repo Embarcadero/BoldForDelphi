@@ -9,6 +9,8 @@ procedure Register;
 
 implementation
 
+{$R BoldManipulators.res}
+
 uses
   SysUtils,
   BoldUtils,

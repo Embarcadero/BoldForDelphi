@@ -12,6 +12,7 @@ uses
 
 type
   { forward declaration }
+  TBoldLogReceiverSubscriber = class;
   TBoldLogHandler = class;
   TBoldLogHandlerClass = class of TBoldLogHandler;
 
@@ -22,6 +23,7 @@ type
     fInterrupted: Boolean;
     fInterruptHandled: Boolean;
     fLastCommandIsSeparator: Boolean;
+    fBoldLogReceiverSubscriber: TBoldLogReceiverSubscriber;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -65,6 +67,7 @@ type
     function GetHandlesExtendedEvents: Boolean; override;
   public
     constructor Create(const Receiver: IBoldLogreceiver);
+    destructor Destroy; override;
   end;
 
 function BoldLog: TBoldLogHandler;
@@ -75,8 +78,7 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldMath,
-  BoldRev;
+  BoldMath;
 
 const
   bleFirst = 1;
@@ -116,6 +118,9 @@ end;
 
 destructor TBoldLogHandler.Destroy;
 begin
+  if self = G_BoldLog then
+    G_BoldLog := nil;
+  fBoldLogReceiverSubscriber.free;
   inherited;
 end;
 
@@ -233,12 +238,13 @@ end;
 
 procedure TBoldLogHandler.RegisterLogReceiver(const LogReceiver: IBoldLogReceiver);
 begin
-  TBoldLogReceiverSubscriber.Create(LogReceiver);
+  fBoldLogReceiverSubscriber := TBoldLogReceiverSubscriber.Create(LogReceiver);
 end;
 
 procedure TBoldLogHandler.UnregisterLogReceiver(const LogReceiver: IBoldLogReceiver);
 begin
-  SendExtendedEvent(bleRemoveReceiver, [LogReceiver]);
+  SendExtendedEvent(bleRemoveReceiver, [LogReceiver]); // will free the subscriber, so we just need to clear the reference
+  fBoldLogReceiverSubscriber := nil;
 end;
 
 
@@ -269,6 +275,12 @@ begin
   fReceiver := Receiver;
   BoldLog.AddSmallSubscription(self, [beDestroying], 0);
   BoldLog.AddSmallSubscription(self, [bleFirst..bleLast], 0);
+end;
+
+destructor TBoldLogReceiverSubscriber.Destroy;
+begin
+  fReceiver := nil;
+  inherited;
 end;
 
 function TBoldLogReceiverSubscriber.GetHandlesExtendedEvents: Boolean;

@@ -43,8 +43,7 @@ uses
   BoldTypeNameDictionary,
   BoldTypeNameHandle,
   BoldTypeNameEditor,
-  BoldGuard,
-  BoldRev;
+  BoldGuard;
 
 procedure Register;
 begin

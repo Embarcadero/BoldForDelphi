@@ -7,7 +7,4 @@ interface
 
 implementation
 
-
-initialization
-
 end.

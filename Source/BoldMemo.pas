@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMemo;
@@ -428,7 +427,5 @@ function TBoldCustomMemo.GetVariableList: TBoldExternalVariableList;
 begin
   result := BoldProperties.VariableList;
 end;
-
-initialization
 
 end.

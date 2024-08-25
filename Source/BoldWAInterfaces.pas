@@ -45,7 +45,4 @@ type
 
 implementation
 
-
-initialization
-
 end.

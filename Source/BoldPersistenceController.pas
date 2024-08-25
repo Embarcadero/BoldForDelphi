@@ -29,7 +29,7 @@ type
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); virtual; abstract;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); virtual; abstract;
     procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); virtual; abstract;
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); virtual;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); virtual;
     function MultilinksAreStoredInObject: Boolean; virtual;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                     TranslationList: TBoldIdTranslationList); virtual; abstract;
@@ -51,8 +51,7 @@ const
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPersistenceController }
 
@@ -94,32 +93,13 @@ begin
   raise EBoldFeatureNotImplementedYet.CreateFmt('PMTimestampForTime not supported by %s', [classname]);
 end;
 
-procedure TBoldPersistenceController.SubscribeToPeristenceEvents(
-  Subscriber: TBoldSubscriber);
+procedure TBoldPersistenceController.SubscribeToPersistenceEvents(
+  Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
-  AddSubscription(Subscriber, bpeStartFetch, bpeStartFetch);
-  AddSubscription(Subscriber, bpeEndFetch, bpeEndFetch);
-
-  AddSubscription(Subscriber, bpeStartUpdate, bpeStartUpdate);
-  AddSubscription(Subscriber, bpeEndUpdate, bpeEndUpdate);
-
-  AddSubscription(Subscriber, bpeStartFetchId, bpeStartFetchId);
-  AddSubscription(Subscriber, bpeEndFetchId, bpeEndFetchId);
-
-  AddSubscription(Subscriber, bpeStartFetchObjectById, bpeStartFetchObjectById);
-  AddSubscription(Subscriber, bpeEndFetchObjectById, bpeEndFetchObjectById);
-
-  AddSubscription(Subscriber, bpeStartFetchAllInClassWithSQL, bpeStartFetchAllInClassWithSQL);
-  AddSubscription(Subscriber, bpeEndFetchAllInClassWithSQL, bpeEndFetchAllInClassWithSQL);
-
-  AddSubscription(Subscriber, bpeStartFetchMember, bpeStartFetchMember);
-  AddSubscription(Subscriber, bpeEndFetchMember, bpeEndFetchMember);
-
-  AddSubscription(Subscriber, bpeStartFetchClass, bpeStartFetchClass);
-  AddSubscription(Subscriber, bpeEndFetchClass, bpeEndFetchClass);
-
-  AddSubscription(Subscriber, bpeStartFetchList, bpeStartFetchList);
-  AddSubscription(Subscriber, bpeEndFetchList, bpeEndFetchList);
+  if Events = [] then
+    AddSmallSubscription(Subscriber, bePersistenceEvents)
+  else
+    AddSmallSubscription(Subscriber, Events);
 end;
 
 end.

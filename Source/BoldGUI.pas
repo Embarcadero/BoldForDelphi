@@ -167,7 +167,6 @@ begin
 end;
 
 initialization
-
   BoldPopupMenu := TPopupMenu.Create(nil);
   BoldPopupMenu.OnPopup := BoldGUIHandler.DoPopUp;
 

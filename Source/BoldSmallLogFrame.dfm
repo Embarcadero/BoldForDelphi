@@ -16,8 +16,6 @@ object BoldLogFrame: TBoldLogFrame
     Width = 443
     Height = 17
     Align = alBottom
-    Min = 0
-    Max = 100
     ParentShowHint = False
     Step = 1
     ShowHint = False
@@ -56,8 +54,8 @@ object BoldLogFrame: TBoldLogFrame
     object lblLogText: TLabel
       Left = 2
       Top = 32
-      Width = 49
-      Height = 13
+      Width = 54
+      Height = 15
       Caption = 'lblLogText'
       Color = clBtnFace
       ParentColor = False
@@ -65,15 +63,15 @@ object BoldLogFrame: TBoldLogFrame
     object lblLogMainHeader: TLabel
       Left = 2
       Top = 0
-      Width = 86
-      Height = 13
+      Width = 98
+      Height = 15
       Caption = 'lblLogMainHeader'
     end
     object lblLogHeader: TLabel
       Left = 2
       Top = 16
-      Width = 63
-      Height = 13
+      Width = 71
+      Height = 15
       Caption = 'lblLogHeader'
       Color = clBtnFace
       ParentColor = False
@@ -87,20 +85,23 @@ object BoldLogFrame: TBoldLogFrame
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 3
+    DesignSize = (
+      200
+      50)
     object lblTimeLeft: TLabel
-      Left = 22
+      Left = 16
       Top = 16
-      Width = 88
-      Height = 13
+      Width = 94
+      Height = 15
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
       Caption = 'Time left: 00:00:00'
     end
     object lblTotTime: TLabel
-      Left = 24
+      Left = 19
       Top = 0
-      Width = 86
-      Height = 13
+      Width = 91
+      Height = 15
       Alignment = taRightJustify
       Anchors = [akTop, akRight]
       Caption = 'Tot time: 00:00:00'

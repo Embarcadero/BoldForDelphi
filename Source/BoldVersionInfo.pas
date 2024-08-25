@@ -29,7 +29,6 @@ implementation
 
 uses
   BoldIsoDateTime,
-  BoldRev,
   SysUtils;
 
 const
@@ -118,8 +117,5 @@ function BoldBuildCopyright: string;
 begin
   result := BOLD_BUILD_COPYRIGHT;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldVersionInfo.pas $ $Revision: 3 $ $Date: 02-07-05 16:23 $');
 
 end.

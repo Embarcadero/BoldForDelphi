@@ -241,8 +241,7 @@ uses
   BoldAttributes,
   DBConsts,
   Variants,
-  BoldEnvironment,
-  BoldRev;
+  BoldEnvironment;
 
 
 type
@@ -1769,7 +1768,5 @@ begin
   Resync([]);
 end;
 
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDataSet.pas $ $Revision: 41 $ $Date: 02-09-19 22:45 $');
 
 end.

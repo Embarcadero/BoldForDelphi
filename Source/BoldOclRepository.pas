@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldOclRepository;
@@ -88,7 +87,6 @@ implementation
 
 uses
   SysUtils,
-
   BoldCoreConsts,
   BoldLogHandler;
 

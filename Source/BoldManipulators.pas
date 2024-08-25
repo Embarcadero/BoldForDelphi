@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldManipulators;
@@ -93,16 +93,13 @@ type
 
 implementation
 
-{$R *.res}
-
 uses
   SysUtils,
-
-  BoldCoreConsts,
   BoldUtils,
   BoldId,
   BoldDefaultId,
-  BoldSystem;
+  BoldSystem,
+  BoldCoreConsts;
 
 { TBoldManipulator }
 

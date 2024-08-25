@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldLockList;
@@ -16,8 +15,7 @@ uses
   SysUtils,
   BoldUtils,
   BoldLockingDefs,
-  Classes
-  ;
+  Classes;
 
 type
   {forward declarations}
@@ -75,9 +73,9 @@ type
   private
     fLocks: TBoldLockNameHashList;
   protected
-    function getItem(Key: variant): TBoldIndexNode; override;
-    procedure setItem(Key: variant; Value: TBoldIndexNode); override;
-    function getCount: integer; override;
+    function GetItem(Key: variant): TBoldIndexNode; override;
+    procedure SetItem(Key: variant; Value: TBoldIndexNode); override;
+    function GetCount: integer; override;
     function InsertINode(Key: variant): TBoldIndexNode; override;
   public
     constructor Create(const IndexOrder: integer); override;
@@ -100,11 +98,11 @@ type
     procedure setLockType(const Value: TBoldLockType);
     function GetHasTimedOut: Boolean;
   protected
-    function getNext(Index: integer): TBoldMultiIndexedListNode; override;
-    procedure setNext(Index: integer; Value: TBoldMultiIndexedListNode); override;
-    function getPrevious(Index: integer): TBoldMultiIndexedListNode; override;
-    procedure setPrevious(Index: integer; Value: TBoldMultiIndexedListNode); override;
-    function getNumberOfIndices: integer; override;
+    function GetNext(Index: integer): TBoldMultiIndexedListNode; override;
+    procedure SetNext(Index: integer; Value: TBoldMultiIndexedListNode); override;
+    function GetPrevious(Index: integer): TBoldMultiIndexedListNode; override;
+    procedure SetPrevious(Index: integer; Value: TBoldMultiIndexedListNode); override;
+    function GetNumberOfIndices: integer; override;
   public
     constructor Create;
     procedure Remove; override;
@@ -125,12 +123,12 @@ type
     fLockNameList: TBoldLockNameList;
     fClientIDIndexOrder: integer;
     fLockNameIndexOrder: integer;
-    function getClient(Index: TBoldClientId): TBoldIndexNode;
-    function getLock(Index: string): TBoldLockNameIndexNode;
-    function getItem(ClientId: TBoldClientID; LockName: string): TBoldLockNode;
+    function GetClient(Index: TBoldClientId): TBoldIndexNode;
+    function GetLock(Index: string): TBoldLockNameIndexNode;
+    function GetItem(ClientId: TBoldClientID; LockName: string): TBoldLockNode;
   protected
-    function getIndexList(Index: integer): TBoldIndexList; override;
-    procedure setIndexList(Index: integer; const Value: TBoldIndexList); override;
+    function GetIndexList(Index: integer): TBoldIndexList; override;
+    procedure SetIndexList(Index: integer; const Value: TBoldIndexList); override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -149,9 +147,6 @@ type
   end;
 
 implementation
-
-uses
-  BoldRev;
 
 var
   IX_LockName: integer = -1;
@@ -262,7 +257,7 @@ begin
   end;
 end;
 
-function TBoldLockList.getIndexList(Index: integer): TBoldIndexList;
+function TBoldLockList.GetIndexList(Index: integer): TBoldIndexList;
 begin
   if Index = 0 then
     Result := fClientIDList
@@ -272,7 +267,7 @@ begin
     Result := nil;
 end;
 
-function TBoldLockList.getItem(ClientId: TBoldClientId; LockName: string): TBoldLockNode;
+function TBoldLockList.GetItem(ClientId: TBoldClientId; LockName: string): TBoldLockNode;
 var
   LockNode: TBoldLockNameIndexNode;
 begin
@@ -282,7 +277,7 @@ begin
     Result := LockNode.Clients.ItemsbyClientID[ClientId];
 end;
 
-function TBoldLockList.getLock(Index: string): TBoldLockNameIndexNode;
+function TBoldLockList.GetLock(Index: string): TBoldLockNameIndexNode;
 var
   iNode: TBoldIndexNode;
 begin
@@ -336,7 +331,7 @@ begin
   end;
 end;
 
-procedure TBoldLockList.setIndexList(Index: integer;
+procedure TBoldLockList.SetIndexList(Index: integer;
   const Value: TBoldIndexList);
 begin
   if Index = 0 then
@@ -384,18 +379,18 @@ begin
   inherited;
 end;
 
-function TBoldLockNameList.getCount: integer;
+function TBoldLockNameList.GetCount: integer;
 begin
   Result := fLocks.Count;
 end;
 
 {
-function TBoldLockNameList.getINode(Index: integer): TBoldIndexNode;
+function TBoldLockNameList.GetINode(Index: integer): TBoldIndexNode;
 begin
   Result := fLocks.Items[Index];
 end;
 }
-function TBoldLockNameList.getItem(Key: variant): TBoldIndexNode;
+function TBoldLockNameList.GetItem(Key: variant): TBoldIndexNode;
 begin
   Result := fLocks.GetItembyLockName(string(Key)) ;
 end;
@@ -448,7 +443,7 @@ begin
   end;
 end;
 
-procedure TBoldLockNameList.setItem(Key: variant;
+procedure TBoldLockNameList.SetItem(Key: variant;
   Value: TBoldIndexNode);
 begin
   Assert(Value is TBoldLockNameIndexNode);
@@ -500,18 +495,18 @@ begin
   Result := TimeStampToMSecs(CurrentTime) - TimeStampToMSecs(LockAcquisitionTime);
 end;
 
-function TBoldLockNode.getNext(Index: integer): TBoldMultiIndexedListNode;
+function TBoldLockNode.GetNext(Index: integer): TBoldMultiIndexedListNode;
 begin
   Assert((Index >= 0) and (Index < NumberOfIndices));
   Result := fNextNodes[index];
 end;
 
-function TBoldLockNode.getNumberOfIndices: integer;
+function TBoldLockNode.GetNumberOfIndices: integer;
 begin
   Result := 2;
 end;
 
-function TBoldLockNode.getPrevious(
+function TBoldLockNode.GetPrevious(
   Index: integer): TBoldMultiIndexedListNode;
 begin
   Assert((Index >= 0) and (Index < NumberOfIndices));
@@ -529,7 +524,7 @@ begin
   inherited;
 end;
 
-procedure TBoldLockNode.setLockType(const Value: TBoldLockType);
+procedure TBoldLockNode.SetLockType(const Value: TBoldLockType);
 var
   LockNameIndexNode: TBoldLockNameIndexNode;
 begin
@@ -555,7 +550,7 @@ begin
   end;
 end;
 
-procedure TBoldLockNode.setNext(Index: integer;
+procedure TBoldLockNode.SetNext(Index: integer;
   Value: TBoldMultiIndexedListNode);
 begin
   fNextNodes[Index] := Value;
@@ -599,13 +594,11 @@ begin
   inherited;
 end;
 
-function TBoldLockNameIndexNode.getClients: TBoldClientIdHashList;
+function TBoldLockNameIndexNode.GetClients: TBoldClientIdHashList;
 begin
   if not Assigned(fClients) then
     fClients := TBoldClientIdHashList.Create(self);
   Result := fClients;
 end;
-
-initialization
 
 end.

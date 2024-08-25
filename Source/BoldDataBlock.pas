@@ -41,8 +41,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldDataBlock}
 
@@ -99,7 +98,5 @@ function TBoldDataBlock.GetMemory: Pointer;
 begin
   Result := FStream.Memory;
 end;
-
-initialization
 
 end.

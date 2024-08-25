@@ -125,6 +125,4 @@ begin
  (Result as TBoldClientHandlerCOM).ClientHandler := ClientHandler;
 end;
 
-initialization
-
 end.

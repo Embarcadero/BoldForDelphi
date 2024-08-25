@@ -12,6 +12,9 @@
 (*                                       *)
 (*****************************************)
 
+{ Global compiler directives }
+{$include bold.inc}
+
 unit BoldUMLModel;
 
 {$DEFINE BoldUMLModel_unitheader}

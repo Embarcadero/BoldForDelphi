@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldIndex;
@@ -40,7 +39,7 @@ type
   TBoldItemRecBloc = class
   private
     fEntries: array[0..4094] of  TBoldHashIndexItemEntryRec;
-    function GetFirstEntry: PItemEntry; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFirstEntry: PItemEntry;
   public
     constructor Create;
     property FirstEntry: PItemEntry read GetFirstEntry;
@@ -52,8 +51,8 @@ type
     fBlocks: TObjectList;
     fFirstFree: PItemEntry;
   public
-    function GetRec: PItemEntry;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ReturnRec(rec: PItemEntry);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRec: PItemEntry;
+    procedure ReturnRec(rec: PItemEntry);
   public
     constructor Create;
     destructor Destroy; override;
@@ -93,7 +92,7 @@ type
     procedure FindAll(const Key; Result: TList); virtual; abstract;
     function IsCorrectlyIndexed(Item: TObject): boolean; virtual; abstract;
     procedure ItemChanged(Item: TObject); virtual;
-    procedure Remove(Item: TObject); virtual; abstract;
+    function Remove(Item: TObject): boolean; virtual; abstract;
     procedure RemoveChanged(Item: TObject); virtual; abstract;
     function CreateTraverser: TBoldIndexTraverser; virtual;
     function GetAndRemoveAny: TObject; virtual;
@@ -113,9 +112,9 @@ type
     FObjectStaticArray: PObjectStaticArray;
     FCount: Integer;
     FCapacity: Integer;
-    function GetItems(index: integer): TObject;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetItems(index: integer; const Value: TObject);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Grow; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItems(index: integer): TObject;
+    procedure SetItems(index: integer; const Value: TObject);
+    procedure Grow;
   private
     procedure RangeError(Index: integer);
   protected
@@ -135,17 +134,17 @@ type
     function Find(const Key):TObject; override;
     procedure FindAll(const Key; Result: TList); override;
     function IsCorrectlyIndexed(Item: TObject): boolean; override;
-    procedure Remove(Item: TObject); override;
+    function Remove(Item: TObject): boolean; override;
     procedure RemoveChanged(Item: TObject); override;
-    procedure Move(CurIndex, NewIndex: Integer);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Sort(Compare: TIntegerIndexSortCompare); 
-    procedure Insert(Index: Integer; Item: TObject);   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure Exchange(Index1, Index2: integer);    {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure RemoveByIndex(Index: Integer);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetAndRemoveAny: TObject; override;    
-    function IndexOf(Item: TObject): integer;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure Move(CurIndex, NewIndex: Integer);
+    procedure Sort(Compare: TIntegerIndexSortCompare);
+    procedure Insert(Index: Integer; Item: TObject);
+    procedure Exchange(Index1, Index2: integer);
+    procedure RemoveByIndex(Index: Integer);
+    function GetAndRemoveAny: TObject; override;
+    function IndexOf(Item: TObject): integer;
     property Items[index: integer]: TObject read GetItems write SetItems;
-    function Includes(Item: TObject): boolean;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}    
+    function Includes(Item: TObject): boolean;
     property FastCount: Integer read fCount;
   end;
 
@@ -155,7 +154,7 @@ type
     fHashIndex: TBoldHashIndex;
     fCurrentItem: PItemEntry;
     fBucketIndex: integer;
-    function FirstItemOfNextBucket: PItemEntry;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function FirstItemOfNextBucket: PItemEntry;
     procedure ItemDestroyed(AItem: TObject); override;
     procedure Clear; override;
   protected
@@ -171,6 +170,7 @@ type
     AutoResize: Boolean;
     PendingResize: Boolean;
     IsResizing: Boolean;
+    RehashOnChange: Boolean
   end;
 
   { TBoldHashIndex }
@@ -181,17 +181,17 @@ type
     fItemCount: integer;
     fLastIndexForAny: integer;
     fTraverserList: TList;
-    procedure InsertEntry(Entry: PItemEntry);  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function MinimumBucketCount: integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function MaximumBucketCount: integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function PrefferedBucketCount: integer;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetAutoResize(Value: boolean);   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure InsertEntry(Entry: PItemEntry);
+    function MinimumBucketCount: integer;
+    function MaximumBucketCount: integer;
+    function PrefferedBucketCount: integer;
+    procedure SetAutoResize(Value: boolean);
     procedure RemoveTraverser(ATraverser: TBoldIndexTraverser);
-    function GetTraverserCount: Integer;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function EnsuredTraverserList: TList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTraverser(AIndex: integer): TBoldIndexTraverser; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTraverserCount: Integer;
+    function EnsuredTraverserList: TList;
+    function GetTraverser(AIndex: integer): TBoldIndexTraverser;
   protected
-    function IndexForHash(Hash: Cardinal): integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function IndexForHash(Hash: Cardinal): integer;
     function GetCount: Integer; override;
     function HashItem(Item: TObject): Cardinal; virtual; abstract;
     function Hash(const Key): Cardinal; virtual; abstract;
@@ -201,6 +201,7 @@ type
     property TraverserCount: Integer read GetTraverserCount;
     function GetCapacity: integer; override;
     procedure SetCapacity(const Value: integer); override;
+    property Options: TBoldHashIndexOptions read fOptions;
   public
     constructor Create;
     destructor Destroy; override;
@@ -211,7 +212,7 @@ type
     procedure FindAll(const Key; Result: TList); override;
     function IsCorrectlyIndexed(Item: TObject): boolean; override;
     procedure ItemChanged(Item: TObject); override;
-    procedure Remove(Item: TObject); override;
+    function Remove(Item: TObject): boolean; override;
     procedure RemoveChanged(Item: TObject); override;
     procedure Resize;
     function CreateTraverser: TBoldIndexTraverser; override;
@@ -225,9 +226,9 @@ var
 implementation
 
 uses
+  System.Types,
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 const
   AVERAGEBUCKETLENGTH = 2;
@@ -319,6 +320,7 @@ end;
 constructor TBoldHashIndex.Create;
 begin
   fOptions.AutoResize := True;
+  fOptions.RehashOnChange := true;
 end;
 
 destructor TBoldHashIndex.Destroy;
@@ -439,12 +441,13 @@ begin
   end;
 end;
 
-procedure TBoldHashIndex.Remove(Item: TObject);
+function TBoldHashIndex.Remove(Item: TObject): boolean;
 var
   Pre: PPItemEntry;
   ToBeRemoved: PItemEntry;
   i: integer;
 begin
+  result := false;
   if Length(fBucketArray) = 0 then
     exit;
   Pre := @(fBucketArray[IndexForHash(HashItem(Item))]);
@@ -459,12 +462,13 @@ begin
       ToBeRemoved.next := nil;
       ReturnItemEntry(ToBeRemoved);
       Dec(fItemCount);
+      result := true;
       break;
     end
     else
       Pre := @Pre^.Next;
   end;
-  if AutoResize then
+  if Result and AutoResize then
     Resize;
 end;
 
@@ -580,9 +584,8 @@ var
 begin
   if fItemCount = 0 then
     exit;
-//  if DestroyObjects then
-    for i := 0 to Length(fBucketArray) - 1 do
-      ReturnItemEntry(fBucketArray[i], DestroyObjects);
+  for i := 0 to Length(fBucketArray) - 1 do
+    ReturnItemEntry(fBucketArray[i], DestroyObjects);
   for i := 0 to TraverserCount -1 do
     Traversers[i].Clear;
   SetLength(fBucketArray, 0);
@@ -732,7 +735,7 @@ var
 begin
   if DestroyObjects then
   begin
-    for i := 0 to fCount - 1 do
+    for i := fCount - 1 downto 0 do
     begin
       temp := FObjectStaticArray^[i];
       FObjectStaticArray^[i] := nil;
@@ -740,6 +743,7 @@ begin
     end;
   end;
   fCount := 0;
+  SetCapacity(0);
 end;
 
 constructor TBoldIntegerIndex.Create;
@@ -812,11 +816,9 @@ end;
 
 function TBoldIntegerIndex.IndexOf(Item: TObject): integer;
 begin
-  Result := 0;
-  while (Result < FCount) and (FObjectStaticArray^[Result] <> Item) do
-    Inc(Result);
-  if Result = FCount then
-    Result := -1;
+  Result := FCount-1;
+  while (Result >= 0) and (FObjectStaticArray^[Result] <> Item) do
+    Dec(Result);
 end;
 
 function TBoldIntegerIndex.Includes(Item: TObject): boolean;
@@ -834,13 +836,20 @@ begin
       (FCount - Index) * SizeOf(TObject));
 end;
 
-procedure TBoldIntegerIndex.Remove(Item: TObject);
+function TBoldIntegerIndex.Remove(Item: TObject): boolean;
 var
   Index: Integer;
 begin
-  Index := IndexOf(Item);
-  if Index >= 0 then
-    RemoveByIndex(Index);
+  result := false;
+  if FCount > 0 then
+  begin
+    Index := IndexOf(Item);
+    if Index >= 0 then
+    begin
+      RemoveByIndex(Index);
+      result := true;
+    end;
+  end;
 end;
 
 procedure TBoldIntegerIndex.RemoveChanged(Item: TObject);

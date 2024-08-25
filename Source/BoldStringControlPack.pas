@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldStringControlPack;
 
@@ -92,9 +91,9 @@ type
   TBoldStringFollowerController = class(TBoldSingleFollowerController)
   private
     FNilStringRepresentation: string;
-    function GetRenderer: TBoldAsStringRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetRenderer(Value: TBoldAsStringRenderer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEffectiveAsStringRenderer: TBoldAsStringRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRenderer: TBoldAsStringRenderer;
+    procedure SetRenderer(Value: TBoldAsStringRenderer);
+    function GetEffectiveAsStringRenderer: TBoldAsStringRenderer;
     procedure SetNilStringRepresentation(const Value: string);
   protected
     function GetSupportsMultiEnsure: Boolean; override;
@@ -103,15 +102,15 @@ type
     procedure DoMultiMakeUptodateAndSubscribe(Followers: TBoldFollowerArray); override;
   public
     procedure MakeClean(Follower: TBoldFollower); override;
-    function GetCurrentAsString(Follower: TBoldFollower): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetAsString(Value: string; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ValidateCharacter(C: Char; Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ValidateString(Value: string; Follower: TBoldFollower): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetFont(EffectiveFont, Font: tFont; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetColor(var EffectiveColor: tColor; COLOR: tColor; Follower: TBoldFollower); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrentAsString(Follower: TBoldFollower): string;
+    procedure SetAsString(Value: string; Follower: TBoldFollower);
+    function ValidateCharacter(C: Char; Follower: TBoldFollower): Boolean;
+    function ValidateString(Value: string; Follower: TBoldFollower): Boolean;
+    procedure SetFont(EffectiveFont, Font: tFont; Follower: TBoldFollower);
+    procedure SetColor(var EffectiveColor: tColor; COLOR: tColor; Follower: TBoldFollower);
     function MayHaveChanged(const NewValue: string; Follower: TBoldFollower): boolean;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
-    function GetAsString(aFollower: TBoldFollower): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAsString(aFollower: TBoldFollower): string;
   published
     property Renderer: TBoldAsStringRenderer read GetRenderer write SetRenderer;
     property NilStringRepresentation: string read FNilStringRepresentation write SetNilStringRepresentation;
@@ -128,8 +127,7 @@ uses
   {$ELSE}
   Variants,
   {$ENDIF}
-  BoldGuard,
-  BoldRev;
+  BoldGuard;
 
 var
   DefaultAsStringRenderer: TBoldAsStringRenderer;

@@ -92,6 +92,4 @@ begin
   result := inherited PersistenceController as TBoldExternalPersistenceControllerSQL;
 end;
 
-initialization
-
 end.

@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldCustomCheckListBox;
@@ -41,8 +40,6 @@ type
     function GetSelected(Index: integer): Boolean;
     function GetSelectedCount: integer;
     procedure SetSelected(Index: integer; const Value: Boolean);
-    function GetItemIndex: integer;
-    procedure SetItemIndex(const Value: integer);
     function GetCurrentBoldElement: TBoldElement;
     function GetCurrentBoldObject: TBoldObject;
     function GetContextType: TBoldElementTypeInfo;
@@ -60,6 +57,7 @@ type
     procedure SetBoldListProperties(
       const Value: TBoldListAsFollowerListController);
   protected
+    procedure SetItemIndex(const Value: integer); override;
     procedure _DisplayCheckBox(Follower: TBoldFollower);
     procedure _DisplayString(Follower: TBoldFollower);
     procedure Click; override;
@@ -172,11 +170,6 @@ begin
       fBoldListProperties.SelectAll(Follower, False);
     fBoldListProperties.SetSelected(Follower, Index, Value);
   end;
-end;
-
-function TBoldCustomCheckListBox.GetItemIndex: integer;
-begin
-  Result := inherited ItemIndex;
 end;
 
 procedure TBoldCustomCheckListBox.SetItemIndex(const Value: integer);
@@ -399,7 +392,5 @@ procedure TBoldCustomCheckListBox.SetBoldListProperties(
 begin
   FBoldListProperties.Assign(Value);
 end;
-
-initialization
 
 end.

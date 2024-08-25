@@ -62,7 +62,4 @@ const
 
 implementation
 
-
-initialization
-
 end.

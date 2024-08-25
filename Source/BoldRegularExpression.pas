@@ -220,8 +220,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 const
   CurrentVersion = '1.1';
@@ -902,8 +901,5 @@ function TTokenList.GetToken(const Index: Integer): TToken;
 begin
   Result := FList[Index]
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldRegularExpression.pas $ $Revision: 10 $ $Date: 02-07-23 17:49 $');
 
 end.

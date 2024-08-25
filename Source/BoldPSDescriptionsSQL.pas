@@ -15,7 +15,8 @@ uses
   BoldPSParamsSQL,
   BoldSQLDatabaseConfig,
   BoldPSDescriptions,
-  BoldTaggedValueSupport;
+  BoldTaggedValueSupport,
+  BoldHashIndexes;
 
 const
   IDCOLUMN_TYPE = ftInteger;
@@ -120,7 +121,7 @@ type
     fSQLAllowNull: string;
     fFieldType: TFieldType;
     fDefaultDBValue: String;
-    function GetTableDescription: TBoldSQLTableDescription;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTableDescription: TBoldSQLTableDescription;
   protected
     function GetDebugInfo: string; override;
     procedure SetSQLName(const v: string); override;
@@ -157,25 +158,50 @@ type
     property IndexOptions: TIndexOptionsExt read fIndexOptions write fIndexOptions;
   end;
 
+  TBoldSQLDescriptionListTraverser = class(TBoldIndexableListTraverser)
+  private
+    function GetItem: TBoldSQLDescriptionElement;
+  public
+    property Item: TBoldSQLDescriptionElement read GetItem;
+    property Current: TBoldSQLDescriptionElement read GetItem;
+  end;
+
   {---TBoldSQLDescriptionList---}
   TBoldSQLDescriptionList = class(TBoldIndexableList)
   private
     fSystemDescription: TBoldSQLSystemDescription;
-    function GetItem(index: Integer): TBoldSQLDescriptionElement;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldSQLDescriptionElement;
     function GetItemBySQLName(const SQLName: string): TBoldSQLDescriptionElement;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
     constructor Create(SystemDescription: TBoldSQLSystemDescription);
     procedure ToStrings(S: TStrings);
+    function ToString: string; override;
+    function CreateTraverser: TBoldSQLDescriptionListTraverser;
+    function GetEnumerator: TBoldSQLDescriptionListTraverser;
     property Items[index: Integer]: TBoldSQLDescriptionElement read GetItem; default;
     property ItemsBySQLName[const SQLName: string]: TBoldSQLDescriptionElement read GetItemBySQLName;
+  end;
+
+  TBoldSQLTableDescriptionListTraverser = class(TBoldSQLDescriptionListTraverser)
+  private
+    function GetItem: TBoldSQLTableDescription;
+  public
+    property Item: TBoldSQLTableDescription read GetItem;
+    property Current: TBoldSQLTableDescription read GetItem;
   end;
 
   {---TBoldSQLTableDescriptionList---}
   TBoldSQLTableDescriptionList = class(TBoldSQLDescriptionList)
   private
-    function GetItem(index: Integer): TBoldSQLTableDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldSQLTableDescription;
     function GetItemBySQLName(const SQLName: string): TBoldSQLTableDescription;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function CreateTraverser: TBoldSQLTableDescriptionListTraverser;
+    function GetEnumerator: TBoldSQLTableDescriptionListTraverser;
     property Items[index: Integer]: TBoldSQLTableDescription read GetItem; default;
     property ItemsBySQLName[const SQLName: string]: TBoldSQLtableDescription read GetItemBySQLName;
   end;
@@ -183,8 +209,8 @@ type
   TBoldSQLIndexDescriptionList = class(TBoldIndexableList)
   private
     class var IX_SQLIndexFields: integer;
-    function GetItem(index: integer): TBoldSQLIndexDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemsByIndexFields(const IndexFields: string): TBoldSQLIndexDescription; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: integer): TBoldSQLIndexDescription;
+    function GetItemsByIndexFields(const IndexFields: string): TBoldSQLIndexDescription;
   public
     constructor Create;
     property items[index: integer]: TBoldSQLIndexDescription read GetItem; default;
@@ -202,13 +228,14 @@ uses
   Dialogs,
   SysUtils,
   TypInfo,
+  UITypes,
 
   BoldCoreConsts,
   BoldGuard,
   BoldNameExpander,
   BoldLogHandler,
   BoldQueryUserDlg,
-  BoldHashIndexes;
+  BoldIndex;
 
 var
   IX_SQLDescriptionSQLName: integer = -1;
@@ -327,61 +354,61 @@ var
 
   function DeleteTableBDE: boolean;
   var
-    Table: IBoldtable;
+  Table: IBoldtable;
   begin
+  try
+    Table := PSParams.DataBase.GetTable;
     try
-      Table := PSParams.DataBase.GetTable;
-      try
-        Table.TableName := TableNameList[i];
-        Table.Exclusive := True;
-        Table.FieldDefs.Update;
-        Table.DeleteTable;
-        Result := True;
-      finally
-        PSParams.Database.ReleaseTable(table)
-      end;
-    except
-      Result := False;
+      Table.TableName := TableNameList[i];
+      Table.Exclusive := True;
+      Table.FieldDefs.Update;
+      Table.DeleteTable;
+      Result := True;
+    finally
+      PSParams.Database.ReleaseTable(table)
     end;
+  except
+    Result := False;
+  end;
   end;
 
   function DeleteTableSQL: boolean;
   var
-    PsParamsSQL: TBoldPSSQLParams;
-    Query: IBoldExecQuery;
+  PsParamsSQL: TBoldPSSQLParams;
+  Query: IBoldExecQuery;
   begin
-    result := true;
-    PSParamsSQL := PSParams as TBoldPSSQLParams;
-    Query := PSParamsSQL.Database.GetExecQuery;
-    try
-      Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
-      Query.ExecSQL;
-    finally
-      PSParamsSQL.Database.ReleaseExecQuery(Query);
-    end;
+  result := true;
+  PSParamsSQL := PSParams as TBoldPSSQLParams;
+  Query := PSParamsSQL.Database.GetExecQuery;
+  try
+    Query.AssignSQLText('DROP TABLE '+Tablenamelist[i]);
+    Query.ExecSQL;
+  finally
+    PSParamsSQL.Database.ReleaseExecQuery(Query);
+  end;
   end;
 
   function DeleteTable: Boolean;
   var
-    MayDelete,
-    IsBoldTable: boolean;
+  MayDelete,
+  IsBoldTable: boolean;
 
   begin
-    Result:=False;
-    IsBoldTable := Knowntables.IndexOf(TableNameList[i]) <> -1 ;
+  Result:=False;
+  IsBoldTable := Knowntables.IndexOf(TableNameList[i]) <> -1 ;
 
-    if not IsBoldTable and (not PSParams.IgnoreUnknownTables) and
-      not (Query in [qrYesAll, qrNoAll]) then
+  if not IsBoldTable and (not PSParams.IgnoreUnknownTables) and
+    not (Query in [qrYesAll, qrNoAll]) then
       Query := QueryUser(sDeleteTable, Format(sDeleteNonBoldTable, [TableNameList[i]]));
 
-    MayDelete := (Query in [qrYes, qrYesAll]) and (not PSParams.IgnoreUnknownTables);
+  MayDelete := (Query in [qrYes, qrYesAll]) and (not PSParams.IgnoreUnknownTables);
 
-    if IsBoldTable or MayDelete then
-      case EffectiveGenerationMode(PSParams) of
-        dbgTable: result := DeleteTableBDE;
-        dbgQuery: Result := DeleteTableSQL;
-        else result := false;
-      end;
+  if IsBoldTable or MayDelete then
+    case EffectiveGenerationMode(PSParams) of
+      dbgTable: result := DeleteTableBDE;
+      dbgQuery: Result := DeleteTableSQL;
+      else result := false;
+    end;
   end;
 
 begin
@@ -820,6 +847,16 @@ begin
   fSystemDescription := SystemDescription;
 end;
 
+function TBoldSQLDescriptionList.CreateTraverser: TBoldSQLDescriptionListTraverser;
+begin
+  result := inherited CreateTraverser as TBoldSQLDescriptionListTraverser;
+end;
+
+function TBoldSQLDescriptionList.GetEnumerator: TBoldSQLDescriptionListTraverser;
+begin
+  result := CreateTraverser;
+end;
+
 function TBoldSQLDescriptionList.GetItem(index: Integer): TBoldSQLDescriptionElement;
 begin
   Result := TBoldSQLDescriptionElement(inherited Items[index]);
@@ -833,6 +870,22 @@ begin
       fSystemDescription.NationalCharConversion)));
 end;
 
+function TBoldSQLDescriptionList.ToString: string;
+var
+  I: Integer;
+  S: TStrings;
+begin
+  result := '';
+  S := TStringList.Create;
+  try
+    for I := 0 to Count - 1 do
+      S.Add(Items[I].SQLName);
+    result := s.CommaText;
+  finally
+    s.Free;
+  end;
+end;
+
 procedure TBoldSQLDescriptionList.ToStrings(S: TStrings);
 var
   I: Integer;
@@ -842,6 +895,21 @@ begin
   for I := 0 to Count - 1 do
     S.AddObject(Items[I].SQLName, Items[I]);
   S.EndUpdate;
+end;
+
+function TBoldSQLDescriptionList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TBoldSQLDescriptionListTraverser;
+end;
+
+function TBoldSQLTableDescriptionList.CreateTraverser: TBoldSQLTableDescriptionListTraverser;
+begin
+  result := inherited CreateTraverser as TBoldSQLTableDescriptionListTraverser;
+end;
+
+function TBoldSQLTableDescriptionList.GetEnumerator: TBoldSQLTableDescriptionListTraverser;
+begin
+  result := CreateTraverser;
 end;
 
 function TBoldSQLTableDescriptionList.GetItem(index: Integer): TBoldSQLTableDescription;
@@ -855,6 +923,11 @@ begin
     BoldExpandName(SQLName, '', xtSQL,
       fSystemDescription.SQLDatabaseConfig.MaxDBIdentifierLength,
       fSystemDescription.NationalCharConversion)));
+end;
+
+function TBoldSQLTableDescriptionList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TBoldSQLTableDescriptionListTraverser;
 end;
 
 function TBoldSQLIndexDescription.GetIndexedFieldsForSQL: String;
@@ -875,7 +948,6 @@ begin
     IndexNameLength,
     TableDescription.SystemDescription.NationalCharConversion);
 end;
-
 
 { TBoldSQLIndexDescriptionList }
 
@@ -959,6 +1031,22 @@ procedure TBoldSQLSystemDescription.StartMetaDataTransaction(PSParams: TBoldPSSQ
 begin
   if EffectiveUseTransactions(PSParams) then
     PsParams.Database.StartTransaction;
+end;
+
+{ TBoldSQLDescriptionListTraverser }
+
+function TBoldSQLDescriptionListTraverser.GetItem: TBoldSQLDescriptionElement;
+begin
+  result := TBoldSQLDescriptionElement(inherited item);
+  Assert(result is TBoldSQLDescriptionElement);
+end;
+
+{ TBoldSQLTableDescriptionListTraverser }
+
+function TBoldSQLTableDescriptionListTraverser.GetItem: TBoldSQLTableDescription;
+begin
+  result := TBoldSQLTableDescription(inherited item);
+  Assert(result is TBoldSQLTableDescription);
 end;
 
 end.

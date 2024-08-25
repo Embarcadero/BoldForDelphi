@@ -40,9 +40,6 @@ type
 
 implementation
 
-uses
-  BoldRev;
-
 {$R *.res}
 
 { TBoldExpert }
@@ -115,7 +112,5 @@ end;
 procedure TBoldExpert.Modified;
 begin
 end;
-
-initialization
 
 end.

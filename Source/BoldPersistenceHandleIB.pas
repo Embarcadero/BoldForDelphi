@@ -214,6 +214,4 @@ begin
     Adapter.DataBase.DatabaseName := DatabaseName;
 end;
 
-initialization
-
 end.

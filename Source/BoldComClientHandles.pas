@@ -492,6 +492,4 @@ begin
   Result := FComObject;
 end;
 
-initialization
-
 end.

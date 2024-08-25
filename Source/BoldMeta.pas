@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldMeta;
@@ -15,7 +15,9 @@ uses
   BoldTypeNameDictionary,
   BoldTaggedValueList,
   BoldTaggedValueSupport,
-  BoldIndexableList;
+  BoldIndexableList,
+  BoldHashIndexes,
+  BoldDefaultTaggedValues;
 
 const
   BOLD_FIRSTUSERDISPID=1024;
@@ -41,7 +43,16 @@ type
   TMoldQualifier = class;
   TMoldQualifierList = class;
   TMoldComponent = class;
-  tMoldComponentList = class;
+  TMoldComponentList = class;
+
+  TMoldElementListTraverser = class;
+  TMoldClassListTraverser = class;
+  TMoldMemberListTraverser = class;
+  TMoldRoleListTraverser = class;
+  TMoldAttributeListTraverser = class;
+  TMoldAssociationListTraverser = class;
+  TMoldMethodListTraverser = class;
+  TMoldQualifierListTraverser = class;
 
   TMoldElementClass = class of TMoldElement;
 
@@ -59,20 +70,20 @@ type
     fBoldTaggedValues: TBoldNamedValueList;
     fDispId: integer;
     FDefaultBoldTVList: TBoldTaggedValueList;
-    function GetExpandedDelphiName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetExpandedDelphiName: string;
     procedure SetBoldTVByName(const Tag, value: string);
     function GetBoldTVByName(const Tag: string): string;
-    function GetStdTVByName(const Tag: string): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDelphiName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetExpressionName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetPMapperName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetStdTVByName(const Tag, Value: string); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDispId: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetStdTVByName(const Tag: string): string;
+    function GetDelphiName: string;
+    function GetExpressionName: string;
+    function GetPMapperName: string;
+    procedure SetStdTVByName(const Tag, Value: string);
+    function GetDispId: integer;
     function GetDefaultBoldTVList: TBoldTaggedValueList;
     function GetTVByName(const Tag: string): string;
     procedure SetTVByName(const Tag, Value: string);
-    function GetTaggedValues: TBoldNamedValueList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetBoldTaggedValues: TBoldNamedValueList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTaggedValues: TBoldNamedValueList;
+    function GetBoldTaggedValues: TBoldNamedValueList;
     function GetNonDefaultTaggedValuesCommaText: string;
     procedure SetNonDefaultTaggedValuesCommaText(const Value: string);
   protected
@@ -80,8 +91,8 @@ type
     function GetModel: TMoldModel; virtual; abstract;
     procedure SetName(const S: string); virtual;
     function GetExpandedExpressionName: string; virtual;
-    function GetEvolutionState: TBoldEvolutionState; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetFormerNames: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEvolutionState: TBoldEvolutionState;
+    function GetFormerNames: string;
     function GetUMLClassName: string; virtual; abstract;
     property UMLClassName: string read GetUMLClassName;
     property DefaultBoldTVList: TBoldTaggedValueList read GetDefaultBoldTVList;
@@ -93,7 +104,7 @@ type
     procedure NameChanged; virtual;
     function GetAllNonBoldTaggedValues: TStringList;
     procedure AddAllTaggedValues(Tags, Values: TStrings);
-    property name: string read FName write SetName;
+    property Name: string read FName write SetName;
     property DelphiName: string read GetDelphiName;
     property ExpandedDelphiName: string read GetExpandedDelphiName;
     property ExpressionName: string read GetExpressionName;
@@ -125,23 +136,23 @@ type
     fIsDestroying: Boolean;
     function CalculateCRC: Cardinal;
     procedure SetRootClass(NewRootClass: TMoldClass);
-    function GetBoldUnitName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetComponents: TMoldComponentList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMainComponent: TMoldComponent; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetInterfaceUses: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUseGlobalId: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUseReadOnly: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUseModelVersion: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetModelVersion: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUseTimestamp: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUseXFiles: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUseClockLog: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetImplementationUses: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetGUID: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTypeLibVersion: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetOptimisticLocking: TBoldOptimisticLockingMode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetUpdateWholeObjects: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetExpandedUnitName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetBoldUnitName: string;
+    function GetComponents: TMoldComponentList;
+    function GetMainComponent: TMoldComponent;
+    function GetInterfaceUses: string;
+    function GetUseGlobalId: Boolean;
+    function GetUseReadOnly: Boolean;
+    function GetUseModelVersion: Boolean;
+    function GetModelVersion: Integer;
+    function GetUseTimestamp: Boolean;
+    function GetUseXFiles: Boolean;
+    function GetUseClockLog: Boolean;
+    function GetImplementationUses: string;
+    function GetGUID: string;
+    function GetTypeLibVersion: String;
+    function GetOptimisticLocking: TBoldOptimisticLockingMode;
+    function GetUpdateWholeObjects: Boolean;
+    function GetExpandedUnitName: string;
     procedure RemoveAssoc(MoldAssoc: TMoldAssociation; ClassList: TMoldClassList; AssocList: TMoldAssociationList);
     procedure RemoveClass(MoldClass: TMoldClass; ClassList: TMoldClassList; AssocList: TMoldAssociationList);
     function GetNationalCharConversion: TBoldNationalCharConversion;
@@ -202,8 +213,11 @@ type
   private
     class var IX_Name: integer;
     function GetItem(index: Integer): TMoldElement;
-    function GetItemByName(const name: string): TMoldElement; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByName(const name: string): TMoldElement;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldElementListTraverser;
     constructor Create;
     procedure RemoveEntryReference(Item: TMoldElement);
     function MakeUniqueName(const prefix: string): string;
@@ -217,11 +231,14 @@ type
   private
     class var IX_ExpressionName: integer;
     class var IX_DelphiName: integer;
-    function GetItem(index: Integer): TMoldClass; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldClass; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: String): TMoldClass; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByDelphiName(const DelphiName: String): TMoldClass; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldClass;
+    function GetItemByName(const name: string): TMoldClass;
+    function GetItemByExpressionName(const ExpressionName: String): TMoldClass;
+    function GetItemByDelphiName(const DelphiName: String): TMoldClass;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldClassListTraverser;
     constructor Create;
     property Items[index: Integer]: TMoldClass read GetItem; default;
     property ItemsByName[const name: string]: TMoldClass read GetItemByName;
@@ -232,9 +249,12 @@ type
   { TMoldMemberList }
   TMoldMemberList = class(TMoldElementList)
   private
-    function GetItem(index: Integer): TMoldMember; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldMember; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldMember;
+    function GetItemByName(const name: string): TMoldMember;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldMemberListTraverser;
     property Items[index: Integer]: TMoldMember read GetItem; default;
     property ItemsByName[const name: string]: TMoldMember read GetItemByName;
   end;
@@ -242,9 +262,12 @@ type
   {---TMoldRoleList---}
   TMoldRoleList = class(TMoldMemberList)
   private
-    function GetItem(index: Integer): TMoldRole; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldRole; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldRole;
+    function GetItemByName(const name: string): TMoldRole;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldRoleListTraverser;
     property Items[index: Integer]: TMoldRole read GetItem; default;
     property ItemsByName[const name: string]: TMoldRole read GetItemByName;
   end;
@@ -252,9 +275,12 @@ type
   {---TMoldMethodList---}
   TMoldMethodList = class(TMoldElementList)
   private
-    function GetItem(index: Integer): TMoldMethod; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldMethod; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldMethod;
+    function GetItemByName(const name: string): TMoldMethod;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldMethodListTraverser;
     property Items[index: Integer]: TMoldMethod read GetItem; default;
     property ItemsByName[const name: string]: TMoldMethod read GetItemByName;
   end;
@@ -262,9 +288,12 @@ type
   {---TMoldAssociationList---}
   TMoldAssociationList = class(TMoldElementList)
   private
-    function GetItem(index: Integer): TMoldAssociation; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldAssociation; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldAssociation;
+    function GetItemByName(const name: string): TMoldAssociation;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldAssociationListTraverser;
     property Items[index: Integer]: TMoldAssociation read GetItem; default;
     property ItemsByName[const name: string]: TMoldAssociation read GetItemByName;
   end;
@@ -272,9 +301,12 @@ type
   {---TMoldAttributeList---}
   TMoldAttributeList = class(TMoldMemberList)
   private
-    function GetItem(index: Integer): TMoldAttribute; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldAttribute; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldAttribute;
+    function GetItemByName(const name: string): TMoldAttribute;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldAttributeListTraverser;
     property Items[index: Integer]: TMoldAttribute read GetItem; default;
     property ItemsByName[const name: string]: TMoldAttribute read GetItemByName;
   end;
@@ -282,12 +314,64 @@ type
   {---TMoldQualifierList---}
   TMoldQualifierList = class(TMoldElementList)
   private
-    function GetItem(index: Integer): TMoldQualifier; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByName(const name: string): TMoldQualifier; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldQualifier;
+    function GetItemByName(const name: string): TMoldQualifier;
+  protected
+    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
+    function GetEnumerator: TMoldQualifierListTraverser;
     property Items[index: Integer]: TMoldQualifier read GetItem; default;
     property ItemsByName[const name: string]: TMoldQualifier read GetItemByName;
   end;
+
+  TMoldElementListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldElement;
+    property Current: TMoldElement read GetCurrent;
+  end;
+
+  TMoldClassListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldClass;
+    property Current: TMoldClass read GetCurrent;
+  end;
+
+  TMoldMemberListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldMember;
+    property Current: TMoldMember read GetCurrent;
+  end;
+
+  TMoldRoleListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldRole;
+    property Current: TMoldRole read GetCurrent;
+  end;
+
+  TMoldAttributeListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldAttribute;
+    property Current: TMoldAttribute read GetCurrent;
+  end;
+
+  TMoldAssociationListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldAssociation;
+    property Current: TMoldAssociation read GetCurrent;
+  end;
+
+  TMoldMethodListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldMethod;
+    property Current: TMoldMethod read GetCurrent;
+  end;
+
+  TMoldQualifierListTraverser = class(TBoldIndexableListTraverser)
+  public
+    function GetCurrent: TMoldQualifier;
+    property Current: TMoldQualifier read GetCurrent;
+  end;
+
 
   {---TMoldClass---}
   TMoldClass = class(TMoldElement)
@@ -310,48 +394,49 @@ type
     fAllPossibleNames: TStringList;
     fTopSortedIndex: integer;
     procedure SetSuperClass(super: TMoldClass);
-    function GetIncFileName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIsRootClass: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIncFileName: string;
+    function GetIsRootClass: Boolean;
     procedure InitializeClass(Parent: TMoldModel);
-    procedure SetComponent(const Value: TMoldComponent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetComponent(const Value: TMoldComponent);
     function GetAllNativeAttributes: TMoldAttributeList;
     function GetAllBoldMembers: TMoldMemberList;
     function GetIntroducesManuallyDerivedMembers: Boolean;
-    function GetFirstOwnBoldMemberIndex: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetFirstOwnNativeAttributeIndex: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFirstOwnBoldMemberIndex: integer;
+    function GetFirstOwnNativeAttributeIndex: integer;
     function GetHasManuallyDerivedMembers: Boolean;
     function GetAllAutoOverrideMethods: TMoldMethodList;
-    function GetComponent: TMoldComponent; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTableMapping: TTableMapping; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetBoldUnitName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetImported: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTableName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetBoldUnitName(const Value: string); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetIncFileName(const Value: string); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDefaultStringRepresentation: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEffectiveDefaultStringRepresentation: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetComponent: TMoldComponent;
+    function GetTableMapping: TTableMapping;
+    function GetBoldUnitName: string;
+    function GetImported: Boolean;
+    function GetTableName: string;
+    function GetExternalTableName: string;
+    procedure SetBoldUnitName(const Value: string);
+    procedure SetIncFileName(const Value: string);
+    function GetDefaultStringRepresentation: String;
+    function GetEffectiveDefaultStringRepresentation: String;
     function GetHasCodeStubs: Boolean;
     function GetVersioned: Boolean;
-    function GetGuid: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetListGuid: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetOptimisticLocking: TBoldOptimisticLockingMode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetExpandedUnitName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetGuid: String;
+    function GetListGuid: String;
+    function GetOptimisticLocking: TBoldOptimisticLockingMode;
+    function GetExpandedUnitName: string;
     procedure TrimRemoved;
-    function GetEffectiveEvolutionState: TBoldEvolutionState; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetFirstDispId: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetLastDispId: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEffectiveEvolutionState: TBoldEvolutionState;
+    function GetFirstDispId: integer;
+    function GetLastDispId: integer;
     function GetAllPossibleNames: TStringList;
     function GetHasDelphiAttributesWithAccessorFunctions: Boolean;
     function CalculateCRC: Cardinal;
     function GetEffectiveOptimisticLocking: TBoldOptimisticLockingMode;
-    function GetGenerateDefaultRegion: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetStorage: TBoldStorage; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetGenerateDefaultRegion: Boolean;
+    function GetStorage: TBoldStorage;
     function GetIntroducesManuallyReverseDerivedMembers: Boolean;
   protected
     procedure AssignMemberDispIds;
     function GetModel: TMoldModel; override;
     function GetExpandedExpressionName: string; override;
-    function GetExpandedInterfaceName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetExpandedInterfaceName: string;
     function GetEffectivePersistent: Boolean;
     function GetHasNotNullMembers: Boolean;
     function GetUMLClassName: string; override;
@@ -366,6 +451,7 @@ type
     function EffectiveIncFileName(const DefaultExtension: String): String;
     property TableMapping: TTableMapping read GetTablemapping;
     property TableName: string read GetTableName;
+    property ExternalTableName: string read GetExternalTableName;
     property IsRootClass: Boolean read GetIsRootClass;
     property SuperClass: TMoldClass read FSuperClass write SetSuperClass;
     property SubClasses: TMoldClassList read FSubClasses;
@@ -419,9 +505,9 @@ type
     fIndex: integer;
     function GetDerived: Boolean; virtual; abstract;
     function GetReverseDerived: Boolean; virtual; abstract;
-    function GetDerivationOCL: String; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDerivationOCL: String;
     function GetMemberExists: boolean; virtual;
-    function GetColumnName: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetColumnName: string;
     function GetTypeStreamName: string; virtual; abstract;
   protected
     function GetEffectiveDelayedFetch: Boolean; virtual;
@@ -463,15 +549,15 @@ type
     function CalculateCRC: Cardinal;
     function GetDerived: Boolean; override;
     function GetReverseDerived: Boolean; override;
-    function GetAllowNull: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetAttributeKind: TBoldAttributeKind; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDelphiPropertyRead: TDelphiPropertyAccessKind; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDelphiPropertyWrite: TDelphiPropertyAccessKind; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetHasDelphiField: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetLength: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetPersistent: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAllowNull: Boolean;
+    function GetAttributeKind: TBoldAttributeKind;
+    function GetDelphiPropertyRead: TDelphiPropertyAccessKind;
+    function GetDelphiPropertyWrite: TDelphiPropertyAccessKind;
+    function GetHasDelphiField: Boolean;
+    function GetLength: Integer;
+    function GetPersistent: Boolean;
     function GetTypeStreamName: string; override;
-    function GetDefaultDBValue: string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDefaultDBValue: string;
   protected
     function GetEffectivePersistent: Boolean; override;
     function GetEffectiveDelayedFetch: Boolean; override;
@@ -509,12 +595,12 @@ type
     fVisibility: TVisibilityKind;
     procedure SetSignature(Value: string);
     function GetSignature: String;
-    function GetParameters: TBoldObjectArray; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetParameters: TBoldObjectArray;
     function GetCallSignature: string;
-    function GetFuncType: TDelphiFunctionType; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetOverrideInAllSubclasses: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetFuncType: TDelphiFunctionType;
+    function GetOverrideInAllSubclasses: Boolean;
     function GetDelphiReturnType: String;
-    function GetHasReturnValue: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasReturnValue: Boolean;
     function GetCanCallInherited: Boolean;
   protected
     function GetModel: TMoldModel; override;
@@ -571,28 +657,28 @@ type
     function CalculateCRC: Cardinal;
     function GetOtherEnd: TMoldRole;
     procedure SetAssociation(Association: TMoldAssociation);
-    function GetHasLinkRole: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasLinkRole: Boolean;
     function GetLinkRole: TMoldRole;
     procedure EnsureLinkRole;
-    function GetMainRole: TMoldRole; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMainRole: TMoldRole;
     function GetMulti: Boolean;
     function GetDerived: Boolean; override;
     function GetReverseDerived: Boolean; override;
-    function GetMandatory: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEmbed: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEffectiveEmbed: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEffectiveOrdered: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMandatory: Boolean;
+    function GetEmbed: Boolean;
+    function GetEffectiveEmbed: Boolean;
+    function GetEffectiveOrdered: Boolean;
     function GetTypeStreamName: string; override;
-    function GetQualifiedMulti: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetDefaultRegionMode: TBoldAssociationEndDefaultRegionMode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetQualifiedMulti: Boolean;
+    function GetDefaultRegionMode: TBoldAssociationEndDefaultRegionMode;
     function GetEffectiveDefaultRegionMode: TBoldAssociationEndDefaultRegionMode;
   protected
     function GetEffectiveDelayedFetch: Boolean; override;
     function GetModel: TMoldModel; override;
     procedure SetMoldClass(NewMoldClass: TMoldClass); override;
     function GetEffectivePersistent: Boolean; override;
-    function GetDeleteAction: TDeleteAction; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetEffectiveDeleteAction: TDeleteAction; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDeleteAction: TDeleteAction;
+    function GetEffectiveDeleteAction: TDeleteAction;
     function GetMemberExists: boolean; override;
     function GetHasDispId: boolean; override;
     function GetUMLClassName: string; override;
@@ -639,9 +725,9 @@ type
     FLinkClass: TMoldClass;
     fAllPossibleNames: TStringList;
     procedure SetLinkClass(Value: TMoldClass);
-    function GetPersistent: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPersistent: Boolean;
     function GetAllPossibleNames: TStringList;
-    function GetStorage: TBoldStorage; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetStorage: TBoldStorage;
   protected
     function GetModel: TMoldModel; override;
     function GetEffectivePersistent: Boolean;
@@ -695,7 +781,7 @@ type
   { TMoldComponentList }
   TMoldComponentList = Class(TList)
   private
-    function GetItem(index: Integer): TMoldComponent; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TMoldComponent;
     function GetItemByName(const name: string): TMoldComponent;
   public
     property Items[index: Integer]: TMoldComponent read GetItem; default;
@@ -706,17 +792,16 @@ implementation
 
 uses
   SysUtils,
-
   BoldCoreConsts,
+
   BoldDefaultStreamNames,
-  BoldDefaultTaggedValues,
   BoldGuard,
-  BoldHashIndexes,
   BoldMetaSupport,
   BoldNameExpander,
   BoldSharedStrings,
   BoldUMLTaggedValues,
-  BoldUtils;
+  BoldUtils,
+  BoldIndex;
 
 type
   {---TNameIndex---}
@@ -841,6 +926,11 @@ begin
   Result := TMoldClass(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
 end;
 
+function TMoldClassList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldClassListTraverser;
+end;
+
 function TMoldModel.FindRoleByClassNameAndName(const boldclassName, roleName: string): TMoldRole;
 var
   MoldClass: TMoldClass;
@@ -894,9 +984,19 @@ begin
     (Attributes[i].Derived and Attributes[i].ReverseDerived);
 end;
 
+function TMoldAssociationList.GetEnumerator: TMoldAssociationListTraverser;
+begin
+  result := CreateTraverser as TMoldAssociationListTraverser;
+end;
+
 function TMoldAssociationList.GetItem(index: Integer): TMoldAssociation;
 begin
   Result := TMoldAssociation(inherited Items[index]);
+end;
+
+function TMoldRoleList.GetEnumerator: TMoldRoleListTraverser;
+begin
+  result := CreateTraverser as TMoldRoleListTraverser;
 end;
 
 function TMoldRoleList.GetItem(index: Integer): TMoldRole;
@@ -987,6 +1087,7 @@ begin
   Result := FModel;
 end;
 
+
 procedure TMoldClass.NameChanged;
 begin
   if Assigned(Model) and assigned(Model.Classes) then
@@ -1029,6 +1130,11 @@ end;
 function TMoldClass.GetIsRootClass: Boolean;
 begin
   Result := Model.RootClass = self;
+end;
+
+function TMoldClassList.GetEnumerator: TMoldClassListTraverser;
+begin
+  result := CreateTraverser as TMoldClassListTraverser;
 end;
 
 function TMoldClassList.GetItem(index: Integer): TMoldClass;
@@ -1133,6 +1239,11 @@ begin
     result := nil;
 end;
 
+function TMoldAttributeList.GetEnumerator: TMoldAttributeListTraverser;
+begin
+  result := CreateTraverser as TMoldAttributeListTraverser;
+end;
+
 function TMoldAttributeList.GetItem(index: Integer): TMoldAttribute;
 begin
   Result := TMoldAttribute(inherited Items[index]);
@@ -1229,6 +1340,11 @@ begin
   Result := TMoldElement(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
 end;
 
+function TMoldElementList.GetEnumerator: TMoldElementListTraverser;
+begin
+  result := CreateTraverser as TMoldElementListTraverser;
+end;
+
 function TMoldElementList.GetItem(index: Integer): TMoldElement;
 begin
   Result := TMoldElement(inherited Items[index]);
@@ -1260,6 +1376,11 @@ begin
   OwnsEntries := fOwnsEntries;
 end;
 
+function TMoldElementList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldElementListTraverser;
+end;
+
 {---TMoldClassList---}
 constructor TMoldClassList.Create;
 begin
@@ -1285,7 +1406,17 @@ begin
   Result := TMoldRole(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
 end;
 
+function TMoldRoleList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldRoleListTraverser;
+end;
+
 {---TMoldMethodList---}
+function TMoldMethodList.GetEnumerator: TMoldMethodListTraverser;
+begin
+  result := CreateTraverser as TMoldMethodListTraverser;
+end;
+
 function TMoldMethodList.GetItem(index: Integer): TMoldMethod;
 begin
   Result := TMoldMethod(inherited Items[index]);
@@ -1296,11 +1427,21 @@ begin
   Result := TMoldMethod(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
 end;
 
+function TMoldMethodList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldMethodListTraverser;
+end;
+
 {---TMoldAssociationList---}
 
 function TMoldAssociationList.GetItemByName(const name: string): TMoldAssociation;
 begin
   Result := TMoldAssociation(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
+end;
+
+function TMoldAssociationList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldAssociationListTraverser;
 end;
 
 {---TMoldAttributeList---}
@@ -1310,7 +1451,17 @@ begin
   Result := TMoldAttribute(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
 end;
 
+function TMoldAttributeList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldAttributeListTraverser;
+end;
+
 {---TMoldQualifierList---}
+function TMoldQualifierList.GetEnumerator: TMoldQualifierListTraverser;
+begin
+  result := CreateTraverser as TMoldQualifierListTraverser;
+end;
+
 function TMoldQualifierList.GetItem(index: Integer): TMoldQualifier;
 begin
   Result := TMoldQualifier(inherited Items[index]);
@@ -1319,6 +1470,11 @@ end;
 function TMoldQualifierList.GetItemByName(const name: string): TMoldQualifier;
 begin
   Result := TMoldQualifier(TBoldCaseSensitiveStringHashIndex(Indexes[IX_Name]).FindByString(name));
+end;
+
+function TMoldQualifierList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldQualifierListTraverser;
 end;
 
 {---TMoldMember---}
@@ -1855,6 +2011,11 @@ begin
   result := BoldTVByName[TAG_TABLENAME];
 end;
 
+function TMoldClass.GetExternalTableName: string;
+begin
+  result := BoldTVByName[TAG_EXTERNALTABLENAME];
+end;
+
 procedure TMoldClass.SetBoldUnitName(const Value: string);
 begin
   BoldTVByName[TAG_UNITNAME] := Value;
@@ -2250,9 +2411,11 @@ var
 begin
   TrimmedValue := BoldTrim(Value);
   Definition := DefaultBoldTVList.DefinitionForTag[Tag];
+  // only set tag if it differs from default
   if Assigned(Definition) and (Definition.DefaultValue = TrimmedValue) then
-  else
-    BoldTaggedValues.ValueByName[Tag] := TrimmedValue;
+    if BoldTaggedValues.ValueByName[Tag] =  '' then
+      exit;
+  BoldTaggedValues.ValueByName[Tag] := TrimmedValue;
 end;
 
 function TMoldMember.GetManuallyDerived: Boolean;
@@ -2262,16 +2425,26 @@ end;
 
 { TMoldMemberList }
 
+function TMoldMemberList.GetEnumerator: TMoldMemberListTraverser;
+begin
+  result := CreateTraverser as TMoldMemberListTraverser;
+end;
+
 function TMoldMemberList.GetItem(index: Integer): TMoldMember;
 begin
-  Assert(Inherited GetItem(index) is TMoldMember);
   result := TMoldMember(Inherited GetItem(index));
+  Assert(result is TMoldMember);
 end;
 
 function TMoldMemberList.GetItemByName(const name: string): TMoldMember;
 begin
-  Assert(inherited GetItemByName(Name) is TMoldMember);
   result := TMoldMember(inherited GetItemByName(Name));
+  Assert(result is TMoldMember);
+end;
+
+function TMoldMemberList.TraverserClass: TBoldIndexableListTraverserClass;
+begin
+  result := TMoldMemberListTraverser;
 end;
 
 function TMoldRole.GetDeleteAction: TDeleteAction;
@@ -3151,6 +3324,62 @@ end;
 function TMoldRole.GetStorage: TBoldStorage;
 begin
   result := Association.Storage;
+end;
+
+{ TMoldElementListTraverser }
+
+function TMoldElementListTraverser.GetCurrent: TMoldElement;
+begin
+  result := inherited GetItem as TMoldElement;
+end;
+
+{ TMoldClassListTraverser }
+
+function TMoldClassListTraverser.GetCurrent: TMoldClass;
+begin
+  result := inherited GetItem as TMoldClass;
+end;
+
+{ TMoldMemberListTraverser }
+
+function TMoldMemberListTraverser.GetCurrent: TMoldMember;
+begin
+  result := inherited GetItem as TMoldMember;
+end;
+
+{ TMoldRoleListTraverser }
+
+function TMoldRoleListTraverser.GetCurrent: TMoldRole;
+begin
+  result := inherited GetItem as TMoldRole;
+end;
+
+{ TMoldAttributeListTraverser }
+
+function TMoldAttributeListTraverser.GetCurrent: TMoldAttribute;
+begin
+  result := inherited GetItem as TMoldAttribute;
+end;
+
+{ TMoldMethodListTraverser }
+
+function TMoldMethodListTraverser.GetCurrent: TMoldMethod;
+begin
+  result := inherited GetItem as TMoldMethod;
+end;
+
+{ TMoldQualifierListTraverser }
+
+function TMoldQualifierListTraverser.GetCurrent: TMoldQualifier;
+begin
+  result := inherited GetItem as TMoldQualifier;
+end;
+
+{ TMoldAssociationListTraverser }
+
+function TMoldAssociationListTraverser.GetCurrent: TMoldAssociation;
+begin
+  result := inherited GetItem as TMoldAssociation;
 end;
 
 initialization

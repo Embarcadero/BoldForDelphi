@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldSQLMappingInfo;
 
@@ -84,7 +83,7 @@ type
   TBoldMemberMappingList = class(TBoldIndexableList)
   private
     function GetMappingsByExpressionNames(const ClassExpressionName, MemberName: string): TBoldMemberMappingArray;
-    function GetItems(index: integer): TBoldMemberMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetItems(index: integer): TBoldMemberMappingInfo;
   public
     constructor Create;
     procedure FillFromList(SourceList: TBoldMemberMappingList);
@@ -97,27 +96,27 @@ type
     function GetMappingsForClassName(const ClassExpressionName: string): TBoldClassMappingArray;
   public
     constructor Create;
-    procedure AddMapping(Mapping: TBoldClassMappingInfo); {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    procedure AddMapping(Mapping: TBoldClassMappingInfo);
     property MappingsForClassName[const ClassExpressionName: string]: TBoldClassMappingArray read GetMappingsForClassName;
   end;
 
   TBoldAllInstancesMappingList = class(TBoldClassMappingList)
   private
-    function GetItems(index: integer): TBoldAllInstancesMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetItems(index: integer): TBoldAllInstancesMappingInfo;
   public
     property items[index: integer]: TBoldAllInstancesMappingInfo read GetItems; default;
   end;
 
   TBoldObjectStorageMappingList = class(TBoldClassMappingList)
   private
-    function GetItems(index: integer): TBoldObjectStorageMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetItems(index: integer): TBoldObjectStorageMappingInfo;
   public
     property items[index: integer]: TBoldObjectStorageMappingInfo read GetItems; default;
   end;
 
   TBoldDbTypeMappingList = class(TBoldClassMappingList)
   private
-    function GetItems(index: integer): TBoldDbTypeMappingInfo; {$IFDEF BOLD_INLINE}inline;{$ENDIF}
+    function GetItems(index: integer): TBoldDbTypeMappingInfo;
   public
     property items[index: integer]: TBoldDbTypeMappingInfo read GetItems; default;
   end;
@@ -184,7 +183,8 @@ uses
   BoldUtils,
   BoldHashIndexes,
   BoldPMapperLists,
-  Boldrev;
+  BoldPMappers
+  ;
 
 type
 
@@ -196,7 +196,7 @@ type
   TBoldMemberMappingIndex = class(TBoldStringHashIndex)
   protected
     function ItemAsKeyString(Item: TObject): string; override;
-    function KeyStringForExpressionNames(const ClassExpressionName, MemberName: string): string;   {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function KeyStringForExpressionNames(const ClassExpressionName, MemberName: string): string;
     procedure FindAllByExpressionNames(const ClassExpressionName, MemberName: string; aList: TList);
   end;
 

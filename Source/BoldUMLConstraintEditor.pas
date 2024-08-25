@@ -26,7 +26,7 @@ uses
   BoldListHandle,
   BoldReferenceHandle,
   BoldUMLModel,
-  BoldPropertiesController;
+  BoldPropertiesController, System.ImageList;
 
 type
   TfrmBoldUMLConstraintEditor = class(TForm)
@@ -147,7 +147,5 @@ procedure TfrmBoldUMLConstraintEditor.FormDeactivate(Sender: TObject);
 begin
   TBoldQueueable.ApplyAllMatching(self);
 end;
-
-initialization
 
 end.

@@ -52,8 +52,7 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs,
-  BoldRev;
+  BoldDefs;
 
 { TBoldDatabaseAdapterIB }
 
@@ -125,8 +124,5 @@ begin
       '%s.SetDatabaseEngine: value not allowed. This adapter only supports' + BOLDCRLF +
       'dbeUnknown, dbeInterbaseSQLDialect1, dbeInterbaseSQLDialect3', [classname]);
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDatabaseAdapterIB.pas $ $Revision: 5 $ $Date: 02-07-24 16:45 $');
 
 end.

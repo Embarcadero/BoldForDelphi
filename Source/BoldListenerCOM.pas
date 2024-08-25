@@ -103,8 +103,7 @@ uses
   Variants,
   BoldPersistenceController,
   Activex,  
-  Windows,
-  BoldRev;
+  Windows;
 
 { TBoldListenerCOM }
 

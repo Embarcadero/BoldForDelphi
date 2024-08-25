@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldDefaultTaggedValues;
@@ -124,6 +123,7 @@ const
   TAG_ROOTCLASS: String = 'RootClass';
 
   TAG_TABLENAME: String = 'TableName';
+  TAG_EXTERNALTABLENAME: String = 'ExternalTableName';
   TAG_TYPELIBVERSION = 'TypeLibVersion';
 
   TAG_UNITNAME: String = 'UnitName';
@@ -163,8 +163,8 @@ const
 
 
 function BoldDefaultTaggedValueList: TBoldTaggedValuePerClassList;
-function TVIsTrue(value: string): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-function TVIsFalse(value: string): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+function TVIsTrue(value: string): Boolean;
+function TVIsFalse(value: string): Boolean;
 
 implementation
 
@@ -215,6 +215,7 @@ begin
     Add('String',   TAG_CPPNAME,                        TV_NAME);
     Add('String',   TAG_EXPRESSIONNAME,                 TV_NAME);
     Add('String',   TAG_TABLENAME,                      TV_NAME);
+    Add('String',   TAG_EXTERNALTABLENAME,              TV_NAME);
     Add('EvolutionStateEnum',
                     TAG_EVOLUTIONSTATE,                 TV_EVOLUTIONSTATE_NORMAL);
     Add('String',   TAG_PMAPPERNAME,                    DEFAULTNAMELITERAL);

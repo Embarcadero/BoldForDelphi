@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelLinkSupport;
@@ -28,7 +27,9 @@ implementation
 
 uses
   SysUtils,
-  BoldDefs;
+  BoldDefs,
+  BoldSystem
+  ;
 
 const
   CONSTRAINT_NAME_TERMINATOR = ':';
@@ -102,7 +103,5 @@ begin
     FreeAndNil(AllConstraints);
   end;
 end;
-
-initialization
 
 end.

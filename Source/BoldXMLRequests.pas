@@ -80,8 +80,7 @@ uses
 
   BoldCoreConsts,
   BoldUtils,
-  Windows,
-  BoldRev;
+  Windows;
 
   {TBoldXMLRequest}
 

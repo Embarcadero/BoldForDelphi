@@ -250,7 +250,7 @@ begin
   PostMessagePopEventQueueMessage := (popMode=pmSingleEvent) or (FCount=1); //NEW
   FCriticalSection.Leave; //NEW
   if PostMessagePopEventQueueMessage then //NEW
-    PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self)); //NEW
+    PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,NativeInt(Self)); //NEW
 //OLD  case popMode of
 //OLD    pmSingleEvent: PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self));
 //OLD    pmAllEvents: if Count = 1 then PostMessage(BoldComEventQueueWindow,BM_POPEVENTQUEUE,0,Integer(Self));

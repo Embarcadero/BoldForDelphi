@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldUMLModelEditForm;
@@ -694,7 +693,7 @@ type
     function GetCurrentElement: TUMLModelElement;
     property IgnoreModelChanges: Boolean read FIgnoreModelChanges write SetIgnoreModelChanges;
   public
-    { Public declarations }
+    constructor Create(AOnwer: TComponent); override;
     function CloseThisForm: TCloseAction;
     procedure EnsureFlattenedAndBoldified;
     property CurrentElement: TUMLModelElement read GetCurrentElement write SetCurrentElement;
@@ -713,6 +712,7 @@ type
 implementation
 
 uses
+  System.UITypes,
   BoldDefaultTaggedValues,
   BoldUMLAttributes,
   BoldUMLModelConverter,
@@ -739,9 +739,25 @@ uses
   BoldUMLModelSupport,
   BoldUMLPluginCallBacks,
   BoldUMLAbstractModelValidator,
-  BoldRegistry;
+  BoldRegistry,
+  BoldUMLModelEditorHandlesDataModule,
+  BoldLogHandlerForm;
 
 {$R *.dfm}
+
+function FindGlobalComponent(const Name: string): TComponent;
+begin
+  if AnsiSameText(Name, 'dmBoldUMLModelEditorHandles') then
+    Result := BoldUMLModelEditorHandlesDataModule.dmBoldUMLModelEditorHandles
+  else
+  if AnsiSameText(Name, 'dmModelEdit') then
+  begin
+    EnsureModelEditDataModule;
+    result := dmModelEdit;
+  end
+  else
+    Result := nil;
+end;
 
 procedure TBoldModelEditFrm.BoldTreeView1Change(Sender: TObject; Node: TTreeNode);
 begin
@@ -1316,16 +1332,22 @@ begin
   imgHint.top := 3;
   imgHint.Left := 7;
   // set up the static systemhandle for all handles,
+  dmModelEdit.bshUMLModel.Active := true;
   for index := 0 to ComponentCount-1 do
     if Components[index] is TBoldNonSystemHandle then
-      (Components[index] as TBoldNonSystemHandle).StaticSystemHandle := dmModelEdit.bmlUMLModel.SystemHandle;
+      (Components[index] as TBoldNonSystemHandle).StaticSystemHandle := dmModelEdit.bshUMLModel;
   // this will not normally be the correct systemhandle, but since these components only
   // need "anEnum.allInstances" it is OK if they have the correct model
-  blhAllAggregationKind.RootHandle := dmModelEdit.bmlUMLModel.SystemHandle;
-  blhAllChangeabilityKind.RootHandle := dmModelEdit.bmlUMLModel.SystemHandle;
-  blhAllOwnerScope.RootHandle := dmModelEdit.bmlUMLModel.SystemHandle;
-  blhAllParameterKind.RootHandle := dmModelEdit.bmlUMLModel.SystemHandle;
-  blhAllVisibilityKind.RootHandle := dmModelEdit.bmlUMLModel.SystemHandle;
+  blhAllAggregationKind.RootHandle := dmModelEdit.bshUMLModel;
+  blhAllChangeabilityKind.RootHandle := dmModelEdit.bshUMLModel;
+  blhAllOwnerScope.RootHandle := dmModelEdit.bshUMLModel;
+  blhAllParameterKind.RootHandle := dmModelEdit.bshUMLModel;
+  blhAllVisibilityKind.RootHandle := dmModelEdit.bshUMLModel;
+
+  for index := 0 to ComponentCount-1 do
+    if Components[index] is TBoldRootedHandle then
+      if (Components[index] as TBoldRootedHandle).RootHandle = nil then
+        raise Exception.Create(TBoldRootedHandle(Components[index]).Name);
 end;
 
 procedure TBoldModelEditFrm.PopulateComboBoxes;
@@ -1515,9 +1537,6 @@ begin
 end;
 
 procedure TBoldModelEditFrm.OpenFile1Click(Sender: TObject);
-var
-  UMLLinkClass: TBoldUMLModelLinkClass;
-  CursorGuard: IBoldCursorGuard;
 begin
   ApplyGUI;
   if fIsExecutingPlugin then
@@ -1625,7 +1644,6 @@ procedure TBoldModelEditFrm.LoadModelFromFile;
 var
   CursorGuard: IBoldCursorGuard;
   UMLLinkClass: TBoldUMLModelLinkClass;
-  vSystemHandle: TBoldSystemHandle;
 begin
   if fIsExecutingPlugin then
   begin
@@ -1869,6 +1887,15 @@ procedure TBoldModelEditFrm.ClearMenuItems(var MenuItem: TMenuItem);
 begin
   while MenuItem.Count > 0 do
     MenuItem.Remove(MenuItem.Items[0]);
+end;
+
+constructor TBoldModelEditFrm.Create(AOnwer: TComponent);
+begin
+  if (csDesigning in ComponentState) then
+    RegisterFindGlobalComponentProc(FindGlobalComponent);
+  inherited;
+  if (csDesigning in ComponentState) then
+    InitInheritedComponent(Self, TForm);
 end;
 
 procedure TBoldModelEditFrm.CreateFrameworkMethodItems(UMLClass: TUMLClass);
@@ -2561,7 +2588,7 @@ end;
 
 procedure TBoldModelEditFrm.Loggform1Click(Sender: TObject);
 begin
-  Boldlog.Show;
+  BoldLogForm.Show;
 end;
 
 procedure TBoldModelEditFrm.Tools1Click(Sender: TObject);
@@ -2809,7 +2836,7 @@ procedure TBoldModelEditFrm.SetModelHandle(const Value: TBoldModel);
 begin
   if FModelHandle <> Value then
   begin
-    BoldInstalledQueue.DeActivateDisplayQueue;
+    TBoldQueueable.DeActivateDisplayQueue;
     Value.FreeNotification(Self);
     fModelHandle := Value;
     brhTreeRoot.Value := ModelHandle.EnsuredUMLModel;
@@ -2822,7 +2849,7 @@ begin
       raise EBoldInternal.CreateFmt('%s.SetRoot: Root must be part of Model', [ClassName]);
     ModelNeedsValidation := True;
     EnsureValidationForm(GetCurrentModelHandle, self, JumpToElement);
-    BoldInstalledQueue.ActivateDisplayQueue;
+    TBoldQueueable.ActivateDisplayQueue;
   end;
 end;
 

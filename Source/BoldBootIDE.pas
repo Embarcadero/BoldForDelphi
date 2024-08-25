@@ -17,7 +17,6 @@ implementation
 
 uses
   Windows,
-  BoldRev,
   Forms,
   Graphics,
   ExtCtrls,
@@ -83,7 +82,6 @@ end;
 {$ENDIF}
 
 initialization
-  BoldRegisterModuleVersion('$Workfile: BoldBootIDE.pas $ $Revision: 17 $ $Date: 02-07-17 7:04 $');
   {$IFDEF BOLD_DELPHI}
   {$IFDEF BOLD_DELPHI6}
   DrawOnD6StartupScreen;

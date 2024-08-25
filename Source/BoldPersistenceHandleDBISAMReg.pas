@@ -30,6 +30,4 @@ begin
   RegisterComponents(BOLDPAGENAME_PERSISTENCE, [TBoldDatabaseAdapterDBISAM]);
 end;
 
-initialization
-
 end.

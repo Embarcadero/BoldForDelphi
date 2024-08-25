@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldListListControlPack;
@@ -28,13 +27,13 @@ type
     fDefaultDblClick: Boolean;
     fFollowerController: TBoldFollowerController;
     fNilElementMode: TBoldNilElementMode;
-    function GetRenderer: TBoldListAsFollowerListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SetRenderer(Value: TBoldListAsFollowerListRenderer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRenderer: TBoldListAsFollowerListRenderer;
+    procedure SetRenderer(Value: TBoldListAsFollowerListRenderer);
     procedure SetNilElementMode(const Value: TBoldNilElementMode);
    protected
     class function PrecreateFollowers: boolean; override;
     function GetEffectiveRenderer: TBoldRenderer; override;
-    function GetEffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetEffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer;
     procedure DoMakeUptodateAndSubscribe(Follower: TBoldFollower; Subscribe: Boolean); override;
     procedure DoAssign(Source: TPersistent); override;
     property EffectiveListAsFollowerListRenderer: TBoldListAsFollowerListRenderer read GetEffectiveListAsFollowerListRenderer;
@@ -47,9 +46,9 @@ type
   public
     constructor Create(aOwningComponent: TComponent; FollowerController: TBoldFollowerController);
 
-    function GetListIndex(Follower: TBoldFollower): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ListIndexToIndex(Follower: TBoldFollower; ListIndex: Integer): integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function ListIndex(index: integer): integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetListIndex(Follower: TBoldFollower): Integer;
+    function ListIndexToIndex(Follower: TBoldFollower; ListIndex: Integer): integer;
+    function ListIndex(index: integer): integer;
   end;
 
   { TBoldListAsFollowerListController }
@@ -317,27 +316,27 @@ begin
     SourceList := Follower.Element as TBoldList;
     if Assigned(SourceList) then
     begin
-      if SourceList.Count > 4 then
-        DestList.SetCapacity(SourceList.Count);
-      while SourceIndex < SourceList.Count do
+    if SourceList.Count > 4 then
+      DestList.SetCapacity(SourceList.Count);
+    while SourceIndex < SourceList.Count do
+    begin
+      if (DestIndex >= DestList.FirstActive) and (Destindex <= DestList.LastActive) then
       begin
-        if (DestIndex >= DestList.FirstActive) and (Destindex <= DestList.LastActive) then
-        begin
-          DestList.EnsuredFollower(Controller, DestIndex, SourceList[SourceIndex], FollowerController);
+        DestList.EnsuredFollower(Controller, DestIndex, SourceList[SourceIndex], FollowerController);
           if not (Follower.Element = SourceList) then
-            Assert(Follower.Element = SourceList, 'If this fails, make a clone of SourceList before the loop.');
+        Assert(Follower.Element = SourceList, 'If this fails, make a clone of SourceList before the loop.');
   //        SourceList := Follower.Element as TBoldList;
-          Inc(DestIndex);
-        end
-        else
-        begin
-          DestList.EnsuredFollower(Controller, DestIndex, nil, FollowerController);
+        Inc(DestIndex);
+      end
+      else
+      begin
+        DestList.EnsuredFollower(Controller, DestIndex, nil, FollowerController);
   //        DestList[DestIndex].ElementValid := false;
-          Inc(DestIndex);
-        end;
-        inc(SourceIndex);
+        Inc(DestIndex);
       end;
+      inc(SourceIndex);
     end;
+  end;
   end;
   if (Controller.NilElementMode=neAddLast) then
     AddElement(nil);

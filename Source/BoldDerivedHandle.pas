@@ -1,4 +1,4 @@
-﻿
+
 /////////////////////////////////////////////////////////
 //                                                     //
 //              Bold for Delphi                        //
@@ -26,6 +26,7 @@ type
   TBoldDerivedHandle = class;
 
   {---TBoldDerviedHandle---}
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldDerivedHandle = class(TBoldRootedHandle)
   private
     fOnDeriveAndSubscribe: TBoldHandleDeriveAndSubscribe;
@@ -47,7 +48,6 @@ uses
   SysUtils,
 
   BoldCoreConsts,
-  BoldRev,
   BoldSystemRT,
   {$IFDEF ATTRACS}
   AttracsPerformance,
@@ -69,7 +69,7 @@ begin
   end;
 end;
 
-procedure TBoldDerivedHandle.DeriveAndSubscribe(DerivedObject: TObject;Subscriber: TBoldSubscriber);
+procedure TBoldDerivedHandle.DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
 {$IFDEF ATTRACS}
 var
   PerformanceMeasurement : TPerformanceMeasurement;
@@ -143,8 +143,5 @@ begin
     StaticBoldTypeChanged;
   end;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDerivedHandle.pas $ $Revision: 15 $ $Date: 02-07-17 7:04 $');
 
 end.

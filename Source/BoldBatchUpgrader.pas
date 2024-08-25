@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldBatchUpgrader;
@@ -217,7 +216,5 @@ begin
     fIsUpgrading := false;
   end;
 end;
-
-initialization
 
 end.

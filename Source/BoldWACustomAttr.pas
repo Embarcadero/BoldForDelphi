@@ -233,6 +233,4 @@ begin
     Remove(TPropertyInfo(fList[Index]));
 end;
 
-initialization
-
 end.

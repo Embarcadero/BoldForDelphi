@@ -31,12 +31,12 @@ type
   TBFSWideString = class(TBoldFreeStandingNullableValue, IBoldWideStringContent)
   private
     fDataValue: WideString;
-    function GetContentAsString: String;
     procedure SetContentAsString(NewValue: String);
     function GetContentAsWideString: WideString;
     procedure SetContentAsWideString(NewValue: WideString);
   protected
     function GetStreamName: string; override;
+    function GetContentAsString: String; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
   public
     property asString: String read GetContentAsString write SetContentAsString;
@@ -50,10 +50,7 @@ implementation
 
 uses
   { RTL / VCL }
-  SysUtils,
-
-  { Bold }
-  BoldRev;
+  SysUtils;
 
 {******************************************************************************}
 {* TBFSUnicodeString                                                          *}

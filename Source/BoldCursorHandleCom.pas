@@ -178,6 +178,4 @@ begin
     fCurrentIndex := fList.Count-1;
 end;
 
-initialization
-
 end.

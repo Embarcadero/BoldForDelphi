@@ -20,7 +20,7 @@ uses
   BoldHandles,
   BoldElements,
   BoldSubscription,
-  BoldReferenceHandle, ImgList;
+  BoldReferenceHandle, ImgList, System.ImageList;
 
 type
   TfrmUsesEditor = class(TForm)
@@ -103,7 +103,5 @@ begin
   if Assigned(ActiveControl) then
     SendMessage(ActiveControl.handle, WM_PASTE, 0, 0);
 end;
-
-initialization
 
 end.

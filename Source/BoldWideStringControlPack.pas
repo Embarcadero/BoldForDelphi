@@ -125,8 +125,7 @@ uses
   {$IFNDEF BOLDCOMCLIENT}
   BoldSystem,
   {$ENDIF}
-  Variants,
-  BoldRev;
+  Variants;
 
 var
   DefaultAsWideStringRenderer: TBoldAsWideStringRenderer;

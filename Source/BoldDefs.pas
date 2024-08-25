@@ -10,6 +10,7 @@ uses
   SysUtils;
 
 const
+  BoldSupportedPlatforms = pidWin32 or pidWin64;
 
   NO_CLASS        = -1;
   INTERNALNULLKEY = -1;
@@ -150,7 +151,6 @@ type
 
   EBoldEnsureDatabaseLockError = class(EBold);
   EBoldLockManagerError = class(EBold);
-  EBoldLicenseError = class(EBold);
 
   EBoldObjectIDError = class(EBold);
 
@@ -162,8 +162,8 @@ type
   TBoldValuePersistenceState = (bvpsCurrent, bvpsModified, bvpsInvalid, bvpsTransient);
   TBoldValuePersistenceStateSet = set of TBoldValuePersistenceState;
 
-  TBoldDatabaseErrorType = (bdetError, bdetConnection, bdetUpdate, bdetSQL,
-      bdetDeadlock, bdetLogin);
+  TBoldDatabaseErrorType = (bdetError, bdetConnection, bdetUpdate, bdetSQL, bdetDeadlock, bdetLogin);
+
   EBoldDatabaseError = class(EBold)
   private
     FOriginalExceptionClass: string;

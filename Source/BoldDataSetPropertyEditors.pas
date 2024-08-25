@@ -37,7 +37,6 @@ type
 implementation
 
 uses
-  BoldRev,
   BoldDataset,
   TypInfo;
 
@@ -102,8 +101,5 @@ begin
   if Prop.GetName = 'FieldDescriptions' then
     Prop.Edit;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldDataSetPropertyEditors.pas $ $Revision: 6 $ $Date: 02-07-05 16:23 $');
 
 end.

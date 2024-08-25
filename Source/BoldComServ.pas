@@ -22,7 +22,4 @@ begin
   result := ComServer;
 end;
 
-
-initialization
-
 end.

@@ -200,6 +200,4 @@ begin
   FreeAndNil(InputForm);
 end;
 
-initialization
-
 end.

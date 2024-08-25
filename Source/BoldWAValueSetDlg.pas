@@ -148,6 +148,4 @@ begin
   fOk := false;
 end;
 
-initialization
-
 end.

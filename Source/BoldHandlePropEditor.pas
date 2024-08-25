@@ -145,7 +145,4 @@ begin
   Result := 'OCLDefinitions';
 end;
 
-
-initialization
-
 end.

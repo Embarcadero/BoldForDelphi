@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemOldValuehandler;
@@ -33,9 +32,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
-
+  SysUtils;
 
 { TBoldOldValueHandler }
 
@@ -260,7 +257,5 @@ begin
 
   fOldValues.ClearWhenObjectContentsEmpty;
 end;
-
-initialization
 
 end.

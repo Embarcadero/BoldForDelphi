@@ -477,15 +477,18 @@ var
     Role: TBoldObjectList;
   begin
     MemberList := TBoldMemberList.Create;
-    for i := 0 to Length(n.Qualifier)-1 do
-      MemberList.Add(n.Qualifier[i].value as TBoldMember);
-    role := Obj.BoldMembers[n.MemberIndex] as TBoldObjectList;
-    if assigned(CurrentSubscriber) then
-      Role.DefaultSubscribe(CurrentSubscriber, breResubscribe);
+    MemberList.CloneMembers := false;
+    try
+      for i := 0 to Length(n.Qualifier)-1 do
+        MemberList.Add(n.Qualifier[i].value as TBoldMember);
+      role := Obj.BoldMembers[n.MemberIndex] as TBoldObjectList;
+      if assigned(CurrentSubscriber) then
+        Role.DefaultSubscribe(CurrentSubscriber, breResubscribe);
 
-    result := Role.GetByIndexAndSubscribe(MemberList, CurrentSubscriber);
-
-    MemberList.Free;
+      result := Role.GetByIndexAndSubscribe(MemberList, CurrentSubscriber);
+    finally
+      MemberList.Free;
+    end;
   end;
 
 
@@ -645,7 +648,7 @@ begin
     if not VariableValue.Mutable then
       N.IsConstant := true;
     if not N.IsConstant then
-    VariableValue.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe or fResubscribeAll));
+      VariableValue.DefaultSubscribe(CurrentSubscriber, MapResubscribe(N.Resubscribe or fResubscribeAll));
   end;
 end;
 
@@ -775,6 +778,4 @@ begin
   result := CreateNewMember(fTimeType) as TBATime;
 end;
 
-initialization
-  
 end.

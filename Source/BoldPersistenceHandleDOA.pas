@@ -36,8 +36,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPersistenceHandleDOA }
 
@@ -92,7 +91,5 @@ procedure TBoldPersistenceHandleDOA.SetUserName(const Value: string);
 begin
   raise Exception.CreateFmt('%s.SetUserName: Not supported, set the Username directly on your OracleSession-object', [classname]);
 end;
-
-initialization
 
 end.

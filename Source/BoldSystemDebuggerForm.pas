@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSystemDebuggerForm;
@@ -207,7 +206,5 @@ procedure TBoldSystemDebuggerFrm.FormClose(Sender: TObject;
 begin
   Action := caFree;
 end;
-
-initialization
 
 end.

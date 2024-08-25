@@ -363,6 +363,5 @@ begin
   inherited Create(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsDBLock, '', '', '', nil));
 end;
 }
-initialization
 
 end.

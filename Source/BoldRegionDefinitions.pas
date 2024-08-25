@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldRegionDefinitions;
@@ -147,8 +146,7 @@ const
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 function GetEnsuredItem(List: TList; index: integer; theClass: TClass): TObject;
 var
@@ -471,7 +469,6 @@ begin
   result := RootClass.ExpressionName + ':' + CoreDefinition.Name;
 end;
 
-
 { TBoldSubregionReference }
 
 procedure TBoldSubregionReference.Clone(NewOwner: TBoldConcreteRegionDefinition);
@@ -495,9 +492,7 @@ begin
   for i := 0 to SubregionCoreDefinition.ConcreteDefinitions.Count-1 do
     if SubregionCoreDefinition.ConcreteDefinitions[i].RootClass.ConformsTo(Navigation.ClassTypeInfoOfOtherEnd) then
       SubregionCoreDefinition.ConcreteDefinitions[i].ParentRegions.Add(self);
-
 end;
-
 
 { TBoldRegionElementInclusion }
 
@@ -518,6 +513,5 @@ begin
   if Member.IsMultiRole then
     (Member as TBoldRoleRTInfo).RoleRTInfoOfOtherEnd.SetForceOtherEnd;
 end;
-
 
 end.

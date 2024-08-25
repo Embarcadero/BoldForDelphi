@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 
@@ -74,9 +73,9 @@ type
   private
     fLinkObjectLocator: TBoldObjectLocator;
     fOtherEndLocator: TBoldObjectLocator;
-    function GetLinkObjectOwnLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetLinkObjectOtherLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetLinkObjectRoleController: TBoldLinkObjectReferenceController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLinkObjectOwnLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController;
+    function GetLinkObjectOtherLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController;
+    function GetLinkObjectRoleController: TBoldLinkObjectReferenceController;
   protected
     function MayUpdate: Boolean; override;
     function NewLink(OtherLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode): TBoldObject;
@@ -106,8 +105,8 @@ type
     procedure Resort; virtual; abstract;
   public
     procedure MarkPossiblyOutOfOrder;
-    procedure EnsureOrder; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure DoEnsureOrder; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure EnsureOrder;
+    procedure DoEnsureOrder;
   end;
 
   { TBoldDirectMultiLinkController }
@@ -117,7 +116,7 @@ type
     procedure ReOrder;
     property LocatorList: TBoldObjectLocatorList read fLocatorList;
   protected
-    function GetOtherEndController(Locator: TBoldObjectLocator): TBoldDirectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetOtherEndController(Locator: TBoldObjectLocator): TBoldDirectSingleLinkController;
     procedure SingleLinkUnlink(Locator: TBoldObjectLocator; OldLocator: TBoldObjectLocator;Mode: TBoldLinkUnlinkMode);
     procedure SingleLinkLinkTo(Locator: TBoldObjectLocator; NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode; aOrderNo: integer = -1);
     procedure SetFromIdList(ListOfOtherEnd: TBoldObjectIdList; Mode: TBoldDomainElementProxyMode);
@@ -157,15 +156,15 @@ type
   private
     fLinkLocatorList: TBoldObjectLocatorList;
     fReferredList: TBoldObjectLocatorList;
-    function GetLinkObjectOwnLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetLinkObjectOtherLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLinkObjectOwnLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController;
+    function GetLinkObjectOtherLinkController(LinkObject: TBoldObject): TBoldLinkObjectSingleLinkController;
     function NewLink(OtherLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode): TBoldObject;
-    function GetLinkObjectListController: TBoldLinkObjectListController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLinkObjectListController: TBoldLinkObjectListController;
     procedure DeleteLink(LinkObjectLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode);
     procedure ReOrder;
     property LinkLocatorList: TBoldObjectLocatorList read fLinkLocatorList;
     property ReferredLocatorList: TBoldObjectLocatorList read FReferredList;
-    function ControllerForLinkMember: TBoldAbstractObjectListController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function ControllerForLinkMember: TBoldAbstractObjectListController;
     procedure ClearNoLongerReferring(NewList: TBoldObjectIdList);
   protected
     procedure SetFromIDLists(ListOfLinkObjects: TBoldObjectIdList; ListOfOtherEnd: TBoldObjectIdList; Mode: TBoldDomainElementProxyMode);
@@ -202,9 +201,9 @@ type
   { TBoldLinkObjectListController }
   TBoldLinkObjectListController = class(TBoldAbstractObjectListController)
   private
-    function GetLocatorList: TBoldObjectLocatorList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMainListController: TBOldIndirectMultiLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMainList: TBoldObjectList; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetLocatorList: TBoldObjectLocatorList;
+    function GetMainListController: TBOldIndirectMultiLinkController;
+    function GetMainList: TBoldObjectList;
     property LocatorList: TBoldObjectLocatorList read GetLocatorList;
   protected
     function GetStreamName: string; override;
@@ -229,7 +228,7 @@ type
   { TBoldLinkObjectSingleLinkController }
   TBoldLinkObjectSingleLinkController = class(TBoldOrderedDirectSingleLinkController)
   private
-    function OtherInnerLinkController: TBoldLinkObjectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function OtherInnerLinkController: TBoldLinkObjectSingleLinkController;
   protected
     procedure SetFromId(Id: TBoldObjectId; Mode: TBoldDomainElementProxyMode); override;
   public
@@ -284,10 +283,10 @@ type
   private
     class var fLastUsed: array[TBoldDomainElementProxyMode] of TBoldMember_Proxy;
     class var fLastUsedAsInterface: array[TBoldDomainElementProxyMode] of IBoldValue;
-    function GetDirectSingleLinkController: TBoldDirectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDirectSingleLinkController: TBoldDirectSingleLinkController;
     procedure SetFromId(Id: TBoldObjectId; Adopt: Boolean);
-    function GetId: TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetOrderNo: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetId: TBoldObjectID;
+    function GetOrderNo: integer;
     procedure SetOrderNo(NewOrder: Integer);
   protected
     procedure AssignContentValue(const Source: IBoldValue); override;
@@ -298,11 +297,11 @@ type
   { TBoldIndirectSingleLinkController_Proxy }
   TBoldIndirectSingleLinkController_Proxy = class(TBoldMember_Proxy, IBoldObjectIdRefPair)
   private
-    function GetInDirectSingleLinkController: TBoldInDirectSingleLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetInDirectSingleLinkController: TBoldInDirectSingleLinkController;
     procedure SetFromIds(Id1, Id2: TBoldObjectId);
-    function GetId1: TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetId2: TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetOrderNo: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetId1: TBoldObjectID;
+    function GetId2: TBoldObjectID;
+    function GetOrderNo: integer;
     procedure SetOrderNo(NewOrder: Integer);
   protected
     procedure AssignContentValue(const Source: IBoldValue); override;
@@ -314,11 +313,11 @@ type
   private
     class var fLastUsed: array[TBoldDomainElementProxyMode] of TBoldMember_Proxy;
     class var fLastUsedAsInterface: array[TBoldDomainElementProxyMode] of IBoldValue;
-    function GetDirectMultiLinkController: TBoldDirectMultiLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetDirectMultiLinkController: TBoldDirectMultiLinkController;
     procedure SetFromIdList(IdLIst: TBoldObjectIdList);
     procedure SetList(IdList: TBoldObjectIdList);
-    function GetIdList(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIdList(Index: Integer): TBoldObjectID;
+    function GetCount: integer;
   protected
     procedure AssignContentValue(const Source: IBoldValue); override;
     property DirectMultiLinkController: TBoldDirectMultiLinkController read GetDirectMultiLinkController;
@@ -328,11 +327,11 @@ type
   { TBoldInDirectMultiLinkController_Proxy }
   TBoldInDirectMultiLinkController_Proxy = class(TBoldMember_Proxy, IBoldObjectIdListRefPair)
   private
-    function GetInDirectMultiLinkController: TBoldInDirectMultiLinkController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIdList1(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIdList2(Index: Integer): TBoldObjectID; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetInDirectMultiLinkController: TBoldInDirectMultiLinkController;
+    function GetIdList1(Index: Integer): TBoldObjectID;
+    function GetIdList2(Index: Integer): TBoldObjectID;
     procedure SetFromIdLists(IdList1, IdList2: TBoldObjectIdList);
-    function GetCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCount: integer;
   protected
     procedure AssignContentValue(const Source: IBoldValue); override;
     property InDirectMultiLinkController: TBoldInDirectMultiLinkController read GetInDirectMultiLinkController;
@@ -638,11 +637,11 @@ begin
       OtherEndController.SetAndModifyOrderNo(LocatorList.IndexOf(Locator));
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
 end;
 
 constructor TBoldDirectMultiLinkController.Create(OwningList: TBoldObjectList);
@@ -807,11 +806,11 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
 end;
 
 procedure TBoldDirectMultiLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode) ;
@@ -837,11 +836,11 @@ begin
     if Mode = blulMarkModified then
       EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [NewLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [NewLocator]);
 end;
 
 procedure TBoldDirectMultiLinkController.Move(CurrentIndex, NewIndex: Integer);
@@ -860,13 +859,12 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beOrderChanged, []);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beOrderChanged, []);
 end;
-
 
 procedure TBoldDirectMultiLinkController.RemoveByIndex(index: Integer);
 var
@@ -886,7 +884,7 @@ begin
     ReOrder;
     EndModify;
     Changed(beItemDeleted, [Locator]);
-    BoldSystem.CommitTransaction;    
+    BoldSystem.CommitTransaction;
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -1110,11 +1108,11 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemReplaced, [Locator, Index]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemReplaced, [Locator, Index]);
 end;
 
 function TBoldDirectMultiLinkController.GetStreamName: String;
@@ -1560,11 +1558,11 @@ begin
       SetAndModifyOrderNo(-1);
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beValueChanged, [NewLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beValueChanged, [NewLocator]);
 end;
 
 procedure TBoldDirectSingleLinkController.InternalSetLocator(NewLocator: TBoldObjectLocator);
@@ -1988,12 +1986,12 @@ begin
       fLinkObjectLocator := nil;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beValueChanged, [NewLocator]);
-    GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beValueChanged, [NewLocator]);
+  GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
 end;
 
 function TBoldIndirectSingleLinkController.GetStreamName: String;
@@ -2112,12 +2110,13 @@ begin
       GetLinkObjectOwnLinkController(LinkObject).SetAndModifyOrderNo(LinkLocatorList.IndexOf(LinkObject.BoldObjectLocator));
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
-    GetLinkObjectListController.Changed(beItemAdded, [LinkObject.BoldObjectLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
+  GetLinkObjectListController.Changed(beItemAdded, [LinkObject.BoldObjectLocator]);
+  LinkObject.SendEvent(beLinkObjectEstablished);
 end;
 
 constructor TBoldIndirectMultiLinkController.Create(OwningList: TBoldObjectList);
@@ -2308,12 +2307,12 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
-    GetLinkObjectListController.Changed(beItemAdded, [NewLinkLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
+  GetLinkObjectListController.Changed(beItemAdded, [NewLinkLocator]);
 end;
 
 procedure TBoldIndirectMultiLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
@@ -2368,12 +2367,12 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beOrderChanged, []);
-    GetLinkObjectListController. Changed(beOrderChanged, []);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beOrderChanged, []);
+  GetLinkObjectListController. Changed(beOrderChanged, []);
 end;
 
 function TBoldIndirectMultiLinkController.NewLink(OtherLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode): TBoldObject;
@@ -3193,8 +3192,6 @@ begin
   if OrderNo <> -1 then
     raise EBoldInternal.Create('Orderno must -1 on an unordered role');
 end;
-
-initialization
 
 end.
 

@@ -172,6 +172,4 @@ begin
   fRegistry.WriteString(Name, Value);
 end;
 
-initialization
-
 end.

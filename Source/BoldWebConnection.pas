@@ -76,7 +76,7 @@ begin
     FormatMessage(FORMAT_MESSAGE_FROM_HMODULE, Pointer(GetModuleHandle('wininet.dll')),
       ErrCode, 0, PChar(S), Length(S), nil);
     SetLength(S, StrLen(PChar(S)));
-    while (Length(S) > 0) and (S[Length(S)] in [#10, #13]) do
+    while (Length(S) > 0) and CharInSet(S[Length(S)], [#10, #13]) do
       SetLength(S, Length(S) - 1);
     raise Exception.Create(S);
   end;
@@ -124,9 +124,6 @@ begin
       Result.Write(S[1], Downloaded);
     end;
   until Size = 0;
-
-
-
 end;
 
 function TBoldWebConnection.Send(const Data: TBoldDataBlock): Integer;
@@ -228,7 +225,5 @@ begin
     FURL := Value;
   end;
 end;
-
-initialization
 
 end.

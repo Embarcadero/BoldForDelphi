@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldTypeNameSelector;
@@ -16,7 +15,7 @@ uses
   BoldSystemRT,
   BoldElements,
   ImgList,
-  Menus;
+  Menus, System.ImageList;
 
 type
   TNodeType = (ntClass, ntClasses, ntAttributes, ntList, ntAttribute, ntClassList,
@@ -42,7 +41,7 @@ type
     procedure SetImageIndex(var Node: TTreeNode; NodeType: TNodeType);
     procedure SelectCurrentNode(CurrentStringValue: String; aNode: TTreeNode);
   public
-    function Select(var StringValue: String; SystemTypeInfo: TBoldSystemTypeInfo; ApprovedTypes: TBoldValueTypes): TModalResult;
+    function Select(var StringValue: String; ASystemTypeInfo: TBoldSystemTypeInfo; ApprovedTypes: TBoldValueTypes): TModalResult;
   end;
 
 implementation
@@ -56,11 +55,13 @@ uses
 
 { TfrmBoldTypeNameSelector }
 
-function TfrmBoldTypeNameSelector.Select(var StringValue: String; SystemTypeInfo: TBoldSystemTypeInfo; ApprovedTypes: TBoldValueTypes): TModalResult;
+function TfrmBoldTypeNameSelector.Select(var StringValue: String; ASystemTypeInfo: TBoldSystemTypeInfo; ApprovedTypes: TBoldValueTypes): TModalResult;
 begin
   Result := mrCancel;
-  fSystemTypeInfo := SystemTypeInfo;
-  GenerateNodes(SystemTypeInfo, ApprovedTypes, StringValue);
+  if not Assigned(ASystemTypeInfo) then
+    raise Exception.Create('SystemTypeInfo required.');
+  fSystemTypeInfo := ASystemTypeInfo;
+  GenerateNodes(fSystemTypeInfo, ApprovedTypes, StringValue);
   if mrOK = ShowModal then
   begin
     StringValue := tvMetaTypes.Selected.Text;

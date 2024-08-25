@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldSystemRT;
 
@@ -8,7 +7,7 @@ interface
 uses
   BoldDefs,
   BoldElements,
-  BoldIndexableList,  
+  BoldIndexableList,
   BoldMetaElementList,
   BoldGeneratedCodeDictionary,
   BoldMeta,
@@ -65,7 +64,7 @@ type
 
   TBoldClassTypeInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldClassTypeInfo;
     property Current: TBoldClassTypeInfo read GetCurrent;
   end;
 
@@ -73,10 +72,10 @@ type
   TBoldClassTypeInfoList = class(TBoldElementTypeInfoList)
   private
     class var IX_ObjectClass: integer;
-    function GetItem(index: Integer): TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: string): TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByModelName(const ModelName: string): TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByObjectClass(ObjectClass: TClass): TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldClassTypeInfo;
+    function GetItemByExpressionName(const ExpressionName: string): TBoldClassTypeInfo;
+    function GetItemByModelName(const ModelName: string): TBoldClassTypeInfo;
+    function GetItemByObjectClass(ObjectClass: TClass): TBoldClassTypeInfo;
   protected
     function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
@@ -90,15 +89,15 @@ type
 
   TBoldMemberRTInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldMemberRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldMemberRTInfo;
     property Current: TBoldMemberRTInfo read GetCurrent;
   end;
 
   {---TBoldMemberRTInfoList---}
   TBoldMemberRTInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldMemberRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: string): TBoldMemberRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldMemberRTInfo;
+    function GetItemByExpressionName(const ExpressionName: string): TBoldMemberRTInfo;
     function GetItemByModelName(const ModelName: string): TBoldMemberRTInfo;
   protected
     function TraverserClass: TBoldIndexableListTraverserClass; override;
@@ -111,14 +110,14 @@ type
 
   TBoldAttributeTypeInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldAttributeTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldAttributeTypeInfo;
     property Current: TBoldAttributeTypeInfo read GetCurrent;
   end;
 
   TBoldAttributeTypeInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldAttributeTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: string): TBoldAttributeTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldAttributeTypeInfo;
+    function GetItemByExpressionName(const ExpressionName: string): TBoldAttributeTypeInfo;
     function GetItemByModelName(const ModelName: string): TBoldAttributeTypeInfo;
   protected
     function TraverserClass: TBoldIndexableListTraverserClass; override;
@@ -131,14 +130,14 @@ type
 
   TBoldRoleRTInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldRoleRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldRoleRTInfo;
     property Current: TBoldRoleRTInfo read GetCurrent;
   end;
 
   {---TBoldRoleRTInfoList---}
   TBoldRoleRTInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldRoleRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldRoleRTInfo;
     function GetItemByExpressionName(const ExpressionName: string): TBoldRoleRTInfo;
     function GetItemByModelName(const ModelName: string): TBoldRoleRTInfo;
   protected
@@ -152,14 +151,14 @@ type
 
   TBoldConstraintRTInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldConstraintRTInfo;
     property Current: TBoldConstraintRTInfo read GetCurrent;
   end;
 
   TBoldConstraintRTInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByModelName(const ModelName: string): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldConstraintRTInfo;
+    function GetItemByModelName(const ModelName: string): TBoldConstraintRTInfo;
   protected
     function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
@@ -170,16 +169,16 @@ type
 
   TBoldMethodRTInfoListTraverser = class(TBoldIndexableListTraverser)
   public
-    function GetCurrent: TBoldMethodRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetCurrent: TBoldMethodRTInfo;
     property Current: TBoldMethodRTInfo read GetCurrent;
   end;
 
   {---TBoldMethodRTInfoList---}
   TBoldMethodRTInfoList = class(TBoldMetaElementList)
   private
-    function GetItem(index: Integer): TBoldMethodRTInfo;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByModelName(const ModelName: string): TBoldMethodRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByExpressionName(const ExpressionName: string): TBoldMethodRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldMethodRTInfo;
+    function GetItemByModelName(const ModelName: string): TBoldMethodRTInfo;
+    function GetItemByExpressionName(const ExpressionName: string): TBoldMethodRTInfo;
   protected
     function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
@@ -194,8 +193,8 @@ type
   private
     class var IX_Element: integer;
     class var IX_ListClass: integer;
-    function GetItemByElement(Element: TBoldElementTypeInfo): TBoldListTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetItemByListClass(ListClass: TClass): TBoldListTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByElement(Element: TBoldElementTypeInfo): TBoldListTypeInfo;
+    function GetItemByListClass(ListClass: TClass): TBoldListTypeInfo;
   public
     constructor Create;
     property ItemByElement[Element: TBoldElementTypeInfo]: TBoldListTypeInfo read GetItemByElement;
@@ -216,12 +215,12 @@ type
   private
     fConstraints: TBoldConstraintRTInfoList;
     fTaggedValues: TStrings;
-    function GetTaggedValues(const Tag: string): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetConstraints(const Name: String): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetConstraintCount: integer;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTaggedvalueCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetConstraintByIndex(Index: integer): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTaggedValueByIndex(Index: integer): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTaggedValues(const Tag: string): string;
+    function GetConstraints(const Name: String): TBoldConstraintRTInfo;
+    function GetConstraintCount: integer;
+    function GetTaggedvalueCount: integer;
+    function GetConstraintByIndex(Index: integer): TBoldConstraintRTInfo;
+    function GetTaggedValueByIndex(Index: integer): string;
   protected
     function GetListTypeInfo: TBoldListTypeInfo; override;
   public
@@ -241,16 +240,16 @@ type
   private
     fConstraints: TBoldConstraintRTInfoList;
     fTaggedValues: TStrings;
-    function GetTaggedValues(const Tag: string): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetConstraints(const Name: String): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetConstraintByIndex(Index: integer): TBoldConstraintRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetConstraintCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTaggedValueByIndex(Index: integer): string; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetTaggedvalueCount: integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetTaggedValues(const Tag: string): string;
+    function GetConstraints(const Name: String): TBoldConstraintRTInfo;
+    function GetConstraintByIndex(Index: integer): TBoldConstraintRTInfo;
+    function GetConstraintCount: integer;
+    function GetTaggedValueByIndex(Index: integer): string;
+    function GetTaggedvalueCount: integer;
   public
     constructor Create(MoldElement: TMoldElement; const ModelName, ExpressionName, DelphiName: String; SystemTypeInfo: TBoldSystemTypeInfo);
     destructor Destroy; override;
-    procedure AddConstraint(Constraint: TBoldConstraintRTinfo); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddConstraint(Constraint: TBoldConstraintRTinfo);
     property Constraint[const Name: String]: TBoldConstraintRTInfo read GetConstraints;
     property ConstraintCount: integer read GetConstraintCount;
     property ConstraintByIndex[Index: integer]: TBoldConstraintRTInfo read GetConstraintByIndex;
@@ -281,17 +280,18 @@ type
     fGenerateMultiplicityConstraints: Boolean;
     fValueTypeNameList: TBoldElementTypeInfoList;
     fStereotype: string;
-    fUseClockLog: Boolean;    
+    fUseClockLog: Boolean;
+    fModelCRC: string;
     function GetInitializationLog: TStringList;
-    function GetAttributeTypeInfoByDelphiName(const name: string): TBoldAttributeTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetAttributeTypeInfoByExpressionName(const name: string): TBoldAttributeTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetClassTypeInfoByExpressionName(const name: string): TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetClassTypeInfoByModelName(const name: string): TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetElementTypeInfoByDelphiName(const name: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetElementTypeInfoByExpressionName(const name: string): TBoldElementTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetListTypeInfoByElement(Element: TBoldElementTypeInfo): TBoldListTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetAttributeTypeInfoByDelphiName(const name: string): TBoldAttributeTypeInfo;
+    function GetAttributeTypeInfoByExpressionName(const name: string): TBoldAttributeTypeInfo;
+    function GetClassTypeInfoByExpressionName(const name: string): TBoldClassTypeInfo;
+    function GetClassTypeInfoByModelName(const name: string): TBoldClassTypeInfo;
+    function GetElementTypeInfoByDelphiName(const name: string): TBoldElementTypeInfo;
+    function GetElementTypeInfoByExpressionName(const name: string): TBoldElementTypeInfo;
+    function GetListTypeInfoByElement(Element: TBoldElementTypeInfo): TBoldListTypeInfo;
     function GetMemberTypeInfoByQualifiedName(const AClassName, AMemberName: string): TBoldMemberRtInfo;
-    function GetRootClassTypeInfo: TBoldClassTypeInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetRootClassTypeInfo: TBoldClassTypeInfo;
     function GetValueTypeNameList: TBoldElementTypeInfoList;
     function GetValueSetTypeInfoList: TBoldElementTypeInfoList;
     procedure InitializationError(const Message: String; args: array of const);
@@ -301,7 +301,7 @@ type
     function GetEvaluator: TBoldEvaluator; override;
     function GetBoldType: TBoldElementTypeInfo; override;
   public
-    constructor Create(moldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
+    constructor Create(AMoldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
     destructor Destroy; override;
     function ConformsTo(CompareElement: TBoldElementTypeInfo): Boolean; override;
     procedure GetValueTypeNames(S: TStrings; Classes, Types, System, metatype, lists: Boolean);
@@ -339,6 +339,7 @@ type
     property InitializationLog: TStringList read GetInitializationLog;
     property GenerateDefaultRegions: Boolean index befGenerateDefaultRegions read GetElementFlag;
     property UseClockLog: Boolean read fUseClockLog;
+    property ModelCRC: string read fModelCRC;
   end;
 
   {---TBoldClassTypeInfo---}
@@ -362,9 +363,9 @@ type
     fPackagename: string;
     fSubClasssesBoldClassTypeInfoList: TBoldClassTypeInfoList;
     fListTypeInfo: TBoldListTypeInfo;
-    function GetMemberIndexByExpressionName(const name: string): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMemberRTInfoByExpressionName(const Name: string): TBoldMemberRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetMemberRTInfoByModelName(const Name: string): TBoldMemberRTInfo; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetMemberIndexByExpressionName(const name: string): Integer;
+    function GetMemberRTInfoByExpressionName(const Name: string): TBoldMemberRTInfo;
+    function GetMemberRTInfoByModelName(const Name: string): TBoldMemberRTInfo;
     procedure InitializeMultiplicityConstraints;
     procedure Initialize(MoldClass: TMoldClass; TypeNameDictionary: TBoldTypeNameDictionary; BoldObjectClasses: TBoldGeneratedClassList; BoldObjectListClasses: TBoldGeneratedClassList; SkipMembers: Boolean); virtual;
     procedure SetObjectClass(BoldObjectClasses: TBoldGeneratedClassList);
@@ -504,8 +505,8 @@ type
     fDeleteAction: TDeleteAction;
     fAssociationStereotype: string;
     class procedure SetPass2InfoForAssociation(SystemTypeInfo: TBoldSystemTypeInfo; moldASsociation: TMoldAssociation);
-    function GetIndexOfLinkObjectRole: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetIndexOfMainRole: Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIndexOfLinkObjectRole: Integer;
+    function GetIndexOfMainRole: Integer;
     procedure InitQualifiers(Qualifiers: TMoldQualifierList);
     function GetDefaultRegionMode: TBoldAssociationEndDefaultRegionMode;
   protected
@@ -902,7 +903,7 @@ begin
 end;
 
 
-constructor TBoldSystemTypeInfo.Create(moldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
+constructor TBoldSystemTypeInfo.Create(AMoldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
 var
   i: integer;
   BoldObjectClasses: TBoldGeneratedClassList;
@@ -911,14 +912,14 @@ var
   Guard: IBoldGuard;
   BoldGeneratedCodeDescriptor: TBoldGeneratedCodeDescriptor;
 begin
-  inherited Create(MoldModel, self);
+  inherited Create(AMoldModel, self);
   Guard := TBoldGuard.Create(BoldObjectListClasses, BoldObjectClasses, Errors);
 
-  fStereotype := MoldModel.Stereotype;
-  fUseClockLog := StringToBoolean(MoldModel.BoldTVByName[TAG_USECLOCKLOG]);
+  fStereotype := AMoldModel.Stereotype;
+  fUseClockLog := StringToBoolean(AMoldModel.BoldTVByName[TAG_USECLOCKLOG]);
 
   SetElementFlag(befSystemIsRunnable, true);
-  fOptimisticLocking := MoldModel.OptimisticLocking;
+  fOptimisticLocking := AMoldModel.OptimisticLocking;
 {$IFDEF BOLD_LITE}
   G_TheSystemType := self;
 {$ENDIF}
@@ -928,35 +929,37 @@ begin
   fAttributeTypes := TBoldAttributeTypeInfoList.Create;
   AttributeTypes.Capacity := TypeNameDictionary.count;
   fListTypes := TBoldListTypeInfoList.Create;
-  ListTypes.Capacity := TypeNameDictionary.count + moldModel.Classes.Count + 1;
+  ListTypes.Capacity := TypeNameDictionary.count + AMoldModel.Classes.Count + 1;
   ListTypes.Add(TBoldListTypeInfo.Create(fTypeTypeinfo, self, TBoldTypeList));
   SetElementFlag(befSystemPersistent, true);
-  SetElementFlag(befGenerateDefaultRegions, MoldModel.GenerateDefaultRegions);
+  SetElementFlag(befGenerateDefaultRegions, AMoldModel.GenerateDefaultRegions);
   FTopSortedClasses := TBoldClassTypeInfoList.Create;
 
   BoldObjectListClasses := TBoldGeneratedClassList.Create;
   BoldObjectClasses := TBoldGeneratedClassList.Create;
-  fGenerateMultiplicityConstraints := TVIsTrue(MoldModel.BoldTVByName[TAG_GENERATEMULTIPLICITYCONSTRAINTS]);
+  fGenerateMultiplicityConstraints := TVIsTrue(AMoldModel.BoldTVByName[TAG_GENERATEMULTIPLICITYCONSTRAINTS]);
 
   fUseGeneratedCode := UseGeneratedCode;
+  fModelCRC := AMoldModel.CRC;
+
   if UseGeneratedCode then
   begin
     BoldGeneratedCodeDescriptor := nil;
     for i := 0 to GeneratedCodes.Count - 1 do
     begin
-      if (GeneratedCodes.ModelEntries[i].ExpressionName = MoldModel.ExpandedExpressionName) then
+      if (GeneratedCodes.ModelEntries[i].ExpressionName = AMoldModel.ExpandedExpressionName) then
       begin
         BoldGeneratedCodeDescriptor := GeneratedCodes.ModelEntries[i];
-        if (not CheckCodeCheckSum or (BoldGeneratedCodeDescriptor.CRC = '') or (BoldGeneratedCodeDescriptor.CRC = MoldModel.CRC)) then
+        if (not CheckCodeCheckSum or (BoldGeneratedCodeDescriptor.CRC = '') or (BoldGeneratedCodeDescriptor.CRC = AMoldModel.CRC)) then
         begin
           if assigned(BoldGeneratedCodeDescriptor.InstallBusinessClasses) then
           begin
-            BoldObjectClasses.Capacity := moldModel.Classes.Count;
+            BoldObjectClasses.Capacity := AMoldModel.Classes.Count;
             BoldGeneratedCodeDescriptor.InstallBusinessClasses(BoldObjectClasses);
           end;
           if assigned(BoldGeneratedCodeDescriptor.InstallObjectListClasses) then
           begin
-            BoldObjectListClasses.Capacity := moldModel.Classes.Count;
+            BoldObjectListClasses.Capacity := AMoldModel.Classes.Count;
             BoldGeneratedCodeDescriptor.InstallObjectListClasses(BoldObjectListClasses);
           end;
           break;
@@ -965,9 +968,9 @@ begin
     end;
 
     if CheckCodeCheckSum and (Assigned(BoldGeneratedCodeDescriptor) and (BoldGeneratedCodeDescriptor.CRC <> '') and 
-      (BoldGeneratedCodeDescriptor.CRC <> MoldModel.CRC) ) then
+      (BoldGeneratedCodeDescriptor.CRC <> AMoldModel.CRC) ) then
     begin
-      InitializationError(sCRCDiffers, [MoldModel.CRC, BoldGeneratedCodeDescriptor.CRC]);
+      InitializationError(sCRCDiffers, [AMoldModel.CRC, BoldGeneratedCodeDescriptor.CRC]);
     end;
   end;
 
@@ -983,24 +986,24 @@ begin
 
   // Superclasses must be constructed first.
   // This also assures that FClasses will be topologicaly sorted
-  moldModel.EnsureTopSorted;
+  AMoldModel.EnsureTopSorted;
 
   Errors := TStringList.Create;
-  Errors.CommaText := MoldModel.TVByName[BOLDINTERALTVPREFIX + TV_MODELERRORS];
+  Errors.CommaText := AMoldModel.TVByName[BOLDINTERALTVPREFIX + TV_MODELERRORS];
   if Errors.Count > 0 then
   begin
     for i := 0 to Errors.Count - 1 do
       InitializationError(Errors[i], []);
-    TBoldClassTypeInfo.Create(self, moldModel.Classes[0], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses, true);
+    TBoldClassTypeInfo.Create(self, AMoldModel.Classes[0], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses, true);
     exit;
   end;
 
-  TopSortedClasses.Capacity := moldModel.Classes.Count;
-  for I := 0 to moldModel.Classes.Count - 1 do
-    TBoldClassTypeInfo.Create(self, moldModel.Classes[I], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses);
+  TopSortedClasses.Capacity := AMoldModel.Classes.Count;
+  for I := 0 to AMoldModel.Classes.Count - 1 do
+    TBoldClassTypeInfo.Create(self, AMoldModel.Classes[I], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses);
 
-  for I := 0 to moldModel.Associations.Count - 1 do
-    TBoldRoleRTInfo.SetPass2InfoForAssociation(self, moldModel.Associations[I]);
+  for I := 0 to AMoldModel.Associations.Count - 1 do
+    TBoldRoleRTInfo.SetPass2InfoForAssociation(self, AMoldModel.Associations[I]);
 
   if GenerateMultiplicityConstraints then
     for i := 0 to TopSortedClasses.Count - 1 do
@@ -1182,16 +1185,16 @@ begin
   s.Capacity := ValueTypeNameList.Count;
   s.BeginUpdate;
   try
-    for I := 0 to ValueTypeNameList.Count - 1 do
-    begin
-      case ValueTypeNameList[I].BoldValueType of
-        bvtList: if lists then S.Add(ValueTypeNameList[I].ExpressionName);
-        bvtClass: if Classes then S.Add(ValueTypeNameList[I].ExpressionName);
-        bvtAttr: if Types then S.Add(ValueTypeNameList[I].ExpressionName);
-        bvtSystem: if System then S.Add(ValueTypeNameList[I].ExpressionName);
-        bvtType: if metatype then S.Add(ValueTypeNameList[I].ExpressionName);
-      end;
+  for I := 0 to ValueTypeNameList.Count - 1 do
+  begin
+    case ValueTypeNameList[I].BoldValueType of
+      bvtList: if lists then S.Add(ValueTypeNameList[I].ExpressionName);
+      bvtClass: if Classes then S.Add(ValueTypeNameList[I].ExpressionName);
+      bvtAttr: if Types then S.Add(ValueTypeNameList[I].ExpressionName);
+      bvtSystem: if System then S.Add(ValueTypeNameList[I].ExpressionName);
+      bvtType: if metatype then S.Add(ValueTypeNameList[I].ExpressionName);
     end;
+  end;
   finally
     s.EndUpdate;
   end;
@@ -1261,7 +1264,8 @@ begin
   FAllRoles.OwnsEntries := false;
   fMethods := TBoldMethodRTInfoList.Create;
   fSubClasssesBoldClassTypeInfoList := TBoldClassTypeInfoList.Create;
-  fSubClasssesBoldClassTypeInfoList.OwnsEntries := false;  
+  fSubClasssesBoldClassTypeInfoList.OwnsEntries := false;
+  fAllMembersCount := -1;
   Initialize(MoldClass, TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses, SkipMembers);
 end;
 

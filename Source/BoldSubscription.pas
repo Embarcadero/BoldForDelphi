@@ -6,6 +6,7 @@ interface
 
 uses
   Classes,
+  SysUtils,
   BoldBase;
 
 const
@@ -18,7 +19,11 @@ const
   beMinUser = 4096;
   beMaxUser = beMaxEvent;
   bqMinQuery = beMaxEvent+1;
-  bpeMinReserved = 1024;
+
+  // bpeMinReserved starts at 1. Only 0 is unversally beDestroying, all other events depend on the context and can therefor overlap - they don't have to be unique
+  // and when they are small (<32) we can use them in sets
+  bpeMinReserved = 1;
+
   bqMaxQuery = 100000;
 
   beDestroying = 0; {General message for all subscribables}
@@ -38,11 +43,12 @@ const
   bePreUpdateId = 18;
   beObjectFetched = 19;
   beObjectUnloaded = 20; // sent by TBoldSystem before an object gets unloaded from memory
+  beLinkObjectEstablished = 21;
   breReEvaluate = beValueChanged; {backwards compatibility}
 
   beDefaultRequestedEvent = breReEvaluate;
 
-  beServerSubscriberRemoved = 21;
+  beServerSubscriberRemoved = 21; // Depricated - Only used in BoldCom Client/Server
 
   beBeginUpdate = 22; // sent by TBoldObjectList before loops
   beEndUpdate = 23; // sent by TBoldObjectList after loops
@@ -53,6 +59,8 @@ const
   beDirtyListEvents = [beObjectBecomingDirty, beObjectBecomingClean, beMemberBecomingDirty, beMemberBecomingClean];
 
   beValueEvents = [beItemAdded, beItemDeleted, beItemReplaced, beOrderChanged, beValueChanged, beValueInvalid];
+
+  // BoldPersistenceEvents
   bpeStartFetch = bpeMinReserved + 0;
   bpeEndFetch = bpeMinReserved + 1;
   bpeStartUpdate = bpeMinReserved + 2;
@@ -67,53 +75,48 @@ const
   bpeFetchId = bpeMinReserved + 11;
   bpeProgressStart = bpeMinReserved + 12;
   bpeProgressEnd = bpeMinReserved + 13;
-  bpeMaxReserved = bpeMinReserved + 13;
 
-  // additional persistence events
-  bpeStartFetchMember = 42;
-  bpeEndFetchMember = 43;
-  bpeStartFetchObjectById = 44;
-  bpeEndFetchObjectById = 45;
-  bpeStartFetchClass = 46;
-  bpeEndFetchClass = 47;
-  bpeStartFetchList = 48;
-  bpeEndFetchList = 49;
-  bpeStartFetchAllInClassWithSQL = 50;
-  bpeEndFetchAllInClassWithSQL = 51;
+  bpeStartFetchMember = bpeMinReserved + 14;
+  bpeEndFetchMember = bpeMinReserved + 15;
 
-  bpeStartFetchEvents = [{bpeStartFetch,} bpeStartFetchList, bpeStartFetchMember, bpeStartFetchObjectById, bpeStartFetchClass, bpeStartFetchAllInClassWithSQL];
-  bpeEndFetchEvents = [{bpeEndFetch,} bpeEndFetchList, bpeEndFetchMember, bpeEndFetchObjectById, bpeEndFetchClass, bpeEndFetchAllInClassWithSQL];
+  bpeMaxReserved = bpeMinReserved + 15;
+
+  bePersistenceEvents = [bpeStartFetch, bpeEndFetch, bpeStartUpdate, bpeEndUpdate, bpeFetchObject, bpeFetchMember,
+                        bpeUpdateObject, bpeDeleteObject, bpeCreateObject,
+                        bpeStartFetchID, bpeEndFetchID, bpeFetchId,
+                        bpeProgressStart, bpeProgressEnd];
 
   // OSS Events
-  boeClassChanged = 52;
-  boeEmbeddedStateOfObjectChanged = 53;
-  boeObjectCreated = 54;
-  boeObjectDeleted = 55;
-  boeNonEmbeddedStateOfObjectChanged = 56;
-  boeMemberChanged = 57;
+  boeOssStart = 52;
+  boeClassChanged = boeOssStart+0;
+  boeEmbeddedStateOfObjectChanged = boeOssStart+1;
+  boeObjectCreated = boeOssStart+2;
+  boeObjectDeleted = boeOssStart+3;
+  boeNonEmbeddedStateOfObjectChanged = boeOssStart+4;
+  boeMemberChanged = boeOssStart+5;
   beOssEvents = [boeClassChanged, boeEmbeddedStateOfObjectChanged, boeObjectCreated, boeObjectDeleted, boeNonEmbeddedStateOfObjectChanged, boeMemberChanged];
 
   // Undo Events
-  beUndoBlock = 60;
-  beRedoBlock = 61;
-  beUndoSetCheckpoint = 62;
-  beUndoChanged = 63;
+  beUndoStart = 60;
+  beUndoBlock = beUndoStart+0;
+  beRedoBlock = beUndoStart+1;
+  beUndoSetCheckpoint = beUndoStart+2;
+  beUndoChanged = beUndoStart+3;
   beUndoEvents = [beUndoBlock, beRedoBlock, beUndoSetCheckpoint, beUndoChanged];
 
   bePrepareModify = 38;
   beCompleteModify = 39;
   bePrepareDelete = 41;
- {$IFNDEF BOLD_NO_QUERIES}
+
+  // Queries
   bqMayUpdate = bqMinQuery + 1;
   bqMayModify = bqMinQuery + 2;
   bqMayDelete = bqMinQuery + 3;
   bqMayCommit = bqMinQuery + 4;
- {$ENDIF}
+
   bqMaxSubscription = bqMinQuery + 6;
 
-{$IFDEF BoldSystemBroadcastMemberEvents}
   beBroadcastMemberEvents = beValueEvents + [beCompleteModify] + beDirtyListEvents;
-{$ENDIF}
 
   { Subscription Statistics }
 var
@@ -122,10 +125,8 @@ var
   ActiveSubscriptionCount: Integer = 0;
   _SendEventMatch: Int64 = 0;
   _SendExtendedEvent: Int64 = 0;
-{$IFNDEF BOLD_NO_QUERIES}
   _SendQuery: Int64 = 0;
   _QueryMatch: Int64 = 0;
-{$ENDIF}
 
   {Forward declarations of all classes}
 type
@@ -160,7 +161,6 @@ type
   TBoldPublisherFlag = (bpfNeedsPacking);
   TBoldPublisherFlags = set of TBoldPublisherFlag;
 
-
   {---TBoldSubscription---}
   TBoldSubscription = record
   public
@@ -168,11 +168,11 @@ type
     IndexInSubscriber: integer;
     RequestedEvent: TBoldRequestedEvent;
     MatchCondition: Integer;
-    function GetIsSmallEventSubscription: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ClearEntry; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ReIndexsSubscriber(NewPublisherIndex: integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function IsMatchingEvent(OriginalEvent: TBoldEvent): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure ExtendEvents(Events: TBoldSmallEventSet); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetIsSmallEventSubscription: Boolean;
+    procedure ClearEntry;
+    procedure ReIndexsSubscriber(NewPublisherIndex: integer);
+    function IsMatchingEvent(OriginalEvent: TBoldEvent): Boolean;
+    procedure ExtendEvents(Events: TBoldSmallEventSet);
     property IsSmallEventSubscription: Boolean read GetIsSmallEventSubscription;
   end;
 
@@ -186,6 +186,8 @@ type
 
   TBoldSubscriptionArray = array of TBoldSubscription;
 
+  TBoldPublisherVariableReference = ^TBoldPublisher;
+
   {---TBoldPublisher---}
   TBoldPublisher = class(TBoldMemoryManagedObject)
   strict private
@@ -194,9 +196,10 @@ type
     fPublisherFlags: TBoldPublisherFlags;
     fSubscribableObject: TObject;
     fHoleCount: Integer;
-    function GetHasSubscribers: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure EnsureFreeSpace; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetNeedsPacking: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    fPublisherReference: TBoldPublisherVariableReference;
+    function GetHasSubscribers: Boolean;
+    procedure EnsureFreeSpace;
+    function GetNeedsPacking: Boolean;
     procedure SetNeedsPacking(Value: Boolean);
     class procedure RemoveFromPostNotificationQueue(Receiver: TObject);
     procedure PackSubscriptions(dummy: TObject);
@@ -205,29 +208,26 @@ type
     class var G_InPostNotification: Boolean;
   private // actually unit internal
     class procedure DelayTillAfterNotification(Event: TNotifyEvent; Sender: TObject; Receiver: TObject);
-    procedure ClearEntry(Subscriber: TBoldSubscriber; index: integer); // Do not use inline due to D2007 bug
+    procedure ClearEntry(Subscriber: TBoldSubscriber; index: integer);
     function GetSubscriptionsAsText: string;
   strict protected
-    procedure SetPublisherFlag(Flag: TBoldPublisherFlag; Value: Boolean); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetPublisherFlag(Flag: TBoldPublisherFlag): Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure SetPublisherFlag(Flag: TBoldPublisherFlag; Value: Boolean);
+    function GetPublisherFlag(Flag: TBoldPublisherFlag): Boolean;
     function GetContextString: string; virtual;
     function GetDebugInfo: string; override;
   public
-    constructor Create;
+    constructor Create(var APublisherReference);
     destructor Destroy; override;
-    class procedure StartNotify; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    class procedure StartNotify;
     class procedure EndNotify;
     procedure BoldForcedDequeuePostNotify;
-    procedure NotifySubscribersAndClearSubscriptions(Originator: TObject); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure NotifySubscribersAndClearSubscriptions(Originator: TObject);
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure SendEvent(OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const);
-{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
-{$ENDIF}
-    function HasMatchingSubscription(Subscriber: TBoldSubscriber): boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function HasMatchingSubscription(Subscriber: TBoldSubscriber): boolean;
     procedure CancelSubscriptionTo(Subscriber: TBoldSubscriber);
     property HasSubscribers: Boolean read GetHasSubscribers;
     property SubscribableObject : TObject read fSubscribableObject write fSubscribableObject;
@@ -242,26 +242,24 @@ type
     fSubscriptionArray: TBoldPublisherReferenceArray;
     fSubscriptionCount: integer;
   private  // unit internal
-    procedure AddToSubscriptions(Publisher: TBoldPublisher; Index: integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF} {called by TBoldSubscription}
-    procedure ClearEntry(Index: integer); {$IFDEF BOLD_INLINE} inline; {$ENDIF} {called by TBoldSubscription}
+    procedure AddToSubscriptions(Publisher: TBoldPublisher; Index: integer); {called by TBoldSubscription}
+    procedure ClearEntry(Index: integer); {called by TBoldSubscription}
     function GetSubscriptionsAsText: string;
   protected
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent;
       RequestedEvent: TBoldRequestedEvent); virtual; abstract;
     procedure ReceiveExtended(Originator: TObject; OriginalEvent: TBoldEvent;
       RequestedEvent: TBoldRequestedEvent; const Args: array of const); virtual;
- {$IFNDEF BOLD_NO_QUERIES}
     function Answer(Originator: TObject; OriginalEvent: TBoldEvent;
       RequestedEvent: TBoldRequestedEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; virtual;
-{$ENDIF}
     function GetContextString: string; virtual;
     function GetHandlesExtendedEvents: Boolean; virtual;
     function GetDebugInfo: string; override;
   public
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
-    procedure CancelAllSubscriptions; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function HasMatchingSubscription(APublisher: TBoldPublisher): boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure CancelAllSubscriptions;
+    function HasMatchingSubscription(APublisher: TBoldPublisher): boolean;
     procedure CancelSubscriptionTo(APublisher: TBoldPublisher);
     property ContextString: string read GetContextString;
     property HandlesExtendedEvents: Boolean read GetHandlesExtendedEvents;
@@ -281,82 +279,68 @@ type
     function GetContextString: string; override;
   public
     constructor Create(AReceiveFunc: TBoldEventHandler);
-    property receiveFunc: TBoldEventHandler read fReceiveFunc write fReceiveFunc;
+    property ReceiveFunc: TBoldEventHandler read fReceiveFunc write fReceiveFunc;
   end;
 
   {---TBoldPassthroughSubscriber---}
   TBoldExtendedPassthroughSubscriber = class(TBoldPassthroughSubscriber)
   strict private
     fExtendedReceiveFunc: TBoldExtendedEventHandler;
- {$IFNDEF BOLD_NO_QUERIES}
     fAnswerFunc: TBoldQueryHandler;
-{$ENDIF}
   protected
     procedure ReceiveExtended(Originator: TObject; OriginalEvent: TBoldEvent;
       RequestedEvent: TBoldRequestedEvent; const Args: array of const); override;
- {$IFNDEF BOLD_NO_QUERIES}
     function Answer(Originator: TObject; OriginalEvent: TBoldEvent;
       RequestedEvent: TBoldRequestedEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean; override;
-{$ENDIF}
     function GetHandlesExtendedEvents: Boolean; override;
   public
     constructor CreateWithExtendedReceive(AExtendedReceiveFunc: TBoldExtendedEventHandler);
-{$IFNDEF BOLD_NO_QUERIES}
     constructor CreateWithReceiveAndAnswer(AReceiveFunc: TBoldEventHandler;
                                            AAnswerFunc: TBoldQueryHandler);
-{$ENDIF}
   end;
 
   {---TBoldSubscribableObject---}
   TBoldSubscribableObject = class(TBoldFlaggedObject)
  strict private
     fPublisher: TBoldPublisher;
-    function GetHasSubscribers: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    function GetPublisher: TBoldPublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasSubscribers: Boolean;
+    function GetPublisher: TBoldPublisher;
     function GetSubscriptionsAsText: string;
   protected
     function GetDebugInfo: string; override;
-    procedure FreePublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure FreePublisher;
     function GetContextString: string; virtual;
-    property HasSubscribers: Boolean read GetHasSubscribers;
     property Publisher: TBoldPublisher read GetPublisher;
   public
     destructor Destroy; override;
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
     procedure SendEvent(OriginalEvent: TBoldEvent); virtual;
     procedure SendExtendedEvent(OriginalEvent: TBoldEvent; const Args: array of const); virtual;
-{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean; virtual;
-{$ENDIF}
     property ContextString: string read GetContextString;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
-end;
+    property HasSubscribers: Boolean read GetHasSubscribers;
+  end;
 
   {---TBoldSubscribableComponent---}
-  [ComponentPlatforms(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSubscribableComponent = class(TComponent)
   strict private
     fPublisher: TBoldPublisher;
-    function GetPublisher: TBoldPublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPublisher: TBoldPublisher;
     function GetSubscriptionsAsText: string;
   strict protected
     function GetHasSubscribers: Boolean; virtual;
     property Publisher: TBoldPublisher read GetPublisher;
-    procedure FreePublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure FreePublisher;
   public
     destructor Destroy; override;
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SendEvent(Originator: TObject; OriginalEvent: TBoldEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure SendEvent(Originator: TObject; OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const);
-    {$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
-    {$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
   end;
@@ -365,24 +349,20 @@ end;
   TBoldSubscribablePersistent = class(TPersistent)
   strict private
     fPublisher: TBoldPublisher;
-    function GetPublisher: TBoldPublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPublisher: TBoldPublisher;
     function GetSubscriptionsAsText: string;
   strict protected
     function GetHasSubscribers: Boolean; virtual;
     property Publisher: TBoldPublisher read GetPublisher;
   protected
-    procedure FreePublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure FreePublisher;
   public
     destructor Destroy; override;
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SendEvent(Originator: TObject; OriginalEvent: TBoldEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure SendEvent(Originator: TObject; OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const);
-{$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
-{$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
   end;
@@ -390,40 +370,34 @@ end;
   TBoldSubscribableNonRefCountedObject = class(TBoldNonRefCountedObject)
   strict private
     fPublisher: TBoldPublisher;
-    function GetPublisher: TBoldPublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPublisher: TBoldPublisher;
     function GetSubscriptionsAsText: string;
   strict protected
     function GetHasSubscribers: Boolean; virtual;
     property Publisher: TBoldPublisher read GetPublisher;
-    procedure FreePublisher; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure FreePublisher;
   public
     destructor Destroy; override;
-    procedure AddSmallSubscription(Subscriber: TBoldSubscriber;
-      Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure AddSubscription(Subscriber: TBoldSubscriber;
-      OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure SendEvent(Originator: TObject; OriginalEvent: TBoldEvent); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    procedure AddSmallSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure AddSubscription(Subscriber: TBoldSubscriber; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent = beDefaultRequestedEvent);
+    procedure SendEvent(Originator: TObject; OriginalEvent: TBoldEvent);
     procedure SendExtendedEvent(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const);
-    {$IFNDEF BOLD_NO_QUERIES}
     function SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
-    {$ENDIF}
     property HasSubscribers: Boolean read GetHasSubscribers;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
   end;
 
   procedure BoldAddEventToPostNotifyQueue(Event: TNotifyEvent; Sender: TObject; Receiver: TObject);
-  function BoldEventToString(aEvent: integer): string;
+//  function BoldEventToString(aEvent: integer): string;
 
 implementation
 
 uses
-  SysUtils,
-
-  BoldCoreConsts,
   BoldDefs,
-  BoldEventQueue;
+  BoldEventQueue,
+  BoldCoreConsts;
 
-function BoldEventToString(aEvent: integer): string;
+(*function BoldEventToString(aEvent: integer): string;
 begin
   case aEvent of
     beDestroying: result := 'beDestroying';
@@ -487,12 +461,10 @@ begin
     beUndoSetCheckpoint: result := 'beUndoSetCheckpoint';
     beUndoChanged: result := 'beUndoChanged';
 
- {$IFNDEF BOLD_NO_QUERIES}
     bqMayUpdate: result := 'bqMayUpdate';
     bqMayModify: result := 'bqMayModify';
     bqMayDelete: result := 'bqMayDelete';
     bqMayCommit: result := 'bqMayCommit';
- {$ENDIF}
   else
   case aEvent of
     beMinSmallReserved..beMaxSmallReserved : result := 'Unknown SmallReserved event: ' + IntToStr(aEvent);
@@ -503,12 +475,12 @@ begin
     result:= 'Unknown event: ' + IntToStr(aEvent);
   end;
   end;
-end;
+end;*)
 
 var
   G_PostNotifyQueue: TboldEventQueue = nil;
 
-function GetNewLength(oldLength: integer): integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+function GetNewLength(oldLength: integer): integer; inline;
 begin
   if oldLength > 64 then
     Result := oldLength + oldLength div 4
@@ -686,12 +658,12 @@ begin
   try
     if fSubscriptionCount <= Subscriber.SubscriptionCount then
     begin
-      for I := 0 to SubscriptionCount-1 do
+      for I := SubscriptionCount-1 downto 0 do
         if (fSubscriptionArray[I].Subscriber = Subscriber) then
           ClearEntry(Subscriber, i);
     end
     else
-    for I := 0 to Subscriber.SubscriptionCount - 1 do
+    for I := Subscriber.SubscriptionCount - 1 downto 0 do
       if (Subscriber.Subscriptions[I].Publisher = Self) then
         ClearEntry(Subscriber, Subscriber.Subscriptions[I].Index);
   finally
@@ -754,7 +726,7 @@ begin
   else
     Inc(fHoleCount);
   if (fSubscriptionCount-fHoleCount < Length(fSubscriptionArray) div 2) then
-    NeedsPacking := True;
+    NeedsPacking := fSubscriptionCount > 0;
 end;
 
 procedure TBoldPublisher.AddSmallSubscription(Subscriber: TBoldSubscriber;
@@ -766,7 +738,7 @@ begin
     exit;
   if fSubscriptionCount <= Subscriber.SubscriptionCount then
   begin
-    for I := 0 to fSubscriptionCount - 1 do
+    for I := fSubscriptionCount - 1 downto 0 do
     begin
       if (fSubscriptionArray[I].Subscriber = Subscriber) and
         (fSubscriptionArray[I].RequestedEvent = RequestedEvent) and
@@ -779,7 +751,7 @@ begin
   end
   else
   begin
-    for I := 0 to Subscriber.SubscriptionCount - 1 do
+    for I := Subscriber.SubscriptionCount - 1 downto 0 do
     begin
       if (Subscriber.Subscriptions[I].Publisher = Self) then
       begin
@@ -821,7 +793,7 @@ begin
   end;
   if fSubscriptionCount <= Subscriber.SubscriptionCount then
   begin
-    for I := 0 to fSubscriptionCount - 1 do
+    for I := fSubscriptionCount - 1 downto 0 do
     begin
       if (fSubscriptionArray[I].Subscriber = Subscriber) and
          (fSubscriptionArray[I].RequestedEvent = RequestedEvent) and
@@ -831,7 +803,7 @@ begin
   end
   else
   begin
-    for I := 0 to Subscriber.SubscriptionCount - 1 do
+    for I := Subscriber.SubscriptionCount - 1 downto 0 do
     begin
       if (Subscriber.Subscriptions[I].Publisher = Self) then
       begin
@@ -854,18 +826,30 @@ begin
   Inc(fSubscriptionCount);
 end;
 
+procedure TBoldPublisher.SendEvent(OriginalEvent: TBoldEvent);
+begin
+  SendExtendedEvent(self, OriginalEvent, []);
+end;
+
 procedure TBoldPublisher.SendExtendedEvent(Originator: TObject;
                                            OriginalEvent: TBoldEvent;
                                            const Args: array of const);
 var
   I: Integer;
   Subscriber: TBoldSubscriber;
+  procedure Send(RequestedEvent: TBoldEvent);
+  begin
+    if Subscriber.HandlesExtendedEvents then
+      Subscriber.ReceiveExtended(Originator, OriginalEvent, RequestedEvent, Args)
+    else
+      Subscriber.Receive(Originator, OriginalEvent, RequestedEvent);
+  end;
 begin
   if fSubscriptionCount = 0 then
     Exit;
   Inc(_SendExtendedEvent);
   StartNotify;
-  for I := 0 to fSubscriptionCount - 1 do
+  for I := fSubscriptionCount - 1 downto 0 do
   begin
     Subscriber := fSubscriptionArray[I].Subscriber;
     if Assigned(Subscriber) and fSubscriptionArray[I].IsMatchingEvent(OriginalEvent) then
@@ -880,7 +864,6 @@ begin
   EndNotify;
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldPublisher.SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 var
   I: Integer;
@@ -889,7 +872,7 @@ begin
   begin
     Inc(_SendQuery);
     StartNotify;
-    for I := 0 to fSubscriptionCount - 1 do
+    for I := fSubscriptionCount - 1 downto 0 do
     begin
       if Assigned( fSubscriptionArray[I].Subscriber) and fSubscriptionArray[I].IsMatchingEvent(OriginalEvent) then
         if not  fSubscriptionArray[I].Subscriber.Answer(Originator, OriginalEvent, fSubscriptionArray[I].RequestedEvent, Args, Subscriber) then
@@ -903,7 +886,6 @@ begin
   end;
   result := true;
 end;
-{$ENDIF}
 
 procedure TBoldPublisher.NotifySubscribersAndClearSubscriptions(Originator: TObject);
 var
@@ -912,19 +894,21 @@ begin
   if fSubscriptionCount = 0 then
     Exit;
   SendExtendedEvent(Originator, beDestroying, []);
-  for I := 0 to fSubscriptionCount - 1 do
+  for I := fSubscriptionCount - 1 downto 0 do
     fSubscriptionArray[I].ClearEntry;
   SetLength(fSubscriptionArray, 0);
   fSubscriptionCount := 0;
 end;
 
-constructor TBoldPublisher.Create;
+constructor TBoldPublisher.Create(var APublisherReference);
 begin
+  fPublisherReference := @TBoldPublisher(APublisherReference);
   Inc(PublisherCount);
 end;
 
 destructor TBoldPublisher.Destroy;
 begin
+  fPublisherReference := nil;
   Assert(fSubscriptionCount = 0);
   if NeedsPacking then
     RemoveFromPostNotificationQueue(self);
@@ -940,6 +924,7 @@ begin
     Exit;
   TBoldPublisher.StartNotify;
   try
+    Assert(fSubscriptionCount <= Length(fSubscriptionArray));
     for I := 0 to fSubscriptionCount - 1 do
     begin
       Publisher := fSubscriptionArray[I].Publisher;
@@ -990,7 +975,6 @@ end;
 
 {---TBoldExtendedPassthroughSubscriber---}
 
-{$IFNDEF BOLD_NO_QUERIES}
 constructor TBoldExtendedPassthroughSubscriber.CreateWithReceiveAndAnswer(AReceiveFunc: TBoldEventHandler;
                                                                   AAnswerFunc: TBoldQueryHandler);
 begin
@@ -1007,7 +991,6 @@ begin
   else
     result := true;
 end;
-{$ENDIF}
 
 {--- TBoldSubscribableObject ---}
 
@@ -1015,7 +998,7 @@ function TBoldSubscribableObject.GetPublisher: TBoldPublisher;
 begin
   if not Assigned(fPublisher) then
   begin
-    fPublisher := TBoldPublisher.Create;
+    fPublisher := TBoldPublisher.Create(fPublisher);
     fPublisher.SubscribableObject := self;
   end;
   Result := fPublisher
@@ -1058,7 +1041,6 @@ begin
   FreePublisher;
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribableObject.SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean;
 begin
   if Assigned(Originator) then
@@ -1066,7 +1048,6 @@ begin
   else
     result := not Assigned(fPublisher) or fPublisher.SendQuery(self, OriginalEvent, Args, Subscriber);
 end;
-{$ENDIF}
 
 function TBoldSubscribableObject.GetContextString: string;
 begin
@@ -1080,7 +1061,7 @@ end;
 
 function TBoldSubscribableObject.GetHasSubscribers: Boolean;
 begin
-  result := assigned(fPublisher) and Publisher.HasSubscribers;
+  result := assigned(fPublisher) and fPublisher.HasSubscribers;
 end;
 
 {--- TBoldSubscribableComponent ---}
@@ -1089,7 +1070,7 @@ function TBoldSubscribableComponent.GetPublisher: TBoldPublisher;
 begin
   if not Assigned(fPublisher) then
   begin
-    fPublisher := TBoldPublisher.Create;
+    fPublisher := TBoldPublisher.Create(fPublisher);
     fPublisher.SubscribableObject := self;
   end;
   Result := fPublisher
@@ -1102,7 +1083,7 @@ end;
 
 function TBoldSubscribableComponent.GetHasSubscribers: Boolean;
 begin
-  result := assigned(fPublisher) and Publisher.HasSubscribers;
+  result := assigned(fPublisher) and fPublisher.HasSubscribers;
 end;
 
 procedure TBoldSubscribableComponent.FreePublisher;
@@ -1138,12 +1119,10 @@ begin
     fPublisher.SendExtendedEvent(Originator, OriginalEvent, []);
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribableComponent.SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
   result := not Assigned(fPublisher) or fPublisher.SendQuery(Originator, OriginalEvent, Args, Subscriber);
 end;
-{$ENDIF}
 
 {---TBoldSubscribablePersistent---}
 
@@ -1151,7 +1130,7 @@ function TBoldSubscribablePersistent.GetPublisher: TBoldPublisher;
 begin
   if not Assigned(fPublisher) then
   begin
-    fPublisher := TBoldPublisher.Create;
+    fPublisher := TBoldPublisher.Create(fPublisher);
     fPublisher.SubscribableObject := self;
   end;
   Result := fPublisher
@@ -1167,7 +1146,7 @@ end;
 
 function TBoldSubscribablePersistent.GetHasSubscribers: Boolean;
 begin
-  result := assigned(fPublisher) and Publisher.HasSubscribers;
+  result := assigned(fPublisher) and fPublisher.HasSubscribers;
 end;
 
 procedure TBoldSubscribablePersistent.FreePublisher;
@@ -1203,7 +1182,6 @@ begin
     fPublisher.SendExtendedEvent(Originator, OriginalEvent, []);
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribablePersistent.SendQuery(Originator: TObject; OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber): Boolean;
 begin
   result := not Assigned(fPublisher) or fPublisher.SendQuery(Originator, OriginalEvent, Args, Subscriber);
@@ -1214,7 +1192,6 @@ function TBoldSubscriber.Answer(Originator: TObject;
 begin
   raise EBold.CreateFmt(sAnswerNotImplemented, [classname, Originator.Classname]);
 end;
-{$ENDIF}
 
 function TBoldSubscriber.GetContextString: string;
 begin
@@ -1249,22 +1226,24 @@ function TBoldSubscriber.GetSubscriptionsAsText: string;
 var
   i,j: integer;
   SubscribableObject: TObject;
+  Publisher: TBoldPublisher;
 begin
   result := '';
   j := 0;
   for I := 0 to Length(fSubscriptionArray) - 1 do
     if Assigned(fSubscriptionArray[i].Publisher) and Assigned(fSubscriptionArray[i].Publisher.SubscribableObject) then
       begin
-        SubscribableObject := fSubscriptionArray[i].Publisher.SubscribableObject;
-    if SubscribableObject is TBoldMemoryManagedObject
-        then
-      result := result + IntToStr(j) + ':' + TBoldMemoryManagedObject(SubscribableObject).DebugInfo + #13#10
-        else
-    if SubscribableObject is TComponent then
-      result := result + IntToStr(j) + ':' + TComponent(SubscribableObject).Name + #13#10
-        else
-      result := result + IntToStr(j) + ':' + SubscribableObject.ClassName + #13#10;
-        inc(j);
+        Publisher := fSubscriptionArray[i].Publisher;
+        SubscribableObject := Publisher.SubscribableObject;
+        if SubscribableObject is TBoldMemoryManagedObject
+            then
+          result := result + IntToStr(j) + ':' + TBoldMemoryManagedObject(SubscribableObject).DebugInfo + #13#10
+            else
+        if SubscribableObject is TComponent then
+          result := result + IntToStr(j) + ':' + TComponent(SubscribableObject).Name + #13#10
+            else
+          result := result + IntToStr(j) + ':' + SubscribableObject.ClassName + #13#10;
+            inc(j);
       end;
 end;
 
@@ -1351,7 +1330,9 @@ begin
     end
     else if gap > 0 then
     begin
+    {$IFDEF DEBUG}
       Assert((fSubscriptionArray[i].Subscriber.Subscriptions[fSubscriptionArray[i].IndexInSubscriber].Publisher = Self) and (fSubscriptionArray[i].Subscriber.Subscriptions[fSubscriptionArray[i].IndexInSubscriber].Index = i));
+    {$ENDIF}
       fSubscriptionArray[i].ReIndexsSubscriber(i-gap);
       fSubscriptionArray[i-gap] := fSubscriptionArray[i];
       fSubscriptionArray[i].Subscriber := nil;
@@ -1361,7 +1342,7 @@ begin
   if (fSubscriptionCount <> OldCount) then
   begin
     if (fSubscriptionCount = 0) and (OldCount <> 0) then
-    SetLength(FSubscriptionArray, 0)
+      SetLength(FSubscriptionArray, 0)
   else
   // do not bother if it's less than 9 records
   if (Length(FSubscriptionArray) > 8) and (fSubscriptionCount < Length(FSubscriptionArray) div 2) then
@@ -1380,7 +1361,7 @@ end;
 procedure InitDebugMethods;
 begin
   exit; // intentionally do nothing, but code bellow forces compiler to include these debug methods so they can be inspected
-  TBoldPublisher.Create.SubscriptionsAsText;
+//  TBoldPublisher.Create(nil).SubscriptionsAsText;
   TBoldPassthroughSubscriber.Create(nil).SubscriptionsAsText;
   TBoldSubscribableObject.Create.SubscriptionsAsText;
   TBoldSubscribablePersistent.Create.SubscriptionsAsText;
@@ -1420,14 +1401,14 @@ end;
 
 function TBoldSubscribableNonRefCountedObject.GetHasSubscribers: Boolean;
 begin
-  result := assigned(fPublisher) and Publisher.HasSubscribers;
+  result := assigned(fPublisher) and fPublisher.HasSubscribers;
 end;
 
 function TBoldSubscribableNonRefCountedObject.GetPublisher: TBoldPublisher;
 begin
   if not Assigned(fPublisher) then
   begin
-    fPublisher := TBoldPublisher.Create;
+    fPublisher := TBoldPublisher.Create(fPublisher);
     fPublisher.SubscribableObject := self;
   end;
   Result := fPublisher
@@ -1452,7 +1433,6 @@ begin
     fPublisher.SendExtendedEvent(self, OriginalEvent, Args);
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 function TBoldSubscribableNonRefCountedObject.SendQuery(Originator: TObject;
   OriginalEvent: TBoldEvent; const Args: array of const;
   Subscriber: TBoldSubscriber): Boolean;
@@ -1462,7 +1442,6 @@ begin
   else
     result := not Assigned(fPublisher) or fPublisher.SendQuery(self, OriginalEvent, Args, Subscriber);
 end;
-{$ENDIF}
 
 initialization
   G_PostNotifyQueue := TboldEventQueue.Create;

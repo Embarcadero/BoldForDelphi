@@ -73,12 +73,11 @@ type
 implementation
 uses
   Graphics,
-  SysUtils,
   {!! DO NOT REMOVE !! BoldAttributes ,}
   {$IFNDEF BOLDCOMCLIENT}
   BoldGui,
   {$ENDIF}
-  BoldRev;
+  SysUtils;
 
 { TBoldDropTargetCom }
 

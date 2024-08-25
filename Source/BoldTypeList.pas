@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldTypeList;
 
@@ -54,9 +53,9 @@ implementation
 uses
   SysUtils,
 
-  BoldCoreConsts,
   BoldMetaElementList,
-  BoldSystemRT;
+  BoldSystemRT,
+  BoldCoreConsts;
 
 type
   { TBoldTypeListController }
@@ -102,7 +101,7 @@ begin
     inherited;
 end;
 
-procedure TBoldTypeList.DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent = breReEvaluate);
+procedure TBoldTypeList.DefaultSubscribe(Subscriber: TBoldSubscriber; RequestedEvent: TBoldEvent);
 begin
   inherited;
 end;

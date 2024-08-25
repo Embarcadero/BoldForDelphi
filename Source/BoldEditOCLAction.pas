@@ -136,6 +136,4 @@ begin
     raise Exception.CreateFmt('%s is not connected to an OCL Component', [Name]);
 end;
 
-initialization
-
 end.

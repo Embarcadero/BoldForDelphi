@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldNamedValueList;
@@ -29,7 +28,7 @@ type
   private
     class var IX_Name: integer;
     function GetItem(index: Integer): TBoldNamedValueListEntry;
-    function GetItemByName(const Name: string): TBoldNamedValueListEntry;  {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItemByName(const Name: string): TBoldNamedValueListEntry;
     procedure SetCommaText(const CommaText: string);
     function GetCommaText: string;
     function GetValueByname(const Name: string): string;
@@ -50,11 +49,7 @@ type
     property ObjectByName[const Name: string]:TObject read GetObjectByName write SetObjectByName;
   end;
 
-
 implementation
-
-uses
-  BoldRev;
 
 type
   TNameIndex = class(TBoldCaseSensitiveStringHashIndex)

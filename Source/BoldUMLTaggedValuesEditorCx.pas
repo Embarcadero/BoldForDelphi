@@ -109,7 +109,7 @@ type
     procedure RefreshGUI(var Message: TMessage); message WM_REFRESHGUI;
     procedure DoMessage(Control: TControl; Msg: Cardinal);
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure SwitchMode(ReadOnly: Boolean);
   end;
 
@@ -120,6 +120,7 @@ implementation
 uses
   SysUtils,
   BoldUtils,
+  System.UITypes,
   BoldUMLModelDataModule,
   BoldUMLAddTV, BoldUMLModelEditorHandlesDataModule, BoldDefaultTaggedValues,
   BoldUMLModelSupport;
@@ -354,7 +355,7 @@ begin
   end;}
 end;
 
-destructor TfrmBoldUMLTaggedValuesEditorCx.destroy;
+destructor TfrmBoldUMLTaggedValuesEditorCx.Destroy;
 begin
   FreeAndNil(fRootSubscriber);
   inherited;
@@ -385,7 +386,5 @@ procedure TfrmBoldUMLTaggedValuesEditorCx.Paste1Click(Sender: TObject);
 begin
   DoMessage(ActiveControl, WM_PASTE);
 end;
-
-initialization
 
 end.

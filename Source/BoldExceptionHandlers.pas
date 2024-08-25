@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldExceptionHandlers;
@@ -41,7 +40,7 @@ type
 implementation
 
 uses
-  BoldRev;
+  System.Types;
 
 var
   G_BoldExceptionHandlers: TList = nil;

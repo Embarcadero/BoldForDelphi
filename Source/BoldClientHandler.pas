@@ -55,7 +55,7 @@ type
   protected
     procedure EnqueueRemoveClientQueueEvent(const ClientId: TBoldClientId); virtual; // virtuality is for testcases...
   public
-    constructor Create; virtual;
+    constructor Create(var APublisherReference);
     destructor Destroy; override;    {IBoldClientHandler}
     function RegisterClient(LeaseDuration: Integer; PollingInterval: Integer;
                              const BoldClientListener: IBoldListener;
@@ -195,10 +195,10 @@ begin
   Result := G_GlobalInterfaceTable;
 end;
 
-  {TBoldClientHandler}
-constructor TBoldClientHandler.Create;
+{TBoldClientHandler}
+constructor TBoldClientHandler.Create(var APublisherReference);
 begin
-  inherited Create;
+  inherited Create(APublisherReference);
   fClientInfoList := TBoldClientInfoList.Create;
   fClientHandlerLock := TBoldLoggableCriticalSection.Create('CH');
   fLockTimeLock := TCriticalSection.Create;

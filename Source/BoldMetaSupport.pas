@@ -57,8 +57,7 @@ const
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 type
   TBoldCOMIDLTypeNameMapping = record
@@ -183,7 +182,5 @@ begin
     exit;
   end;
 end;
-
-initialization
 
 end.

@@ -37,8 +37,7 @@ implementation
 
 uses
   BoldSharedStrings,
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldStringList }
 

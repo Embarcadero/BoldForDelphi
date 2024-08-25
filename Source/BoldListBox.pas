@@ -1,6 +1,3 @@
-/////////////////////////////////////////////////////////
-
-
 unit BoldListBox;
 
 {$UNDEF BOLDCOMCLIENT}
@@ -179,6 +176,7 @@ implementation
 uses
   SysUtils,
   Forms,
+  System.Types,
   {$IFNDEF BOLDCOMCLIENT} // uses
   BoldGui, // IFNDEF BOLDCOMCLIENT
   {$ENDIF}
@@ -603,5 +601,4 @@ begin
 end;
 
 end.
-
 

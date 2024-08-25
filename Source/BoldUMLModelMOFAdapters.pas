@@ -261,7 +261,6 @@ implementation
 
 uses
   SysUtils,
-  BoldRev,
   BoldDefs,
   BoldUMLXMICommon,
   BoldUMLTypes;
@@ -1092,8 +1091,5 @@ function TBoldUMLMOFDummyAttrAdapter.QualifiedName: string;
 begin
   result := fQualifiedName;
 end;
-
-initialization
-  BoldRegisterModuleVersion('$Workfile: BoldUMLModelMOFAdapters.pas $ $Revision: 8 $ $Date: 02-09-24 14:37 $');
 
 end.

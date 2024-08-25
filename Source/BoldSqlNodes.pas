@@ -1,5 +1,4 @@
-﻿
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldSqlNodes;
 
@@ -56,11 +55,11 @@ type
 
   TBoldSqlNodeList = class(TList)
   private
-    function GetItem(index: Integer): TBoldSqlNode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
-    procedure PutItem(index: Integer; Value: TBoldSqlNode); {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetItem(index: Integer): TBoldSqlNode;
+    procedure PutItem(index: Integer; Value: TBoldSqlNode);
   public
     destructor Destroy; override;
-    function Add(Item: TBoldSqlNode): Integer; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function Add(Item: TBoldSqlNode): Integer;
     procedure TraverseList(V: TBoldSqlNodeVisitor); virtual;
     property Items[index: Integer]: TBoldSqlNode read GetItem write PutItem; default;
   end;
@@ -73,7 +72,7 @@ type
     fTableReferences: TBoldSqlTableReferenceList;
     fWCF: TBoldSqlWCF;
     fQuery: TBoldSqlQuery;
-    function GetHasObjectMapper: Boolean; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetHasObjectMapper: Boolean;
     function GetTableReferences: TBoldSqlTableReferenceList; virtual;
   protected
     function GetHasQuery: boolean; virtual;

@@ -67,7 +67,7 @@ type
                   TranslationList: TBoldIdTranslationList); override;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
     procedure PMTimeForTimestamp(Timestamp: TBoldTimestampType; var ClockTime: TDateTime); override;
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
     function CanEvaluateInPS(sOCL: string; aSystem: TBoldElement; aContext: TBoldElementTypeInfo = nil; const aVariableList: TBoldExternalVariableList = nil): Boolean; override;
   end;
 
@@ -338,22 +338,27 @@ begin
   end;
 end;
 
-procedure TBoldSOAPPersistenceControllerProxy.SubscribeToPeristenceEvents(
-  Subscriber: TBoldSubscriber);
+procedure TBoldSOAPPersistenceControllerProxy.SubscribeToPersistenceEvents(
+  Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
-  AddSubscription(Subscriber, bpeStartFetch, bpeStartFetch);
-  AddSubscription(Subscriber, bpeEndFetch, bpeEndFetch);
+  if Events <> [] then
+    AddSmallSubscription(Subscriber, Events)
+  else
+  begin
+    AddSubscription(Subscriber, bpeStartFetch, bpeStartFetch);
+    AddSubscription(Subscriber, bpeEndFetch, bpeEndFetch);
 
-  AddSubscription(Subscriber, bpeStartUpdate, bpeStartUpdate);
-  AddSubscription(Subscriber, bpeEndUpdate, bpeEndUpdate);
+    AddSubscription(Subscriber, bpeStartUpdate, bpeStartUpdate);
+    AddSubscription(Subscriber, bpeEndUpdate, bpeEndUpdate);
 
-  AddSubscription(Subscriber, bpeStartFetchId, bpeStartFetchId);
-  AddSubscription(Subscriber, bpeEndFetchId, bpeEndFetchId);
+    AddSubscription(Subscriber, bpeStartFetchId, bpeStartFetchId);
+    AddSubscription(Subscriber, bpeEndFetchId, bpeEndFetchId);
 
-  AddSubscription(Subscriber, bpeFetchObject, bpeFetchObject);
-  AddSubscription(Subscriber, bpeUpdateObject, bpeUpdateObject);
-  AddSubscription(Subscriber, bpeCreateObject, bpeCreateObject);
-  AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
+    AddSubscription(Subscriber, bpeFetchObject, bpeFetchObject);
+    AddSubscription(Subscriber, bpeUpdateObject, bpeUpdateObject);
+    AddSubscription(Subscriber, bpeCreateObject, bpeCreateObject);
+    AddSubscription(Subscriber, bpeDeleteObject, bpeDeleteObject);
+  end;
 end;
 
 end.

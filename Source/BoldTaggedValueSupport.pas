@@ -64,8 +64,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 class procedure TBoldTaggedValueSupport.AddTableMappings(
   Strings: TStrings);
@@ -416,7 +415,5 @@ case Value of
       raise EBold.CreateFmt('%s.DefaultRegionModeToString: Unknown TBoldAssociationEndDefaultRegionMode', [ClassName]);
   end;
 end;
-
-initialization
 
 end.

@@ -31,7 +31,7 @@ type
     FJsonString: String;
     procedure ApplyJsonStringToBoldElement;
     procedure ApplyJsonDateTimeToBoldMember(aMember: TBoldMember; aJsonValue: TJSONValue);
-    function TrimLetterTFromDateTime(const aDateTime: String) : String;
+//    function TrimLetterTFromDateTime(const aDateTime: String) : String;
     function CreateJsonForBoldObjectRef(aBoldObject: TBoldObject): TJSONObject;
     function CreateJsonForBoldObject(aBoldObject : TBoldObject;anEmbeddedDepth : Integer = DefaultEmbeddedDepth) : TJSONObject;
     function CreateJsonForBoldAttribute(aBoldAttribute : TBoldAttribute) : TJSONValue;
@@ -40,7 +40,7 @@ type
     function ElementForId(aBoldSystem: TBoldSystem; anId : Integer) : TBoldElement;
     function GetJsonName(Member: TBoldMember) : String;
     procedure SetSingleLink(aBoldObject: TBoldObject; const SingleLinkMemberExpressionName: String; js: TJSONPair);overload;
-    procedure SetSingleLink(SingleLinkMember : TBoldObjectReference; js: TJSONPair; jsAttribute: TBoldMember); overload;
+//    procedure SetSingleLink(SingleLinkMember : TBoldObjectReference; js: TJSONPair; jsAttribute: TBoldMember); overload;
     procedure SetBoldElementAsVariant(ABoldElement: TBoldElement; aVariant: Variant);
     function CreateJson: TJSONValue;
     function GetJsonString: String;
@@ -75,6 +75,7 @@ implementation
 uses
   SysUtils,
   DateUtils,
+  System.Generics.Collections,
 
   //BoldExpressSecuredObject,
   BoldCoreConsts,
@@ -315,10 +316,10 @@ begin
 end;
   *)
 
-procedure TBoldElementJsonConverter.SetSingleLink(SingleLinkMember : TBoldObjectReference; js: TJSONPair; jsAttribute: TBoldMember);
+{procedure TBoldElementJsonConverter.SetSingleLink(SingleLinkMember : TBoldObjectReference; js: TJSONPair; jsAttribute: TBoldMember);
 begin
   SetSingleLink(SingleLinkMember.OwningObject,SingleLinkMember.BoldMemberRTInfo.ExpressionName, js);
-end;
+end;}
 
 function TBoldElementJsonConverter.ReceivedJsonValue(js: TJSONObject; jsAttribute: TBoldMember; var Value: TJSONValue): Boolean;
 var
@@ -393,7 +394,7 @@ begin
   end;}
 end;
 
-function TBoldElementJsonConverter.TrimLetterTFromDateTime(const aDateTime: String) : String;
+{function TBoldElementJsonConverter.TrimLetterTFromDateTime(const aDateTime: String) : String;
 var
   vTPos : Integer;
 begin
@@ -402,7 +403,7 @@ begin
     Result := aDateTime
   else
     Result := Copy(aDateTime,1,vTPos-1) + ' ' + Copy(aDateTime,vTPos+1,MaxInt);
-end;
+end;}
 
 procedure TBoldElementJsonConverter.ApplyJsonStringToBoldElement;
 var
@@ -614,7 +615,7 @@ begin
   //js.Add('id',StrToInt(aBoldObject.BoldObjectLocator.BoldObjectID.AsString));
   //Result.Add('id',aBoldObject.BoldMemberByExpressionName['objectGUID'].AsString);
 
-  for I := 0 to aBoldObject.BoldClassTypeInfo.AllMembers.Count - 1 do
+  for I := 0 to aBoldObject.BoldClassTypeInfo.AllMembersCount - 1 do
   try
     vBoldMember := aBoldObject.BoldMembers[i];
     vMemberRTInfo := vBoldMember.BoldMemberRTInfo;

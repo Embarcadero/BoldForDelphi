@@ -68,8 +68,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 type
   {---TWinControlWithCaption---}
@@ -186,7 +185,5 @@ function TBoldCustomCaptionControllerCom.GetVariableList: IBoldExternalVariableL
 begin
   result := BoldProperties.VariableList;
 end;
-
-initialization
 
 end.

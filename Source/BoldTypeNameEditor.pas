@@ -16,7 +16,7 @@ uses
   Menus,
   Grids,
   BoldTypeNameHandle,
-  BoldTypeNameDictionary, ImgList;
+  BoldTypeNameDictionary, ImgList, System.ImageList;
 
 type
   TBoldTypeNameEditorForm = class(TForm)
@@ -60,8 +60,7 @@ implementation
 
 uses
   SysUtils,
-  BoldUtils,
-  BoldRev;
+  BoldUtils;
 
 {$R *.dfm}
 
@@ -265,7 +264,5 @@ begin
     CurrentMappings.Free;
   end;
 end;
-
-initialization
 
 end.

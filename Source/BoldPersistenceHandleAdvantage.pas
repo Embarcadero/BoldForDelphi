@@ -33,8 +33,7 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldPersistenceHandleAdvantage }
 
@@ -87,7 +86,5 @@ begin
       FAdsConnection.FreeNotification(self);
   end;
 end;
-
-initialization
 
 end.

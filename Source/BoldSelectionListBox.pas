@@ -1,4 +1,3 @@
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSelectionListBox;
@@ -50,15 +49,14 @@ type
 implementation
 
 uses
-  SysUtils,
-  BoldRev;
+  SysUtils;
 
 { TBoldSelectionListBox }
 
 constructor TBoldSelectionListBox.Create(AOwner: TComponent);
 begin
   inherited;
-  fPublisher := TBoldPublisher.Create;
+  fPublisher := TBoldPublisher.Create(fPublisher);
   fCheckBoxRenderer := TBoldAsCheckBoxStateRenderer.Create(self);
   fCheckBoxRenderer.OnGetAsCheckBoxState := GetAsCheckBoxState;
   fCheckBoxRenderer.OnSetAsCheckBoxState := SetAsCheckBoxState;
@@ -121,7 +119,5 @@ begin
     fPublisher.SendExtendedEvent(self, beSelectionHandleChanged, []);
   end;
 end;
-
-initialization
 
 end.

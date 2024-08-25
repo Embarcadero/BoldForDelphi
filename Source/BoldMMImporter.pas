@@ -3,7 +3,7 @@
 {$include bold.inc}
 unit BoldMMImporter;
 
-interface 
+interface
 
 uses
   BoldUMLModel,
@@ -470,11 +470,18 @@ end;
 
 procedure TMMModelImporter.RawImport;
 begin
-  fUMLModel.name := ChangeFileExt(ExtractFileName(MMToolServices.ProjectManager.ProjectName), '');
-  pass := PASS1;
-  ImportModel(MMToolServices.CodeModel);
-  pass := PASS2;
-  ImportModel(MMToolServices.CodeModel);
+  fUMLModel.BoldSystem.StartTransaction;
+  try
+    fUMLModel.name := ChangeFileExt(ExtractFileName(MMToolServices.ProjectManager.ProjectName), '');
+    pass := PASS1;
+    ImportModel(MMToolServices.CodeModel);
+    pass := PASS2;
+    ImportModel(MMToolServices.CodeModel);
+    fUMLModel.BoldSystem.CommitTransaction;
+  except
+    fUMLModel.BoldSystem.RollbackTransaction;
+    raise;
+  end;
 end;
 
 end.

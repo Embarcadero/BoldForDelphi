@@ -95,7 +95,7 @@ type
       TypeNameDictionary: TBoldTypeNameDictionary; OnStartUpdates, OnEndUpdates, OnFailUpdates: TNotifyEvent;
       AClassesToHandle: TStrings; AUpdateBoldDatabaseFirst: boolean); reintroduce;
     destructor Destroy; override;
-    procedure SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber); override;
+    procedure SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); override;
   end;
 
 {------------------------------------------------------------------------------}
@@ -190,7 +190,6 @@ type
     destructor Destroy; override;
     procedure FetchObject(ObjectContents: IBoldObjectContents);
     procedure PostFetch;
-  published
     property FetchObjectList: TFetchObjectList read FFetchObjectList;
   end;
 
@@ -209,7 +208,7 @@ uses
 
 function _GetTableName(MoldClass: TMoldClass): String;
 begin
-  Result := BoldExpandName(MoldClass.TableName, MoldClass.name, xtSQL, -1, nccFalse);
+  Result := BoldExpandName(MoldClass.ExternalTableName, MoldClass.name, xtSQL, -1, nccFalse);
 end;
 
 function _GetColumnName(BoldMember: TMoldMember): String;
@@ -385,7 +384,7 @@ begin
   else if B.QueryInterface(IBoldDateTimeContent, DT) = S_OK then
     DT.asDateTime := Value
   else if B.QueryInterface(IBoldBlobContent, BL) = S_OK then
-    BL.asBlob := Value
+    BL.asBlob := AnsiString(Value)
   else raise Exception.Create(sUnknownDataType);
 end;
 
@@ -654,7 +653,7 @@ begin
   end;
 end;
 
-procedure TBoldExternalPersistenceControllerSQL.SubscribeToPeristenceEvents(Subscriber: TBoldSubscriber);
+procedure TBoldExternalPersistenceControllerSQL.SubscribeToPersistenceEvents(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
   inherited;
 end;

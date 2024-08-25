@@ -412,6 +412,4 @@ begin
   PutLine('');
 end;
 
-initialization
-
 end.
