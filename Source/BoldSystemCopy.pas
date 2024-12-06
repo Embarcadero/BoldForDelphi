@@ -18,23 +18,25 @@ type
   TBoldSystemCopy = class;
 
   // user events
-  TClassEvent = procedure(Sender: TBoldSystemCopy; const AClass: TBoldClassTypeInfo; var ASkip: boolean) of object;
-  TObjectEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldobject; var ASkip: boolean) of object;
-  TLinkEvent = procedure(Sender: TBoldSystemCopy; const ASourceLink: TBoldMember; var ASkip: boolean) of object;
-  TAttributesEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldObject; const ADestinationObject: TBoldObject) of object;
-  TProgressEvent = procedure(Sender: TBoldSystemCopy; const aStatus: string) of object;
-  TFindObjectEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject) of object;
+  TBoldSystemCopyClassEvent = procedure(Sender: TBoldSystemCopy; const AClass: TBoldClassTypeInfo; var ASkip: boolean) of object;
+  TBoldSystemCopyObjectEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldobject; var ASkip: boolean) of object;
+  TBoldSystemCopyLinkEvent = procedure(Sender: TBoldSystemCopy; const ASourceLink: TBoldMember; var ASkip: boolean) of object;
+  TBoldSystemCopyAttributesEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldObject; const ADestinationObject: TBoldObject) of object;
+  TBoldSystemCopyFindObjectEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject) of object;
+  TBoldSystemCopyProgressEvent = procedure(Sender: TBoldSystemCopy; AProgress: integer; AMax: integer; AEstimatedRemainingTime: TDateTime) of object;
+  TBoldSystemCopyLogEvent = procedure(Sender: TBoldSystemCopy; const aStatus: string) of object;
 
   TBoldSystemCopy = class(TComponent)
   private
-    fObjectEvent: TObjectEvent;
+    fObjectEvent: TBoldSystemCopyObjectEvent;
     fDestinationSystemHandle: TBoldSystemHandle;
     fSourceSystemHandle: TBoldSystemHandle;
-    fAttributesEvent: TAttributesEvent;
+    fAttributesEvent: TBoldSystemCopyAttributesEvent;
     fBatchSize: integer;
-    fClassEvent: TClassEvent;
-    fProgressEvent: TProgressEvent;
-    HeadTailRoles: TBoldRoleRTInfoList;
+    fClassEvent: TBoldSystemCopyClassEvent;
+    fProgressEvent: TBoldSystemCopyProgressEvent;
+    fLogEvent: TBoldSystemCopyLogEvent;
+    fHeadTailRoles: TBoldRoleRTInfoList;
     fDelayedProcessList: TBoldObjectList;
     fProcessedObjects: TBoldObjectList;
     fSkippedObjects: TBoldObjectList;
@@ -49,6 +51,7 @@ type
     procedure TranslateId(ASourceObject, ADestinationObject: TBoldObject);
     procedure UpdateLastUsedID;
   protected
+    procedure DoLogEvent(const Msg: string);
     procedure Report(const Msg: string; const Args: array of const);
     function SkipObject(const SourceObject: TBoldObject): boolean;
     function EnsureDestinationObject(const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject): boolean;
@@ -72,10 +75,11 @@ type
   published
     property SourceSystemHandle: TBoldSystemHandle read fSourceSystemHandle write fSourceSystemHandle;
     property DestinationSystemHandle: TBoldSystemHandle read fDestinationSystemHandle write fDestinationSystemHandle;
-    property OnClass: TClassEvent read fClassEvent write fClassEvent;
-    property OnObject: TObjectEvent read fObjectEvent write fObjectEvent;
-    property OnAttributes: TAttributesEvent read fAttributesEvent write fAttributesEvent;
-    property OnProgress: TProgressEvent read fProgressEvent write fProgressEvent;
+    property OnClass: TBoldSystemCopyClassEvent read fClassEvent write fClassEvent;
+    property OnObject: TBoldSystemCopyObjectEvent read fObjectEvent write fObjectEvent;
+    property OnAttributes: TBoldSystemCopyAttributesEvent read fAttributesEvent write fAttributesEvent;
+    property OnLog: TBoldSystemCopyLogEvent read fLogEvent write fLogEvent;
+    property OnProgress: TBoldSystemCopyProgressEvent read fProgressEvent write fProgressEvent;
     property BatchSize: integer read fBatchSize write fBatchSize;
   end;
 
@@ -110,8 +114,8 @@ uses
 procedure TBoldSystemCopy.AfterConstruction;
 begin
   inherited;
-  HeadTailRoles := TBoldRoleRTInfoList.Create;
-  HeadTailRoles.OwnsEntries := false;
+  fHeadTailRoles := TBoldRoleRTInfoList.Create;
+  fHeadTailRoles.OwnsEntries := false;
   fDelayedProcessList := TBoldObjectList.Create;
   fDelayedProcessList.DuplicateMode := bldmMerge;
   fProcessedObjects := TBoldObjectList.Create;
@@ -121,7 +125,7 @@ end;
 
 procedure TBoldSystemCopy.BeforeDestruction;
 begin
-  HeadTailRoles.free;
+  fHeadTailRoles.free;
   fDelayedProcessList.free;
   fProcessedObjects.free;
   fSkippedObjects.free;
@@ -150,7 +154,7 @@ begin
       if (RoleTypeInfo.Aggregation = akComposite) and RoleTypeInfo.RoleRTInfoOfOtherEnd.IsMultiRole then
         Report(RoleTypeInfo.DebugInfo, []);
       if (RoleTypeInfo.Aggregation = akComposite) {and RoleTypeInfo.RoleRTInfoOfOtherEnd.Mandatory} then
-        HeadTailRoles.Add(RoleTypeInfo);
+        fHeadTailRoles.Add(RoleTypeInfo);
     end;
   end;
 
@@ -168,14 +172,14 @@ begin
       begin
         HeadRoleTypeInfo := FindHead(ClassTypeInfo);
         if Assigned(HeadRoleTypeInfo) then
-          HeadTailRoles.Remove(HeadRoleTypeInfo);
+          fHeadTailRoles.Remove(HeadRoleTypeInfo);
       end;
     end;
   end;
-  for i := HeadTailRoles.Count-1 downto 0 do
+  for i := fHeadTailRoles.Count-1 downto 0 do
   begin
-    if FindTail(HeadTailRoles[i].ClassTypeInfo) <> nil then
-      HeadTailRoles.RemoveByIndex(i);
+    if FindTail(fHeadTailRoles[i].ClassTypeInfo) <> nil then
+      fHeadTailRoles.RemoveByIndex(i);
   end;
 end;
 
@@ -538,6 +542,12 @@ begin
   end;
 end;
 
+procedure TBoldSystemCopy.DoLogEvent(const Msg: string);
+begin
+  if Assigned(fLogEvent) then
+    fLogEvent(self, Msg);
+end;
+
 function TBoldSystemCopy.EnsureDestinationLocator(
   const ASourceLocator: TBoldObjectLocator;
   var ADestinationLocator: TBoldObjectLocator): boolean;
@@ -621,9 +631,9 @@ function TBoldSystemCopy.FindHead(AClassTypeInfo: TBoldClassTypeInfo): TBoldRole
 var
   i: integer;
 begin
-  for i := 0 to HeadTailRoles.Count -1 do
+  for i := 0 to fHeadTailRoles.Count -1 do
   begin
-    result := HeadTailRoles[i];
+    result := fHeadTailRoles[i];
     if result.ClassTypeInfo = AClassTypeInfo then
       exit;
   end;
@@ -634,9 +644,9 @@ function TBoldSystemCopy.FindTail(AClassTypeInfo: TBoldClassTypeInfo): TBoldRole
 var
   i: integer;
 begin
-  for i := 0 to HeadTailRoles.Count -1 do
+  for i := 0 to fHeadTailRoles.Count -1 do
   begin
-    result := HeadTailRoles[i];
+    result := fHeadTailRoles[i];
     if result.ClassTypeInfoOfOtherEnd = AClassTypeInfo then
       exit;
   end;
@@ -656,7 +666,7 @@ function TBoldSystemCopy.SkipObject(
     for j := SourceObject.BoldClassTypeInfo.AllRolesCount -1 downto 0 do
     begin
       RoleRTInfo := SourceObject.BoldClassTypeInfo.AllRoles[j];
-      if HeadTailRoles.Includes(RoleRTInfo) or HeadTailRoles.Includes(RoleRTInfo.RoleRTInfoOfOtherEnd) then
+      if fHeadTailRoles.Includes(RoleRTInfo) or fHeadTailRoles.Includes(RoleRTInfo.RoleRTInfoOfOtherEnd) then
       begin
         if (RoleRTInfo.ClassTypeInfoOfOtherEnd = SourceObject.BoldClassTypeInfo) then
         begin
@@ -702,9 +712,9 @@ begin
   if Assigned(fProgressEvent) then
   begin
     if Length(Args) = 0 then
-      fProgressEvent(self, msg)
+      DoLogEvent(msg)
     else
-      fProgressEvent(self, Format(msg, Args));
+      DoLogEvent(Format(msg, Args));
   end;
 end;
 
