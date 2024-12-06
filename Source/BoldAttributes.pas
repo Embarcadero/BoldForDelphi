@@ -533,9 +533,10 @@ type
     function GetAsDate: TDateTime;
     function GetAsDateTime: TDateTime;
     function GetAsTime: TDateTime;
-    procedure SetAsDate(Value: TDateTime);
+    procedure SetAsDate(Value: TDateTime); virtual; abstract;
     procedure SetAsDateTime(Value: TDateTime);
     procedure SetAsTime(Value: TDateTime);
+    function IsSameValue(Value: TDateTime): boolean; virtual; abstract;
     function MaySetValue(NewValue: TDateTime; Subscriber: TBoldSubscriber): Boolean; virtual;
     property AsDate: TDateTime read GetAsDate write SetAsDate;
     property AsTime: TDateTime read GetAsTime write SetAsTime;
@@ -566,6 +567,8 @@ type
     class procedure ClearAttributeTypeInfo;
   protected
     function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
+    function IsSameValue(Value: TDateTime): boolean; override;
+    procedure SetAsDate(Value: TDateTime); override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
@@ -596,6 +599,8 @@ type
     class procedure ClearAttributeTypeInfo;
   protected
     function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
+    procedure SetAsDate(Value: TDateTime); override;
+    function IsSameValue(Value: TDateTime): boolean; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
@@ -623,6 +628,8 @@ type
     function GetAsSeconds: cardinal;
   protected
     function GetAttributeTypeInfoForType: TBoldElementTypeInfo; override;
+    procedure SetAsDate(Value: TDateTime); override;
+    function IsSameValue(Value: TDateTime): boolean; override;
     procedure AssignContentValue(const Source: IBoldValue); override;
     procedure SetStringRepresentation(Representation: TBoldRepresentation; const Value: string); override;
     function GetStringRepresentation(Representation: TBoldRepresentation): string; override;
@@ -1043,7 +1050,7 @@ begin
   end
   else
     Result := True;
-  end;
+end;
 
 procedure TBAString.Assign(Source: TBoldElement);
 begin
@@ -3450,7 +3457,7 @@ var
   bContentIsNull: Boolean;
   sOldValue: TDateTime;
 begin
-  if IsNull or (FValue <> NewValue) then
+  if IsNull or not IsSameValue(NewValue) then
   begin
     BoldClearLastFailure;
   {$IFDEF NoNegativeDates}
@@ -3540,14 +3547,6 @@ end;
 procedure TBAMoment.SetAsInteger(Value: integer);
 begin
   SetAsDate(Value);
-end;
-
-procedure TBAMoment.SetAsDate(Value: TDateTime);
-begin
-  if IsNull then
-    SetAsDateTime(Int(Value))
-  else
-    SetAsDateTime(Int(Value) + AsTime);
 end;
 
 procedure TBAMoment.SetAsTime(Value: TDateTime);
@@ -4195,6 +4194,16 @@ begin
     Result := RetrieveProxyInterface(IID, Mode, obj, 'IBold[Date][Time]Content')
   else
     result := inherited ProxyInterface(IID, Mode, Obj);
+end;
+
+procedure TBADateTime.SetAsDate(Value: TDateTime);
+begin
+  SetDataValue(Value);
+end;
+
+function TBADateTime.IsSameValue(Value: TDateTime): boolean;
+begin
+  result := SameValue(Value, fValue);
 end;
 
 function TBADateTime.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
@@ -5244,6 +5253,16 @@ begin
     result := inherited ProxyInterface(IId, Mode, Obj);
 end;
 
+procedure TBADate.SetAsDate(Value: TDateTime);
+begin
+  SetDataValue(Trunc(Value));
+end;
+
+function TBADate.IsSameValue(Value: TDateTime): boolean;
+begin
+  result := Trunc(Value) = fValue;
+end;
+
 function TBADate.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
 begin
   if not Assigned(AttributeTypeInfo) then
@@ -5303,6 +5322,16 @@ end;
 function TBATime.GetAsSeconds: cardinal;
 begin
   Result := Seconds + (Minutes * 60) + (Hours * 3600);
+end;
+
+procedure TBATime.SetAsDate(Value: TDateTime);
+begin
+  SetDataValue(Frac(Value));
+end;
+
+function TBATime.IsSameValue(Value: TDateTime): boolean;
+begin
+  result := SameValue(Frac(Value), fValue);
 end;
 
 function TBATime.GetAttributeTypeInfoForType: TBoldElementTypeInfo;
