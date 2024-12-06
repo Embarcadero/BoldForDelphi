@@ -554,9 +554,7 @@ begin
 end;
 
 procedure TBoldSubscriber.ClearEntry(Index: integer);
-var Publisher: TBoldPublisher;
 begin
-  Publisher := Subscriptions[Index].Publisher;
   Subscriptions[Index].Publisher := nil;
   // Attempt to reuse empty places
   if fSubscriptionCount-1 = index then

@@ -203,7 +203,7 @@ Illegal symbol combination
 // IndexColumn creates an extra Index column in MemberMappingTable
 {.$DEFINE IndexColumn}
 
-//Includes BoldJson and BoldObjectRepresentationJson - includes LkJSON v1.07
+//Adds brJson StringRepresentation via BoldObjectRepresentationJson unit
 {$DEFINE BoldJson}
 
 // BoldSystem broadcasts member events - allows getting events from all objects and their members by only placing one subscription on system
