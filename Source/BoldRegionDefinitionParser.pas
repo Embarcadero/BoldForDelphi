@@ -124,7 +124,7 @@ begin
         DefaultRegion := DefaultCore.EnsuredConcreteDefinition(ClassTypeInfo, existed);
         if not existed then
         begin
-          for MemberIx := 0 to ClassTypeInfo.AllMembers.Count-1 do
+          for MemberIx := 0 to ClassTypeInfo.AllMembersCount-1 do
           begin
             MemberRTInfo := ClassTypeInfo.AllMembers[MemberIx];
             if MemberRTInfo.IsAttribute then

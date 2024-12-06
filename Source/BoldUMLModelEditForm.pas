@@ -740,7 +740,8 @@ uses
   BoldUMLPluginCallBacks,
   BoldUMLAbstractModelValidator,
   BoldRegistry,
-  BoldUMLModelEditorHandlesDataModule;
+  BoldUMLModelEditorHandlesDataModule,
+  BoldLogHandlerForm;
 
 {$R *.dfm}
 
@@ -2587,7 +2588,7 @@ end;
 
 procedure TBoldModelEditFrm.Loggform1Click(Sender: TObject);
 begin
-  Boldlog.Show;
+  BoldLogForm.Show;
 end;
 
 procedure TBoldModelEditFrm.Tools1Click(Sender: TObject);

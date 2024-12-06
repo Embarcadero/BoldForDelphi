@@ -610,7 +610,7 @@ begin
   //js.Add('id',StrToInt(aBoldObject.BoldObjectLocator.BoldObjectID.AsString));
   //Result.Add('id',aBoldObject.BoldMemberByExpressionName['objectGUID'].AsString);
 
-  for I := 0 to aBoldObject.BoldClassTypeInfo.AllMembers.Count - 1 do
+  for I := 0 to aBoldObject.BoldClassTypeInfo.AllMembersCount - 1 do
   try
     vBoldMember := aBoldObject.BoldMembers[i];
     vMemberRTInfo := vBoldMember.BoldMemberRTInfo;

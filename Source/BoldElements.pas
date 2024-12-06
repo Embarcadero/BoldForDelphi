@@ -56,6 +56,7 @@ const
   befInDelayDestructionList         = BoldElementFlag13;
   befDiscarding                     = BoldElementFlag14;
   befDeleting                       = BoldElementFlag15;
+  befCreating                       = BoldElementFlag16;
 
   {flags for BoldMember}
   befIsNull                         = BoldElementFlag4;
@@ -711,8 +712,8 @@ begin
     ElementName := BoldElement.ClassName
   else
     ElementName := 'nil';
-  
-  raise EBold.CreateFmt(sInvalidCompareType,  [ClassName,  
+
+  raise EBold.CreateFmt(sInvalidCompareType,  [ClassName,
                         GetEnumName(TypeInfo(TBoldCompareType), Ord(CompType)), ElementName]);
 end;
 
@@ -1175,7 +1176,7 @@ var
   List: TBoldExternalVariableList;
 begin
   // Used to force compiler to link AsCommaText, so it can be used in debugging
-  exit; 
+  exit;
   List := nil;
   List.AsCommaText;
 end;

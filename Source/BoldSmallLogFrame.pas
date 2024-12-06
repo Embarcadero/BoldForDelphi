@@ -258,7 +258,7 @@ end;
 
 procedure TBoldLogFrame.ProcessInterruption;
 begin
-  application.ProcessMessages;
+  Application.ProcessMessages;
 end;
 
 procedure TBoldLogFrame.Sync;

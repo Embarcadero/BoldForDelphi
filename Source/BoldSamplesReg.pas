@@ -72,9 +72,9 @@ end;
 
 procedure Register;
 begin
-    RegisterComponentsOnPalette;
-    RegisterBoldActions;
-    RegisterEditors;
+  RegisterComponentsOnPalette;
+  RegisterBoldActions;
+  RegisterEditors;
 end;
 
 { TTextFileProperty }

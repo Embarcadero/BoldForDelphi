@@ -2908,7 +2908,7 @@ end;
 
 procedure TBoldModelEditFrmCx.Loggform1Click(Sender: TObject);
 begin
-  Boldlog.Show;
+  BoldLogForm.Show;
 end;
 
 procedure TBoldModelEditFrmCx.Tools1Click(Sender: TObject);

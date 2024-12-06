@@ -42,9 +42,6 @@ type
   TBoldUMLSupport = class(TObject)
   private
     class function NameInListExceptElement(Name: string; List: TUMLModelElementList; UMLElement: TUMLModelElement): Boolean;
-    {$IFNDEF BoldSystemBroadcastMemberEvents}
-    class procedure SubscribeToAllMembers(UMLElement: TUMLModelElement; Subscriber: TBoldSubscriber);
-    {$ENDIF}
     class function GetEnsuredPackage(Package: TUMLPackage; QualifiedPackageName: String): TUMLPackage;
   public
     class function UMLModelNameToUMLName(const ModelName: string): string;
@@ -349,17 +346,7 @@ begin
   if Assigned(TaggedValue) then
     TaggedValue.Delete;
 end;
-{
-class procedure TBoldUMLSupport.SetDefaultBoldTaggedValues(
-  Element: TUMLModelElement);
-var
-  i: integer;
-begin
-  with BoldDefaultTaggedValueList.ListForClassName[UMLModelNameToUMLName(Element.BoldClassTypeInfo.ExpressionName)] do
-    for i := 0 to Count - 1 do
-       EnsuredTaggedValue(Element, BOLDTVPREFIX + Definition[i].Tag).value := Definition[i].DefaultValue;
-end;
-}
+
 class procedure TBoldUMLSupport.StripToolId(Model: TUMLModel);
 var
   List: TUMLModelElementList;
@@ -377,64 +364,9 @@ begin
      List[i].Delete;
 end;
 
-{$IFNDEF BoldSystemBroadcastMemberEvents}
-class procedure TBoldUMLSupport.SubscribeToAllMembers(UMLElement: TUMLModelElement; Subscriber: TBoldSubscriber);
-{var
-  m: integer;
-  MemberRTInfo: TBoldMemberRTInfo;
-  OtherEnd, RoleRTInfo: TBoldRoleRTInfo;
-  IsTaggedValue, Subscribe: Boolean;}
-begin
-  UMLElement.AddSmallSubscription(subscriber, [beMemberChanged], breReEvaluate);
-{
-  // is it not possible to use the event beMemberChanged that is sent by an object.
-  IsTaggedValue := (UMLElement is TUMLTaggedValue);
-  for m := 0 to UMLElement.BoldMemberCount - 1 do
-  begin
-    MemberRTInfo := UMLElement.BoldClassTypeInfo.AllMembers[m];
-    // for tagged values, only subscribe to the value!
-    if not MemberRTInfo.IsDerived and
-      (not IsTaggedValue) or (MemberRTInfo.ExpressionName =  'value') then
-    begin
-      if MemberRTInfo.IsAttribute then
-      begin
-        Subscribe := true;
-      end
-      else
-      begin
-        Assert(MemberRTInfo is TBoldRoleRTInfo);
-        RoleRTInfo := TBoldRoleRTInfo(MemberRTInfo);
-        OtherEnd := RoleRTInfo.RoleRTInfoOfOtherEnd;
-        Subscribe :=
-          (RoleRTInfo.IsMultiRole or OtherEnd.IsSingleRole or not OtherEnd.IsNavigable) and
-          RoleRTInfo.IsNavigable and (RoleRTInfo.RoleType = rtRole);
-      end;
-      if Subscribe then
-        UMLElement.BoldMembers[m].DefaultSubscribe(Subscriber)
-    end;
-  end;
-  }
-end;
-{$ENDIF}
-
 class procedure TBoldUMLSupport.SubscribeToEntireModel(UMLModel: TUMLModel; Subscriber: TBoldSubscriber);
-{$IFNDEF BoldSystemBroadcastMemberEvents}
-var
-  i: integer;
-  Parts: TUMLModelElementList;
-{$ENDIF}
 begin
-{$IFDEF BoldSystemBroadcastMemberEvents}
   UMLModel.BoldSystem.AddSmallSubscription(Subscriber, beBroadcastMemberEvents);
-{$ELSE}
-  Parts := AllModelParts(UMLModel);
-  try
-    for i := 0 to Parts.Count - 1 do
-      SubscribeToAllMembers(Parts[i], Subscriber);
-  finally
-    Parts.Free;
-  end;
-{$ENDIF}
 end;
 
 class function TBoldUMLSupport.UMLModelNameToUMLName(const ModelName: string): string;

@@ -1136,7 +1136,6 @@ const
   sUMLGenInterface = 'Generate Persistence Interfaces';
 
 // BoldConstraintValidator
-  sVMOnModifyRequirements = '%s: vmOnModify mode requires BoldSystemBroadcastMemberEvents conditional define.';
   sConstraints = 'Constraints';
 
 implementation

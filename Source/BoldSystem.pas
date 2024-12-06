@@ -673,6 +673,7 @@ type
     property BoldObjectIsDeleted: Boolean read GetBoldObjectIsDeleted;
     property BoldObjectExists: Boolean read GetBoldObjectExists;
     property Touched: Boolean index befTouched read GetElementFlag;
+    property IsCreating: Boolean index befCreating read GetElementFlag write SetElementFlag;
     property Discarding: Boolean index befDiscarding read GetElementFlag write SetElementFlag;
     property Deleting: Boolean index befDeleting read GetElementFlag write SetElementFlag;
     property DeletingOrDeletingByDiscard: Boolean read GetDeletingOrDeletingByDiscard;
@@ -1263,6 +1264,7 @@ type
     function GetIsEmpty: Boolean; virtual;
   public
     constructor Create(OwningList: TBoldList); virtual;
+    function AssertIntegrity: Boolean; override;
     procedure AddElement(Element: TBoldElement); virtual; abstract;
     function GetElement(index: Integer): TBoldElement; virtual; abstract;
     function IncludesElement(Item: TBoldElement): Boolean; virtual; abstract;
@@ -1275,6 +1277,7 @@ type
     property Count: integer read GetCount;
     property IsEmpty: Boolean read GetIsEmpty;
     property Capacity: integer read GetCapacity write SetCapacity;
+    property Elements[index: Integer]: TBoldElement read GetElement write SetElement; default;
   end;
 
   {---TBoldAbstractObjectListController---}
@@ -2212,7 +2215,7 @@ end;
 
 function TBoldObject.GetBoldMemberCount: Integer;
 begin
-  Result := BoldClassTypeInfo.AllMembers.Count;
+  Result := BoldClassTypeInfo.AllMembersCount;
 end;
 
 function TBoldObject.GetBoldMemberAssigned(Index: integer): Boolean;
@@ -2813,7 +2816,7 @@ begin
     // If we got an exception duriung destoy, we might get an half uninitialized BoldObject without Locator next time.
     if Assigned(aLocator) then //PATCH
     begin
-      TBoldClassListController(Classes[aLocator.BoldClassTypeInfo.TopSortedIndex].ObjectListController).ReceiveClassEvent(BoldObject, beLocatorDestroying);
+      TBoldClassListController(Classes[aLocator.BoldClassTypeInfo.TopSortedIndex].ObjectListController).ReceiveClassEvent(BoldObject, beLocatorDestroying, []);
       SendExtendedEvent(beLocatorDestroying, [aLocator]);
       aLocator.UnloadBoldObject;
       Locators.Remove(aLocator);
@@ -2832,22 +2835,22 @@ procedure TBoldSystem.ReceiveEventFromOwned(originator: TObject;
 var
   ClassList: TBoldObjectList;
 begin
-  if (originalEvent in [beObjectCreated, beObjectDeleted, beObjectFetched, beObjectUnloaded, beCompleteModify])
-     and (originator is TBoldObject) then
+  if Assigned(fClasses) then
   begin
-    if originalEvent in [beObjectCreated, beObjectDeleted, beObjectFetched, beObjectUnloaded] then
+    ClassList := nil;
+    if (originator is TBoldMember) then
     begin
+      if not Assigned(TBoldMember(Originator).OwningObject) then
+        exit;
+      ClassList := Classes[TBoldMember(Originator).OwningObject.BoldClassTypeInfo.TopSortedIndex];
+    end
+    else
+    if (originator is TBoldObject) then
       ClassList := Classes[TBoldObject(Originator).BoldClassTypeInfo.TopSortedIndex];
-      Assert(ClassList.ObjectListController is TBoldClassListController);
-      TBoldClassListController(ClassList.ObjectListController).ReceiveClassEvent(TBoldObject(Originator), OriginalEvent);
-    end;
-    SendExtendedEvent(originalEvent, [originator]);
-  end
-  else
-{$IFDEF BoldSystemBroadcastMemberEvents}
+    TBoldClassListController(ClassList.ObjectListController).ReceiveClassEvent(Originator as TBoldDomainElement, OriginalEvent, Args);
     if (originalEvent in beBroadcastMemberEvents) and ((Originator is TBoldObject) or (Originator is TBoldMember) and (TBoldMember(Originator).OwnedByObject)) then
       Publisher.SendExtendedEvent(Originator, originalEvent, Args);
-{$ENDIF}
+  end;
 end;
 
 procedure TBoldSystem.ReceiveFromPersistenceController(Originator: TObject;
@@ -3841,11 +3844,9 @@ begin
   if (BoldExistenceState = besExisting) and
      (originalEvent in beValueEvents) then
     SendExtendedEvent(beMemberChanged, [Originator]);
-{$IFDEF BoldSystemBroadcastMemberEvents}
   if (BoldExistenceState = besExisting) and
      (originalEvent in beBroadcastMemberEvents) then
     BoldSystem.ReceiveEventFromOwned(Originator, OriginalEvent, Args); // broadcast member events through BoldSystem
-{$ENDIF}
 end;
 
 function TBoldObject.ReceiveQueryFromOwned(Originator: TObject;
@@ -3987,7 +3988,7 @@ var
   MemberRTInfo: TBoldmemberRTInfo;
 begin
   Result := True;
-  for I := 0 to BoldClassTypeInfo.AllMembers.Count - 1 do
+  for I := 0 to BoldClassTypeInfo.AllMembersCount - 1 do
   begin
     MemberRTInfo := BoldClassTypeInfo.AllMembers[i];
     if (I <> index) and not MemberRTInfo.IsDerived then
@@ -4347,8 +4348,13 @@ begin
   else
     SetBoldPersistenceState(bvpsTransient);
   try
-    CompleteCreate;
-    SendEvent(beCompleteModify);
+    IsCreating := true;
+    try
+      CompleteCreate;
+      SendEvent(beCompleteModify);
+    finally
+      IsCreating := false;
+    end;
   except
     SetBoldExistenceState(besNotCreated);
     SetBoldPersistenceState(bvpsCurrent);
@@ -4906,7 +4912,7 @@ begin
   if BoldDirty then
     raise EBold.CreateFmt(sCannotInvalidateDirtyObject, [classname]);
 
-  for i := 0 to BoldClassTypeInfo.AllMembers.Count - 1 do
+  for i := 0 to BoldClassTypeInfo.AllMembersCount - 1 do
     if BoldClassTypeInfo.AllMembers[i].Persistent and BoldMembers[i].BoldPersistent then
       BoldMembers[i].Invalidate;
 
@@ -9221,6 +9227,18 @@ end;
 constructor TBoldListController.Create(OwningList: TBoldList);
 begin
   fOwningList := OwningList;
+end;
+
+function TBoldListController.AssertIntegrity: Boolean;
+var
+  i: integer;
+begin
+  for i := 0 to Count-1 do
+  begin
+    self[i].DebugInfo;
+    Assert(self[i] is TBoldElement);
+  end;
+  result := true;
 end;
 
 function TBoldListController.CreateNew: TBoldElement;

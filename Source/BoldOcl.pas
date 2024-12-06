@@ -245,7 +245,7 @@ begin
   begin
     ClassInfo := fSystemTypeInfo.TopSortedClasses[i];
     vLength := 0;
-    for j := 0 to ClassInfo.AllMembers.Count - 1 do
+    for j := 0 to ClassInfo.AllMembersCount - 1 do
       vLength := Max(vLength, Length(ClassInfo.AllMembers[j].ExpressionName));
     fMaxMemberNameArray[i] := vLength;
   end;

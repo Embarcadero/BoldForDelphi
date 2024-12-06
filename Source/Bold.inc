@@ -203,9 +203,6 @@ Illegal symbol combination
 //Adds brJson StringRepresentation via BoldObjectRepresentationJson unit
 {$DEFINE BoldJson}
 
-// BoldSystem broadcasts member events - allows getting events from all objects and their members by only placing one subscription on system
-{$DEFINE BoldSystemBroadcastMemberEvents}
-
 // NoEnsureEnclosure skips EnsureEnclosure call in UpdateDatabase, use NoEnsureEnclosure if objects passed to UpdateDatabase are already enclosed
 {.$DEFINE NoEnsureEnclosure}
 
@@ -237,6 +234,5 @@ Illegal symbol combination
   {$UNDEF IDServer}
   {$UNDEF NoNegativeDates}
   {$UNDEF ConvertZeroDateToDateNil}
-  {$UNDEF BoldSystemBroadcastMemberEvents}
 {$ENDIF}
 

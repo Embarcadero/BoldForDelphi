@@ -1260,7 +1260,8 @@ begin
   FAllRoles.OwnsEntries := false;
   fMethods := TBoldMethodRTInfoList.Create;
   fSubClasssesBoldClassTypeInfoList := TBoldClassTypeInfoList.Create;
-  fSubClasssesBoldClassTypeInfoList.OwnsEntries := false;  
+  fSubClasssesBoldClassTypeInfoList.OwnsEntries := false;
+  fAllMembersCount := -1;
   Initialize(MoldClass, TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses, SkipMembers);
 end;
 

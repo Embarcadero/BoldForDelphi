@@ -30,6 +30,7 @@ type
     procedure SetProgressMax(const Value: integer);
     procedure ProcessInterruption;
   public
+    procedure AfterConstruction; override;
     destructor Destroy; override;
     procedure Clear;
     procedure Hide;
@@ -41,6 +42,8 @@ type
     procedure EndLog;
     procedure SaveLog;
   end;
+
+function BoldLogForm: IBoldLogReceiver;
 
 implementation
 
@@ -54,7 +57,20 @@ uses
 var
   LogHandlerForm: TBoldLogHandlerReceiver;
 
+function BoldLogForm: IBoldLogReceiver;
+begin
+  if not Assigned(LogHandlerForm) then
+    LogHandlerForm := TBoldLogHandlerReceiver.Create;
+  result := LogHandlerForm;
+end;
+
 { TBoldLogHandlerReceiver }
+
+procedure TBoldLogHandlerReceiver.AfterConstruction;
+begin
+  inherited;
+  BoldLog.RegisterLogReceiver(self as IBoldLogReceiver);
+end;
 
 procedure TBoldLogHandlerReceiver.Clear;
 begin
@@ -154,13 +170,5 @@ begin
   if LogForm.Visible then
     Application.ProcessMessages;
 end;
-
-initialization
-//  LogHandlerForm := TBoldLogHandlerReceiver.Create;
-//  BoldLog.RegisterLogReceiver(LogHandlerForm as IBoldLogReceiver);
-
-finalization
-//  if Assigned(LogHandlerForm) then
-//    BoldLog.UnregisterLogReceiver(LogHandlerForm as IBoldLogReceiver);
 
 end.
