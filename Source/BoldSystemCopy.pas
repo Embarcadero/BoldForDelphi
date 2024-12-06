@@ -130,61 +130,51 @@ end;
 
 procedure TBoldSystemCopy.AnalyzeModel;
 var
-  i,j: integer;
   TopSortedClasses: TBoldClassTypeInfoList;
   ClassTypeInfo: TBoldClassTypeInfo;
   RoleTypeInfo: TBoldRoleRTInfo;
+  HeadRoleTypeInfo: TBoldRoleRTInfo;
+  i: integer;
 begin
   TopSortedClasses := self.fSourceSystemHandle.StaticSystemTypeInfo.TopSortedClasses;
-  for I := 0 to TopSortedClasses.Count-1 do
+  for ClassTypeInfo in TopSortedClasses do
   begin
-    ClassTypeInfo := TopSortedClasses[i];
     with ClassTypeInfo do
       if IsAbstract or IsLinkClass or (not Persistent) then
         Continue;
 
-    for j := 0 to ClassTypeInfo.AllMembersCount - 1 do
+    for RoleTypeInfo in ClassTypeInfo.AllRoles do
     begin
-      if not ClassTypeInfo.AllMembers[j].IsRole then
-        continue;
-      RoleTypeInfo := ClassTypeInfo.AllMembers[j] as TBoldRoleRTInfo;
       if not RoleTypeInfo.Persistent then
         Continue;
-
       if (RoleTypeInfo.Aggregation = akComposite) and RoleTypeInfo.RoleRTInfoOfOtherEnd.IsMultiRole then
         Report(RoleTypeInfo.DebugInfo, []);
-
       if (RoleTypeInfo.Aggregation = akComposite) {and RoleTypeInfo.RoleRTInfoOfOtherEnd.Mandatory} then
         HeadTailRoles.Add(RoleTypeInfo);
     end;
   end;
 
-  for I := 0 to TopSortedClasses.Count-1 do
+  for ClassTypeInfo in TopSortedClasses do
   begin
-    ClassTypeInfo := TopSortedClasses[i];
     with ClassTypeInfo do
       if IsAbstract or IsLinkClass or (not Persistent) then
         Continue;
 
-    for j :=  0 to ClassTypeInfo.AllMembers.Count - 1 do
+    for RoleTypeInfo in ClassTypeInfo.AllRoles do
     begin
-      if not ClassTypeInfo.AllMembers[j].IsRole then
-        continue;
-      RoleTypeInfo := ClassTypeInfo.AllMembers[j] as TBoldRoleRTInfo;
       if not RoleTypeInfo.Persistent then
         Continue;
       if (RoleTypeInfo.RoleRTInfoOfOtherEnd.Aggregation = akComposite) {and RoleTypeInfo.Mandatory }then
       begin
-        RoleTypeInfo := FindHead(ClassTypeInfo);
-        if Assigned(RoleTypeInfo) then
-          HeadTailRoles.Remove(RoleTypeInfo);
+        HeadRoleTypeInfo := FindHead(ClassTypeInfo);
+        if Assigned(HeadRoleTypeInfo) then
+          HeadTailRoles.Remove(HeadRoleTypeInfo);
       end;
     end;
   end;
   for i := HeadTailRoles.Count-1 downto 0 do
   begin
-    RoleTypeInfo :=  FindTail(HeadTailRoles[i].ClassTypeInfo);
-    if Assigned(RoleTypeInfo) then
+    if FindTail(HeadTailRoles[i].ClassTypeInfo) <> nil then
       HeadTailRoles.RemoveByIndex(i);
   end;
 end;
@@ -238,14 +228,12 @@ procedure TBoldSystemCopy.CollectMembers(AClassTypeInfo: TBoldClassTypeInfo;
   AMemberIdList: TBoldMemberIdList; ARoleTypes: TBoldRoleSet; AAttributes,
   ADerived, ADelayedFetched: boolean);
 var
-  i: integer;
   RoleRTInfo: TBoldRoleRTInfo;
   MemberRtInfo: TBoldMemberRTInfo;
 begin
   Assert(Assigned(AMemberIdList));
-  for I := 0 to AClassTypeInfo.AllMembersCount -1 do
+  for MemberRtInfo in AClassTypeInfo.AllMembers do
   begin
-    MemberRtInfo := AClassTypeInfo.AllMembers[i];
     if not MemberRtInfo.Persistent then
       continue;
     if MemberRtInfo.IsDerived then
@@ -257,7 +245,7 @@ begin
     else
     if MemberRtInfo.IsRole then
     begin
-      RoleRTInfo := AClassTypeInfo.AllMembers[i] as TBoldRoleRTInfo;
+      RoleRTInfo := MemberRtInfo as TBoldRoleRTInfo;
       if (RoleRTInfo.RoleType in ARoleTypes) then
         AMemberIdList.Add(TBoldMemberId.Create(RoleRTInfo.index));
     end;
@@ -274,7 +262,7 @@ var
   FilteredList: TBoldObjectList;
   MemberIdList1, MemberIdList2: TBoldMemberIdList;
   RoleTypeInfo: TBoldRoleRTInfo;
-  i, c, iStart, iEnd: integer;
+  i, iStart, iEnd: integer;
   DirtyObject: TBoldObject;
   DirtyObjects: TList;
   g: IBoldGuard;
@@ -292,9 +280,8 @@ begin
   Report('Copying objects', []);
   Report('-------------',[]);
 
-  for c := 0 to SourceSystem.BoldSystemTypeInfo.TopSortedClasses.Count - 1do
+  for ClassTypeInfo in SourceSystem.BoldSystemTypeInfo.TopSortedClasses do
   begin
-    ClassTypeInfo := SourceSystem.BoldSystemTypeInfo.TopSortedClasses[c];
     if ClassTypeInfo.IsAbstract or ClassTypeInfo.IsLinkClass or not ClassTypeInfo.Persistent then
       continue; // skip abstract, link and transient classes
     RoleTypeInfo := FindTail(ClassTypeInfo);
@@ -303,7 +290,7 @@ begin
       Report('Skipping tail class %s', [ClassTypeInfo.DebugInfo]);
       Continue; // skip tail classes
     end;
-    ClassList := SourceSystem.Classes[c];
+    ClassList := SourceSystem.Classes[ClassTypeInfo.TopSortedIndex];
     if ClassList.Empty then
     begin
       Report('Skipping empty class %s', [ClassTypeInfo.DebugInfo]);
