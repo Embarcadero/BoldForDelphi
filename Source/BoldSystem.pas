@@ -1614,11 +1614,21 @@ begin
 end;
 
 procedure TBoldDirtyObjectTracker.DiscardChanges;
+var
+  i: integer;
+  BoldObject: TBoldObject;
 begin
   if fBoldSystem.InTransaction then
     raise EBold.CreateFmt('%s.DiscardChanges: System is in transaction, discard not allowed.', [ClassName]);
   while not fDirtyObjects.Empty do
-    (fDirtyObjects.Last as TBoldObject).Discard;
+  begin
+    i := fDirtyObjects.Count;
+    BoldObject := fDirtyObjects.Last;
+    BoldObject.Discard;
+    if i = fDirtyObjects.Count then
+      if not BoldObject.BoldDirty then
+        fBoldSystem.MarkObjectClean(BoldObject);
+  end;
 end;
 
 function TBoldDirtyObjectTracker.GetDirtyObjects: TBoldObjectList;
