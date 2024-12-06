@@ -192,7 +192,7 @@ type
   public
     constructor Create; overload;
     constructor Create(aOwnsVariables: boolean); overload;
-    class function CreateWithStringVariable(AName: string; AValue: string): TBoldExternalVariableList;
+    class function CreateWithStringVariable(AName: string; AValue: string; AEvaluator: TBoldEvaluator = nil): TBoldExternalVariableList;
     class function CreateWithElementVariable(AName: string; AValue: TBoldElement): TBoldExternalVariableList;
     function GetEnumerator: TBoldExternalVariableListTraverser;
     procedure Add(Variable: TBoldExternalVariable); overload;
@@ -1039,10 +1039,10 @@ begin
 end;
 
 class function TBoldExternalVariableList.CreateWithStringVariable(AName,
-  AValue: string): TBoldExternalVariableList;
+  AValue: string; AEvaluator: TBoldEvaluator): TBoldExternalVariableList;
 begin
   result := TBoldExternalVariableList.Create;
-  result.Add(TBoldOclVariable.CreateStringVariable(AName, AValue));
+  result.Add(TBoldOclVariable.CreateStringVariable(AName, AValue, AEvaluator));
 end;
 
 function TBoldExternalVariableList.GetAsCommaText: string;
