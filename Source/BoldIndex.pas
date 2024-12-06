@@ -743,6 +743,7 @@ begin
     end;
   end;
   fCount := 0;
+  SetCapacity(0);
 end;
 
 constructor TBoldIntegerIndex.Create;

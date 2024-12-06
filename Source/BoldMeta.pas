@@ -2252,10 +2252,11 @@ var
 begin
   TrimmedValue := BoldTrim(Value);
   Definition := DefaultBoldTVList.DefinitionForTag[Tag];
+  // only set tag if it differs from default
   if Assigned(Definition) and (Definition.DefaultValue = TrimmedValue) then
-   // do Nothing
-  else
-    BoldTaggedValues.ValueByName[Tag] := TrimmedValue;
+    if BoldTaggedValues.ValueByName[Tag] =  '' then
+      exit;
+  BoldTaggedValues.ValueByName[Tag] := TrimmedValue;
 end;
 
 function TMoldMember.GetManuallyDerived: Boolean;

@@ -2830,7 +2830,7 @@ begin
     // If we got an exception duriung destoy, we might get an half uninitialized BoldObject without Locator next time.
     if Assigned(aLocator) then //PATCH
     begin
-      TBoldClassListController(Classes[aLocator.BoldClassTypeInfo.TopSortedIndex].ObjectListController).ReceiveClassEvent(BoldObject, beLocatorDestroying, []);
+      TBoldClassListController(Classes[aLocator.BoldClassTypeInfo.TopSortedIndex].ObjectListController).ReceiveClassEvent(BoldObject, beLocatorDestroying, [aLocator]);
       SendExtendedEvent(beLocatorDestroying, [aLocator]);
       aLocator.UnloadBoldObject;
       Locators.Remove(aLocator);
@@ -5923,17 +5923,15 @@ begin
 {$ENDIF}
     case BoldPersistenceState of
       bvpsModified: begin
-
         if not OwningObject.BoldObjectLocator.BoldObjectID.IsStorable then
           BoldPersistenceState := bvpsCurrent
         else
           BoldPersistenceState := bvpsInvalid;
-
         FreeContent;
         SendEvent(beValueInvalid);
       end;
-      bvpsTransient: if not Derived and mutable then
-       DoSetInitialValue;
+      bvpsTransient: if not Derived and mutable and not OwningObject.Discarding then
+        DoSetInitialValue;
     end;
   end;
 end;

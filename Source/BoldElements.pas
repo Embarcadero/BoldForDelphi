@@ -197,12 +197,12 @@ type
     function GetEnumerator: TBoldExternalVariableListTraverser;
     procedure Add(Variable: TBoldExternalVariable); overload;
     procedure Add(AName: string; AValue: TBoldElement); overload;
-    procedure Add(AName: string; AValue: string); overload;
-    procedure AddInteger(AName: string; AValue: integer);
-    procedure AddFloat(AName: string; AValue: Double);
-    procedure AddDateTime(AName: string; AValue: TDateTime);
-    procedure AddDate(AName: string; AValue: TDate);
-    procedure AddTime(AName: string; AValue: TTime);
+    procedure Add(AName: string; AValue: string; AEvaluator: TBoldEvaluator = nil); overload;
+    procedure AddInteger(AName: string; AValue: integer; AEvaluator: TBoldEvaluator = nil);
+    procedure AddFloat(AName: string; AValue: Double; AEvaluator: TBoldEvaluator = nil);
+    procedure AddDateTime(AName: string; AValue: TDateTime; AEvaluator: TBoldEvaluator = nil);
+    procedure AddDate(AName: string; AValue: TDate; AEvaluator: TBoldEvaluator = nil);
+    procedure AddTime(AName: string; AValue: TTime; AEvaluator: TBoldEvaluator = nil);
     property Variables[index: integer]: TBoldExternalVariable read GetVariables; default;
     property VariableByName[const aName: string]: TBoldExternalVariable read GetVariableByName;
     property AsCommaText: string read GetAsCommaText;
@@ -983,9 +983,9 @@ begin
   inherited Add(Variable);
 end;
 
-procedure TBoldExternalVariableList.Add(AName, AValue: string);
+procedure TBoldExternalVariableList.Add(AName, AValue: string; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateStringVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateStringVariable(AName, AValue, AEvaluator));
 end;
 
 procedure TBoldExternalVariableList.Add(AName: string; AValue: TBoldElement);
@@ -993,29 +993,29 @@ begin
   Add(TBoldOclVariable.Create(AName, AValue));
 end;
 
-procedure TBoldExternalVariableList.AddDate(AName: string; AValue: TDate);
+procedure TBoldExternalVariableList.AddDate(AName: string; AValue: TDate; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateDateVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateDateVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddDateTime(AName: string; AValue: TDateTime);
+procedure TBoldExternalVariableList.AddDateTime(AName: string; AValue: TDateTime; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateDateTimeVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateDateTimeVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddFloat(AName: string; AValue: Double);
+procedure TBoldExternalVariableList.AddFloat(AName: string; AValue: Double; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateFloatVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateFloatVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddInteger(AName: string; AValue: integer);
+procedure TBoldExternalVariableList.AddInteger(AName: string; AValue: integer; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateIntegerVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateIntegerVariable(AName, AValue, AEvaluator));
 end;
 
-procedure TBoldExternalVariableList.AddTime(AName: string; AValue: TTime);
+procedure TBoldExternalVariableList.AddTime(AName: string; AValue: TTime; AEvaluator: TBoldEvaluator);
 begin
-  Add(TBoldOclVariable.CreateTimeVariable(AName, AValue));
+  Add(TBoldOclVariable.CreateTimeVariable(AName, AValue, AEvaluator));
 end;
 
 constructor TBoldExternalVariableList.Create(aOwnsVariables: boolean);
