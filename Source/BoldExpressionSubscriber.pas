@@ -21,124 +21,45 @@ uses
   BoldId,
   BoldTypeList,
   BoldExternalObjectSpaceEventHandler,
+  BoldExpressionHandle,
   BoldComponentValidator;
 
 type
-  TEvaluationMode = (emAuto, emInMemory, emInPs);
-const
-  cDefaultSeverity = emAuto;
-
-type
   TExpressionSubscriber = class;
-  TExpressionCollection = class;
-  TExpressionDefinition = class;
-  TExpressionDefinitionEnumerator = class;
 
-  TExpressionChangedEvent = procedure(AExpressionDefinition: TExpressionDefinition) of object;
-
-  TExpressionSubscriber = class(TBoldNonSystemHandle, IBoldValidateableComponent)
+  TExpressionSubscriber = class(TBoldExpressionHandle)
   strict private
-    fExpressions: TExpressionCollection;
     fSubscriber: TBoldExtendedPassthroughSubscriber;
-    fExpressionChanged: TExpressionChangedEvent;
     fBoldExternalObjectSpaceEventHandler: TBoldExternalObjectSpaceEventHandler;
+    fSpan: TObject; // actually a TBoldObjectSpan
+    fCondition: TBoldExpression;
+    fRelevantClasses: TBoldTypeList;
+    fRelevantMembers: TBoldMemberRTInfoList;
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
     function GetSubscriber: TBoldSubscriber;
     procedure SetBoldExternalObjectSpaceEventHandler(const Value: TBoldExternalObjectSpaceEventHandler);
-    { IBoldValidateableComponent }
-    function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean; override;
-  protected
-    procedure StaticBoldTypeChanged; override;
-    procedure Changed(AExpressionDefinition: TExpressionDefinition);
-    function GetBoldSystem: TBoldSystem;
-    property Subscriber: TBoldSubscriber read GetSubscriber;
-    property BoldSystem: TBoldSystem read GetBoldSystem;
-  public
-    procedure AfterConstruction; override;
-    procedure BeforeDestruction; override;
-    procedure Execute;
-  published
-    property Expressions: TExpressionCollection read fExpressions write fExpressions;
-    property OnExpressionChanged: TExpressionChangedEvent read fExpressionChanged write fExpressionChanged;
-    property BoldExternalObjectSpaceEventHandler: TBoldExternalObjectSpaceEventHandler read fBoldExternalObjectSpaceEventHandler write SetBoldExternalObjectSpaceEventHandler;
-  end;
-
-  TExpressionDefinitionEnumerator = class(TCollectionEnumerator)
-  public
-    function GetCurrent: TExpressionDefinition;
-    property Current: TExpressionDefinition read GetCurrent;
-  end;
-
-  TExpressionCollection = class(TCollection)
-  strict private
-    fExpressionSubscriber: TExpressionSubscriber;
-  protected
-    function GetItems(Index: integer): TExpressionDefinition;
-    function GetOwner: TPersistent; override;
-    procedure Update(Item: TCollectionItem); override;
-    property ExpressionSubscriber: TExpressionSubscriber read fExpressionSubscriber;
-  public
-    constructor Create(AExpressionSubscriber: TExpressionSubscriber);
-    function GetEnumerator: TExpressionDefinitionEnumerator;
-    function AddDefinition(const ClassExpressionName: string; Condition: TBoldExpression; EvaluationMode: TEvaluationMode): TExpressionDefinition;
-    property Items[Index: integer]: TExpressionDefinition read GetItems; default;
-  end;
-
-  TExpressionDefinition = class(TCollectionItem, IBoldOCLComponent)
-  strict private
-    fSubscriber: TBoldExtendedPassthroughSubscriber;
-    fClassExpressionName: String;
-    fCondition: TBoldExpression;
-    fEvaluationMode: TEvaluationMode;
-    fResultList: TBoldIndirectElement;
-    fRelevantClasses: TBoldTypeList;
-    fVariables: TBoldOclVariables; //TBoldExternalVariableList;
-    fVariablesSubscriber: TBoldPassThroughSubscriber;
-    fSpan: TObject; // actually a TBoldObjectSpan
+    procedure EvaluateCondition(AContext: TBoldElement);
+    procedure ParseSpan;
   private
-    procedure SetClassExpressionName(const Value: String);
-    procedure SetEvaluationMode(const Value: TEvaluationMode);
-    procedure SetVariables(Value: TBoldOclVariables);
-    function GetVariables: TBoldOclVariables;
-    function GetSubscriber: TBoldSubscriber;
-    function GetBoldSystem: TBoldSystem;
-    function GetResultList: TBoldList;
-    procedure Changed;
-    procedure ReceiveFromVariables(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
+    function GetResultType: TBoldClassTypeInfo;
+  protected
+    procedure DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber); override;
+    procedure DoExpressionChanged; override;
+    function IsClassRelevant(AUmlClass: TBoldClassTypeInfo): boolean;
+    function IsMemberRelevant(AMember: TBoldMemberRtInfo): boolean;
     procedure ObjectCreated(const AClassName: string; AObjectId: TBoldObjectId);
     procedure ObjectDeleted(const AClassName: string; AObjectId: TBoldObjectId);
     procedure MemberChanged(const AClassName, AMemberName: string; AObjectId: TBoldObjectId; ABoldObject: TBoldObject);
-    function IsClassRelevant(AUmlClass: TBoldClassTypeInfo): boolean;
-    function GetSelectExpression: TBoldExpression;
+    function GetBoldSystem: TBoldSystem;
     property Subscriber: TBoldSubscriber read GetSubscriber;
     property BoldSystem: TBoldSystem read GetBoldSystem;
-    { IInterface }
-    function QueryInterface(const IId: TGUID; out Obj): HResult; virtual; stdcall;
-    function _AddRef: Integer; stdcall;
-    function _Release: Integer; stdcall;
-  protected
-    procedure Evaluate;
-    procedure EvaluateCondition(AContext: TBoldElement);
-    function GetDisplayName: string; override;
-    { IBoldOCLComponent }
-    function GetContextType: TBoldElementTypeInfo;
-    function GetExpression: TBoldExpression;
-    procedure SetExpression(const Value: TBoldExpression);
-    function GetVariableList: TBoldExternalVariableList; virtual;
+    property Condition: TBoldExpression read fCondition;
+    property ResultType: TBoldClassTypeInfo read GetResultType;
   public
-    constructor Create(Collection: TCollection); override;
-    destructor Destroy; override;
-    procedure Assign(Source: TPersistent); override;
-    property SelectExpression: TBoldExpression read GetSelectExpression;
-    property Expression: TBoldExpression read GetExpression;
-    property VariableList: TBoldExternalVariableList read GetVariableList;
-    property ResultList: TBoldList read GetResultList;
+    procedure AfterConstruction; override;
+    procedure BeforeDestruction; override;
   published
-    property ClassExpressionName: String read fClassExpressionName write SetClassExpressionName;
-    property Condition: TBoldExpression read fCondition write SetExpression;
-    property Variables: TBoldOclVariables read GetVariables write SetVariables;
-    property EvaluationMode: TEvaluationMode read fEvaluationMode write SetEvaluationMode default cDefaultSeverity;
+    property BoldExternalObjectSpaceEventHandler: TBoldExternalObjectSpaceEventHandler read fBoldExternalObjectSpaceEventHandler write SetBoldExternalObjectSpaceEventHandler;
   end;
 
 implementation
@@ -165,6 +86,7 @@ type
   private
     procedure SetParentNode(NewOwner: TBoldObjectSpan);
   strict protected
+    function GetDebugInfo: string; override;
     function GetIsDerived: Boolean; virtual; abstract;
     function GetHasDerivedPart: Boolean; virtual; abstract;
     function GetAlwaysCall: Boolean; virtual;
@@ -175,6 +97,7 @@ type
     function ShallowClone: TBoldSpanNode; virtual; abstract;
     function DeepClone: TBoldSpanNode; virtual;
     procedure CollectRelevantClasses(ATypeList: TBoldTypeList); virtual;
+    procedure CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList); virtual;
     function FindMatchByObject(AUmlClass: TBoldClassTypeInfo; AObjectId: TBoldObjectId): TBoldElement; virtual;
     function FindMatchByMember(AMember: TBoldMemberRTInfo; AObject: TBoldObject): TBoldElement; virtual;
     property ParentNode: TBoldObjectSpan read fParentNode;
@@ -188,10 +111,9 @@ type
   TBoldObjectSpan = class(TBoldSpanNode)
   strict private
     fUmlClass: TBoldClassTypeInfo;
-//    fFetchDefaultMembers: Boolean;
     fSubnodes: TObjectList;
     function GetSubnodeCount: Integer;
-    function GetSubNode(Index: Integer): TBoldSpanNode;
+    function GetSubNode(Index: Integer): TBoldSpanNode; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
     function GetRootNode: TBoldSpanNode;
   protected
     function GetHasDerivedPart: Boolean; override;
@@ -206,10 +128,10 @@ type
     function DeepClone: TBoldSpanNode; override;
     function ExtractAt(index: Integer): TBoldSpanNode;
     procedure CollectRelevantClasses(ATypeList: TBoldTypeList); override;
+    procedure CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList); override;
     function FindMatchByObject(AUmlClass: TBoldClassTypeInfo; AObjectId: TBoldObjectId): TBoldElement; override;
     function FindMatchByMember(AMember: TBoldMemberRTInfo; AObject: TBoldObject): TBoldElement; override;
 //    property UmlClass: TBoldClassTypeInfo read fUmlClass;
-//    property FetchDefaultMembers: Boolean read fFetchDefaultMembers write fFetchDefaultMembers;
     property SubnodeCount: Integer read GetSubnodeCount;
     property SubNode[Index: Integer]: TBoldSpanNode read GetSubNode;
     property RootNode: TBoldSpanNode read GetRootNode;
@@ -245,6 +167,7 @@ type
     function GetPath: string; override;
     function GetAsString: string; override;
     function ShallowClone: TBoldSpanNode; override;
+    procedure CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList); override;
     function FindMatchByMember(AMember: TBoldMemberRTInfo; AObject: TBoldObject): TBoldElement; override;
     property Attribute: TBoldAttributeRTInfo read fAttribute write fAttribute;
   end;
@@ -259,6 +182,7 @@ type
     function GetAsString: string; override;
     function GetPath: string; override;
     function ShallowClone: TBoldSpanNode; override;
+    procedure CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList); override;
     function FindMatchByMember(AMember: TBoldMemberRTInfo; AObject: TBoldObject): TBoldElement; override;
     property Role: TBoldRoleRTInfo read fRole;
  end;
@@ -283,6 +207,7 @@ type
     function GetAsString: string; override;
     function GetPath: string; override;
     function ShallowClone: TBoldSpanNode; override;
+    procedure CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList); override;
     function FindMatchByMember(AMember: TBoldMemberRTInfo; AObject: TBoldObject): TBoldElement; override;
     property Attribute:TBoldAttributeRTInfo read fAttribute;
  end;
@@ -340,7 +265,7 @@ type
     fGlobalVariableStack : TSpanArrayNamedCollection;
     fCurrentContextSpans: TSpanArray;
 
-    function DoParse(Expression: String; Evaluator: TBoldOcl; ContextType: TBoldClassTypeinfo; VariableList: TBoldExternalVariableList = nil): TBoldSpan;
+    function DoParse(Expression: String; Evaluator: TBoldOcl; ContextType: TBoldElementTypeInfo; VariableList: TBoldExternalVariableList = nil): TBoldSpan;
     function TranslateOclOperation(OclOperation: TBoldOclOperation): TSpanArray;
     function TranslateOclListCoercion(OclListCoercion: TBoldOclListCoercion): TSpanArray;
     function TranslateOclIteration(OclIteration: TBoldOclIteration): TSpanArray;
@@ -353,68 +278,72 @@ type
     property TypeSystem: TBoldSystemTypeInfo read GetTypeSystem;
   public
     destructor Destroy; override;
-    class function Parse(const Expression: String; ContextType: TBoldClassTypeinfo;
+    class function Parse(const Expression: String; ContextType: TBoldElementTypeInfo;
       VariableList: TBoldExternalVariableList = nil; Evaluator: TBoldOcl = nil): TBoldSpan;
   end;
 
-{ TExpressionDefinitionEnumerator }
 
-function TExpressionDefinitionEnumerator.GetCurrent: TExpressionDefinition;
+{ TExpressionSubscriber }
+
+procedure TExpressionSubscriber.AfterConstruction;
 begin
-  result := inherited GetCurrent as TExpressionDefinition;
+  inherited;
+  fRelevantClasses := TBoldTypeList.Create;
+  fRelevantClasses.DuplicateMode := bldmMerge;
+  fRelevantMembers := TBoldMemberRTInfoList.Create;
+  fRelevantMembers.OwnsEntries := false;
 end;
 
-{ TExpressionDefinition }
-
-function TExpressionDefinition.QueryInterface(const IId: TGUID;
-  out Obj): HResult;
+procedure TExpressionSubscriber.BeforeDestruction;
 begin
-  if GetInterface(IID, Obj) then
-    Result := S_OK
-  else
-    Result := E_NOINTERFACE;
+  FreeAndNil(fSpan);
+  FreeAndNil(fSubscriber);
+  FreeAndNil(fRelevantClasses);
+  FreeAndNil(fRelevantMembers);
+  inherited;
 end;
 
-procedure TExpressionDefinition.Evaluate;
+procedure TExpressionSubscriber.EvaluateCondition(AContext: TBoldElement);
 var
-  ClassTypeInfo: TBoldClassTypeInfo;
-  InPs: boolean;
-  Span: TBoldObjectSpan;
-begin
-  if not Assigned(BoldSystem) then
-    exit;
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassExpressionName];
-  fSpan := TExpressionsDefinitionParser.Parse(Expression, ClassTypeInfo);
-  Assert(fSpan is TBoldObjectSpan, fSpan.ClassName);
-  Span := fSpan as TBoldObjectSpan;
-  fRelevantClasses.clear;
-  Span.CollectRelevantClasses(fRelevantClasses);
-  Assert(not fRelevantClasses.Empty);
-  InPs := BoldSystem.CanEvaluateInPS(Expression, ClassTypeInfo);
-  BoldSystem.EvaluateExpression(Expression, fResultList, InPs, VariableList);
-  Assert(fResultList.Value is TBoldList, 'Result is not a list.');
-  Assert(ClassTypeInfo.ConformsTo(ResultList.BoldType), 'Result is not a ' + ClassTypeInfo.AsString + ' it is: ' + ResultList.BoldType.AsString);
-  Assert(ResultList.Mutable, 'Result is not mutable.');
-  Assert(ResultList.DuplicateMode = bldmMerge, 'DuplicateMode is not bldmMerge.');
-  ResultList.SubscribeToExpression(Condition, Subscriber, false, false, VariableList);
-end;
-
-procedure TExpressionDefinition.EvaluateCondition(AContext: TBoldElement);
-var
-  IE: TBoldIndirectElement;
+  IE,IE2: TBoldIndirectElement;
   TempList: TBoldList;
+  ResultList: TBoldList;
+  InList: TBoldList;
 begin
-  if Assigned(AContext) then
+  if Assigned(AContext) and Assigned(Value) then
   begin
-    if AContext is TBoldObject then
+    ie := TBoldIndirectElement.Create;
+    ie2 := TBoldIndirectElement.Create;
+    try
+      AContext.GetAsList(IE);
+      InList :=  IE.Value as TBoldList;
+      IE.Value.EvaluateAndSubscribeToExpression(Condition, Subscriber, ie2, false, false, VariableList);
+      ResultList := (IE2.Value as TBoldList);
+      if ResultList.Empty and (self.Value as TBoldList).Includes(AContext) then
+        self.MarkOutOfDate
+      else
+      if not ResultList.Empty and not (self.Value as TBoldList).Includes(AContext) then
+        self.MarkOutOfDate;
+{        (ResultElement.Value as TBoldList).RemoveList(InList)
+      else
+        (ResultElement.Value as TBoldList).AddList(InList);
+}
+    finally
+      ie.Free;
+      ie2.Free;
+    end;
+//    (ResultElement.Value as TBoldList).Add(AContext);
+{
+    if (AContext is TBoldObject) and AContext.BoldType.ConformsTo(resultType) then
     begin
       if AContext.EvaluateExpressionAsBoolean(Condition, false, VariableList) then
-        ResultList.Add(AContext)
+        (ResultElement.Value as TBoldList).Add(AContext)
       else
-        ResultList.Remove(AContext);
+        (ResultElement.Value as TBoldList).Remove(AContext);
       AContext.SubscribeToExpression(Condition, Subscriber, false, false, VariableList);
-    end
-    else
+    end;
+}
+{    else
     if AContext is TBoldList then
     begin
       TempList := TBoldList(AContext).Clone as TBoldList;
@@ -429,10 +358,214 @@ begin
         TempList.free;
       end;
     end;
+}
   end;
 end;
 
-procedure TExpressionDefinition.Receive(Originator: TObject;
+procedure TExpressionSubscriber.DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
+var
+  ClassTypeInfo: TBoldClassTypeInfo;
+  InPs: boolean;
+  Span: TBoldObjectSpan;
+begin
+  inherited;
+  if EffectiveRootValue = nil then
+    exit;
+  if EvaluateInPs and not Assigned(fSpan) then
+  begin
+    ParseSpan;
+    Assert(not fRelevantClasses.Empty);
+  end;
+end;
+
+procedure TExpressionSubscriber.DoExpressionChanged;
+begin
+  inherited;
+  if EvaluateInPs and (expression <> '') and (EffectiveRootValue <> nil)  then
+    ParseSpan;
+end;
+
+function TExpressionSubscriber.GetBoldSystem: TBoldSystem;
+begin
+  result := nil;
+  if Assigned(StaticSystemHandle) then
+    result := StaticSystemHandle.System;
+end;
+
+function TExpressionSubscriber.GetResultType: TBoldClassTypeInfo;
+begin
+  result := nil;
+  if Assigned(fSpan) then
+    result := (fSpan as TBoldObjectSpan).UmlClass;
+end;
+
+function TExpressionSubscriber.GetSubscriber: TBoldSubscriber;
+begin
+  if not Assigned(fSubscriber) then
+    fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(Receive);
+  result := fSubscriber;
+end;
+
+function TExpressionSubscriber.IsClassRelevant(AUmlClass: TBoldClassTypeInfo): boolean;
+var
+  Element: TBoldElement;
+begin
+  result := true;
+  for Element in fRelevantClasses do
+    if AUmlClass.BoldIsA(Element as TBoldElementTypeInfo) then
+      exit;
+  result := false;
+end;
+
+function TExpressionSubscriber.IsMemberRelevant(AMember: TBoldMemberRtInfo): boolean;
+var
+  Element: TBoldElement;
+begin
+  result := true;
+  if Assigned(AMember) then
+    for Element in fRelevantMembers do
+      if AMember.IsEqual(Element) then
+        exit;
+
+  result := false;
+end;
+
+procedure TExpressionSubscriber.ObjectCreated(const AClassName: string;
+  AObjectId: TBoldObjectId);
+var
+  ClassTypeInfo: TBoldClassTypeInfo;
+  Span: TBoldObjectSpan;
+  Locator: TBoldObjectLocator;
+  bo: TBoldObject;
+begin
+  Span := fSpan as TBoldObjectSpan;
+  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
+  if Assigned(resultType) and ClassTypeInfo.ConformsTo(resultType) then
+  begin
+    Locator := BoldSystem.EnsuredLocatorByID[AObjectId];
+    Assert(Assigned(Locator), 'Locator not found for ID' +AObjectId.AsString);
+    bo := Locator.EnsuredBoldObject;
+    EvaluateCondition(BO);
+  end
+  else
+  if IsClassRelevant(ClassTypeInfo) then
+  begin
+//    bo := Span.FindMatchByObject(ClassTypeInfo, AObjectId) as TBoldObject;
+//    if Assigned(bo) then
+//      EvaluateCondition(bo);
+    MarkOutOfDate;
+  end;
+end;
+
+procedure TExpressionSubscriber.ObjectDeleted(const AClassName: string;
+  AObjectId: TBoldObjectId);
+var
+  ClassTypeInfo: TBoldClassTypeInfo;
+  Span: TBoldObjectSpan;
+  Locator: TBoldObjectLocator;
+  bo: TBoldObject;
+begin
+  Span := fSpan as TBoldObjectSpan;
+  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
+//  if IsClassRelevant(ClassTypeInfo) then
+  if ClassTypeInfo.ConformsTo(resultType) then
+//  if ClassTypeInfo.BoldIsA(Span.UmlClass) then // root/result class match
+  begin
+    Locator := BoldSystem.EnsuredLocatorByID[AObjectId];
+    Assert(Assigned(Locator), 'Locator not found for ID' +AObjectId.AsString);
+    bo := Locator.EnsuredBoldObject;
+    MarkOutOfDate;//EvaluateCondition(BO);
+  end;
+  if IsClassRelevant(ClassTypeInfo) then
+  begin
+    MarkOutOfDate;
+//    bo := Span.FindMatchByObject(ClassTypeInfo, AObjectId) as TBoldObject;
+//    if Assigned(bo) then
+//      EvaluateCondition(bo);
+  end;
+end;
+
+procedure TExpressionSubscriber.ParseSpan;
+var
+  Span: TBoldObjectSpan;
+
+  function ExtractConditionFromExpression: string;
+  var
+    i: integer;
+  begin
+    if (Span.SubnodeCount = 1) and (Span.SubNode[0] is TBoldAllInstancesNode) then
+      result :=  StringReplace(expression, Span.UmlClass.ExpressionName + '.allInstances', 'self', [rfIgnoreCase])
+    else
+      Assert(false, 'expression not supported');
+  end;
+
+
+begin
+  FreeAndNil(fSpan);
+  fRelevantClasses.clear;
+  fRelevantMembers.Clear;
+  if (expression <> '') and (EffectiveRootValue <> nil) then
+  begin
+    fSpan := TExpressionsDefinitionParser.Parse(Expression, EffectiveRootValue.BoldType, VariableList);
+    if not Assigned(fSpan) then
+      exit;
+    Assert(fSpan is TBoldObjectSpan, fSpan.ClassName);
+    Span := fSpan as TBoldObjectSpan;
+    Span.CollectRelevantClasses(fRelevantClasses);
+    Span.CollectRelevantMembers(fRelevantMembers);
+
+    Assert(not fRelevantClasses.Empty);
+    fCondition := ExtractConditionFromExpression;
+  end;
+end;
+
+procedure TExpressionSubscriber.MemberChanged(const AClassName,
+  AMemberName: string; AObjectId: TBoldObjectId; ABoldObject: TBoldObject);
+var
+  ClassTypeInfo: TBoldClassTypeInfo;
+  MemberRTInfo: TBoldMemberRTInfo;
+  Span: TBoldObjectSpan;
+  Locator: TBoldObjectLocator;
+  bo: TBoldObject;
+  Element: TBoldElement;
+  sl: TStringList;
+  i,j: integer;
+begin
+  Span := fSpan as TBoldObjectSpan;
+  if Assigned(ABoldObject) then
+    ClassTypeInfo := ABoldObject.BoldClassTypeInfo
+  else
+    ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
+  if not IsClassRelevant(ClassTypeInfo) then
+    exit;
+  sl := TStringList.Create;
+  try
+    sl.CommaText := AMemberName;
+//    Locator := BoldSystem.Locators.LocatorByID[AObjectId];
+    for i := 0 to sl.Count - 1 do
+    begin
+      j := ClassTypeInfo.MemberIndexByExpressionName[sl[i]];
+//      j := ABoldObject.BoldMemberIndexByExpressionName[sl[i]];
+      if j = -1 then
+        raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [AClassName, AMemberName]);
+      MemberRTInfo := ClassTypeInfo.AllMembers[j];
+      Assert(Assigned(MemberRTInfo));
+      if IsMemberRelevant(MemberRTInfo) then
+      begin
+        self.MarkOutOfDate;
+        exit;
+//        Element := Span.FindMatchByMember(MemberRTInfo, Locator.EnsuredBoldObject);
+//        if Assigned(Element) then
+//          EvaluateCondition(Element);
+      end;
+    end;
+  finally
+    sl.free;
+  end;
+  bo := Locator.EnsuredBoldObject;
+end;
+
+procedure TExpressionSubscriber.Receive(Originator: TObject;
   OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent;
   const Args: array of const);
 begin
@@ -446,335 +579,6 @@ begin
     boeMemberChanged:  // [className, memberName, ObjectId]);
       MemberChanged(String(Args[0].VString), String(Args[1].VString), Args[2].VObject as TBoldObjectId, Args[3].VObject as TBoldObject);
   end;
-end;
-
-procedure TExpressionDefinition.ReceiveFromVariables(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-begin
-  if (Originator = FVariables) and (OriginalEvent = beDestroying) then
-    Variables := nil;
-end;
-
-procedure TExpressionDefinition.ObjectCreated(const AClassName: string;
-  AObjectId: TBoldObjectId);
-var
-  ClassTypeInfo: TBoldClassTypeInfo;
-  Span: TBoldObjectSpan;
-  bo: TBoldObject;
-begin
-  Span := fSpan as TBoldObjectSpan;
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
-  if ClassTypeInfo.BoldIsA(Span.UmlClass) then // root/result class match
-  begin
-    bo := BoldSystem.Locators.LocatorByID[AObjectId].EnsuredBoldObject;
-    EvaluateCondition(BO);
-  end;
-  if IsClassRelevant(ClassTypeInfo) then
-  begin
-    bo := Span.FindMatchByObject(ClassTypeInfo, AObjectId) as TBoldObject;
-    if Assigned(bo) then
-      EvaluateCondition(bo);
-  end;
-end;
-
-procedure TExpressionDefinition.ObjectDeleted(const AClassName: string;
-  AObjectId: TBoldObjectId);
-var
-  ClassTypeInfo: TBoldClassTypeInfo;
-  Span: TBoldObjectSpan;
-  bo: TBoldObject;
-begin
-  Span := fSpan as TBoldObjectSpan;
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
-  if ClassTypeInfo.BoldIsA(Span.UmlClass) then // root/result class match
-  begin
-    bo := BoldSystem.Locators.LocatorByID[AObjectId].EnsuredBoldObject;
-    EvaluateCondition(BO);
-  end;
-  if IsClassRelevant(ClassTypeInfo) then
-  begin
-    bo := Span.FindMatchByObject(ClassTypeInfo, AObjectId) as TBoldObject;
-    if Assigned(bo) then
-      EvaluateCondition(bo);
-  end;
-end;
-
-procedure TExpressionDefinition.MemberChanged(const AClassName,
-  AMemberName: string; AObjectId: TBoldObjectId; ABoldObject: TBoldObject);
-var
-  ClassTypeInfo: TBoldClassTypeInfo;
-  MemberRTInfo: TBoldMemberRTInfo;
-  Span: TBoldObjectSpan;
-  bo: TBoldObject;
-  Element: TBoldElement;
-  sl: TStringList;
-  i,j: integer;
-begin
-  Span := fSpan as TBoldObjectSpan;
-  ClassTypeInfo := BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClassName];
-  sl := TStringList.Create;
-  try
-    sl.CommaText := AMemberName;
-    for i := 0 to sl.Count - 1 do
-    begin
-      j := ClassTypeInfo.MemberIndexByExpressionName[sl[i]];
-//      j := ABoldObject.BoldMemberIndexByExpressionName[sl[i]];
-      if j = -1 then
-        raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [AClassName, AMemberName]);
-      MemberRTInfo := ClassTypeInfo.MemberRTInfoByExpressionName[AMemberName];
-      Element := Span.FindMatchByMember(MemberRTInfo, bo);
-      if Assigned(Element) then
-        EvaluateCondition(Element);
-      end;
-  finally
-    sl.free;
-  end;
-  bo := BoldSystem.Locators.LocatorByID[AObjectId].EnsuredBoldObject;
-end;
-
-function TExpressionDefinition._AddRef: Integer;
-begin
-  result := -1;
-end;
-
-function TExpressionDefinition._Release: Integer;
-begin
-  result := -1;
-end;
-
-procedure TExpressionDefinition.Assign(Source: TPersistent);
-var
-  SourceDefinition: TExpressionDefinition;
-begin
-  if Source is TExpressionDefinition then
-  begin
-    SourceDefinition := Source as TExpressionDefinition;
-    ClassExpressionName := SourceDefinition.ClassExpressionName;
-    Condition := SourceDefinition.Condition;
-    EvaluationMode := SourceDefinition.EvaluationMode;
-  end
-  else
-    inherited;
-end;
-
-procedure TExpressionDefinition.Changed;
-begin
-  if Assigned(fSubscriber) then
-    fSubscriber.CancelAllSubscriptions;
-  fResultList.SetOwnedValue(nil);
-  fRelevantClasses.Clear;
-  FreeAndNil(fSpan);
-end;
-
-constructor TExpressionDefinition.Create(Collection: TCollection);
-begin
-  inherited;
-  fResultList := TBoldIndirectElement.Create;
-  fVariablesSubscriber := TBoldPassthroughSubscriber.create(ReceiveFromVariables);
-  fRelevantClasses := TBoldTypeList.Create;
-  fRelevantClasses.DuplicateMode := bldmMerge;
-end;
-
-destructor TExpressionDefinition.Destroy;
-begin
-  FreeAndNil(fSubscriber);
-  FreeAndNil(fVariablesSubscriber);
-  FreeAndNil(fSpan);
-  FreeAndNil(fResultList);
-  FreeAndNil(fRelevantClasses);
-  inherited;
-end;
-
-function TExpressionDefinition.GetBoldSystem: TBoldSystem;
-begin
-  result := TExpressionCollection(Collection).ExpressionSubscriber.BoldSystem;
-end;
-
-function TExpressionDefinition.GetContextType: TBoldElementTypeInfo;
-var
-  BoldSystemTypeInfo: TBoldSystemTypeInfo;
-begin
-  result := nil;
-  BoldSystemTypeInfo := (Collection as TExpressionCollection).ExpressionSubscriber.StaticSystemTypeInfo;
-  if Assigned(BoldSystemTypeInfo) then
-    result := BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ClassExpressionName];
-end;
-
-function TExpressionDefinition.GetDisplayName: string;
-begin
-  result := Format('[%s]:%s', [ClassExpressionName, Condition])
-end;
-
-function TExpressionDefinition.GetExpression: TBoldExpression;
-begin
-  result := Format('%s.allInstances->select(%s)', [ClassExpressionName, Condition]);
-end;
-
-function TExpressionDefinition.GetResultList: TBoldList;
-begin
-  result := fResultList.Value as TBoldList;
-end;
-
-function TExpressionDefinition.GetSelectExpression: TBoldExpression;
-begin
-  result := Format('select(%s)', [Condition]);
-end;
-
-function TExpressionDefinition.GetSubscriber: TBoldSubscriber;
-begin
-  if not Assigned(fSubscriber) then
-    fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(Receive);
-  result := fSubscriber;
-end;
-
-function TExpressionDefinition.GetVariableList: TBoldExternalVariableList;
-begin
-  if assigned(fVariables) then
-    result := fVariables.VariableList
-  else
-    result := nil;
-end;
-
-function TExpressionDefinition.GetVariables: TBoldOclVariables;
-begin
-  result := fVariables;
-end;
-
-function TExpressionDefinition.IsClassRelevant(
-  AUmlClass: TBoldClassTypeInfo): boolean;
-var
-  Element: TBoldElement;
-begin
-  result := true;
-  for Element in fRelevantClasses do
-    if AUmlClass.BoldIsA(Element as TBoldElementTypeInfo) then
-      exit;
-  result := false;
-end;
-
-procedure TExpressionDefinition.SetClassExpressionName(const Value: String);
-begin
-  fClassExpressionName := Value;
-  Changed;
-end;
-
-procedure TExpressionDefinition.SetEvaluationMode(const Value: TEvaluationMode);
-begin
-  fEvaluationMode := Value;
-  Changed;
-end;
-
-procedure TExpressionDefinition.SetExpression(const Value: TBoldExpression);
-begin
-  fCondition := Value;
-  Changed;
-end;
-
-procedure TExpressionDefinition.SetVariables(Value: TBoldOclVariables);
-begin
-  if Value <> Variables then
-  begin
-    FVariables := Value;
-    Changed;
-    fVariablesSubscriber.CancelAllSubscriptions;
-    if assigned(Value) then
-      Value.AddSmallSubscription(fVariablesSubscriber, [beDestroying]);
-  end;
-end;
-
-{ TExpressionCollection }
-
-function TExpressionCollection.AddDefinition(const ClassExpressionName: string;
-  Condition: TBoldExpression;
-  EvaluationMode: TEvaluationMode): TExpressionDefinition;
-begin
-  result := Add as TExpressionDefinition;
-  result.ClassExpressionName := ClassExpressionName;
-  result.Condition := Condition;
-  result.EvaluationMode := EvaluationMode;
-end;
-
-constructor TExpressionCollection.Create(
-  AExpressionSubscriber: TExpressionSubscriber);
-begin
-  inherited Create(TExpressionDefinition);
-  fExpressionSubscriber := AExpressionSubscriber;
-end;
-
-function TExpressionCollection.GetEnumerator: TExpressionDefinitionEnumerator;
-begin
-  result := TExpressionDefinitionEnumerator.Create(self);
-end;
-
-function TExpressionCollection.GetItems(Index: integer): TExpressionDefinition;
-begin
-  result := TExpressionDefinition(inherited items[index]);
-end;
-
-function TExpressionCollection.GetOwner: TPersistent;
-begin
-  result := fExpressionSubscriber;
-end;
-
-procedure TExpressionCollection.Update(Item: TCollectionItem);
-begin
-  fExpressionSubscriber.Changed(Item as TExpressionDefinition);
-end;
-
-{ TExpressionSubscriber }
-
-procedure TExpressionSubscriber.AfterConstruction;
-begin
-  inherited;
-  fExpressions := TExpressionCollection.Create(self);
-end;
-
-procedure TExpressionSubscriber.BeforeDestruction;
-begin
-  FreeAndNil(fExpressions);
-  FreeAndNil(fSubscriber);
-  inherited;
-end;
-
-function TExpressionSubscriber.GetBoldSystem: TBoldSystem;
-begin
-  result := nil;
-  if Assigned(StaticSystemHandle) then
-    result := StaticSystemHandle.System;
-end;
-
-procedure TExpressionSubscriber.Changed(AExpressionDefinition: TExpressionDefinition);
-begin
-  if Assigned(fExpressionChanged) then
-    fExpressionChanged(AExpressionDefinition);
-end;
-
-function TExpressionSubscriber.GetSubscriber: TBoldSubscriber;
-begin
-  if not Assigned(fSubscriber) then
-    fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(Receive);
-  result := fSubscriber;
-end;
-
-procedure TExpressionSubscriber.Execute;
-var
-  ExpressionDefinition: TExpressionDefinition;
-begin
-  if Assigned(BoldSystem) then
-    for ExpressionDefinition in Expressions do
-      ExpressionDefinition.Evaluate;
-end;
-
-procedure TExpressionSubscriber.Receive(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent;
-  const Args: array of const);
-var
-  ExpressionDefinition: TExpressionDefinition;
-begin
-  if OriginalEvent in beOssEvents then
-    for ExpressionDefinition in Expressions do
-      ExpressionDefinition.Receive(Originator, OriginalEvent, RequestedEvent, Args);
-//  Execute;
 end;
 
 procedure TExpressionSubscriber.SetBoldExternalObjectSpaceEventHandler(
@@ -792,31 +596,14 @@ begin
   end;
 end;
 
-procedure TExpressionSubscriber.StaticBoldTypeChanged;
-begin
-  inherited;
-  Execute; // TODO: do not execute right away, but add to queue instead
-end;
-
-function TExpressionSubscriber.ValidateComponent(
-  ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean;
-var
-  Context: TBoldElementTypeInfo;
-  ExpressionDefinition: TExpressionDefinition;
-begin
-  result := inherited ValidateComponent(ComponentValidator, NamePrefix);
-  for ExpressionDefinition in Expressions do
-  begin
-    result := ComponentValidator.ValidateExpressionInContext(
-      ExpressionDefinition.Condition,
-      ExpressionDefinition.GetContextType,
-      format('%s%s.ExpressionDefinition[%d]', [NamePrefix, ExpressionDefinition.DisplayName, ExpressionDefinition.Index])) and result;
-  end;
-end;
-
 { TBoldSpanNode }
 
 procedure TBoldSpanNode.CollectRelevantClasses(ATypeList: TBoldTypeList);
+begin
+// nothing here
+end;
+
+procedure TBoldSpanNode.CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList);
 begin
 // nothing here
 end;
@@ -831,9 +618,14 @@ begin
   Result := false;
 end;
 
+function TBoldSpanNode.GetDebugInfo: string;
+begin
+  result := inherited GetDebugInfo + ': ' + AsString;
+end;
+
 function TBoldSpanNode.FindMatchByObject(AUmlClass: TBoldClassTypeInfo; AObjectId: TBoldObjectId): TBoldElement;
 begin
-  result := nil; //AUmlClass.BoldIsA(UmlClass)
+  result := nil; //AUmlClass.BoldIsA(UmlClass);
 end;
 
 function TBoldSpanNode.FindMatchByMember(AMember: TBoldMemberRTInfo; AObject: TBoldObject): TBoldElement;
@@ -876,6 +668,14 @@ begin
   ATypeList.Add(UmlClass);
   for I := 0 to SubNodeCount - 1 do
     SubNode[i].CollectRelevantClasses(ATypeList);
+end;
+
+procedure TBoldObjectSpan.CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList);
+var
+  i: Integer;
+begin
+  for I := 0 to SubNodeCount - 1 do
+    SubNode[i].CollectRelevantMembers(AMemberList);
 end;
 
 constructor TBoldObjectSpan.Create(UmlClass: TBoldClassTypeInfo);
@@ -1059,6 +859,13 @@ end;
 
 { TBoldAttributeNode }
 
+procedure TBoldAttributeNode.CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList);
+begin
+  inherited CollectRelevantMembers(AMemberList);
+  if not AMemberList.Includes(Attribute) then
+    AMemberList.Add(Attribute);
+end;
+
 constructor TBoldAttributeNode.Create(UmlAttribute: TBoldAttributeRTInfo);
 begin
   fAttribute := UmlAttribute;
@@ -1104,6 +911,13 @@ begin
 end;
 
 { TBoldRoleNode }
+
+procedure TBoldRoleNode.CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList);
+begin
+  inherited CollectRelevantMembers(AMemberList);
+  if not AMemberList.Includes(Role) then
+    AMemberList.Add(Role);
+end;
 
 constructor TBoldRoleNode.Create(Role: TBoldRoleRTInfo);
 begin
@@ -1202,13 +1016,17 @@ begin
 end;
 
 function TExpressionsDefinitionParser.DoParse(Expression: String;
-  Evaluator: TBoldOcl; ContextType: TBoldClassTypeinfo;
+  Evaluator: TBoldOcl; ContextType: TBoldElementTypeInfo;
   VariableList: TBoldExternalVariableList): TBoldSpan;
 var
   ResultEntry: TBoldOclEntry;
 begin
+  result := nil;
   ResultEntry := Evaluator.SemanticCheck(Expression, ContextType, VariableList);
-  Result := TBoldSpan.Create(ContextType);
+  if not (ResultEntry.Ocl.BoldType.ListTypeInfo.ListElementTypeInfo is TBoldClassTypeInfo) then
+    exit;
+  Assert(ResultEntry.Ocl.BoldType.ListTypeInfo.ListElementTypeInfo is TBoldClassTypeInfo, ResultEntry.Ocl.BoldType.DisplayName);
+  Result := TBoldSpan.Create(ResultEntry.Ocl.BoldType.ListTypeInfo.ListElementTypeInfo as TBoldClassTypeInfo);
   SetLength(fCurrentContextSpans, 1);
   fCurrentContextSpans[0] := result;
   try
@@ -1226,7 +1044,7 @@ begin
 end;
 
 class function TExpressionsDefinitionParser.Parse(const Expression: String;
-  ContextType: TBoldClassTypeinfo; VariableList: TBoldExternalVariableList;
+  ContextType: TBoldElementTypeInfo; VariableList: TBoldExternalVariableList;
   Evaluator: TBoldOcl): TBoldSpan;
 var
   Parser: TExpressionsDefinitionParser;
@@ -1657,6 +1475,13 @@ end;
 
 { TBoldAttributeFilterNode }
 
+procedure TBoldAttributeFilterNode.CollectRelevantMembers(AMemberList: TBoldMemberRTInfoList);
+begin
+  inherited CollectRelevantMembers(AMemberList);
+  if not AMemberList.Includes(Attribute) then
+    AMemberList.Add(Attribute);
+end;
+
 constructor TBoldAttributeFilterNode.Create(UmlClass: TBoldClassTypeInfo;
   Attribute: TBoldAttributeRTInfo);
 begin
@@ -1776,3 +1601,4 @@ begin
 end;
 
 end.
+
