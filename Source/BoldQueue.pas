@@ -14,9 +14,7 @@ const
   { Queueable }
   befIsInDisplayList = BoldElementFlag0;
   befStronglyDependedOfPrioritized = BoldElementFlag1;
-{$IFDEF BoldQueue_Optimization}
   befToBeRemovedFromDisplayList = BoldElementFlag2;
-{$ENDIF}
   { Follower }
   befFollowerSelected = BoldElementFlag3;
 
@@ -42,9 +40,7 @@ type
     function AfterInPriority(Queueable: TBoldQueueable): Boolean;
     procedure Display; virtual; abstract;
     function StronglyPrioritizedSibbling(Queueable: TBoldQueueable): Boolean;
-{$IFDEF BoldQueue_Optimization}
     property ToBeRemovedFromDisplayList: Boolean index befToBeRemovedFromDisplayList read GetElementFlag write SetElementFlag;
-{$ENDIF}
     class function DisplayOne: Boolean;
     function GetDebugInfo: string; override;
   public
@@ -80,9 +76,7 @@ type
     fPostDisplayQueue: TBoldEventQueue;
     fDisplayList: TList;
     fApplyList: TList;
-{$IFDEF BoldQueue_Optimization}
     fDisplayListIndex: Integer;
-{$ENDIF}
     function GetApplyCount: integer;
     function GetDisplayCount: integer;
     function GetPostDisplayCount: integer;
@@ -169,11 +163,7 @@ destructor TBoldQueueable.Destroy;
 begin
   RemoveFromApplyList;
   RemoveFromDisplayList(true);
-{$IFDEF BoldQueue_Optimization}
   Assert(not (IsInDisplayList or ToBeRemovedFromDisplayList));
-{$ELSE}
-  Assert(not IsInDisplayList);
-{$ENDIF}
   inherited Destroy;
 end;
 
@@ -201,11 +191,9 @@ begin
   if not BoldQueueFinalized then
   begin
     Assert(not IsInDisplayList);
-{$IFDEF BoldQueue_Optimization}
     if ToBeRemovedFromDisplayList then
       ToBeRemovedFromDisplayList := false
     else
-{$ENDIF}
       BoldInstalledQueue.AddToDisplayList(self);
     SetElementflag(befIsInDisplayList, True);
   end;
@@ -213,11 +201,7 @@ end;
 
 procedure TBoldQueueable.RemoveFromDisplayList(ADestroying: boolean);
 begin
-{$IFDEF BoldQueue_Optimization}
   if not (BoldQueueFinalized) and (IsInDisplayList or ToBeRemovedFromDisplayList) then
-{$ELSE}
-  if not BoldQueueFinalized and IsInDisplayList then
-{$ENDIF}
   begin
     BoldInstalledQueue.RemoveFromDisplayList(self, ADestroying);
     SetElementflag(befIsInDisplayList, False);
@@ -245,9 +229,7 @@ begin
       begin
         Queueable := fDisplayList[i];
         if assigned(Queueable) and
-{$IFDEF BoldQueue_Optimization}
           Queueable.IsInDisplayList and
-{$ENDIF}
           Queueable.AfterInPriority(PrioritizedQueuable) and
           not StronglyPrioritizedSibbling(Queueable) and
           not Queueable.AfterInPriority(self) then
@@ -456,7 +438,7 @@ begin
 end;
 
 function TBoldQueue.DisplayOne: Boolean;
-{$IFDEF BoldQueue_Optimization}
+
 var
   Queueable, vPrioritizedQueuable: TBoldQueueable;
 begin
@@ -511,44 +493,6 @@ begin
     end;
   end;
 end;
-{$ELSE}
-var
-  Index: Integer;
-  ExchangeWith,
-  Queueable: TBoldQueueable;
-begin
-  if fIsDisplaying or (fDisplayList.Count = 0) then
-    result := false
-  else
-  begin
-    fIsDisplaying := true;
-    try
-      Queueable := nil;
-      while (fDisplayList.Count>0) and (fDisplayList.Last=nil) do
-        fDisplayList.Count := fDisplayList.Count - 1;
-      Result := fDisplayList.Count>0;
-      if Result then
-      begin
-        try
-          ExchangeWith := TBoldQueueable(fDisplayList.Last).MostPrioritizedQueuable;
-          if Assigned(ExchangeWith) then
-          begin
-            Index := fDisplayList.IndexOf(ExchangeWith);
-            if Index <> -1 then
-              fDisplayList.Exchange(Index, fDisplayList.Count - 1);
-          end;
-          Queueable := TBoldQueueable(fDisplayList.Last);
-          Queueable.Display;
-        except
-          raise; // patch this used to directly call Application.HandleException(Queueable);
-        end;
-      end;
-    finally
-      fIsDisplaying := false;
-    end;
-  end;
-end;
-{$ENDIF}
 
 function TBoldQueueable.AfterInPriority(Queueable: TBoldQueueable): Boolean;
 begin
@@ -626,7 +570,6 @@ var
   index: integer;
 begin
 //  Log('R:'+Queueable.ClassName);
-{$IFDEF BoldQueue_Optimization}
   if (fDisplayList.Last = Queueable) then
   begin
     Queueable.ToBeRemovedFromDisplayList := false;
@@ -638,15 +581,12 @@ begin
     Queueable.ToBeRemovedFromDisplayList := true;
     exit;
   end;
-{$ENDIF}
   Index := fDisplayList.Count - 1;
   while (Index >=0 ) and (fDisplayList.List[Index] <> Queueable) do
     Dec(Index);
   if Index > -1 then
   begin
-{$IFDEF BoldQueue_Optimization}
     Queueable.ToBeRemovedFromDisplayList := false;
-{$ENDIF}
     if Index = fdisplayList.Count - 1 then
       fDisplayList.Count := fDisplayList.Count - 1
     else

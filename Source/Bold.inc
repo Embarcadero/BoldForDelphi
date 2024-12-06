@@ -123,9 +123,6 @@ Illegal symbol combination
   // Use OXML instead of MSXML for XML operations (faster and can handle larger XML)
 {.$DEFINE OXML}
 
-  // Faster Display Queue - Simplified handling of (Most)Prioritized and less iteration of Display List
-{$DEFINE BoldQueue_Optimization}
-
   // When fetching an object which class list is loaded then search there instead of going to db.
 {$DEFINE FetchFromClassList}
 
