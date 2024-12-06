@@ -331,7 +331,7 @@ type
     function GetClassByObjectClass(AObjectClass: TBoldObjectClass): TBoldObjectList;
     function GetClassByIndex(index: Integer): TBoldObjectList;
     function GetDirtyObjects: TList; {of TBoldObject}
-    function GetDirtyObjectsAsBoldList(AClassType: TBoldObjectClass): TBoldObjectList;
+    function GetDirtyObjectsAsBoldList(AClassType: TBoldClassTypeInfo): TBoldObjectList;
     function GetDirtyObjectsAsBoldListByClassExpressionName(const AClass: string): TBoldObjectList;
     function GetAllDirtyObjectsAsBoldList: TBoldObjectList;
     function GetEnsuredLocatorByID(ObjectID: TBoldObjectId): TBoldObjectLocator;
@@ -432,7 +432,7 @@ type
     property ClassByObjectClass[ObjectClass: TBoldObjectClass]: TBoldObjectList read GetClassByObjectClass;
     property Classes[index: Integer]: TBoldObjectList read GetClassByIndex;
     property DirtyObjects: TList read GetDirtyObjects;
-    property DirtyObjectsAsBoldListByClass[AClassType: TBoldObjectClass]: TBoldObjectList read GetDirtyObjectsAsBoldList;
+    property DirtyObjectsAsBoldListByClass[AClassType: TBoldCLassTypeInfo]: TBoldObjectList read GetDirtyObjectsAsBoldList;
     property DirtyObjectsAsBoldListByClassExpressionName[const AClass: string]: TBoldObjectList read GetDirtyObjectsAsBoldListByClassExpressionName;
     property DirtyObjectsAsBoldList: TBoldObjectList read GetAllDirtyObjectsAsBoldList;
     property EnsuredLocatorByID[ObjectID: TBoldObjectId]: TBoldObjectLocator read GetEnsuredLocatorByID;
@@ -2660,18 +2660,18 @@ begin
   result := fDirtyObjects;
 end;
 
-function TBoldSystem.GetDirtyObjectsAsBoldList(AClassType: TBoldObjectClass): TBoldObjectList;
+function TBoldSystem.GetDirtyObjectsAsBoldList(AClassType: TBoldClassTypeInfo): TBoldObjectList;
 var
   i: integer;
 begin
   if not Assigned(AClassType) then
-    AClassType := TBoldObjectClass(BoldSystemTypeInfo.RootClassTypeInfo.ObjectClass);
-  result := TBoldObjectList.CreateWithTypeInfo(BoldSystemTypeInfo.ClassTypeInfoByClass[AClassType]);
+    AClassType := BoldSystemTypeInfo.RootClassTypeInfo;
+  result := TBoldObjectList.CreateWithTypeInfo(AClassType);
   result.DuplicateMode := bldmAllow;
   result.SubscribeToObjectsInList := false;
   with result.ObjectListController, GetDirtyObjects do
     for I := 0 to Count - 1 do
-      if TBoldObject(Items[i]) is AClassType then
+      if TBoldObject(Items[i]).BoldType = AClassType then
         AddLocator(TBoldObject(Items[i]).BoldObjectLocator);
   result.DuplicateMode := bldmMerge;
 end;
@@ -2685,10 +2685,7 @@ begin
   result := nil;
   ClassTypeInfo := BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClass];
   if Assigned(ClassTypeInfo) then
-  begin
-    AClassType := TBoldObjectClass(ClassTypeInfo.ObjectClass);
-    result := GetDirtyObjectsAsBoldList(AClassType);
-  end;
+    result := GetDirtyObjectsAsBoldList(ClassTypeInfo);
 end;
 
 function TBoldSystem.GetAllDirtyObjectsAsBoldList: TBoldObjectList;
@@ -7348,7 +7345,7 @@ begin
     begin
       s := Elements[i].StringRepresentation[Representation];
       if AIncludeType then
-       s := Elements[i].ClassName + ':' + s;
+       s := Elements[i].DebugInfo + ':' + s;
     end
     else
       s := 'nil';

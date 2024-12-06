@@ -13,7 +13,7 @@ type
   TBoldClassSubscriber = class;
   TBoldClassEventMapping = class;
   TBoldClassEventMappingCollection = class;
-  TEventMappingEnumerator = class;
+  TBoldEventMappingEnumerator = class;
 
   TBoldClassSubscriptionEvent = procedure (AClassList: TBoldObjectList; ASubscriber: TBoldSubscriber) of object;
 
@@ -21,7 +21,7 @@ type
   private
     fSubscriber: TBoldExtendedPassthroughSubscriber;
     fClassTypeName: string;
-    fOnChange: TBoldExtendedEventHandler;
+    fOnEvent: TBoldExtendedEventHandler;
     fOnSubscribe: TBoldClassSubscriptionEvent;
     procedure SetClassTypeName(const Value: string);
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo;
@@ -42,7 +42,7 @@ type
     procedure Assign(Source: TPersistent); override;
   published
     property ClassTypeName: string read fClassTypeName write SetClassTypeName;
-    property OnChange: TBoldExtendedEventHandler read fOnChange write fOnChange;
+    property OnEvent: TBoldExtendedEventHandler read fOnEvent write fOnEvent;
     property OnSubscribe: TBoldClassSubscriptionEvent read fOnSubscribe write SetOnSubscribe;
   end;
 
@@ -58,7 +58,7 @@ type
   public
     constructor Create(AEventSubscriber: TBoldClassSubscriber);
     function Add: TBoldClassEventMapping;
-    function GetEnumerator: TEventMappingEnumerator;
+    function GetEnumerator: TBoldEventMappingEnumerator;
     property Items[Index: Integer]: TBoldClassEventMapping read GetItem write SetItem; default;
   end;
 
@@ -79,7 +79,7 @@ type
     property EventMapping: TBoldClassEventMappingCollection read fMappingCollection write SetEventMappingCollection;
   end;
 
-  TEventMappingEnumerator = class
+  TBoldEventMappingEnumerator = class
   private
     FIndex: Integer;
     FCollection: TBoldClassEventMappingCollection;
@@ -140,7 +140,7 @@ procedure TBoldClassEventMapping.Assign(Source: TPersistent);
 begin
   if source is TBoldClassEventMapping then
   begin
-    fOnChange := (Source as TBoldClassEventMapping).OnChange;
+    fOnEvent := (Source as TBoldClassEventMapping).OnEvent;
     fOnSubscribe := (Source as TBoldClassEventMapping).OnSubscribe;
   end
   else
@@ -209,8 +209,8 @@ end;
 procedure TBoldClassEventMapping._Receive(Originator: TObject; OriginalEvent: TBoldEvent;
   RequestedEvent: TBoldRequestedEvent; const args: array of const);
 begin
-  if Assigned(OnChange) then
-    OnChange(Originator, OriginalEvent, RequestedEvent, args);
+  if Assigned(OnEvent) then
+    OnEvent(Originator, OriginalEvent, RequestedEvent, args);
 end;
 
 { TBoldClassEventMappingCollection }
@@ -227,9 +227,9 @@ begin
   fBoldEventSubscriber := AEventSubscriber;
 end;
 
-function TBoldClassEventMappingCollection.GetEnumerator: TEventMappingEnumerator;
+function TBoldClassEventMappingCollection.GetEnumerator: TBoldEventMappingEnumerator;
 begin
-  Result := TEventMappingEnumerator.Create(Self);
+  Result := TBoldEventMappingEnumerator.Create(Self);
 end;
 
 function TBoldClassEventMappingCollection.GetEventSubscriber: TBoldClassSubscriber;
@@ -253,9 +253,9 @@ begin
   inherited SetItem(Index, Value);
 end;
 
-{ TEventMappingEnumerator }
+{ TBoldEventMappingEnumerator }
 
-constructor TEventMappingEnumerator.Create(
+constructor TBoldEventMappingEnumerator.Create(
   ACollection: TBoldClassEventMappingCollection);
 begin
   inherited Create;
@@ -263,12 +263,12 @@ begin
   FCollection := ACollection;
 end;
 
-function TEventMappingEnumerator.GetCurrent: TBoldClassEventMapping;
+function TBoldEventMappingEnumerator.GetCurrent: TBoldClassEventMapping;
 begin
   Result := FCollection.Items[FIndex];
 end;
 
-function TEventMappingEnumerator.MoveNext: Boolean;
+function TBoldEventMappingEnumerator.MoveNext: Boolean;
 begin
   Inc(FIndex);
   Result := FIndex < FCollection.Count;
