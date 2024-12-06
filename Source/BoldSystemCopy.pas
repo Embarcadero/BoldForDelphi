@@ -26,6 +26,8 @@ type
   TBoldSystemCopyProgressEvent = procedure(Sender: TBoldSystemCopy; AProgress: integer; AMax: integer; AEstimatedRemainingTime: TDateTime) of object;
   TBoldSystemCopyLogEvent = procedure(Sender: TBoldSystemCopy; const aStatus: string) of object;
 
+  EBoldSystemCopyInterrupt = class(Exception);
+
   TBoldSystemCopy = class(TComponent)
   private
     fObjectEvent: TBoldSystemCopyObjectEvent;
@@ -41,6 +43,7 @@ type
     fProcessedObjects: TBoldObjectList;
     fSkippedObjects: TBoldObjectList;
     fLastUsedId: integer;
+    fStopped: boolean;
     function GetDestinationSystem: TBoldSystem;
     function GetSourceSystem: TBoldSystem;
     function FindHead(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
@@ -50,6 +53,7 @@ type
     procedure CopyMembers(ASource: TBoldObjectLocator; AMemberIdList: TBoldMemberIdList = nil; ATouchedList: TBoldObjectList = nil);
     procedure TranslateId(ASourceObject, ADestinationObject: TBoldObject);
     procedure UpdateLastUsedID;
+    procedure CheckStop;
   protected
     procedure DoLogEvent(const Msg: string);
     procedure Report(const Msg: string; const Args: array of const);
@@ -66,6 +70,7 @@ type
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
     procedure Run;
+    procedure Stop;
     procedure CheckModelCompatibility;
     procedure AnalyzeModel;
     property SourceSystem: TBoldSystem read GetSourceSystem;
@@ -213,6 +218,16 @@ begin
   end;
 end;
 
+procedure TBoldSystemCopy.CheckStop;
+begin
+  if fStopped then
+  begin
+    fStopped := false;
+    DoLogEvent('Use requested abort');
+    raise EBoldSystemCopyInterrupt.Create('Use requested abort.');
+  end;
+end;
+
 procedure TBoldSystemCopy.CloneObject(const ASourceObject: TBoldObject;
   var ADestinationObject: TBoldObject);
 begin
@@ -286,6 +301,7 @@ begin
 
   for ClassTypeInfo in SourceSystem.BoldSystemTypeInfo.TopSortedClasses do
   begin
+    CheckStop;
     if ClassTypeInfo.IsAbstract or ClassTypeInfo.IsLinkClass or not ClassTypeInfo.Persistent then
       continue; // skip abstract, link and transient classes
     RoleTypeInfo := FindTail(ClassTypeInfo);
@@ -306,6 +322,7 @@ begin
     iStart := 0;
     iEnd := MinIntValue([ClassList.Count-1, BatchSize]);
     repeat
+      CheckStop;
       Assert(iStart<=iEnd);
       Report('Loading Objects %d-%d for: %s', [iStart, iEnd, ClassTypeInfo.DisplayName]);
       ClassList.EnsureRange(iStart, iEnd);
@@ -319,7 +336,9 @@ begin
       Report('Loading %d links %d-%d for: %s', [MemberIdList1.Count, iStart, iEnd, ClassTypeInfo.DisplayName]);
       SourceSystem.FetchMembersWithObjects(FilteredList, MemberIdList1);
       Report('Copying links %d-%d for: %s', [iStart, iEnd, ClassTypeInfo.DisplayName]);
+      CheckStop;
       FilteredList.EnsureObjects;
+      CheckStop;
       DestinationSystem.StartTransaction;
       try
         for I := 0 to FilteredList.Count - 1 do
@@ -380,6 +399,7 @@ begin
   if DestinationSystem.BoldDirty then
     Report('Writing %d objects', [DestinationSystem.DirtyObjects.Count]);
   DestinationSystem.UpdateDatabase;
+  CheckStop;
   if not fDelayedProcessList.Empty then
   begin
     Report('Processing %d delayed objects.', [fDelayedProcessList.Count]);
@@ -426,6 +446,8 @@ var
   SourceAttribute, DestinationAttribute: TBoldAttribute;
   j, k, m: integer;
   MemberIdList: TBoldMemberIdList;
+  LocatorUnloadList: TBoldSystemLocatorList;
+  Locator: TBoldObjectLocator;
   g: IBoldGuard;
 begin
   if SkipObject(ASource.EnsuredBoldObject) then
@@ -449,6 +471,8 @@ begin
   if Assigned(ATouchedList) then
     ATouchedList.Add(DestinationObject);
   FetchList := TBoldObjectList.Create;
+  LocatorUnloadList := TBoldSystemLocatorList.Create;
+  LocatorUnloadList.OwnsEntries := false;
   try
     for j := MemberIdList.Count-1 downto 0 do
     begin
@@ -531,7 +555,7 @@ begin
               if not fProcessedObjects.Includes(SourceOtherEnd) then
                 fDelayedProcessList.Add(SourceOtherEnd);
             end;
-            SourceList[m].BoldObjectLocator.UnloadBoldObject;
+            LocatorUnloadList.Add(SourceList[m].BoldObjectLocator);
           end;
         end;
       end;
@@ -539,6 +563,9 @@ begin
   finally
     ASource.UnloadBoldObject;
     FetchList.Free;
+    for Locator in LocatorUnloadList do
+      Locator.UnloadBoldObject;
+    LocatorUnloadList.Free;
   end;
 end;
 
@@ -707,9 +734,14 @@ begin
     Report('Skipping instance %s:%s', [SourceObject.ClassName, SourceObject.BoldObjectLocator.BoldObjectID.AsString]);
 end;
 
+procedure TBoldSystemCopy.Stop;
+begin
+  fStopped := true;
+end;
+
 procedure TBoldSystemCopy.Report(const Msg: string; const Args: array of const);
 begin
-  if Assigned(fProgressEvent) then
+  if Assigned(fLogEvent) then
   begin
     if Length(Args) = 0 then
       DoLogEvent(msg)
@@ -720,6 +752,7 @@ end;
 
 procedure TBoldSystemCopy.Run;
 begin
+  fStopped := false;
   if not Assigned(SourceSystemHandle) then
     raise Exception.Create('Source system handle not set.');
   if not Assigned(DestinationSystemHandle) then
@@ -738,12 +771,19 @@ begin
   DestinationSystem.UndoHandlerInterface.Enabled := false;
   BoldLinks.BoldPerformMultilinkConsistencyCheck := false;
   BoldLinks.BoldPerformMultiLinkConsistenceCheckLimit := 0;
-  CheckModelCompatibility;
-  AnalyzeModel;
-  Report('Source objects: %d Destination objects %d', [SourceAllInstanceCount, DestinationAllInstanceCount]);
-  CopyInstances;
-  UpdateLastUsedID;
-  Report('Completed succesfully', []);
+  try
+    CheckStop;
+    CheckModelCompatibility;
+    AnalyzeModel;
+    Report('Source objects: %d Destination objects %d', [SourceAllInstanceCount, DestinationAllInstanceCount]);
+    CheckStop;
+    CopyInstances;
+    UpdateLastUsedID;
+    Report('Completed succesfully', []);
+  except
+    on e:EBoldSystemCopyInterrupt do
+    ; // silent
+  end;
 end;
 
 procedure TBoldSystemCopy.TranslateId(ASourceObject,
