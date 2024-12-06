@@ -282,8 +282,11 @@ end;
 
 function TBoldNonSystemHandle.GetBoldSystem: TBoldSystem;
 begin
-  if Assigned(fStaticSystemHandle) then
-    result := fStaticSystemHandle.System
+  if Assigned(StaticSystemHandle) then
+    result := StaticSystemHandle.System
+  else
+  if TBoldAbstractSystemHandle.DefaultBoldSystemHandle <> nil then
+    result := TBoldAbstractSystemHandle.DefaultBoldSystemHandle.System
   else
     result := nil;
 end;
@@ -291,15 +294,6 @@ end;
 function TBoldNonSystemHandle.GetStaticSystemHandle: TBoldAbstractSystemHandle;
 begin
   result := fStaticSystemHandle;
-{  if not Assigned(result) then
-  begin
-    result := TBoldAbstractSystemHandle.DefaultBoldSystemHandle;
-    if Assigned(result) and (fStaticSystemHandleSubscriber.SubscriptionCount = 0) then
-    begin
-      result.AddSmallSubscription(fStaticSystemHandleSubscriber, [beDestroying], breFreeHandle);
-      result.AddSmallSubscription(fStaticSystemHandleSubscriber, [beValueIDentityChanged], breValueIdentityChanged);
-    end;
-  end;}
 end;
 
 function TBoldNonSystemHandle.GetStaticSystemTypeInfo: TBoldSystemTypeInfo;
