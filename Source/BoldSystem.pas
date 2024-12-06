@@ -2698,7 +2698,6 @@ function TBoldSystem.GetDirtyObjectsAsBoldListByClassExpressionName(
   const AClass: string): TBoldObjectList;
 var
   ClassTypeInfo: TBoldClassTypeInfo;
-  AClassType: TBoldObjectClass;
 begin
   result := nil;
   ClassTypeInfo := BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClass];
