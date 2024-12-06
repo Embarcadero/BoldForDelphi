@@ -1132,6 +1132,8 @@ begin
   end;
 end;
 
+type TCollectionAccess = class(TCollection);
+
 procedure TBoldFireDACConnection.ReleaseQuery(var Query: IBoldQuery);
 var
   lBoldFireDACQuery: TBoldFireDACQuery;
@@ -1140,6 +1142,10 @@ begin
   begin
     lBoldFireDACQuery := Query.Implementor as TBoldFireDACQuery;
     lBoldFireDACQuery.clear;
+    while lBoldFireDACQuery.SQLStrings.Updating do
+      lBoldFireDACQuery.SQLStrings.EndUpdate;
+    while TCollectionAccess(lBoldFireDACQuery.Params).UpdateCount > 0 do
+      lBoldFireDACQuery.Params.EndUpdate;
     Query := nil;
     if not Assigned(fCachedQuery1) then
       fCachedQuery1 := lBoldFireDACQuery
@@ -1159,13 +1165,15 @@ begin
   if (Query.Implementor is TBoldFireDACQuery) then
   begin
     lBoldFireDACQuery := Query.Implementor as TBoldFireDACQuery;
-    if lBoldFireDACQuery.GetSQLStrings.Count <> 0 then
+    if lBoldFireDACQuery.SQLStrings.Count <> 0 then
     begin
-      lBoldFireDACQuery.GetSQLStrings.BeginUpdate;
+      lBoldFireDACQuery.SQLStrings.BeginUpdate;
       lBoldFireDACQuery.clear;
     end;
-    while TStringsAccess(lBoldFireDACQuery.GetSQLStrings).UpdateCount > 0 do
-      lBoldFireDACQuery.GetSQLStrings.EndUpdate;
+    while lBoldFireDACQuery.SQLStrings.Updating do
+      lBoldFireDACQuery.SQLStrings.EndUpdate;
+    while TCollectionAccess(lBoldFireDACQuery.Params).UpdateCount > 0 do
+      lBoldFireDACQuery.Params.EndUpdate;
     Query := nil;
     if not Assigned(fCachedExecQuery1) then
       fCachedExecQuery1 := lBoldFireDACQuery

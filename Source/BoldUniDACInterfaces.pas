@@ -1,13 +1,4 @@
-﻿
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 1996-2002 Boldsoft AB              //
-//              (c) 2002-2005 Borland Software Corp    //
-//                                                     //
-/////////////////////////////////////////////////////////
-
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldUniDACInterfaces;
 
@@ -464,7 +455,7 @@ begin
           fReadTransactionStarted := fUseReadTransactions;
         end;
         Query.Execute;
-        if fReadTransactionStarted and  (DatabaseWrapper as TBoldUniDACConnection).GetInTransaction then
+        if fReadTransactionStarted and (DatabaseWrapper as TBoldUniDACConnection).GetInTransaction then
         begin
          (DatabaseWrapper as TBoldUniDACConnection).Commit;
          fReadTransactionStarted := false;
@@ -1160,6 +1151,8 @@ begin
   end;
 end;
 
+type TCollectionAccess = class(TCollection);
+
 procedure TBoldUniDACConnection.ReleaseQuery(var Query: IBoldQuery);
 var
   lBoldUniDACQuery: TBoldUniDACQuery;
@@ -1168,6 +1161,10 @@ begin
   begin
     lBoldUniDACQuery := Query.Implementor as TBoldUniDACQuery;
     lBoldUniDACQuery.clear;
+    while lBoldUniDACQuery.SQLStrings.Updating do
+      lBoldUniDACQuery.SQLStrings.EndUpdate;
+    while TCollectionAccess(lBoldUniDACQuery.Params).UpdateCount > 0 do
+      lBoldUniDACQuery.Params.EndUpdate;
     Query := nil;
     if not Assigned(fCachedQuery1) then
       fCachedQuery1 := lBoldUniDACQuery
@@ -1186,13 +1183,15 @@ begin
   if (Query.Implementor is TBoldUniDACQuery) then
   begin
     lBoldUniDACQuery := Query.Implementor as TBoldUniDACQuery;
-    if lBoldUniDACQuery.GetSQLStrings.Count <> 0 then
+    if lBoldUniDACQuery.SQLStrings.Count <> 0 then
     begin
-      lBoldUniDACQuery.GetSQLStrings.BeginUpdate;
+      lBoldUniDACQuery.SQLStrings.BeginUpdate;
       lBoldUniDACQuery.clear;
     end;
-    while TStringsAccess(lBoldUniDACQuery.GetSQLStrings).UpdateCount > 0 do
-      lBoldUniDACQuery.GetSQLStrings.EndUpdate;
+    while lBoldUniDACQuery.SQLStrings.Updating do
+      lBoldUniDACQuery.SQLStrings.EndUpdate;
+    while TCollectionAccess(lBoldUniDACQuery.Params).UpdateCount > 0 do
+      lBoldUniDACQuery.Params.EndUpdate;
     Query := nil;
     if not Assigned(fCachedExecQuery1) then
       fCachedExecQuery1 := lBoldUniDACQuery

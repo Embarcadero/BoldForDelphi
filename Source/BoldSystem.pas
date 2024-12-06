@@ -231,6 +231,7 @@ type
     function GetDirtyObjects: TBoldObjectList;
     procedure DiscardChanges;
     procedure WriteChangesToDb;
+    procedure ClearObjects;
     property DirtyObjects: TBoldObjectList read GetDirtyObjects;
   end;
 
@@ -242,7 +243,6 @@ type
   protected
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); virtual;
     function CanCommitOrRollback: boolean;
-//    property DirtyObjects: TBoldObjectList read GetDirtyObjects;
     function GetValueSpace: IBoldValueSpace;
     property Valuespace: IBoldValueSpace read GetValueSpace;
     procedure Commit;
@@ -268,6 +268,7 @@ type
     procedure BeforeDestruction; override;
     procedure StartTracking;
     procedure StopTracking;
+    procedure ClearObjects;
     procedure DiscardChanges;
     procedure WriteChangesToDb;
     property DirtyObjects: TBoldObjectList read GetDirtyObjects;
@@ -1677,6 +1678,11 @@ begin
   for i := fDirtyObjects.Count-1 downto 0 do
     if not fDirtyObjects[i].BoldDirty then
       fDirtyObjects.RemoveByIndex(i);
+end;
+
+procedure TBoldDirtyObjectTracker.ClearObjects;
+begin
+  fDirtyObjects.Clear;
 end;
 
 procedure TBoldDirtyObjectTracker.StartTracking;
@@ -5368,6 +5374,11 @@ function TBoldMember.StartModify: Boolean;
 begin
   if not (BoldPersistenceState in [bvpsCurrent, bvpsModified, bvpsTransient, bvpsInvalid]) then
     StateError('StartModify');
+  if IsInitializing then
+  begin
+    result := true;
+    exit;
+  end;
   result := CanModify;
   if result and assigned(BoldSystem) and assigned(OwningObject) and
      assigned(BoldSystem.PessimisticLockHandler) and
@@ -5423,8 +5434,11 @@ begin
 {$ENDIF}
   if Derived and not (DeriverState in bdsIsDeriving) then
     Deriver.ReverseDerive;
-  CompleteModify;
-  SendExtendedEvent(beCompleteModify, [self]);
+  if not IsInitializing then
+  begin
+    CompleteModify;
+    SendExtendedEvent(beCompleteModify, [self]);
+  end;
   if OwnedByObject then
   begin
     System.AddToTransaction(OwningObject);

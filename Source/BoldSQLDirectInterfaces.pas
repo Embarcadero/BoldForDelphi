@@ -1,11 +1,3 @@
-
-/////////////////////////////////////////////////////////
-//                                                     //
-//              Bold for Delphi                        //
-//    Copyright (c) 2002 BoldSoft AB, Sweden           //
-//                                                     //
-/////////////////////////////////////////////////////////
-
 { Global compiler directives }
 {$include bold.inc}
 unit BoldSQLDirectInterfaces;
@@ -542,6 +534,7 @@ begin
         case ESDEngineError(E).ErrorCode of
           -2147217900, -2139062144, -2147467259, -1, 2, 53, 233, 6005: aErrorType := bdetConnection;
           4060, 18456: aErrorType := bdetLogin;
+
         end;
       end
       else
@@ -646,6 +639,8 @@ begin
   FreeAndNil(fCachedQuery);
 end;
 
+type TCollectionAccess = class(TCollection);
+
 procedure TBoldSQLDirectDatabase.ReleaseQuery(var Query: IBoldQuery);
 var
   SDQuery: TBoldSQLDirectQuery;
@@ -658,7 +653,11 @@ begin
       if FCachedQuery.Active then
         FCachedQuery.Close;
       FCachedQuery.SQL.Clear;
+      while FCachedQuery.SQL.Updating do
+        FCachedQuery.SQL.EndUpdate;
       FCachedQuery.Params.Clear;
+      while TCollectionAccess(FCachedQuery.Params).UpdateCount > 0 do
+        FCachedQuery.Params.EndUpdate;
     end
     else
       SDQuery.FQuery.free;

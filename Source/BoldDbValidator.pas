@@ -122,83 +122,85 @@ var
 begin
   query := SystemSQLMapper.GetQuery;
   ExecQuery := SystemSQLMapper.GetExecQuery;
-  query.AssignSQLText(format('SELECT * FROM %s', [TypeTableName]));
+  try
+    query.AssignSQLText(format('SELECT * FROM %s', [TypeTableName]));
 
-  HighestBoldDbType := -1;
+    HighestBoldDbType := -1;
 
-  Query.Open;
-  BoldDBTypeField := Query.FieldByName('BOLD_TYPE');
-  ClassNameField := Query.FieldByName('CLASSNAME');
-  while not query.eof do
-  begin
-    BoldDbType := BoldDBTypeField.AsInteger;
-    if BoldDbType > HighestBoldDbType then
-      HighestBoldDbType := BoldDbType;
-
-    Name := ClassNameField.AsString;
-
-    Found := false;
-    for i := 0 to SystemSQLMapper.ObjectPersistenceMappers.count - 1 do
+    Query.Open;
+    BoldDBTypeField := Query.FieldByName('BOLD_TYPE');
+    ClassNameField := Query.FieldByName('CLASSNAME');
+    while not query.eof do
     begin
-      if assigned(SystemSQLMapper.ObjectPersistenceMappers[i]) and
-         (CompareText(SystemSQLMapper.ObjectPersistenceMappers[i].ExpressionName, Name) = 0) then
+      BoldDbType := BoldDBTypeField.AsInteger;
+      if BoldDbType > HighestBoldDbType then
+        HighestBoldDbType := BoldDbType;
+
+      Name := ClassNameField.AsString;
+
+      Found := false;
+      for i := 0 to SystemSQLMapper.ObjectPersistenceMappers.count - 1 do
       begin
-        ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
-        ObjectPMapper.BoldDbType := BoldDbType;
-        Found := true;
-        Break;
+        if assigned(SystemSQLMapper.ObjectPersistenceMappers[i]) and
+           (CompareText(SystemSQLMapper.ObjectPersistenceMappers[i].ExpressionName, Name) = 0) then
+        begin
+          ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
+          ObjectPMapper.BoldDbType := BoldDbType;
+          Found := true;
+          Break;
+        end;
       end;
+      if not found then
+        BoldLog.LogFmt(sClassInDBNotInModel, [Name, BoldDbType]);
+      Query.Next;
     end;
-    if not found then
-      BoldLog.LogFmt(sClassInDBNotInModel, [Name, BoldDbType]);
-    Query.Next;
-  end;
-  Query.Close;
+    Query.Close;
 
-  MissingClasses := false;
-  for i := 0 to SystemSQLMapper.ObjectPersistenceMappers.count - 1 do
-  begin
-    ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
-    if assigned(ObjectPMapper) and (ObjectPMapper.BoldDbType = -1) then
-    begin
-      if not MissingClasses then
-        BoldLog.Separator;
-      BoldLog.LogFmt(sClassWithMissingID, [ObjectPMapper.ExpressionName]);
-      MissingClasses := true;
-    end;
-  end;
-
-  if MissingClasses and (MessageDlg(sCorrectClassWithNoID, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-  begin
-    BoldLog.Separator;
-    Execquery.AssignSQLText(
-      format('INSERT INTO %s (%s, %s) VALUES (:%s, :%s)', [
-        TypeTablename,
-        TYPECOLUMN_NAME,
-        CLASSNAMECOLUMN_NAME,
-        TYPECOLUMN_NAME,
-        CLASSNAMECOLUMN_NAME]));
-
-    ExecQuery.ParamCheck := true;
-    TypeParam := ExecQuery.ParamByName(TYPECOLUMN_NAME);
-    ClassParam := ExecQuery.ParamByName(CLASSNAMECOLUMN_NAME);
+    MissingClasses := false;
     for i := 0 to SystemSQLMapper.ObjectPersistenceMappers.count - 1 do
     begin
       ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
       if assigned(ObjectPMapper) and (ObjectPMapper.BoldDbType = -1) then
       begin
-        Inc(HighestBoldDbType);
-        ObjectPMapper.BoldDbType := HighestBoldDbType;
-        BoldLog.LogFmt(sAddBoldDBTType, [ObjectPMapper.BoldDbType, ObjectPMapper.expressionName]);
-        TypeParam.AsInteger := HighestBoldDbType;
-        ClassParam.AsString := ObjectPMapper.ExpressionName;
-        ExecQuery.ExecSQL;
+        if not MissingClasses then
+          BoldLog.Separator;
+        BoldLog.LogFmt(sClassWithMissingID, [ObjectPMapper.ExpressionName]);
+        MissingClasses := true;
       end;
     end;
-  end;
 
-  SystemSQLMapper.ReleaseQuery(Query);
-  SystemSQLMapper.ReleaseExecQuery(ExecQuery);
+    if MissingClasses and (MessageDlg(sCorrectClassWithNoID, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
+    begin
+      BoldLog.Separator;
+      Execquery.AssignSQLText(
+        format('INSERT INTO %s (%s, %s) VALUES (:%s, :%s)', [
+          TypeTablename,
+          TYPECOLUMN_NAME,
+          CLASSNAMECOLUMN_NAME,
+          TYPECOLUMN_NAME,
+          CLASSNAMECOLUMN_NAME]));
+
+      ExecQuery.ParamCheck := true;
+      TypeParam := ExecQuery.ParamByName(TYPECOLUMN_NAME);
+      ClassParam := ExecQuery.ParamByName(CLASSNAMECOLUMN_NAME);
+      for i := 0 to SystemSQLMapper.ObjectPersistenceMappers.count - 1 do
+      begin
+        ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
+        if assigned(ObjectPMapper) and (ObjectPMapper.BoldDbType = -1) then
+        begin
+          Inc(HighestBoldDbType);
+          ObjectPMapper.BoldDbType := HighestBoldDbType;
+          BoldLog.LogFmt(sAddBoldDBTType, [ObjectPMapper.BoldDbType, ObjectPMapper.expressionName]);
+          TypeParam.AsInteger := HighestBoldDbType;
+          ClassParam.AsString := ObjectPMapper.ExpressionName;
+          ExecQuery.ExecSQL;
+        end;
+      end;
+    end;
+  finally
+    SystemSQLMapper.ReleaseQuery(Query);
+    SystemSQLMapper.ReleaseExecQuery(ExecQuery);
+  end;
 end;
 
 procedure TBoldDbValidator.Activate;

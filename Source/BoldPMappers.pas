@@ -530,8 +530,11 @@ begin
     Exit;
   Guard := TBoldGuard.Create(ModifiedObjectIDList, NewObjectIDList, DeletedObjectIDList);
   DeletedObjectIDList := TBoldObjectIdList.Create;
+  DeletedObjectIDList.OwnsEntries := false;
   NewObjectIDList := TBoldObjectIdList.Create;
+  NewObjectIDList.OwnsEntries := false;
   ModifiedObjectIDList := TBoldObjectIdList.Create;
+  ModifiedObjectIDList.OwnsEntries := false;
 
   // downto order is important here - Daniel
   for i := ObjectIDList.Count - 1 downto 0 do
@@ -540,11 +543,11 @@ begin
     if ObjectContents.BoldPersistenceState = bvpsModified then
     begin
       if ObjectContents.BoldExistenceState = besDeleted then
-        DeletedObjectIDList.Add(ObjectIDList[i])
+        DeletedObjectIDList.AddAndAdopt(ObjectIDList[i])
       else
-        NewObjectIDList.Add(ObjectIDList[i]);
+        NewObjectIDList.AddAndAdopt(ObjectIDList[i]);
     end else
-      ModifiedObjectIDList.Add(ObjectIDList[i]);
+      ModifiedObjectIDList.AddAndAdopt(ObjectIDList[i]);
   end;
 
   ReserveNewIds(ValueSpace, ObjectIdList, TranslationList);
