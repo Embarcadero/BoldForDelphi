@@ -122,7 +122,7 @@ begin
   for i:= 0 to NO_CLIENTS do
   begin
     if not Assigned(fClientHandler) then
-      fClientHandler := TTestableClientHandler.Create;
+      fClientHandler := TTestableClientHandler.Create(fClientHandler);
     if not Assigned(ListenerIntf) then
       ListenerIntf := TTestBoldListener.Create;
     fClientidentifierString := Format('TestClient%d', [i]);

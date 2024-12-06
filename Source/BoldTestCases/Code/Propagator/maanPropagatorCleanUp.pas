@@ -67,7 +67,7 @@ begin
   fPropagator := TDummyAdvancedPropagator.Create;
   fPropagator.Initialize;
   (TPropagatorServerTest.Instance as TPropagatorServerTest).fAdvancedPropagator := fPropagator;
-  fClientHandler := TTestableClientHandler.Create;
+  fClientHandler := TTestableClientHandler.Create(fClientHandler);
   fEventQueue := TBoldThreadSafeObjectQueue.Create('TSQ-Testcase/Cleanup');
   fPropagator.fClientHandlerTest := fClienthandler;
   fCleanUpSubscriber := TBoldCleanUpSubscriber.Create(fClientHandler);

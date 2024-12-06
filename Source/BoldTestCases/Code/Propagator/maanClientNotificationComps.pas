@@ -351,7 +351,7 @@ begin
   fOutputQueueHandler := TTestableOutputQueueHandler.Create;
   fPriorityListEnlister := TTestablePriorityListEnlister.Create;
   fNotificationList := TList.Create;
-  fClientHandler := TBoldClientHandler.Create;
+  fClientHandler := TBoldClientHandler.Create(fClientHandler);
   (fPriorityListEnlister as TTestablePriorityListEnlister).PriorityList.OnHeadChanged := OnPriorityChanged;
   // register clients 1 & 2
   RegisterClients;

@@ -46,11 +46,9 @@ uses
   maan_PropagatorLockingSupport,
   maanBoldSnooperHandle,
   aniv_1,
- {$IFNDEF BOLD_NO_QUERIES}
   aniv_FLS,
  {$IFNDEF OXML}
   aniv_xml,
- {$ENDIF}
  {$ENDIF}
   aniv_temporal,
   dmjehoBoldTest,
@@ -136,7 +134,6 @@ begin
                              TAniv_PrioQueue.Suite,
                              TAniv_Various.Suite,
                              TAniv_fmDistributable.Suite]),
- {$IFNDEF BOLD_NO_QUERIES}
                TTestSuite.Create('FullLockingSupport testcases',
                             [TAniv_RegionDefinitions.Suite,
                              TAniv_Regions.Suite,
@@ -144,7 +141,6 @@ begin
                              TAniv_FLS_Various.Suite,
                              TAniv_LockHolder.Suite,
                              TAniv_LockingHandle.Suite]),
- {$ENDIF}
                TAniv_temporal1.Suite,
 {$IFNDEF OXML} // TODO update TAniv_XMLStreaming to work with OXML
                TAniv_XMLStreaming.Suite,

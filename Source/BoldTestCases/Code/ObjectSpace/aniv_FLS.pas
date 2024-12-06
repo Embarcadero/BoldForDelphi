@@ -69,7 +69,6 @@ type
     procedure ParentExpansion;
   end;
 
- {$IFNDEF BOLD_NO_QUERIES}
   TDummyLockHolder = class;
    
   TAniv_LockHandler = class(TLocalTestCase)
@@ -135,7 +134,6 @@ type
     procedure GetPropagationEvents(EventList: TStringList); override;
     function EnsureLocks: Boolean; override;
   end;
- {$ENDIF}
 
 var
   dmAnivFLS: TdmAnivFLS;
@@ -707,7 +705,6 @@ begin
   SetCommentForTest(Result, 'ParentExpansion', '');
 end;
 
-{$IFNDEF BOLD_NO_QUERIES}
 { TAniv_LockHandler }
 
 procedure TAniv_LockHandler.DeletingObjects;
@@ -1202,16 +1199,13 @@ begin
   FreeAndNil(LockHolder);
   FreeAndNil(dmAnivFLS);
 end;
-{$ENDIF}
 
 initialization
   TestGlobal.RegisterTestCase(TAniv_RegionDefinitions);
   TestGlobal.RegisterTestCase(TAniv_Regions);
- {$IFNDEF BOLD_NO_QUERIES}
   TestGlobal.RegisterTestCase(TAniv_FLS_Various); 
   TestGlobal.RegisterTestCase(TAniv_LockHandler);
   TestGlobal.RegisterTestCase(TAniv_LockHolder);
   TestGlobal.RegisterTestCase(TAniv_LockingHandle);
- {$ENDIF}
 end.
 

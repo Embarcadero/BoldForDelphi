@@ -87,7 +87,7 @@ begin
   fListenerThread.Resume;
   fListenerThread.WaitUntilReady(INFINITE);
   fPriorityListEnlister := TMyPriorityListEnlister.Create;
-  fClientHandler := TBoldClientHandler.Create;
+  fClientHandler := TBoldClientHandler.Create(fClientHandler);
   fClientNotifierHandler := TBoldClientNotifierHandler.Create(1, fClientHandler, fPriorityListEnlister.PriorityList, true);
 end;
 
@@ -154,7 +154,7 @@ begin
   fListenerThread := TTestListenerThread2.Create(true, 4);
   fListenerThread.Resume;
   fListenerThread.WaitUntilReady(INFINITE);
-  fClientHandler:= TBoldClientHandler.Create;
+  fClientHandler:= TBoldClientHandler.Create(fClientHandler);
   fPriorityListEnlister:= TMyPriorityListEnlister.Create;
   fOutputQueueHandler:= TMyOutputQueueHandler.Create;
   fClientNotifierHandler:= TBoldClientNotifierHandler.Create(15, fClientHandler, fPriorityListEnlister.Prioritylist, true);

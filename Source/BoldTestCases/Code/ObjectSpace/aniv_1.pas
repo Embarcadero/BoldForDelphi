@@ -23,7 +23,7 @@ uses
   BoldUMLModelLink, BoldUMLXMILink, DB,
   BoldAbstractDatabaseAdapter,   BoldAbstractPersistenceHandleDB,
   BoldDatabaseAdapterUniDAC, DBAccess, Uni,  PostgreSQLUniProvider,
-  InterBaseUniProvider, DAScript, UniScript, System.Actions;
+  DAScript, UniScript, System.Actions;
 
 type
   Tdm_aniv_test1 = class(TDataModule)
