@@ -280,7 +280,8 @@ type
     fGenerateMultiplicityConstraints: Boolean;
     fValueTypeNameList: TBoldElementTypeInfoList;
     fStereotype: string;
-    fUseClockLog: Boolean;    
+    fUseClockLog: Boolean;
+    fModelCRC: string;
     function GetInitializationLog: TStringList;
     function GetAttributeTypeInfoByDelphiName(const name: string): TBoldAttributeTypeInfo;
     function GetAttributeTypeInfoByExpressionName(const name: string): TBoldAttributeTypeInfo;
@@ -300,7 +301,7 @@ type
     function GetEvaluator: TBoldEvaluator; override;
     function GetBoldType: TBoldElementTypeInfo; override;
   public
-    constructor Create(moldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
+    constructor Create(AMoldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
     destructor Destroy; override;
     function ConformsTo(CompareElement: TBoldElementTypeInfo): Boolean; override;
     procedure GetValueTypeNames(S: TStrings; Classes, Types, System, metatype, lists: Boolean);
@@ -338,6 +339,7 @@ type
     property InitializationLog: TStringList read GetInitializationLog;
     property GenerateDefaultRegions: Boolean index befGenerateDefaultRegions read GetElementFlag;
     property UseClockLog: Boolean read fUseClockLog;
+    property ModelCRC: string read fModelCRC;
   end;
 
   {---TBoldClassTypeInfo---}
@@ -901,7 +903,7 @@ begin
 end;
 
 
-constructor TBoldSystemTypeInfo.Create(moldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
+constructor TBoldSystemTypeInfo.Create(AMoldModel: TMoldModel; UseGeneratedCode, CheckCodeCheckSum: Boolean; TypeNameDictionary: TBoldTypeNameDictionary);
 var
   i: integer;
   BoldObjectClasses: TBoldGeneratedClassList;
@@ -910,14 +912,14 @@ var
   Guard: IBoldGuard;
   BoldGeneratedCodeDescriptor: TBoldGeneratedCodeDescriptor;
 begin
-  inherited Create(MoldModel, self);
+  inherited Create(AMoldModel, self);
   Guard := TBoldGuard.Create(BoldObjectListClasses, BoldObjectClasses, Errors);
 
-  fStereotype := MoldModel.Stereotype;
-  fUseClockLog := StringToBoolean(MoldModel.BoldTVByName[TAG_USECLOCKLOG]);
+  fStereotype := AMoldModel.Stereotype;
+  fUseClockLog := StringToBoolean(AMoldModel.BoldTVByName[TAG_USECLOCKLOG]);
 
   SetElementFlag(befSystemIsRunnable, true);
-  fOptimisticLocking := MoldModel.OptimisticLocking;
+  fOptimisticLocking := AMoldModel.OptimisticLocking;
 {$IFDEF BOLD_LITE}
   G_TheSystemType := self;
 {$ENDIF}
@@ -927,35 +929,37 @@ begin
   fAttributeTypes := TBoldAttributeTypeInfoList.Create;
   AttributeTypes.Capacity := TypeNameDictionary.count;
   fListTypes := TBoldListTypeInfoList.Create;
-  ListTypes.Capacity := TypeNameDictionary.count + moldModel.Classes.Count + 1;
+  ListTypes.Capacity := TypeNameDictionary.count + AMoldModel.Classes.Count + 1;
   ListTypes.Add(TBoldListTypeInfo.Create(fTypeTypeinfo, self, TBoldTypeList));
   SetElementFlag(befSystemPersistent, true);
-  SetElementFlag(befGenerateDefaultRegions, MoldModel.GenerateDefaultRegions);
+  SetElementFlag(befGenerateDefaultRegions, AMoldModel.GenerateDefaultRegions);
   FTopSortedClasses := TBoldClassTypeInfoList.Create;
 
   BoldObjectListClasses := TBoldGeneratedClassList.Create;
   BoldObjectClasses := TBoldGeneratedClassList.Create;
-  fGenerateMultiplicityConstraints := TVIsTrue(MoldModel.BoldTVByName[TAG_GENERATEMULTIPLICITYCONSTRAINTS]);
+  fGenerateMultiplicityConstraints := TVIsTrue(AMoldModel.BoldTVByName[TAG_GENERATEMULTIPLICITYCONSTRAINTS]);
 
   fUseGeneratedCode := UseGeneratedCode;
+  fModelCRC := AMoldModel.CRC;
+
   if UseGeneratedCode then
   begin
     BoldGeneratedCodeDescriptor := nil;
     for i := 0 to GeneratedCodes.Count - 1 do
     begin
-      if (GeneratedCodes.ModelEntries[i].ExpressionName = MoldModel.ExpandedExpressionName) then
+      if (GeneratedCodes.ModelEntries[i].ExpressionName = AMoldModel.ExpandedExpressionName) then
       begin
         BoldGeneratedCodeDescriptor := GeneratedCodes.ModelEntries[i];
-        if (not CheckCodeCheckSum or (BoldGeneratedCodeDescriptor.CRC = '') or (BoldGeneratedCodeDescriptor.CRC = MoldModel.CRC)) then
+        if (not CheckCodeCheckSum or (BoldGeneratedCodeDescriptor.CRC = '') or (BoldGeneratedCodeDescriptor.CRC = AMoldModel.CRC)) then
         begin
           if assigned(BoldGeneratedCodeDescriptor.InstallBusinessClasses) then
           begin
-            BoldObjectClasses.Capacity := moldModel.Classes.Count;
+            BoldObjectClasses.Capacity := AMoldModel.Classes.Count;
             BoldGeneratedCodeDescriptor.InstallBusinessClasses(BoldObjectClasses);
           end;
           if assigned(BoldGeneratedCodeDescriptor.InstallObjectListClasses) then
           begin
-            BoldObjectListClasses.Capacity := moldModel.Classes.Count;
+            BoldObjectListClasses.Capacity := AMoldModel.Classes.Count;
             BoldGeneratedCodeDescriptor.InstallObjectListClasses(BoldObjectListClasses);
           end;
           break;
@@ -964,9 +968,9 @@ begin
     end;
 
     if CheckCodeCheckSum and (Assigned(BoldGeneratedCodeDescriptor) and (BoldGeneratedCodeDescriptor.CRC <> '') and 
-      (BoldGeneratedCodeDescriptor.CRC <> MoldModel.CRC) ) then
+      (BoldGeneratedCodeDescriptor.CRC <> AMoldModel.CRC) ) then
     begin
-      InitializationError(sCRCDiffers, [MoldModel.CRC, BoldGeneratedCodeDescriptor.CRC]);
+      InitializationError(sCRCDiffers, [AMoldModel.CRC, BoldGeneratedCodeDescriptor.CRC]);
     end;
   end;
 
@@ -982,24 +986,24 @@ begin
 
   // Superclasses must be constructed first.
   // This also assures that FClasses will be topologicaly sorted
-  moldModel.EnsureTopSorted;
+  AMoldModel.EnsureTopSorted;
 
   Errors := TStringList.Create;
-  Errors.CommaText := MoldModel.TVByName[BOLDINTERALTVPREFIX + TV_MODELERRORS];
+  Errors.CommaText := AMoldModel.TVByName[BOLDINTERALTVPREFIX + TV_MODELERRORS];
   if Errors.Count > 0 then
   begin
     for i := 0 to Errors.Count - 1 do
       InitializationError(Errors[i], []);
-    TBoldClassTypeInfo.Create(self, moldModel.Classes[0], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses, true);
+    TBoldClassTypeInfo.Create(self, AMoldModel.Classes[0], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses, true);
     exit;
   end;
 
-  TopSortedClasses.Capacity := moldModel.Classes.Count;
-  for I := 0 to moldModel.Classes.Count - 1 do
-    TBoldClassTypeInfo.Create(self, moldModel.Classes[I], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses);
+  TopSortedClasses.Capacity := AMoldModel.Classes.Count;
+  for I := 0 to AMoldModel.Classes.Count - 1 do
+    TBoldClassTypeInfo.Create(self, AMoldModel.Classes[I], TypeNameDictionary, BoldObjectClasses, BoldObjectListClasses);
 
-  for I := 0 to moldModel.Associations.Count - 1 do
-    TBoldRoleRTInfo.SetPass2InfoForAssociation(self, moldModel.Associations[I]);
+  for I := 0 to AMoldModel.Associations.Count - 1 do
+    TBoldRoleRTInfo.SetPass2InfoForAssociation(self, AMoldModel.Associations[I]);
 
   if GenerateMultiplicityConstraints then
     for i := 0 to TopSortedClasses.Count - 1 do
