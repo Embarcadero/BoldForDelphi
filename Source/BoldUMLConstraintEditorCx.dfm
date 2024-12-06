@@ -37,13 +37,11 @@ object frmBoldUMLConstraintEditorCx: TfrmBoldUMLConstraintEditorCx
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnDestroy = FormDestroy
   OnDeactivate = FormDeactivate
-  PixelsPerInch = 96
   TextHeight = 13
   object ToolBar1: TToolBar
     Left = 0
@@ -152,6 +150,7 @@ object frmBoldUMLConstraintEditorCx: TfrmBoldUMLConstraintEditorCx
       Navigator.Buttons.CustomButtons = <>
       ScrollbarAnnotations.CustomAnnotations = <>
       DataController.BoldHandle = blhElementConstraint
+      DataController.Filter.Options = [fcoSoftNull]
       DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>

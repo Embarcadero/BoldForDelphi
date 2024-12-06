@@ -8,13 +8,14 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
   ClientWidth = 471
   Color = clBtnFace
   ParentFont = True
+  OldCreateOrder = True
   Position = poMainFormCenter
   OnClose = FormClose
-  OnCreate = FormCreate
   DesignSize = (
     471
     500)
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 13
   object PageControl1: TPageControl
     Left = 16
     Top = 16
@@ -25,7 +26,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
     object TabSheet1: TTabSheet
       DesignSize = (
         439
-        405)
+        407)
       object btAttributeShowDerivExprEditor: TButton
         Left = 327
         Top = 156
@@ -42,7 +43,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Font.Name = 'Symbol'
         Font.Style = []
         ParentFont = False
-        TabOrder = 12
+        TabOrder = 18
         OnClick = btAttributeShowDerivExprEditorClick
       end
       object gbDelphiFeatures: TcxGroupBox
@@ -50,7 +51,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Top = 304
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Attribute kind Delphi features'
-        ParentFont = False
         Style.BorderStyle = ebsFlat
         TabOrder = 30
         Visible = False
@@ -60,22 +60,20 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Height = 85
         Width = 332
         object lblDPRead: TcxLabel
-          Left = 3
+          Left = 5
           Top = 36
           Margins.Bottom = 0
           Caption = 'Pr&operty read'
-          ParentFont = False
           Style.BorderStyle = ebsNone
           Properties.Alignment.Horz = taRightJustify
           Transparent = True
           AnchorX = 76
         end
         object lblDPWrite: TcxLabel
-          Left = 0
+          Left = 3
           Top = 60
           Margins.Bottom = 0
           Caption = 'Property &write'
-          ParentFont = False
           Style.BorderStyle = ebsNone
           Properties.Alignment.Horz = taRightJustify
           Transparent = True
@@ -90,7 +88,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
           DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiPropertyRead'#39'].value'
           DataBinding.BoldProperties.ApplyPolicy = bapChange
           DataBinding.BoldProperties.NilRepresentation = ''
-          ParentFont = False
           Properties.BoldLookupListHandle = dmBoldUMLModelEditorHandles.bchDelphiProperty
           Properties.BoldRowProperties.Expression = ''
           Properties.BoldRowProperties.NilRepresentation = ''
@@ -111,7 +108,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
           DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiPropertyWrite'#39'].value'
           DataBinding.BoldProperties.ApplyPolicy = bapChange
           DataBinding.BoldProperties.NilRepresentation = ''
-          ParentFont = False
           Properties.BoldLookupListHandle = dmBoldUMLModelEditorHandles.bchDelphiProperty
           Properties.BoldRowProperties.Expression = ''
           Properties.BoldRowProperties.NilRepresentation = ''
@@ -134,7 +130,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
           DataBinding.BoldHandle = behAttribute
           DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiField'#39'].value'
           DataBinding.BoldProperties.ApplyPolicy = bapChange
-          ParentFont = False
           Properties.ImmediatePost = True
           Style.BorderStyle = ebsFlat
           Style.TransparentBorder = False
@@ -150,7 +145,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'visibility'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         DataBinding.BoldProperties.NilRepresentation = ''
-        ParentFont = False
         Properties.BoldLookupListHandle = dmBoldUMLModelEditorHandles.blhAllVisibilityKind
         Properties.BoldRowProperties.Expression = ''
         Properties.BoldRowProperties.NilRepresentation = ''
@@ -159,7 +153,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Properties.DropDownListStyle = lsEditFixedList
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
-        TabOrder = 9
+        TabOrder = 13
         Width = 241
       end
       object cmbAttributePMapperName: TcxBoldComboBox
@@ -171,7 +165,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.PMapper'#39'].value'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         DataBinding.BoldProperties.NilRepresentation = ''
-        ParentFont = False
         Properties.BoldLookupListHandle = dmBoldUMLModelEditorHandles.bchAttributePMapperNames
         Properties.BoldRowProperties.Expression = ''
         Properties.BoldRowProperties.NilRepresentation = ''
@@ -181,7 +174,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Properties.OnChange = cmbAttributePMapperNamePropertiesChange
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
-        TabOrder = 24
+        TabOrder = 26
         Width = 241
       end
       object cmbAttributeBoldType: TcxBoldComboBox
@@ -193,7 +186,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'type'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         DataBinding.BoldProperties.NilRepresentation = ''
-        ParentFont = False
         Properties.BoldLookupListHandle = dmBoldUMLModelEditorHandles.blhConcreteTypesForAttribute
         Properties.BoldRowProperties.Expression = 'name'
         Properties.BoldRowProperties.NilRepresentation = ''
@@ -202,7 +194,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Properties.DropDownListStyle = lsEditFixedList
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
-        TabOrder = 8
+        TabOrder = 11
         Width = 241
       end
       object tbxAttributeStereotype: TcxBoldTextEdit
@@ -224,7 +216,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 3
+        TabOrder = 4
         Width = 241
       end
       object tbxAttributeName: TcxBoldTextEdit
@@ -268,7 +260,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 10
+        TabOrder = 15
         Width = 241
       end
       object tbxAttributeInitialValue: TcxBoldTextEdit
@@ -292,7 +284,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 15
+        TabOrder = 20
         Width = 241
       end
       object tbxAttributeExpressionName: TcxBoldTextEdit
@@ -315,7 +307,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 21
+        TabOrder = 24
         Width = 241
       end
       object tbxAttributeDerivationOCL: TcxBoldTextEdit
@@ -338,7 +330,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 11
+        TabOrder = 17
         Width = 221
       end
       object tbxAttributeDelphiName: TcxBoldTextEdit
@@ -361,7 +353,7 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 18
+        TabOrder = 22
         Width = 241
       end
       object tbxAttributeColumnName: TcxBoldTextEdit
@@ -384,125 +376,114 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 27
+        TabOrder = 28
         Width = 241
       end
       object lblAttributeVisibility: TcxLabel
-        Left = 50
+        Left = 56
         Top = 112
         Margins.Bottom = 0
         Caption = 'Visi&bility'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeStereotype: TcxLabel
-        Left = 38
+        Left = 39
         Top = 39
         Margins.Bottom = 0
         Caption = '&Stereotype'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributePMapperName: TcxLabel
-        Left = 16
+        Left = 22
         Top = 258
         Margins.Bottom = 0
         Caption = '&PMapper name'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeName: TcxLabel
-        Left = 64
+        Left = 66
         Top = 15
         Margins.Bottom = 0
         Caption = '&Name'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeLength: TcxLabel
-        Left = 57
+        Left = 60
         Top = 136
         Margins.Bottom = 0
         Caption = 'Len&gth'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeInitialValue: TcxLabel
-        Left = 34
+        Left = 38
         Top = 186
         Margins.Bottom = 0
         Caption = 'Initial value'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeExpressionName: TcxLabel
-        Left = 7
+        Left = 12
         Top = 234
         Margins.Bottom = 0
         Caption = 'E&xpression name'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeDerivationOCL: TcxLabel
-        Left = 16
+        Left = 21
         Top = 160
         Margins.Bottom = 0
         Caption = 'Derivation OC&L'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeDelphiName: TcxLabel
-        Left = 28
+        Left = 35
         Top = 210
         Margins.Bottom = 0
         Caption = 'Delph&i name'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeColumnName: TcxLabel
-        Left = 22
+        Left = 29
         Top = 282
         Margins.Bottom = 0
         Caption = 'Col&umn name'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
         AnchorX = 97
       end
       object lblAttributeBoldType: TcxLabel
-        Left = 70
+        Left = 69
         Top = 88
         Margins.Bottom = 0
         Caption = 'Type'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
@@ -520,11 +501,10 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.ReverseDerive'#39'].value'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         Enabled = False
-        ParentFont = False
         Properties.ImmediatePost = True
         Style.BorderStyle = ebsFlat
         Style.TransparentBorder = False
-        TabOrder = 5
+        TabOrder = 7
       end
       object bcbAttributePersistent: TcxBoldCheckBox
         Left = 349
@@ -540,7 +520,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'persistent'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         DataBinding.BoldProperties.Renderer = brPersistent
-        ParentFont = False
         Properties.ImmediatePost = True
         Style.BorderStyle = ebsFlat
         Style.TransparentBorder = False
@@ -558,11 +537,10 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'derived'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         DataBinding.BoldProperties.Renderer = brDerived
-        ParentFont = False
         Properties.ImmediatePost = True
         Style.BorderStyle = ebsFlat
         Style.TransparentBorder = False
-        TabOrder = 4
+        TabOrder = 6
       end
       object bcbAttributeDelayedFetch: TcxBoldCheckBox
         Left = 349
@@ -578,11 +556,10 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.DelayedFetch'#39'].value'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         Enabled = False
-        ParentFont = False
         Properties.ImmediatePost = True
         Style.BorderStyle = ebsFlat
         Style.TransparentBorder = False
-        TabOrder = 7
+        TabOrder = 10
       end
       object bcbAttributeAllowNull: TcxBoldCheckBox
         Left = 349
@@ -595,11 +572,10 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldHandle = behAttribute
         DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.AllowNULL'#39'].value'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
-        ParentFont = False
         Properties.ImmediatePost = True
         Style.BorderStyle = ebsFlat
         Style.TransparentBorder = False
-        TabOrder = 2
+        TabOrder = 3
       end
       object cmbTVAttributeKind: TcxBoldComboBox
         Left = 101
@@ -610,7 +586,6 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         DataBinding.BoldProperties.Expression = 'taggedValue['#39'Bold.AttributeKind'#39'].value'
         DataBinding.BoldProperties.ApplyPolicy = bapChange
         DataBinding.BoldProperties.NilRepresentation = ''
-        ParentFont = False
         Properties.BoldLookupListHandle = dmBoldUMLModelEditorHandles.bchAttributeKind
         Properties.BoldRowProperties.Expression = ''
         Properties.BoldRowProperties.NilRepresentation = ''
@@ -620,15 +595,14 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
         Properties.OnChange = cmbTVAttributeKindPropertiesChange
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
-        TabOrder = 6
+        TabOrder = 8
         Width = 241
       end
       object lblAttributeKind: TcxLabel
-        Left = 21
+        Left = 28
         Top = 63
         Margins.Bottom = 0
         Caption = 'Attribute &kind'
-        ParentFont = False
         Style.BorderStyle = ebsNone
         Properties.Alignment.Horz = taRightJustify
         Transparent = True
@@ -637,42 +611,38 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
     end
   end
   object OKBtn: TButton
-    Left = 303
+    Left = 307
     Top = 464
     Width = 75
     Height = 25
-    Action = BoldFormSaverOkAction1
     Anchors = [akRight, akBottom]
+    Caption = 'OK'
     Default = True
     ModalResult = 1
     TabOrder = 1
-    ExplicitLeft = 299
-    ExplicitTop = 463
   end
   object CancelBtn: TButton
-    Left = 384
+    Left = 388
     Top = 464
     Width = 75
     Height = 25
-    Action = BoldFormSaverCancelAction1
     Anchors = [akRight, akBottom]
     Cancel = True
+    Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 2
-    ExplicitLeft = 380
-    ExplicitTop = 463
   end
   object behAttribute: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
+    StaticSystemHandle = dmModelEdit.bshUMLModel
     RootHandle = brhAttribute
-    Left = 100
-    Top = 448
+    Left = 84
+    Top = 480
   end
   object brhAttribute: TBoldReferenceHandle
-    StaticSystemHandle = ServerData.SystemHandle
+    StaticSystemHandle = dmModelEdit.bshUMLModel
     StaticValueTypeName = 'UMLAttribute'
     Left = 24
-    Top = 448
+    Top = 480
   end
   object BoldPropertyMapper1: TBoldPropertyMapper
     MappingCollection = <
@@ -725,26 +695,5 @@ object BoldUMLAttributeEditForm: TBoldUMLAttributeEditForm
     OnSetAsVariant = brDerivedSetAsVariant
     Left = 388
     Top = 248
-  end
-  object BoldFormSaver1: TBoldFormSaver
-    StaticSystemHandle = ServerData.SystemHandle
-    OnlyFirstDirty = False
-    Left = 396
-    Top = 400
-  end
-  object ActionList1: TActionList
-    Left = 44
-    Top = 50
-    object BoldFormSaverOkAction1: TBoldFormSaverOkAction
-      Category = 'Bold Actions'
-      Caption = '&Ok'
-      ShortCut = 16474
-      BoldFormSaver = BoldFormSaver1
-    end
-    object BoldFormSaverCancelAction1: TBoldFormSaverCancelAction
-      Category = 'Bold Actions'
-      Caption = '&Cancel'
-      BoldFormSaver = BoldFormSaver1
-    end
   end
 end

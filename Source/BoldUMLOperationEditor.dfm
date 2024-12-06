@@ -12,13 +12,11 @@ object BoldUMLOperationEditForm: TBoldUMLOperationEditForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
   DesignSize = (
     432
     465)
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 8
@@ -194,7 +192,7 @@ object BoldUMLOperationEditForm: TBoldUMLOperationEditForm
     end
   end
   object CancelBtn: TButton
-    Left = 349
+    Left = 345
     Top = 427
     Width = 75
     Height = 25
@@ -205,7 +203,7 @@ object BoldUMLOperationEditForm: TBoldUMLOperationEditForm
     TabOrder = 3
   end
   object OKBtn: TButton
-    Left = 268
+    Left = 264
     Top = 427
     Width = 75
     Height = 25
@@ -244,6 +242,7 @@ object BoldUMLOperationEditForm: TBoldUMLOperationEditForm
           Navigator.Buttons.CustomButtons = <>
           ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldHandle = blhParameters
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>

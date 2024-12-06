@@ -11,8 +11,7 @@ uses Winapi.Windows, System.SysUtils, System.Classes, Vcl.Graphics, Vcl.Forms,
   BoldUMLModel, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
   cxContainer, cxEdit, cxTextEdit, cxMaskEdit, cxDropDownEdit, cxBoldEditors,
   BoldPropertyMapper, cxGroupBox, cxLabel, BoldToCxConverterUnit, cxCheckBox,
-  BoldVariantControlPack, BoldFormSaverActions, System.Actions, Vcl.ActnList,
-  BoldHandleAction, BoldFormSaver;
+  BoldVariantControlPack;
 
 type
   TBoldUMLAttributeEditForm = class(TForm)
@@ -61,10 +60,6 @@ type
     brDerived: TBoldAsVariantRenderer;
     cmbTVAttributeKind: TcxBoldComboBox;
     lblAttributeKind: TcxLabel;
-    BoldFormSaver1: TBoldFormSaver;
-    ActionList1: TActionList;
-    BoldFormSaverOkAction1: TBoldFormSaverOkAction;
-    BoldFormSaverCancelAction1: TBoldFormSaverCancelAction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btAttributeShowDerivExprEditorClick(Sender: TObject);
     procedure tbxAttributeInitialValuePropertiesValidate(Sender: TObject;
@@ -77,7 +72,6 @@ type
     procedure brDerivedSetAsVariant(aFollower: TBoldFollower;
       const NewValue: Variant);
     procedure cmbTVAttributeKindPropertiesChange(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
   public
     { Public declarations }
@@ -152,11 +146,6 @@ procedure TBoldUMLAttributeEditForm.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   Action := caFree;
-end;
-
-procedure TBoldUMLAttributeEditForm.FormCreate(Sender: TObject);
-begin
-  BoldFormSaver1.StaticSystemHandle := dmBoldUMLModelEditorHandles.ModelHandle.SystemHandle;
 end;
 
 procedure TBoldUMLAttributeEditForm.tbxAttributeColumnNamePropertiesChange(
