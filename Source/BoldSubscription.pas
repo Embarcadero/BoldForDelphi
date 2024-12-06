@@ -115,9 +115,7 @@ const
 
   bqMaxSubscription = bqMinQuery + 6;
 
-{$IFDEF BoldSystemBroadcastMemberEvents}
   beBroadcastMemberEvents = beValueEvents + [beCompleteModify] + beDirtyListEvents;
-{$ENDIF}
 
   { Subscription Statistics }
 var
@@ -181,7 +179,7 @@ type
   public
     Publisher: TBoldPublisher;
     Index: integer; // index in the publishers subscriptionarray
-  end;  
+  end;
 
   TBoldPublisherReferenceArray = array of TBoldPublisherReference;
 
@@ -311,7 +309,6 @@ type
     function GetDebugInfo: string; override;
     procedure FreePublisher;
     function GetContextString: string; virtual;
-    property HasSubscribers: Boolean read GetHasSubscribers;
     property Publisher: TBoldPublisher read GetPublisher;
   public
     destructor Destroy; override;
@@ -322,6 +319,7 @@ type
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean; virtual;
     property ContextString: string read GetContextString;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
+    property HasSubscribers: Boolean read GetHasSubscribers;
 end;
 
   {---TBoldSubscribableComponent---}
