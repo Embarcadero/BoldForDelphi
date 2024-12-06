@@ -11,6 +11,7 @@ uses
   BoldDeriver,
   BoldElements,
   BoldSystemRt,
+  BoldSystem,
   BoldHandles;
 
 type
@@ -43,6 +44,7 @@ type
     function GetRootTypeName: string;
     function GetIsCurrent: boolean;
   protected
+    function GetBoldSystem: TBoldSystem; override;
     procedure SubscribeToValue;
     procedure EffectiveRootValueChanged; virtual;
     function EffectiveRootValue: TBoldElement;
@@ -407,6 +409,14 @@ procedure TBoldRootedHandle.SetRootHandle(const Value: TBoldElementHandle);
 begin
   if InternalRootHandle <> value then
     InternalRootHandle := value;
+end;
+
+function TBoldRootedHandle.GetBoldSystem: TBoldSystem;
+begin
+  if Assigned(RootHandle) then
+    result := RootHandle.BoldSystem;
+  if not Assigned(result) then
+    result := inherited;
 end;
 
 function TBoldRootedHandle.GetIsCurrent: boolean;

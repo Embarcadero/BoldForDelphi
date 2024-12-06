@@ -9,7 +9,8 @@ uses
   Classes,
   BoldSubscription,
   BoldElements,
-  BoldHandles;
+  BoldHandles,
+  BoldSystem;
 
 type
   { forward declaration of classes }
@@ -30,6 +31,7 @@ type
     function GetValue: TBoldElement; override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; override;
+    function GetBoldSystem: TBoldSystem; override;
     procedure SetValue(NewValue: TBoldElement); override;
     function GetCanSetValue: boolean; override;
     procedure DoAssign(Source: TPersistent); override;
@@ -48,7 +50,7 @@ implementation
 uses
   SysUtils,
   BoldSystemRT,
-  BoldSystem;
+  BoldDomainElement;
 
 const
   breValueDestroyed = 42;
@@ -79,6 +81,14 @@ begin
     self.OnObjectDeleted := OnObjectDeleted;
     self.OnValueDestroyed := OnValueDestroyed;
   end;
+end;
+
+function TBoldReferenceHandle.GetBoldSystem: TBoldSystem;
+begin
+  if Value is TBoldDomainElement then
+    result := TBoldDomainElement(Value).BoldSystem as TBoldSystem
+  else
+    result := inherited;
 end;
 
 function TBoldReferenceHandle.GetCanSetValue: boolean;

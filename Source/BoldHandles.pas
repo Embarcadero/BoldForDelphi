@@ -36,6 +36,7 @@ type
     function GetValueAsString: String;
     function GetValueAsVariant: variant;
   protected
+    function GetBoldSystem: TBoldSystem; virtual; abstract;
     { IBoldValidateableComponent}
     function ValidateComponent(ComponentValidator: TBoldComponentValidator; NamePrefix: String): Boolean; virtual;
     function GetValue: TBoldElement; virtual; abstract;
@@ -51,6 +52,7 @@ type
     property BoldType: TBoldElementTypeInfo read GetBoldType;
     property DynamicBoldType: TBoldElementTypeInfo read GetDynamicBoldType;
     property StaticBoldType: TBoldElementTypeInfo read GetStaticBoldType;
+    property BoldSystem: TBoldSystem read GetBoldSystem;
     property Value: TBoldElement read GetValue;
     property StrictType: Boolean read fStrictType write fStrictType;
     property AsString: String read GetValueAsString;
@@ -75,6 +77,7 @@ type
     function GetRegionDefinitions: TBoldRegionDefinitions;
     function GetIsSystemTypeInfoAvailable: boolean;
   protected
+    function GetBoldSystem: TBoldSystem; override;
     function GetStaticBoldType: TBoldElementTypeInfo; override;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
     function GetValue: TBoldElement; override;
@@ -101,6 +104,7 @@ type
     procedure _Recieve(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SetIsDefault(Value: Boolean);
   protected
+    function GetBoldSystem: TBoldSystem; override;
     function GetActive: Boolean; virtual; abstract;
     procedure SetActive(Value: Boolean); virtual; abstract;
     function GetSystem: TBoldSystem; virtual; abstract;
@@ -127,8 +131,8 @@ type
     fStaticSystemHandle: TBoldAbstractSystemHandle;
     fStaticSystemHandleSubscriber: TBoldPassthroughSubscriber;
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
-    function GetBoldSystem: TBoldSystem;
   protected
+    function GetBoldSystem: TBoldSystem; override;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; virtual;
     procedure SetStaticSystemHandle(Value: TBoldAbstractSystemHandle); virtual;
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
@@ -138,7 +142,6 @@ type
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    property BoldSystem: TBoldSystem read GetBoldSystem;
  published
     property StaticSystemHandle: TBoldAbstractSystemHandle read GetStaticSystemHandle write SetStaticSystemHandle;
   end;
@@ -386,6 +389,11 @@ begin
   result := nil;
 end;
 
+function TBoldAbstractSystemHandle.GetBoldSystem: TBoldSystem;
+begin
+  result := self.System;
+end;
+
 function TBoldAbstractSystemHandle.GetStaticBoldType: TBoldElementTypeInfo;
 begin
   result := StaticSystemTypeInfo;
@@ -551,6 +559,11 @@ begin
   result := inherited RefersToComponent(Component);
   if not result and assigned(Component) then
     result := Component = BoldModel;
+end;
+
+function TBoldSystemTypeInfoHandle.GetBoldSystem: TBoldSystem;
+begin
+  result := nil;
 end;
 
 function TBoldSystemTypeInfoHandle.GetIsSystemTypeInfoAvailable: boolean;
