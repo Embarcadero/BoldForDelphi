@@ -106,6 +106,7 @@ type
     procedure SetSystemTypeInfoHandle(Value: TBoldSystemTypeInfoHandle);
     procedure _Recieve(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure SetIsDefault(Value: Boolean);
+    function GetIsDefault: Boolean;
   protected
     function GetBoldSystem: TBoldSystem; override;
     function GetActive: Boolean; virtual; abstract;
@@ -125,7 +126,7 @@ type
     class function DefaultBoldSystemHandle: TBoldAbstractSystemHandle;
     class function FindSystemHandleForSystem(ABoldSystem: TBoldSystem): TBoldAbstractSystemHandle;
   published
-    property IsDefault: Boolean read fIsDefault write SetIsDefault nodefault; {Always save}
+    property IsDefault: Boolean read GetIsDefault write SetIsDefault nodefault; {Always save}
   end;
 
   { TBoldNonSystemHandle }
@@ -436,19 +437,21 @@ begin
     result := Component = SystemTypeInfoHandle;
 end;
 
+function TBoldAbstractSystemHandle.GetIsDefault: Boolean;
+begin
+  result :=  G_DefaultBoldSystemHandle = Self;
+end;
+
 procedure TBoldAbstractSystemHandle.SetIsDefault(Value: Boolean);
 begin
-  if (Value <> IsDefault) then
-  begin
-    fIsDefault := Value;
-    if Value then
-      G_DefaultBoldSystemHandle := Self
-    else
-    if G_DefaultBoldSystemHandle = Self then
-      G_DefaultBoldSystemHandle := nil;
-    if Active then
-      System.IsDefault := G_DefaultBoldSystemHandle = Self;
-  end;
+  fIsDefault := Value;
+  if Value then
+    G_DefaultBoldSystemHandle := Self
+  else
+  if G_DefaultBoldSystemHandle = Self then
+    G_DefaultBoldSystemHandle := nil;
+  if Active then
+    System.IsDefault := G_DefaultBoldSystemHandle = Self;
 end;
 
 procedure TBoldAbstractSystemHandle.SetSystemTypeInfoHandle(Value: TBoldSystemTypeInfoHandle);
