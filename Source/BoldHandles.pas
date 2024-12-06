@@ -14,6 +14,7 @@ uses
   BoldSystem,
   BoldSystemRT,
   BoldHandle,
+  BoldContainers,
   BoldComponentValidator; // maybe move IBoldValidateableComponent here instead ?
 
 type
@@ -46,6 +47,8 @@ type
     function GetCanSetValue: boolean; virtual;
     procedure SetValue(NewValue: TBoldElement); virtual;
   public
+    procedure AfterConstruction; override;
+    procedure BeforeDestruction; override;
     destructor Destroy; override;
     function RefersToComponent(Component: TBoldSubscribableComponent): Boolean; virtual;
     property StaticSystemTypeInfo: TBoldSystemTypeInfo read GetStaticSystemTypeInfo;
@@ -129,8 +132,9 @@ type
   TBoldNonSystemHandle = class(TBoldElementHandle)
   private
     fStaticSystemHandle: TBoldAbstractSystemHandle;
-    fStaticSystemHandleSubscriber: TBoldPassthroughSubscriber;
+    fSubscriber: TBoldPassthroughSubscriber;
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetSubscriber: TBoldPassthroughSubscriber;
   protected
     function GetBoldSystem: TBoldSystem; override;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; virtual;
@@ -138,8 +142,8 @@ type
     function GetStaticSystemTypeInfo: TBoldSystemTypeInfo; override;
     procedure DoAssign(Source: TPersistent); virtual;
     function IsStaticSystemHandleStored: boolean; virtual;
+    property Subscriber: TBoldPassthroughSubscriber read GetSubscriber;
   public
-    constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
  published
@@ -149,22 +153,26 @@ type
   TBoldSystemExtensionComponent = class(TBoldHandle)
   private
     fStaticSystemHandle: TBoldAbstractSystemHandle;
-    fStaticSystemHandleSubscriber: TBoldPassthroughSubscriber;
+    fSubscriber: TBoldPassthroughSubscriber;
     function GetBoldSystem: TBoldSystem;
+    function GetSubscriber: TBoldPassthroughSubscriber;
   protected
     procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); virtual;
     function GetHandledObject: TObject; override;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; virtual;
     procedure SetStaticSystemHandle(Value: TBoldAbstractSystemHandle); virtual;
     procedure StaticBoldTypeChanged; virtual;
+    procedure PlaceSubscriptions; virtual;
     property BoldSystem: TBoldSystem read GetBoldSystem;
+    property Subscriber: TBoldPassthroughSubscriber read GetSubscriber;
   public
-    constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
  published
     property StaticSystemHandle: TBoldAbstractSystemHandle read GetStaticSystemHandle write SetStaticSystemHandle;
   end;
 
+var
+  BoldElementHandleList: TBoldObjectArray;
 
 implementation
 
@@ -174,8 +182,7 @@ uses
 
   BoldCoreConsts,
   BoldDefs,
-  BoldregionDefinitionParser,
-  BoldContainers;
+  BoldRegionDefinitionParser;
 
 const
   breModelDestroyed = 42;
@@ -188,6 +195,20 @@ var
   G_BoldSystemHandleList: TBoldObjectArray;
 
 {---TBoldElementHandle---}
+
+procedure TBoldElementHandle.AfterConstruction;
+begin
+  inherited;
+  if assigned(BoldHandleList) then
+    BoldHandleList.Add(self);
+end;
+
+procedure TBoldElementHandle.BeforeDestruction;
+begin
+  inherited;
+  if assigned(BoldHandleList) then
+    BoldHandleList.Remove(self);
+end;
 
 destructor TBoldElementHandle.Destroy;
 begin
@@ -272,12 +293,12 @@ procedure TBoldNonSystemHandle.SetStaticSystemHandle(Value: TBoldAbstractSystemH
 begin
   if (fStaticSystemHandle <> Value) then
   begin
-    fStaticSystemHandleSubscriber.CancelAllSubscriptions;
+    FreeAndNil(fSubscriber);
     fStaticSystemHandle := Value;
     if Assigned(fStaticSystemHandle) then
     begin
-      fStaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beDestroying], breFreeHandle);
-      fStaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beValueIDentityChanged], breValueIdentityChanged);
+      fStaticSystemHandle.AddSmallSubscription(Subscriber, [beDestroying], breFreeHandle);
+      fStaticSystemHandle.AddSmallSubscription(Subscriber, [beValueIDentityChanged], breValueIdentityChanged);
     end;
     StaticBoldTypeChanged;
   end;
@@ -307,6 +328,13 @@ begin
     Result := TBoldAbstractSystemHandle.DefaultBoldSystemTypeInfo
 end;
 
+function TBoldNonSystemHandle.GetSubscriber: TBoldPassthroughSubscriber;
+begin
+  if not Assigned(fSubscriber) then
+    fSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
+  result := fSubscriber;
+end;
+
 function TBoldNonSystemHandle.IsStaticSystemHandleStored: boolean;
 begin
   result := true;
@@ -328,16 +356,10 @@ begin
   end
 end;
 
-constructor TBoldNonSystemHandle.Create(Owner: TComponent);
-begin
-  inherited;
-  fStaticSystemHandleSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
-end;
-
 destructor TBoldNonSystemHandle.Destroy;
 begin
   FreePublisher;
-  FreeAndNil(fStaticSystemHandleSubscriber);
+  FreeAndNil(fSubscriber);
   inherited;
 end;
 
@@ -595,15 +617,9 @@ end;
 
 { TBoldSystemExtensionComponent }
 
-constructor TBoldSystemExtensionComponent.Create(Owner: TComponent);
-begin
-  inherited;
-  fStaticSystemHandleSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
-end;
-
 destructor TBoldSystemExtensionComponent.Destroy;
 begin
-  FreeAndNil(fStaticSystemHandleSubscriber);
+  FreeAndNil(fSubscriber);
   inherited;
 end;
 
@@ -625,25 +641,36 @@ begin
   result := fStaticSystemHandle;
 end;
 
+function TBoldSystemExtensionComponent.GetSubscriber: TBoldPassthroughSubscriber;
+begin
+  if not Assigned(fSubscriber) then
+    fSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
+  result := fSubscriber;
+end;
+
+procedure TBoldSystemExtensionComponent.PlaceSubscriptions;
+begin
+  FreeAndNil(fSubscriber);
+  if Assigned(fStaticSystemHandle) then
+  begin
+    fStaticSystemHandle.AddSmallSubscription(Subscriber, [beDestroying], breFreeHandle);
+    fStaticSystemHandle.AddSmallSubscription(Subscriber, [beValueIDentityChanged], breValueIdentityChanged);
+  end;
+end;
+
 procedure TBoldSystemExtensionComponent.SetStaticSystemHandle(
   Value: TBoldAbstractSystemHandle);
 begin
   if (fStaticSystemHandle <> Value) then
   begin
-    fStaticSystemHandleSubscriber.CancelAllSubscriptions;
     fStaticSystemHandle := Value;
-    if Assigned(fStaticSystemHandle) then
-    begin
-      fStaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beDestroying], breFreeHandle);
-      fStaticSystemHandle.AddSmallSubscription(fStaticSystemHandleSubscriber, [beValueIDentityChanged], breValueIdentityChanged);
-    end;
     StaticBoldTypeChanged;
   end;
 end;
 
 procedure TBoldSystemExtensionComponent.StaticBoldTypeChanged;
 begin
-
+  PlaceSubscriptions;
 end;
 
 procedure TBoldSystemExtensionComponent._Receive(Originator: TObject;
@@ -657,9 +684,10 @@ begin
 end;
 
 initialization
-  G_BoldSystemHandleList := TBoldObjectArray.Create(10, []);
+  G_BoldSystemHandleList := TBoldObjectArray.Create(128, []);
 
 finalization
+  Assert(G_BoldSystemHandleList.Count=0, Format('There are %d unreleased handles in finalization', [G_BoldSystemHandleList.Count]));
   FreeAndNil(G_BoldSystemHandleList);
 
 end.

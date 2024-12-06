@@ -150,9 +150,6 @@ begin
   if (RootHandle is TBoldAbstractSystemHandle) then
     Result := RootHandle as TBoldAbstractSystemHandle
   else
-  if Assigned(RootHandle) then
-    Result := nil
-  else
     Result := inherited GetStaticSystemHandle;
 end;
 
@@ -413,6 +410,7 @@ end;
 
 function TBoldRootedHandle.GetBoldSystem: TBoldSystem;
 begin
+  result := nil;
   if Assigned(RootHandle) then
     result := RootHandle.BoldSystem;
   if not Assigned(result) then
