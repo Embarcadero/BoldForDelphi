@@ -28,7 +28,7 @@ type
     fTimeToTimestampCache: TBoldTimeMappingCache;
     procedure DoPreUpdate(ObjectList: TBoldObjectList);
     procedure DoPostUpdate(ObjectList: TBoldObjectList);
-    function GetPersistenceController: TBoldPersistenceController; {$IFDEF BOLD_INLINE} inline; {$ENDIF}
+    function GetPersistenceController: TBoldPersistenceController;
     procedure PMFetch(ObjectList: TBoldObjectList; MemberIdList: TBoldMemberIdList);
   protected
     function GetTimeStampOfLatestUpdate: TBoldTimeStampType; override;
@@ -40,7 +40,7 @@ type
     function EnsureEnclosure(ObjectList: TBoldObjectList; ValidateOnly: Boolean): Boolean; override;
     procedure FetchMembersWithObjects(aBoldObjectList: TBoldObjectList; aBoldMemberIdList: TBoldMemberIdList); override;
     procedure FetchMembersWithObjects(aBoldObjectList: TBoldObjectList; AMemberCommaList: string); override;
-    procedure FetchLinksWithObjects(ObjectList: TBoldObjectList; const LinkName: string; FetchObjectsInLink: Boolean = True{; const FetchedObjectList: TBoldObjectList = nil}); override;
+    procedure FetchLinksWithObjects(ObjectList: TBoldObjectList; const LinkName: string; FetchObjectsInLink: Boolean = True); override;
     procedure FetchList(FetchList: TBoldObjectList); override;
     procedure FetchObjectById(BoldObjectId: TBoldObjectId); override;
     procedure FetchMember(Member: TBoldMember); override;
@@ -192,7 +192,7 @@ var
   end;
 
 var
-  OldCount: Integer; //PATCH
+  OldCount: Integer;
   I,J,M : Integer;
   OtherEnd: TBoldObjectReference;
   ObjectReference: TBoldObjectReference;
@@ -201,10 +201,10 @@ begin
   i := 0;
   while i < ObjectList.Count do
   begin
-    OldCount := ObjectList.Count; //PATCH
+    OldCount := ObjectList.Count;
     ExamineBoldObject := ObjectList[i];
-    if OldCount<=ObjectList.Count then //PATCH
-      Inc(i); //PATCH
+    if OldCount<=ObjectList.Count then
+      Inc(i);
     for J := 0 to ExamineBoldObject.BoldClassTypeInfo.AllRoles.Count - 1 do
     begin
       RoleRTInfo := ExamineBoldObject.BoldClassTypeInfo.AllRoles[J];
@@ -241,7 +241,6 @@ begin
       end;
     end;
     System.OptimisticLockHandler.EnsureEnclosure(ExamineBoldObject, ObjectList, ValidateOnly, ListIsEnclosure);
-    //PATCH MOVED UP  Inc(i);
   end;
   result := ListIsEnclosure;
 end;
