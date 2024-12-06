@@ -1,9 +1,9 @@
 object frmMemoEdit: TfrmMemoEdit
   Left = 397
   Top = 213
-  Width = 310
-  Height = 235
   Caption = ' - Bold tagged value editor'
+  ClientHeight = 196
+  ClientWidth = 294
   Color = clBtnFace
   Constraints.MinHeight = 58
   Constraints.MinWidth = 171
@@ -12,14 +12,12 @@ object frmMemoEdit: TfrmMemoEdit
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object memoTheMemo: TMemo
     Left = 0
     Top = 0
-    Width = 302
-    Height = 183
+    Width = 294
+    Height = 171
     Cursor = crIBeam
     Align = alClient
     BevelOuter = bvNone
@@ -30,14 +28,14 @@ object frmMemoEdit: TfrmMemoEdit
   end
   object Panel1: TPanel
     Left = 0
-    Top = 183
-    Width = 302
+    Top = 171
+    Width = 294
     Height = 25
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      302
+      294
       25)
     object Button1: TButton
       Left = 224

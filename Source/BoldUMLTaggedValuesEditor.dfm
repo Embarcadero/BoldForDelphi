@@ -65,7 +65,6 @@ object frmBoldUMLTaggedValuesEditor: TfrmBoldUMLTaggedValuesEditor
         Width = 6
         Height = 334
         Beveled = True
-        ExplicitHeight = 347
       end
       object bmValue: TBoldMemo
         Left = 131
@@ -84,8 +83,6 @@ object frmBoldUMLTaggedValuesEditor: TfrmBoldUMLTaggedValuesEditor
         MaxLength = 0
         ReadOnly = False
         TabOrder = 0
-        ExplicitWidth = 233
-        ExplicitHeight = 347
       end
       object lbTagName: TBoldListBox
         Left = 4
@@ -105,7 +102,6 @@ object frmBoldUMLTaggedValuesEditor: TfrmBoldUMLTaggedValuesEditor
     end
   end
   object bdhAllTools: TBoldDerivedHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = behRoot
     OnDeriveAndSubscribe = bdhAllToolsDeriveAndSubscribe
     ValueTypeName = 'Collection(UMLTaggedValue)'
@@ -113,14 +109,12 @@ object frmBoldUMLTaggedValuesEditor: TfrmBoldUMLTaggedValuesEditor
     Top = 100
   end
   object bchAllTools: TBoldCursorHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = bdhAllTools
     AutoFirst = False
     Left = 34
     Top = 148
   end
   object bdhSelectedTVs: TBoldDerivedHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = bchAllTools
     OnDeriveAndSubscribe = bdhSelectedTVsDeriveAndSubscribe
     ValueTypeName = 'Collection(UMLTaggedValue)'
@@ -128,7 +122,6 @@ object frmBoldUMLTaggedValuesEditor: TfrmBoldUMLTaggedValuesEditor
     Top = 104
   end
   object blhSelectedTVs: TBoldListHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = bdhSelectedTVs
     RootTypeName = 'Collection(UMLTaggedValue)'
     Expression = 'self->orderby(tag)'
@@ -136,7 +129,6 @@ object frmBoldUMLTaggedValuesEditor: TfrmBoldUMLTaggedValuesEditor
     Top = 152
   end
   object behRoot: TBoldExpressionHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     Left = 84
     Top = 52
   end

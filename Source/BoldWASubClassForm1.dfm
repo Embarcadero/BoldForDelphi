@@ -22,8 +22,6 @@ object SubClassForm1: TSubClassForm1
     Align = alClient
     Style = tsButtons
     TabOrder = 0
-    ExplicitWidth = 457
-    ExplicitHeight = 277
     object tsClassDef: TTabSheet
       HelpContext = 21
       Caption = 'Defifnition'
@@ -31,16 +29,16 @@ object SubClassForm1: TSubClassForm1
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 449
-        Height = 246
+        Width = 441
+        Height = 234
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
         object GroupBox1: TGroupBox
           Left = 0
           Top = 0
-          Width = 449
-          Height = 246
+          Width = 441
+          Height = 234
           Align = alClient
           Caption = 'Class Definition'
           Font.Charset = DEFAULT_CHARSET
@@ -237,8 +235,6 @@ object SubClassForm1: TSubClassForm1
         Font.Style = []
         ParentFont = False
         TabOrder = 0
-        ExplicitWidth = 449
-        ExplicitHeight = 246
         object ListViewOverride: TListView
           Left = 2
           Top = 15
@@ -259,8 +255,6 @@ object SubClassForm1: TSubClassForm1
           ParentFont = False
           TabOrder = 0
           ViewStyle = vsList
-          ExplicitWidth = 445
-          ExplicitHeight = 229
         end
         object MemoBoldClasses: TMemo
           Left = 48

@@ -1,25 +1,23 @@
 object CustomAttrForm1: TCustomAttrForm1
   Left = 232
   Top = 237
-  Width = 547
-  Height = 314
   HelpContext = 10
   Caption = 'CustomAttrForm1'
+  ClientHeight = 275
+  ClientWidth = 531
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 539
-    Height = 287
+    Width = 531
+    Height = 275
     ActivePage = tsProperties
     Align = alClient
     Style = tsButtons
@@ -31,8 +29,8 @@ object CustomAttrForm1: TCustomAttrForm1
       object GroupBox1: TGroupBox
         Left = 0
         Top = 0
-        Width = 531
-        Height = 256
+        Width = 523
+        Height = 244
         Align = alClient
         Caption = ' Class Definition '
         Font.Charset = DEFAULT_CHARSET
@@ -145,7 +143,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 0
           ParentFont = False
           TabOrder = 0
           OnChange = cbParentChange
@@ -218,8 +215,8 @@ object CustomAttrForm1: TCustomAttrForm1
       object GroupBox4: TGroupBox
         Left = 0
         Top = 0
-        Width = 531
-        Height = 256
+        Width = 523
+        Height = 244
         Align = alClient
         Caption = 'Define new properties'
         Font.Charset = DEFAULT_CHARSET
@@ -232,7 +229,7 @@ object CustomAttrForm1: TCustomAttrForm1
         object ToolBar1: TToolBar
           Left = 2
           Top = 15
-          Width = 527
+          Width = 519
           Height = 29
           ButtonHeight = 25
           Caption = 'ToolBar1'
@@ -249,21 +246,19 @@ object CustomAttrForm1: TCustomAttrForm1
           TabStop = True
           object ToolButton2: TToolButton
             Left = 0
-            Top = 2
+            Top = 0
             Width = 8
             Caption = 'ToolButton2'
             Style = tbsSeparator
           end
           object bbPropertyAdd: TBitBtn
             Left = 8
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Add (Ctrl + Ins)'
             Action = ActionStringGridInsert
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
+            ImageIndex = 0
             Glyph.Data = {
               36030000424D3603000000000000360000002800000010000000100000000100
               1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
@@ -291,17 +286,18 @@ object CustomAttrForm1: TCustomAttrForm1
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
           end
           object bbPropertyDelete: TBitBtn
             Left = 33
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Delete (Ctrl + Del)'
             Action = ActionStringGridDelete
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
+            ImageIndex = 1
             Glyph.Data = {
               F6000000424DF600000000000000760000002800000010000000100000000100
               0400000000008000000000000000000000001000000010000000000000000000
@@ -311,17 +307,16 @@ object CustomAttrForm1: TCustomAttrForm1
               7777777777777777777777777777777777777770000000000777777000000000
               0777777000000000077777777777777777777777777777777777777777777777
               7777777777777777777777777777777777777777777777777777}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
           end
           object bbPropertyMoveDown: TBitBtn
             Left = 58
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Move Down'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 2
-            OnClick = bbPropertyMoveDownClick
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               04000000000000010000120B0000120B00001000000000000000000000000000
@@ -336,17 +331,17 @@ object CustomAttrForm1: TCustomAttrForm1
               6666666666766F6666666666666006666666666666766F666666666666600666
               6666666666766F66666666666666666666666666667776666666}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+            OnClick = bbPropertyMoveDownClick
           end
           object bbPropertyMoveUp: TBitBtn
             Left = 83
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Move Up'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 3
-            OnClick = bbPropertyMoveUpClick
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               04000000000000010000120B0000120B00001000000000000000000000000000
@@ -361,13 +356,17 @@ object CustomAttrForm1: TCustomAttrForm1
               66666666676666F666666666667007666666666666766F666666666666600666
               6666666666766F666666666666666666666666666667F6666666}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 3
+            OnClick = bbPropertyMoveUpClick
           end
         end
         object StringGridProperties: TStringGrid
           Left = 2
           Top = 44
-          Width = 527
-          Height = 210
+          Width = 519
+          Height = 198
           Align = alClient
           ColCount = 3
           DefaultColWidth = 100
@@ -394,7 +393,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 13
           ParentFont = False
           TabOrder = 2
           Items.Strings = (
@@ -417,7 +415,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 13
           ParentFont = False
           TabOrder = 3
           Items.Strings = (
@@ -532,8 +529,8 @@ object CustomAttrForm1: TCustomAttrForm1
       object GroupBox3: TGroupBox
         Left = 0
         Top = 0
-        Width = 531
-        Height = 256
+        Width = 523
+        Height = 244
         Align = alClient
         Caption = 'Define new methods '
         Font.Charset = DEFAULT_CHARSET
@@ -546,7 +543,7 @@ object CustomAttrForm1: TCustomAttrForm1
         object ToolBar2: TToolBar
           Left = 2
           Top = 15
-          Width = 527
+          Width = 519
           Height = 29
           ButtonHeight = 25
           Caption = 'ToolBar2'
@@ -573,9 +570,7 @@ object CustomAttrForm1: TCustomAttrForm1
             Height = 25
             Hint = 'Add (Ctrl + Ins)'
             Action = ActionStringGridInsert
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
+            ImageIndex = 0
             Glyph.Data = {
               36030000424D3603000000000000360000002800000010000000100000000100
               1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
@@ -603,6 +598,9 @@ object CustomAttrForm1: TCustomAttrForm1
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
           end
           object bbDeleteMethod: TBitBtn
             Left = 33
@@ -611,9 +609,7 @@ object CustomAttrForm1: TCustomAttrForm1
             Height = 25
             Hint = 'Delete (Ctrl + Del)'
             Action = ActionStringGridInsert
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
+            ImageIndex = 0
             Glyph.Data = {
               F6000000424DF600000000000000760000002800000010000000100000000100
               0400000000008000000000000000000000001000000010000000000000000000
@@ -623,6 +619,9 @@ object CustomAttrForm1: TCustomAttrForm1
               7777777777777777777777777777777777777770000000000777777000000000
               0777777000000000077777777777777777777777777777777777777777777777
               7777777777777777777777777777777777777777777777777777}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
           end
           object bbMethodMoveDown: TBitBtn
             Left = 58
@@ -630,10 +629,6 @@ object CustomAttrForm1: TCustomAttrForm1
             Width = 25
             Height = 25
             Hint = 'Move Down'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 2
-            OnClick = bbMethodMoveDownClick
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               04000000000000010000120B0000120B00001000000000000000000000000000
@@ -648,6 +643,10 @@ object CustomAttrForm1: TCustomAttrForm1
               6666666666766F6666666666666006666666666666766F666666666666600666
               6666666666766F66666666666666666666666666667776666666}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+            OnClick = bbMethodMoveDownClick
           end
           object bbMethodMoveUp: TBitBtn
             Left = 83
@@ -655,10 +654,6 @@ object CustomAttrForm1: TCustomAttrForm1
             Width = 25
             Height = 25
             Hint = 'Move Up'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 3
-            OnClick = bbPropertyMoveUpClick
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               04000000000000010000120B0000120B00001000000000000000000000000000
@@ -673,13 +668,17 @@ object CustomAttrForm1: TCustomAttrForm1
               66666666676666F666666666667007666666666666766F666666666666600666
               6666666666766F666666666666666666666666666667F6666666}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 3
+            OnClick = bbPropertyMoveUpClick
           end
         end
         object StringGridMethods: TStringGrid
           Left = 2
           Top = 44
-          Width = 527
-          Height = 210
+          Width = 519
+          Height = 198
           Align = alClient
           DefaultColWidth = 100
           DefaultRowHeight = 21
@@ -712,7 +711,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 13
           ParentFont = False
           TabOrder = 2
           Items.Strings = (
@@ -744,7 +742,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 13
           ParentFont = False
           TabOrder = 4
           Items.Strings = (
@@ -780,7 +777,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Font.Height = -11
           Font.Name = 'MS Sans Serif'
           Font.Style = []
-          ItemHeight = 13
           ParentFont = False
           TabOrder = 6
           Items.Strings = (
@@ -813,7 +809,6 @@ object CustomAttrForm1: TCustomAttrForm1
           Top = 15
           Width = 527
           Height = 239
-          OnClickCheck = CheckListBoxOverrideClickCheck
           Align = alClient
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -825,6 +820,7 @@ object CustomAttrForm1: TCustomAttrForm1
           ParentShowHint = False
           ShowHint = False
           TabOrder = 0
+          OnClickCheck = CheckListBoxOverrideClickCheck
         end
       end
     end

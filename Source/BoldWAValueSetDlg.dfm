@@ -20,8 +20,6 @@ object ValueSetDlg: TValueSetDlg
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 254
-    ExplicitHeight = 202
     object lbValueName: TLabel
       Left = 8
       Top = 8
@@ -42,7 +40,7 @@ object ValueSetDlg: TValueSetDlg
       Left = 8
       Top = 24
       Width = 160
-      Height = 21
+      Height = 23
       Enabled = False
       TabOrder = 0
       Text = 'Ex: Monday'
@@ -68,8 +66,6 @@ object ValueSetDlg: TValueSetDlg
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 202
-    ExplicitWidth = 254
     object OkBtn: TButton
       Left = 76
       Top = 8

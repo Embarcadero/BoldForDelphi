@@ -50,8 +50,6 @@ object MainForm: TMainForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 255
-    ExplicitWidth = 497
     object btnCancel: TButton
       Left = 408
       Top = 16
@@ -99,8 +97,6 @@ object MainForm: TMainForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 497
-    ExplicitHeight = 255
     object Image1: TImage
       Left = 23
       Top = 8

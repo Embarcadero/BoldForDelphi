@@ -52,7 +52,6 @@ object frmBoldUMLConstraintEditor: TfrmBoldUMLConstraintEditor
     Images = ImageList1
     List = True
     TabOrder = 0
-    ExplicitWidth = 390
     object btAdd: TToolButton
       Left = 0
       Top = 0
@@ -132,7 +131,6 @@ object frmBoldUMLConstraintEditor: TfrmBoldUMLConstraintEditor
       300)
   end
   object blhElementConstraint: TBoldListHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = brhCurrentElement
     RootTypeName = 'UMLConstraint'
     Expression = 'constraint'
@@ -140,7 +138,6 @@ object frmBoldUMLConstraintEditor: TfrmBoldUMLConstraintEditor
     Top = 132
   end
   object brhCurrentElement: TBoldReferenceHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     StaticValueTypeName = 'UMLModelElement'
     Left = 252
     Top = 72

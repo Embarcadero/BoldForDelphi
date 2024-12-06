@@ -65,7 +65,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
       6666666666766F66666666666666666666666666667776666666}
     NumGlyphs = 2
     OnClick = btnDownClick
-    ExplicitTop = 360
   end
   object btnUp: TSpeedButton
     Left = 8
@@ -88,7 +87,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
       6666666666766F666666666666666666666666666667F6666666}
     NumGlyphs = 2
     OnClick = btnUpClick
-    ExplicitTop = 360
   end
   object StringGrid1: TStringGrid
     Left = 0
@@ -103,8 +101,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goEditing]
     PopupMenu = PopupMenu1
     TabOrder = 0
-    ExplicitWidth = 1017
-    ExplicitHeight = 349
     ColWidths = (
       99
       92
@@ -129,8 +125,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Caption = '&Add'
     TabOrder = 1
     OnClick = btnAddClick
-    ExplicitLeft = 665
-    ExplicitTop = 360
   end
   object btnDelete: TButton
     Left = 745
@@ -141,8 +135,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Caption = '&Delete'
     TabOrder = 2
     OnClick = btnDeleteClick
-    ExplicitLeft = 753
-    ExplicitTop = 360
   end
   object btnOK: TButton
     Left = 833
@@ -154,8 +146,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Default = True
     ModalResult = 1
     TabOrder = 3
-    ExplicitLeft = 841
-    ExplicitTop = 360
   end
   object btnCancel: TButton
     Left = 921
@@ -166,8 +156,6 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 4
-    ExplicitLeft = 929
-    ExplicitTop = 360
   end
   object MainMenu1: TMainMenu
     Images = ImageList1

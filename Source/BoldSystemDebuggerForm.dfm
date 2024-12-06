@@ -23,7 +23,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
     Height = 372
     Align = alRight
     AutoSnap = False
-    ExplicitLeft = 290
   end
   object Splitter1: TSplitter
     Left = 142
@@ -32,7 +31,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
     Height = 372
     Align = alRight
     AutoSnap = False
-    ExplicitLeft = 146
   end
   object Panel3: TPanel
     Left = 0
@@ -42,8 +40,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 146
-    ExplicitHeight = 373
     DesignSize = (
       142
       372)
@@ -66,8 +62,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       BoldRowProperties.Expression = ''
       DragMode = dmAutomatic
       TabOrder = 0
-      ExplicitWidth = 142
-      ExplicitHeight = 353
     end
   end
   object Panel4: TPanel
@@ -78,8 +72,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 150
-    ExplicitHeight = 373
     DesignSize = (
       140
       372)
@@ -102,7 +94,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       BoldRowProperties.Expression = ''
       DragMode = dmAutomatic
       TabOrder = 0
-      ExplicitHeight = 313
     end
     object btnUpdateDirtyObjects: TButton
       Left = 52
@@ -114,7 +105,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       Enabled = False
       TabOrder = 1
       OnClick = btnUpdateDirtyObjectsClick
-      ExplicitTop = 342
     end
   end
   object Panel1: TPanel
@@ -125,8 +115,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 294
-    ExplicitHeight = 373
     DesignSize = (
       338
       372)
@@ -144,7 +132,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       Height = 13
       Anchors = [akLeft, akBottom]
       Caption = 'Shared Strings'
-      ExplicitTop = 284
     end
     object Label2: TLabel
       Left = 184
@@ -163,7 +150,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       Caption = 'Update'
       TabOrder = 2
       OnClick = btnUpdateMemoryInfoClick
-      ExplicitTop = 342
     end
     object mmoMemoryInfo: TMemo
       Left = 0
@@ -179,7 +165,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitHeight = 256
     end
     object mmoSharedStrings: TMemo
       Left = 0
@@ -188,7 +173,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       Height = 33
       Anchors = [akLeft, akRight, akBottom]
       TabOrder = 1
-      ExplicitTop = 300
     end
     object Panel2: TPanel
       Left = 184
@@ -266,7 +250,6 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       TabOrder = 4
       OnDragDrop = Panel2DragDrop
       OnDragOver = Panel2DragOver
-      ExplicitHeight = 153
     end
     object btnUpdateDatabase: TButton
       Left = 212
@@ -278,29 +261,24 @@ object BoldSystemDebuggerFrm: TBoldSystemDebuggerFrm
       Enabled = False
       TabOrder = 5
       OnClick = btnUpdateDatabaseClick
-      ExplicitTop = 342
     end
   end
   object blhClasses: TBoldListHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = brhSystem
     Left = 24
     Top = 32
   end
   object bchDirtyObjects: TBoldCursorHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     RootHandle = brhDirtyObjects
     AutoFirst = False
     Left = 184
     Top = 32
   end
   object brhSystem: TBoldReferenceHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     Left = 24
     Top = 64
   end
   object brhDirtyObjects: TBoldReferenceHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     Left = 152
     Top = 32
   end

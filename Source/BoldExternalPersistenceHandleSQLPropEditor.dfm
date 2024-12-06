@@ -11,9 +11,7 @@ object BoldExternalPersistenceHandleSQLPropEditorForm: TBoldExternalPersistenceH
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
-  PixelsPerInch = 96
   TextHeight = 13
   object CheckListBox1: TCheckListBox
     Left = 8

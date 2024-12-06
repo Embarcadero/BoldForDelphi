@@ -56,10 +56,8 @@ object frmRTColEditor: TfrmRTColEditor
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 264
-    ExplicitWidth = 368
     object Panel2: TPanel
-      Left = 280
+      Left = 272
       Top = 0
       Width = 88
       Height = 40
@@ -104,8 +102,6 @@ object frmRTColEditor: TfrmRTColEditor
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 136
-    ExplicitHeight = 264
     object Label1: TLabel
       Left = 8
       Top = 8

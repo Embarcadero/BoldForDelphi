@@ -63,8 +63,6 @@ object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 287
-    ExplicitWidth = 344
     DesignSize = (
       336
       40)

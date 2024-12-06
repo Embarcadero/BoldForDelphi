@@ -49,8 +49,6 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 319
-    ExplicitWidth = 720
     object imgModelErrors: TImage
       Left = 8
       Top = 0
@@ -2180,7 +2178,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
       OnClick = imgModelErrorsClick
     end
     object pnlOKCancel: TPanel
-      Left = 434
+      Left = 430
       Top = 0
       Width = 286
       Height = 33
@@ -2227,26 +2225,24 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
     BorderWidth = 5
     Caption = 'TabControlPanel'
     TabOrder = 0
-    ExplicitWidth = 720
-    ExplicitHeight = 319
     object SplitterRight: TSplitter
-      Left = 489
+      Left = 485
       Top = 5
       Width = 6
-      Height = 309
+      Height = 308
       Align = alRight
     end
     object SplitterLeft: TSplitter
       Left = 225
       Top = 5
       Width = 6
-      Height = 309
+      Height = 308
     end
     object ExprEditPageControl: TPageControl
       Left = 231
       Top = 5
-      Width = 258
-      Height = 309
+      Width = 254
+      Height = 308
       ActivePage = ExpressionPage
       Align = alClient
       TabOrder = 0
@@ -2256,24 +2252,24 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
         object pnlClient: TPanel
           Left = 0
           Top = 0
-          Width = 250
-          Height = 281
+          Width = 246
+          Height = 280
           Align = alClient
           BevelOuter = bvNone
           Caption = 'Panel1'
           TabOrder = 0
           object Splitter2: TSplitter
             Left = 0
-            Top = 161
-            Width = 250
+            Top = 160
+            Width = 246
             Height = 6
             Cursor = crVSplit
             Align = alBottom
           end
           object ExpParserPanel: TPanel
             Left = 0
-            Top = 167
-            Width = 250
+            Top = 166
+            Width = 246
             Height = 114
             Align = alBottom
             BevelOuter = bvNone
@@ -2282,7 +2278,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
             object pnlEditButtons: TPanel
               Left = 0
               Top = 0
-              Width = 250
+              Width = 246
               Height = 37
               Align = alTop
               BevelOuter = bvNone
@@ -2308,7 +2304,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
                 OnClick = SyntaxcbClick
               end
               object Clear: TButton
-                Left = 164
+                Left = 160
                 Top = 4
                 Width = 81
                 Height = 25
@@ -2316,10 +2312,9 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
                 Caption = '&Clear'
                 TabOrder = 1
                 OnClick = ClearClick
-                ExplicitLeft = 168
               end
               object RemoveLast: TButton
-                Left = 72
+                Left = 68
                 Top = 4
                 Width = 81
                 Height = 25
@@ -2327,7 +2322,6 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
                 Caption = '&Remove Last'
                 TabOrder = 0
                 OnClick = RemoveLastClick
-                ExplicitLeft = 76
               end
             end
             object ParserMessages: TMemo
@@ -2348,7 +2342,6 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
               ScrollBars = ssBoth
               TabOrder = 1
               WantReturns = False
-              ExplicitWidth = 250
             end
           end
           object EditPanel: TPanel
@@ -2360,16 +2353,14 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
             BevelOuter = bvNone
             Caption = 'Panel2'
             TabOrder = 1
-            ExplicitWidth = 250
-            ExplicitHeight = 161
             object EditMemo: TMemo
               Left = 0
               Top = 0
-              Width = 250
-              Height = 161
+              Width = 246
+              Height = 160
               Align = alClient
               Constraints.MinHeight = 50
-              Constraints.MinWidth = 250
+              Constraints.MinWidth = 246
               PopupMenu = MRUPopupMenu
               ScrollBars = ssBoth
               TabOrder = 0
@@ -2392,14 +2383,13 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
       ActivePage = OclVariablesTabSheet
       Align = alLeft
       TabOrder = 1
-      ExplicitHeight = 309
       object OclVariablesTabSheet: TTabSheet
         Caption = 'OCL Variables'
         object pnlOclVariables: TPanel
           Left = 0
           Top = 0
           Width = 212
-          Height = 281
+          Height = 280
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
@@ -2407,7 +2397,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
             Left = 0
             Top = 0
             Width = 212
-            Height = 281
+            Height = 280
             Style = lbOwnerDrawFixed
             Align = alClient
             Constraints.MinWidth = 140
@@ -2429,15 +2419,13 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
       ActivePage = ExpressionTypeTabSheet
       Align = alRight
       TabOrder = 2
-      ExplicitLeft = 495
-      ExplicitHeight = 309
       object ExpressionTypeTabSheet: TTabSheet
         Caption = 'Available expressions'
         object pnlRightSide: TPanel
           Left = 0
           Top = 0
           Width = 212
-          Height = 281
+          Height = 280
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
@@ -2445,7 +2433,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
             Left = 0
             Top = 21
             Width = 212
-            Height = 243
+            Height = 242
             Style = lbOwnerDrawFixed
             Align = alClient
             Constraints.MinWidth = 140
@@ -2465,7 +2453,6 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
             Align = alBottom
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitTop = 264
             object Derivedcb: TCheckBox
               Left = 2
               Top = 0

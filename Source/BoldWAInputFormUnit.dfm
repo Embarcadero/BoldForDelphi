@@ -49,8 +49,6 @@ object InputForm: TInputForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 273
-    ExplicitWidth = 578
     object btnCancel: TButton
       Left = 492
       Top = 16
@@ -98,7 +96,6 @@ object InputForm: TInputForm
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 273
     object Image1: TImage
       Left = 7
       Top = 8

@@ -49,10 +49,8 @@ object frmUsesEditor: TfrmUsesEditor
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 150
-    ExplicitWidth = 227
     object pnButtons2: TPanel
-      Left = 42
+      Left = 34
       Top = 0
       Width = 185
       Height = 41
@@ -92,8 +90,6 @@ object frmUsesEditor: TfrmUsesEditor
     Width = 219
     Height = 19
     Panels = <>
-    ExplicitTop = 191
-    ExplicitWidth = 227
   end
   object pnText: TPanel
     Left = 0
@@ -104,13 +100,11 @@ object frmUsesEditor: TfrmUsesEditor
     BevelOuter = bvNone
     Caption = 'pnText'
     TabOrder = 0
-    ExplicitWidth = 227
-    ExplicitHeight = 150
     object BoldMemo1: TBoldMemo
       Left = 0
       Top = 0
-      Width = 227
-      Height = 150
+      Width = 219
+      Height = 138
       Align = alClient
       Alignment = taLeftJustify
       BoldHandle = behFormRoot
@@ -128,7 +122,6 @@ object frmUsesEditor: TfrmUsesEditor
     end
   end
   object behFormRoot: TBoldReferenceHandle
-    StaticSystemHandle = dmSnooper.BoldSystemHandle1
     Left = 112
     Top = 112
   end

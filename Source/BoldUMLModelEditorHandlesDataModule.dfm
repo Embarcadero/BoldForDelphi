@@ -376,7 +376,7 @@ object dmBoldUMLModelEditorHandles: TdmBoldUMLModelEditorHandles
   object behModelClasses: TBoldExpressionHandle
     RootHandle = behModel
     Expression = 'classes'
-    Left = 616
+    Left = 624
     Top = 48
   end
   object behModelAssociations: TBoldExpressionHandle

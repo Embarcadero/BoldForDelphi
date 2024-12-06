@@ -64,8 +64,6 @@ object FormNodeEditor: TFormNodeEditor
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 328
-    ExplicitHeight = 360
     object btnAddNodeDescription: TButton
       Left = 8
       Top = 8

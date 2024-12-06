@@ -1,6 +1,6 @@
 object dmModelEdit: TdmModelEdit
-  Height = 226
-  Width = 202
+  Height = 255
+  Width = 216
   object bmlUMLModel: TBoldModel
     TypeNameHandle = BoldTypeNameHandle1
     UMLModelMode = ummNone

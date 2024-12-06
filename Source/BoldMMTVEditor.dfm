@@ -1,10 +1,10 @@
 object frmBoldMMTVEdit: TfrmBoldMMTVEdit
   Left = 363
   Top = 149
-  Width = 522
-  Height = 419
   Anchors = [akLeft, akTop, akRight]
   Caption = 'Bold Tagged Value Editor'
+  ClientHeight = 360
+  ClientWidth = 506
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,33 +12,28 @@ object frmBoldMMTVEdit: TfrmBoldMMTVEdit
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 145
     Top = 0
-    Width = 3
-    Height = 354
-    Cursor = crHSplit
+    Height = 341
     Beveled = True
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 354
-    Width = 514
+    Top = 341
+    Width = 506
     Height = 19
     Panels = <>
-    SimplePanel = False
   end
   object tvModelElements: TTreeView
     Left = 0
     Top = 0
     Width = 145
-    Height = 354
+    Height = 341
     Align = alLeft
     Indent = 19
     TabOrder = 1
@@ -48,8 +43,8 @@ object frmBoldMMTVEdit: TfrmBoldMMTVEdit
   object Panel1: TPanel
     Left = 148
     Top = 0
-    Width = 366
-    Height = 354
+    Width = 358
+    Height = 341
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
@@ -57,8 +52,8 @@ object frmBoldMMTVEdit: TfrmBoldMMTVEdit
     object tcTaggedValues: TTabControl
       Left = 0
       Top = 0
-      Width = 366
-      Height = 354
+      Width = 358
+      Height = 341
       Align = alClient
       TabOrder = 0
       Tabs.Strings = (
@@ -69,8 +64,8 @@ object frmBoldMMTVEdit: TfrmBoldMMTVEdit
       object vleTaggedValues: TValueListEditor
         Left = 4
         Top = 24
-        Width = 358
-        Height = 326
+        Width = 350
+        Height = 313
         Align = alClient
         TabOrder = 0
         TitleCaptions.Strings = (
@@ -80,7 +75,7 @@ object frmBoldMMTVEdit: TfrmBoldMMTVEdit
         OnStringsChange = vleTaggedValuesStringsChange
         ColWidths = (
           150
-          202)
+          194)
       end
     end
   end

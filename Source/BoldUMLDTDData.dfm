@@ -1,7 +1,4 @@
 object dmUML13DTD: TdmUML13DTD
-  OldCreateOrder = False
-  Left = 291
-  Top = 196
   Height = 150
   Width = 215
   object UML13DTD: TBoldTemplateHolder

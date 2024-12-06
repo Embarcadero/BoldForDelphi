@@ -22,8 +22,6 @@ object ValueSetForm1: TValueSetForm1
     Align = alClient
     Style = tsButtons
     TabOrder = 0
-    ExplicitWidth = 468
-    ExplicitHeight = 277
     object tsClassDef: TTabSheet
       HelpContext = 31
       Caption = 'Definition'
@@ -243,8 +241,8 @@ object ValueSetForm1: TValueSetForm1
       object GroupBox2: TGroupBox
         Left = 0
         Top = 0
-        Width = 460
-        Height = 246
+        Width = 452
+        Height = 235
         Align = alClient
         Caption = '  Define values  '
         Font.Charset = DEFAULT_CHARSET
@@ -257,7 +255,7 @@ object ValueSetForm1: TValueSetForm1
         object ToolBar1: TToolBar
           Left = 2
           Top = 15
-          Width = 456
+          Width = 448
           Height = 29
           ButtonHeight = 25
           Caption = 'ToolBar1'
@@ -275,14 +273,14 @@ object ValueSetForm1: TValueSetForm1
           TabStop = True
           object ToolButton1: TToolButton
             Left = 0
-            Top = 2
+            Top = 0
             Width = 8
             Caption = 'ToolButton1'
             Style = tbsSeparator
           end
           object bbInsert: TBitBtn
             Left = 8
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'New Value (Ctrl + Ins)'
@@ -320,7 +318,7 @@ object ValueSetForm1: TValueSetForm1
           end
           object bbDelete: TBitBtn
             Left = 33
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Delete Value (Ctrl+Del)'
@@ -340,7 +338,7 @@ object ValueSetForm1: TValueSetForm1
           end
           object bbEdit: TBitBtn
             Left = 58
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Edit Value'
@@ -366,7 +364,7 @@ object ValueSetForm1: TValueSetForm1
           end
           object bbDown: TBitBtn
             Left = 83
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Move Down'
@@ -391,7 +389,7 @@ object ValueSetForm1: TValueSetForm1
           end
           object bbUp: TBitBtn
             Left = 108
-            Top = 2
+            Top = 0
             Width = 25
             Height = 25
             Hint = 'Move Up'
@@ -418,8 +416,8 @@ object ValueSetForm1: TValueSetForm1
         object ListViewValues: TListView
           Left = 2
           Top = 44
-          Width = 456
-          Height = 200
+          Width = 448
+          Height = 189
           Align = alClient
           BorderStyle = bsNone
           BorderWidth = 1

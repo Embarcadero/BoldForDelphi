@@ -37,7 +37,6 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
@@ -45,7 +44,6 @@ object frmBoldDbEvolutor: TfrmBoldDbEvolutor
   DesignSize = (
     460
     387)
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 4

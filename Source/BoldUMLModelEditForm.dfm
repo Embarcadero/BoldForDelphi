@@ -53,7 +53,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Width = 6
     Height = 541
     Beveled = True
-    ExplicitHeight = 542
   end
   object TBoldLabel
     Left = 120
@@ -386,7 +385,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Align = alTop
         Beveled = True
         OnCanResize = Splitter2CanResize
-        ExplicitWidth = 607
       end
       object sbModel: TScrollBox
         Left = 0
@@ -596,7 +594,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
-          ExplicitWidth = 287
         end
         object tbxModelDelhpiName: TBoldEdit
           Left = 120
@@ -618,7 +615,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 2
-          ExplicitWidth = 287
         end
         object tbxModelExpressionName: TBoldEdit
           Left = 120
@@ -640,7 +636,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 3
-          ExplicitWidth = 287
         end
         object tbxModelPMapperName: TBoldEdit
           Left = 120
@@ -665,7 +660,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 15
           Visible = False
-          ExplicitWidth = 287
         end
         object tbxModelInterfaceUses: TBoldEdit
           Left = 120
@@ -689,7 +683,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 4
-          ExplicitWidth = 271
         end
         object tbxModelImplementationUses: TBoldEdit
           Left = 120
@@ -713,7 +706,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 6
-          ExplicitWidth = 271
         end
         object btInterfaceUses: TButton
           Left = 382
@@ -732,7 +724,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           ParentFont = False
           TabOrder = 5
           OnClick = btInterfaceUsesClick
-          ExplicitLeft = 390
         end
         object btImplementationUses: TButton
           Left = 382
@@ -751,7 +742,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           ParentFont = False
           TabOrder = 7
           OnClick = btImplementationUsesClick
-          ExplicitLeft = 390
         end
         object bcbModelUseXFiles: TBoldCheckBox
           Left = 406
@@ -770,7 +760,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'U&se X files'
           ReadOnly = False
           TabOrder = 14
-          ExplicitLeft = 414
         end
         object bcbModelUseTimestamp: TBoldCheckBox
           Left = 406
@@ -789,7 +778,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use timestamp'
           ReadOnly = False
           TabOrder = 16
-          ExplicitLeft = 414
         end
         object bcbUseGlobalId: TBoldCheckBox
           Left = 406
@@ -806,7 +794,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use global id'
           ReadOnly = False
           TabOrder = 17
-          ExplicitLeft = 414
         end
         object bcbUseReadOnly: TBoldCheckBox
           Left = 406
@@ -825,7 +812,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use readonly'
           ReadOnly = False
           TabOrder = 18
-          ExplicitLeft = 414
         end
         object tbxModelStereotype: TBoldEdit
           Left = 120
@@ -847,7 +833,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
-          ExplicitWidth = 287
         end
         object tbxModelConstraints: TBoldEdit
           Left = 120
@@ -874,7 +859,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 10
           Visible = False
-          ExplicitWidth = 271
         end
         object btModelConstraintEditor: TButton
           Left = 382
@@ -894,7 +878,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 11
           Visible = False
           OnClick = btModelConstraintEditorClick
-          ExplicitLeft = 390
         end
         object edModelGUID: TBoldEdit
           Left = 120
@@ -917,7 +900,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 12
           Visible = False
-          ExplicitWidth = 287
         end
         object edModelTypeLibVersion: TBoldEdit
           Left = 120
@@ -940,7 +922,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 13
           Visible = False
-          ExplicitWidth = 287
         end
         object bcbUseClockLog: TBoldCheckBox
           Left = 406
@@ -959,7 +940,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use clock lo&g'
           ReadOnly = False
           TabOrder = 19
-          ExplicitLeft = 414
         end
         object bcbGenerateMultiplicityConstraints: TBoldCheckBox
           Left = 406
@@ -978,7 +958,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use multiplicity constraints'
           ReadOnly = False
           TabOrder = 20
-          ExplicitLeft = 414
         end
         object cmbModelOptimisticLocking: TBoldComboBox
           Left = 120
@@ -1021,7 +1000,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 8
-          ExplicitWidth = 287
         end
       end
       object pcModelTabs: TPageControl
@@ -1032,8 +1010,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         ActivePage = TabSheet2
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 607
-        ExplicitHeight = 177
         object TabSheet1: TTabSheet
           HelpContext = 87
           Caption = '&Classes'
@@ -1315,7 +1291,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Cursor = crVSplit
         Align = alTop
         Beveled = True
-        ExplicitWidth = 607
       end
       object sbClass: TScrollBox
         Left = 0
@@ -1521,7 +1496,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
-          ExplicitWidth = 291
         end
         object tbxClassDelphiName: TBoldEdit
           Left = 120
@@ -1544,7 +1518,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 14
           Visible = False
-          ExplicitWidth = 291
         end
         object tbxClassExpressionName: TBoldEdit
           Left = 120
@@ -1567,7 +1540,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 15
           Visible = False
-          ExplicitWidth = 291
         end
         object tbxClassTableName: TBoldEdit
           Left = 120
@@ -1590,7 +1562,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 17
           Visible = False
-          ExplicitWidth = 291
         end
         object tbxClassFileName: TBoldEdit
           Left = 120
@@ -1614,7 +1585,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 4
-          ExplicitWidth = 291
         end
         object bcbClassPersistent: TBoldCheckBox
           Left = 406
@@ -1630,7 +1600,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Pe&rsistent'
           ReadOnly = False
           TabOrder = 18
-          ExplicitLeft = 418
         end
         object bcbClassAbstract: TBoldCheckBox
           Left = 406
@@ -1646,7 +1615,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'A&bstract'
           ReadOnly = False
           TabOrder = 19
-          ExplicitLeft = 418
         end
         object bcbClassImported: TBoldCheckBox
           Left = 406
@@ -1662,7 +1630,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Importe&d'
           ReadOnly = False
           TabOrder = 20
-          ExplicitLeft = 418
         end
         object cmbClassPMapperName: TBoldComboBox
           Left = 120
@@ -1683,7 +1650,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 16
           Visible = False
-          ExplicitWidth = 291
         end
         object cmbSuperClass: TBoldComboBox
           Left = 120
@@ -1724,7 +1690,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 7
-          ExplicitWidth = 291
         end
         object tbxClassStereotype: TBoldEdit
           Left = 120
@@ -1746,7 +1711,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
-          ExplicitWidth = 291
         end
         object tbxClassConstraint: TBoldEdit
           Left = 120
@@ -1771,7 +1735,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 10
           Visible = False
-          ExplicitWidth = 275
         end
         object btClassConstraintEditor: TButton
           Left = 382
@@ -1791,7 +1754,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 11
           Visible = False
           OnClick = btModelConstraintEditorClick
-          ExplicitLeft = 394
         end
         object tbxClassDerivationExpressions: TBoldEdit
           Left = 120
@@ -1814,7 +1776,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 8
           Visible = False
-          ExplicitWidth = 275
         end
         object btShowDerivationExpressionsEditor: TButton
           Left = 382
@@ -1834,7 +1795,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 9
           Visible = False
           OnClick = btShowDerivationExpressionsEditorClick
-          ExplicitLeft = 394
         end
         object tbxClassUnitName: TBoldEdit
           Left = 120
@@ -1858,7 +1818,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 3
-          ExplicitWidth = 291
         end
         object edClassDefaultStringRep: TBoldEdit
           Left = 120
@@ -1882,7 +1841,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 5
-          ExplicitWidth = 275
         end
         object btClassDefaultStringRep: TButton
           Left = 382
@@ -1901,7 +1859,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           ParentFont = False
           TabOrder = 6
           OnClick = btClassDefaultStringRepClick
-          ExplicitLeft = 394
         end
         object edClassGUID: TBoldEdit
           Left = 120
@@ -1924,7 +1881,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 12
           Visible = False
-          ExplicitWidth = 291
         end
         object cmbClassOptimisticLocking: TBoldComboBox
           Left = 120
@@ -1959,7 +1915,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Remove Superclass on unboldify'
           ReadOnly = False
           TabOrder = 21
-          ExplicitLeft = 418
         end
         object bcbRemoveOnUnboldify: TBoldCheckBox
           Left = 406
@@ -1975,7 +1930,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Remove class on unboldify'
           ReadOnly = False
           TabOrder = 22
-          ExplicitLeft = 418
         end
         object bcbIsRootClass: TBoldCheckBox
           Left = 406
@@ -1988,7 +1942,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Is Root Class'
           ReadOnly = False
           TabOrder = 23
-          ExplicitLeft = 418
         end
       end
       object pcClassTabs: TPageControl
@@ -1999,8 +1952,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         ActivePage = TabSheet3
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 607
-        ExplicitHeight = 113
         object TabSheet3: TTabSheet
           HelpContext = 64
           Caption = 'Attrib&utes'
@@ -2644,7 +2595,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
-        ExplicitWidth = 262
       end
       object tbxAttributeDelphiName: TBoldEdit
         Left = 120
@@ -2669,7 +2619,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 10
         Visible = False
-        ExplicitWidth = 262
       end
       object tbxAttributeExpressionName: TBoldEdit
         Left = 120
@@ -2692,7 +2641,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 11
         Visible = False
-        ExplicitWidth = 262
       end
       object tbxAttributeColumnName: TBoldEdit
         Left = 120
@@ -2717,7 +2665,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 13
         Visible = False
-        ExplicitWidth = 262
       end
       object bcbAttributePersistent: TBoldCheckBox
         Left = 377
@@ -2735,7 +2682,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = 'Persistent'
         ReadOnly = False
         TabOrder = 16
-        ExplicitLeft = 389
       end
       object bcbAttributeDelayedFetch: TBoldCheckBox
         Left = 377
@@ -2755,7 +2701,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Enabled = False
         ReadOnly = False
         TabOrder = 20
-        ExplicitLeft = 389
       end
       object bcbAttributeAllowNull: TBoldCheckBox
         Left = 377
@@ -2772,7 +2717,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = '&Allow null'
         ReadOnly = False
         TabOrder = 17
-        ExplicitLeft = 389
       end
       object bcbAttributeDerived: TBoldCheckBox
         Left = 377
@@ -2788,7 +2732,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = '&Derived'
         ReadOnly = False
         TabOrder = 18
-        ExplicitLeft = 389
       end
       object tbxAttributeLength: TBoldEdit
         Left = 120
@@ -2812,7 +2755,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 4
-        ExplicitWidth = 262
       end
       object cmbAttributeBoldType: TBoldComboBox
         Left = 120
@@ -2833,7 +2775,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         Sorted = True
         TabOrder = 2
-        ExplicitWidth = 262
       end
       object cmbAttributePMapperName: TBoldComboBox
         Left = 120
@@ -2854,7 +2795,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Sorted = True
         TabOrder = 12
         Visible = False
-        ExplicitWidth = 262
       end
       object cmbTVAttributeKind: TBoldComboBox
         Left = 120
@@ -2876,7 +2816,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 14
         Visible = False
-        ExplicitWidth = 262
       end
       object gbDelphiFeatures: TGroupBox
         Left = 40
@@ -2887,7 +2826,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = 'Attribute kind Delphi features'
         TabOrder = 15
         Visible = False
-        ExplicitWidth = 353
         DesignSize = (
           341
           83)
@@ -2943,7 +2881,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
-          ExplicitWidth = 262
         end
         object cmbTVDPWrite: TBoldComboBox
           Left = 80
@@ -2962,7 +2899,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
-          ExplicitWidth = 262
         end
       end
       object tbxAttributeDerivationOCL: TBoldEdit
@@ -2986,7 +2922,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 5
         Visible = False
-        ExplicitWidth = 246
       end
       object tbxAttributeStereotype: TBoldEdit
         Left = 120
@@ -3008,7 +2943,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 1
-        ExplicitWidth = 262
       end
       object cmbAttributeVisibility: TBoldComboBox
         Left = 120
@@ -3029,7 +2963,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 3
-        ExplicitWidth = 262
       end
       object tbxAttributeInitialValue: TBoldEdit
         Left = 120
@@ -3054,7 +2987,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 9
         Visible = False
-        ExplicitWidth = 262
       end
       object tbxAttributeConstraint: TBoldEdit
         Left = 120
@@ -3079,7 +3011,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 7
         Visible = False
-        ExplicitWidth = 246
       end
       object btAttributeConstraintEditor: TButton
         Left = 353
@@ -3099,7 +3030,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         TabOrder = 8
         Visible = False
         OnClick = btModelConstraintEditorClick
-        ExplicitLeft = 365
       end
       object bcbAttributeReverseDerive: TBoldCheckBox
         Left = 377
@@ -3117,7 +3047,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Enabled = False
         ReadOnly = False
         TabOrder = 19
-        ExplicitLeft = 389
       end
       object btAttributeShowDerivExprEditor: TButton
         Left = 353
@@ -3137,7 +3066,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         TabOrder = 6
         Visible = False
         OnClick = btAttributeShowDerivExprEditorClick
-        ExplicitLeft = 365
       end
     end
     object tabOperation: TTabSheet
@@ -3151,7 +3079,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Cursor = crVSplit
         Align = alTop
         Beveled = True
-        ExplicitWidth = 607
       end
       object sbOperation: TScrollBox
         Left = 0
@@ -3288,7 +3215,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
-          ExplicitWidth = 254
         end
         object tbxOperationDelphiName: TBoldEdit
           Left = 120
@@ -3313,7 +3239,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 7
           Visible = False
-          ExplicitWidth = 254
         end
         object tbxOperationExpressionName: TBoldEdit
           Left = 120
@@ -3336,7 +3261,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 8
           Visible = False
-          ExplicitWidth = 254
         end
         object cmbOwnerScope: TBoldComboBox
           Left = 120
@@ -3357,7 +3281,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
-          ExplicitWidth = 254
         end
         object cmbDelphiFunctionType: TBoldComboBox
           Left = 120
@@ -3376,7 +3299,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 4
-          ExplicitWidth = 254
         end
         object tbxOperationStereotype: TBoldEdit
           Left = 120
@@ -3398,7 +3320,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
-          ExplicitWidth = 254
         end
         object cmbOperationVisibility: TBoldComboBox
           Left = 120
@@ -3419,7 +3340,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
-          ExplicitWidth = 254
         end
         object tbxOperationConstraint: TBoldEdit
           Left = 120
@@ -3444,7 +3364,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 5
           Visible = False
-          ExplicitWidth = 238
         end
         object btOperationConstraintEditor: TButton
           Left = 353
@@ -3464,7 +3383,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 6
           Visible = False
           OnClick = btModelConstraintEditorClick
-          ExplicitLeft = 357
         end
         object cbOperationOverrideInAllSubclasses: TBoldCheckBox
           Left = 377
@@ -3483,7 +3401,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Override in all s&ubclasses'
           ReadOnly = False
           TabOrder = 9
-          ExplicitLeft = 381
         end
       end
       object pcOperationTabs: TPageControl
@@ -3607,7 +3524,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Cursor = crVSplit
         Align = alTop
         Beveled = True
-        ExplicitWidth = 607
       end
       object sbAssociation: TScrollBox
         Left = 0
@@ -3706,7 +3622,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
-          ExplicitWidth = 291
         end
         object cmbAssociationLinkClass: TBoldComboBox
           Left = 120
@@ -3750,7 +3665,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
-          ExplicitWidth = 291
         end
         object tbxAssociationConstraint: TBoldEdit
           Left = 120
@@ -3775,7 +3689,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 3
           Visible = False
-          ExplicitWidth = 275
         end
         object btAssociationConstraintEditor: TButton
           Left = 382
@@ -3795,7 +3708,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 4
           Visible = False
           OnClick = btModelConstraintEditorClick
-          ExplicitLeft = 394
         end
         object bcbAssociationDerived: TBoldCheckBox
           Left = 406
@@ -3811,7 +3723,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Der&ived'
           ReadOnly = False
           TabOrder = 6
-          ExplicitLeft = 418
         end
         object bcbPersistent: TBoldCheckBox
           Left = 406
@@ -3829,7 +3740,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = '&Persistent'
           ReadOnly = False
           TabOrder = 5
-          ExplicitLeft = 418
         end
       end
       object pcAssociationTabs: TPageControl
@@ -3840,8 +3750,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         ActivePage = TabSheet6
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 607
-        ExplicitHeight = 378
         object TabSheet6: TTabSheet
           HelpContext = 86
           Caption = '&AssociationEnds'
@@ -4010,7 +3918,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Cursor = crVSplit
         Align = alTop
         Beveled = True
-        ExplicitWidth = 607
       end
       object sbAssociationEnd: TScrollBox
         Left = 0
@@ -4194,7 +4101,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
-          ExplicitWidth = 291
         end
         object tbxAssociationEndDelphiName: TBoldEdit
           Left = 120
@@ -4217,7 +4123,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 12
           Visible = False
-          ExplicitWidth = 291
         end
         object tbxAssociationEndExpressionName: TBoldEdit
           Left = 120
@@ -4240,7 +4145,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 13
           Visible = False
-          ExplicitWidth = 291
         end
         object tbxAssociationEndColumnName: TBoldEdit
           Left = 120
@@ -4263,7 +4167,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 14
           Visible = False
-          ExplicitWidth = 291
         end
         object bcbAssociationEndNavigable: TBoldCheckBox
           Left = 406
@@ -4279,7 +4182,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'N&avigable'
           ReadOnly = False
           TabOrder = 15
-          ExplicitLeft = 418
         end
         object bcbAssociationEndMulti: TBoldCheckBox
           Left = 406
@@ -4295,7 +4197,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'M&ulti'
           ReadOnly = False
           TabOrder = 16
-          ExplicitLeft = 418
         end
         object bcbAssociationEndOrdered: TBoldCheckBox
           Left = 406
@@ -4311,7 +4212,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'O&rdered'
           ReadOnly = False
           TabOrder = 17
-          ExplicitLeft = 418
         end
         object bcbAssociationEndMandatory: TBoldCheckBox
           Left = 406
@@ -4327,7 +4227,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Mandator&y'
           ReadOnly = False
           TabOrder = 18
-          ExplicitLeft = 418
         end
         object bcbAssociationEndEmbed: TBoldCheckBox
           Left = 406
@@ -4344,7 +4243,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Em&bed'
           ReadOnly = False
           TabOrder = 19
-          ExplicitLeft = 418
         end
         object cmbAssoEndClass: TBoldComboBox
           Left = 120
@@ -4363,7 +4261,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
-          ExplicitWidth = 291
         end
         object tbxAssociationEndStereotype: TBoldEdit
           Left = 120
@@ -4385,7 +4282,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
-          ExplicitWidth = 291
         end
         object cmbAggregationKind: TBoldComboBox
           Left = 120
@@ -4404,7 +4300,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 4
-          ExplicitWidth = 291
         end
         object cmbAssoEndVisibility: TBoldComboBox
           Left = 120
@@ -4425,7 +4320,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 5
-          ExplicitWidth = 291
         end
         object cmbAssoEndChangeability: TBoldComboBox
           Left = 120
@@ -4444,7 +4338,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 6
-          ExplicitWidth = 291
         end
         object tbxAssociationEndConstraint: TBoldEdit
           Left = 120
@@ -4469,7 +4362,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 10
           Visible = False
-          ExplicitWidth = 275
         end
         object btAssociationEndConstraintEditor: TButton
           Left = 382
@@ -4489,7 +4381,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 11
           Visible = False
           OnClick = btModelConstraintEditorClick
-          ExplicitLeft = 394
         end
         object cmbMultiplicity: TBoldComboBox
           Left = 120
@@ -4527,7 +4418,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 7
-          ExplicitWidth = 291
         end
         object tbxAssoEndDerivationOCL: TBoldEdit
           Left = 120
@@ -4550,7 +4440,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 8
           Visible = False
-          ExplicitWidth = 275
         end
         object btAssoEndShowDeriExprEditor: TButton
           Left = 382
@@ -4570,7 +4459,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 9
           Visible = False
           OnClick = btAssoEndShowDeriExprEditorClick
-          ExplicitLeft = 394
         end
       end
       object pcAssociationEndTabs: TPageControl
@@ -4581,8 +4469,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         ActivePage = TabSheet7
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 607
-        ExplicitHeight = 157
         object TabSheet7: TTabSheet
           HelpContext = 50
           Caption = '&Qualifiers'
@@ -4828,7 +4714,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
-        ExplicitWidth = 262
       end
       object tbxParameterType: TBoldEdit
         Left = 120
@@ -4850,7 +4735,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 3
-        ExplicitWidth = 262
       end
       object tbxParameterExpressionName: TBoldEdit
         Left = 120
@@ -4875,7 +4759,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 6
         Visible = False
-        ExplicitWidth = 262
       end
       object bcbIsConst: TBoldCheckBox
         Left = 377
@@ -4892,7 +4775,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = 'is c&onst'
         ReadOnly = False
         TabOrder = 7
-        ExplicitLeft = 389
       end
       object cmbParamKind: TBoldComboBox
         Left = 120
@@ -4913,7 +4795,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 2
-        ExplicitWidth = 262
       end
       object tbxParameterStereotype: TBoldEdit
         Left = 120
@@ -4935,7 +4816,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 1
-        ExplicitWidth = 262
       end
       object tbxParameterConstraint: TBoldEdit
         Left = 120
@@ -4960,7 +4840,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 4
         Visible = False
-        ExplicitWidth = 246
       end
       object btParameterConstraintEditor: TButton
         Left = 353
@@ -4980,7 +4859,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         TabOrder = 5
         Visible = False
         OnClick = btModelConstraintEditorClick
-        ExplicitLeft = 365
       end
     end
     object tabPackage: TTabSheet
@@ -4995,7 +4873,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Align = alTop
         Beveled = True
         OnCanResize = Splitter2CanResize
-        ExplicitWidth = 607
       end
       object sbPaCKAGE: TScrollBox
         Left = 0
@@ -5006,7 +4883,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
-        ExplicitWidth = 607
         DesignSize = (
           603
           104)
@@ -5085,7 +4961,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
-          ExplicitWidth = 262
         end
         object tbxPackageExpressionName: TBoldEdit
           Left = 120
@@ -5106,7 +4981,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 2
-          ExplicitWidth = 262
         end
         object tbxStereotypeName: TBoldEdit
           Left = 120
@@ -5127,7 +5001,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
-          ExplicitWidth = 262
         end
       end
       object pcPackageTabs: TPageControl
@@ -5138,8 +5011,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         ActivePage = TabSheet12
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 607
-        ExplicitHeight = 402
         object TabSheet11: TTabSheet
           HelpContext = 87
           Caption = '&Classes'
@@ -5501,7 +5372,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
-        ExplicitWidth = 262
       end
       object BoldEdit6: TBoldEdit
         Left = 120
@@ -5523,7 +5393,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 1
         Visible = False
-        ExplicitWidth = 262
       end
       object BoldEdit7: TBoldEdit
         Left = 120
@@ -5545,7 +5414,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 2
         Visible = False
-        ExplicitWidth = 262
       end
       object BoldEdit8: TBoldEdit
         Left = 120
@@ -5567,7 +5435,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 3
         Visible = False
-        ExplicitWidth = 262
       end
     end
     object tabQualifier: TTabSheet
@@ -5669,7 +5536,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
-        ExplicitWidth = 262
       end
       object BoldEdit3: TBoldEdit
         Left = 120
@@ -5691,7 +5557,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 1
-        ExplicitWidth = 262
       end
       object BoldComboBox1: TBoldComboBox
         Left = 120
@@ -5712,7 +5577,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         Sorted = True
         TabOrder = 2
-        ExplicitWidth = 262
       end
       object BoldEdit4: TBoldEdit
         Left = 120
@@ -5736,7 +5600,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 3
-        ExplicitWidth = 262
       end
       object BoldEdit9: TBoldEdit
         Left = 120
@@ -5758,7 +5621,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 4
-        ExplicitWidth = 262
       end
     end
   end
@@ -5843,49 +5705,42 @@ object BoldModelEditFrm: TBoldModelEditFrm
     end
   end
   object behModel: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhTreeRoot
     Expression = 'self->filterOnType(UMLModel)->first'
     Left = 4
     Top = 64
   end
   object behClass: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLClass)->first'
     Left = 4
     Top = 96
   end
   object behAttribute: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLAttribute)->first'
     Left = 4
     Top = 160
   end
   object behOperation: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLOperation)->first'
     Left = 8
     Top = 200
   end
   object behAssociation: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLAssociation)->first'
     Left = 8
     Top = 236
   end
   object behAssociationEnd: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLAssociationEnd)->first'
     Left = 8
     Top = 272
   end
   object behClassSuperClass: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     RootTypeName = 'UMLClassifier'
     Expression = 'superclass'
@@ -6205,62 +6060,53 @@ object BoldModelEditFrm: TBoldModelEditFrm
     end
   end
   object behParameter: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLParameter)->first'
     Left = 4
     Top = 356
   end
   object brhTreeRoot: TBoldReferenceHandle
-    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLModelElement'
     Left = 4
     Top = 32
   end
   object blhModelClasses: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'ownedElement->filterOnType(UMLClass)->orderBy(name)'
     Left = 38
     Top = 64
   end
   object blhModelAssociations: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'ownedElement->filterOnType(UMLAssociation)'
     Left = 72
     Top = 64
   end
   object blhClassAttributes: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 'feature->filterOnType(UMLAttribute)'
     Left = 36
     Top = 128
   end
   object blhClassOperations: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 'feature->select(oclIsTypeOf(UMLOperation))'
     Left = 176
     Top = 100
   end
   object blhParameters: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behOperation
     Expression = 'parameter'
     Left = 40
     Top = 200
   end
   object blhAssociationAssociationEnds: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAssociation
     Expression = 'connection'
     Left = 43
     Top = 238
   end
   object blhAllClasses: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhTreeRoot
     Expression = 'UMLClass.allInstances'
     Left = 47
@@ -7608,7 +7454,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
       000000000000}
   end
   object blhAssociationEndQualifiers: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAssociationEnd
     Expression = 'qualifier'
     Left = 83
@@ -7630,21 +7475,18 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 529
   end
   object blhAllParameterKind: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootTypeName = 'ParameterDirectionKind'
     Expression = 'ParameterDirectionKind.allInstances'
     Left = 111
     Top = 201
   end
   object blhAllOwnerScope: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootTypeName = 'ScopeKind'
     Expression = 'ScopeKind.allInstances'
     Left = 75
     Top = 201
   end
   object behAssociationEndType: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAssociationEnd
     RootTypeName = 'UMLAssociationEnd'
     Expression = 'type'
@@ -7660,7 +7502,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 525
   end
   object blhAllSuperclasses: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 
       'model.allOwnedElement->filterOnType(UMLCLass)->excluding(self)->' +
@@ -7677,38 +7518,32 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 529
   end
   object blhAllAggregationKind: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootTypeName = 'Collection(AggregationKind)'
     Expression = 'AggregationKind.allinstances'
     Left = 119
     Top = 305
   end
   object blhAllVisibilityKind: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     Expression = 'VisibilityKind.allinstances'
     Left = 11
     Top = 485
   end
   object blhAllChangeabilityKind: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     Expression = 'ChangeableKind.allinstances'
     Left = 151
     Top = 304
   end
   object brhCurrentElement: TBoldReferenceHandle
-    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLElement'
     Left = 100
     Top = 32
   end
   object bvhTableMapping: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 71
     Top = 97
   end
   object bcrTableMapping: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhTableMapping
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7716,7 +7551,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 97
   end
   object bchAttributeKind: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhAttributeKind
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7724,19 +7558,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 165
   end
   object bvhAttributeKind: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 139
     Top = 161
   end
   object bvhDelphiProperty: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 71
     Top = 165
   end
   object bchDelphiProperty: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhDelphiProperty
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7744,7 +7575,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 165
   end
   object bchDelphiFunctionType: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhDelphiFunctionType
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7752,13 +7582,11 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 201
   end
   object bvhDelphiFunctionType: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 147
     Top = 201
   end
   object bchMultiplicityValues: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhMultiplicityValues
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7766,7 +7594,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 269
   end
   object bvhMultiplicityValues: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     InitialValues.Strings = (
       '0..1'
@@ -7777,7 +7604,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 269
   end
   object bchDeleteActions: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhDeleteActions
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7785,20 +7611,17 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 305
   end
   object bvhDeleteActions: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 43
     Top = 305
   end
   object blhClassAssociationEnds: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 'associationEnd.otherEnd'
     Left = 76
     Top = 128
   end
   object bvhOptimisticLocking: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     InitialValues.Strings = (
       '<Default>'
@@ -7810,62 +7633,53 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 64
   end
   object bchOptimisticLocking: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhOptimisticLocking
     AutoFirst = False
     Left = 139
     Top = 64
   end
   object behHighestSeverity: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'validator.highestSeverity'
     Left = 107
     Top = 437
   end
   object brhPackage: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLPackage)->first'
     Left = 8
     Top = 396
   end
   object blhPackageAssociations: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhPackage
     Expression = 'ownedElement->filterOnType(UMLAssociation)'
     Left = 83
     Top = 390
   end
   object blhPackageClasses: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhPackage
     Expression = 'ownedElement->filterOnType(UMLClass)'
     Left = 43
     Top = 394
   end
   object blhAllDataTypes: TBoldListHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'allOwnedElement->filterOnType(UMLDataType)->orderby(name)'
     Left = 40
     Top = 160
   end
   object brhDataType: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLDataType)->first'
     Left = 8
     Top = 436
   end
   object brhCopyCut: TBoldReferenceHandle
-    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLModelElement'
     Left = 136
     Top = 32
   end
   object behBoldified: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     RootTypeName = 'Boolean'
     Expression = 'taggedValue['#39'_Boldify.boldified'#39'].Value='#39'True'#39
@@ -7884,7 +7698,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 484
   end
   object behClassIsRootClass: TBoldExpressionHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 
       '(model.taggedValue['#39'_Boldify.boldified'#39'].Value='#39'True'#39') and (gene' +
@@ -7915,7 +7728,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 93
   end
   object bdhAttributePMapperNames: TBoldDerivedHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAttribute
     RootTypeName = 'Collection(String)'
     OnDeriveAndSubscribe = bdhAttributePMapperNamesDeriveAndSubscribe
@@ -7924,14 +7736,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 148
   end
   object bchAttributePMapperNames: TBoldCursorHandle
-    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bdhAttributePMapperNames
     RootTypeName = 'Collection(String)'
     Left = 163
     Top = 361
   end
   object bvhAdvancedMode: TBoldVariableHandle
-    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Boolean'
     Left = 348
     Top = 2

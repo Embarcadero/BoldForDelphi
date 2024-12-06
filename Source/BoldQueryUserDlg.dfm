@@ -11,9 +11,7 @@ object frmBoldQueryUser: TfrmBoldQueryUser
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
-  PixelsPerInch = 96
   TextHeight = 13
   object lblQuestion: TLabel
     Left = 24

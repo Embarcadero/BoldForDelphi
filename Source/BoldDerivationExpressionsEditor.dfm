@@ -1,10 +1,10 @@
 object frmBoldDerivationExpressionsEditor: TfrmBoldDerivationExpressionsEditor
   Left = 219
   Top = 184
-  Width = 361
-  Height = 232
   BorderIcons = [biSystemMenu]
   Caption = 'Expressions editor'
+  ClientHeight = 193
+  ClientWidth = 345
   Color = clBtnFace
   Constraints.MinHeight = 100
   Font.Charset = DEFAULT_CHARSET
@@ -37,23 +37,21 @@ object frmBoldDerivationExpressionsEditor: TfrmBoldDerivationExpressionsEditor
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   OnClose = FormClose
-  PixelsPerInch = 96
   TextHeight = 13
   object pnMain: TPanel
     Left = 0
     Top = 0
-    Width = 353
-    Height = 164
+    Width = 345
+    Height = 152
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object BoldMemo1: TBoldMemo
       Left = 0
       Top = 0
-      Width = 353
-      Height = 164
+      Width = 345
+      Height = 152
       Align = alClient
       Alignment = taLeftJustify
       BoldHandle = brhTaggedValue
@@ -70,17 +68,17 @@ object frmBoldDerivationExpressionsEditor: TfrmBoldDerivationExpressionsEditor
   end
   object pnButtons: TPanel
     Left = 0
-    Top = 164
-    Width = 353
+    Top = 152
+    Width = 345
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
-      353
+      345
       41)
     object btClose: TButton
-      Left = 269
+      Left = 261
       Top = 8
       Width = 81
       Height = 25
