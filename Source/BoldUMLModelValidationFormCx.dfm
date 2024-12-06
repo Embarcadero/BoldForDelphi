@@ -46,8 +46,6 @@ object frmValidationCx: TfrmValidationCx
     Width = 591
     Height = 19
     Panels = <>
-    ExplicitTop = 185
-    ExplicitWidth = 595
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -61,7 +59,6 @@ object frmValidationCx: TfrmValidationCx
     List = True
     ShowCaptions = True
     TabOrder = 1
-    ExplicitWidth = 595
     object btReCheck: TToolButton
       Left = 0
       Top = 0
@@ -80,8 +77,6 @@ object frmValidationCx: TfrmValidationCx
     Height = 154
     Align = alClient
     TabOrder = 2
-    ExplicitWidth = 595
-    ExplicitHeight = 155
     object tvViolations: TcxGridBoldTableView
       PopupMenu = PopupMenuValidation
       OnDblClick = tvViolationsDblClick

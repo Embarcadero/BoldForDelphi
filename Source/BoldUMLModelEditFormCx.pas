@@ -1039,7 +1039,13 @@ begin
 
   AssociationEditForm := TBoldUMLAssociationEditForm.Create(nil);
   AssociationEditForm.brhAssociation.Value := NewAssociation;
-  AssociationEditForm.Show;
+  AssociationEditForm.ShowModal;
+  if AssociationEditForm.ModalResult = mrCancel then
+  begin
+    CurrentModel.BoldSystem.UndoHandlerInterface.UndoBlock(BlockName);
+    if CurrentModel.BoldSystem.UndoHandlerInterface.RedoList.IndexOf(BlockName) <> -1 then
+      CurrentModel.BoldSystem.UndoHandlerInterface.RedoList.RemoveBlock(BlockName);
+  end;
 end;
 
 procedure TBoldModelEditFrmCx.NewAttribute1Click(Sender: TObject);
@@ -1060,7 +1066,12 @@ begin
   dmBoldUMLModelEditorHandles.blhClassAttributes.CurrentElement := NewAttribute;
   AttributeEditForm := TBoldUMLAttributeEditForm.Create(nil);
   AttributeEditForm.brhAttribute.Value := NewAttribute;
-  AttributeEditForm.Show;
+  AttributeEditForm.ShowModal;
+  if AttributeEditForm.ModalResult = mrCancel then
+  begin
+    CurrentModel.BoldSystem.UndoHandlerInterface.UndoBlock(BlockName);
+    CurrentModel.BoldSystem.UndoHandlerInterface.RedoList.Clear;
+  end;
 end;
 
 procedure TBoldModelEditFrmCx.NewOperation1Click(Sender: TObject);
@@ -1079,7 +1090,12 @@ begin
   dmBoldUMLModelEditorHandles.blhClassOperations.CurrentElement := NewOperation;
   OperationEditForm := TBoldUMLOperationEditForm.Create(nil);
   OperationEditForm.brhOperation.Value := NewOperation;
-  OperationEditForm.Show;
+  OperationEditForm.ShowModal;
+  if OperationEditForm.ModalResult = mrCancel then
+  begin
+    CurrentModel.BoldSystem.UndoHandlerInterface.UndoBlock(BlockName);
+    CurrentModel.BoldSystem.UndoHandlerInterface.RedoList.Clear;
+  end;
 end;
 
 procedure TBoldModelEditFrmCx.NewParameter1Click(Sender: TObject);
@@ -1240,9 +1256,6 @@ end;
 
 procedure TBoldModelEditFrmCx.actConsistencyCheckExecute(Sender: TObject);
 begin
-  if Assigned(tvAssociations.DataController.BoldHandle.Value) then
-    Caption := tvAssociations.DataController.BoldHandle.Value.AsString;
-    exit;
   ApplyGUI;
   CurrentModel.BoldSystem.UndoHandlerInterface.Enabled := false;
   try
@@ -1643,7 +1656,12 @@ begin
   if Assigned(Form) then
   begin
     BlockName := CurrentModel.BoldSystem.UndoHandlerInterface.SetCheckPoint('Edit ' + CurrentElement.AsString);
-    Form.Show;
+    if Form.ShowModal = mrCancel then
+    begin
+      CurrentModel.BoldSystem.UndoHandlerInterface.UndoBlock(BlockName);
+      if CurrentModel.BoldSystem.UndoHandlerInterface.RedoList.IndexOf(BlockName) <> -1 then
+        CurrentModel.BoldSystem.UndoHandlerInterface.RedoList.RemoveBlock(BlockName);
+    end;
   end;
 end;
 

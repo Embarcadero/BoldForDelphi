@@ -190,8 +190,6 @@ procedure TfrmValidationCx.BoldPlaceableSubscriber1Receive(
   OriginalEvent: TBoldEvent; RequestedEvent: Integer);
 begin
   Timer1.Enabled := true;
-  tvViolations.DataController.BoldHandle := nil;
-  BoldPlaceableSubscriber1.BoldHandle := nil;
 end;
 
 procedure TfrmValidationCx.Validate;
@@ -245,9 +243,7 @@ end;
 procedure TfrmValidationCx.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := false;
-  BoldPlaceableSubscriber1.BoldHandle := behViolations;
   visible := (blhViolations.Count > 0);
-  tvViolations.DataController.BoldHandle := blhViolations;
 end;
 
 end.
