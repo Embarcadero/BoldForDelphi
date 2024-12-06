@@ -218,7 +218,7 @@ begin
     ADestinationObject := nil;
     exit;
   end;
-  ADestinationObject := DestinationSystem.CreateNewObjectFromClassTypeInfo(DestinationSystem.BoldSystemTypeInfo.ClassTypeInfoByClass[ASourceObject.ClassType]);
+  ADestinationObject := DestinationSystem.CreateNewObjectFromClassTypeInfo(DestinationSystem.BoldSystemTypeInfo.ClassTypeInfoByExpressionName[ASourceObject.BoldClassTypeInfo.ExpressionName]);
   TranslateId(ASourceObject, ADestinationObject);
   TBoldCopyAndClone.BoldCopy(ADestinationObject, ASourceObject, bcmAttributes, false);
   if Assigned(fAttributesEvent) then
