@@ -339,7 +339,7 @@ type
     fCurrencyZero: TBoldMember;
     fFloatZero: TBoldMember;
   public
-    constructor Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+    constructor Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem; var AErrorsEncountered: Boolean);
     destructor Destroy; override;
     procedure MakeNew(el: TBoldOCLNode; NewType: TBoldElementTypeInfo);
     function CreateNewMember(BoldType: TBoldElementTypeInfo): TBoldMember;
@@ -752,13 +752,13 @@ begin
   fBoldType := NewType;
 end;
 
-constructor TBoldOclSymbolHelp.Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldSystem: TBoldSystem; var ErrorsEncountered: Boolean);
+constructor TBoldOclSymbolHelp.Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem; var AErrorsEncountered: Boolean);
 
   procedure SignalError(const Message: String; const args: array of const);
   begin
-  if assigned(BoldSystem) then
-    raise EBoldOclError.CreateFmt(Message, Args);
-  ErrorsEncountered := true;
+    if assigned(ABoldSystem) then
+      raise EBoldOclError.CreateFmt(Message, Args);
+    AErrorsEncountered := true;
   end;
 
   procedure InstallAttribute(const Name: String; var AttrTypeInfo: TBoldAttributeTypeInfo; AttrClass: TClass; Exact: Boolean);
@@ -770,7 +770,7 @@ constructor TBoldOclSymbolHelp.Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldS
 
   if not assigned(AttrTypeInfo.AttributeClass) then
       SignalError(sMissingDelphiType, [Name, AttrTypeInfo.DelphiName])
-    else 
+    else
     begin
     case exact of
       true: if AttrTypeInfo.AttributeClass <> AttrClass then
@@ -782,8 +782,8 @@ constructor TBoldOclSymbolHelp.Create(SystemTypeInfo: tBoldSystemTypeInfo; BoldS
   end;
 
 begin
-  inherited create;
-  fSystemTypeInfo := SystemTypeInfo;
+  inherited Create;
+  fSystemTypeInfo := ASystemTypeInfo;
   fTypeType := SystemTypeInfo.BoldType as TBoldTypeTypeInfo;
   InstallAttribute('Numeric', fNumericType, TBANumeric, true);
   InstallAttribute('Float', fRealType, TBAFloat, false);

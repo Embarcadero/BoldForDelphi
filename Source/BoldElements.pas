@@ -169,7 +169,7 @@ type
     function GetValue: TBoldElement; virtual; abstract;
     function GetValueType: TBoldElementTypeInfo; virtual; abstract;
   public
-    constructor Create(const Name: String);
+    constructor Create(AEvaluator: TBoldEvaluator; const AName: String);
     destructor Destroy; override;
     property Value: TBoldElement read GetValue;
     property Name: String read fName;
@@ -961,10 +961,11 @@ end;
 
 { TBoldExternalVariable }
 
-constructor TBoldExternalVariable.Create(const Name: String);
+constructor TBoldExternalVariable.Create(AEvaluator: TBoldEvaluator; const AName: String);
 begin
   inherited Create;
-  fName := Name;
+  fEvaluator := AEvaluator;
+  fName := AName;
 end;
 
 destructor TBoldExternalVariable.Destroy;

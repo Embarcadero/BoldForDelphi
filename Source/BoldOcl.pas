@@ -118,7 +118,7 @@ type
     function GetVariable(index: integer): TBoldIndirectElement; override;
     function GetVariableByName(const aName: string): TBoldIndirectElement; override;
   public
-    constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
+    constructor Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem);
     destructor Destroy; override;
     property GlobalEnv: TBoldOclEnvironment read GetGlobalEnv;
     property SymbolTable: TBoldSymbolDictionary read fsymbolTable;
@@ -150,6 +150,7 @@ type
     property DateType: TBoldAttributeTypeInfo read fDateType;
     property TimeType: TBoldAttributeTypeInfo read fTimeType;
     property DateTimeType: TBoldAttributeTypeInfo read fDateTimeType;
+    property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
   end;
 
 var
@@ -251,13 +252,13 @@ begin
   end;
 end;
 
-constructor TBoldOcl.Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
+constructor TBoldOcl.Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem);
 var
   FalseConst: TBABoolean;
   MaxTimeStamp: TBAInteger;
 begin
-  fSystemTypeInfo := SystemTypeInfo;
-  fBoldSystem := BoldSystem;
+  fSystemTypeInfo := ASystemTypeInfo;
+  fBoldSystem := ABoldSystem;
   fOclDictionary := TBoldOclDictionary.Create;
   fCanEvaluate := true;
   fSymbolTable := TBoldSymbolDictionary.Create(SystemTypeInfo, BoldSystem, fCanEvaluate);
