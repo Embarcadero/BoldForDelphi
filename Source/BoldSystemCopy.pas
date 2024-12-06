@@ -56,6 +56,9 @@ type
     procedure FindDestinationObject(const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject);
     procedure FindDestinationLocator(const ASourceLocator: TBoldObjectLocator; var ADestinationLocator: TBoldObjectLocator);
     procedure CloneObject(const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject);
+    function GetSourceAllInstanceCount: integer;
+    function GetDestinationAllInstanceCount: integer;
+    function GetAllInstanceCount(ASystemHandle: TBoldSystemHandle): integer;
   public
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
@@ -64,6 +67,8 @@ type
     procedure AnalyzeModel;
     property SourceSystem: TBoldSystem read GetSourceSystem;
     property DestinationSystem: TBoldSystem read GetDestinationSystem;
+    property SourceAllInstanceCount: integer read GetSourceAllInstanceCount;
+    property DestinationAllInstanceCount: integer read GetDestinationAllInstanceCount;
   published
     property SourceSystemHandle: TBoldSystemHandle read fSourceSystemHandle write fSourceSystemHandle;
     property DestinationSystemHandle: TBoldSystemHandle read fDestinationSystemHandle write fDestinationSystemHandle;
@@ -77,22 +82,26 @@ type
 implementation
 
 uses
+  Vcl.Dialogs,
+  Vcl.Controls,
+  System.UITypes,
+
   BoldLinks,
   BoldDBInterfaces,
   BoldTaggedValueSupport,
   BoldUMLModelSupport,
   BoldDefaultID,
   BoldMath,
-  BoldGuard
-  , BoldBase
-  , BoldIndexableList
-  , BoldIndex
-  , BoldElements
-  , BoldUndoHandler
-  , BoldMetaElementList
-  , BoldValueInterfaces
-  , BoldValueSpaceInterfaces
-  , BoldUNdoInterfaces;
+  BoldGuard,
+  BoldBase,
+  BoldIndexableList,
+  BoldIndex,
+  BoldElements,
+  BoldUndoHandler,
+  BoldMetaElementList,
+  BoldValueInterfaces,
+  BoldValueSpaceInterfaces,
+  BoldUNdoInterfaces;
 
 { TBoldSystemCopy }
 
@@ -180,7 +189,6 @@ end;
 
 procedure TBoldSystemCopy.CheckModelCompatibility;
 var
-  i,j: integer;
   SourceClasses, DestinationClasses: TBoldClassTypeInfoList;
   SourceClass, DestinationClass: TBoldClassTypeInfo;
   SourceMember, DestinationMember: TBoldMemberRtInfo;
@@ -195,9 +203,8 @@ begin
       DestinationClass := DestinationClasses.ItemsByExpressionName[SourceClass.ExpressionName];
       if not Assigned(DestinationClasses) then
         Errors.Add(Format('Class %s does not exist in destination model.', [SourceClass.ExpressionName]));
-      for j := 0 to SourceClass.AllMembersCount - 1 do
+      for SourceMember in SourceClass.AllMembers do
       begin
-        SourceMember := SourceClass.AllMembers[j];
         DestinationMember := DestinationClass.MemberRTInfoByExpressionName[SourceMember.ExpressionName];
         if not Assigned(DestinationMember) then
           Errors.Add(Format('Member %s.%s does not exist in destination class.', [SourceClass.ExpressionName, SourceMember.ExpressionName]));
@@ -720,6 +727,8 @@ begin
     raise Exception.Create('Destination system handle not set.');
   if SourceSystemHandle = DestinationSystemHandle then
     raise Exception.Create('Source and destination systems can not be same.');
+  if (DestinationAllInstanceCount > 0) and (MessageDlg('Non empty destination, are you sure you want to proceed ?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes) then
+    exit;
   SourceSystemHandle.Active := true;
   DestinationSystemHandle.Active := true;
   DestinationSystem.UndoHandlerInterface.Enabled := false;
@@ -750,6 +759,33 @@ begin
   TranslationList.AddTranslation(ADestinationObject.BoldObjectLocator.BoldObjectID, DestinationID);
   DestinationSystem.AsIBoldvalueSpace[bdepContents].ApplytranslationList(TranslationList);
   Assert(ASourceObject.DebugInfo = ADestinationObject.DebugInfo);
+end;
+
+function TBoldSystemCopy.GetAllInstanceCount(ASystemHandle: TBoldSystemHandle): integer;
+var
+  Query: IBoldQuery;
+  RootTableName: string;
+begin
+  RootTableName := ASystemHandle.PersistenceHandleDB.PersistenceControllerDefault.PersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName;
+  Query := ASystemHandle.System.PersistenceController.DatabaseInterface.GetQuery;
+  try
+    Query.SQLText := 'select count(*) from ' + RootTableName;
+    Query.Open;
+    result := Query.Fields[0].AsInteger;
+    Query.Close;
+  finally
+    ASystemHandle.System.PersistenceController.DatabaseInterface.ReleaseQuery(Query);
+  end;
+end;
+
+function TBoldSystemCopy.GetSourceAllInstanceCount: integer;
+begin
+  result := GetAllInstanceCount(SourceSystemHandle);
+end;
+
+function TBoldSystemCopy.GetDestinationAllInstanceCount: integer;
+begin
+  result := GetAllInstanceCount(DestinationSystemHandle);
 end;
 
 end.
