@@ -109,10 +109,8 @@ function TBoldVariableHandle.GetValue: TBoldElement;
 begin
   if not (csDesigning in ComponentState) and not (csLoading in ComponentState) then
   begin
-//    if not assigned(StaticSystemHandle) then
-//      raise EBold.CreateFmt(sNoSystemHandle, [classname, 'GetValue', name]); // do not localize
-    if not assigned(StaticBoldType) then
-      raise EBold.CreateFmt(sValueTypeNameInvalid, [classname, name, ValueTypeName]);
+    if not assigned(StaticSystemHandle) and not assigned(StaticBoldType) then
+      raise EBold.CreateFmt(sNoSystemHandle, [classname, 'GetValue', name]); // do not localize
   end;
 
   if {not (csDesigning in ComponentState) and}
