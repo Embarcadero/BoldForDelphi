@@ -68,7 +68,7 @@ type
     function AddIndex(BoldIndex: TBoldIndex): integer;
     procedure AddToAllIndexes(Item: TObject);
     procedure RemoveAndFreeIndex(var BoldIndex: TBoldIndex; DestroyObjects: Boolean);
-    function RemoveFromAllIndexes(Item: TObject): boolean;
+    procedure RemoveFromAllIndexes(Item: TObject);
     procedure SetIndexCapacity(NewCapacity: integer);
     function TraverserClass: TBoldIndexableListTraverserClass; virtual;
     property IndexCount: integer read GetIndexCount;
@@ -82,7 +82,7 @@ type
     procedure Add(Item: TObject);
     procedure Clear;
     procedure ItemChanged(Item: TObject);
-    function Remove(Item: TObject): boolean;
+    procedure Remove(Item: TObject);
     function CreateTraverser: TBoldIndexableListTraverser;
     function GetEnumerator: TBoldIndexableListTraverser;
     property Count: integer read GetCount;
@@ -364,19 +364,14 @@ begin
       Indexes[i].Add(Item);
 end;
 
-function TBoldUnOrderedIndexableList.RemoveFromAllIndexes(Item: TObject): boolean;
+procedure TBoldUnOrderedIndexableList.RemoveFromAllIndexes(Item: TObject);
 var
   i: integer;
 begin
   if Assigned(Item) then
-  begin
-    result := (IndexCount > 0);
     for i := 0 to IndexCount-1 do
       if Assigned(Indexes[i]) then
-        result := Indexes[i].Remove(Item) and result;
-  end
-  else
-    result := false;
+        Indexes[i].Remove(Item);
 end;
 
 procedure TBoldUnOrderedIndexableList.Add(Item: TObject);
@@ -392,12 +387,13 @@ begin
   AddToAllIndexes(Item);
 end;
 
-function TBoldUnOrderedIndexableList.Remove(Item: TObject): boolean;
+procedure TBoldUnOrderedIndexableList.Remove(Item: TObject);
 begin
-  result := RemoveFromAllIndexes(item);
+  RemoveFromAllIndexes(item);
   if OwnsEntries then
     item.free;
 end;
+
 
 procedure TBoldUnOrderedIndexableList.ItemChanged(Item: TObject);
 var
@@ -407,6 +403,7 @@ begin
     if Assigned(Indexes[i]) then
       Indexes[i].ItemChanged(Item);
 end;
+
 
 procedure TBoldUnOrderedIndexableList.Clear;
 var
@@ -419,7 +416,7 @@ begin
   for i := 0 to IndexCount-1 do
     if assigned(Indexes[i]) then
     begin
-      Indexes[i].Clear(OwnsEntries and (IndicesToGo=1)); // only free from one (last) index
+      Indexes[i].Clear(OwnsEntries and (IndicesToGo=1));
       dec(IndicesToGo);
     end;
 end;

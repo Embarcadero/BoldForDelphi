@@ -542,7 +542,7 @@ begin
   if ExpressionType is TBoldClasstypeInfo then
   begin
     ClassInfo := ExpressionType as TBoldClasstypeInfo;
-    for I := 0 to ClassInfo.AllMembersCount - 1 do
+    for I := 0 to ClassInfo.AllMembers.Count - 1 do
     begin
       Member := ClassInfo.AllMembers[I];
       if not ShowDerived and Member.IsDerived then continue;

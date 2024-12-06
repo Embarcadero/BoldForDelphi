@@ -2,8 +2,8 @@ object frmValidationCx: TfrmValidationCx
   Left = 458
   Top = 198
   Caption = 'Validation'
-  ClientHeight = 204
-  ClientWidth = 595
+  ClientHeight = 203
+  ClientWidth = 591
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -36,23 +36,23 @@ object frmValidationCx: TfrmValidationCx
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
   KeyPreview = True
-  OldCreateOrder = True
   Position = poScreenCenter
   OnClose = FormClose
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 185
-    Width = 595
+    Top = 184
+    Width = 591
     Height = 19
     Panels = <>
+    ExplicitTop = 185
+    ExplicitWidth = 595
   end
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 595
+    Width = 591
     Height = 30
     BorderWidth = 1
     ButtonWidth = 71
@@ -61,6 +61,7 @@ object frmValidationCx: TfrmValidationCx
     List = True
     ShowCaptions = True
     TabOrder = 1
+    ExplicitWidth = 595
     object btReCheck: TToolButton
       Left = 0
       Top = 0
@@ -75,10 +76,12 @@ object frmValidationCx: TfrmValidationCx
   object ViolationsGrid: TcxGrid
     Left = 0
     Top = 30
-    Width = 595
-    Height = 155
+    Width = 591
+    Height = 154
     Align = alClient
     TabOrder = 2
+    ExplicitWidth = 595
+    ExplicitHeight = 155
     object tvViolations: TcxGridBoldTableView
       PopupMenu = PopupMenuValidation
       OnDblClick = tvViolationsDblClick
@@ -87,6 +90,7 @@ object frmValidationCx: TfrmValidationCx
       OnCustomDrawCell = tvViolationsCustomDrawCell
       DataController.BoldProperties.DefaultDblClick = False
       DataController.BoldHandle = blhViolations
+      DataController.Filter.Options = [fcoSoftNull]
       DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>
@@ -135,13 +139,13 @@ object frmValidationCx: TfrmValidationCx
     end
   end
   object behModel: TBoldReferenceHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLModel'
     Left = 48
     Top = 52
   end
   object blhViolations: TBoldListHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behViolations
     Left = 48
     Top = 140
@@ -470,7 +474,7 @@ object frmValidationCx: TfrmValidationCx
     Top = 128
   end
   object behViolations: TBoldExpressionHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'validator.violation->orderdescending(severity)'
     Left = 48

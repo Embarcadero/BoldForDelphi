@@ -3,8 +3,8 @@ object FGettingStarted: TFGettingStarted
   Top = 289
   BorderStyle = bsDialog
   Caption = 'Bold for Delphi'
-  ClientHeight = 176
-  ClientWidth = 436
+  ClientHeight = 175
+  ClientWidth = 432
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -37,10 +37,8 @@ object FGettingStarted: TFGettingStarted
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
-  PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage
     Left = 8

@@ -108,8 +108,7 @@ uses
   BoldPMappers,
   BoldDefaultTaggedValues,
   BoldDefaultStreamNames,
-  BoldAttributes,
-  BoldModel;
+  BoldAttributes;
 
 resourcestring
   // Validator errors
@@ -370,8 +369,6 @@ begin
       NationalCharConversion);
 end;
 
-type TBoldModelAccess = class(TBoldModel);
-
 procedure TBoldUMLModelValidator.Validate(TypeNameDictionary: TBoldTypeNameDictionary);
 var
   I: Integer;
@@ -394,7 +391,7 @@ begin
   BoldLog.StartLog('Validating the model');
   UndoWasEnabled := UMLModel.BoldSystem.UndoHandlerInterface.Enabled;
   UMLModel.BoldSystem.UndoHandlerInterface.Enabled := false;
-  TBoldModelAccess(BoldModel).StartValidation;
+  BoldModel.StartValidation;
   try
     UMLModel.BoldSystem.StartTransaction();
     try
@@ -477,7 +474,7 @@ begin
     end;
   finally
     BoldLog.EndLog;
-    TBoldModelAccess(BoldModel).EndValidation;
+    BoldModel.EndValidation;
     UMLModel.BoldSystem.UndoHandlerInterface.Enabled := UndoWasEnabled;
   end;
 end;

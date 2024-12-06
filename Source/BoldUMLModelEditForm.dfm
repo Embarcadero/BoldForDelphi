@@ -2,8 +2,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
   Left = 352
   Top = 156
   Caption = 'Bold UML Model Editor'
-  ClientHeight = 588
-  ClientWidth = 821
+  ClientHeight = 587
+  ClientWidth = 817
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -37,7 +37,6 @@ object BoldModelEditFrm: TBoldModelEditFrm
     000000000000000000000000000000000000000000000000000000000000}
   KeyPreview = True
   Menu = MainMenu1
-  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnActivate = FormActivate
@@ -47,20 +46,20 @@ object BoldModelEditFrm: TBoldModelEditFrm
   OnDeactivate = FormDeactivate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 200
     Top = 27
     Width = 6
-    Height = 542
+    Height = 541
     Beveled = True
+    ExplicitHeight = 542
   end
   object TBoldLabel
     Left = 120
     Top = 4
-    Width = 3
-    Height = 13
+    Width = 209
+    Height = 24
     BoldHandle = behAttribute
     BoldProperties.Expression = 'owner.name + '#39'.'#39' + name'
     Color = clBtnFace
@@ -129,13 +128,28 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Left = 0
     Top = 27
     Width = 200
-    Height = 542
+    Height = 541
     HelpContext = 34
     Align = alLeft
+    DragMode = dmAutomatic
+    HideSelection = False
+    Images = ilTreeView
+    Indent = 19
+    PopupMenu = popTree
+    RightClickSelect = True
+    TabOrder = 2
+    OnChange = BoldTreeView1Change
+    OnDragDrop = BoldTreeView1DragDrop
+    OnDragOver = BoldTreeView1DragOver
+    OnEndDrag = BoldTreeView1EndDrag
+    OnExpanded = BoldTreeView1Expanded
+    OnKeyDown = BoldTreeView1KeyDown
+    OnStartDrag = BoldTreeView1StartDrag
     AutoExpandLevels = 0
     BoldHandle = brhTreeRoot
     BoldProperties.Parts = <
       item
+        ElementExpression = ''
         ControllerExpression = 'self.ocltype'
         InterpretAsList = True
       end>
@@ -145,6 +159,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         HideNodeWithNoChildren = False
         ListController.Parts = <
           item
+            ElementExpression = ''
             ControllerExpression = #39'LogicalView'#39
             InterpretAsList = False
           end>
@@ -297,6 +312,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
             InterpretAsList = True
           end
           item
+            ElementExpression = ''
             ControllerExpression = #39'DataTypes'#39
             InterpretAsList = False
           end>
@@ -330,32 +346,20 @@ object BoldModelEditFrm: TBoldModelEditFrm
             InterpretAsList = True
           end
           item
+            ElementExpression = ''
             ControllerExpression = #39'Associations'#39
             InterpretAsList = False
           end
           item
+            ElementExpression = ''
             ControllerExpression = #39'DataTypes'#39
             InterpretAsList = False
           end>
         IconController.Expression = '6'
         TextController.Expression = #39'Logical View'#39
       end>
-    DragMode = dmAutomatic
-    HideSelection = False
-    Images = ilTreeView
-    Indent = 19
-    PopupMenu = popTree
-    RightClickSelect = True
     SelectedIndexDelta = 1
     SelectInserted = True
-    TabOrder = 2
-    OnChange = BoldTreeView1Change
-    OnDragDrop = BoldTreeView1DragDrop
-    OnDragOver = BoldTreeView1DragOver
-    OnEndDrag = BoldTreeView1EndDrag
-    OnExpanded = BoldTreeView1Expanded
-    OnKeyDown = BoldTreeView1KeyDown
-    OnStartDrag = BoldTreeView1StartDrag
     OnCut = BoldTreeView1Cut
     OnCopy = BoldTreeView1Copy
     OnPaste = BoldTreeView1Paste
@@ -363,9 +367,9 @@ object BoldModelEditFrm: TBoldModelEditFrm
   object pcModelEdit: TPageControl
     Left = 206
     Top = 27
-    Width = 615
-    Height = 542
-    ActivePage = tabClass
+    Width = 611
+    Height = 541
+    ActivePage = tabOperation
     Align = alClient
     TabHeight = 20
     TabOrder = 0
@@ -376,24 +380,25 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object Splitter2: TSplitter
         Left = 0
         Top = 329
-        Width = 607
+        Width = 603
         Height = 6
         Cursor = crVSplit
         Align = alTop
         Beveled = True
         OnCanResize = Splitter2CanResize
+        ExplicitWidth = 607
       end
       object sbModel: TScrollBox
         Left = 0
         Top = 0
-        Width = 607
+        Width = 603
         Height = 329
         HelpContext = 9
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
         DesignSize = (
-          607
+          603
           329)
         object lblModelName: TLabel
           Left = 84
@@ -574,7 +579,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object tbxModelName: TBoldEdit
           Left = 120
           Top = 32
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|The name of the model.'
           HelpContext = 33
@@ -591,11 +596,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
+          ExplicitWidth = 287
         end
         object tbxModelDelhpiName: TBoldEdit
           Left = 120
           Top = 80
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Filename used to save model.'
           HelpContext = 1130
@@ -612,11 +618,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 2
+          ExplicitWidth = 287
         end
         object tbxModelExpressionName: TBoldEdit
           Left = 120
           Top = 104
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|The expression name of the model. Can mostly be left unchanged.'
           HelpContext = 11
@@ -633,11 +640,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 3
+          ExplicitWidth = 287
         end
         object tbxModelPMapperName: TBoldEdit
           Left = 120
           Top = 296
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|Persistence mapper for the model. There is no reason to change ' +
@@ -657,11 +665,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 15
           Visible = False
+          ExplicitWidth = 287
         end
         object tbxModelInterfaceUses: TBoldEdit
           Left = 120
           Top = 128
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|The units required by the interface section.'
           HelpContext = 13
@@ -680,11 +689,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 4
+          ExplicitWidth = 271
         end
         object tbxModelImplementationUses: TBoldEdit
           Left = 120
           Top = 152
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|The units required by the implementation section.'
           HelpContext = 14
@@ -703,9 +713,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 6
+          ExplicitWidth = 271
         end
         object btInterfaceUses: TButton
-          Left = 394
+          Left = 382
           Top = 128
           Width = 17
           Height = 21
@@ -721,9 +732,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           ParentFont = False
           TabOrder = 5
           OnClick = btInterfaceUsesClick
+          ExplicitLeft = 390
         end
         object btImplementationUses: TButton
-          Left = 394
+          Left = 382
           Top = 152
           Width = 17
           Height = 21
@@ -739,9 +751,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           ParentFont = False
           TabOrder = 7
           OnClick = btImplementationUsesClick
+          ExplicitLeft = 390
         end
         object bcbModelUseXFiles: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 30
           Width = 77
           Height = 17
@@ -757,9 +770,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'U&se X files'
           ReadOnly = False
           TabOrder = 14
+          ExplicitLeft = 414
         end
         object bcbModelUseTimestamp: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 46
           Width = 93
           Height = 17
@@ -775,9 +789,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use timestamp'
           ReadOnly = False
           TabOrder = 16
+          ExplicitLeft = 414
         end
         object bcbUseGlobalId: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 62
           Width = 93
           Height = 17
@@ -791,9 +806,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use global id'
           ReadOnly = False
           TabOrder = 17
+          ExplicitLeft = 414
         end
         object bcbUseReadOnly: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 78
           Width = 93
           Height = 17
@@ -809,11 +825,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use readonly'
           ReadOnly = False
           TabOrder = 18
+          ExplicitLeft = 414
         end
         object tbxModelStereotype: TBoldEdit
           Left = 120
           Top = 56
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Stereotype applied to model.'
           HelpContext = 1150
@@ -830,11 +847,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
+          ExplicitWidth = 287
         end
         object tbxModelConstraints: TBoldEdit
           Left = 120
           Top = 224
-          Width = 275
+          Width = 263
           Height = 21
           Hint = 
             '|Constraints for the model. Note that these are not enforced aut' +
@@ -856,9 +874,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 10
           Visible = False
+          ExplicitWidth = 271
         end
         object btModelConstraintEditor: TButton
-          Left = 394
+          Left = 382
           Top = 224
           Width = 17
           Height = 21
@@ -875,11 +894,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 11
           Visible = False
           OnClick = btModelConstraintEditorClick
+          ExplicitLeft = 390
         end
         object edModelGUID: TBoldEdit
           Left = 120
           Top = 248
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 'GUID used when generating IDL code.'
           HelpContext = 11
@@ -897,11 +917,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 12
           Visible = False
+          ExplicitWidth = 287
         end
         object edModelTypeLibVersion: TBoldEdit
           Left = 120
           Top = 272
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Version number for the type lib.'
           HelpContext = 11
@@ -919,9 +940,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 13
           Visible = False
+          ExplicitWidth = 287
         end
         object bcbUseClockLog: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 94
           Width = 93
           Height = 17
@@ -937,9 +959,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use clock lo&g'
           ReadOnly = False
           TabOrder = 19
+          ExplicitLeft = 414
         end
         object bcbGenerateMultiplicityConstraints: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 110
           Width = 157
           Height = 17
@@ -955,11 +978,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Use multiplicity constraints'
           ReadOnly = False
           TabOrder = 20
+          ExplicitLeft = 414
         end
         object cmbModelOptimisticLocking: TBoldComboBox
           Left = 120
           Top = 200
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|Specifies what kind of optimistic locking mechanism will be use' +
@@ -968,22 +992,19 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Alignment = taLeftJustify
           BoldHandle = behModel
           BoldListHandle = bchOptimisticLocking
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.OptimisticLocking'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 9
           Visible = False
         end
         object tbxModelRootClass: TBoldEdit
           Left = 120
           Top = 176
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|The root class of the model.'
           HelpContext = 12
@@ -1000,24 +1021,27 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 8
+          ExplicitWidth = 287
         end
       end
       object pcModelTabs: TPageControl
         Left = 0
         Top = 335
-        Width = 607
-        Height = 177
+        Width = 603
+        Height = 176
         ActivePage = TabSheet2
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 607
+        ExplicitHeight = 177
         object TabSheet1: TTabSheet
           HelpContext = 87
           Caption = '&Classes'
           object BoldGrid1: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 149
+            Width = 595
+            Height = 148
             HelpContext = 87
             AddNewAtEnd = False
             Align = alClient
@@ -1026,15 +1050,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhModelClasses
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -1044,6 +1069,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'superclass.name'
@@ -1053,6 +1079,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Superclass'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.FileName'#39'].value'
@@ -1062,6 +1089,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'File name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.TableMapping'#39'].value'
@@ -1071,6 +1099,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Table mapping'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiName'#39'].value'
@@ -1080,6 +1109,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -1089,6 +1119,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.PMapper'#39'].value'
@@ -1098,6 +1129,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'PMapper name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.TableName'#39'].value'#13
@@ -1107,6 +1139,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Table name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'persistent'
@@ -1116,6 +1149,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Persistent'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'isabstract'
@@ -1125,6 +1159,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Abstract'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.Imported'#39'].value'
@@ -1134,6 +1169,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Imported'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -1170,8 +1206,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
           object BoldGrid2: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 149
+            Width = 595
+            Height = 148
             HelpContext = 32
             AddNewAtEnd = False
             Align = alClient
@@ -1180,15 +1216,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhModelAssociations
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -1198,6 +1235,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'class'
@@ -1207,6 +1245,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Class'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 
@@ -1218,6 +1257,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Connection 1'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 
@@ -1229,6 +1269,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Connection 2'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -1269,23 +1310,24 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object Splitter3: TSplitter
         Left = 0
         Top = 393
-        Width = 607
+        Width = 603
         Height = 6
         Cursor = crVSplit
         Align = alTop
         Beveled = True
+        ExplicitWidth = 607
       end
       object sbClass: TScrollBox
         Left = 0
         Top = 0
-        Width = 607
+        Width = 603
         Height = 393
         HelpContext = 52
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
         DesignSize = (
-          607
+          603
           393)
         object lblClassName: TLabel
           Left = 84
@@ -1462,7 +1504,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object tbxClassName: TBoldEdit
           Left = 120
           Top = 32
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Modeled name of the class.'
           HelpContext = 62
@@ -1479,11 +1521,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
+          ExplicitWidth = 291
         end
         object tbxClassDelphiName: TBoldEdit
           Left = 120
           Top = 296
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Template for the name used to access this class in source code.'
           HelpContext = 5
@@ -1501,11 +1544,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 14
           Visible = False
+          ExplicitWidth = 291
         end
         object tbxClassExpressionName: TBoldEdit
           Left = 120
           Top = 320
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Template for the name used to access the class from OCL.'
           HelpContext = 53
@@ -1523,11 +1567,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 15
           Visible = False
+          ExplicitWidth = 291
         end
         object tbxClassTableName: TBoldEdit
           Left = 120
           Top = 368
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Template for the name used for this class'#39' table name.'
           HelpContext = 54
@@ -1545,11 +1590,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 17
           Visible = False
+          ExplicitWidth = 291
         end
         object tbxClassFileName: TBoldEdit
           Left = 120
           Top = 128
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|Name of include file into which this class'#39' business method imp' +
@@ -1568,9 +1614,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 4
+          ExplicitWidth = 291
         end
         object bcbClassPersistent: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 30
           Width = 69
           Height = 17
@@ -1583,9 +1630,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Pe&rsistent'
           ReadOnly = False
           TabOrder = 18
+          ExplicitLeft = 418
         end
         object bcbClassAbstract: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 46
           Width = 69
           Height = 17
@@ -1598,9 +1646,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'A&bstract'
           ReadOnly = False
           TabOrder = 19
+          ExplicitLeft = 418
         end
         object bcbClassImported: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 62
           Width = 69
           Height = 17
@@ -1613,11 +1662,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Importe&d'
           ReadOnly = False
           TabOrder = 20
+          ExplicitLeft = 418
         end
         object cmbClassPMapperName: TBoldComboBox
           Left = 120
           Top = 344
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|Persistence mapper for this class. There is no reason to change' +
@@ -1625,31 +1675,26 @@ object BoldModelEditFrm: TBoldModelEditFrm
           HelpContext = 58
           Alignment = taLeftJustify
           BoldHandle = behClass
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.PMapper'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 16
           Visible = False
+          ExplicitWidth = 291
         end
         object cmbSuperClass: TBoldComboBox
           Left = 120
           Top = 80
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|The immediate ancestor of this class.'
           HelpContext = 59
           Alignment = taLeftJustify
           BoldHandle = behClass
           BoldListHandle = blhAllSuperclasses
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'generalization->first.parent.name'
           BoldProperties.ApplyPolicy = bapChange
           BoldProperties.NilStringRepresentation = '<None>'
@@ -1659,35 +1704,32 @@ object BoldModelEditFrm: TBoldModelEditFrm
           OnSelectChanged = cmbSuperClassSelectChanged
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 2
           Visible = False
         end
         object cmbTableMapping: TBoldComboBox
           Left = 120
           Top = 176
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Controls into which table the class persistent data goes.'
           HelpContext = 1000
           Alignment = taLeftJustify
           BoldHandle = behClass
           BoldListHandle = bcrTableMapping
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.TableMapping'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 7
+          ExplicitWidth = 291
         end
         object tbxClassStereotype: TBoldEdit
           Left = 120
           Top = 56
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Stereotype applied on class, if any.'
           HelpContext = 1150
@@ -1704,11 +1746,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
+          ExplicitWidth = 291
         end
         object tbxClassConstraint: TBoldEdit
           Left = 120
           Top = 224
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|Number of constraints specified for this class.'
           HelpContext = 14
@@ -1728,9 +1771,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 10
           Visible = False
+          ExplicitWidth = 275
         end
         object btClassConstraintEditor: TButton
-          Left = 394
+          Left = 382
           Top = 224
           Width = 17
           Height = 21
@@ -1747,11 +1791,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 11
           Visible = False
           OnClick = btModelConstraintEditorClick
+          ExplicitLeft = 394
         end
         object tbxClassDerivationExpressions: TBoldEdit
           Left = 120
           Top = 200
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|Redefinition of inherited derivation expressions.'
           HelpContext = 1170
@@ -1769,9 +1814,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 8
           Visible = False
+          ExplicitWidth = 275
         end
         object btShowDerivationExpressionsEditor: TButton
-          Left = 394
+          Left = 382
           Top = 200
           Width = 17
           Height = 21
@@ -1788,11 +1834,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 9
           Visible = False
           OnClick = btShowDerivationExpressionsEditorClick
+          ExplicitLeft = 394
         end
         object tbxClassUnitName: TBoldEdit
           Left = 120
           Top = 104
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|The name of the unit this class will be generated into. Blank m' +
@@ -1811,11 +1858,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 3
+          ExplicitWidth = 291
         end
         object edClassDefaultStringRep: TBoldEdit
           Left = 120
           Top = 152
-          Width = 275
+          Width = 263
           Height = 21
           Hint = 
             '|OCL expression for the string representation of the class objec' +
@@ -1834,9 +1882,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 5
+          ExplicitWidth = 275
         end
         object btClassDefaultStringRep: TButton
-          Left = 394
+          Left = 382
           Top = 152
           Width = 17
           Height = 21
@@ -1852,11 +1901,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           ParentFont = False
           TabOrder = 6
           OnClick = btClassDefaultStringRepClick
+          ExplicitLeft = 394
         end
         object edClassGUID: TBoldEdit
           Left = 120
           Top = 248
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|The GUID for this class (required for COM access)'
           HelpContext = 11
@@ -1874,31 +1924,29 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 12
           Visible = False
+          ExplicitWidth = 291
         end
         object cmbClassOptimisticLocking: TBoldComboBox
           Left = 120
           Top = 272
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Specify the optimistic locking mechanism to use for this class.'
           HelpContext = 1250
           Alignment = taLeftJustify
           BoldHandle = behClass
           BoldListHandle = bchOptimisticLocking
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.OptimisticLocking'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 13
           Visible = False
         end
         object bcbRemoveSuperOnUnboldify: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 87
           Width = 173
           Height = 17
@@ -1911,49 +1959,56 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Remove Superclass on unboldify'
           ReadOnly = False
           TabOrder = 21
+          ExplicitLeft = 418
         end
         object bcbRemoveOnUnboldify: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 104
           Width = 149
           Height = 17
           HelpContext = 57
           Anchors = [akTop, akRight]
           BoldHandle = behClass
+          BoldProperties.Expression = ''
           BoldProperties.ApplyPolicy = bapChange
           BoldProperties.Renderer = bcrAutoCreated
           Caption = 'Remove class on unboldify'
           ReadOnly = False
           TabOrder = 22
+          ExplicitLeft = 418
         end
         object bcbIsRootClass: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 120
           Width = 97
           Height = 17
           Anchors = [akTop, akRight]
           BoldHandle = behClassIsRootClass
+          BoldProperties.Expression = ''
           Caption = 'Is Root Class'
           ReadOnly = False
           TabOrder = 23
+          ExplicitLeft = 418
         end
       end
       object pcClassTabs: TPageControl
         Left = 0
         Top = 399
-        Width = 607
-        Height = 113
-        ActivePage = TabSheet4
+        Width = 603
+        Height = 112
+        ActivePage = TabSheet3
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 607
+        ExplicitHeight = 113
         object TabSheet3: TTabSheet
           HelpContext = 64
           Caption = 'Attrib&utes'
           object BoldGrid3: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 85
+            Width = 595
+            Height = 84
             HelpContext = 64
             AddNewAtEnd = False
             Align = alClient
@@ -1962,15 +2017,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhClassAttributes
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -1980,6 +2036,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'typeName'
@@ -1989,6 +2046,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Type'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'stereotypeName'
@@ -1998,6 +2056,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Stereotype'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.Length'#39'].value'
@@ -2007,6 +2066,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Length'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiName'#39'].value'
@@ -2016,6 +2076,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -2025,6 +2086,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.PMapper'#39'].value'#13
@@ -2034,6 +2096,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'PMapper name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ColumnName'#39'].value'
@@ -2043,6 +2106,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Column name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.Persistent'#39'].value'
@@ -2052,6 +2116,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Persistent'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.AllowNULL'#39'].value'
@@ -2061,6 +2126,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Allow null'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'derived'
@@ -2070,6 +2136,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Derived'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelayedFetch'#39'].value'
@@ -2079,6 +2146,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delayed fetch'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.GetMethod'#39'].value'
@@ -2088,6 +2156,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Get method'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.SetMethod'#39'].value'
@@ -2097,6 +2166,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Set method'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.LocalVariable'#39'].value'
@@ -2106,6 +2176,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Local variable'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -2146,8 +2217,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
           object BoldGrid4: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 85
+            Width = 595
+            Height = 84
             HelpContext = 61
             AddNewAtEnd = False
             Align = alClient
@@ -2156,15 +2227,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhClassOperations
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -2174,6 +2246,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'ownerscope'
@@ -2183,6 +2256,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Owner scope'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.OperationKind'#39'].value'
@@ -2192,6 +2266,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi function type'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiName'#39'].value'
@@ -2201,6 +2276,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -2210,6 +2286,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -2240,8 +2317,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
           object BoldGrid9: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 85
+            Width = 595
+            Height = 84
             HelpContext = 61
             AddNewAtEnd = False
             Align = alClient
@@ -2250,15 +2327,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhClassAssociationEnds
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -2268,6 +2346,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'stereotypeName'
@@ -2277,6 +2356,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Stereotype'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'isNavigable'
@@ -2285,6 +2365,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'multi'
@@ -2294,6 +2375,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Multi'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'mandatory'
@@ -2303,6 +2385,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Mandatory'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'isOrdered'
@@ -2311,6 +2394,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'aggregation'
@@ -2320,6 +2404,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Aggregation'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'multiplicity'
@@ -2329,6 +2414,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Multiplicity'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'changeability'
@@ -2338,6 +2424,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Changeability'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'visibility'
@@ -2346,6 +2433,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -2381,8 +2469,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
       HelpContext = 63
       Caption = 'Attribute'
       DesignSize = (
-        607
-        512)
+        603
+        511)
       object lblAttributeName: TLabel
         Left = 84
         Top = 36
@@ -2539,7 +2627,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object tbxAttributeName: TBoldEdit
         Left = 120
         Top = 32
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|The modeled name for this attribute.'
         HelpContext = 77
@@ -2556,11 +2644,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
+        ExplicitWidth = 262
       end
       object tbxAttributeDelphiName: TBoldEdit
         Left = 120
         Top = 224
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Template for the name used to access this attribute in source c' +
@@ -2580,11 +2669,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 10
         Visible = False
+        ExplicitWidth = 262
       end
       object tbxAttributeExpressionName: TBoldEdit
         Left = 120
         Top = 248
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Template for the name used to access this attribute in OCL.'
         HelpContext = 65
@@ -2602,11 +2692,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 11
         Visible = False
+        ExplicitWidth = 262
       end
       object tbxAttributeColumnName: TBoldEdit
         Left = 120
         Top = 296
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Template for the name used for the SQL column of this attribute' +
@@ -2626,9 +2717,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 13
         Visible = False
+        ExplicitWidth = 262
       end
       object bcbAttributePersistent: TBoldCheckBox
-        Left = 389
+        Left = 377
         Top = 30
         Width = 97
         Height = 17
@@ -2643,9 +2735,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = 'Persistent'
         ReadOnly = False
         TabOrder = 16
+        ExplicitLeft = 389
       end
       object bcbAttributeDelayedFetch: TBoldCheckBox
-        Left = 389
+        Left = 377
         Top = 94
         Width = 97
         Height = 17
@@ -2662,9 +2755,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Enabled = False
         ReadOnly = False
         TabOrder = 20
+        ExplicitLeft = 389
       end
       object bcbAttributeAllowNull: TBoldCheckBox
-        Left = 389
+        Left = 377
         Top = 46
         Width = 97
         Height = 17
@@ -2678,9 +2772,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = '&Allow null'
         ReadOnly = False
         TabOrder = 17
+        ExplicitLeft = 389
       end
       object bcbAttributeDerived: TBoldCheckBox
-        Left = 389
+        Left = 377
         Top = 62
         Width = 97
         Height = 17
@@ -2693,11 +2788,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = '&Derived'
         ReadOnly = False
         TabOrder = 18
+        ExplicitLeft = 389
       end
       object tbxAttributeLength: TBoldEdit
         Left = 120
         Top = 128
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|The maximum length of the attribute (relevant for strings only)' +
@@ -2716,20 +2812,18 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 4
+        ExplicitWidth = 262
       end
       object cmbAttributeBoldType: TBoldComboBox
         Left = 120
         Top = 80
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|The type of the attribute.'
         HelpContext = 71
         Alignment = taLeftJustify
         BoldHandle = behAttribute
         BoldListHandle = blhAllDataTypes
-        BoldListProperties.DragMode = bdgSelection
-        BoldListProperties.DropMode = bdpAppend
-        BoldListProperties.NilElementMode = neNone
         BoldProperties.Expression = 'type.Name'
         BoldProperties.ApplyPolicy = bapChange
         BoldRowProperties.Expression = 'name'
@@ -2737,37 +2831,35 @@ object BoldModelEditFrm: TBoldModelEditFrm
         BoldSelectChangeAction = bdcsSetValue
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
         Sorted = True
         TabOrder = 2
+        ExplicitWidth = 262
       end
       object cmbAttributePMapperName: TBoldComboBox
         Left = 120
         Top = 272
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Persistence mapper to be used for this attribute.'
         HelpContext = 72
         Alignment = taLeftJustify
         BoldHandle = behAttribute
         BoldListHandle = bchAttributePMapperNames
-        BoldListProperties.DragMode = bdgSelection
-        BoldListProperties.DropMode = bdpAppend
-        BoldListProperties.NilElementMode = neNone
         BoldProperties.Expression = 'taggedValue['#39'Bold.PMapper'#39'].value'
         BoldProperties.ApplyPolicy = bapChange
+        BoldRowProperties.Expression = ''
         BoldSelectChangeAction = bdscSetText
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
         Sorted = True
         TabOrder = 12
         Visible = False
+        ExplicitWidth = 262
       end
       object cmbTVAttributeKind: TBoldComboBox
         Left = 120
         Top = 320
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Determines if this is a Bold attribute, or a plain Delphi attri' +
@@ -2776,29 +2868,28 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Alignment = taLeftJustify
         BoldHandle = behAttribute
         BoldListHandle = bchAttributeKind
-        BoldListProperties.DragMode = bdgSelection
-        BoldListProperties.DropMode = bdpAppend
-        BoldListProperties.NilElementMode = neNone
         BoldProperties.Expression = 'taggedValue['#39'Bold.AttributeKind'#39'].value'
         BoldProperties.ApplyPolicy = bapChange
+        BoldRowProperties.Expression = ''
         BoldSelectChangeAction = bdscSetText
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
         TabOrder = 14
         Visible = False
+        ExplicitWidth = 262
       end
       object gbDelphiFeatures: TGroupBox
         Left = 40
         Top = 356
-        Width = 353
+        Width = 341
         Height = 83
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Attribute kind Delphi features'
         TabOrder = 15
         Visible = False
+        ExplicitWidth = 353
         DesignSize = (
-          353
+          341
           83)
         object lblDPRead: TLabel
           Left = 9
@@ -2838,50 +2929,46 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object cmbTVDPRead: TBoldComboBox
           Left = 80
           Top = 32
-          Width = 262
+          Width = 250
           Height = 21
           Hint = '|Controls the read mechanism for the attribute.'
           HelpContext = 1220
           Alignment = taLeftJustify
           BoldHandle = behAttribute
           BoldListHandle = bchDelphiProperty
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiPropertyRead'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 1
+          ExplicitWidth = 262
         end
         object cmbTVDPWrite: TBoldComboBox
           Left = 80
           Top = 56
-          Width = 262
+          Width = 250
           Height = 21
           Hint = '|Controls the write mechanism for the attribute.'
           HelpContext = 1230
           Alignment = taLeftJustify
           BoldHandle = behAttribute
           BoldListHandle = bchDelphiProperty
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiPropertyWrite'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 2
+          ExplicitWidth = 262
         end
       end
       object tbxAttributeDerivationOCL: TBoldEdit
         Left = 120
         Top = 152
-        Width = 246
+        Width = 234
         Height = 21
         Hint = '|The OCL expression used to derive this attribute.'
         HelpContext = 1180
@@ -2899,11 +2986,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 5
         Visible = False
+        ExplicitWidth = 246
       end
       object tbxAttributeStereotype: TBoldEdit
         Left = 120
         Top = 56
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Stereotype applied to this attribute.'
         HelpContext = 1150
@@ -2920,11 +3008,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 1
+        ExplicitWidth = 262
       end
       object cmbAttributeVisibility: TBoldComboBox
         Left = 120
         Top = 104
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|The visibility scope into which this attribute will be generate' +
@@ -2933,21 +3022,19 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Alignment = taLeftJustify
         BoldHandle = behAttribute
         BoldListHandle = blhAllVisibilityKind
-        BoldListProperties.DragMode = bdgSelection
-        BoldListProperties.DropMode = bdpAppend
-        BoldListProperties.NilElementMode = neNone
         BoldProperties.Expression = 'visibility'
         BoldProperties.ApplyPolicy = bapChange
+        BoldRowProperties.Expression = ''
         BoldSelectChangeAction = bdscSetText
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
         TabOrder = 3
+        ExplicitWidth = 262
       end
       object tbxAttributeInitialValue: TBoldEdit
         Left = 120
         Top = 200
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Initial value for the attribute. This will be set when the attr' +
@@ -2967,11 +3054,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 9
         Visible = False
+        ExplicitWidth = 262
       end
       object tbxAttributeConstraint: TBoldEdit
         Left = 120
         Top = 176
-        Width = 246
+        Width = 234
         Height = 21
         Hint = '|The number of constraints for this attribute.'
         HelpContext = 14
@@ -2991,9 +3079,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 7
         Visible = False
+        ExplicitWidth = 246
       end
       object btAttributeConstraintEditor: TButton
-        Left = 365
+        Left = 353
         Top = 176
         Width = 17
         Height = 21
@@ -3010,9 +3099,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         TabOrder = 8
         Visible = False
         OnClick = btModelConstraintEditorClick
+        ExplicitLeft = 365
       end
       object bcbAttributeReverseDerive: TBoldCheckBox
-        Left = 389
+        Left = 377
         Top = 78
         Width = 97
         Height = 17
@@ -3027,9 +3117,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Enabled = False
         ReadOnly = False
         TabOrder = 19
+        ExplicitLeft = 389
       end
       object btAttributeShowDerivExprEditor: TButton
-        Left = 365
+        Left = 353
         Top = 152
         Width = 17
         Height = 21
@@ -3046,6 +3137,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         TabOrder = 6
         Visible = False
         OnClick = btAttributeShowDerivExprEditorClick
+        ExplicitLeft = 365
       end
     end
     object tabOperation: TTabSheet
@@ -3054,23 +3146,24 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object Splitter4: TSplitter
         Left = 0
         Top = 229
-        Width = 607
+        Width = 603
         Height = 6
         Cursor = crVSplit
         Align = alTop
         Beveled = True
+        ExplicitWidth = 607
       end
       object sbOperation: TScrollBox
         Left = 0
         Top = 0
-        Width = 607
+        Width = 603
         Height = 229
         HelpContext = 76
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
         DesignSize = (
-          607
+          603
           229)
         object lblOperationName: TLabel
           Left = 84
@@ -3178,7 +3271,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object tbxOperationName: TBoldEdit
           Left = 120
           Top = 32
-          Width = 262
+          Width = 250
           Height = 21
           Hint = '|The modeled name of the operation.'
           HelpContext = 83
@@ -3195,11 +3288,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
+          ExplicitWidth = 254
         end
         object tbxOperationDelphiName: TBoldEdit
           Left = 120
           Top = 176
-          Width = 262
+          Width = 250
           Height = 21
           Hint = 
             '|Template for the name used to access this operation in source c' +
@@ -3219,11 +3313,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 7
           Visible = False
+          ExplicitWidth = 254
         end
         object tbxOperationExpressionName: TBoldEdit
           Left = 120
           Top = 200
-          Width = 262
+          Width = 250
           Height = 21
           Hint = '|Template for OCL name (not relevant for operations).'
           HelpContext = 79
@@ -3241,11 +3336,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 8
           Visible = False
+          ExplicitWidth = 254
         end
         object cmbOwnerScope: TBoldComboBox
           Left = 120
           Top = 104
-          Width = 262
+          Width = 250
           Height = 21
           Hint = 
             '|Determines if the operation belongs to the instance or the clas' +
@@ -3254,42 +3350,38 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Alignment = taLeftJustify
           BoldHandle = behOperation
           BoldListHandle = blhAllOwnerScope
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'ownerScope'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 3
+          ExplicitWidth = 254
         end
         object cmbDelphiFunctionType: TBoldComboBox
           Left = 120
           Top = 128
-          Width = 262
+          Width = 250
           Height = 21
           Hint = '|Controls the directives of the operation.'
           HelpContext = 81
           Alignment = taLeftJustify
           BoldHandle = behOperation
           BoldListHandle = bchDelphiFunctionType
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.OperationKind'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 4
+          ExplicitWidth = 254
         end
         object tbxOperationStereotype: TBoldEdit
           Left = 120
           Top = 56
-          Width = 262
+          Width = 250
           Height = 21
           Hint = '|The stereotype applied to the operation.'
           HelpContext = 1150
@@ -3306,11 +3398,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
+          ExplicitWidth = 254
         end
         object cmbOperationVisibility: TBoldComboBox
           Left = 120
           Top = 80
-          Width = 262
+          Width = 250
           Height = 21
           Hint = 
             '|The visibility scope into which this operation will be generate' +
@@ -3319,21 +3412,19 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Alignment = taLeftJustify
           BoldHandle = behOperation
           BoldListHandle = blhAllVisibilityKind
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'visibility'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 2
+          ExplicitWidth = 254
         end
         object tbxOperationConstraint: TBoldEdit
           Left = 120
           Top = 152
-          Width = 246
+          Width = 234
           Height = 21
           Hint = '|The number of constraints defined for this operation.'
           HelpContext = 14
@@ -3353,9 +3444,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 5
           Visible = False
+          ExplicitWidth = 238
         end
         object btOperationConstraintEditor: TButton
-          Left = 365
+          Left = 353
           Top = 152
           Width = 17
           Height = 21
@@ -3372,9 +3464,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 6
           Visible = False
           OnClick = btModelConstraintEditorClick
+          ExplicitLeft = 357
         end
         object cbOperationOverrideInAllSubclasses: TBoldCheckBox
-          Left = 389
+          Left = 377
           Top = 30
           Width = 149
           Height = 17
@@ -3390,13 +3483,14 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Override in all s&ubclasses'
           ReadOnly = False
           TabOrder = 9
+          ExplicitLeft = 381
         end
       end
       object pcOperationTabs: TPageControl
         Left = 0
         Top = 235
-        Width = 607
-        Height = 277
+        Width = 603
+        Height = 276
         ActivePage = TabSheet5
         Align = alClient
         TabOrder = 1
@@ -3406,8 +3500,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
           object BoldGrid5: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 249
+            Width = 595
+            Height = 248
             HelpContext = 84
             AddNewAtEnd = False
             Align = alClient
@@ -3416,15 +3510,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhParameters
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -3434,6 +3529,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'kind'
@@ -3443,6 +3539,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Kind'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'typeName'
@@ -3452,6 +3549,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Type'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -3461,6 +3559,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.IsConst'#39'].value'
@@ -3470,6 +3569,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Is const'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -3502,23 +3602,24 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object Splitter5: TSplitter
         Left = 0
         Top = 128
-        Width = 607
+        Width = 603
         Height = 6
         Cursor = crVSplit
         Align = alTop
         Beveled = True
+        ExplicitWidth = 607
       end
       object sbAssociation: TScrollBox
         Left = 0
         Top = 0
-        Width = 607
+        Width = 603
         Height = 128
         HelpContext = 20
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
         DesignSize = (
-          607
+          603
           128)
         object lblAssociationName: TLabel
           Left = 84
@@ -3588,7 +3689,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object tbxAssociationName: TBoldEdit
           Left = 120
           Top = 32
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Modeled name of association.'
           HelpContext = 35
@@ -3605,19 +3706,18 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
+          ExplicitWidth = 291
         end
         object cmbAssociationLinkClass: TBoldComboBox
           Left = 120
           Top = 80
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Specifies the link class for this association.'
           HelpContext = 2
           Alignment = taLeftJustify
           BoldHandle = behAssociation
           BoldListHandle = blhAllClasses
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
           BoldListProperties.NilElementMode = neInsertFirst
           BoldProperties.Expression = 'class.name'
           BoldProperties.ApplyPolicy = bapChange
@@ -3628,13 +3728,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           BoldSelectChangeAction = bdcsSetValue
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 2
         end
         object tbxAssociationStereotype: TBoldEdit
           Left = 120
           Top = 56
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Stereotype applied to acssociation.'
           HelpContext = 1150
@@ -3651,11 +3750,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
+          ExplicitWidth = 291
         end
         object tbxAssociationConstraint: TBoldEdit
           Left = 120
           Top = 104
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|Number of constraints specified for the association.'
           HelpContext = 14
@@ -3675,9 +3775,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 3
           Visible = False
+          ExplicitWidth = 275
         end
         object btAssociationConstraintEditor: TButton
-          Left = 394
+          Left = 382
           Top = 104
           Width = 17
           Height = 21
@@ -3694,9 +3795,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 4
           Visible = False
           OnClick = btModelConstraintEditorClick
+          ExplicitLeft = 394
         end
         object bcbAssociationDerived: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 46
           Width = 73
           Height = 17
@@ -3709,9 +3811,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Der&ived'
           ReadOnly = False
           TabOrder = 6
+          ExplicitLeft = 418
         end
         object bcbPersistent: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 30
           Width = 73
           Height = 17
@@ -3726,24 +3829,27 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = '&Persistent'
           ReadOnly = False
           TabOrder = 5
+          ExplicitLeft = 418
         end
       end
       object pcAssociationTabs: TPageControl
         Left = 0
         Top = 134
-        Width = 607
-        Height = 378
+        Width = 603
+        Height = 377
         ActivePage = TabSheet6
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 607
+        ExplicitHeight = 378
         object TabSheet6: TTabSheet
           HelpContext = 86
           Caption = '&AssociationEnds'
           object BoldGrid6: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 350
+            Width = 595
+            Height = 349
             HelpContext = 86
             AddNewAtEnd = False
             Align = alClient
@@ -3752,15 +3858,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhAssociationAssociationEnds
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -3770,6 +3877,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'type'
@@ -3779,6 +3887,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Class'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiName'#39'].value'
@@ -3788,6 +3897,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -3797,6 +3907,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DBName'#39'].value'
@@ -3806,6 +3917,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Column name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'isnavigable'
@@ -3815,6 +3927,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Navigable'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'multi'
@@ -3824,6 +3937,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Multi'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'isordered'
@@ -3833,6 +3947,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Ordered'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'mandatory'
@@ -3842,6 +3957,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Mandatory'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.Embed'#39'].value'
@@ -3851,6 +3967,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Embed'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -3888,23 +4005,24 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object Splitter6: TSplitter
         Left = 0
         Top = 349
-        Width = 607
+        Width = 603
         Height = 6
         Cursor = crVSplit
         Align = alTop
         Beveled = True
+        ExplicitWidth = 607
       end
       object sbAssociationEnd: TScrollBox
         Left = 0
         Top = 0
-        Width = 607
+        Width = 603
         Height = 349
         HelpContext = 40
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
         DesignSize = (
-          607
+          603
           349)
         object lblAssociationEndName: TLabel
           Left = 84
@@ -4059,7 +4177,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object tbxAssociationEndName: TBoldEdit
           Left = 120
           Top = 32
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|The modeled name of the role.'
           HelpContext = 51
@@ -4076,11 +4194,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
+          ExplicitWidth = 291
         end
         object tbxAssociationEndDelphiName: TBoldEdit
           Left = 120
           Top = 272
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Template for the name used to access this role in source code.'
           HelpContext = 4
@@ -4098,11 +4217,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 12
           Visible = False
+          ExplicitWidth = 291
         end
         object tbxAssociationEndExpressionName: TBoldEdit
           Left = 120
           Top = 296
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Template for the name used to access this role in OCL.'
           HelpContext = 42
@@ -4120,11 +4240,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 13
           Visible = False
+          ExplicitWidth = 291
         end
         object tbxAssociationEndColumnName: TBoldEdit
           Left = 120
           Top = 320
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Template for SQL column to store this role.'
           HelpContext = 43
@@ -4142,9 +4263,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 14
           Visible = False
+          ExplicitWidth = 291
         end
         object bcbAssociationEndNavigable: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 30
           Width = 69
           Height = 17
@@ -4157,9 +4279,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'N&avigable'
           ReadOnly = False
           TabOrder = 15
+          ExplicitLeft = 418
         end
         object bcbAssociationEndMulti: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 46
           Width = 53
           Height = 17
@@ -4172,9 +4295,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'M&ulti'
           ReadOnly = False
           TabOrder = 16
+          ExplicitLeft = 418
         end
         object bcbAssociationEndOrdered: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 62
           Width = 61
           Height = 17
@@ -4187,9 +4311,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'O&rdered'
           ReadOnly = False
           TabOrder = 17
+          ExplicitLeft = 418
         end
         object bcbAssociationEndMandatory: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 78
           Width = 77
           Height = 17
@@ -4202,9 +4327,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Mandator&y'
           ReadOnly = False
           TabOrder = 18
+          ExplicitLeft = 418
         end
         object bcbAssociationEndEmbed: TBoldCheckBox
-          Left = 418
+          Left = 406
           Top = 94
           Width = 61
           Height = 17
@@ -4218,33 +4344,31 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Caption = 'Em&bed'
           ReadOnly = False
           TabOrder = 19
+          ExplicitLeft = 418
         end
         object cmbAssoEndClass: TBoldComboBox
           Left = 120
           Top = 80
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Class where the role ends.'
           HelpContext = 49
           Alignment = taLeftJustify
           BoldHandle = behAssociationEndType
           BoldListHandle = blhAllClasses
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'name'
           BoldProperties.ApplyPolicy = bapChange
           BoldRowProperties.Expression = 'name'
           BoldSelectChangeAction = bdcsSetValue
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 2
+          ExplicitWidth = 291
         end
         object tbxAssociationEndStereotype: TBoldEdit
           Left = 120
           Top = 56
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Stereotype applied to this role.'
           HelpContext = 1150
@@ -4261,32 +4385,31 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
+          ExplicitWidth = 291
         end
         object cmbAggregationKind: TBoldComboBox
           Left = 120
           Top = 128
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Type of aggregation of the role.'
           HelpContext = 1290
           Alignment = taLeftJustify
           BoldHandle = behAssociationEnd
           BoldListHandle = blhAllAggregationKind
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'aggregation'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 4
+          ExplicitWidth = 291
         end
         object cmbAssoEndVisibility: TBoldComboBox
           Left = 120
           Top = 152
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|The visibility scope into which this role will be code generate' +
@@ -4295,42 +4418,38 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Alignment = taLeftJustify
           BoldHandle = behAssociationEnd
           BoldListHandle = blhAllVisibilityKind
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'visibility'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 5
+          ExplicitWidth = 291
         end
         object cmbAssoEndChangeability: TBoldComboBox
           Left = 120
           Top = 176
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Controls changeability of the role (not enforced).'
           HelpContext = 1310
           Alignment = taLeftJustify
           BoldHandle = behAssociationEnd
           BoldListHandle = blhAllChangeabilityKind
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'changeability'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 6
+          ExplicitWidth = 291
         end
         object tbxAssociationEndConstraint: TBoldEdit
           Left = 120
           Top = 248
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|Number of constraints defined for this role.'
           HelpContext = 14
@@ -4350,9 +4469,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 10
           Visible = False
+          ExplicitWidth = 275
         end
         object btAssociationEndConstraintEditor: TButton
-          Left = 394
+          Left = 382
           Top = 248
           Width = 17
           Height = 21
@@ -4369,11 +4489,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 11
           Visible = False
           OnClick = btModelConstraintEditorClick
+          ExplicitLeft = 394
         end
         object cmbMultiplicity: TBoldComboBox
           Left = 120
           Top = 104
-          Width = 291
+          Width = 279
           Height = 21
           Hint = 
             '|Multiplicity of the role - how many things can be on the other ' +
@@ -4382,41 +4503,36 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Alignment = taLeftJustify
           BoldHandle = behAssociationEnd
           BoldListHandle = bchMultiplicityValues
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'multiplicity'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
           TabOrder = 3
         end
         object cmbAssoEndDeleteAction: TBoldComboBox
           Left = 120
           Top = 200
-          Width = 291
+          Width = 279
           Height = 21
           Hint = '|Controls how deletion propagates over the role.'
           HelpContext = 1300
           Alignment = taLeftJustify
           BoldHandle = behAssociationEnd
           BoldListHandle = bchDeleteActions
-          BoldListProperties.DragMode = bdgSelection
-          BoldListProperties.DropMode = bdpAppend
-          BoldListProperties.NilElementMode = neNone
           BoldProperties.Expression = 'taggedValue['#39'Bold.DeleteAction'#39'].value'
           BoldProperties.ApplyPolicy = bapChange
+          BoldRowProperties.Expression = ''
           BoldSelectChangeAction = bdscSetText
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
           TabOrder = 7
+          ExplicitWidth = 291
         end
         object tbxAssoEndDerivationOCL: TBoldEdit
           Left = 120
           Top = 224
-          Width = 275
+          Width = 263
           Height = 21
           Hint = '|Derivation OCL expression for this role.'
           HelpContext = 1180
@@ -4434,9 +4550,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
           MaxLength = 0
           TabOrder = 8
           Visible = False
+          ExplicitWidth = 275
         end
         object btAssoEndShowDeriExprEditor: TButton
-          Left = 394
+          Left = 382
           Top = 224
           Width = 17
           Height = 21
@@ -4453,24 +4570,27 @@ object BoldModelEditFrm: TBoldModelEditFrm
           TabOrder = 9
           Visible = False
           OnClick = btAssoEndShowDeriExprEditorClick
+          ExplicitLeft = 394
         end
       end
       object pcAssociationEndTabs: TPageControl
         Left = 0
         Top = 355
-        Width = 607
-        Height = 157
+        Width = 603
+        Height = 156
         ActivePage = TabSheet7
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 607
+        ExplicitHeight = 157
         object TabSheet7: TTabSheet
           HelpContext = 50
           Caption = '&Qualifiers'
           object BoldGrid7: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 129
+            Width = 595
+            Height = 128
             HelpContext = 50
             AddNewAtEnd = False
             Align = alClient
@@ -4479,15 +4599,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhAssociationEndQualifiers
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -4497,6 +4618,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'typeName'
@@ -4506,6 +4628,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Type'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'stereotypeName'
@@ -4515,6 +4638,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Stereotype'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.Length'#39'].value'
@@ -4524,6 +4648,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Length'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiName'#39'].value'
@@ -4533,6 +4658,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -4542,6 +4668,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.PMapperName'#39'].value'
@@ -4551,6 +4678,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'PMapper name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DBName'#39'].value'
@@ -4560,6 +4688,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Column name'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -4593,8 +4722,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
       HelpContext = 36
       Caption = 'Parameter'
       DesignSize = (
-        607
-        512)
+        603
+        511)
       object lblParameterName: TLabel
         Left = 84
         Top = 36
@@ -4682,7 +4811,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object tbxParameterName: TBoldEdit
         Left = 120
         Top = 32
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Modeled name of the parameter.'
         HelpContext = 41
@@ -4699,11 +4828,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
+        ExplicitWidth = 262
       end
       object tbxParameterType: TBoldEdit
         Left = 120
         Top = 104
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Data type of the parameter.'
         HelpContext = 3
@@ -4720,11 +4850,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 3
+        ExplicitWidth = 262
       end
       object tbxParameterExpressionName: TBoldEdit
         Left = 120
         Top = 152
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Template for the name used to access this parameter in OCL. (No' +
@@ -4744,9 +4875,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 6
         Visible = False
+        ExplicitWidth = 262
       end
       object bcbIsConst: TBoldCheckBox
-        Left = 389
+        Left = 377
         Top = 30
         Width = 97
         Height = 17
@@ -4760,11 +4892,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Caption = 'is c&onst'
         ReadOnly = False
         TabOrder = 7
+        ExplicitLeft = 389
       end
       object cmbParamKind: TBoldComboBox
         Left = 120
         Top = 80
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Controls the kind of parameter. Return makes the operation a fu' +
@@ -4773,21 +4906,19 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Alignment = taLeftJustify
         BoldHandle = behParameter
         BoldListHandle = blhAllParameterKind
-        BoldListProperties.DragMode = bdgSelection
-        BoldListProperties.DropMode = bdpAppend
-        BoldListProperties.NilElementMode = neNone
         BoldProperties.Expression = 'kind'
         BoldProperties.ApplyPolicy = bapChange
+        BoldRowProperties.Expression = ''
         BoldSelectChangeAction = bdscSetText
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
         TabOrder = 2
+        ExplicitWidth = 262
       end
       object tbxParameterStereotype: TBoldEdit
         Left = 120
         Top = 56
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Stereotype applied to the parameter.'
         HelpContext = 1150
@@ -4804,11 +4935,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 1
+        ExplicitWidth = 262
       end
       object tbxParameterConstraint: TBoldEdit
         Left = 120
         Top = 128
-        Width = 246
+        Width = 234
         Height = 21
         Hint = '|Number of constraints on the parameter.'
         HelpContext = 14
@@ -4828,9 +4960,10 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 4
         Visible = False
+        ExplicitWidth = 246
       end
       object btParameterConstraintEditor: TButton
-        Left = 365
+        Left = 353
         Top = 128
         Width = 17
         Height = 21
@@ -4847,6 +4980,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         TabOrder = 5
         Visible = False
         OnClick = btModelConstraintEditorClick
+        ExplicitLeft = 365
       end
     end
     object tabPackage: TTabSheet
@@ -4855,24 +4989,26 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object Splitter7: TSplitter
         Left = 0
         Top = 104
-        Width = 607
+        Width = 603
         Height = 6
         Cursor = crVSplit
         Align = alTop
         Beveled = True
         OnCanResize = Splitter2CanResize
+        ExplicitWidth = 607
       end
       object sbPaCKAGE: TScrollBox
         Left = 0
         Top = 0
-        Width = 607
+        Width = 603
         Height = 104
         HelpContext = 9
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
+        ExplicitWidth = 607
         DesignSize = (
-          607
+          603
           104)
         object lbPackageName: TLabel
           Left = 84
@@ -4933,7 +5069,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
         object tbxPackageName: TBoldEdit
           Left = 120
           Top = 32
-          Width = 262
+          Width = 250
           Height = 21
           HelpContext = 33
           BoldHandle = brhPackage
@@ -4949,11 +5085,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 0
+          ExplicitWidth = 262
         end
         object tbxPackageExpressionName: TBoldEdit
           Left = 120
           Top = 80
-          Width = 262
+          Width = 250
           Height = 21
           HelpContext = 11
           BoldHandle = brhPackage
@@ -4969,11 +5106,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 2
+          ExplicitWidth = 262
         end
         object tbxStereotypeName: TBoldEdit
           Left = 120
           Top = 56
-          Width = 262
+          Width = 250
           Height = 21
           HelpContext = 1150
           BoldHandle = brhPackage
@@ -4989,24 +5127,27 @@ object BoldModelEditFrm: TBoldModelEditFrm
           Anchors = [akLeft, akTop, akRight]
           MaxLength = 0
           TabOrder = 1
+          ExplicitWidth = 262
         end
       end
       object pcPackageTabs: TPageControl
         Left = 0
         Top = 110
-        Width = 607
-        Height = 402
+        Width = 603
+        Height = 401
         ActivePage = TabSheet12
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 607
+        ExplicitHeight = 402
         object TabSheet11: TTabSheet
           HelpContext = 87
           Caption = '&Classes'
           object BoldGrid8: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 374
+            Width = 595
+            Height = 373
             HelpContext = 87
             AddNewAtEnd = False
             Align = alClient
@@ -5014,15 +5155,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldShowConstraints = False
             BoldHandle = blhPackageClasses
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -5032,6 +5174,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'superclass.name'
@@ -5041,6 +5184,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Superclass'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.FileName'#39'].value'
@@ -5050,6 +5194,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'File name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.TableMapping'#39'].value'
@@ -5059,6 +5204,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Table mapping'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.DelphiName'#39'].value'
@@ -5068,6 +5214,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Delphi name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.ExpressionName'#39'].value'
@@ -5077,6 +5224,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Expression name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.PMapper'#39'].value'
@@ -5086,6 +5234,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'PMapper name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.TableName'#39'].value'#13
@@ -5095,6 +5244,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Table name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'persistent'
@@ -5104,6 +5254,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Persistent'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'isabstract'
@@ -5113,6 +5264,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Abstract'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'taggedValue['#39'Bold.Imported'#39'].value'
@@ -5122,6 +5274,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Imported'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -5158,8 +5311,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
           object BoldGrid10: TBoldGrid
             Left = 0
             Top = 0
-            Width = 599
-            Height = 374
+            Width = 595
+            Height = 373
             HelpContext = 32
             AddNewAtEnd = False
             Align = alClient
@@ -5168,15 +5321,16 @@ object BoldModelEditFrm: TBoldModelEditFrm
             BoldHandle = blhPackageAssociations
             BoldProperties.DefaultDblClick = False
             BoldProperties.InternalDrag = False
-            BoldProperties.NilElementMode = neNone
             Columns = <
               item
+                BoldProperties.Expression = ''
                 Color = clBtnFace
                 Font.Charset = DEFAULT_CHARSET
                 Font.Color = clWindowText
                 Font.Height = -11
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'name'
@@ -5186,6 +5340,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Name'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 'class'
@@ -5195,6 +5350,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Class'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 
@@ -5206,6 +5362,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Connection 1'
+                LookUpProperties.Expression = ''
               end
               item
                 BoldProperties.Expression = 
@@ -5217,6 +5374,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
                 Font.Name = 'MS Sans Serif'
                 Font.Style = []
                 Title.Caption = 'Connection 2'
+                LookUpProperties.Expression = ''
               end>
             DefaultRowHeight = 17
             EnableColAdjust = False
@@ -5255,8 +5413,8 @@ object BoldModelEditFrm: TBoldModelEditFrm
       Caption = 'DataType'
       ImageIndex = 8
       DesignSize = (
-        607
-        512)
+        603
+        511)
       object BoldLabel2: TBoldLabel
         Left = 120
         Top = 4
@@ -5327,7 +5485,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object BoldEdit5: TBoldEdit
         Left = 120
         Top = 32
-        Width = 262
+        Width = 250
         Height = 21
         HelpContext = 77
         BoldHandle = brhDataType
@@ -5343,11 +5501,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
+        ExplicitWidth = 262
       end
       object BoldEdit6: TBoldEdit
         Left = 120
         Top = 56
-        Width = 262
+        Width = 250
         Height = 21
         HelpContext = 1150
         BoldHandle = brhDataType
@@ -5364,11 +5523,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 1
         Visible = False
+        ExplicitWidth = 262
       end
       object BoldEdit7: TBoldEdit
         Left = 120
         Top = 80
-        Width = 262
+        Width = 250
         Height = 21
         HelpContext = 6
         BoldHandle = brhDataType
@@ -5385,11 +5545,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 2
         Visible = False
+        ExplicitWidth = 262
       end
       object BoldEdit8: TBoldEdit
         Left = 120
         Top = 104
-        Width = 262
+        Width = 250
         Height = 21
         HelpContext = 65
         BoldHandle = brhDataType
@@ -5406,14 +5567,15 @@ object BoldModelEditFrm: TBoldModelEditFrm
         MaxLength = 0
         TabOrder = 3
         Visible = False
+        ExplicitWidth = 262
       end
     end
     object tabQualifier: TTabSheet
       Caption = 'Qualifier'
       ImageIndex = 9
       DesignSize = (
-        607
-        512)
+        603
+        511)
       object Label27: TLabel
         Left = 44
         Top = 4
@@ -5490,7 +5652,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
       object BoldEdit1: TBoldEdit
         Left = 120
         Top = 32
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Modeled name of the qualifier.'
         HelpContext = 77
@@ -5507,11 +5669,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 0
+        ExplicitWidth = 262
       end
       object BoldEdit3: TBoldEdit
         Left = 120
         Top = 56
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Stereotype applied to the qualifier.'
         HelpContext = 1150
@@ -5528,20 +5691,18 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 1
+        ExplicitWidth = 262
       end
       object BoldComboBox1: TBoldComboBox
         Left = 120
         Top = 80
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|The type of the qualifier.'
         HelpContext = 71
         Alignment = taLeftJustify
         BoldHandle = behAttribute
         BoldListHandle = blhAllDataTypes
-        BoldListProperties.DragMode = bdgSelection
-        BoldListProperties.DropMode = bdpAppend
-        BoldListProperties.NilElementMode = neNone
         BoldProperties.Expression = 'type.Name'
         BoldProperties.ApplyPolicy = bapChange
         BoldRowProperties.Expression = 'name'
@@ -5549,14 +5710,14 @@ object BoldModelEditFrm: TBoldModelEditFrm
         BoldSelectChangeAction = bdcsSetValue
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
         Sorted = True
         TabOrder = 2
+        ExplicitWidth = 262
       end
       object BoldEdit4: TBoldEdit
         Left = 120
         Top = 104
-        Width = 262
+        Width = 250
         Height = 21
         Hint = 
           '|Template for the name used to access the qualifier in source co' +
@@ -5575,11 +5736,12 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 3
+        ExplicitWidth = 262
       end
       object BoldEdit9: TBoldEdit
         Left = 120
         Top = 128
-        Width = 262
+        Width = 250
         Height = 21
         Hint = '|Template for the name used to access the qualifier in OCL.'
         HelpContext = 65
@@ -5596,13 +5758,14 @@ object BoldModelEditFrm: TBoldModelEditFrm
         Anchors = [akLeft, akTop, akRight]
         MaxLength = 0
         TabOrder = 4
+        ExplicitWidth = 262
       end
     end
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 569
-    Width = 821
+    Top = 568
+    Width = 817
     Height = 19
     Hint = 'Doubleclick here to validate model'
     Panels = <
@@ -5617,7 +5780,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 821
+    Width = 817
     Height = 27
     AutoSize = True
     ButtonHeight = 23
@@ -5680,42 +5843,49 @@ object BoldModelEditFrm: TBoldModelEditFrm
     end
   end
   object behModel: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhTreeRoot
     Expression = 'self->filterOnType(UMLModel)->first'
     Left = 4
     Top = 64
   end
   object behClass: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLClass)->first'
     Left = 4
     Top = 96
   end
   object behAttribute: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLAttribute)->first'
     Left = 4
     Top = 160
   end
   object behOperation: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLOperation)->first'
     Left = 8
     Top = 200
   end
   object behAssociation: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLAssociation)->first'
     Left = 8
     Top = 236
   end
   object behAssociationEnd: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLAssociationEnd)->first'
     Left = 8
     Top = 272
   end
   object behClassSuperClass: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     RootTypeName = 'UMLClassifier'
     Expression = 'superclass'
@@ -6035,53 +6205,62 @@ object BoldModelEditFrm: TBoldModelEditFrm
     end
   end
   object behParameter: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLParameter)->first'
     Left = 4
     Top = 356
   end
   object brhTreeRoot: TBoldReferenceHandle
+    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLModelElement'
     Left = 4
     Top = 32
   end
   object blhModelClasses: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'ownedElement->filterOnType(UMLClass)->orderBy(name)'
     Left = 38
     Top = 64
   end
   object blhModelAssociations: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'ownedElement->filterOnType(UMLAssociation)'
     Left = 72
     Top = 64
   end
   object blhClassAttributes: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 'feature->filterOnType(UMLAttribute)'
     Left = 36
     Top = 128
   end
   object blhClassOperations: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 'feature->select(oclIsTypeOf(UMLOperation))'
     Left = 176
     Top = 100
   end
   object blhParameters: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behOperation
     Expression = 'parameter'
     Left = 40
     Top = 200
   end
   object blhAssociationAssociationEnds: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAssociation
     Expression = 'connection'
     Left = 43
     Top = 238
   end
   object blhAllClasses: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhTreeRoot
     Expression = 'UMLClass.allInstances'
     Left = 47
@@ -7429,6 +7608,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
       000000000000}
   end
   object blhAssociationEndQualifiers: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAssociationEnd
     Expression = 'qualifier'
     Left = 83
@@ -7450,18 +7630,21 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 529
   end
   object blhAllParameterKind: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootTypeName = 'ParameterDirectionKind'
     Expression = 'ParameterDirectionKind.allInstances'
     Left = 111
     Top = 201
   end
   object blhAllOwnerScope: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootTypeName = 'ScopeKind'
     Expression = 'ScopeKind.allInstances'
     Left = 75
     Top = 201
   end
   object behAssociationEndType: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAssociationEnd
     RootTypeName = 'UMLAssociationEnd'
     Expression = 'type'
@@ -7477,6 +7660,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 525
   end
   object blhAllSuperclasses: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 
       'model.allOwnedElement->filterOnType(UMLCLass)->excluding(self)->' +
@@ -7493,33 +7677,38 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 529
   end
   object blhAllAggregationKind: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootTypeName = 'Collection(AggregationKind)'
     Expression = 'AggregationKind.allinstances'
     Left = 119
     Top = 305
   end
   object blhAllVisibilityKind: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     Expression = 'VisibilityKind.allinstances'
     Left = 11
     Top = 485
   end
   object blhAllChangeabilityKind: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     Expression = 'ChangeableKind.allinstances'
     Left = 151
     Top = 304
   end
   object brhCurrentElement: TBoldReferenceHandle
+    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLElement'
     Left = 100
     Top = 32
   end
   object bvhTableMapping: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 71
     Top = 97
   end
   object bcrTableMapping: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhTableMapping
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7527,6 +7716,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 97
   end
   object bchAttributeKind: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhAttributeKind
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7534,18 +7724,19 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 165
   end
   object bvhAttributeKind: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 139
     Top = 161
   end
   object bvhDelphiProperty: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 71
     Top = 165
   end
   object bchDelphiProperty: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhDelphiProperty
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7553,6 +7744,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 165
   end
   object bchDelphiFunctionType: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhDelphiFunctionType
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7560,12 +7752,13 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 201
   end
   object bvhDelphiFunctionType: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 147
     Top = 201
   end
   object bchMultiplicityValues: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhMultiplicityValues
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7573,7 +7766,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 269
   end
   object bvhMultiplicityValues: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     InitialValues.Strings = (
       '0..1'
@@ -7584,6 +7777,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 269
   end
   object bchDeleteActions: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhDeleteActions
     RootTypeName = 'Collection(String)'
     AutoFirst = False
@@ -7591,19 +7785,20 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 305
   end
   object bvhDeleteActions: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     Left = 43
     Top = 305
   end
   object blhClassAssociationEnds: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 'associationEnd.otherEnd'
     Left = 76
     Top = 128
   end
   object bvhOptimisticLocking: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Collection(String)'
     InitialValues.Strings = (
       '<Default>'
@@ -7615,53 +7810,62 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 64
   end
   object bchOptimisticLocking: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bvhOptimisticLocking
     AutoFirst = False
     Left = 139
     Top = 64
   end
   object behHighestSeverity: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'validator.highestSeverity'
     Left = 107
     Top = 437
   end
   object brhPackage: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLPackage)->first'
     Left = 8
     Top = 396
   end
   object blhPackageAssociations: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhPackage
     Expression = 'ownedElement->filterOnType(UMLAssociation)'
     Left = 83
     Top = 390
   end
   object blhPackageClasses: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhPackage
     Expression = 'ownedElement->filterOnType(UMLClass)'
     Left = 43
     Top = 394
   end
   object blhAllDataTypes: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     Expression = 'allOwnedElement->filterOnType(UMLDataType)->orderby(name)'
     Left = 40
     Top = 160
   end
   object brhDataType: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = brhCurrentElement
     Expression = 'self->filterOnType(UMLDataType)->first'
     Left = 8
     Top = 436
   end
   object brhCopyCut: TBoldReferenceHandle
+    StaticSystemHandle = ServerData.SystemHandle
     StaticValueTypeName = 'UMLModelElement'
     Left = 136
     Top = 32
   end
   object behBoldified: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behModel
     RootTypeName = 'Boolean'
     Expression = 'taggedValue['#39'_Boldify.boldified'#39'].Value='#39'True'#39
@@ -7680,6 +7884,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 484
   end
   object behClassIsRootClass: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behClass
     Expression = 
       '(model.taggedValue['#39'_Boldify.boldified'#39'].Value='#39'True'#39') and (gene' +
@@ -7710,6 +7915,7 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 93
   end
   object bdhAttributePMapperNames: TBoldDerivedHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behAttribute
     RootTypeName = 'Collection(String)'
     OnDeriveAndSubscribe = bdhAttributePMapperNamesDeriveAndSubscribe
@@ -7718,19 +7924,21 @@ object BoldModelEditFrm: TBoldModelEditFrm
     Top = 148
   end
   object bchAttributePMapperNames: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bdhAttributePMapperNames
     RootTypeName = 'Collection(String)'
     Left = 163
     Top = 361
   end
   object bvhAdvancedMode: TBoldVariableHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
+    StaticSystemHandle = ServerData.SystemHandle
     ValueTypeName = 'Boolean'
     Left = 348
     Top = 2
   end
   object bpcAdvancedView: TBoldPropertiesController
     BoldHandle = bvhAdvancedMode
+    BoldProperties.Expression = ''
     DrivenProperties = <
       item
         VCLComponent = lblModelPMapperName

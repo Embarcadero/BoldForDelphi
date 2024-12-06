@@ -68,7 +68,7 @@ type
     procedure DefaultSetAsViewer(Element: IBoldElement; Value: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList); virtual;
     function DefaultIsChanged(RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     function IsChanged(RendererData: TBoldViewerRendererDataCom; NewValue: TBoldAbstractViewAdapterCom; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
-    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
   published
     property OnGetAsViewer: TBoldGetAsViewerCom read FOnGetAsViewer write FOnGetAsViewer;
     property OnSetAsViewer: TBoldSetAsViewerCom read FOnSetAsViewer write FOnSetAsViewer;
@@ -159,7 +159,7 @@ end;
 
 { TBoldAsViewerRendererCom }
 
-procedure TBoldAsViewerRendererCom.MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
+procedure TBoldAsViewerRendererCom.MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
 var
   Controller: TBoldViewerFollowerControllerCom;
 begin

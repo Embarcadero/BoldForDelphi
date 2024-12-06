@@ -641,16 +641,14 @@ begin
   sPreviousDateSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator;
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := ADateSeparatorChar;
 
-  try
-    Result := StrToDateTime(ADateString);
-  finally
+  Result := StrToDateTime(ADateString);
+
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := sPreviousShortDateFormat;
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := sPreviousDateSeparator;
 
   {$IFDEF BOLD_DELPHI28_OR_LATER}
   FormatSettings.LongTimeFormat := sPreviousShortTimeFormat;
   {$ENDIF}
-  end;
 end;
 
 function DateToStrFmt(const aDate: TDateTime; DateFormat: string; const DateSeparatorChar: char = '/'): String;
@@ -662,12 +660,9 @@ begin
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := DateFormat;
   PreviousDateSeparator := {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator;
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := DateSeparatorChar;
-  try
-    Result := DateToStr(aDate);
-  finally
+  Result := DateToStr(aDate);
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}ShortDateFormat := PreviousShortDateFormat;
   {$IFDEF BOLD_DELPHI16_OR_LATER}FormatSettings.{$ENDIF}DateSeparator := PreviousDateSeparator;
-  end;
 end;
 
 function BoldVariantToStrings(V: OleVariant; Strings: TStrings): Integer;

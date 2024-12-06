@@ -34,8 +34,6 @@ type
     bctValueSpace,
     bctObject,
     bctString,
-    bctAnsiString,
-    bctUnicodeString,
     bctCurrency,
     bctFloat,
     bctInteger,

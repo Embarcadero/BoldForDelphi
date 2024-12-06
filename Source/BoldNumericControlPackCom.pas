@@ -51,7 +51,7 @@ type
     class function DefaultRenderer: TBoldAsIntegerRendererCom;
     function DefaultIsChanged(RendererData: TBoldIntegerRendererDataCom; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     function DefaultMayModify(Element: IBoldElement; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList; Subscriber: TBoldComClientSubscriber): Boolean; override;
-    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
     function IsChanged(RendererData: TBoldIntegerRendererDataCom; const NewValue: Integer; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
   published
     property OnGetAsInteger: TBoldGetAsIntegerEventCom read FOnGetAsInteger write FOnGetAsInteger;
@@ -197,7 +197,7 @@ begin
     DefaultSetAsInteger(Element, Value, Representation, Expression, VariableList)
 end;
 
-procedure TBoldAsIntegerRendererCom.MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
+procedure TBoldAsIntegerRendererCom.MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
 var
   Value: Integer;
   Controller: TBoldIntegerFollowerControllerCom;

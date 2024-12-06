@@ -3,22 +3,20 @@ object BoldLEPropagatorMainForm: TBoldLEPropagatorMainForm
   Top = 289
   BorderStyle = bsSingle
   Caption = 'Bold LowEnd Propagator'
-  ClientHeight = 288
-  ClientWidth = 482
+  ClientHeight = 287
+  ClientWidth = 478
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
-  PixelsPerInch = 96
   TextHeight = 13
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 269
-    Width = 482
+    Top = 268
+    Width = 478
     Height = 19
     Panels = <
       item
@@ -29,22 +27,23 @@ object BoldLEPropagatorMainForm: TBoldLEPropagatorMainForm
         Style = psOwnerDraw
         Width = 50
       end>
-    SimplePanel = False
+    ExplicitTop = 269
+    ExplicitWidth = 482
   end
   object Panel1: TPanel
     Left = 0
     Top = 40
-    Width = 482
-    Height = 229
+    Width = 478
+    Height = 228
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 482
+    ExplicitHeight = 229
     object Splitter1: TSplitter
       Left = 145
       Top = 0
-      Width = 3
       Height = 229
-      Cursor = crHSplit
     end
     object ListBox1: TListBox
       Left = 0
@@ -64,20 +63,23 @@ object BoldLEPropagatorMainForm: TBoldLEPropagatorMainForm
     object Memo1: TMemo
       Left = 148
       Top = 0
-      Width = 334
-      Height = 229
+      Width = 330
+      Height = 228
       Align = alClient
       TabOrder = 1
+      ExplicitWidth = 334
+      ExplicitHeight = 229
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 482
+    Width = 478
     Height = 40
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 482
     object Label1: TLabel
       Left = 4
       Top = 24

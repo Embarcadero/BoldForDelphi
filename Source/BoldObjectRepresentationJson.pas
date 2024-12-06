@@ -536,13 +536,8 @@ begin
   end
   else if (aBoldAttribute is TBANumeric) then
   begin
-    if (aBoldAttribute is TBAFloat) or  (aBoldAttribute is TBACurrency) then
-      Result := TJSONNumber.Create(TBANumeric(aBoldAttribute).AsFloat)
-    else
-    begin
-      vInt := vMemberValueAsVariant;
-      Result := TJSONNumber.Create(vInt);
-    end;
+    vInt := vMemberValueAsVariant;
+    Result := TJSONNumber.Create(vInt);
   end
   else if aBoldAttribute is TBABoolean then
   begin
@@ -615,7 +610,7 @@ begin
   //js.Add('id',StrToInt(aBoldObject.BoldObjectLocator.BoldObjectID.AsString));
   //Result.Add('id',aBoldObject.BoldMemberByExpressionName['objectGUID'].AsString);
 
-  for I := 0 to aBoldObject.BoldClassTypeInfo.AllMembersCount - 1 do
+  for I := 0 to aBoldObject.BoldClassTypeInfo.AllMembers.Count - 1 do
   try
     vBoldMember := aBoldObject.BoldMembers[i];
     vMemberRTInfo := vBoldMember.BoldMemberRTInfo;

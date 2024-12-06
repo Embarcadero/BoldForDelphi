@@ -36,12 +36,10 @@ object BoldLogForm: TBoldLogForm
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
   Menu = MainMenu1
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Log: TRichEdit
     Left = 0
@@ -59,7 +57,6 @@ object BoldLogForm: TBoldLogForm
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0
-    Zoom = 100
   end
   object Panel1: TPanel
     Left = 0
@@ -114,11 +111,6 @@ object BoldLogForm: TBoldLogForm
         ImageIndex = 2
         ShortCut = 16451
         OnClick = mnuCopyClick
-      end
-      object mnuShowAll: TMenuItem
-        Caption = 'Show all log'
-        Visible = False
-        OnClick = mnuShowAllClick
       end
     end
   end

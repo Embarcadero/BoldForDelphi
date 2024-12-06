@@ -123,6 +123,9 @@ Illegal symbol combination
   // Use OXML instead of MSXML for XML operations (faster and can handle larger XML)
 {.$DEFINE OXML}
 
+  // Faster Display Queue - Simplified handling of (Most)Prioritized and less iteration of Display List
+{$DEFINE BoldQueue_Optimization}
+
   // When fetching an object which class list is loaded then search there instead of going to db.
 {$DEFINE FetchFromClassList}
 
@@ -130,7 +133,7 @@ Illegal symbol combination
 {.$DEFINE NoAutoSubscription}
 
   // Mechanism for efficient fetching
-{$DEFINE SpanFetch}
+{.$DEFINE SpanFetch}
 
   // Turns off query mechanism
 {$DEFINE BOLD_NO_QUERIES}
@@ -200,8 +203,11 @@ Illegal symbol combination
 // IndexColumn creates an extra Index column in MemberMappingTable
 {.$DEFINE IndexColumn}
 
-//Adds brJson StringRepresentation via BoldObjectRepresentationJson unit
+//Includes BoldJson and BoldObjectRepresentationJson - includes LkJSON v1.07
 {$DEFINE BoldJson}
+
+// BoldSystem broadcasts member events - allows getting events from all objects and their members by only placing one subscription on system
+{$DEFINE BoldSystemBroadcastMemberEvents}
 
 // NoEnsureEnclosure skips EnsureEnclosure call in UpdateDatabase, use NoEnsureEnclosure if objects passed to UpdateDatabase are already enclosed
 {.$DEFINE NoEnsureEnclosure}
@@ -223,7 +229,7 @@ Illegal symbol combination
 {$ENDIF}
 
 // settings for design package
-
+(*
 {$IFNDEF Attracs}
   {$DEFINE NoAutoSubscription}
   {$UNDEF SpanFetch}
@@ -234,5 +240,6 @@ Illegal symbol combination
   {$UNDEF IDServer}
   {$UNDEF NoNegativeDates}
   {$UNDEF ConvertZeroDateToDateNil}
+  {$UNDEF BoldSystemBroadcastMemberEvents}
 {$ENDIF}
-
+*)

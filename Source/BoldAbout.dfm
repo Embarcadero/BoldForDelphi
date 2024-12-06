@@ -21,7 +21,7 @@ object frmAboutBold: TfrmAboutBold
     Top = 6
     Width = 385
     Height = 380
-    ActivePage = TabAbout
+    ActivePage = TabSheetRegistration
     MultiLine = True
     TabOrder = 0
     object TabAbout: TTabSheet
@@ -864,6 +864,7 @@ object frmAboutBold: TfrmAboutBold
         SortType = stText
         TabOrder = 0
         ViewStyle = vsReport
+        OnDblClick = ListViewRevisionDblClick
       end
     end
     object TabSheetRegistration: TTabSheet
@@ -3060,6 +3061,7 @@ object frmAboutBold: TfrmAboutBold
         StateImages = ImageList2
         TabOrder = 1
         ViewStyle = vsReport
+        OnDblClick = btnLicenseDetailsClick
       end
       object BtnSaveDeploymentKeys: TBitBtn
         Left = 196
@@ -3167,6 +3169,7 @@ object frmAboutBold: TfrmAboutBold
           Height = 25
           Caption = '&Open License Key...'
           TabOrder = 0
+          OnClick = btnLicenseDetailsClick
         end
       end
     end
@@ -3477,11 +3480,13 @@ object frmAboutBold: TfrmAboutBold
   end
   object PopupMenuRevision: TPopupMenu
     Images = ImageList1
+    OnPopup = PopupMenuRevisionPopup
     Left = 4
     Top = 392
     object PopupOpenModule: TMenuItem
       Caption = '&Open'
       ImageIndex = 0
+      OnClick = ListViewRevisionDblClick
     end
   end
   object SaveDialogRunLic: TSaveDialog

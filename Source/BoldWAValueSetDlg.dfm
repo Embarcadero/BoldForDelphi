@@ -3,38 +3,38 @@ object ValueSetDlg: TValueSetDlg
   Top = 201
   BorderStyle = bsToolWindow
   Caption = 'Value'
-  ClientHeight = 243
-  ClientWidth = 254
+  ClientHeight = 231
+  ClientWidth = 246
   Color = clBtnFace
   ParentFont = True
   FormStyle = fsStayOnTop
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 15
   object pnRight: TPanel
     Left = 0
     Top = 0
-    Width = 254
-    Height = 202
+    Width = 246
+    Height = 190
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 254
+    ExplicitHeight = 202
     object lbValueName: TLabel
       Left = 8
       Top = 8
-      Width = 58
-      Height = 13
+      Width = 63
+      Height = 15
       Caption = 'Value Name'
       Enabled = False
     end
     object lbRepresentations: TLabel
       Left = 8
       Top = 56
-      Width = 77
-      Height = 13
+      Width = 84
+      Height = 15
       Caption = 'Representations'
       Enabled = False
     end
@@ -62,12 +62,14 @@ object ValueSetDlg: TValueSetDlg
   end
   object Panel1: TPanel
     Left = 0
-    Top = 202
-    Width = 254
+    Top = 190
+    Width = 246
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 202
+    ExplicitWidth = 254
     object OkBtn: TButton
       Left = 76
       Top = 8

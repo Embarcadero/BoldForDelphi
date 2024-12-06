@@ -3,8 +3,8 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
   Top = 156
   BorderWidth = 2
   Caption = 'Bold Model Editor'
-  ClientHeight = 797
-  ClientWidth = 1338
+  ClientHeight = 794
+  ClientWidth = 1326
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -38,7 +38,6 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
     000000000000000000000000000000000000000000000000000000000000}
   KeyPreview = True
   Menu = MainMenu1
-  OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnActivate = FormActivate
@@ -49,12 +48,11 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
   OnDeactivate = FormDeactivate
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter9: TSplitter
     Left = 0
-    Top = 592
-    Width = 1338
+    Top = 589
+    Width = 1326
     Height = 6
     Cursor = crVSplit
     Align = alBottom
@@ -65,8 +63,8 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 778
-    Width = 1338
+    Top = 775
+    Width = 1326
     Height = 19
     Hint = 'Doubleclick here to validate model'
     Panels = <
@@ -80,11 +78,11 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
   object pcLeft: TPageControl
     Left = 0
     Top = 28
-    Width = 1338
-    Height = 564
-    ActivePage = tsClasses
+    Width = 1326
+    Height = 561
+    ActivePage = tsDataTypes2
     Align = alClient
-    TabOrder = 2
+    TabOrder = 1
     object tsModel: TTabSheet
       Caption = 'Model'
       ImageIndex = 1
@@ -607,10 +605,11 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       object cxGridPackages: TcxGrid
         Left = 0
         Top = 0
-        Width = 1330
-        Height = 536
+        Width = 1322
+        Height = 534
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 536
         object tvPackages: TcxGridBoldTableView
           PopupMenu = popTree
           Navigator.Buttons.CustomButtons = <>
@@ -620,6 +619,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldProperties.DefaultDblClick = False
           DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhPackages
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
@@ -668,7 +668,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
         Left = 224
         Top = 0
         Width = 6
-        Height = 536
+        Height = 533
         Beveled = True
         ExplicitLeft = 16
         ExplicitTop = 23
@@ -678,7 +678,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
         Left = 0
         Top = 0
         Width = 224
-        Height = 536
+        Height = 533
         Align = alLeft
         Caption = 'pnlLeft'
         TabOrder = 0
@@ -686,9 +686,10 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           Left = 1
           Top = 1
           Width = 222
-          Height = 404
+          Height = 401
           Align = alClient
           TabOrder = 0
+          ExplicitHeight = 404
           object tvClasses: TcxGridBoldTableView
             PopupMenu = popTree
             Navigator.Buttons.CustomButtons = <>
@@ -699,6 +700,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
             ScrollbarAnnotations.CustomAnnotations = <>
             DataController.BoldProperties.DefaultDblClick = False
             DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhModelClasses
+            DataController.Filter.Options = [fcoSoftNull]
             DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
             DataController.Summary.DefaultGroupSummaryItems = <>
             DataController.Summary.FooterSummaryItems = <
@@ -783,7 +785,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
         end
         object pnlClassFilter: TPanel
           Left = 1
-          Top = 405
+          Top = 402
           Width = 222
           Height = 130
           Align = alBottom
@@ -819,15 +821,15 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       object Panel2: TPanel
         Left = 230
         Top = 0
-        Width = 1100
-        Height = 536
+        Width = 1088
+        Height = 533
         Align = alClient
         TabOrder = 1
         object pgClient: TPageControl
           Left = 1
           Top = 1
-          Width = 1098
-          Height = 534
+          Width = 1086
+          Height = 531
           ActivePage = tsClass
           Align = alClient
           TabOrder = 0
@@ -1482,15 +1484,17 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           object tabAttributes: TTabSheet
             Caption = 'Attributes'
             DesignSize = (
-              1090
-              506)
+              1078
+              503)
             object cxGridAttributes: TcxGrid
               Left = 0
               Top = 0
-              Width = 1090
-              Height = 506
+              Width = 1078
+              Height = 503
               Align = alClient
               TabOrder = 0
+              ExplicitWidth = 1082
+              ExplicitHeight = 506
               object tvAttributes: TcxGridBoldTableView
                 PopupMenu = popTree
                 OnDblClick = tvGridDblClick
@@ -1503,6 +1507,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
                 DataController.BoldProperties.DefaultDblClick = False
                 DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhClassAttributes
                 DataController.OnAfterLoad = tvDataControllerAfterLoad
+                DataController.Filter.Options = [fcoSoftNull]
                 DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
                 DataController.Summary.DefaultGroupSummaryItems = <>
                 DataController.Summary.FooterSummaryItems = <>
@@ -1697,7 +1702,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               end
             end
             object cxCheckBox1: TcxCheckBox
-              Left = 884
+              Left = 852
               Top = 9
               Anchors = [akTop, akRight]
               Caption = 'Show Derivation'
@@ -1706,9 +1711,10 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 1
               Transparent = True
               OnClick = CheckBox2Click
+              ExplicitLeft = 860
             end
             object cxCheckBox2: TcxCheckBox
-              Left = 988
+              Left = 956
               Top = 9
               Anchors = [akTop, akRight]
               Caption = 'Show Inherited'
@@ -1717,21 +1723,24 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 2
               Transparent = True
               OnClick = CheckBox1Click
+              ExplicitLeft = 964
             end
           end
           object tabAssociationEnds: TTabSheet
             Caption = 'AssociationEnds'
             ImageIndex = 1
             DesignSize = (
-              1090
-              506)
+              1078
+              503)
             object cxGridAssociationEnds: TcxGrid
               Left = 0
               Top = 0
-              Width = 1090
-              Height = 506
+              Width = 1078
+              Height = 503
               Align = alClient
               TabOrder = 0
+              ExplicitWidth = 1082
+              ExplicitHeight = 506
               object tvAssociationEnds: TcxGridBoldTableView
                 PopupMenu = popTree
                 OnDblClick = tvGridDblClick
@@ -1743,6 +1752,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
                 ScrollbarAnnotations.CustomAnnotations = <>
                 DataController.BoldProperties.DefaultDblClick = False
                 DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhClassAssociationEnds
+                DataController.Filter.Options = [fcoSoftNull]
                 DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
                 DataController.Summary.DefaultGroupSummaryItems = <>
                 DataController.Summary.FooterSummaryItems = <>
@@ -1914,7 +1924,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               end
             end
             object cxCheckBox3: TcxCheckBox
-              Left = 881
+              Left = 849
               Top = 9
               Anchors = [akTop, akRight]
               Caption = 'Show Derivation'
@@ -1923,9 +1933,10 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 1
               Transparent = True
               OnClick = cxCheckBox3Click
+              ExplicitLeft = 857
             end
             object cxCheckBox4: TcxCheckBox
-              Left = 983
+              Left = 951
               Top = 9
               Anchors = [akTop, akRight]
               Caption = 'Show Inherited'
@@ -1934,21 +1945,24 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 2
               Transparent = True
               OnClick = cxCheckBox4Click
+              ExplicitLeft = 959
             end
           end
           object tabAssociations: TTabSheet
             Caption = 'Associations'
             ImageIndex = 3
             DesignSize = (
-              1090
-              506)
+              1078
+              503)
             object cxGridClassAssociations: TcxGrid
               Left = 0
               Top = 0
-              Width = 1090
-              Height = 506
+              Width = 1078
+              Height = 503
               Align = alClient
               TabOrder = 0
+              ExplicitWidth = 1082
+              ExplicitHeight = 506
               object tvClassAssociations: TcxGridBoldTableView
                 PopupMenu = popTree
                 OnDblClick = tvGridDblClick
@@ -1961,6 +1975,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
                 DataController.BoldProperties.DefaultDblClick = False
                 DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhClassAssociations
                 DataController.OnAfterLoad = tvDataControllerAfterLoad
+                DataController.Filter.Options = [fcoSoftNull]
                 DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
                 DataController.Summary.DefaultGroupSummaryItems = <>
                 DataController.Summary.FooterSummaryItems = <>
@@ -2110,7 +2125,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               end
             end
             object cxCheckBox5: TcxCheckBox
-              Left = 889
+              Left = 857
               Top = 17
               Anchors = [akTop, akRight]
               Caption = 'Show Derivation'
@@ -2119,9 +2134,10 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 1
               Transparent = True
               OnClick = cxCheckBox5Click
+              ExplicitLeft = 865
             end
             object cxCheckBox7: TcxCheckBox
-              Left = 989
+              Left = 957
               Top = 17
               Anchors = [akTop, akRight]
               Caption = 'Show Inherited'
@@ -2130,21 +2146,24 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 2
               Transparent = True
               OnClick = cxCheckBox7Click
+              ExplicitLeft = 965
             end
           end
           object tabClientOperations: TTabSheet
             Caption = 'Operations'
             ImageIndex = 2
             DesignSize = (
-              1090
-              506)
+              1078
+              503)
             object cxGridOperations: TcxGrid
               Left = 0
               Top = 0
-              Width = 1090
-              Height = 506
+              Width = 1078
+              Height = 503
               Align = alClient
               TabOrder = 0
+              ExplicitWidth = 1082
+              ExplicitHeight = 506
               object tvOperations: TcxGridBoldTableView
                 PopupMenu = popTree
                 OnDblClick = tvGridDblClick
@@ -2157,6 +2176,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
                 DataController.BoldProperties.DefaultDblClick = False
                 DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhClassOperations
                 DataController.OnAfterLoad = tvDataControllerAfterLoad
+                DataController.Filter.Options = [fcoSoftNull]
                 DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
                 DataController.Summary.DefaultGroupSummaryItems = <>
                 DataController.Summary.FooterSummaryItems = <>
@@ -2212,7 +2232,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               end
             end
             object cxCheckBox6: TcxCheckBox
-              Left = 969
+              Left = 937
               Top = 9
               Anchors = [akTop, akRight]
               Caption = 'Show Inherited'
@@ -2221,21 +2241,24 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 1
               Transparent = True
               OnClick = cxCheckBox6Click
+              ExplicitLeft = 945
             end
           end
           object TabOCL: TTabSheet
             Caption = 'OCL Expressions'
             ImageIndex = 4
             DesignSize = (
-              1090
-              506)
+              1078
+              503)
             object cxGridOclExpressions: TcxGrid
               Left = 0
               Top = 0
-              Width = 1090
-              Height = 506
+              Width = 1078
+              Height = 503
               Align = alClient
               TabOrder = 0
+              ExplicitWidth = 1082
+              ExplicitHeight = 506
               object tvOclExpressions: TcxGridBoldTableView
                 PopupMenu = popTree
                 OnDblClick = tvOclExpressionsDblClick
@@ -2248,6 +2271,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
                 ScrollbarAnnotations.CustomAnnotations = <>
                 DataController.BoldProperties.DefaultDblClick = False
                 DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhOclExpressions
+                DataController.Filter.Options = [fcoSoftNull]
                 DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
                 DataController.Summary.DefaultGroupSummaryItems = <>
                 DataController.Summary.FooterSummaryItems = <>
@@ -2301,7 +2325,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               end
             end
             object cxCheckBox8: TcxCheckBox
-              Left = 985
+              Left = 953
               Top = 9
               Anchors = [akTop, akRight]
               Caption = 'Show Inherited'
@@ -2310,6 +2334,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
               TabOrder = 1
               Transparent = True
               OnClick = cxCheckBox8Click
+              ExplicitLeft = 961
             end
           end
         end
@@ -2321,10 +2346,11 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       object gridAssociations: TcxGrid
         Left = 0
         Top = 0
-        Width = 1330
-        Height = 536
+        Width = 1322
+        Height = 534
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 536
         object tvAssociations: TcxGridBoldTableView
           PopupMenu = popTree
           OnDblClick = tvGridDblClick
@@ -2335,6 +2361,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldProperties.DefaultDblClick = False
           DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhAssociations
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <
@@ -2445,15 +2472,17 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       Caption = 'Data types'
       ImageIndex = 2
       DesignSize = (
-        1330
-        536)
+        1318
+        533)
       object cxGrid2: TcxGrid
         Left = 0
         Top = 0
-        Width = 1330
-        Height = 536
+        Width = 1318
+        Height = 533
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 1322
+        ExplicitHeight = 536
         object tvDataTypes: TcxGridBoldTableView
           PopupMenu = popTree
           OnDblClick = tvDataTypesDblClick
@@ -2464,6 +2493,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldProperties.DefaultDblClick = False
           DataController.BoldHandle = dmBoldUMLModelEditorHandles.bchDataTypes
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
@@ -2519,7 +2549,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
         end
       end
       object cxCheckBox9: TcxCheckBox
-        Left = 1215
+        Left = 1183
         Top = 9
         Anchors = [akTop, akRight]
         Caption = 'Show all types'
@@ -2528,6 +2558,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
         TabOrder = 1
         Transparent = True
         OnClick = cxCheckBox9Click
+        ExplicitLeft = 1191
       end
     end
     object tabFeatures: TTabSheet
@@ -2536,10 +2567,11 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       object cxGrid5: TcxGrid
         Left = 0
         Top = 0
-        Width = 1330
-        Height = 536
+        Width = 1322
+        Height = 534
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 536
         object cxGridBoldTableView4: TcxGridBoldTableView
           PopupMenu = popTree
           OnDblClick = tvGridDblClick
@@ -2553,6 +2585,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           DataController.BoldProperties.DefaultDblClick = False
           DataController.BoldHandle = dmBoldUMLModelEditorHandles.bchClassFeatures
           DataController.OnAfterLoad = tvDataControllerAfterLoad
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <
@@ -2657,10 +2690,11 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       object cxGrid4: TcxGrid
         Left = 0
         Top = 0
-        Width = 1330
-        Height = 536
+        Width = 1322
+        Height = 534
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 536
         object cxGridBoldTableView3: TcxGridBoldTableView
           PopupMenu = popTree
           Navigator.Buttons.CustomButtons = <>
@@ -2670,6 +2704,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldProperties.DefaultDblClick = False
           DataController.BoldHandle = dmBoldUMLModelEditorHandles.blhAllClasses
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
@@ -2803,19 +2838,20 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 598
-    Width = 1338
+    Top = 595
+    Width = 1326
     Height = 180
     Align = alBottom
     TabOrder = 5
     object pcBottom: TPageControl
       Left = 1
       Top = 1
-      Width = 1336
+      Width = 1328
       Height = 178
       ActivePage = tsValidation
       Align = alClient
       TabOrder = 0
+      ExplicitWidth = 1324
       object tsValidation: TTabSheet
         Caption = 'Validation'
       end
@@ -4670,7 +4706,7 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
           Hint = 'bguhb'
         end>
       DockedDockingStyle = dsTop
-      DockedLeft = 1084
+      DockedLeft = 1072
       DockedTop = 0
       DockingStyle = dsTop
       FloatLeft = 1370
@@ -5330,7 +5366,6 @@ object BoldModelEditFrmCx: TBoldModelEditFrmCx
       end>
   end
   object behViolations: TBoldExpressionHandle
-    StaticSystemHandle = dmModelEdit.bshUMLModel
     RootHandle = dmBoldUMLModelEditorHandles.behModel
     Expression = 'validator.Violation'
     Left = 262

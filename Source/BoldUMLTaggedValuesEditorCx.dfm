@@ -4,8 +4,8 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
   BorderIcons = [biSystemMenu, biMinimize]
   BorderWidth = 4
   Caption = 'Bold UML tagged values editor'
-  ClientHeight = 453
-  ClientWidth = 440
+  ClientHeight = 451
+  ClientWidth = 432
   Color = clBtnFace
   Constraints.MinHeight = 100
   Constraints.MinWidth = 100
@@ -40,20 +40,20 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 440
-    Height = 412
+    Width = 432
+    Height = 410
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 436
+    ExplicitHeight = 411
     object tcTools: TTabControl
       Left = 0
       Top = 0
@@ -65,14 +65,17 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
       object cxGrid1: TcxGrid
         Left = 4
         Top = 6
-        Width = 432
-        Height = 402
+        Width = 424
+        Height = 400
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 428
+        ExplicitHeight = 401
         object cxGrid1BoldTableView1: TcxGridBoldTableView
           Navigator.Buttons.CustomButtons = <>
           ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldHandle = blhSelectedTVs
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
@@ -111,16 +114,18 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
   end
   object Panel2: TPanel
     Left = 0
-    Top = 412
-    Width = 440
+    Top = 410
+    Width = 432
     Height = 41
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 411
+    ExplicitWidth = 436
     DesignSize = (
-      440
+      432
       41)
     object CancelBtn: TButton
-      Left = 361
+      Left = 341
       Top = 6
       Width = 75
       Height = 25
@@ -130,9 +135,11 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
       ModalResult = 2
       TabOrder = 0
       OnClick = CancelBtnClick
+      ExplicitLeft = 353
     end
   end
   object bdhAllTools: TBoldDerivedHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = behRoot
     OnDeriveAndSubscribe = bdhAllToolsDeriveAndSubscribe
     ValueTypeName = 'Collection(UMLTaggedValue)'
@@ -140,12 +147,14 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
     Top = 100
   end
   object bchAllTools: TBoldCursorHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bdhAllTools
     AutoFirst = False
     Left = 34
     Top = 148
   end
   object bdhSelectedTVs: TBoldDerivedHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bchAllTools
     OnDeriveAndSubscribe = bdhSelectedTVsDeriveAndSubscribe
     ValueTypeName = 'Collection(UMLTaggedValue)'
@@ -153,6 +162,7 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
     Top = 104
   end
   object blhSelectedTVs: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     RootHandle = bdhSelectedTVs
     RootTypeName = 'Collection(UMLTaggedValue)'
     Expression = 'self->orderby(tag)'
@@ -160,6 +170,7 @@ object frmBoldUMLTaggedValuesEditorCx: TfrmBoldUMLTaggedValuesEditorCx
     Top = 152
   end
   object behRoot: TBoldExpressionHandle
+    StaticSystemHandle = ServerData.SystemHandle
     Left = 84
     Top = 52
   end

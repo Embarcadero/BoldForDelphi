@@ -116,6 +116,7 @@ begin
   inherited;
   Node.WriteSubNodeString(BoldNodeName_IdValue, (Obj as TBoldStringID).fIdValue);
 end;
+
 initialization
   TBoldXMLStreamerRegistry.MainStreamerRegistry.RegisterStreamer(TBoldXMLStringIdStreamer.Create);
 end.

@@ -1,10 +1,10 @@
 object frmRTColEditorCom: TfrmRTColEditorCom
   Left = 444
   Top = 599
-  Width = 376
-  Height = 331
   BorderIcons = [biSystemMenu]
   Caption = 'Runtime Column Editor'
+  ClientHeight = 292
+  ClientWidth = 360
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -36,15 +36,13 @@ object frmRTColEditorCom: TfrmRTColEditorCom
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = True
   Position = poScreenCenter
-  PixelsPerInch = 96
   TextHeight = 13
   object lbxColumns: TListBox
     Left = 0
     Top = 0
-    Width = 136
-    Height = 264
+    Width = 128
+    Height = 252
     Align = alClient
     ItemHeight = 13
     TabOrder = 0
@@ -52,12 +50,14 @@ object frmRTColEditorCom: TfrmRTColEditorCom
   end
   object Panel1: TPanel
     Left = 0
-    Top = 264
-    Width = 368
+    Top = 252
+    Width = 360
     Height = 40
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitTop = 264
+    ExplicitWidth = 368
     object Panel2: TPanel
       Left = 280
       Top = 0
@@ -97,13 +97,15 @@ object frmRTColEditorCom: TfrmRTColEditorCom
     end
   end
   object Panel3: TPanel
-    Left = 136
+    Left = 128
     Top = 0
     Width = 232
-    Height = 264
+    Height = 252
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitLeft = 136
+    ExplicitHeight = 264
     object Label1: TLabel
       Left = 8
       Top = 8

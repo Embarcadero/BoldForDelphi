@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPSDescriptionsSQL;
@@ -16,8 +16,8 @@ uses
   BoldSQLDatabaseConfig,
   BoldPSDescriptions,
   BoldTaggedValueSupport,
-  BoldHashIndexes;
-
+  BoldHashIndexes
+  ;
 const
   IDCOLUMN_TYPE = ftInteger;
   TYPECOLUMN_TYPE = ftSmallint;
@@ -158,38 +158,17 @@ type
     property IndexOptions: TIndexOptionsExt read fIndexOptions write fIndexOptions;
   end;
 
-  TBoldSQLDescriptionListTraverser = class(TBoldIndexableListTraverser)
-  private
-    function GetItem: TBoldSQLDescriptionElement;
-  public
-    property Item: TBoldSQLDescriptionElement read GetItem;
-    property Current: TBoldSQLDescriptionElement read GetItem;
-  end;
-
   {---TBoldSQLDescriptionList---}
   TBoldSQLDescriptionList = class(TBoldIndexableList)
   private
     fSystemDescription: TBoldSQLSystemDescription;
     function GetItem(index: Integer): TBoldSQLDescriptionElement;
     function GetItemBySQLName(const SQLName: string): TBoldSQLDescriptionElement;
-  protected
-    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
     constructor Create(SystemDescription: TBoldSQLSystemDescription);
     procedure ToStrings(S: TStrings);
-    function ToString: string; override;
-    function CreateTraverser: TBoldSQLDescriptionListTraverser;
-    function GetEnumerator: TBoldSQLDescriptionListTraverser;
     property Items[index: Integer]: TBoldSQLDescriptionElement read GetItem; default;
     property ItemsBySQLName[const SQLName: string]: TBoldSQLDescriptionElement read GetItemBySQLName;
-  end;
-
-  TBoldSQLTableDescriptionListTraverser = class(TBoldSQLDescriptionListTraverser)
-  private
-    function GetItem: TBoldSQLTableDescription;
-  public
-    property Item: TBoldSQLTableDescription read GetItem;
-    property Current: TBoldSQLTableDescription read GetItem;
   end;
 
   {---TBoldSQLTableDescriptionList---}
@@ -197,11 +176,7 @@ type
   private
     function GetItem(index: Integer): TBoldSQLTableDescription;
     function GetItemBySQLName(const SQLName: string): TBoldSQLTableDescription;
-  protected
-    function TraverserClass: TBoldIndexableListTraverserClass; override;
   public
-    function CreateTraverser: TBoldSQLTableDescriptionListTraverser;
-    function GetEnumerator: TBoldSQLTableDescriptionListTraverser;
     property Items[index: Integer]: TBoldSQLTableDescription read GetItem; default;
     property ItemsBySQLName[const SQLName: string]: TBoldSQLtableDescription read GetItemBySQLName;
   end;
@@ -847,16 +822,6 @@ begin
   fSystemDescription := SystemDescription;
 end;
 
-function TBoldSQLDescriptionList.CreateTraverser: TBoldSQLDescriptionListTraverser;
-begin
-  result := inherited CreateTraverser as TBoldSQLDescriptionListTraverser;
-end;
-
-function TBoldSQLDescriptionList.GetEnumerator: TBoldSQLDescriptionListTraverser;
-begin
-  result := CreateTraverser;
-end;
-
 function TBoldSQLDescriptionList.GetItem(index: Integer): TBoldSQLDescriptionElement;
 begin
   Result := TBoldSQLDescriptionElement(inherited Items[index]);
@@ -870,22 +835,6 @@ begin
       fSystemDescription.NationalCharConversion)));
 end;
 
-function TBoldSQLDescriptionList.ToString: string;
-var
-  I: Integer;
-  S: TStrings;
-begin
-  result := '';
-  S := TStringList.Create;
-  try
-    for I := 0 to Count - 1 do
-      S.Add(Items[I].SQLName);
-    result := s.CommaText;
-  finally
-    s.Free;
-  end;
-end;
-
 procedure TBoldSQLDescriptionList.ToStrings(S: TStrings);
 var
   I: Integer;
@@ -895,21 +844,6 @@ begin
   for I := 0 to Count - 1 do
     S.AddObject(Items[I].SQLName, Items[I]);
   S.EndUpdate;
-end;
-
-function TBoldSQLDescriptionList.TraverserClass: TBoldIndexableListTraverserClass;
-begin
-  result := TBoldSQLDescriptionListTraverser;
-end;
-
-function TBoldSQLTableDescriptionList.CreateTraverser: TBoldSQLTableDescriptionListTraverser;
-begin
-  result := inherited CreateTraverser as TBoldSQLTableDescriptionListTraverser;
-end;
-
-function TBoldSQLTableDescriptionList.GetEnumerator: TBoldSQLTableDescriptionListTraverser;
-begin
-  result := CreateTraverser;
 end;
 
 function TBoldSQLTableDescriptionList.GetItem(index: Integer): TBoldSQLTableDescription;
@@ -923,11 +857,6 @@ begin
     BoldExpandName(SQLName, '', xtSQL,
       fSystemDescription.SQLDatabaseConfig.MaxDBIdentifierLength,
       fSystemDescription.NationalCharConversion)));
-end;
-
-function TBoldSQLTableDescriptionList.TraverserClass: TBoldIndexableListTraverserClass;
-begin
-  result := TBoldSQLTableDescriptionListTraverser;
 end;
 
 function TBoldSQLIndexDescription.GetIndexedFieldsForSQL: String;
@@ -948,6 +877,7 @@ begin
     IndexNameLength,
     TableDescription.SystemDescription.NationalCharConversion);
 end;
+
 
 { TBoldSQLIndexDescriptionList }
 
@@ -1031,22 +961,6 @@ procedure TBoldSQLSystemDescription.StartMetaDataTransaction(PSParams: TBoldPSSQ
 begin
   if EffectiveUseTransactions(PSParams) then
     PsParams.Database.StartTransaction;
-end;
-
-{ TBoldSQLDescriptionListTraverser }
-
-function TBoldSQLDescriptionListTraverser.GetItem: TBoldSQLDescriptionElement;
-begin
-  result := TBoldSQLDescriptionElement(inherited item);
-  Assert(result is TBoldSQLDescriptionElement);
-end;
-
-{ TBoldSQLTableDescriptionListTraverser }
-
-function TBoldSQLTableDescriptionListTraverser.GetItem: TBoldSQLTableDescription;
-begin
-  result := TBoldSQLTableDescription(inherited item);
-  Assert(result is TBoldSQLTableDescription);
 end;
 
 end.

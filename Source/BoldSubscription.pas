@@ -1,4 +1,4 @@
-﻿{ Global compiler directives }
+{ Global compiler directives }
 {$include bold.inc}
 unit BoldSubscription;
 
@@ -43,12 +43,11 @@ const
   bePreUpdateId = 18;
   beObjectFetched = 19;
   beObjectUnloaded = 20; // sent by TBoldSystem before an object gets unloaded from memory
-  beLinkObjectEstablished = 21;
   breReEvaluate = beValueChanged; {backwards compatibility}
 
   beDefaultRequestedEvent = breReEvaluate;
 
-  beServerSubscriberRemoved = 21; // Depricated - Only used in BoldCom Client/Server
+  beServerSubscriberRemoved = 21;
 
   beBeginUpdate = 22; // sent by TBoldObjectList before loops
   beEndUpdate = 23; // sent by TBoldObjectList after loops
@@ -116,7 +115,9 @@ const
 
   bqMaxSubscription = bqMinQuery + 6;
 
+{$IFDEF BoldSystemBroadcastMemberEvents}
   beBroadcastMemberEvents = beValueEvents + [beCompleteModify] + beDirtyListEvents;
+{$ENDIF}
 
   { Subscription Statistics }
 var
@@ -180,7 +181,7 @@ type
   public
     Publisher: TBoldPublisher;
     Index: integer; // index in the publishers subscriptionarray
-  end;
+  end;  
 
   TBoldPublisherReferenceArray = array of TBoldPublisherReference;
 
@@ -310,6 +311,7 @@ type
     function GetDebugInfo: string; override;
     procedure FreePublisher;
     function GetContextString: string; virtual;
+    property HasSubscribers: Boolean read GetHasSubscribers;
     property Publisher: TBoldPublisher read GetPublisher;
   public
     destructor Destroy; override;
@@ -320,11 +322,10 @@ type
     function SendQuery(OriginalEvent: TBoldEvent; const Args: array of const; Subscriber: TBoldSubscriber; Originator: TObject = nil): Boolean; virtual;
     property ContextString: string read GetContextString;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
-    property HasSubscribers: Boolean read GetHasSubscribers;
-  end;
+end;
 
   {---TBoldSubscribableComponent---}
-  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldSubscribableComponent = class(TComponent)
   strict private
     fPublisher: TBoldPublisher;
@@ -553,7 +554,9 @@ begin
 end;
 
 procedure TBoldSubscriber.ClearEntry(Index: integer);
+var Publisher: TBoldPublisher;
 begin
+  Publisher := Subscriptions[Index].Publisher;
   Subscriptions[Index].Publisher := nil;
   // Attempt to reuse empty places
   if fSubscriptionCount-1 = index then

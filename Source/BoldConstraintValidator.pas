@@ -351,7 +351,11 @@ begin
     case ValidationMode of
       vmManual:;
       vmOnModify:
+      {$IFDEF BoldSystemBroadcastMemberEvents}
         BoldSystem.AddSubscription(Subscriber, beCompleteModify, beCompleteModify);
+      {$ELSE}
+        raise Exception.CreateFmt(sVMOnModifyRequirements, [ClassName]);
+      {$ENDIF}
       vmPreUpdate:
         BoldSystem.OnPreUpdate := PreUpdate;
     end;

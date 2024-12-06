@@ -1,4 +1,4 @@
-﻿{ Global compiler directives }
+{ Global compiler directives }
 {$include bold.inc}
 
 unit BoldSystem;
@@ -231,7 +231,6 @@ type
     function GetDirtyObjects: TBoldObjectList;
     procedure DiscardChanges;
     procedure WriteChangesToDb;
-    procedure ClearObjects;
     property DirtyObjects: TBoldObjectList read GetDirtyObjects;
   end;
 
@@ -243,6 +242,7 @@ type
   protected
     procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); virtual;
     function CanCommitOrRollback: boolean;
+//    property DirtyObjects: TBoldObjectList read GetDirtyObjects;
     function GetValueSpace: IBoldValueSpace;
     property Valuespace: IBoldValueSpace read GetValueSpace;
     procedure Commit;
@@ -268,7 +268,6 @@ type
     procedure BeforeDestruction; override;
     procedure StartTracking;
     procedure StopTracking;
-    procedure ClearObjects;
     procedure DiscardChanges;
     procedure WriteChangesToDb;
     property DirtyObjects: TBoldObjectList read GetDirtyObjects;
@@ -331,8 +330,7 @@ type
     function GetClassByObjectClass(AObjectClass: TBoldObjectClass): TBoldObjectList;
     function GetClassByIndex(index: Integer): TBoldObjectList;
     function GetDirtyObjects: TList; {of TBoldObject}
-    function GetDirtyObjectsAsBoldList(AClassType: TBoldObjectClass): TBoldObjectList; overload;
-    function GetDirtyObjectsAsBoldList(AClassType: TBoldClassTypeInfo): TBoldObjectList; overload;
+    function GetDirtyObjectsAsBoldList(AClassType: TBoldObjectClass): TBoldObjectList;
     function GetDirtyObjectsAsBoldListByClassExpressionName(const AClass: string): TBoldObjectList;
     function GetAllDirtyObjectsAsBoldList: TBoldObjectList;
     function GetEnsuredLocatorByID(ObjectID: TBoldObjectId): TBoldObjectLocator;
@@ -405,7 +403,7 @@ type
     procedure GetAsList(ResultList: TBoldIndirectElement); override;
     function InTransaction: boolean;
     procedure RollbackTransaction(MinimalMode: TBoldSystemTransactionMode = stmNormal);
-    function CreateTransactionHandler(MinimalMode: TBoldSystemTransactionMode = stmNormal): IBoldTransactionHandler;
+    function CreateTransactionHandler(MinimalMode: TBoldSystemTransactionMode = stmNormal): IBoldTransactionHandler;    
     procedure StartTransaction(MinimalMode: TBoldSystemTransactionMode = stmNormal);
     function TryCommitTransaction(MinimalMode: TBoldSystemTransactionMode = stmNormal): Boolean;
     procedure UpdateDatabase;
@@ -434,7 +432,6 @@ type
     property Classes[index: Integer]: TBoldObjectList read GetClassByIndex;
     property DirtyObjects: TList read GetDirtyObjects;
     property DirtyObjectsAsBoldListByClass[AClassType: TBoldObjectClass]: TBoldObjectList read GetDirtyObjectsAsBoldList;
-    property DirtyObjectsAsBoldListByClassTypeInfo[AClassType: TBoldCLassTypeInfo]: TBoldObjectList read GetDirtyObjectsAsBoldList;
     property DirtyObjectsAsBoldListByClassExpressionName[const AClass: string]: TBoldObjectList read GetDirtyObjectsAsBoldListByClassExpressionName;
     property DirtyObjectsAsBoldList: TBoldObjectList read GetAllDirtyObjectsAsBoldList;
     property EnsuredLocatorByID[ObjectID: TBoldObjectId]: TBoldObjectLocator read GetEnsuredLocatorByID;
@@ -675,7 +672,6 @@ type
     property BoldObjectIsDeleted: Boolean read GetBoldObjectIsDeleted;
     property BoldObjectExists: Boolean read GetBoldObjectExists;
     property Touched: Boolean index befTouched read GetElementFlag;
-    property IsCreating: Boolean index befCreating read GetElementFlag write SetElementFlag;
     property Discarding: Boolean index befDiscarding read GetElementFlag write SetElementFlag;
     property Deleting: Boolean index befDeleting read GetElementFlag write SetElementFlag;
     property DeletingOrDeletingByDiscard: Boolean read GetDeletingOrDeletingByDiscard;
@@ -1156,7 +1152,6 @@ type
     function GetFreeStandingClass: TBoldFreeStandingElementClass; override;
     function IncludesElement(Item: TBoldElement): Boolean; override;
     function IndexOfElement(Item: TBoldElement): Integer; override;
-    function GetEvaluator: TBoldEvaluator; override;
     procedure Initialize; override;
     procedure InsertElement(index: Integer; Element: TBoldElement); override;
     procedure SetElement(index: Integer; Value: TBoldElement); override;
@@ -1267,7 +1262,6 @@ type
     function GetIsEmpty: Boolean; virtual;
   public
     constructor Create(OwningList: TBoldList); virtual;
-    function AssertIntegrity: Boolean; override;
     procedure AddElement(Element: TBoldElement); virtual; abstract;
     function GetElement(index: Integer): TBoldElement; virtual; abstract;
     function IncludesElement(Item: TBoldElement): Boolean; virtual; abstract;
@@ -1280,7 +1274,6 @@ type
     property Count: integer read GetCount;
     property IsEmpty: Boolean read GetIsEmpty;
     property Capacity: integer read GetCapacity write SetCapacity;
-    property Elements[index: Integer]: TBoldElement read GetElement write SetElement; default;
   end;
 
   {---TBoldAbstractObjectListController---}
@@ -1621,21 +1614,11 @@ begin
 end;
 
 procedure TBoldDirtyObjectTracker.DiscardChanges;
-var
-  i: integer;
-  BoldObject: TBoldObject;
 begin
   if fBoldSystem.InTransaction then
     raise EBold.CreateFmt('%s.DiscardChanges: System is in transaction, discard not allowed.', [ClassName]);
   while not fDirtyObjects.Empty do
-  begin
-    i := fDirtyObjects.Count;
-    BoldObject := fDirtyObjects.Last;
-    BoldObject.Discard;
-    if i = fDirtyObjects.Count then
-      if not BoldObject.BoldDirty then
-        fBoldSystem.MarkObjectClean(BoldObject);
-  end;
+    (fDirtyObjects.Last as TBoldObject).Discard;
 end;
 
 function TBoldDirtyObjectTracker.GetDirtyObjects: TBoldObjectList;
@@ -1655,7 +1638,7 @@ begin
     begin
       // this is needed to catch the case when member becomes clean and thus object also becomes clean
       // which is only the case if there are no other dirty members, which we check via BoldObject.MemberModified
-      if not fDirtyObjects.Empty and not BoldObject.BoldObjectIsNew and fBoldSystem.DirtyObjectsInvalid then
+      if not BoldObject.BoldObjectIsNew and fBoldSystem.DirtyObjectsInvalid then
       begin
         if not BoldObject.MemberModifiedKnown then
           BoldObject.CalculateMemberModified;
@@ -1671,7 +1654,7 @@ begin
     begin
       // When object is deleted and then written to db then beLocatorDestroying is sent which removes object from dirty list automatically
       // in this case the call to Remove will do nothing since it's already removed, and we check for this via InDelayDestructionList, to avoid needless call to remove.
-      if not fDirtyObjects.Empty and not BoldObject.InDelayDestructionList then
+      if not BoldObject.InDelayDestructionList then
         fDirtyObjects.Remove(BoldObject, false);
     end;
   end;
@@ -1684,11 +1667,6 @@ begin
   for i := fDirtyObjects.Count-1 downto 0 do
     if not fDirtyObjects[i].BoldDirty then
       fDirtyObjects.RemoveByIndex(i);
-end;
-
-procedure TBoldDirtyObjectTracker.ClearObjects;
-begin
-  fDirtyObjects.Clear;
 end;
 
 procedure TBoldDirtyObjectTracker.StartTracking;
@@ -2218,7 +2196,7 @@ end;
 
 function TBoldObject.GetBoldMemberCount: Integer;
 begin
-  Result := BoldClassTypeInfo.AllMembersCount;
+  Result := BoldClassTypeInfo.AllMembers.Count;
 end;
 
 function TBoldObject.GetBoldMemberAssigned(Index: integer): Boolean;
@@ -2396,11 +2374,11 @@ begin
     begin
       fDirtyObjects.Add(BoldObject);
       BoldObject.InDirtyList := True;
+      BoldObject.SendExtendedEvent(beObjectBecomingDirty, [BoldObject]);
+      if not DirtyObjectsInvalid then
+        SendExtendedEvent(beDirtyListInvalidOrItemDeleted, [BoldObject]);
     end;
-    BoldObject.SendExtendedEvent(beObjectBecomingDirty, [BoldObject]);
-    if not DirtyObjectsInvalid then
-      SendExtendedEvent(beDirtyListInvalidOrItemDeleted, [BoldObject]);
-    end;
+  end;
 end;
 
 procedure TBoldSystem.MarkObjectClean(BoldObject: TBoldObject); {called by TBoldObject}
@@ -2542,12 +2520,6 @@ procedure TBoldSystem.UpdateDatabaseWithList(ObjectList: TBoldObjectList);
 begin
   if IsUpdatingDatabase then
     raise EBold.CreateFmt(sUpdateDbRentry, []);
-  if BoldSystemCount > 1 then
-  begin
-    for var BO in ObjectList do
-      if BO.BoldSystem <> self then
-        raise EBold.CreateFmt(sObjectFromAnotherSystem, [classname, 'UpdateDatabaseWithList']);
-  end;
   SystemPersistenceHandler.UpdateDatabaseWithList(ObjectList);
   if (DirtyObjects.Count > 0) then
     fOldValueHandler.PurgeEqualValues
@@ -2685,31 +2657,19 @@ begin
   result.DuplicateMode := bldmMerge;
 end;
 
-function TBoldSystem.GetDirtyObjectsAsBoldList(AClassType: TBoldClassTypeInfo): TBoldObjectList;
-var
-  i: integer;
-begin
-  if not Assigned(AClassType) then
-    AClassType := BoldSystemTypeInfo.RootClassTypeInfo;
-  result := TBoldObjectList.CreateWithTypeInfo(AClassType);
-  result.DuplicateMode := bldmAllow;
-  result.SubscribeToObjectsInList := false;
-  with result.ObjectListController, GetDirtyObjects do
-    for I := 0 to Count - 1 do
-      if TBoldObject(Items[i]).BoldType = AClassType then
-        AddLocator(TBoldObject(Items[i]).BoldObjectLocator);
-  result.DuplicateMode := bldmMerge;
-end;
-
 function TBoldSystem.GetDirtyObjectsAsBoldListByClassExpressionName(
   const AClass: string): TBoldObjectList;
 var
   ClassTypeInfo: TBoldClassTypeInfo;
+  AClassType: TBoldObjectClass;
 begin
   result := nil;
   ClassTypeInfo := BoldSystemTypeInfo.ClassTypeInfoByExpressionName[AClass];
   if Assigned(ClassTypeInfo) then
-    result := GetDirtyObjectsAsBoldList(ClassTypeInfo);
+  begin
+    AClassType := TBoldObjectClass(ClassTypeInfo.ObjectClass);
+    result := GetDirtyObjectsAsBoldList(AClassType);
+  end;
 end;
 
 function TBoldSystem.GetAllDirtyObjectsAsBoldList: TBoldObjectList;
@@ -2837,7 +2797,7 @@ begin
     // If we got an exception duriung destoy, we might get an half uninitialized BoldObject without Locator next time.
     if Assigned(aLocator) then //PATCH
     begin
-      TBoldClassListController(Classes[aLocator.BoldClassTypeInfo.TopSortedIndex].ObjectListController).ReceiveClassEvent(BoldObject, beLocatorDestroying, [aLocator]);
+      TBoldClassListController(Classes[aLocator.BoldClassTypeInfo.TopSortedIndex].ObjectListController).ReceiveClassEvent(BoldObject, beLocatorDestroying);
       SendExtendedEvent(beLocatorDestroying, [aLocator]);
       aLocator.UnloadBoldObject;
       Locators.Remove(aLocator);
@@ -2856,22 +2816,22 @@ procedure TBoldSystem.ReceiveEventFromOwned(originator: TObject;
 var
   ClassList: TBoldObjectList;
 begin
-  if Assigned(fClasses) then
+  if (originalEvent in [beObjectCreated, beObjectDeleted, beObjectFetched, beObjectUnloaded, beCompleteModify])
+     and (originator is TBoldObject) then
   begin
-    ClassList := nil;
-    if (originator is TBoldMember) then
+    if originalEvent in [beObjectCreated, beObjectDeleted, beObjectFetched, beObjectUnloaded] then
     begin
-      if not Assigned(TBoldMember(Originator).OwningObject) then
-        exit;
-      ClassList := Classes[TBoldMember(Originator).OwningObject.BoldClassTypeInfo.TopSortedIndex];
-    end
-    else
-    if (originator is TBoldObject) then
       ClassList := Classes[TBoldObject(Originator).BoldClassTypeInfo.TopSortedIndex];
-    TBoldClassListController(ClassList.ObjectListController).ReceiveClassEvent(Originator as TBoldDomainElement, OriginalEvent, Args);
+      Assert(ClassList.ObjectListController is TBoldClassListController);
+      TBoldClassListController(ClassList.ObjectListController).ReceiveClassEvent(TBoldObject(Originator), OriginalEvent);
+    end;
+    SendExtendedEvent(originalEvent, [originator]);
+  end
+  else
+{$IFDEF BoldSystemBroadcastMemberEvents}
     if (originalEvent in beBroadcastMemberEvents) and ((Originator is TBoldObject) or (Originator is TBoldMember) and (TBoldMember(Originator).OwnedByObject)) then
       Publisher.SendExtendedEvent(Originator, originalEvent, Args);
-  end;
+{$ENDIF}
 end;
 
 procedure TBoldSystem.ReceiveFromPersistenceController(Originator: TObject;
@@ -3865,9 +3825,11 @@ begin
   if (BoldExistenceState = besExisting) and
      (originalEvent in beValueEvents) then
     SendExtendedEvent(beMemberChanged, [Originator]);
+{$IFDEF BoldSystemBroadcastMemberEvents}
   if (BoldExistenceState = besExisting) and
      (originalEvent in beBroadcastMemberEvents) then
     BoldSystem.ReceiveEventFromOwned(Originator, OriginalEvent, Args); // broadcast member events through BoldSystem
+{$ENDIF}
 end;
 
 function TBoldObject.ReceiveQueryFromOwned(Originator: TObject;
@@ -4009,7 +3971,7 @@ var
   MemberRTInfo: TBoldmemberRTInfo;
 begin
   Result := True;
-  for I := 0 to BoldClassTypeInfo.AllMembersCount - 1 do
+  for I := 0 to BoldClassTypeInfo.AllMembers.Count - 1 do
   begin
     MemberRTInfo := BoldClassTypeInfo.AllMembers[i];
     if (I <> index) and not MemberRTInfo.IsDerived then
@@ -4369,13 +4331,8 @@ begin
   else
     SetBoldPersistenceState(bvpsTransient);
   try
-    IsCreating := true;
-    try
-      CompleteCreate;
-      SendEvent(beCompleteModify);
-    finally
-      IsCreating := false;
-    end;
+    CompleteCreate;
+    SendEvent(beCompleteModify);
   except
     SetBoldExistenceState(besNotCreated);
     SetBoldPersistenceState(bvpsCurrent);
@@ -4933,7 +4890,7 @@ begin
   if BoldDirty then
     raise EBold.CreateFmt(sCannotInvalidateDirtyObject, [classname]);
 
-  for i := 0 to BoldClassTypeInfo.AllMembersCount - 1 do
+  for i := 0 to BoldClassTypeInfo.AllMembers.Count - 1 do
     if BoldClassTypeInfo.AllMembers[i].Persistent and BoldMembers[i].BoldPersistent then
       BoldMembers[i].Invalidate;
 
@@ -5401,11 +5358,6 @@ function TBoldMember.StartModify: Boolean;
 begin
   if not (BoldPersistenceState in [bvpsCurrent, bvpsModified, bvpsTransient, bvpsInvalid]) then
     StateError('StartModify');
-  if IsInitializing then
-  begin
-    result := true;
-    exit;
-  end;
   result := CanModify;
   if result and assigned(BoldSystem) and assigned(OwningObject) and
      assigned(BoldSystem.PessimisticLockHandler) and
@@ -5461,11 +5413,8 @@ begin
 {$ENDIF}
   if Derived and not (DeriverState in bdsIsDeriving) then
     Deriver.ReverseDerive;
-  if not IsInitializing then
-  begin
-    CompleteModify;
-    SendExtendedEvent(beCompleteModify, [self]);
-  end;
+  CompleteModify;
+  SendExtendedEvent(beCompleteModify, [self]);
   if OwnedByObject then
   begin
     System.AddToTransaction(OwningObject);
@@ -5930,15 +5879,17 @@ begin
 {$ENDIF}
     case BoldPersistenceState of
       bvpsModified: begin
+
         if not OwningObject.BoldObjectLocator.BoldObjectID.IsStorable then
           BoldPersistenceState := bvpsCurrent
         else
           BoldPersistenceState := bvpsInvalid;
+
         FreeContent;
         SendEvent(beValueInvalid);
       end;
-      bvpsTransient: if not Derived and mutable and not OwningObject.Discarding then
-        DoSetInitialValue;
+      bvpsTransient: if not Derived and mutable then
+       DoSetInitialValue;
     end;
   end;
 end;
@@ -7367,7 +7318,7 @@ begin
     begin
       s := Elements[i].StringRepresentation[Representation];
       if AIncludeType then
-       s := Elements[i].DebugInfo + ':' + s;
+       s := Elements[i].ClassName + ':' + s;
     end
     else
       s := 'nil';
@@ -8298,18 +8249,6 @@ procedure TBoldObjectList.FreeData;
 begin
 end;
 
-function TBoldObjectList.GetEvaluator: TBoldEvaluator;
-begin
-  result := nil;
-  if IsPartOfSystem then
-    result := BoldSystem.Evaluator
-  else
-  if not Empty then
-    result := Locators[0].BoldSystem.Evaluator
-  else
-    result := inherited GetEvaluator;
-end;
-
 function TBoldObjectList.ObserverMayModify(Observer: TObject): Boolean;
 begin
   result := inherited ObserverMayModify(Observer) and
@@ -8883,9 +8822,6 @@ begin
   if vCount = 0 then
     exit;
   x := RestrictRange(FromIndex, 0, vCount - 1);
-  if ToIndex = -1 then
-    y := vCount - 1
-  else
   y := RestrictRange(ToIndex, 0, vCount - 1);
   CheckObjects(x,y);
 end;
@@ -9261,18 +9197,6 @@ end;
 constructor TBoldListController.Create(OwningList: TBoldList);
 begin
   fOwningList := OwningList;
-end;
-
-function TBoldListController.AssertIntegrity: Boolean;
-var
-  i: integer;
-begin
-  for i := 0 to Count-1 do
-  begin
-    self[i].DebugInfo;
-    Assert(self[i] is TBoldElement);
-  end;
-  result := true;
 end;
 
 function TBoldListController.CreateNew: TBoldElement;
@@ -9917,21 +9841,16 @@ procedure TBoldSystem_Proxy.ApplytranslationList(
 var
   I: Integer;
   Locator: TBoldObjectLocator;
-  Id: TBoldObjectId;
 begin
   if IdTranslationList.Count = 0 then
     exit;
   for I := 0 to IdTranslationList.Count - 1 do
   begin
-    Id := IdTranslationList.OldIDs[I];
-    if Assigned(Id) then
+    if Assigned(IdTranslationList.OldIDs[I]) then
     begin
-      Locator := ProxedSystem.Locators.LocatorByID[Id];
-      if not Assigned(Locator) then
-        raise EBoldInternal.CreateFmt(sLocatorNotFound, [ClassName, 'ApplytranslationList', Id.AsString]);
-      Id := IdTranslationList.NewIDs[I];
-      if Assigned(Id) then
-        ProxedSystem.Locators.UpdateId(Locator, Id)
+      Locator := ProxedSystem.Locators.LocatorByID[IdTranslationList.OldIDs[I]];
+      if Assigned(IdTranslationList.NewIDs[I]) then
+        ProxedSystem.Locators.UpdateId(Locator, IdTranslationList.NewIds[i])
     end
     else
     begin
@@ -10592,7 +10511,7 @@ end;
 
 procedure TBoldTransactionHandler.BeforeDestruction;
 begin
-  if CanCommitOrRollback then
+  if CanCommitOrRollback then  
     Rollback;
   inherited;
 end;

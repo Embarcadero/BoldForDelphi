@@ -201,15 +201,13 @@ begin
       AddViolation(sError, Element, ErrorHeader + Format(' Type mismatch: Expected %s got %s', [ElementTypeInfo.ExpressionName, Result.ExpressionName]));
 end;
 
-type TBoldModelAccess = class(TBoldModel);
-
 procedure TOCLValidityChecker.ValidateModel(BoldModel: TBoldModel);
 var
   i: integer;
 begin
   fBoldModel := BoldModel;
   fUMLModel := BoldModel.EnsuredUMLModel;
-  TBoldModelAccess(BoldModel).StartValidation;
+  BoldModel.StartValidation;
   BoldLog.StartLog('Validating OCL in model');
   try
     fSystemTypeInfo := ExtractSystemTypeInfo(BoldModel);
@@ -219,7 +217,7 @@ begin
     for i := 0 to UMLModel.associations.Count - 1 do
       ValidateAssociation(UMLModel.associations[i]);
   finally
-    TBoldModelAccess(BoldModel).EndValidation;
+    BoldModel.EndValidation;
     BoldLog.EndLog;
   end;
 end;

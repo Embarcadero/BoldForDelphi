@@ -64,7 +64,7 @@ type
     procedure EnableNextBtn(const Enable: Boolean);
   public
     { Public declarations }
-    constructor create(AOwner: TComponent); override;
+    constructor Create(AOwner: TComponent); override;
     procedure AssignParent(aParent: TWinControl);
     procedure ClearParent;
     procedure Initialize;

@@ -47,7 +47,7 @@ type
     procedure UpdateIcon;
     function GetTreeView: TBoldTreeViewCom;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     function ExistsInParent: Boolean;
     property Follower: TBoldFollowerCom read FFollower write FFollower;
     property NodeDescription: TBoldNodeDescriptionCom read GetNodeDescription;
@@ -1170,7 +1170,7 @@ begin
   end;
 end;
 
-destructor TBoldTreeNodeCom.destroy;
+destructor TBoldTreeNodeCom.Destroy;
 begin
   inherited;
   if TreeView.fLastSelectedNode = self then

@@ -163,10 +163,8 @@ end;
 procedure TBoldDbValidatorPlugIn.ExecuteValidator(Validator: TBoldDbValidator; context: IUMLModelPlugInContext);
 begin
   Validator.PersistenceHandle := GetValidPersistenceHandle(context);
-  Validator.Execute;
-
-//  if Validator.Execute then
-//    ShowMessage('Database validated OK');
+  if Validator.Execute then
+    ShowMessage('Database validated OK');
 end;
 
 function TBoldDbValidatorPlugIn.GetOptions: TBoldUMLPluginOptions;

@@ -1,5 +1,4 @@
 object dmModelEdit: TdmModelEdit
-  OldCreateOrder = True
   Height = 226
   Width = 202
   object bmlUMLModel: TBoldModel
@@ -8953,7 +8952,7 @@ object dmModelEdit: TdmModelEdit
     Top = 72
   end
   object bshUMLModel: TBoldSystemHandle
-    IsDefault = True
+    IsDefault = False
     SystemTypeInfoHandle = BoldSystemTypeInfoHandle1
     Active = False
     Left = 64

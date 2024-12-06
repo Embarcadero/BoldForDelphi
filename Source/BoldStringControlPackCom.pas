@@ -77,7 +77,7 @@ type
     function IsChanged(RendererData: TBoldStringRendererDataCom; NewValue: string; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList): Boolean;
     procedure SetFont(Element: IBoldElement; EffectiveFont, Font: TFont; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
     procedure SetColor(Element: IBoldElement; var EffectiveColor: TColor; Color: TColor; Representation: TBoldRepresentation; Expression: TBoldExpression; VariableList: IBoldExternalVariableList);
-    procedure MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
+    procedure MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber); override;
     procedure MultiMakeUpToDateAndSubscribe(Elements: TBoldClientableListCom; Subscribers: TBoldObjectArray; RendererData: TBoldObjectArray; FollowerController: TBoldFollowerControllerCom);
     procedure DefaultMakeUptodateAndSetMayModifyAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldStringFollowerControllerCom; Subscriber: TBoldComClientSubscriber); virtual;
   published
@@ -273,7 +273,7 @@ begin
   DrawStringOnCanvas(Canvas, Rect, Alignment, Margins, TBoldStringRendererDataCom(Follower.RendererData).CurrentStringValue);
 end;
 
-procedure TBoldAsStringRendererCom.MakeUpToDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
+procedure TBoldAsStringRendererCom.MakeUptoDateAndSubscribe(Element: IBoldElement; RendererData: TBoldFollowerDataCom; FollowerController: TBoldFollowerControllerCom; Subscriber: TBoldComClientSubscriber);
 var
   S: string;
 begin

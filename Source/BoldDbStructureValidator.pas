@@ -15,20 +15,9 @@ type
 
   { TBoldDbStructureValidator }
   TBoldDbStructureValidator = class(TBoldDbValidator)
-  protected
-    procedure DeActivate; override;
-    function CreateValidatorThread: TBoldDbValidatorThread; override;
-  public
-    destructor Destroy; override;
-    procedure Validate; override;
-  end;
-
-  { TBoldDbStructureValidatorThread }
-  TBoldDbStructureValidatorThread = class(TBoldDbValidatorThread)
   private
     fCurrentTable: IBoldTable;
     function GetCurrentTable: IBoldTable;
-    procedure DeActivate;
   protected
     procedure ValidateColumn(BoldSQLColumnDescription: TBoldSQLColumnDescription);
     procedure ValidateColumnsForTable(BoldSQLTableDescription: TBoldSQLTableDescription);
@@ -36,9 +25,9 @@ type
     procedure FindExtraIndiciesForTable(BoldSQLTableDescription: TBoldSQLTableDescription);
     procedure ValidateIndex(BoldSQLIndexDescription: TBoldSQLIndexDescription);
     procedure ValidateTable(BoldSQLTableDescription: TBoldSQLTableDescription);
+    procedure DeActivate; override;
     property CurrentTable: IBoldTable read GetCurrentTable;
   public
-    constructor Create(AValidator: TBoldDbValidator); override;
     destructor Destroy; override;
     procedure Validate; override;
   end;
@@ -57,43 +46,82 @@ uses
   BoldSQlMappingInfo,
   BoldPMappersDefault,
   BoldPMappersSQL,
-  BoldPMappers,
-  Winapi.ActiveX,
-  System.TimeSpan;
+  BoldPMappers;
 
 { TBoldDbStructureValidator }
-
-procedure TBoldDbStructureValidatorThread.Validate;
+procedure TBoldDbStructureValidator.Validate;
 var
-  Table: TBoldSQLTableDescription;
+  i: integer;
+  QueryRes: TBoldQueryResult;
+  MappingInfo: TBoldSQLMappingInfo;
+  PMapper: TBoldSystemDefaultMapper;
+  ObjectMapper: TBoldObjectPersistenceMapper;
+  MappingsAdded: Boolean;
 begin
-  fCurrentTable := Database.GetTable;
   try
-    repeat
-      var vObject := Validator.TableQueue.Dequeue;
-      if not Assigned(vObject) then
-        break;
-      Assert(vObject is TBoldSQLTableDescription, vObject.Classname);
-      Table := vObject as TBoldSQLTableDescription;
-      if not Assigned(Table) then
-        break;
-      if DoCheckStop then exit;
-      BoldLog.LogHeader := Format(sCheckingTable, [Table.SQLName]);
-//      BoldLog.ProgressStep;
-      ValidateTable(Table);
-    until Validator.TableQueue.Empty;
+    BoldLog.LogHeader := 'Opening database';
+    PMapper := PersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
+    MappingInfo := PMapper.MappingInfo;
+    PersistenceHandle.DataBaseInterface.Open;
+
+    BoldLog.LogHeader := 'Reading mapping from database';
+    MappingInfo.ReadDataFromDB(PersistenceHandle.DataBaseInterface, true, true);
+    MappingsAdded := false;
+    QueryRes := qrNo;
+    BoldLog.ProgressMax := PMapper.ObjectPersistenceMappers.Count - 1;
+
+    for i := 0 to PMapper.ObjectPersistenceMappers.Count - 1 do
+    begin
+      BoldLog.Progress := i;
+      ObjectMapper := PMapper.ObjectPersistenceMappers[i];
+      if Assigned(ObjectMapper) then
+      begin
+        BoldLog.LogHeader := 'Reading mapping for: ' + ObjectMapper.ExpressionName;
+        if MappingInfo.GetDbTypeMapping(ObjectMapper.ExpressionName) = NO_CLASS then
+        begin
+          if QueryRes <> qrYesAll then
+            QueryRes := QueryUser(sMissingID, format(sAnIDWasMissing, [ObjectMapper.ExpressionName]));
+
+          if QueryRes in [qrYesAll, qrYes] then
+          begin
+            MappingInfo.AddTypeIdMapping(ObjectMapper.ExpressionName, MappingInfo.HighestUsedDbType+1);
+            MappingsAdded := true;
+          end
+          else
+            exit;
+        end;
+      end; // PMapper.ObjectPersistenceMappers[i] = nil ??? /FRHA
+    end;
+    if MappingsAdded then
+      MappingInfo.WriteDataToDB(PersistenceHandle.DataBaseInterface);
   finally
-    Database.ReleaseTable(fCurrentTable);
+    PersistenceHandle.DataBaseInterface.Close;
+  end;
+  PersistenceHandle.Active := false;
+  PersistenceHandle.Active := true;
+  try
+    BoldLog.ProgressMax := SystemSQLMapper.AllTables.count - 1;
+    for i := 0 to SystemSQLMapper.AllTables.count - 1 do
+    begin
+      BoldLog.LogHeader := Format(sCheckingTable, [SystemSQLMapper.AllTables[i].SQLName]);
+      BoldLog.Progress := i;
+      ValidateTable(SystemSQLMapper.AllTables[i]);
+    end;
+    BoldLog.LogHeader := '';
+  finally
+    PersistenceHandle.Active := false;
   end;
 end;
 
-procedure TBoldDbStructureValidatorThread.ValidateColumnsForTable(BoldSQLTableDescription: TBoldSQLTableDescription);
+procedure TBoldDbStructureValidator.ValidateColumnsForTable(BoldSQLTableDescription: TBoldSQLTableDescription);
+var
+  i: integer;
 begin
-  for var ColumnDescription in BoldSQLTableDescription.ColumnsList do
-    ValidateColumn(ColumnDescription as TBoldSQlColumnDescription);
+  for i := 0 to BoldSQLTableDescription.ColumnsList.count - 1 do
+    ValidateColumn(BoldSQLTableDescription.ColumnsList[i] as TBoldSQlColumnDescription);
 end;
 
-procedure TBoldDbStructureValidatorThread.ValidateColumn(
+procedure TBoldDbStructureValidator.ValidateColumn(
   BoldSQLColumnDescription: TBoldSQLColumnDescription);
 var
   aQuery: IBoldQuery;
@@ -106,9 +134,9 @@ const
 begin
   TableName := BoldSQLColumnDescription.tableDescription.SQLName;
   ColumnName := BoldSQLColumnDescription.SQLName;
-  aQuery := Database.GetQuery;
+  aQuery := SystemSQLMapper.GetQuery;
   try
-    aQuery.AssignSQLText(Database.SQLDataBaseConfig.GetColumnExistsQuery(TableName, ColumnName));
+    aQuery.AssignSQLText(SystemSQLMapper.SQLDataBaseConfig.GetColumnExistsQuery(TableName, ColumnName));
     aQuery.Open;
     bColumnExists := aQuery.RecordCount = 1;
     aQuery.Close;
@@ -132,13 +160,13 @@ begin
       end;
     end;
   finally
-    Database.ReleaseQuery(aQuery);
+    SystemSQLMapper.ReleaseQuery(aQuery);
   end;
 
   if not bColumnExists then begin
     BoldLog.LogFmt(sColumnMissing,
                    [Tablename, ColumnName, BoldSQLColumnDescription.SQLType], ltWarning);
-    AddRemedy(format('alter table %s add %s %s %s;', [TableName, ColumnName,
+    Remedy.add(format('alter table %s add %s %s %s;', [TableName, ColumnName,
         BoldSQLColumnDescription.SQLType, BoldSQLColumnDescription.SQLAllowNull])); // do not localize
   end else if BoldSQLColumnDescription.Mandatory then begin
     // Moved to BoldDbDataValidator
@@ -146,7 +174,7 @@ begin
   end;
 end;
 
-procedure TBoldDbStructureValidatorThread.ValidateIndex(
+procedure TBoldDbStructureValidator.ValidateIndex(
   BoldSQLIndexDescription: TBoldSQLIndexDescription);
 var
   i,j: Integer;
@@ -182,7 +210,7 @@ begin
     isMultiIndex := aIndexFields.Count > 1;
     for i := 0 to aIndexFields.Count - 1 do
     begin
-      aQuery.AssignSQLText(Database.SQLDataBaseConfig
+      aQuery.AssignSQLText(SystemSQLMapper.SQLDataBaseConfig
           .GetIndexColumnExistsQuery(sTableName, Trim(aIndexFields[i])));
       aQuery.Open;
       NameField := aQuery.FieldByName(cIndexNameColumn);
@@ -224,21 +252,25 @@ begin
   begin
     BoldLog.LogFmt(sIndexMissing, [sTableName, sIndexFields], ltWarning);
     if BoldPSDescriptionsSQL.ixPrimary in BoldSQLIndexDescription.IndexOptions then
-      AddRemedy(Format('alter table %s add %s', [sTableName,
+      Remedy.Add(Format('alter table %s add %s', [sTableName,
           BoldSQLIndexDescription.SQLForPrimaryKey])) // do not localize
     else
-      AddRemedy(BoldSQLIndexDescription.SQLForSecondaryKey);
+      Remedy.Add(BoldSQLIndexDescription.SQLForSecondaryKey);
   end;
 end;
 
-procedure TBoldDbStructureValidatorThread.ValidateIndicesForTable(
+procedure TBoldDbStructureValidator.ValidateIndicesForTable(
   BoldSQLTableDescription: TBoldSQLTableDescription);
+var
+  i: integer;
 begin
-  for var LIndexDescription in BoldSQLTableDescription.IndexList do
-    ValidateIndex(LIndexDescription as TBoldSQLIndexDescription);
+  for i := 0 to BoldSQLTableDescription.IndexList.count - 1 do
+  begin
+    ValidateIndex(BoldSQLTableDescription.IndexList[i] as TBoldSQLIndexDescription);
+  end;
 end;
 
-procedure TBoldDbStructureValidatorThread.ValidateTable(
+procedure TBoldDbStructureValidator.ValidateTable(
   BoldSQLTableDescription: TBoldSQLTableDescription);
 var
   TableName: string;
@@ -255,18 +287,18 @@ begin
   else
   begin
     BoldLog.LogFmt(sTableDoesNotExist, [BoldSQLTableDescription.MappedSQLName(BoldSQLTableDescription.SQLNameUpper)], ltWarning);
-    AddRemedy(BoldSQLTableDescription.sqlforCreateTable(DataBase));
+    remedy.Add(BoldSQLTableDescription.sqlforCreateTable(DataBase));
   end;
 end;
 
-destructor TBoldDbStructureValidatorThread.destroy;
+destructor TBoldDbStructureValidator.destroy;
 begin
   if assigned(fCurrentTable) then
     DataBase.ReleaseTable(fCurrentTable);
   inherited;
 end;
 
-procedure TBoldDbStructureValidatorThread.FindExtraIndiciesForTable(
+procedure TBoldDbStructureValidator.FindExtraIndiciesForTable(
   BoldSQLTableDescription: TBoldSQLTableDescription);
 
   function SameFields(const s1, s2: String): boolean;
@@ -308,98 +340,19 @@ begin
       BoldLog.LogFmt('Extra Index: %s(%s)', [BoldSQLTableDescription.SQLName, IndexDefs[i].IndexedColumns], ltWarning);
 end;
 
-function TBoldDbStructureValidatorThread.GetCurrentTable: IBoldTable;
+function TBoldDbStructureValidator.GetCurrentTable: IBoldTable;
 begin
   if not assigned(fCurrentTable) then
     fCurrentTable := DataBase.GetTable;
   result := fCurrentTable;
 end;
 
-constructor TBoldDbStructureValidatorThread.Create(AValidator: TBoldDbValidator);
-begin
-  inherited;
-
-end;
-
-procedure TBoldDbStructureValidatorThread.DeActivate;
+procedure TBoldDbStructureValidator.DeActivate;
 begin
   if assigned(fCurrentTable) then
     DataBase.ReleaseTable(fCurrentTable);
 
   inherited;
-end;
-
-{ TBoldDbStructureValidator }
-
-procedure TBoldDbStructureValidator.DeActivate;
-begin
-
-end;
-
-destructor TBoldDbStructureValidator.Destroy;
-begin
-
-  inherited;
-end;
-
-procedure TBoldDbStructureValidator.Validate;
-var
-  i: integer;
-  QueryRes: TBoldQueryResult;
-  MappingInfo: TBoldSQLMappingInfo;
-  PMapper: TBoldSystemDefaultMapper;
-  ObjectMapper: TBoldObjectPersistenceMapper;
-  MappingsAdded: Boolean;
-  CurrentTable: IBoldTable;
-begin
-  BoldLog.LogHeader := 'Opening database';
-  PMapper := PersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
-  MappingInfo := PMapper.MappingInfo;
-  Database.Open;
-
-  BoldLog.LogHeader := 'Reading mapping from database';
-  MappingInfo.ReadDataFromDB(DataBase, true, true);
-  MappingsAdded := false;
-  QueryRes := qrNo;
-  BoldLog.ProgressMax := PMapper.ObjectPersistenceMappers.Count - 1;
-
-  for i := 0 to PMapper.ObjectPersistenceMappers.Count - 1 do
-  begin
-    if DoCheckStop then exit;
-//    BoldLog.Progress := i;
-    ObjectMapper := PMapper.ObjectPersistenceMappers[i];
-    if Assigned(ObjectMapper) then
-    begin
-//      BoldLog.LogHeader := 'Reading mapping for: ' + ObjectMapper.ExpressionName;
-      if MappingInfo.GetDbTypeMapping(ObjectMapper.ExpressionName) = NO_CLASS then
-      begin
-        if QueryRes <> qrYesAll then
-          QueryRes := QueryUser(sMissingID, format(sAnIDWasMissing, [ObjectMapper.ExpressionName]));
-
-        if QueryRes in [qrYesAll, qrYes] then
-        begin
-          MappingInfo.AddTypeIdMapping(ObjectMapper.ExpressionName, MappingInfo.HighestUsedDbType+1);
-          MappingsAdded := true;
-        end
-        else
-          exit;
-      end;
-    end; // PMapper.ObjectPersistenceMappers[i] = nil ??? /FRHA
-  end;
-  if MappingsAdded then
-    MappingInfo.WriteDataToDB(Database);
-
-  PersistenceHandle.Active := false;
-  PersistenceHandle.Active := true;
-
-  for i := 0 to SystemSQLMapper.AllTables.Count -1 do
-    TableQueue.Enqueue(SystemSQLMapper.AllTables[i]);
-  inherited;
-end;
-
-function TBoldDbStructureValidator.CreateValidatorThread: TBoldDbValidatorThread;
-begin
-  result := TBoldDbStructureValidatorThread.Create(self);
 end;
 
 end.

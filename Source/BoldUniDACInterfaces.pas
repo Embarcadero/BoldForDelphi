@@ -261,7 +261,7 @@ uses
   AttracsDefs,
   AttracsPerformance,
   AttracsTraceLog,
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   BoldSystemPerf,
   {$ENDIF}
   {$ENDIF}
@@ -484,7 +484,7 @@ begin
       end;
     end;
   {$IFDEF ATTRACS}
-    {$IFNDEF NO_PERFORMANCE_COUNTERS}
+    {$IFDEF BOLD_PERFORMANCE_COUNTERS}
     PerformanceMeasurement.EndMeasurement;
     BoldSystemPerfObject.BoldDBXQuery_ExecSQL(PerformanceMeasurement.TimeTaken);
     {$ENDIF}
@@ -574,7 +574,7 @@ begin
     end;
   end;
 {$IFDEF ATTRACS}
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   PerformanceMeasurement.EndMeasurement;
   BoldSystemPerfObject.BoldDBXQuery_Open(PerformanceMeasurement.TimeTaken);
   {$ENDIF}
@@ -1622,7 +1622,7 @@ begin
     end;
   end;
 {$IFDEF ATTRACS}
-  {$IFNDEF NO_PERFORMANCE_COUNTERS}
+  {$IFDEF BOLD_PERFORMANCE_COUNTERS}
   PerformanceMeasurement.EndMeasurement;
   BoldSystemPerfObject.BoldDBXQuery_ExecSQL(PerformanceMeasurement.TimeTaken);
   {$ENDIF}

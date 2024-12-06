@@ -743,7 +743,6 @@ begin
     end;
   end;
   fCount := 0;
-  SetCapacity(0);
 end;
 
 constructor TBoldIntegerIndex.Create;
@@ -816,9 +815,11 @@ end;
 
 function TBoldIntegerIndex.IndexOf(Item: TObject): integer;
 begin
-  Result := FCount-1;
-  while (Result >= 0) and (FObjectStaticArray^[Result] <> Item) do
-    Dec(Result);
+  Result := 0;
+  while (Result < FCount) and (FObjectStaticArray^[Result] <> Item) do
+    Inc(Result);
+  if Result = FCount then
+    Result := -1;
 end;
 
 function TBoldIntegerIndex.Includes(Item: TObject): boolean;
@@ -840,16 +841,14 @@ function TBoldIntegerIndex.Remove(Item: TObject): boolean;
 var
   Index: Integer;
 begin
-  result := false;
-  if FCount > 0 then
+  Index := IndexOf(Item);
+  if Index >= 0 then
   begin
-    Index := IndexOf(Item);
-    if Index >= 0 then
-    begin
-      RemoveByIndex(Index);
-      result := true;
-    end;
-  end;
+    RemoveByIndex(Index);
+    result := true;
+  end
+  else
+    result := false;
 end;
 
 procedure TBoldIntegerIndex.RemoveChanged(Item: TObject);

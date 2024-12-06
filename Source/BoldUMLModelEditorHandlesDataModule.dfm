@@ -1,5 +1,4 @@
 object dmBoldUMLModelEditorHandles: TdmBoldUMLModelEditorHandles
-  OldCreateOrder = False
   OnCreate = DataModuleCreate
   Height = 706
   Width = 1171

@@ -54,14 +54,14 @@ type
     procedure ReadValueSpace; virtual; abstract;
   public
     constructor create(filename: string; CacheData: Boolean; MoldModel: TMoldModel);
-    destructor destroy; override;
+    destructor Destroy; override;
     procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
     procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     procedure PMTranslateToGlobalIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList); override;
-    procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
+    procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     function MultilinksAreStoredInObject: Boolean; override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                     TranslationList: TBoldIdTranslationList); override;
@@ -86,7 +86,7 @@ function TBoldPersistenceControllerFile.CanEvaluateInPS(sOCL: string;
   aSystem: TBoldElement; aContext: TBoldElementTypeInfo;
   const aVariableList: TBoldExternalVariableList): Boolean;
 const
-  sMethodNotImplemented = '%s.%s: not supported/implemented';  
+  sMethodNotImplemented = '%s.%s: not supported/implemented';
 begin
   raise EBold.CreateFmt(sMethodNotImplemented, [ClassName, 'CanEvaluateInPS']); // do not localize
 end;
@@ -206,7 +206,7 @@ end;
 procedure TBoldPersistenceControllerFile.PMUpdate(
   ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
   Old_Values: IBoldValueSpace;
-  Precondition: TBoldUpdatePrecondition; 
+  Precondition: TBoldUpdatePrecondition;
   TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID);
 var
   NewTimeStamp: TDateTime;
@@ -214,7 +214,7 @@ var
 begin
   if assigned(Precondition) then
     raise EBold.CreateFmt('%s.PMUpdate: Preconditions (%s) not supported in this component', [Classname, Precondition.Classname]);
-    
+
   EnsureValueSpace;
 
   if fileexists(Filename) then
@@ -289,7 +289,7 @@ end;
 destructor TBoldPersistenceControllerFile.destroy;
 begin
   FreeAndNil(fFreeStandingValueSpace);
-  inherited; 
+  inherited;
 end;
 
 { TBoldAbstractPersistenceHandleFile }

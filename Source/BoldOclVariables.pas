@@ -135,20 +135,19 @@ type
     fBoldIndirectElement: TBoldIndirectElement;
     fBoldElementTypeInfo: TBoldElementTypeInfo;
     function GetBoldIndirectElement: TBoldIndirectElement;
-    function EnsureEvaluator(AEvaluator: TBoldEvaluator): TBoldEvaluator;
   protected
     function GetValue: TBoldElement; override;
     function GetValueType: TBoldElementTypeInfo; override;
   public
     constructor Create(const aName: string; aValue: TBoldElement{; aOwnsValue: boolean = false}); overload;
-    constructor CreateWithTypeInfo(const aName: string; AValue: TBoldElement; ABoldElementTypeInfo: TBoldElementTypeInfo);
-    constructor CreateFromIndirectElement(const aName: string; ABoldIndirectElement: TBoldIndirectElement);
-    constructor CreateStringVariable(const aName: string; const aValue: string; AEvaluator: TBoldEvaluator = nil);
-    constructor CreateIntegerVariable(const aName: string; const aValue: integer; AEvaluator: TBoldEvaluator = nil);
-    constructor CreateFloatVariable(const aName: string; const aValue: Double; AEvaluator: TBoldEvaluator = nil);
-    constructor CreateDateVariable(const aName: string; const aValue: TDate; AEvaluator: TBoldEvaluator = nil);
-    constructor CreateDateTimeVariable(const aName: string; const aValue: TDateTime; AEvaluator: TBoldEvaluator = nil);
-    constructor CreateTimeVariable(const aName: string; const aValue: TTime; AEvaluator: TBoldEvaluator = nil);
+    constructor CreateWithTypeInfo(const aName: string; AValue: TBoldElement; aBoldElementTypeInfo: TBoldElementTypeInfo);
+    constructor CreateFromIndirectElement(const aName: string; aBoldIndirectElement: TBoldIndirectElement);
+    constructor CreateStringVariable(const aName: string; const aValue: string);
+    constructor CreateIntegerVariable(const aName: string; const aValue: integer);
+    constructor CreateFloatVariable(const aName: string; const aValue: Double);
+    constructor CreateDateVariable(const aName: string; const aValue: TDate);
+    constructor CreateDateTimeVariable(const aName: string; const aValue: TDateTime);
+    constructor CreateTimeVariable(const aName: string; const aValue: TTime);
     destructor Destroy; override;
     property BoldIndirectElement: TBoldIndirectElement read GetBoldIndirectElement;
   end;
@@ -164,8 +163,7 @@ uses
   BoldRootedHandles,
   BoldAbstractListHandle,
   BoldAttributes,
-  BoldUtils,
-  BoldOcl;
+  BoldUtils;
 
 { TBoldOclVariables }
 
@@ -669,10 +667,7 @@ end;
 constructor TBoldHandleBasedExternalVariable.Create(Name: String;
   Handle: TBoldElementHandle; UseListElement: Boolean);
 begin
-  if Assigned(Handle) and Assigned(Handle.BoldSystem) then
-    inherited Create(Handle.BoldSystem.Evaluator , Name)
-  else
-    inherited Create(nil , Name);
+  inherited Create(Name);
   fHandle := Handle;
   fUseListElement := UseListElement;
   fHandleSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveHandleEvent);
@@ -728,7 +723,7 @@ end;
 constructor TBoldOclVariable.Create(const aName: string;
   aValue: TBoldElement{; aOwnsValue: boolean = false});
 begin
-  inherited Create(aValue.Evaluator, aName);
+  inherited Create(aName);
 {  if aOwnsValue then
     BoldIndirectElement.SetOwnedValue(aValue)
   else
@@ -736,90 +731,81 @@ begin
     BoldIndirectElement.SetReferenceValue(aValue);
 end;
 
-constructor TBoldOclVariable.CreateFromIndirectElement(const aName: string;
-  ABoldIndirectElement: TBoldIndirectElement);
-begin
-  inherited Create(ABoldIndirectElement.Value.Evaluator, aName);
-  aBoldIndirectElement.TransferValue(BoldIndirectElement);
-end;
-
-constructor TBoldOclVariable.CreateWithTypeInfo(const aName: string; AValue: TBoldElement;
-  ABoldElementTypeInfo: TBoldElementTypeInfo);
-begin
-  inherited Create(nil, aName);
-  BoldIndirectElement.SetOwnedValue(AValue);
-  fBoldElementTypeInfo := aBoldElementTypeInfo;
-end;
-
-function TBoldOclVariable.EnsureEvaluator(AEvaluator: TBoldEvaluator): TBoldEvaluator;
-begin
-  result := AEvaluator;
-  if not Assigned(AEvaluator) and (TBoldAbstractSystemHandle.DefaultBoldSystemHandle <> nil) and TBoldAbstractSystemHandle.DefaultBoldSystemHandle.Active then
-    result := TBoldAbstractSystemHandle.DefaultBoldSystemHandle.System.Evaluator;
-end;
-
-constructor TBoldOclVariable.CreateStringVariable(const aName, aValue: string; AEvaluator: TBoldEvaluator);
-var
-  vString: TBAString;
-begin
-  AEvaluator := EnsureEvaluator(AEvaluator);
-  inherited Create(AEvaluator, aName);
-  vString := TBAString.CreateWithTypeInfo(TBoldOcl(AEvaluator).StringType);
-  vString.AsString := aValue;
-  BoldIndirectElement.SetOwnedValue(vString);
-end;
-
-constructor TBoldOclVariable.CreateFloatVariable(const aName: string; const aValue: Double; AEvaluator: TBoldEvaluator);
+constructor TBoldOclVariable.CreateFloatVariable(const aName: string;
+  const aValue: Double);
 var
   vFloat: TBAFloat;
 begin
-  AEvaluator := EnsureEvaluator(AEvaluator);
-  inherited Create(AEvaluator, aName);
+  inherited Create(aName);
   vFloat := TBAFloat.Create;
   vFloat.AsFloat := aValue;
   BoldIndirectElement.SetOwnedValue(vFloat);
 end;
 
-constructor TBoldOclVariable.CreateTimeVariable(const aName: string; const aValue: TTime; AEvaluator: TBoldEvaluator);
+constructor TBoldOclVariable.CreateFromIndirectElement(const aName: string;
+  aBoldIndirectElement: TBoldIndirectElement);
+begin
+  inherited Create(aName);
+  aBoldIndirectElement.TransferValue(BoldIndirectElement);
+end;
+
+constructor TBoldOclVariable.CreateWithTypeInfo(const aName: string; AValue: TBoldElement;
+  aBoldElementTypeInfo: TBoldElementTypeInfo);
+begin
+  inherited Create(aName);
+  BoldIndirectElement.SetOwnedValue(AValue);
+  fBoldElementTypeInfo := aBoldElementTypeInfo;
+end;
+
+constructor TBoldOclVariable.CreateStringVariable(const aName, aValue: string);
+var
+  vString: TBAString;
+begin
+  inherited Create(aName);
+  vString := TBAString.Create;
+  vString.AsString := aValue;
+  BoldIndirectElement.SetOwnedValue(vString);
+end;
+
+constructor TBoldOclVariable.CreateTimeVariable(const aName: string;
+  const aValue: TTime);
 var
   vTime: TBATime;
 begin
-  AEvaluator := EnsureEvaluator(AEvaluator);
-  inherited Create(AEvaluator, aName);
-  vTime := TBATime.CreateWithTypeInfo(TBoldOcl(AEvaluator).TimeType);
+  inherited Create(aName);
+  vTime := TBATime.Create;
   vTime.AsTime := aValue;
   BoldIndirectElement.SetOwnedValue(vTime);
 end;
 
-constructor TBoldOclVariable.CreateIntegerVariable(const aName: string; const aValue: integer; AEvaluator: TBoldEvaluator);
+constructor TBoldOclVariable.CreateIntegerVariable(const aName: string; const aValue: integer);
 var
   vInteger: TBAinteger;
 begin
-  AEvaluator := EnsureEvaluator(AEvaluator);
-  inherited Create(AEvaluator, aName);
-  vInteger := TBAInteger.CreateWithTypeInfo(TBoldOcl(AEvaluator).IntegerType);
+  inherited Create(aName);
+  vInteger := TBAinteger.Create;
   vInteger.Asinteger := aValue;
   BoldIndirectElement.SetOwnedValue(vInteger);
 end;
 
-constructor TBoldOclVariable.CreateDateTimeVariable(const aName: string; const aValue: TDateTime; AEvaluator: TBoldEvaluator);
+constructor TBoldOclVariable.CreateDateTimeVariable(const aName: string;
+  const aValue: TDateTime);
 var
   vDateTime: TBADateTime;
 begin
-  AEvaluator := EnsureEvaluator(AEvaluator);
-  inherited Create(AEvaluator, aName);
-  vDateTime := TBADateTime.CreateWithTypeInfo(TBoldOcl(AEvaluator).DateTimeType);
+  inherited Create(aName);
+  vDateTime := TBADateTime.Create;
   vDateTime.AsDateTime := aValue;
   BoldIndirectElement.SetOwnedValue(vDateTime);
 end;
 
-constructor TBoldOclVariable.CreateDateVariable(const aName: string; const aValue: TDate; AEvaluator: TBoldEvaluator);
+constructor TBoldOclVariable.CreateDateVariable(const aName: string;
+  const aValue: TDate);
 var
   vDate: TBADate;
 begin
-  AEvaluator := EnsureEvaluator(AEvaluator);
-  inherited Create(AEvaluator, aName);
-  vDate := TBADate.CreateWithTypeInfo(TBoldOcl(AEvaluator).DateType);
+  inherited Create(aName);
+  vDate := TBADate.Create;
   vDate.AsDate := aValue;
   BoldIndirectElement.SetOwnedValue(vDate);
 end;

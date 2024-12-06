@@ -30,6 +30,7 @@ type
     fUser: string;
     fApplication: string;
     fComputer: string;
+    fModelCRC: string;
     function GetAsString: string;
     procedure SetAsString(const Value: string);
 {$IFDEF CRCOSSMESSAGES}
@@ -43,18 +44,21 @@ type
     constructor Create(
       AMessageType: TBoldOSSMessageType;
       AEvents: string;
+      AModelCRC: string;
       ABoldTimeStamp: TBoldTimeStampType;
       ATimeOfTimeStamp: TDateTimeMS;
       AClientSendTime: TDateTimeMS;
       AUser: string = '';
       AComputer: string = '';
       AApplication: string = ''); overload;
+    constructor Create(AJSON: string); overload;
     destructor Destroy; override;
     function Clone: TBoldOSSMessage;
     property AsString: string read GetAsString write SetAsString;
   published
     property MessageType: TBoldOSSMessageType read fMessageType;
     property Events: string read fEvents;
+    property ModelCRC: string read fModelCRC;
     property BoldTimeStamp: TBoldTimeStampType read fBoldTimeStamp;
     property TimeOfTimeStamp: TDateTimeMS read fTimeOfTimeStamp;
     property ClientSendTime: TDateTimeMS read fClientSendTime;
@@ -115,6 +119,7 @@ begin
   JSONObject := TJSONObject.Create;
   try
     JSONObject.AddPair('MessageType', String((GetEnumName(TypeInfo(TBoldOSSMessageType), Ord(MessageType)))));
+    JSONObject.AddPair('ModelCRC', ModelCRC);
     JSONObject.AddPair('BoldTimeStamp', IntToStr(BoldTimeStamp));
     JSONObject.AddPair('BoldTimeOfTimeStamp', AsISODateTimeMS(TimeOfTimeStamp));
     JSONObject.AddPair('SendTime', AsISODateTimeMS(ClientSendTime));
@@ -159,6 +164,7 @@ begin
       fMessageType := mtFail
     else
       raise Exception.Create('Unknown MessageType');
+    fModelCRC := JSONObject.GetValue('ModelCRC').Value;
     fBoldTimeStamp := StrToInt(JSONObject.GetValue('BoldTimeStamp').Value);
     fTimeOfTimeStamp := ParseISODateTime(JSONObject.GetValue('BoldTimeOfTimeStamp').Value);
     fClientSendTime := ParseISODateTime(JSONObject.GetValue('SendTime').Value);
@@ -180,12 +186,14 @@ begin
 end;
 
 constructor TBoldOSSMessage.Create(AMessageType: TBoldOSSMessageType; AEvents: string;
+  AModelCRC: string;
   ABoldTimeStamp: TBoldTimeStampType; ATimeOfTimeStamp,
   AClientSendTime: TDateTimeMS;
   AUser: string; AComputer: string; AApplication: string);
 begin
   fMessageType := AMessageType;
   fEvents := AEvents;
+  fModelCRC := AModelCRC;
   fBoldTimeStamp := ABoldTimeStamp;
   fTimeOfTimeStamp := ATimeOfTimeStamp;
   fClientSendTime := AClientSendTime;
@@ -201,6 +209,7 @@ begin
   begin
     fMessageType := self.fMessageType;
     fEvents := self.fEvents;
+    fModelCRC := self.fModelCRC;
     fBoldTimeStamp := self.fBoldTimeStamp;
     fTimeOfTimeStamp := self.fTimeOfTimeStamp;
     fClientSendTime := self.fClientSendTime;
@@ -216,6 +225,12 @@ function TBoldOSSMessage.Clone: TBoldOSSMessage;
 begin
   result := TBoldOSSMessage.Create;
   self.AssignTo(result);
+end;
+
+constructor TBoldOSSMessage.Create(AJSON: string);
+begin
+  inherited Create;
+  AsString := AJSon;
 end;
 
 end.

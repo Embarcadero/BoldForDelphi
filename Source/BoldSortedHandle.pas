@@ -5,7 +5,6 @@ unit BoldSortedHandle;
 interface
 
 uses
-  Classes,
   BoldSubscription,
   BoldElements,
   BoldSystem,
@@ -17,7 +16,6 @@ type
   TBoldSortedHandle = class;
 
  { TBoldComparer }
-  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldComparer = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnCompare: TBoldElementCompare;
@@ -54,6 +52,7 @@ implementation
 
 uses
   SysUtils,
+  Classes,
   BoldDefs,
   {$IFDEF ATTRACS}
   AttracsPerformance,

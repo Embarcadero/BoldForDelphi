@@ -1,7 +1,4 @@
 object dmAttributeWizard: TdmAttributeWizard
-  OldCreateOrder = False
-  Left = 226
-  Top = 192
   Height = 480
   Width = 696
   object AttributeWizardMenu: TPopupMenu

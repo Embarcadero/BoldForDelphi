@@ -3,8 +3,8 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
   Top = 187
   HelpContext = 10
   Caption = 'OCL Expression Editor'
-  ClientHeight = 352
-  ClientWidth = 720
+  ClientHeight = 351
+  ClientWidth = 716
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -37,20 +37,20 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object ExpBottomPanel: TPanel
     Left = 0
-    Top = 319
-    Width = 720
+    Top = 318
+    Width = 716
     Height = 33
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 319
+    ExplicitWidth = 720
     object imgModelErrors: TImage
       Left = 8
       Top = 0
@@ -2220,13 +2220,15 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
   object TabControlPanel: TPanel
     Left = 0
     Top = 0
-    Width = 720
-    Height = 319
+    Width = 716
+    Height = 318
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 5
     Caption = 'TabControlPanel'
     TabOrder = 0
+    ExplicitWidth = 720
+    ExplicitHeight = 319
     object SplitterRight: TSplitter
       Left = 489
       Top = 5
@@ -2287,7 +2289,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
               Constraints.MinHeight = 37
               TabOrder = 0
               DesignSize = (
-                250
+                246
                 37)
               object ParserMsg: TLabel
                 Left = 1
@@ -2306,7 +2308,7 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
                 OnClick = SyntaxcbClick
               end
               object Clear: TButton
-                Left = 168
+                Left = 164
                 Top = 4
                 Width = 81
                 Height = 25
@@ -2314,9 +2316,10 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
                 Caption = '&Clear'
                 TabOrder = 1
                 OnClick = ClearClick
+                ExplicitLeft = 168
               end
               object RemoveLast: TButton
-                Left = 76
+                Left = 72
                 Top = 4
                 Width = 81
                 Height = 25
@@ -2324,12 +2327,13 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
                 Caption = '&Remove Last'
                 TabOrder = 0
                 OnClick = RemoveLastClick
+                ExplicitLeft = 76
               end
             end
             object ParserMessages: TMemo
               Left = 0
               Top = 37
-              Width = 250
+              Width = 246
               Height = 77
               TabStop = False
               Align = alClient
@@ -2344,17 +2348,20 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
               ScrollBars = ssBoth
               TabOrder = 1
               WantReturns = False
+              ExplicitWidth = 250
             end
           end
           object EditPanel: TPanel
             Left = 0
             Top = 0
-            Width = 250
-            Height = 161
+            Width = 246
+            Height = 160
             Align = alClient
             BevelOuter = bvNone
             Caption = 'Panel2'
             TabOrder = 1
+            ExplicitWidth = 250
+            ExplicitHeight = 161
             object EditMemo: TMemo
               Left = 0
               Top = 0
@@ -2381,10 +2388,11 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
       Left = 5
       Top = 5
       Width = 220
-      Height = 309
+      Height = 308
       ActivePage = OclVariablesTabSheet
       Align = alLeft
       TabOrder = 1
+      ExplicitHeight = 309
       object OclVariablesTabSheet: TTabSheet
         Caption = 'OCL Variables'
         object pnlOclVariables: TPanel
@@ -2414,13 +2422,15 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
       end
     end
     object ExpressionTypePageControl: TPageControl
-      Left = 495
+      Left = 491
       Top = 5
       Width = 220
-      Height = 309
+      Height = 308
       ActivePage = ExpressionTypeTabSheet
       Align = alRight
       TabOrder = 2
+      ExplicitLeft = 495
+      ExplicitHeight = 309
       object ExpressionTypeTabSheet: TTabSheet
         Caption = 'Available expressions'
         object pnlRightSide: TPanel
@@ -2449,12 +2459,13 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
           end
           object pnlFilterPersistence: TPanel
             Left = 0
-            Top = 264
+            Top = 263
             Width = 212
             Height = 17
             Align = alBottom
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitTop = 264
             object Derivedcb: TCheckBox
               Left = 2
               Top = 0

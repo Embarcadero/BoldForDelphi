@@ -1,10 +1,10 @@
 object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
   Left = 449
   Top = 599
-  Width = 352
-  Height = 355
   BorderIcons = [biSystemMenu]
   Caption = 'Bold Type Name Selector'
+  ClientHeight = 316
+  ClientWidth = 336
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -36,16 +36,14 @@ object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object tvMetaTypes: TTreeView
     Left = 0
     Top = 0
-    Width = 344
-    Height = 287
+    Width = 336
+    Height = 276
     Align = alClient
     HotTrack = True
     Images = ilImages
@@ -59,12 +57,17 @@ object frmBoldTypeNameSelector: TfrmBoldTypeNameSelector
   end
   object pnButtons: TPanel
     Left = 0
-    Top = 287
-    Width = 344
+    Top = 276
+    Width = 336
     Height = 40
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 287
+    ExplicitWidth = 344
+    DesignSize = (
+      336
+      40)
     object btCancel: TButton
       Left = 256
       Top = 8

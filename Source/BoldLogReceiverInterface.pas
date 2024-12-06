@@ -27,19 +27,12 @@ type
     procedure EndLog;
     procedure Sync;
     procedure ProcessInterruption;
-    function GetEnabled: boolean;
-    procedure SetEnabled(const Value: boolean);
     property ProgressMax: integer write SetProgressMax;
     property Progress: integer write SetProgress;
     property LogHeader: string write SetLogHeader;
-    property Enabled: boolean read GetEnabled write SetEnabled;
   end;
 
   TBoldLogReceiver = class(TInterfacedObject, IBoldLogReceiver)
-  private
-    fEnabled: boolean;
-    function GetEnabled: boolean;
-    procedure SetEnabled(const Value: boolean);
   protected
     procedure SetProgress(const Value: integer); virtual;
     procedure SetLogHeader(const Value: string); virtual;
@@ -55,7 +48,6 @@ type
     procedure EndLog; virtual;
   public
     function LogTypeToString(ALogType: TBoldLogType): string;
-    property Enabled: boolean read GetEnabled write SetEnabled;
   end;
 
 implementation
@@ -68,11 +60,6 @@ end;
 
 procedure TBoldLogReceiver.EndLog;
 begin
-end;
-
-function TBoldLogReceiver.GetEnabled: boolean;
-begin
-  result := fEnabled;
 end;
 
 procedure TBoldLogReceiver.Hide;
@@ -102,11 +89,6 @@ procedure TBoldLogReceiver.ProgressStep;
 begin
 end;
 
-procedure TBoldLogReceiver.SetEnabled(const Value: boolean);
-begin
-  fEnabled := Value;
-end;
-
 procedure TBoldLogReceiver.SetLogHeader(const Value: string);
 begin
 end;
@@ -132,4 +114,3 @@ begin
 end;
 
 end.
-

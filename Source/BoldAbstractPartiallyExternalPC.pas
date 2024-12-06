@@ -191,7 +191,7 @@ begin
     raise EBold.CreateFmt(sNotSupportedWithNoKeys, [classname, MoldClass.ExpandedExpressionName]);
 
   result := format('%s.%s in (', [
-    BoldExpandName(ExternalKey.MoldClass.ExternalTableName, ExternalKey.MoldClass.Name, xtSQL, -1, nccFalse),
+    BoldExpandName(ExternalKey.MoldClass.Tablename, ExternalKey.MoldClass.Name, xtSQL, -1, nccFalse),
     BoldExpandName(ExternalKey.ColumnName, ExternalKey.name, xtSQL, -1, nccFalse)]);
   Mapping := TypeNameDictionary.MappingForModelName[ExternalKey.BoldType];
   KeyIsString := assigned(Mapping) and SameText(Mapping.ExpandedContentsName, BoldContentName_String);

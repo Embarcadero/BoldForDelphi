@@ -13,6 +13,7 @@ begin
   BoldSystem.StartTransaction();
   try
     Validator.Violation.DeleteObjects;
+    M_associations.DeleteObjects;
     M_ownedElement.DeleteObjects;
     M_taggedValue.DeleteObjects;
     BoldSystem.CommitTransaction();
@@ -115,9 +116,10 @@ begin
     aTaggedValue.Value := Value
   else
   begin
-    aTaggedValue := M_TaggedValue.AddNew;
+    aTaggedValue := TUMLTaggedValue.Create(BoldSystem);
     aTaggedValue.Tag := TagName;
     aTaggedValue.Value := Value;
+    M_TaggedValue.Add(aTaggedValue);
   end;
 end;
 
@@ -140,10 +142,10 @@ begin
   aTaggedValue := TaggedValue[TagName];
   if not Assigned(aTaggedValue) then
   begin
-//    aTaggedValue := TUMLTaggedValue.Create((Self as TUMLModelElement).BoldSystem);
-    aTaggedValue := M_TaggedValue.AddNew;
+    aTaggedValue := TUMLTaggedValue.Create(BoldSystem);
     aTaggedValue.Tag := TagName;
     aTaggedValue.Value := DefaultValue;
+    M_TaggedValue.Add(aTaggedValue);
   end;
 end;
 
@@ -185,10 +187,10 @@ begin
     aTaggedValue.Value := Value
   else
   begin
-//    aTaggedValue := TUMLTaggedValue.Create((Self as TUMLModelElement).BoldSystem);
-    aTaggedValue := M_TaggedValue.AddNew;
+    aTaggedValue := TUMLTaggedValue.Create(BoldSystem);
     aTaggedValue.Tag := BOLDTVPREFIX + TagName;
     aTaggedValue.Value := Value;
+    M_TaggedValue.Add(aTaggedValue);
   end;
 end;
 
@@ -234,7 +236,9 @@ begin
   // so empty values must be treated as persistent too.
   value := GetTaggedValue(TAG_PERSISTENCE);
   M_Persistent.AsBoolean := (value = '') or SameText(value, TV_PERSISTENCE_PERSISTENT);
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('taggedValue[''' + TAG_PERSISTENCE + '''].value', Subscriber);
+{$ENDIF}
 end;
 
 procedure TUMLClassifier._Persistent_ReverseDerive(DerivedObject: TObject);
@@ -251,7 +255,9 @@ end;
 procedure TUMLAssociation._Persistent_DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
 begin
   M_Persistent.AsBoolean := SameText(GetTaggedValue(TAG_PERSISTENCE), TV_PERSISTENCE_PERSISTENT);
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('taggedValue[''' + TAG_PERSISTENCE + '''].value', Subscriber);
+{$ENDIF}
 end;
 
 procedure TUMLAssociation._Persistent_ReverseDerive(DerivedObject: TObject);
@@ -268,7 +274,9 @@ end;
 procedure TUMLAttribute._Persistent_DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
 begin
   M_Persistent.AsBoolean := SameText(GetTaggedValue(TAG_PERSISTENCE), TV_PERSISTENCE_PERSISTENT);
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('taggedValue[''' + TAG_PERSISTENCE + '''].value', Subscriber);
+{$ENDIF}
 end;
 
 procedure TUMLAttribute._Persistent_ReverseDerive(DerivedObject: TObject);
@@ -288,8 +296,74 @@ begin
     M_StereotypeName.AsString := stereotype.Name
   else
     M_StereotypeName.AsString := '';
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('stereotype.Name', Subscriber);
+{$ENDIF}
 end;
+
+{function GetElementByName(UMLModel: TUMLModel; Name: String; UMLClass: TBoldObjectClass; Subscriber: TBoldSubscriber = nil): TUMLModelElement;
+var
+  ElementList: TUMLModelElementList;
+  i: integer;
+  ClassTypeInfo: TBoldClassTypeInfo;
+  Locator: TBoldObjectLocator;
+  BoldObjectLocatorList: TBoldObjectLocatorList;
+
+  procedure InitIndex();
+  var
+    MemberList: TBoldMemberRTInfoList;
+  begin
+    MemberList := TBoldMemberRTInfoList.Create;
+    try
+      MemberList.OwnsEntries := false;
+      MemberList.Add(ClassTypeInfo.MemberRTInfoByExpressionName['name']);
+      BoldObjectLocatorList.InitMembersIndex(ElementList, MemberList);
+    finally
+      MemberList.Free;
+    end;
+  end;
+
+var
+  MemberList: TBoldMemberList;
+  BAString: TBAString;
+const
+  cHashSearchThreshold = 20;
+begin
+  result := nil;
+  ClassTypeInfo := UMLModel.BoldSystem.BoldSystemTypeInfo.ClassTypeInfoByClass[UMLClass];
+  ElementList := UMLModel.BoldSystem.Classes[ClassTypeInfo.TopSortedIndex] as TUMLModelElementList;
+  if ElementList.Empty then
+    exit;
+  if ElementList.Count < cHashSearchThreshold then
+  begin
+  for i := 0 to ElementList.Count-1 do
+  begin
+    if (SameText(ElementList[i].Name, name)) and (ElementList[i].Model = UMLModel) then
+    begin
+      result := ElementList[i];
+      exit;
+    end;
+  end;
+  end
+  else
+  begin
+    BoldObjectLocatorList := (ElementList.ObjectListController as TBoldObjectListController).LocatorList;
+    if not BoldObjectLocatorList.HasMembersIndex then
+      InitIndex();
+    MemberList := TBoldMemberList.Create;
+    BAString := TBAString.CreateWithValue(Name);
+    try
+      MemberList.CloneMembers := false;
+      MemberList.Add( BAString );
+      Locator := BoldObjectLocatorList.GetLocatorByAttributesAndSubscribe(MemberList, Subscriber);
+      if Assigned(Locator) then
+        result := Locator.BoldObject as TUMLModelElement;
+    finally
+      BAString.Free;
+      MemberList.Free;
+    end;
+  end;
+end;}
 
 function GetElementByName(UMLModel: TUMLModel; Name: String; UMLClass: TBoldObjectClass): TUMLModelElement;
 var
@@ -321,10 +395,6 @@ begin
     if not assigned(model) then
       raise EBold.Create('Can''t set StereotypeName in for Element not belonging to model');
     aStereoType := GetElementByName(Model, Newname, TUMLStereotype) as TUMLStereoType;
-//    model.EvaluateExpressionAsDirectElement
-//    (
-//      Format('allOwnedElement->filterOnType(UMLStereotype)->select(name=''%s'')->first', [NewName])
-//    ) as TUMLStereotype;
     if not Assigned(aStereotype) then
     begin
       aStereotype := TUMLStereotype.Create(BoldSystem);
@@ -382,7 +452,9 @@ begin
     M_typeName.AsString := type_.name
   else
     M_typeName.AsString := '';
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('type.name', Subscriber);
+{$ENDIF}
 end;
 
 procedure TUMLParameter._typeName_ReverseDerive(DerivedObject: TObject);
@@ -416,7 +488,9 @@ begin
     M_typeName.AsString := type_.name
   else
     M_typeName.AsString := '';
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('type.name', Subscriber);
+{$ENDIF}
 end;
 
 procedure TUMLStructuralFeature._typeName_ReverseDerive(DerivedObject: TObject);
@@ -446,7 +520,9 @@ end;
 procedure TUMLModelElement._derived_DeriveAndSubscribe(DerivedObject: TObject; Subscriber: TBoldSubscriber);
 begin
   M_Derived.AsBoolean := TVIsTrue(GetTaggedValue(TAG_DERIVED));
+{$IFDEF NoAutoSubscription}
   SubscribeToExpression('taggedValue[''' + TAG_DERIVED + '''].value', Subscriber);
+{$ENDIF}
 end;
 
 procedure TUMLModelElement._derived_ReverseDerive(DerivedObject: TObject);
@@ -480,6 +556,9 @@ var
 begin
   vClass := self;
   repeat
+{$IFDEF NoAutoSubscription}
+    vClass.M_SuperClass.DefaultSubscribe(Subscriber, breReEvaluate);
+{$ENDIF}
     vClass := vClass.SuperClass;
     if Assigned(vClass) then
       M_superclasses.Insert(0, vClass);

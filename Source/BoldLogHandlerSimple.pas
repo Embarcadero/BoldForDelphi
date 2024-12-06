@@ -16,16 +16,12 @@ type
   TBoldSimpleLogReceiver = class(TInterfacedObject, IBoldLogReceiver)
   private
     fLogLines: TStringList;
-    FEnabled: Boolean;
     function GetLogLines: TStringList;
-    function GetEnabled: Boolean;
-    procedure SetEnabled(const Value: Boolean);
   protected
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string); virtual;
     procedure SetProgressMax(const Value: integer);
     procedure ProcessInterruption;
-
   public
     destructor Destroy; override;
     procedure Clear;
@@ -37,7 +33,6 @@ type
     procedure StartLog(const SessionName: string); virtual;
     procedure EndLog;
     property LogLines: TStringList read GetLogLines;
-    property Enabled: Boolean read GetEnabled write SetEnabled;
   end;
 
 implementation
@@ -65,11 +60,6 @@ procedure TBoldSimpleLogReceiver.EndLog;
 begin
 end;
 
-function TBoldSimpleLogReceiver.GetEnabled: Boolean;
-begin
-  Result := FEnabled;
-end;
-
 function TBoldSimpleLogReceiver.GetLogLines: TStringList;
 begin
   if not Assigned(fLogLines) then
@@ -93,11 +83,6 @@ end;
 
 procedure TBoldSimpleLogReceiver.SetProgress(const Value: integer);
 begin
-end;
-
-procedure TBoldSimpleLogReceiver.SetEnabled(const Value: Boolean);
-begin
-  FEnabled := Value;
 end;
 
 procedure TBoldSimpleLogReceiver.SetLogHeader(const Value: string);

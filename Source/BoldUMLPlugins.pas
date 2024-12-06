@@ -94,7 +94,7 @@ implementation
 uses
   SysUtils,
   BoldUtils,
-  dialogs,
+  Dialogs,
   Controls,
   Classes,
   System.Types,

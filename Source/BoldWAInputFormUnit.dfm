@@ -3,8 +3,8 @@ object InputForm: TInputForm
   Top = 182
   BorderStyle = bsDialog
   Caption = 'InputForm'
-  ClientHeight = 319
-  ClientWidth = 578
+  ClientHeight = 318
+  ClientWidth = 574
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -37,20 +37,20 @@ object InputForm: TInputForm
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object pnBottom: TPanel
     Left = 0
-    Top = 273
-    Width = 578
+    Top = 272
+    Width = 574
     Height = 46
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 273
+    ExplicitWidth = 578
     object btnCancel: TButton
       Left = 492
       Top = 16
@@ -75,8 +75,8 @@ object InputForm: TInputForm
       Width = 81
       Height = 25
       Caption = '&Help'
-      TabOrder = 0
       NumGlyphs = 2
+      TabOrder = 0
     end
     object btnNext: TButton
       Left = 404
@@ -94,10 +94,11 @@ object InputForm: TInputForm
     Left = 0
     Top = 0
     Width = 44
-    Height = 273
+    Height = 272
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitHeight = 273
     object Image1: TImage
       Left = 7
       Top = 8

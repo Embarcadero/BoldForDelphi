@@ -123,7 +123,6 @@ const
   TAG_ROOTCLASS: String = 'RootClass';
 
   TAG_TABLENAME: String = 'TableName';
-  TAG_EXTERNALTABLENAME: String = 'ExternalTableName';
   TAG_TYPELIBVERSION = 'TypeLibVersion';
 
   TAG_UNITNAME: String = 'UnitName';
@@ -215,7 +214,6 @@ begin
     Add('String',   TAG_CPPNAME,                        TV_NAME);
     Add('String',   TAG_EXPRESSIONNAME,                 TV_NAME);
     Add('String',   TAG_TABLENAME,                      TV_NAME);
-    Add('String',   TAG_EXTERNALTABLENAME,              TV_NAME);
     Add('EvolutionStateEnum',
                     TAG_EVOLUTIONSTATE,                 TV_EVOLUTIONSTATE_NORMAL);
     Add('String',   TAG_PMAPPERNAME,                    DEFAULTNAMELITERAL);

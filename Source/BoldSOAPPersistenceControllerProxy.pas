@@ -62,7 +62,7 @@ type
       TranslationList: TBoldIdTranslationList); override;
     procedure PMTranslateToLocalIds(GlobalIdList: TBoldObjectIdList;
       TranslationList: TBoldIdTranslationList); override;
-    procedure PMSetReadonlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
+    procedure PMSetReadOnlyness(ReadOnlyList, WriteableList: TBoldObjectIdList); override;
     procedure ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
                   TranslationList: TBoldIdTranslationList); override;
     procedure PMTimestampForTime(ClockTime: TDateTime; var Timestamp: TBoldTimestampType); override;
@@ -220,7 +220,7 @@ begin
   SendEvent(bpeEndFetchId);
 end;
 
-procedure TBoldSOAPPersistenceControllerProxy.PMSetReadonlyness(
+procedure TBoldSOAPPersistenceControllerProxy.PMSetReadOnlyness(
   ReadOnlyList, WriteableList: TBoldObjectIdList);
 begin
 

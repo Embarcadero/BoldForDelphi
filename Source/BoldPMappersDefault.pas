@@ -1,4 +1,4 @@
-﻿{ Global compiler directives }
+{ Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersDefault;
 
@@ -1334,7 +1334,7 @@ begin
           TickCounter := 0;
         end;
         inc(Row);
-        if UseParams or (i = ObjectIDList.Count-1) or (Row = Limit) or (aQuery.Params.Count + aQuery.BatchQueryParamCount >= SystemPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams) then
+        if UseParams or (i = ObjectIDList.Count-1) or (Row = Limit) or (aQuery.ParamCount + aQuery.BatchQueryParamCount >= SystemPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams) then
         begin
           if not UseParams then
             SB.Append(')');
@@ -1593,8 +1593,7 @@ begin
   finally
     aQuery.SQLStrings.Clear;
     aQuery.ClearParams;
-    if aQuery.SQLStrings.Updating then
-      aQuery.SQLStrings.EndUpdate;
+    aQuery.SQLStrings.EndUpdate;
     SystemPersistenceMapper.ReleaseExecQuery(aQuery);
   end;
 

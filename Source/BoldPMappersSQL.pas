@@ -1,4 +1,3 @@
-﻿
 { Global compiler directives }
 {$include bold.inc}
 unit BoldPMappersSQL;
@@ -199,8 +198,13 @@ uses
   BoldPSParamsSQL,
   BoldNameExpander,
   BoldValueInterfaces,
-  BoldDefaultStreamNames,
-  BoldRev;
+  BoldDefaultStreamNames
+  {$IFDEF RIL}
+  {$IFNDEF BOLD_UNICODE}
+  ,StringBuilder
+  {$ENDIF}
+  {$ENDIF}
+  ;
   
 {---TBoldSystemSQLMapper---}
 function TBoldSystemSQLMapper.GetAllTables: TBoldSQLTableDescriptionList;

@@ -952,14 +952,14 @@ begin
   ClassTypeInfo := (MemberRTInfo as TBoldRoleRTInfo).ClassTypeInfoOfOtherEnd;
   if ClassTypeInfo.DefaultStringRepresentation = '' then
   begin
-    for i := 0 to ClassTypeInfo.AllMembersCount - 1 do
+    for i := 0 to ClassTypeInfo.AllMembers.Count - 1 do
       if ClassTypeInfo.AllMembers[i].BoldType.ExpressionName = 'String' then  // do not localize
       begin
         Result := ClassTypeInfo.AllMembers[i].ExpressionName;
         exit;
       end;
 
-    for i := 0 to ClassTypeInfo.AllMembersCount - 1 do
+    for i := 0 to ClassTypeInfo.AllMembers.Count - 1 do
       if ClassTypeInfo.AllMembers[i] is TBoldAttributeRTInfo then
       begin
         Result := ClassTypeInfo.AllMembers[i].ExpressionName;

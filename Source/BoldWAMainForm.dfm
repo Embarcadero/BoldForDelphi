@@ -4,8 +4,8 @@ object MainForm: TMainForm
   HelpContext = 5
   BorderStyle = bsDialog
   Caption = 'Bold Wizard'
-  ClientHeight = 304
-  ClientWidth = 497
+  ClientHeight = 303
+  ClientWidth = 493
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -38,20 +38,20 @@ object MainForm: TMainForm
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
   KeyPreview = True
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object pnBottom: TPanel
     Left = 0
-    Top = 255
-    Width = 497
+    Top = 254
+    Width = 493
     Height = 49
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 255
+    ExplicitWidth = 497
     object btnCancel: TButton
       Left = 408
       Top = 16
@@ -77,8 +77,8 @@ object MainForm: TMainForm
       Height = 25
       HelpContext = 5
       Caption = '&Help'
-      TabOrder = 0
       NumGlyphs = 2
+      TabOrder = 0
     end
     object btnNext: TButton
       Left = 320
@@ -94,11 +94,13 @@ object MainForm: TMainForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 497
-    Height = 255
+    Width = 493
+    Height = 254
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 497
+    ExplicitHeight = 255
     object Image1: TImage
       Left = 23
       Top = 8

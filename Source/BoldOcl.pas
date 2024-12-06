@@ -118,7 +118,7 @@ type
     function GetVariable(index: integer): TBoldIndirectElement; override;
     function GetVariableByName(const aName: string): TBoldIndirectElement; override;
   public
-    constructor Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem);
+    constructor Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
     destructor Destroy; override;
     property GlobalEnv: TBoldOclEnvironment read GetGlobalEnv;
     property SymbolTable: TBoldSymbolDictionary read fsymbolTable;
@@ -150,7 +150,6 @@ type
     property DateType: TBoldAttributeTypeInfo read fDateType;
     property TimeType: TBoldAttributeTypeInfo read fTimeType;
     property DateTimeType: TBoldAttributeTypeInfo read fDateTimeType;
-    property SystemTypeInfo: TBoldSystemTypeInfo read fSystemTypeInfo;
   end;
 
 var
@@ -246,19 +245,19 @@ begin
   begin
     ClassInfo := fSystemTypeInfo.TopSortedClasses[i];
     vLength := 0;
-    for j := 0 to ClassInfo.AllMembersCount - 1 do
+    for j := 0 to ClassInfo.AllMembers.Count - 1 do
       vLength := Max(vLength, Length(ClassInfo.AllMembers[j].ExpressionName));
     fMaxMemberNameArray[i] := vLength;
   end;
 end;
 
-constructor TBoldOcl.Create(ASystemTypeInfo: TBoldSystemTypeInfo; ABoldSystem: TBoldSystem);
+constructor TBoldOcl.Create(SystemTypeInfo: TBoldSystemTypeInfo; BoldSystem: TBoldSystem);
 var
   FalseConst: TBABoolean;
   MaxTimeStamp: TBAInteger;
 begin
-  fSystemTypeInfo := ASystemTypeInfo;
-  fBoldSystem := ABoldSystem;
+  fSystemTypeInfo := SystemTypeInfo;
+  fBoldSystem := BoldSystem;
   fOclDictionary := TBoldOclDictionary.Create;
   fCanEvaluate := true;
   fSymbolTable := TBoldSymbolDictionary.Create(SystemTypeInfo, BoldSystem, fCanEvaluate);
@@ -304,7 +303,6 @@ end;
 
 destructor TBoldOcl.Destroy;
 begin
-  SendEvent(beDestroying);
   FreeAndNil(fOclDictionary);
   FreeAndNil(fSymbolTable);
   FreeAndNil(fGlobalEnv);

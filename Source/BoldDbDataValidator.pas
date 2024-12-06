@@ -6,7 +6,6 @@ interface
 
 uses
   Classes,
-  System.Generics.Collections,
   BoldDbValidator,
   BoldPSDescriptionsSQL,
   BoldDbInterfaces,
@@ -36,26 +35,8 @@ type
 
   TBoldDbDataValidatorCorruptObjectsAction = (caInsert, caDelete);
 
-  TValidateProc =  procedure (ObjectSQLMapper: TBoldObjectSQLMapper) of object;
-  TValidateProcList = TDictionary<TValidateProc, TBoldObjectSQLMapper>;
-
   { TBoldDbDataValidator }
   TBoldDbDataValidator = class(TBoldDbValidator)
-  private
-    fValidatorTestTypes: TBoldDBDataValidatorTestTypes;
-    fClassesToValidate: string;
-  protected
-//    procedure DeActivate; override;
-    function CreateValidatorThread: TBoldDbValidatorThread; override;
-  public
-    constructor Create(owner: TComponent); override;
-    destructor Destroy; override;
-    procedure Validate; override;
-    property ValidatorTestTypes: TBoldDBDataValidatorTestTypes read fValidatorTestTypes write fValidatorTestTypes;
-    property ClassesToValidate: string read fClassesToValidate write fClassesToValidate;
-  end;
-
-  TBoldDbDataValidatorThread = class(TBoldDbValidatorThread)
   private
     fTypeTestedTables: TStringList;
     fQuery: IBoldQuery;
@@ -63,7 +44,6 @@ type
     fValidatorTestTypes: TBoldDBDataValidatorTestTypes;
     fClassesToValidate: string;
     fCorruptObjectsAction: TBoldDbDataValidatorCorruptObjectsAction;
-    fValidateProcList: TValidateProcList;
     function GetQuery: IBoldQuery;
     procedure SuggestTableInsert(table: TBoldSQLTableDescription; IdList, TypeList: TStrings);
     procedure SuggestTableDelete(Tables: TBoldSQLTableDescriptionList; IdList: TStrings; ObjectSQLMapper: TBoldObjectSQLMapper);
@@ -75,12 +55,13 @@ type
     function Prepare2TableTest(SQLTemplate: String; CheckList: TStringList; args: array of const; table1, table2: String; IdList: TStrings; TypeList: TStrings = nil): Boolean;
     procedure AddRemedyForDeleteObjects(Mapper: TBoldObjectSQLMapper; IdList: TStringList);
     procedure UnlinkFromDeleteObject(IdList: TStrings; ObjectSQLMapper: TBoldObjectSQLMapper);
+    procedure DeActivate; override;
     procedure OpenQuery;
     property Query: IBoldQuery read GetQuery;
     property TypeTestedTables: TStringList read fTypeTestedTables;
     property ExistenceInParentTestedTables: TStringList read fExistenceInParentTestedTables;
   public
-    constructor Create(AValidator: TBoldDbValidator); override;
+    constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     procedure ValidateExistence(ObjectSQLMapper: TBoldObjectSQLMapper);
     procedure ValidateStrayObjects(ObjectDefaultMapper: TBoldObjectDefaultMapper);
@@ -107,8 +88,7 @@ uses
   BoldLogHandler,
   BoldDefs,
   BoldUtils,
-  BoldMath,
-  BoldGuard;
+  BoldMath;
 
 const
   Field_BOLD_ID = 'BOLD_ID';
@@ -193,16 +173,16 @@ const
 
 { TBoldDbDataValidator }
 
-destructor TBoldDbDataValidatorThread.Destroy;
+destructor TBoldDbDataValidator.Destroy;
 begin
   FreeAndNil(fTypeTestedTables);
   FreeAndNil(fExistenceInParentTestedTables);
   if assigned(fQuery) then
-    Database.ReleaseQuery(fQuery);
+    SystemSQLMapper.ReleaseQuery(fQuery);
   inherited;
 end;
 
-function TBoldDbDataValidatorThread.MemberIsInherited(
+function TBoldDbDataValidator.MemberIsInherited(
   MemberMapper: TBoldMemberPersistenceMapper): Boolean;
 begin
   result := false;
@@ -210,12 +190,12 @@ begin
     result := MemberMapper.MemberIndex < MemberMapper.ObjectPersistenceMapper.SuperClass.MemberPersistenceMappers.count;
 end;
 
-procedure TBoldDbDataValidatorThread.OpenQuery;
+procedure TBoldDbDataValidator.OpenQuery;
 begin
   Query.Open;
 end;
 
-function TBoldDbDataValidatorThread.Prepare2TableTest(SQLTemplate: String; CheckList: TStringList; args: array of const; table1, table2: String; IdList: TStrings; TypeList: TStrings = nil): Boolean;
+function TBoldDbDataValidator.Prepare2TableTest(SQLTemplate: String; CheckList: TStringList; args: array of const; table1, table2: String; IdList: TStrings; TypeList: TStrings = nil): Boolean;
 var
   BoldIdField: IBoldField;
   BoldTypeField: IBoldField;
@@ -248,40 +228,49 @@ begin
     result := false;
 end;
 
-procedure TBoldDbDataValidatorThread.Validate;
+procedure TBoldDbDataValidator.Validate;
 var
+  i: integer;
   ObjectPMapper: TBoldObjectSQLMapper;
-  fCurrentTable: IBoldTable;
+  sl: TStringList;
 begin
-  fCurrentTable := Database.GetTable;
+(*
+  if not PersistenceHandle.DatabaseInterface.Connected then
+  begin
+    BoldLog.Log(sDBMustBeOpened);
+    exit;
+  end;
+*)
+  sl := TStringList.Create;
+  sl.CommaText := UpperCase(ClassesToValidate);
   try
-    repeat
-      ObjectPMapper := Validator.TableQueue.Dequeue as TBoldObjectSQLMapper;
-      if not Assigned(ObjectPMapper) then
-        break;
-      if DoCheckStop then exit;
-      BoldLog.LogHeader := Format(sCheckingTable, [ObjectPMapper.ExpressionName]);
-      BoldLog.ProgressMax := 100;
-      BoldLog.Progress := 0;
+  BoldLog.ProgressMax := SystemSQLMapper.ObjectPersistenceMappers.count - 1;
+  for i := SystemSQLMapper.ObjectPersistenceMappers.count - 1 downto 0 do
+  begin
+    ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
+    if assigned(ObjectPMapper) then
+    begin
+        if (sl.Count > 0) and not (sl.IndexOf(UpperCase(ObjectPMapper.ExpressionName)) <> -1) then
+          continue;
+      BoldLog.LogHeader := Format(sProcessingClass, [ObjectPMapper.ExpressionName]);
       ValidateExistence(ObjectPMapper);
-      BoldLog.Progress := 20;
       ValidateRelations(ObjectPMapper);
-      BoldLog.Progress := 60;
-      ValidateNotNullColumns(ObjectPMapper);
-      BoldLog.Progress := 80;
+        ValidateNotNullColumns(ObjectPMapper);
       if ObjectPmapper is TBoldObjectDefaultMapper then
         ValidateStrayObjects(ObjectPMapper as TBoldObjectDefaultMapper);
       if ObjectPMapper.IsLinkClass then
       begin
         ValidateLinkObjects(ObjectPmapper);
       end;
-    until Validator.TableQueue.Empty;
+    end;
+    BoldLog.Progress := SystemSQLMapper.ObjectPersistenceMappers.count-i+1;
+  end;
   finally
-    Database.ReleaseTable(fCurrentTable);
+    sl.free;
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.SuggestTableDelete(
+procedure TBoldDbDataValidator.SuggestTableDelete(
   Tables: TBoldSQLTableDescriptionList; IdList: TStrings; ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   s: string;
@@ -310,7 +299,7 @@ begin
         if not query.eof then
         begin
           s := format('DELETE FROM %s WHERE BOLD_ID IN (%s);', [Tables[i].SQLName, BlockIdList.CommaText]);
-          AddRemedy(s);
+          Remedy.Add(s);
         end;
       end;
       UnlinkFromDeleteObject(BlockIdList, ObjectSQLMapper);
@@ -320,7 +309,7 @@ begin
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.SuggestTableInsert(table: TBoldSQLTableDescription; IdList, TypeList: TStrings);
+procedure TBoldDbDataValidator.SuggestTableInsert(table: TBoldSQLTableDescription; IdList, TypeList: TStrings);
 var
   j: integer;
   Skip: Boolean;
@@ -361,20 +350,20 @@ begin
     end;
   end;
 
-  remedySQL := 'INSERT INTO %s (BOLD_ID, BOLD_TYPE%s) VALUES (%s, %s%s)'+ PersistenceHandle.SQLDataBaseConfig.SqlScriptSeparator;
+  remedySQL := 'INSERT INTO %s (BOLD_ID, BOLD_TYPE%s) VALUES (%s, %s%s)'+PersistenceHandle.SQLDataBaseConfig.SqlScriptSeparator;
   if skip then
   begin
-    AddRemedy(format(sColumnsHaveUnsupportedType, [UnsupportedColumns]));
+    Remedy.add(format(sColumnsHaveUnsupportedType, [UnsupportedColumns]));
     remedySQL := '-- '+ remedySQL;
   end
   else
-    AddRemedy(Format(sAddMissingEntries, [Table.SQLName]));
+    Remedy.Add(Format(sAddMissingEntries, [Table.SQLName]));
 
   for j := 0 to idlist.count - 1 do
-    AddRemedy(format(remedySQL, [Table.SQLName, NotNullColumns, IdList[j], TypeList[j], NotNullValues]));
+    Remedy.Add(format(remedySQL, [Table.SQLName, NotNullColumns, IdList[j], TypeList[j], NotNullValues]));
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateExistence(ObjectSQLMapper: TBoldObjectSQLMapper);
+procedure TBoldDbDataValidator.ValidateExistence(ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   i: integer;
   IdList, TypeList: TStringList;
@@ -383,9 +372,9 @@ var
   Tables: TBoldSQLTableDescriptionList;
   TempMapper: TBoldObjectSQLMapper;
 begin
-  BoldLog.LogHeader := Format('ValidateExistence %s', [ObjectSQLMapper.ExpressionName]);
   SetLength(OwnMapping, 0);
   SetLength(ParentMapping, 0);
+
   IdList := TStringList.Create;
   TypeList := TStringList.Create;
   Tables := TBoldSQLTableDescriptionList.Create(ObjectSQlMapper.SystemPersistenceMapper.PSSystemDescription);
@@ -404,12 +393,12 @@ begin
     begin
       if Tables[i]=nil then
       begin
-        BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateExistence: %s Tables[%d]=nil', [ObjectSQLMapper.ExpressionName, I]);
+        BoldLog.LogFmt('TBoldDbDataValidator.ValidateExistence: %s Tables[%d]=nil', [ObjectSQLMapper.ExpressionName, I]);
         Continue;
       end;
       if Tables[i+1]=nil then
       begin
-        BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateExistence: %s Tables[%d+1]=nil', [ObjectSQLMapper.ExpressionName, I]);
+        BoldLog.LogFmt('TBoldDbDataValidator.ValidateExistence: %s Tables[%d+1]=nil', [ObjectSQLMapper.ExpressionName, I]);
         Continue;
       end;
       SubTable := Tables[i].SQLName;
@@ -420,7 +409,7 @@ begin
       begin
         BoldLog.LogFmt(sLogObjectsMissingInParentTable, [SubTable, SuperTable], ltWarning);
         Boldlog.Log(IdList.CommaText, ltDetail);
-        AddRemedy(Format('-- Corrupt object of class %s missing parent entry in %s, Ids: %s.', [ObjectSQlMapper.ExpressionName, SuperTable, IdList.CommaText]));
+        Remedy.Add(Format('-- Corrupt object of class %s missing parent entry in %s, Ids: %s.', [ObjectSQlMapper.ExpressionName, SuperTable, IdList.CommaText]));
         if CorruptObjectsAction = caInsert then
           SuggestTableInsert(Tables[i+1], IdList, TypeList)
         else
@@ -474,7 +463,7 @@ begin
       begin
         BoldLog.LogFmt('The following objects exists in %s, but not in child table %s', [SuperTable, SubTable], ltWarning);
         Boldlog.Log(IdList.CommaText, ltDetail);
-        AddRemedy(Format('-- Corrupt object of class %s missing child entry in %s, Ids: %s.', [ObjectSQlMapper.ExpressionName, SubTable, IdList.CommaText]));
+        Remedy.Add(Format('-- Corrupt object of class %s missing child entry in %s, Ids: %s.', [ObjectSQlMapper.ExpressionName, SubTable, IdList.CommaText]));
         if CorruptObjectsAction = caInsert then
           SuggesttableInsert(ObjectSQLMapper.MainTable, IdList, TypeList)
         else
@@ -489,7 +478,7 @@ begin
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateLinkObjectDupes(
+procedure TBoldDbDataValidator.ValidateLinkObjectDupes(
   ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   LastLInk1, LastLInk2, Link1, Link2: Integer;
@@ -503,7 +492,7 @@ begin
   if not (ttLinkObjectDupesTest in fValidatorTestTypes) then
     exit;
   IdList := TStringList.create;
-  BoldLog.LogHeader := Format('ValidateLinkObjectDupes %s.%s', [ObjectSQLMapper.ExpressionName]);
+
   LinkColumn1 := (ObjectSQLMapper.LinkClassRole1 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
   LinkColumn2 := (ObjectSQLMapper.LinkClassRole2 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
   LinkTable := ObjectSQLMapper.MainTable.SQLName;
@@ -535,7 +524,7 @@ begin
   IdList.Free;
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateLinkObjects(ObjectSQLMapper: TBoldObjectSQLMapper);
+procedure TBoldDbDataValidator.ValidateLinkObjects(ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   LinkTable,
   LinkColumn1, LinkColumn2: String;
@@ -550,13 +539,13 @@ var
   begin
     if LinkMapper=nil then
     begin
-      BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateLinkObjects->CheckSpacePointers: %s: LinkMapper=nil', [ObjectSQLMapper.ExpressionName]);
+      BoldLog.LogFmt('TBoldDbDataValidator.ValidateLinkObjects->CheckSpacePointers: %s: LinkMapper=nil', [ObjectSQLMapper.ExpressionName]);
       Exit;
     end;
     Assert(PersistenceHandle.BoldModel.MoldModel.GetClassByName(LinkMapper.OtherEndObjectMapper.ExpressionName) <> nil, 'Class ' + LinkMapper.ObjectPersistenceMapper.ExpressionName + ' not found.');
     if LInkMapper.OtherEndObjectMapper=nil then
     begin
-      BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateLinkObjects->CheckSpacePointers: %s: LinkMapper.OtherEndObjectMapper=nil', [ObjectSQLMapper.ExpressionName]);
+      BoldLog.LogFmt('TBoldDbDataValidator.ValidateLinkObjects->CheckSpacePointers: %s: LinkMapper.OtherEndObjectMapper=nil', [ObjectSQLMapper.ExpressionName]);
       Exit;
     end;
     if LInkMapper.OtherEndObjectMapper.Maintable<>nil then
@@ -565,7 +554,7 @@ var
     begin
       MainTableName := SystemSQLMapper.RootClassObjectPersistenceMapper.MainTable.SQLName; // it would be more efficient to find first concrete superclass so that we search more concrete table instead of all in Bold_Object
       if not PersistenceHandle.BoldModel.MoldModel.GetClassByName(LinkMapper.OtherEndObjectMapper.ExpressionName).IsAbstract or not LinkMapper.OtherEndObjectMapper.HasSubClasses then
-        BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateLinkObjects->CheckSpacePointers: %s: Link: %s LinkMapper.OtherEndObjectMapper.Maintable=nil, substituting &s', [ObjectSQLMapper.ExpressionName, LinkMapper.MainColumnName, MainTableName]);
+        BoldLog.LogFmt('TBoldDbDataValidator.ValidateLinkObjects->CheckSpacePointers: %s: Link: %s LinkMapper.OtherEndObjectMapper.Maintable=nil, substituting &s', [ObjectSQLMapper.ExpressionName, LinkMapper.MainColumnName, MainTableName]);
     end;
     Query.Close;
     if (ttLinkObjectTest2 in fValidatorTestTypes) then
@@ -591,7 +580,7 @@ var
         if TempIdList.Count > 0 then begin
           BoldLog.LogFmt(sLogLinkObjectsLinkUnexistingObjects, [ObjectSQLmapper.ExpressionName], ltWarning);
           BoldLog.Log(TempIdList.CommaText, ltDetail);
-          AddRemedy(Format(sCommentRemoveSpaceLinkObjects, [ObjectSQLmapper.ExpressionName]));
+          Remedy.Add(Format(sCommentRemoveSpaceLinkObjects, [ObjectSQLmapper.ExpressionName]));
           AddRemedyForDeleteObjects(ObjectSQLMapper, IDList);
         end;
       finally
@@ -605,7 +594,6 @@ var
 begin
   if not (ttLinkObjectTest in fValidatorTestTypes) then
     exit;
-  BoldLog.LogHeader := Format('ValidateLinkObjects %s', [ObjectSQLMapper.ExpressionName]);
   IdList := TStringList.create;
   LinkColumn1 := (ObjectSQLMapper.LinkClassRole1 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
   LinkColumn2 := (ObjectSQLMapper.LinkClassRole2 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
@@ -622,7 +610,7 @@ begin
   if IdList.Count > 0 then begin
     BoldLog.LogFmt(sLogBrokenLinkObjects, [ObjectSQLmapper.ExpressionName], ltWarning);
     BoldLog.Log(IdList.CommaText, ltDetail);
-    AddRemedy(Format(sCommentRemoveBrokenLinkObjects, [ObjectSQLmapper.ExpressionName]));
+    Remedy.Add(Format(sCommentRemoveBrokenLinkObjects, [ObjectSQLmapper.ExpressionName]));
     AddRemedyForDeleteObjects(ObjectSQLMapper, IdLIst);
   end;
 
@@ -632,7 +620,7 @@ begin
   IdList.Free;
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateNotNullForColumn(
+procedure TBoldDbDataValidator.ValidateNotNullForColumn(
   BoldSQLColumnDescription: TBoldSQLColumnDescription);
 var
   FieldNames: TStrings;
@@ -642,7 +630,6 @@ var
 begin
   if not (ttNotNullColumns in fValidatorTestTypes) then
     exit;
-  BoldLog.LogHeader := Format('ValidateNotNullForColumn %s.%s', [BoldSQLColumnDescription.TableDescription.SQLName, BoldSQLColumnDescription.SQLName]);
   FieldNames := TStringList.Create;
   query.Close;
   TableName := BoldSQLColumnDescription.tableDescription.SQLName;
@@ -658,7 +645,7 @@ begin
     if NullCount <> 0 then
     begin
       BoldLog.LogFmtIndent(sNullValuesFound, [NullCount, tableName, ColumnName], ltWarning);
-      AddRemedy(Format('UPDATE %s SET %s = <initial value> WHERE %1:s IS NULL;',
+      Remedy.Add(Format('UPDATE %s SET %s = <initial value> WHERE %1:s IS NULL;',
                         [TableName, ColumnName]));
     end;
   finally
@@ -666,7 +653,7 @@ begin
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateNotNullColumns(
+procedure TBoldDbDataValidator.ValidateNotNullColumns(
   ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   i, j: integer;
@@ -687,7 +674,7 @@ begin
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateRelations(ObjectSQLMapper: TBoldObjectSQLMapper);
+procedure TBoldDbDataValidator.ValidateRelations(ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   i,j: integer;
   IdList: TStringList;
@@ -706,7 +693,6 @@ begin
   IdList := TStringList.create;
   LinkTable := ObjectSQLMapper.MainTable;
   MemberMappings := nil;
-  BoldLog.ProgressMax := ObjectSQLMapper.MemberPersistenceMappers.count;
   if not assigned(LinkTable) then
     exit;
   for i := 0 to ObjectSQLMapper.MemberPersistenceMappers.count-1 do
@@ -715,8 +701,6 @@ begin
     begin
       SingleLink := ObjectSQLMapper.MemberPersistenceMappers[i] as TBoldEmbeddedSingleLinkDefaultMapper;
       MemberMappings := ObjectSQLMapper.SystemPersistenceMapper.MappingInfo.GetMemberMappings(ObjectSQLMapper.ExpressionName, SingleLink.ExpressionName);
-      BoldLog.LogHeader := Format('ValidateRelation %s.%s', [ObjectSQLMapper.ExpressionName, SingleLink.ExpressionName]);
-      BoldLog.Progress := i;
       if (length(MemberMappings) = 1) and
          SameText(MemberMappings[0].TableName, LinkTable.SQLName) then
       begin
@@ -726,17 +710,17 @@ begin
           RelatedTable := ObjectSQLMapper.SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable;
         if SingleLink=nil then
         begin
-          BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateRelations: %s:%d SingleLink=nil', [ObjectSQLMapper.ExpressionName, I]);
+          BoldLog.LogFmt('TBoldDbDataValidator.ValidateRelations: %s:%d SingleLink=nil', [ObjectSQLMapper.ExpressionName, I]);
           Continue;
         end;
         if LinkTable=nil then
         begin
-          BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateRelations: %s:%d LinkTable=nil', [ObjectSQLMapper.ExpressionName, I]);
+          BoldLog.LogFmt('TBoldDbDataValidator.ValidateRelations: %s:%d LinkTable=nil', [ObjectSQLMapper.ExpressionName, I]);
           Continue;
         end;
         if RelatedTable=nil then
         begin
-          BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateRelations: %s:%d RelatedTable=nil', [ObjectSQLMapper.ExpressionName, I]);
+          BoldLog.LogFmt('TBoldDbDataValidator.ValidateRelations: %s:%d RelatedTable=nil', [ObjectSQLMapper.ExpressionName, I]);
           Continue;
         end;
         Query.Close;
@@ -754,7 +738,7 @@ begin
           Query.Close;
           if IdList.Count > 0 then
           begin
-            BoldLog.LogFmt(sLogObjectsWithBrokenLinks, [ObjectSQlMapper.ExpressionName, IdList.Count, SingleLink.ExpressionName], ltWarning);
+            BoldLog.LogFmt(sLogObjectsWithBrokenLinks, [IdList.Count, ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName], ltWarning);
             FetchBlockSize := SystemSQLMapper.SQLDataBaseConfig.FetchBlockSize;
             for Block := 0 to (IdList.Count div FetchBlockSize) do
             begin
@@ -768,8 +752,8 @@ begin
                   s := s + ',';
               end;
               BoldLog.Log(s, ltDetail);
-              AddRemedy(Format(sCommentCleanRelation, [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
-              AddRemedy(format('UPDATE %s SET %s = -1 WHERE BOLD_ID IN (%s);',
+              Remedy.Add(Format(sCommentCleanRelation, [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
+              Remedy.Add(format('UPDATE %s SET %s = -1 WHERE BOLD_ID IN (%s);',
                 [LinkTable.SQLName, SingleLink.MainColumnName, s]));
             end;
           end;
@@ -819,8 +803,8 @@ begin
                     s := s + ',';
                 end;
                 BoldLog.Log(s);
-                AddRemedy(Format('-- Unlink relation (%s.%s) ', [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
-                AddRemedy(format('UPDATE %s SET %s = -1 WHERE %s IN (%s);',
+                Remedy.Add(Format('-- Unlink relation (%s.%s) ', [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
+                Remedy.Add(format('UPDATE %s SET %s = -1 WHERE %s IN (%s);',
                   [ObjectSQlMapper.MainTable.SQlName, SingleLink.MainColumnName, SingleLink.MainColumnName, s]));
               end;
             end;
@@ -863,8 +847,8 @@ begin
                       s := s + ',';
                   end;
                   BoldLog.Log(s, ltDetail);
-                  AddRemedy(Format(sCommentCleanRelation, [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
-                  AddRemedy(format('UPDATE %s SET %s = -1 WHERE BOLD_ID IN (%s);',
+                  Remedy.Add(Format(sCommentCleanRelation, [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
+                  Remedy.Add(format('UPDATE %s SET %s = -1 WHERE BOLD_ID IN (%s);',
                     [ObjectSQlMapper.MainTable.SQlName, SingleLink.MainColumnName, s]));
                 end;
               end;
@@ -877,7 +861,7 @@ begin
   IdList.Free;
 end;
 
-procedure TBoldDbDataValidatorThread.ValidateStrayObjects(ObjectDefaultMapper: TBoldObjectDefaultMapper);
+procedure TBoldDbDataValidator.ValidateStrayObjects(ObjectDefaultMapper: TBoldObjectDefaultMapper);
 var
   i: integer;
   IdList: TStringList;
@@ -892,7 +876,6 @@ var
 begin
   if not (ttStrayObjectsTest in fValidatorTestTypes) then
     exit;
-  BoldLog.LogHeader := Format('ValidateStrayObjects %s', [ObjectDefaultMapper.ExpressionName]);
   OwnMapping := SystemSQLMapper.MappingInfo.GetAllInstancesMapping(ObjectdefaultMapper.ExpressionName);
   if (length(OwnMapping)=1) and not OwnMapping[0].ClassIdRequired then
   begin
@@ -933,8 +916,8 @@ begin
           BoldLog.Log(s, ltDetail);
         end;
         BoldLog.LogFmt('The following %d objects are in table %s, but with an illegal type:', [IdList.Count, ObjectDefaultMapper.MainTable.SQLName], ltWarning);
-        AddRemedy(format(sCommentRemoveObjectsWithIllegaltype, [ObjectDefaultMapper.MainTable.SQLName]));
-        AddRemedy(format('DELETE FROM %s WHERE BOLD_ID IN (%s);', [ObjectDefaultMapper.MainTable.SQLName, s]));
+        Remedy.Add(format(sCommentRemoveObjectsWithIllegaltype, [ObjectDefaultMapper.MainTable.SQLName]));
+        Remedy.Add(format('DELETE FROM %s WHERE BOLD_ID IN (%s);', [ObjectDefaultMapper.MainTable.SQLName, s]));
         Query.AssignSQLText(Format('SELECT * FROM %s WHERE BOLD_ID IN (%s)', [ObjectDefaultMapper.MainTable.SQLName, s]));
       end;
     finally
@@ -944,17 +927,14 @@ begin
   end;
 end;
 
-function TBoldDbDataValidatorThread.GetQuery: IBoldQuery;
+function TBoldDbDataValidator.GetQuery: IBoldQuery;
 begin
   if not assigned(fQuery) then
-  begin
-    fQuery := Database.GetQuery;
-    fQuery.UseReadTransactions := false;
-  end;
+    fQuery := SystemSQLMapper.GetQuery;
   result := fQuery;
 end;
 
-constructor TBoldDbDataValidatorThread.Create(AValidator: TBoldDbValidator);
+constructor TBoldDbDataValidator.Create(owner: Tcomponent);
 begin
   inherited;
   fTypeTestedTables := TStringList.create;
@@ -966,14 +946,14 @@ begin
   fCorruptObjectsAction := caDelete;
 end;
 
-{procedure TBoldDbDataValidatorThread.DeActivate;
+procedure TBoldDbDataValidator.DeActivate;
 begin
   if assigned(fQuery) then
     SystemSQLMapper.ReleaseQuery(fQuery);
   inherited;
-end;}
+end;
 
-procedure TBoldDbDataValidatorThread.AddRemedyForDeleteObjects(Mapper: TBoldObjectSQLMapper; IdList: TStringList);
+procedure TBoldDbDataValidator.AddRemedyForDeleteObjects(Mapper: TBoldObjectSQLMapper; IdList: TStringList);
 var
   i,j: integer;
   FetchBlockSize: integer;
@@ -996,7 +976,7 @@ begin
           if j < stop then
             s := s + ',';
         end;
-        AddRemedy(format('DELETE FROM %s WHERE BOLD_ID IN (%s);', [Mapper.AllTables[i].SQLName, s]));
+        Remedy.Add(format('DELETE FROM %s WHERE BOLD_ID IN (%s);', [Mapper.AllTables[i].SQLName, s]));
       end;
     end;
   UnlinkFromDeleteObject(IdList, Mapper);
@@ -1004,7 +984,7 @@ end;
 
 type TBoldNonEmbeddedLinkDefaultMapperAccess = Class(TBoldNonEmbeddedLinkDefaultMapper);
 
-procedure TBoldDbDataValidatorThread.UnlinkFromDeleteObject(IdList: TStrings;
+procedure TBoldDbDataValidator.UnlinkFromDeleteObject(IdList: TStrings;
   ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   i: integer;
@@ -1036,17 +1016,17 @@ begin
           RelatedTable := ObjectSQLMapper.SystemPersistenceMapper.RootClassObjectPersistenceMapper.MainTable;
         if NonEmbeddedLink=nil then
         begin
-          BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateRelations: %s:%d SingleLink=nil', [ObjectSQLMapper.ExpressionName, I]);
+          BoldLog.LogFmt('TBoldDbDataValidator.ValidateRelations: %s:%d SingleLink=nil', [ObjectSQLMapper.ExpressionName, I]);
           Continue;
         end;
         if LinkTable=nil then
         begin
-          BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateRelations: %s:%d LinkTable=nil', [ObjectSQLMapper.ExpressionName, I]);
+          BoldLog.LogFmt('TBoldDbDataValidator.ValidateRelations: %s:%d LinkTable=nil', [ObjectSQLMapper.ExpressionName, I]);
           Continue;
         end;
         if RelatedTable=nil then
         begin
-          BoldLog.LogFmt('TBoldDbDataValidatorThread.ValidateRelations: %s:%d RelatedTable=nil', [ObjectSQLMapper.ExpressionName, I]);
+          BoldLog.LogFmt('TBoldDbDataValidator.ValidateRelations: %s:%d RelatedTable=nil', [ObjectSQLMapper.ExpressionName, I]);
           Continue;
         end;
         ClearSingleLink(IdList, MemberOfOtherEnd as TBoldEmbeddedSingleLinkDefaultMapper, ClassOfOtherEnd);
@@ -1066,7 +1046,7 @@ begin
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.ClearSingleLink(IdList: TStrings;
+procedure TBoldDbDataValidator.ClearSingleLink(IdList: TStrings;
   SingleLink: TBoldEmbeddedSingleLinkDefaultMapper; ObjectSQLMapper: TBoldObjectSQLMapper);
 var
   FetchBlockSize: integer;
@@ -1104,14 +1084,14 @@ begin
   end;
 end;
 
-procedure TBoldDbDataValidatorThread.ClearMultiLink(IdList: TStrings;
+procedure TBoldDbDataValidator.ClearMultiLink(IdList: TStrings;
   MultiLink: TBoldIndirectMultiLinkDefaultmapper;
   ObjectSQLMapper: TBoldObjectSQLMapper);
 begin
 //
 end;
 
-function TBoldDbDataValidatorThread.ClearRelationIfNeeded(IdList: TStrings;
+function TBoldDbDataValidator.ClearRelationIfNeeded(IdList: TStrings;
   SingleLink: TBoldEmbeddedSingleLinkDefaultMapper;
   ObjectSQLMapper: TBoldObjectSQLMapper): boolean;
 var
@@ -1136,7 +1116,7 @@ begin
           LinkClassIdList.Add(query.Fields[0].AsString);
           query.Next;
         end;
-        AddRemedy(Format('-- Delete link class (%s.%s) ', [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
+        Remedy.Add(Format('-- Delete link class (%s.%s) ', [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
         SuggestTableDelete(SingleLink.ObjectPersistenceMapper.AllTables, LinkClassIdList, ObjectSQlMapper);
       finally
         LinkClassIdList.free;
@@ -1144,73 +1124,13 @@ begin
     end
     else
     begin
-      AddRemedy(Format('-- Clean relation (%s.%s) ', [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
-      AddRemedy(format('UPDATE %s SET %s = -1 WHERE %s IN (%s);',
+      Remedy.Add(Format('-- Clean relation (%s.%s) ', [ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName]));
+      Remedy.Add(format('UPDATE %s SET %s = -1 WHERE %s IN (%s);',
         [ObjectSQlMapper.MainTable.SQLName, SingleLink.MainColumnName, SingleLink.MainColumnName, IdList.CommaText]));
     end;
   end;
   Query.Close;
 end;
 
-{ TBoldDbDataValidator }
-
-constructor TBoldDbDataValidator.Create(owner: TComponent);
-begin
-  inherited;
-end;
-
-destructor TBoldDbDataValidator.Destroy;
-begin
-
-  inherited;
-end;
-
-procedure TBoldDbDataValidator.Validate;
-var
-  i: integer;
-  ObjectPMapper: TBoldObjectSQLMapper;
-  sl: TStringList;
-begin
-  sl := TStringList.Create;
-  sl.CommaText := UpperCase(ClassesToValidate);
-  try
-    BoldLog.ProgressMax := SystemSQLMapper.ObjectPersistenceMappers.count - 1;
-    for i := SystemSQLMapper.ObjectPersistenceMappers.count - 1 downto 0 do
-    begin
-      ObjectPMapper := SystemSQLMapper.ObjectPersistenceMappers[i] as TBoldObjectSQLMapper;
-      if assigned(ObjectPMapper) then
-      begin
-        if (sl.Count > 0) and not (sl.IndexOf(UpperCase(ObjectPMapper.ExpressionName)) <> -1) then
-          continue;
-        TableQueue.Enqueue(ObjectPMapper);
-{        BoldLog.LogHeader := Format(sProcessingClass, [ObjectPMapper.ExpressionName]);
-        ValidateExistence(ObjectPMapper);
-        ValidateRelations(ObjectPMapper);
-          ValidateNotNullColumns(ObjectPMapper);
-        if ObjectPmapper is TBoldObjectDefaultMapper then
-          ValidateStrayObjects(ObjectPMapper as TBoldObjectDefaultMapper);
-        if ObjectPMapper.IsLinkClass then
-        begin
-          ValidateLinkObjects(ObjectPmapper);
-        end;}
-      end;
-//      BoldLog.Progress := SystemSQLMapper.ObjectPersistenceMappers.count-i+1;
-      if DoCheckStop then exit;
-    end;
-  finally
-    sl.free;
-  end;
-  inherited;
-end;
-
-function TBoldDbDataValidator.CreateValidatorThread: TBoldDbValidatorThread;
-begin
-  var thread := TBoldDbDataValidatorThread.Create(self);
-  result := thread;
-  thread.ValidatorTestTypes := ValidatorTestTypes;
-end;
-
 end.
-
-
 

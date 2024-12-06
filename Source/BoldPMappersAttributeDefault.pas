@@ -53,11 +53,9 @@ type
   {TBoldPMAnsiString}
   TBoldPMAnsiString = class(TBoldPMString)
   protected
-    function GetColumnTypeAsSQL(ColumnIndex: Integer): string; override;
     function CompareField(const ObjectContent: IBoldObjectContents; const Field: IBoldField;
         ColumnIndex: integer; const ValueSpace: IBoldValueSpace; TranslationList:
         TBoldIdTranslationList): Boolean; override;
-    function GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType; override;
   public
     procedure ValueFromField(OwningObjectId: TBoldObjectId; const ObjectContent:
         IBoldObjectContents; const ValueSpace: IBoldValueSpace; TranslationList:
@@ -345,28 +343,7 @@ end;
 
 function TBoldPMString.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
 begin
-  if SystemPersistenceMapper.SQLDataBaseConfig.TreatStringFieldAsUnicode then
-  begin
-    if SystemPersistenceMapper.SQLDataBaseConfig.IsSQLServerEngine then
-    begin
-      // Changed from ftWideString to ftWideMemo as MSSQL truncates
-      // string params to 8000
-      Result := ftWideMemo;
-    end else
-    begin
-      Result := ftWideString
-    end;
-  end else
-  begin
-    if SystemPersistenceMapper.SQLDataBaseConfig.IsSQLServerEngine then
-    begin
-      // Changed from ftString to ftMemo as MSSQL truncates string params to 8000
-      Result := ftMemo;
-    end else
-    begin
-      Result := ftString;
-    end;
-  end;
+  Result := ftMemo; // Changed from ftString to ftMemo as MSSQL truncates string params to 8000
 end;
 
 function TBoldPMString.GetColumnSize(ColumnIndex: Integer): Integer;
@@ -1288,17 +1265,6 @@ begin
     if not CheckEitherNull(field, aString, result) then
       result := Field.AsAnsiString = aString.asAnsiString;
   end;
-end;
-
-function TBoldPMAnsiString.GetColumnBDEFieldType(
-  ColumnIndex: Integer): TFieldType;
-begin
-  Result := ftString;
-end;
-
-function TBoldPMAnsiString.GetColumnTypeAsSQL(ColumnIndex: Integer): string;
-begin
-  Result := SystemPersistenceMapper.SQLDataBaseConfig.GetColumnTypeForAnsiString(GetColumnSize(ColumnIndex));
 end;
 
 procedure TBoldPMAnsiString.ValueFromField(OwningObjectId: TBoldObjectId;

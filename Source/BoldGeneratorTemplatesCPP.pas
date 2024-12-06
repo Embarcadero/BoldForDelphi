@@ -48,7 +48,7 @@ type
     function GetDefaultIncFileExtension: string; override;
     property DataModule: TBoldGeneratorTemplateCPPDM read GetDataModule;
   public
-    destructor destroy; override;
+    destructor Destroy; override;
     function MethodToCOMHeader(OwningClass: TMoldClass; Method: TMoldMethod; InterfaceCode: Boolean; ParametersToCoerce: TStringList; ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel; GenerateMIDLCode: Boolean): String; override;
     function MethodToCOMCall(OwningClass: TMoldClass; Method: TMoldMethod; ParametersToCoerce, ParametersToInterfaceCoerce: TStringList; MoldModel: TMoldModel): String; override;
     function ReadMethodSignature(ClassName, AttributeName, AttributeType: string): string; override;
@@ -75,7 +75,7 @@ uses
 
 { TBoldCPPTemplateManager }
 
-destructor TBoldCPPTemplateManager.destroy;
+destructor TBoldCPPTemplateManager.Destroy;
 begin
   FreeAndNil(fDataModule);
   inherited;

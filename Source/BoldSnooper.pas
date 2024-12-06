@@ -6,7 +6,6 @@ unit BoldSnooper;
 interface
 
 uses
-  Classes,
   BoldAbstractSnooper,
   BoldPropagatorInterfaces_TLB,
   BoldDefs,
@@ -17,21 +16,19 @@ type
   {forward declarations}
   TBoldSnooper = class;
 
+
   { TBoldSnooper }
   TBoldSnooper = class(TBoldAbstractSnooper)
   private
     fOwner: TObject;
-    fEvents: TStringList;
   protected
     procedure EnsureDataBaseLock(const ClientID: TBoldClientID); override;
     procedure ReleaseDataBaseLock(const ClientID: TBoldClientID); override;
     function GetLockManager: IBoldLockManager; virtual;
     function GetPropagator: IBoldEventPropagator; virtual;
     function GetCheckDatabaseLock: Boolean; virtual;
-    property Events: TStringList read fEvents;
   public
     constructor Create(MoldModel: TMoldModel; aOwner: TObject); reintroduce;
-    destructor Destroy; override;
     procedure TransmitEvents(const ClientID: TBoldClientID); override;
     property Propagator: IBoldEventPropagator read GetPropagator;
     property LockManager: IBoldLockManager read GetLockManager;
@@ -43,6 +40,7 @@ implementation
 uses
   Sysutils,
   Variants,
+  Classes,
   BoldPropagatorConstants,
   BoldLockingDefs,
   BoldUtils,
@@ -82,23 +80,17 @@ begin
       try
         if (Events.Count <> 0) then
           CheckError(Propagator.SendEvents(ClientID, StringListToVarArray(Events)), 'SendEvents');
-//        if (Subscriptions.Count <> 0) then
-//          CheckError(Propagator.AddSubscriptions(ClientID, StringListToVarArray(Subscriptions)), 'AddSubscriptions');
-//        if (CancelledSubscriptions.Count <> 0) then
-//          CheckError(Propagator.CancelSubscriptions(ClientID, StringListToVarArray(CancelledSubscriptions)), 'CancelSubscriptions');
+        if (Subscriptions.Count <> 0) then
+          CheckError(Propagator.AddSubscriptions(ClientID, StringListToVarArray(Subscriptions)), 'AddSubscriptions');
+        if (CancelledSubscriptions.Count <> 0) then
+          CheckError(Propagator.CancelSubscriptions(ClientID, StringListToVarArray(CancelledSubscriptions)), 'CancelSubscriptions');
       except on E: EOleSysError do
         DoPropagatorFailure(self, E.Message);
       end;
     end;
   finally
-    Events.Clear;
+    ClearEvents;
   end;
-end;
-
-destructor TBoldSnooper.Destroy;
-begin
-  fEvents.free;
-  inherited;
 end;
 
 procedure TBoldSnooper.EnsureDataBaseLock(const ClientId: TBoldClientID);
@@ -132,7 +124,6 @@ begin
   inherited Create(MoldModel);
   Assert(Assigned(aOwner));
   fOwner := aOwner;
-  fEvents := TStringList.Create;
 end;
 
 function TBoldSnooper.GetLockManager: IBoldLockManager;

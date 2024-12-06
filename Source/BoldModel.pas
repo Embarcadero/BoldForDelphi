@@ -56,14 +56,14 @@ type
     procedure EnsureMoldModelCurrent; override;
     property UMLModelExposed: Boolean read FUMLModelExposed;
     property UMLModelMoreCurrent: Boolean read GetUMLModelMoreCurrent;
-    procedure StartValidation;
-    procedure EndValidation;
   public
     constructor Create(owner: TComponent); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure EnsureTypes;
     function UMLModelToString: string;
+    procedure StartValidation;
+    procedure EndValidation;
     property UMLModel: TUMLModel read GetUMLModel;
     property EnsuredUMLModel: TUMLModel read GetEnsuredUMLModel;
     property IsValidating: boolean read GetIsValidating;

@@ -3,8 +3,8 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
   Top = 221
   BorderIcons = [biSystemMenu]
   Caption = 'TypeName Editor'
-  ClientHeight = 390
-  ClientWidth = 1019
+  ClientHeight = 389
+  ClientWidth = 1015
   Color = clBtnFace
   Constraints.MinHeight = 200
   Constraints.MinWidth = 411
@@ -39,16 +39,14 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     0000000000000000000000000000000000000000000000000000000000000000
     000000000000000000000000000000000000000000000000000000000000}
   Menu = MainMenu1
-  OldCreateOrder = False
   OnCreate = FormCreate
   DesignSize = (
-    1019
-    390)
-  PixelsPerInch = 96
+    1015
+    389)
   TextHeight = 13
   object btnDown: TSpeedButton
     Left = 40
-    Top = 360
+    Top = 359
     Width = 25
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -67,10 +65,11 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
       6666666666766F66666666666666666666666666667776666666}
     NumGlyphs = 2
     OnClick = btnDownClick
+    ExplicitTop = 360
   end
   object btnUp: TSpeedButton
     Left = 8
-    Top = 360
+    Top = 359
     Width = 25
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -89,12 +88,13 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
       6666666666766F666666666666666666666666666667F6666666}
     NumGlyphs = 2
     OnClick = btnUpClick
+    ExplicitTop = 360
   end
   object StringGrid1: TStringGrid
     Left = 0
     Top = 0
-    Width = 1017
-    Height = 349
+    Width = 1009
+    Height = 348
     Anchors = [akLeft, akTop, akRight, akBottom]
     ColCount = 13
     DefaultRowHeight = 18
@@ -103,6 +103,8 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goEditing]
     PopupMenu = PopupMenu1
     TabOrder = 0
+    ExplicitWidth = 1017
+    ExplicitHeight = 349
     ColWidths = (
       99
       92
@@ -119,28 +121,32 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
       64)
   end
   object btnAdd: TButton
-    Left = 665
-    Top = 360
+    Left = 657
+    Top = 359
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = '&Add'
     TabOrder = 1
     OnClick = btnAddClick
+    ExplicitLeft = 665
+    ExplicitTop = 360
   end
   object btnDelete: TButton
-    Left = 753
-    Top = 360
+    Left = 745
+    Top = 359
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = '&Delete'
     TabOrder = 2
     OnClick = btnDeleteClick
+    ExplicitLeft = 753
+    ExplicitTop = 360
   end
   object btnOK: TButton
-    Left = 841
-    Top = 360
+    Left = 833
+    Top = 359
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
@@ -148,16 +154,20 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Default = True
     ModalResult = 1
     TabOrder = 3
+    ExplicitLeft = 841
+    ExplicitTop = 360
   end
   object btnCancel: TButton
-    Left = 929
-    Top = 360
+    Left = 921
+    Top = 359
     Width = 81
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 4
+    ExplicitLeft = 929
+    ExplicitTop = 360
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -206,7 +216,7 @@ object BoldTypeNameEditorForm: TBoldTypeNameEditorForm
     Left = 76
     Top = 360
     Bitmap = {
-      494C010103000400180010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

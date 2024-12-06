@@ -1,29 +1,29 @@
 object ValueSetForm1: TValueSetForm1
   Left = 271
   Top = 240
-  Width = 476
-  Height = 305
   HelpContext = 30
   Caption = 'ValueSetForm1'
+  ClientHeight = 266
+  ClientWidth = 460
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 468
-    Height = 277
+    Width = 460
+    Height = 266
     ActivePage = tsValues
     Align = alClient
     Style = tsButtons
     TabOrder = 0
+    ExplicitWidth = 468
+    ExplicitHeight = 277
     object tsClassDef: TTabSheet
       HelpContext = 31
       Caption = 'Definition'
@@ -261,7 +261,6 @@ object ValueSetForm1: TValueSetForm1
           Height = 29
           ButtonHeight = 25
           Caption = 'ToolBar1'
-          EdgeBorders = []
           EdgeInner = esNone
           EdgeOuter = esNone
           Font.Charset = DEFAULT_CHARSET
@@ -287,10 +286,6 @@ object ValueSetForm1: TValueSetForm1
             Width = 25
             Height = 25
             Hint = 'New Value (Ctrl + Ins)'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 0
-            OnClick = ActionInsertExecute
             Glyph.Data = {
               36030000424D3603000000000000360000002800000010000000100000000100
               1800000000000003000000000000000000000000000000000000FFFFFFFFFFFF
@@ -318,6 +313,10 @@ object ValueSetForm1: TValueSetForm1
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
               FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            OnClick = ActionInsertExecute
           end
           object bbDelete: TBitBtn
             Left = 33
@@ -325,10 +324,6 @@ object ValueSetForm1: TValueSetForm1
             Width = 25
             Height = 25
             Hint = 'Delete Value (Ctrl+Del)'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 1
-            OnClick = ActionDeleteExecute
             Glyph.Data = {
               F6000000424DF600000000000000760000002800000010000000100000000100
               0400000000008000000000000000000000001000000010000000000000000000
@@ -338,6 +333,10 @@ object ValueSetForm1: TValueSetForm1
               7777777777777777777777777777777777777770000000000777777000000000
               0777777000000000077777777777777777777777777777777777777777777777
               7777777777777777777777777777777777777777777777777777}
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
+            OnClick = ActionDeleteExecute
           end
           object bbEdit: TBitBtn
             Left = 58
@@ -346,10 +345,6 @@ object ValueSetForm1: TValueSetForm1
             Height = 25
             Hint = 'Edit Value'
             Default = True
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 2
-            OnClick = ActionEditExecute
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               0400000000000001000000000000000000001000000010000000000000000000
@@ -364,6 +359,10 @@ object ValueSetForm1: TValueSetForm1
               5555F777F7555555555501900555555555557777755555555555099055555555
               5555777755555555555550055555555555555775555555555555}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+            OnClick = ActionEditExecute
           end
           object bbDown: TBitBtn
             Left = 83
@@ -371,10 +370,6 @@ object ValueSetForm1: TValueSetForm1
             Width = 25
             Height = 25
             Hint = 'Move Down'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 3
-            OnClick = bbDownClick
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               04000000000000010000120B0000120B00001000000000000000000000000000
@@ -389,6 +384,10 @@ object ValueSetForm1: TValueSetForm1
               6666666666766F6666666666666006666666666666766F666666666666600666
               6666666666766F66666666666666666666666666667776666666}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 3
+            OnClick = bbDownClick
           end
           object bbUp: TBitBtn
             Left = 108
@@ -396,10 +395,6 @@ object ValueSetForm1: TValueSetForm1
             Width = 25
             Height = 25
             Hint = 'Move Up'
-            ParentShowHint = False
-            ShowHint = True
-            TabOrder = 4
-            OnClick = bbUpClick
             Glyph.Data = {
               76010000424D7601000000000000760000002800000020000000100000000100
               04000000000000010000120B0000120B00001000000000000000000000000000
@@ -414,6 +409,10 @@ object ValueSetForm1: TValueSetForm1
               66666666676666F666666666667007666666666666766F666666666666600666
               6666666666766F666666666666666666666666666667F6666666}
             NumGlyphs = 2
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+            OnClick = bbUpClick
           end
         end
         object ListViewValues: TListView

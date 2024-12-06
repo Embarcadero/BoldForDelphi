@@ -32,20 +32,20 @@ type
 
   TBoldSQLDataBaseConfig = class(TPersistent)
   private
-    fIfTemplate: string;
-    fColumnExistsTemplate: string;
-    fTableExistsTemplate: string;
-    fIndexExistsTemplate: string;
-    fIndexColumnExistsTemplate: string;
-    fColumnTypeForBlob: string;
-    fColumnTypeForDateTime: string;
-    fColumnTypeForDate: string;
-    fColumnTypeForTime: string;
-    fColumnTypeForFloat: string;
-    fColumnTypeForInt64: string;
+    FIfTemplate: string;
+    FColumnExistsTemplate: string;
+    FTableExistsTemplate: string;
+    FIndexExistsTemplate: string;
+    FIndexColumnExistsTemplate: string;
+    FColumnTypeForBlob: string;
+    FColumnTypeForDateTime: string;
+    FColumnTypeForDate: string;
+    FColumnTypeForTime: string;
+    FColumnTypeForFloat: string;
+    fColumnTypeForInt64: string;    
     fDefaultValueForDateTime: string;
-    fDefaultSystemMapper: string;
-    fDefaultObjectMapper: string;
+    FDefaultSystemMapper: string;
+    FDefaultObjectMapper: string;
     fOnChange: TNotifyEvent;
     fUseSQL92Joins: boolean;
     fSingleIndexOrderedLinks: Boolean;
@@ -54,26 +54,24 @@ type
     fUseParamsForInteger: boolean;
     fUseParamsForEmptyString: boolean;
     fDefaultStringLength: integer;
-    fColumnTypeForString: string;
-    fColumnTypeForUnicodeString: string;
-    fColumnTypeForAnsiString: string;
-    fColumnTypeForText: string;
-    fColumnTypeForUnicodeText: string;
-    fColumnTypeForAnsiText: string;
-    fLongStringLimit: integer;
+    FColumnTypeForString: string;
+    FColumnTypeForUnicodeString: string;
+    FColumnTypeForText: string;
+    FColumnTypeForUnicodeText: string;
+    FLongStringLimit: integer;
     fDropColumnTemplate: string;
     fDropIndexTemplate: string;
     fDropTableTemplate: string;
     fIndexInfoTemplate: string;
     fSQLforNotNull: string;
-    fColumnTypeForInteger: string;
+    FColumnTypeForInteger: string;
     fColumnTypeForSmallInt: string;
-    fColumnTypeForGUID: string;
+    FColumnTypeForGUID: string;
     fSupportsConstraintsInCreateTable: Boolean;
     fQuoteNonStringDefaultValues: Boolean;
     fSupportsStringDefaultValues: Boolean;
     fReservedWords: TStringList;
-    fColumnTypeForCurrency: string;
+    FColumnTypeForCurrency: string;
     fEngine: TBoldDatabaseEngine;
     fMaxParamsInIdList: integer;
     fMaxIndexNameLength: integer;
@@ -84,14 +82,14 @@ type
     fEmptyStringMarker: String;
     fStoreEmptyStringsAsNULL: Boolean;
     fSystemTablePrefix: String;
-    fSqlScriptCommentStart: string;
-    fSqlScriptStartTransaction: string;
-    fSqlScriptTerminator: string;
-    fSqlScriptCommentStop: string;
-    fSqlScriptSeparator: string;
-    fSqlScriptRollBackTransaction: string;
-    fSqlScriptCommitTransaction: string;
-    fDatabaseCaseSensitiveTemplate: string;
+    FSqlScriptCommentStart: string;
+    FSqlScriptStartTransaction: string;
+    FSqlScriptTerminator: string;
+    FSqlScriptCommentStop: string;
+    FSqlScriptSeparator: string;
+    FSqlScriptRollBackTransaction: string;
+    FSqlScriptCommitTransaction: string;
+    FDatabaseCaseSensitiveTemplate: string;
     fQuoteLeftBracketInLike: Boolean;
     fIgnoreMissingObjects: boolean;
     fMaxBatchQueryLength: integer;
@@ -106,7 +104,6 @@ type
     fDropDatabaseTemplate: string;
     fDatabaseExistsTemplate: string;
     fUnicodeStringPrefix: string;
-    fTreatStringFieldAsUnicode: boolean;
     procedure SetIfTemplate(const Value: string);
     procedure SetColumnExistsTemplate(const Value: string);
     procedure SetTableExistsTemplate(const Value: string);
@@ -139,7 +136,7 @@ type
     procedure SetColumnTypeForInteger(const Value: string);
     function GetEffectiveSQLForNotNull: string;
     procedure SetColumnTypeForSmallInt(const Value: string);
-    procedure SetColumnTypeForInt64(const Value: string);
+    procedure SetColumnTypeForInt64(const Value: string);    
     procedure SetColumnTypeForGUID(const Value: string);
     procedure SetSupportsConstraintsInCreateTable(const Value: Boolean);
     procedure SetQuoteNonStringDefaultValues(const Value: Boolean);
@@ -152,7 +149,7 @@ type
     procedure SetDBGenerationMode(const Value: TBoldDatabaseGenerationMode);
     procedure setAllowMetadataChangesInTransaction(const Value: Boolean);
     procedure ReadUseTransactionsDuringDBCreate(Reader: TReader);
-    procedure SetDatabaseCaseSensitiveTemplate(const Value: string);
+    procedure SetDatabaseCaseSensitiveTemplate(const Value: string);    
     procedure SetFieldTypeForBlob(const Value: TFieldType);
     procedure SetEmptyStringMarker(const Value: String);
     procedure SetStoreEmptyStringsAsNULL(const Value: Boolean);
@@ -181,9 +178,6 @@ type
     procedure SetDropDatabaseTemplate(const Value: string);
     procedure SetDatabaseExistsTemplate(const Value: string);
     procedure SetUnicodeStringPrefix(const Value: string);
-    procedure SetColumnTypeForAnsiString(const Value: string);
-    procedure SetColumnTypeForAnsiText(const Value: string);
-    procedure SetTreatStringFieldAsUnicode(const Value: boolean);
   protected
     procedure DefineProperties(Filer: TFiler); override;
   public
@@ -200,7 +194,6 @@ type
     function GetIndexInfoQuery(const TableName: String): String;
     function GetColumnTypeForString(Size: Integer): string;
     function GetColumnTypeForUnicodeString(Size: Integer): string;
-    function GetColumnTypeForAnsiString(Size: Integer): string;
     procedure InitializeDbEngineSettings(Engine: TBoldDatabaseEngine);
     function CorrectlyQuotedDefaultValue(value: string): String;
     function GetColumnExistsQuery(const TableName, ColumnName: string): string;
@@ -210,9 +203,6 @@ type
         string;
     function GetIndexExistsQuery(const TableName, IndexName: string): string;
     function GetTableExistsQuery(const TableName: string): string;
-
-    function IsSQLServerEngine: Boolean;
-
     property EffectiveSQLForNotNull: string read GetEffectiveSQLForNotNull;
     property OnChange: TNotifyEvent read fOnChange write fOnChange;
     property Engine: TBoldDatabaseEngine read fEngine write fEngine;
@@ -233,10 +223,8 @@ type
     property ColumnTypeForCurrency: string read FColumnTypeForCurrency write SetColumnTypeForCurrency;
     property ColumnTypeForString: string read FColumnTypeForString write SetColumnTypeForString;
     property ColumnTypeForUnicodeString: string read FColumnTypeForUnicodeString write SetColumnTypeForUnicodeString;
-    property ColumnTypeForAnsiString: string read FColumnTypeForAnsiString write SetColumnTypeForAnsiString;
     property ColumnTypeForText: string read FColumnTypeForText write SetColumnTypeForText;
-    property ColumnTypeForUnicodeText: string read FColumnTypeForUnicodeText write SetColumnTypeForUnicodeText;
-    property ColumnTypeForAnsiText: string read FColumnTypeForAnsiText write SetColumnTypeForAnsiText;
+    property ColumnTypeForUnicodeText: string read FColumnTypeForUnicodeText write SetColumnTypeForUnicodeText;    
     property LongStringLimit: integer read FLongStringLimit write SetLongStringLimit default -1;
     property ColumnTypeForInteger: string read FColumnTypeForInteger write SetColumnTypeForInteger;
     property ColumnTypeForSmallInt: string read fColumnTypeForSmallInt write SetColumnTypeForSmallInt;
@@ -289,8 +277,6 @@ type
     property SqlScriptStartTransaction: string read FSqlScriptStartTransaction write SetSqlScriptStartTransaction;
     property SqlScriptCommitTransaction: string read FSqlScriptCommitTransaction write SetSqlScriptCommitTransaction;
     property SqlScriptRollBackTransaction: string read FSqlScriptRollBackTransaction write SetSqlScriptRollBackTransaction;
-    property TreatStringFieldAsUnicode: boolean read fTreatStringFieldAsUnicode write SetTreatStringFieldAsUnicode;
-
   end;
 
 implementation
@@ -329,10 +315,8 @@ begin
   FColumnTypeForCurrency := Source.ColumnTypeForCurrency;
   fColumnTypeForString := Source.ColumnTypeForString;
   fColumnTypeForUnicodeString := Source.ColumnTypeForUnicodeString;
-  fColumnTypeForAnsiString := Source.ColumnTypeForAnsiString;
   fColumnTypeForText := Source.ColumnTypeForText;
   fColumnTypeForUnicodeText := Source.ColumnTypeForUnicodeText;
-  fColumnTypeForAnsiText := Source.ColumnTypeForAnsiText;
   FLongStringLimit := Source.LongStringLimit;
   FColumnTypeForInteger := Source.ColumnTypeForInteger;
   fColumnTypeForSmallInt := Source.ColumnTypeForSmallInt;
@@ -362,7 +346,6 @@ begin
   fSystemTablePrefix := Source.SystemTablePrefix;
   fEmptyStringMarker := Source.EmptyStringMarker;
   fUnicodeStringPrefix := Source.UnicodeStringPrefix;
-  fTreatStringFieldAsUnicode := Source.TreatStringFieldAsUnicode;
   fAllowMetadataChangesInTransaction := Source.AllowMetadataChangesInTransaction;
   fDbGenerationMode := Source.DBGenerationMode;
   fDefaultStringLength := Source.DefaultStringLength;
@@ -392,7 +375,7 @@ begin
   FIndexExistsTemplate := Source.IndexExistsTemplate;
   FIndexColumnExistsTemplate := Source.IndexColumnExistsTemplate;
   FDatabaseCaseSensitiveTemplate := Source.DatabaseCaseSensitiveTemplate;
-  FIgnoreMissingObjects := Source.IgnoreMissingObjects;
+  FIgnoreMissingObjects := Source.IgnoreMissingObjects;  
   Change;
 end;
 
@@ -515,16 +498,6 @@ begin
   end;
 end;
 
-procedure TBoldSQLDataBaseConfig.SetColumnTypeForAnsiString(
-  const Value: string);
-begin
-  if FColumnTypeForAnsiString <> Value then
-  begin
-    FColumnTypeForAnsiString := Value;
-    Change;
-  end;
-end;
-
 procedure TBoldSQLDataBaseConfig.SetColumnTypeForText(const Value: string);
 begin
   if FColumnTypeForText <> Value then
@@ -539,15 +512,6 @@ begin
   if FColumnTypeForUnicodeText <> Value then
   begin
     FColumnTypeForUnicodeText := Value;
-    Change;
-  end;
-end;
-
-procedure TBoldSQLDataBaseConfig.SetColumnTypeForAnsiText(const Value: string);
-begin
-  if FColumnTypeForAnsiText <> Value then
-  begin
-    FColumnTypeForAnsiText := Value;
     Change;
   end;
 end;
@@ -667,15 +631,6 @@ begin
     Result := Format(ColumnTypeForUnicodeString, [Size])
   else
     Result := Format(ColumnTypeForUnicodeText, [Size]);
-end;
-
-function TBoldSQLDataBaseConfig.GetColumnTypeForAnsiString(
-  Size: Integer): string;
-begin
-  if ( LongStringLimit = -1) or (Size <= LongStringLimit) then
-    Result := Format(ColumnTypeForAnsiString, [Size])
-  else
-    Result := Format(ColumnTypeForAnsiText, [Size]);
 end;
 
 function TBoldSQLDataBaseConfig.GetCreateDatabaseQuery(
@@ -809,27 +764,25 @@ end;
 
 procedure TBoldSQLDataBaseConfig.SetInitialValues;
 begin
-  fDatabaseCaseSensitiveTemplate := ''; // is database specific
-  fIfTemplate := ''; // is database specific
-  fColumnExistsTemplate := ''; // is database specific
-  fTableExistsTemplate := ''; // is database specific
-  fIndexExistsTemplate := ''; // is database specific
-  fIndexColumnExistsTemplate := ''; // is database specific
-  fColumnTypeForBlob := 'BLOB';
-  fColumnTypeForDateTime := 'DATE';
-  fColumnTypeForDate := 'DATE';
-  fColumnTypeForTime := 'DATE';
+  FDatabaseCaseSensitiveTemplate := ''; // is database specific
+  FIfTemplate := ''; // is database specific
+  FColumnExistsTemplate := ''; // is database specific
+  FTableExistsTemplate := ''; // is database specific
+  FIndexExistsTemplate := ''; // is database specific
+  FIndexColumnExistsTemplate := ''; // is database specific
+  FColumnTypeForBlob := 'BLOB';
+  FColumnTypeForDateTime := 'DATE';
+  FColumnTypeForDate := 'DATE';
+  FColumnTypeForTime := 'DATE';
   fDefaultValueForDateTime := '';
-  fColumnTypeForFloat := 'DOUBLE PRECISION';
-  fColumnTypeForCurrency := 'DOUBLE PRECISION';
+  FColumnTypeForFloat := 'DOUBLE PRECISION';
+  FColumnTypeForCurrency := 'DOUBLE PRECISION';
   fColumnTypeForString := 'VARCHAR(%d)';
   fColumnTypeForUnicodeString := 'NVARCHAR(%d)'; // do not localize
-  fColumnTypeForAnsiString := 'VARCHAR(%d)'; // do not localize
   fColumnTypeForText := 'VARCHAR(MAX)'; // do not localize
   fColumnTypeForUnicodeText := 'NVARCHAR(MAX)'; // do not localize
-  fColumnTypeForAnsiText := 'VARCHAR(MAX)'; // do not localize
   fLongStringLimit := -1;
-  fColumnTypeForInteger := 'INTEGER';
+  FColumnTypeForInteger := 'INTEGER';
   fColumnTypeForSmallInt := 'SMALLINT';
   fColumnTypeForInt64 := 'BIGINT'; // do not localize
   fDefaultStringLength := 255;
@@ -847,10 +800,9 @@ begin
   fSystemTablePrefix := 'BOLD';
   fEmptyStringMarker := '';
   fUnicodeStringPrefix := '';
-  fTreatStringFieldAsUnicode := true;
   fMultiRowInsertLimit := 1;
-  fUseParamsForInteger := false;
-  fUseParamsForEmptyString := false;
+  UseParamsForInteger := false;
+  UseParamsForEmptyString := false;
   fIgnoreMissingObjects := false;
   fAllowMetadataChangesInTransaction := true;
   fDBGenerationMode := dbgQuery;
@@ -864,15 +816,15 @@ begin
   fSQLforNull := 'NULL';
   fSQLforNotNull := 'NOT NULL';
   fSupportsConstraintsInCreateTable := true;
-  fQuoteNonStringDefaultValues := false;
+  FQuoteNonStringDefaultValues := false;
   fSupportsStringDefaultValues := true;
-  fSqlScriptCommentStart := '/* ';
-  fSqlScriptStartTransaction := 'START TRANSACTION';
-  fSqlScriptTerminator := ';';
-  fSqlScriptCommentStop := ' */';
-  fSqlScriptSeparator := '';
-  fSqlScriptRollBackTransaction := 'ROLLBACK';
-  fSqlScriptCommitTransaction := 'COMMIT';
+  FSqlScriptCommentStart := '/* ';
+  FSqlScriptStartTransaction := 'START TRANSACTION';
+  FSqlScriptTerminator := ';';
+  FSqlScriptCommentStop := ' */';
+  FSqlScriptSeparator := '';
+  FSqlScriptRollBackTransaction := 'ROLLBACK';
+  FSqlScriptCommitTransaction := 'COMMIT';
   fReservedWords.Text := 'ACTIVE, ADD, ALL, AFTER, ALTER'#10'AND, ANY, AS, ASC, ASCENDING,'#10 +
                          'AT, AUTO, AUTOINC, AVG, BASE_NAME'#10'BEFORE, BEGIN, BETWEEN, BLOB, BOOLEAN,'#10 +
                          'BOTH, BY, BYTES, CACHE, CAST, CHAR'#10'CHARACTER, CHECK, CHECK_POINT_LENGTH, COLLATE,'#10 +
@@ -993,19 +945,10 @@ begin
       fMaxIndexNameLength := 63;
       fMaxDbIdentifierLength := 63;
       fMultiRowInsertLimit := 1000;
-      fIndexColumnExistsTemplate := 'select indexname name from pg_indexes where upper(tablename) = upper(''<TableName>'')';
+      fIndexColumnExistsTemplate := 'select indexname from pg_indexes where upper(tablename) = upper(''<TableName>'')';
       FColumnExistsTemplate := 'SELECT column_name FROM information_schema.columns WHERE upper(table_name)=upper(''<TableName>'') and upper(column_name)=upper(''<ColumnName>'')'; // do not localize
       fDatabaseExistsTemplate := 'select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(''<DatabaseName>''));';
-//      IndexInfoTemplate fields: IndexName, IsPrimary, IsUnique, ColumnName
-      IndexInfoTemplate :=  'SELECT ix.relname IndexName, indisunique isUnique, indisprimary isPrimary, '+
-            '  regexp_replace(pg_get_indexdef(indexrelid), '#39'.*\((.*)\)'#39', '#39'\1'#39
-+            ') columnName '
-+          'FROM pg_index i '
-+          'JOIN pg_class t ON t.oid = i.indrelid '
-+          'JOIN pg_class ix ON ix.oid = i.indexrelid '
-+          'WHERE t.relname = (''<TableName>'')';
-
-
+//      IndexInfoTemplate := 'select indexname from pg_indexes where tablename = ''<TableName>'''; // this is not complete IndexName, IsPrimary, IsUnique, ColumnName
       fReservedWords.Text := 'ALL, ANALYSE, AND, ANY, ARRAY, AS, ASC, ASYMMETRIC, AUTHORIZATION,'#10 + // do not localize
                              'BETWEEN, BINARY, BOOLEAN, BOTH, CASE, CAST, CHAR, CHARACTER, CHECK,'#10 + // do not localize
                              'CMIN, COALESCE, COLLATE, COLUMN, CONSTRAINT, CONVERT, CREATE, CROSS,'#10 + // do not localize
@@ -1095,7 +1038,6 @@ begin
       fColumnTypeForText:='VARCHAR(32765)';  // do not localize
       fColumnTypeForUnicodeString:='VARCHAR(%d) CHARACTER SET UNICODE';  // do not localize
       fColumnTypeForUnicodeText:='VARCHAR(4000) CHARACTER SET UNICODE';  // do not localize
-      fColumnTypeForAnsiText:='VARCHAR(32765)';  // do not localize
       fIfTemplate:='EXECUTE BLOCK AS BEGIN IF (<Condition>) THEN EXECUTE STATEMENT ''<SQLStatement>''; END';  // do not localize
       fIndexColumnExistsTemplate:=
           'SELECT IX.RDB$INDEX_NAME AS Name FROM RDB$INDICES IX, RDB$INDEX_SEGMENTS SG WHERE IX.RDB$INDEX_NAME = SG.RDB$INDEX_NAME AND '  // do not localize
@@ -1126,7 +1068,6 @@ begin
       fColumnTypeForText:='VARCHAR(32765)';  // do not localize
       fColumnTypeForUnicodeString:='VARCHAR(%d) CHARACTER SET UNICODE';  // do not localize
       fColumnTypeForUnicodeText:='VARCHAR(4000) CHARACTER SET UNICODE';  // do not localize
-      fColumnTypeForAnsiText:='VARCHAR(32765)';  // do not localize
       fIfTemplate:='EXECUTE BLOCK AS BEGIN IF (<Condition>) THEN EXECUTE STATEMENT ''<SQLStatement>''; END';  // do not localize
       fIndexColumnExistsTemplate:=
           'SELECT IX.RDB$INDEX_NAME AS Name FROM RDB$INDICES IX, RDB$INDEX_SEGMENTS SG WHERE IX.RDB$INDEX_NAME = SG.RDB$INDEX_NAME AND '  // do not localize
@@ -1179,7 +1120,6 @@ begin
       fColumnTypeForText:='CLOB';  // do not localize
       fColumnTypeForUnicodeString:='NVARCHAR2(%d)';  // do not localize
       fColumnTypeForUnicodeText:='CLOB';  // do not localize
-      fColumnTypeForAnsiText:='CLOB';  // do not localize
       fMaxIndexNameLength := 30;
       fMaxDbIdentifierLength := 30;
       fSupportsStringDefaultValues:=False;
@@ -1355,11 +1295,6 @@ destructor TBoldSQLDataBaseConfig.Destroy;
 begin
   FreeAndNil(fReservedWords);
   inherited;
-end;
-
-function TBoldSQLDataBaseConfig.IsSQLServerEngine: Boolean;
-begin
-  Result := Engine = dbeSQLServer;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetColumnTypeForCurrency(const Value: string);
@@ -1606,84 +1541,53 @@ begin
   end;
 end;
 
-procedure TBoldSQLDataBaseConfig.SetTreatStringFieldAsUnicode(
-  const Value: boolean);
-begin
-  if fTreatStringFieldAsUnicode <> Value then
-  begin
-    fTreatStringFieldAsUnicode := Value;
-    Change;
-  end;
-end;
-
 procedure TBoldSQLDataBaseConfig.SetSqlScriptCommentStart(
   const Value: string);
 begin
-  if FSqlScriptCommentStart <> Value then
-  begin
-    FSqlScriptCommentStart := Value;
-    Change;
-  end;
+  FSqlScriptCommentStart := Value;
+  Change;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetSqlScriptCommentStop(
   const Value: string);
 begin
-  if FSqlScriptCommentStop <> Value then
-  begin
-    FSqlScriptCommentStop := Value;
-    Change;
-  end;
+  FSqlScriptCommentStop := Value;
+  Change;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetSqlScriptSeparator(
   const Value: string);
 begin
-  if FSqlScriptSeparator <> Value then
-  begin
-    FSqlScriptSeparator := Value;
-    Change;
-  end;
+  FSqlScriptSeparator := Value;
+  Change;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetSqlScriptStartTransaction(
   const Value: string);
 begin
-  if FSqlScriptStartTransaction <> Value then
-  begin
-    FSqlScriptStartTransaction := Value;
-    Change;
-  end;
+  FSqlScriptStartTransaction := Value;
+  Change;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetSqlScriptTerminator(
   const Value: string);
 begin
-  if FSqlScriptTerminator <> Value then
-  begin
-    FSqlScriptTerminator := Value;
-    Change;
-  end;
+  FSqlScriptTerminator := Value;
+  Change;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetSqlScriptCommitTransaction(
   const Value: string);
 begin
-  if FSqlScriptCommitTransaction <>  Value then
-  begin
-    FSqlScriptCommitTransaction := Value;
-    Change;
-  end;
+  FSqlScriptCommitTransaction := Value;
+  Change;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetSqlScriptRollBackTransaction(
   const Value: string);
 begin
-  if FSqlScriptRollBackTransaction <> Value then
-  begin
-    FSqlScriptRollBackTransaction := Value;
-    Change;
-  end;
+  FSqlScriptRollBackTransaction := Value;
+  Change;
 end;
 
 end.

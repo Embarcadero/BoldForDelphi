@@ -27,7 +27,6 @@ type
   TBoldExpressionHandleClass = class of TBoldExpressionHandle;       
 
   {---TBoldExpressionHandle---}
-  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldExpressionHandle = class(TBoldRootedHandle, IBoldOCLComponent)
   function IBoldOCLComponent.GetContextType = GetStaticRootType;
   private

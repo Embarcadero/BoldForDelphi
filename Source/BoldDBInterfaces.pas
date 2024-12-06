@@ -244,7 +244,7 @@ type
     function GetBatchQueryParamCount: integer;
     property RowsAffected: integer read GetRowsAffected;
     property Implementor: TObject read GetImplementor;
-    property SQLText: String read GetSQLText write AssignSQLText;
+    property SQLText: String read GetSQLText;
     property SQLStrings: TStrings read GetSQLStrings;
     property UseReadTransactions: boolean read GetUseReadTransactions write SetUseReadTransactions;
     property BatchQueryParamCount: integer read GetBatchQueryParamCount;
@@ -329,7 +329,6 @@ type
     procedure CreateDatabase(DropExisting: boolean = true);
     procedure DropDatabase;
     function DatabaseExists: boolean;
-    function CreateAnotherDatabaseConnection: IBoldDatabase;
   end;
 
   TBoldParameterWrapper = class(TBoldRefCountedObject)
@@ -425,8 +424,8 @@ type
     procedure Append;
     function ParamByName(const Value: string): IBoldParameter; virtual; abstract;
     function FindParam(const Value: string): IBoldParameter; virtual; abstract;
-    function CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; virtual;
-    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; virtual;
+    function Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; virtual;
+    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; virtual;
     function EnsureParamByName(const Value: string): IBoldParameter; virtual;
     procedure Close; virtual;
     function FieldByName(const FieldName: string): IBoldField; virtual;
@@ -467,7 +466,7 @@ type
     function GetSqlText: string; virtual; abstract;
     procedure AssignSQLText(const SQL: string); virtual; abstract;
     function GetSQLStrings: TStrings; virtual; abstract;
-    function GetSQLLength: integer;
+    function GetSqlLength: integer;
     function ParamsContainBlob: Boolean;
     function GetBatchQueryParamCount: integer;
     procedure BatchExecSQL;
@@ -479,7 +478,7 @@ type
   public
     constructor Create(DatabaseWrapper: TBoldDatabaseWrapper); override;
     destructor Destroy; override;
-    property SQLText: string read GetSQLText write AssignSQLText;
+    property SqlText: string read GetSqlText write AssignSQLText;
     property SQLStrings: TStrings read GetSQLStrings;
     property Params: TParams read GetParams;
   end;
@@ -950,14 +949,14 @@ begin
      DataSet.Close;
 end;
 
-function TBoldDataSetWrapper.CreateParam(FldType: TFieldType;
+function TBoldDataSetWrapper.Createparam(FldType: TFieldType;
   const ParamName: string; ParamType: TParamType;
   Size: integer): IBoldParameter;
 begin
   raise EBold.CreateFmt(sCreateParamNotImplemented, [classname]);
 end;
 
-function TBoldDataSetWrapper.CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter;
+function TBoldDataSetWrapper.Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter;
 begin
   result := Createparam(FldType, Paramname, ptUnknown, 0);
 end;

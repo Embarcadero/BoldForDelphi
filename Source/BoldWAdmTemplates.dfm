@@ -1,7 +1,4 @@
 object attrdatamodule: Tattrdatamodule
-  OldCreateOrder = False
-  Left = 285
-  Top = 161
   Height = 479
   Width = 741
   object ValueSetTemplate: TBoldTemplateHolder

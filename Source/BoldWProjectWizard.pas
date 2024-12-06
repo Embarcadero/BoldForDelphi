@@ -83,30 +83,36 @@ begin
       Result := true;
     end;
     if not Result then
-      if (CurrentModule.GetOwnerModuleCount > 0) then
+      if (CurrentModule.GetOwnerCount > 0) then
         for i:= 0 to CurrentModule.OwnerCount - 1 do
-          if (CurrentModule.GetOwnerModule(i).QueryInterface(IOTAProject, Project) = S_OK) then
+          if (CurrentModule.GetOwner(i).QueryInterface(IOTAProject, Project) = S_OK) then
           begin
-            Project := CurrentModule.GetOwnerModule(i) as IOTAProject;
+            Project := CurrentModule.GetOwner(i) as IOTAProject;
             Result := true;
             Break;
           end;
 
     if not Result then
-    if (CurrentModule.GetOwnerModuleCount > 0) then
-      for i:= 0 to CurrentModule.OwnerCount - 1 do
-        if (CurrentModule.GetOwnerModule(i).QueryInterface(IOTAProject, Project) = S_OK) then
-        begin
-          Project := CurrentModule.GetOwnerModule(i) as IOTAProject;
-          Result := true;
-          Break;
-        end;
+      if (ModuleServices.ModuleCount > 0) then
+        for i:=0 to ModuleServices.GetModuleCount - 1 do
+          if ModuleServices.Modules[i].QueryInterface(IOTAProject, Project) = S_OK then
+          begin
+            Project := ModuleServices.Modules[i] as IOTAProject;
+            Result := true;
+            Break;
+          end;
   end;
 end;
 
 procedure TProjectWizard.CreateModule;
 begin
 end;
+
+
+
+
+
+
 
 {TOTAProject}
 constructor TOTAProject.Create(ProjectIntf: IOTAProject);

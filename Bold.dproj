@@ -169,7 +169,6 @@
         <DCCReference Include="Source\BoldComObj.pas"/>
         <DCCReference Include="Source\BoldComPersistenceHandleReg.pas"/>
         <DCCReference Include="Source\BoldComReg.pas"/>
-        <DCCReference Include="Source\BoldComServer.pas"/>
         <DCCReference Include="Source\BoldComServerHandles.pas"/>
         <DCCReference Include="Source\BoldComThreads.pas"/>
         <DCCReference Include="Source\BoldComUtils.pas"/>

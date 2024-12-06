@@ -3,25 +3,25 @@ object frmBoldUndo: TfrmBoldUndo
   Top = 0
   BorderStyle = bsSizeToolWin
   Caption = 'Undo'
-  ClientHeight = 174
-  ClientWidth = 395
+  ClientHeight = 162
+  ClientWidth = 387
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object GridUndoList: TcxGrid
     Left = 0
     Top = 0
-    Width = 395
-    Height = 174
+    Width = 387
+    Height = 162
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 395
+    ExplicitHeight = 174
     object tvUndoList: TcxGridTableView
       PopupMenu = popUndo
       Navigator.Buttons.CustomButtons = <>

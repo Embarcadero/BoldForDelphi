@@ -5616,6 +5616,8 @@ uses
   BoldRev,
   BoldCoreConsts,
   BoldUtils,
+  BoldObjectListControllers,
+  BoldObjectSpaceLists,
   // implementation dependencies
   // other
   BoldGeneratedCodeDictionary;

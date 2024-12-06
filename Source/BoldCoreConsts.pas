@@ -362,9 +362,7 @@ const
 // BoldSystem
   sReasonUnknown = 'Reason unknown';
   sFailureMessage = '%s.%s failed: %s';
-  sObjectFromAnotherSystem = '%s Objects from wrong system passed to %s.';
   sBoldObjectAssigned = '%s.Destroy: BoldObject assigned';
-  sLocatorNotFound = '%s.%s. Locator not found for ID: %s';
   sNoSuchClass = '%s.%s: System contains no class named: %s';
   sCannotCreateInexact = 'Can not create objects with approximate type. ID: %s Class: %s';
   sClassDoesNotBelongHere = '%s.GetAllInClass: %s does not belong to this system';
@@ -824,7 +822,7 @@ const
   sCommentRemoveSpaceLinkObjects = '-- Clean Linkobjects (%s) with space pointers';
   sLogBrokenLinkObjects = 'The following Linkobjects (class %s) have empty links in one direction:';
   sCommentRemoveBrokenLinkObjects = '-- Clean Linkobjects (%s) with broken links';
-  sLogObjectsWithBrokenLinks = 'The following objects of class %s have %d invalid links in %s:';
+  sLogObjectsWithBrokenLinks = 'The following objects of class %s have invalid links in %s:';
   sCommentCleanRelation = '-- Clean relation (%s.%s) ';
   sLogObjectsWithWrongLinks = 'The following %d objects of class %s have singlelinks (%s) pointing to objects that don''t point back (they might point elsewhere):';
   sLogObjectsWithIllegalType = 'The following invalid types occur in the objects listed below:';
@@ -1138,9 +1136,9 @@ const
   sUMLGenInterface = 'Generate Persistence Interfaces';
 
 // BoldConstraintValidator
+  sVMOnModifyRequirements = '%s: vmOnModify mode requires BoldSystemBroadcastMemberEvents conditional define.';
   sConstraints = 'Constraints';
 
 implementation
 
 end.
-

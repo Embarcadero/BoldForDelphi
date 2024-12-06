@@ -58,7 +58,7 @@ type
     function GetDisplayName: string; override;
   public
     constructor Create(Collection: TCollection); override;
-    destructor destroy; override;
+    destructor Destroy; override;
   published
     property BoldHandle: TBoldElementHandleCom read FBoldHandle write SetBoldHandle;
     property VariableName: String read FVariableName write SetVariableName;
@@ -163,7 +163,7 @@ begin
   fBoldHandleSubscriber := TBoldPassthroughSubscriber.Create(_ReceiveHandleEvent);
 end;
 
-destructor TBoldVariableTupleCom.destroy;
+destructor TBoldVariableTupleCom.Destroy;
 begin
   FreeAndNil(fBoldHandleSubscriber);
   inherited;

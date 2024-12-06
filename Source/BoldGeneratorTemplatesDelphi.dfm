@@ -19,6 +19,7 @@ object BoldGeneratorTemplatesDelphiDM: TBoldGeneratorTemplatesDelphiDM
       ''
       'unit $(UNITNAME);'
       ''
+      '{$INCLUDE Bold.inc}'
       '{$DEFINE $(UNITNAME)_unitheader}'
       '{$INCLUDE $(UNITNAME)_Interface.inc}'
       ''

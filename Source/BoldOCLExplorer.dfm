@@ -2,8 +2,8 @@ object OclExplorerForm: TOclExplorerForm
   Left = 132
   Top = 107
   Caption = 'OCL Explorer'
-  ClientHeight = 466
-  ClientWidth = 973
+  ClientHeight = 465
+  ClientWidth = 969
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,26 +11,27 @@ object OclExplorerForm: TOclExplorerForm
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   Menu = MainMenu1
-  OldCreateOrder = False
   Position = poScreenCenter
   Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter5: TSplitter
     Left = 497
     Top = 0
     Width = 4
-    Height = 466
+    Height = 465
+    ExplicitHeight = 466
   end
   object Panel1: TPanel
     Left = 501
     Top = 0
-    Width = 472
-    Height = 466
+    Width = 468
+    Height = 465
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 472
+    ExplicitHeight = 466
     object Splitter1: TSplitter
       Left = 1
       Top = 137
@@ -57,7 +58,7 @@ object OclExplorerForm: TOclExplorerForm
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
-          460
+          456
           28)
         object List2EditOCLButton: TButton
           Left = 0
@@ -68,7 +69,7 @@ object OclExplorerForm: TOclExplorerForm
           TabOrder = 0
         end
         object cbEvaluateInPS2: TCheckBox
-          Left = 360
+          Left = 356
           Top = 6
           Width = 97
           Height = 17
@@ -76,27 +77,31 @@ object OclExplorerForm: TOclExplorerForm
           Caption = 'Evaluate in PS'
           TabOrder = 1
           OnClick = cbEvaluateInPS2Click
+          ExplicitLeft = 360
         end
       end
       object List2OCLMemo: TMemo
         Left = 5
         Top = 33
-        Width = 460
+        Width = 456
         Height = 98
         Align = alClient
         Color = clBtnFace
         ReadOnly = True
         TabOrder = 1
+        ExplicitWidth = 460
       end
     end
     object Panel4: TPanel
       Left = 1
       Top = 141
-      Width = 470
-      Height = 324
+      Width = 466
+      Height = 323
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitWidth = 470
+      ExplicitHeight = 324
       object Panel5: TPanel
         Left = 0
         Top = 0
@@ -125,17 +130,19 @@ object OclExplorerForm: TOclExplorerForm
         object RightView: TcxGridBoldTableView
           DragMode = dmAutomatic
           Navigator.Buttons.CustomButtons = <>
+          ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldHandle = List2Handle
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
           DateTimeHandling.Grouping = dtgRelativeToToday
           OptionsBehavior.CellHints = True
-          OptionsBehavior.ImmediateEditor = False
           OptionsBehavior.IncSearch = True
-          OptionsSelection.InvertSelect = False
+          OptionsBehavior.ImmediateEditor = False
           OptionsSelection.MultiSelect = True
+          OptionsSelection.InvertSelect = False
           OptionsSelection.UnselectFocusedRecordOnExit = False
           OptionsView.ColumnAutoWidth = True
           object RightViewColumn1: TcxGridBoldColumn
@@ -149,6 +156,7 @@ object OclExplorerForm: TOclExplorerForm
           end
           object RightViewColumn3: TcxGridBoldColumn
             Caption = 'AsString'
+            DataBinding.BoldProperties.Expression = ''
           end
         end
         object cxGridLevel1: TcxGridLevel
@@ -161,9 +169,10 @@ object OclExplorerForm: TOclExplorerForm
     Left = 0
     Top = 0
     Width = 497
-    Height = 466
+    Height = 465
     Align = alLeft
     TabOrder = 1
+    ExplicitHeight = 466
     object Splitter3: TSplitter
       Left = 1
       Top = 137
@@ -226,10 +235,11 @@ object OclExplorerForm: TOclExplorerForm
       Left = 1
       Top = 141
       Width = 495
-      Height = 324
+      Height = 323
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitHeight = 324
       object Panel12: TPanel
         Left = 0
         Top = 0
@@ -258,35 +268,40 @@ object OclExplorerForm: TOclExplorerForm
         object LeftView: TcxGridBoldTableView
           DragMode = dmAutomatic
           Navigator.Buttons.CustomButtons = <>
+          ScrollbarAnnotations.CustomAnnotations = <>
           DataController.BoldProperties.DefaultDblClick = False
           DataController.BoldHandle = List1Handle
+          DataController.Filter.Options = [fcoSoftNull]
           DataController.Options = [dcoAssignGroupingValues, dcoAssignMasterDetailKeys, dcoSaveExpanding, dcoImmediatePost]
           DataController.Summary.DefaultGroupSummaryItems = <>
           DataController.Summary.FooterSummaryItems = <>
           DataController.Summary.SummaryGroups = <>
           DateTimeHandling.Grouping = dtgRelativeToToday
           OptionsBehavior.CellHints = True
-          OptionsBehavior.ImmediateEditor = False
           OptionsBehavior.IncSearch = True
           OptionsBehavior.IncSearchItem = LeftViewClass
-          OptionsSelection.InvertSelect = False
+          OptionsBehavior.ImmediateEditor = False
           OptionsSelection.MultiSelect = True
+          OptionsSelection.InvertSelect = False
           OptionsSelection.UnselectFocusedRecordOnExit = False
           OptionsView.ColumnAutoWidth = True
           OptionsView.Footer = True
           object LeftViewTopSortedIndex: TcxGridBoldColumn
             Caption = 'Index'
             DataBinding.ValueType = 'Integer'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = brIndex
             PropertiesClassName = 'TcxSpinEditProperties'
           end
           object LeftViewClass: TcxGridBoldColumn
             Caption = 'Class'
+            DataBinding.BoldProperties.Expression = ''
             Width = 298
           end
           object LeftViewObjectCount: TcxGridBoldColumn
             Caption = 'Objects'
             DataBinding.ValueType = 'Integer'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = brObjects
             PropertiesClassName = 'TcxSpinEditProperties'
             Properties.Alignment.Horz = taRightJustify
@@ -297,6 +312,7 @@ object OclExplorerForm: TOclExplorerForm
           object LeftViewIdCount: TcxGridBoldColumn
             Caption = 'Ids'
             DataBinding.ValueType = 'Integer'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = brIds
             PropertiesClassName = 'TcxSpinEditProperties'
             Properties.Alignment.Horz = taRightJustify
@@ -305,6 +321,7 @@ object OclExplorerForm: TOclExplorerForm
           object LeftViewPersistent: TcxGridBoldColumn
             Caption = 'Persistent'
             DataBinding.ValueType = 'Boolean'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = bfIsPersistent
             PropertiesClassName = 'TcxCheckBoxProperties'
             Width = 80
@@ -312,16 +329,19 @@ object OclExplorerForm: TOclExplorerForm
           object LeftViewColumn1: TcxGridBoldColumn
             Caption = 'Abstract'
             DataBinding.ValueType = 'Boolean'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = brIsAbstract
           end
           object LeftViewColumn2: TcxGridBoldColumn
             Caption = 'LinkClass'
             DataBinding.ValueType = 'Boolean'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = brIsLinkClass
           end
           object LeftViewClassState: TcxGridBoldColumn
             Caption = 'Loaded'
             DataBinding.ValueType = 'Boolean'
+            DataBinding.BoldProperties.Expression = ''
             DataBinding.BoldProperties.Renderer = bfClassState
           end
         end
@@ -332,10 +352,12 @@ object OclExplorerForm: TOclExplorerForm
     end
   end
   object List1Handle: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     Left = 16
     Top = 104
   end
   object List2Handle: TBoldListHandle
+    StaticSystemHandle = ServerData.SystemHandle
     Variables = BoldVariableDefinition
     Left = 516
     Top = 104
@@ -416,16 +438,19 @@ object OclExplorerForm: TOclExplorerForm
     object BoldUpdateDBAction1: TBoldUpdateDBAction
       Category = 'Bold Actions'
       Caption = 'Update DB'
+      ShortCut = 16467
     end
   end
   object BoldPlaceableListSubscriber1: TBoldPlaceableListSubscriber
     BoldHandle = List1Handle
+    BoldRowProperties.Expression = ''
     OnAfterMakeUptoDate = BoldPlaceableListSubscriber1AfterMakeUptoDate
     Left = 233
     Top = 73
   end
   object BoldPlaceableListSubscriber2: TBoldPlaceableListSubscriber
     BoldHandle = List1Handle
+    BoldRowProperties.Expression = ''
     OnAfterMakeUptoDate = BoldPlaceableListSubscriber2AfterMakeUptoDate
     Left = 625
     Top = 73

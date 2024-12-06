@@ -35,7 +35,7 @@ type
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
-    procedure AddPersistenceSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []); virtual;
+    procedure AddPersistenceSubscription(Subscriber: TBoldSubscriber); virtual;
     procedure ReleasePersistenceController;
     property Active: Boolean read GetActive write SetActive;
     property PersistenceController: TBoldPersistenceController read GetPersistenceController;
@@ -121,7 +121,7 @@ begin
     SendExtendedEvent(Originator, OriginalEvent, Args);
 end;
 
-procedure TBoldPersistenceHandle.AddPersistenceSubscription(Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet = []);
+procedure TBoldPersistenceHandle.AddPersistenceSubscription(Subscriber: TBoldSubscriber);
 begin
   PersistenceSubscriber.CancelAllSubscriptions;
   PersistenceController.AddSmallSubscription(fPersistenceSubscriber, [beDestroying]);
@@ -131,7 +131,7 @@ end;
 procedure TBoldPersistenceHandle.ReleasePersistenceController;
 begin
   Active := false;
-  FreeAndNil(fPersistenceSubscriber);
+  FreeAndNil(fPersistenceSubscriber);  
   FreeAndNil(fPersistenceController);
 end;
 
