@@ -250,7 +250,7 @@ procedure TBoldSystemPersistenceHandler.FetchMembersWithObjects(
   aBoldObjectList: TBoldObjectList; aBoldMemberIdList: TBoldMemberIdList);
 var
   ListToFetch: TBoldObjectList;
-  vObject: TBoldObject;  
+  vObject: TBoldObject;
   i,j: integer;
 begin
   ListToFetch := TBoldObjectList.Create;
@@ -334,7 +334,7 @@ begin
   ObjectList.EnsureObjects;
   if ObjectList.Count > 0 then
   begin
-    Guard := TBoldGuard.Create(FetchList, MemberIdList);  
+    Guard := TBoldGuard.Create(FetchList, MemberIdList);
     FetchList := TBoldObjectList.Create;
     FetchList.SubscribeToObjectsInList := False;
     MemberIdList := TBoldMemberIdList.Create;
@@ -524,78 +524,82 @@ begin
 
   Guard := TBoldGuard.Create(ObjectsToUpdate, aTranslationList, ObjectIdList, Precondition, FailureList);
 
-  System.DelayObjectDestruction;
-  try
-    ObjectsToUpdate := ObjectList.Clone as TBoldObjectList;
-    for i := ObjectsToUpdate.Count-1 downto 0 do
-      if not assigned(ObjectsToUpdate.Locators[i].BoldObject) or
-         not ObjectsToUpdate[i].BoldPersistent then
-        ObjectsToUpdate.RemoveByIndex(i);
 
+  ObjectsToUpdate := ObjectList.Clone as TBoldObjectList;
+  for i := ObjectsToUpdate.Count-1 downto 0 do
+    if not assigned(ObjectsToUpdate.Locators[i].BoldObject) or
+       not ObjectsToUpdate[i].BoldPersistent then
+      ObjectsToUpdate.RemoveByIndex(i);
+
+  if ObjectsToUpdate.Count > 0 then
+  begin
+    EnsureEnclosure(ObjectsToUpdate, false);
+    DoPreUpdate(ObjectsToUpdate);
     if ObjectsToUpdate.Count > 0 then
     begin
-      EnsureEnclosure(ObjectsToUpdate, false);
-      DoPreUpdate(ObjectsToUpdate);
-      System.IsUpdatingDatabase := True;
-      ObjectIdList := ObjectsToUpdate.CreateObjectIdList(true);
-      aTranslationList := TBoldIdTranslationList.Create;
-      if System.BoldSystemTypeInfo.OptimisticLocking = bolmOff then
-        Precondition := nil
-      else
-      begin
-        Precondition := TBoldOptimisticLockingPrecondition.create;
-        System.OptimisticLockHandler.AddOptimisticLocks(ObjectsToUpdate, PreCondition);
-        if not Precondition.HasOptimisticLocks then
-          FreeAndNil(PreCondition);
-      end;
-
-      //TODO: in the future, call another function to add optimistic locking data for optimistic region locking
-      //TODO: If the model wants optimistic locking, but none of the classes of objects to be updated,
-      //      the precondition should be freed.
-
-      if assigned(System.PessimisticLockHandler) and not System.PessimisticLockHandler.EnsureLocks then
-        raise EBold.CreateFmt(sRequiredLocksNotHeld, [classname]);
-      BoldClearLastfailure;
-
+      System.DelayObjectDestruction;
       try
-        if not StartUpdateForAll(ObjectsToUpdate) then
-          BoldRaiseLastFailure(System, 'UpdateDatabaseWithList', sStartUpdateFailed); // do not localize
+        System.IsUpdatingDatabase := True;
+        ObjectIdList := ObjectsToUpdate.CreateObjectIdList(true);
+        aTranslationList := TBoldIdTranslationList.Create;
+        if System.BoldSystemTypeInfo.OptimisticLocking = bolmOff then
+          Precondition := nil
+        else
+        begin
+          Precondition := TBoldOptimisticLockingPrecondition.create;
+          System.OptimisticLockHandler.AddOptimisticLocks(ObjectsToUpdate, PreCondition);
+          if not Precondition.HasOptimisticLocks then
+            FreeAndNil(PreCondition);
+        end;
 
-        PersistenceController.PMUpdate(ObjectIdList, System.AsIBoldvalueSpace[bdepPMOut], System.OptimisticLockHandler.OldValues, Precondition, aTranslationList, fTimeStampOfLatestUpdate, fTimeOfLatestUpdate, NOTVALIDCLIENTID);
-        if assigned(Precondition) and Precondition.Failed then
-        begin
-          if assigned(system.OnOptimisticLockingFailed) then
+        //TODO: in the future, call another function to add optimistic locking data for optimistic region locking
+        //TODO: If the model wants optimistic locking, but none of the classes of objects to be updated,
+        //      the precondition should be freed.
+
+        if assigned(System.PessimisticLockHandler) and not System.PessimisticLockHandler.EnsureLocks then
+          raise EBold.CreateFmt(sRequiredLocksNotHeld, [classname]);
+        BoldClearLastfailure;
+
+        try
+          if not StartUpdateForAll(ObjectsToUpdate) then
+            BoldRaiseLastFailure(System, 'UpdateDatabaseWithList', sStartUpdateFailed); // do not localize
+
+          PersistenceController.PMUpdate(ObjectIdList, System.AsIBoldvalueSpace[bdepPMOut], System.OptimisticLockHandler.OldValues, Precondition, aTranslationList, fTimeStampOfLatestUpdate, fTimeOfLatestUpdate, NOTVALIDCLIENTID);
+          if assigned(Precondition) and Precondition.Failed then
           begin
-            FailureList := TBoldObjectList.Create;
-            FailureList.FillFromIDList(Precondition.FailureList, System);
-            system.OnOptimisticLockingFailed(ObjectsToUpdate, FailureList, Precondition.FailureReason);
-          end
-          else
-            raise EBoldOperationFailedForObjectList.Create(Precondition.FailureReason, [], Precondition.FailureList, System);
-        end else
-        begin
-          for i := 0 to ObjectsToUpdate.Count - 1 do
-            ObjectsToUpdate[i].AsIBoldObjectContents[bdepPMIn].TimeStamp := TimeStampOfLatestUpdate;
-          EndUpdateForAll(ObjectsToUpdate, aTranslationList);
-          if Assigned(System.UndoHandler) then
-             System.UndoHandler.PrepareUpdate(ObjectList);
+            if assigned(system.OnOptimisticLockingFailed) then
+            begin
+              FailureList := TBoldObjectList.Create;
+              FailureList.FillFromIDList(Precondition.FailureList, System);
+              system.OnOptimisticLockingFailed(ObjectsToUpdate, FailureList, Precondition.FailureReason);
+            end
+            else
+              raise EBoldOperationFailedForObjectList.Create(Precondition.FailureReason, [], Precondition.FailureList, System);
+          end else
+          begin
+            for i := 0 to ObjectsToUpdate.Count - 1 do
+              ObjectsToUpdate[i].AsIBoldObjectContents[bdepPMIn].TimeStamp := TimeStampOfLatestUpdate;
+            EndUpdateForAll(ObjectsToUpdate, aTranslationList);
+            if Assigned(System.UndoHandler) then
+               System.UndoHandler.PrepareUpdate(ObjectList);
+          end;
+          DoPostUpdate(ObjectList);
+        except
+          on e: Exception do
+          begin
+            if GetBoldLastFailureReason <> nil then
+              BoldRaiseLastFailure(System, 'UpdateDatabaseWithlist', e.message)
+            else
+              raise;
+          end;
         end;
-        DoPostUpdate(ObjectList);
-      except
-        on e: Exception do
-        begin
-          if GetBoldLastFailureReason <> nil then
-            BoldRaiseLastFailure(System, 'UpdateDatabaseWithlist', e.message)
-          else
-            raise;
-        end;
+      finally
+        if assigned(System.PessimisticLockHandler) then
+          System.PessimisticLockHandler.ReleaseUnneededRegions;
+        System.AllowObjectDestruction;
+        System.IsUpdatingDatabase := false;
       end;
     end;
-  finally
-    if assigned(System.PessimisticLockHandler) then
-      System.PessimisticLockHandler.ReleaseUnneededRegions;
-    System.AllowObjectDestruction;
-    System.IsUpdatingDatabase := false;
   end;
 end;
 
