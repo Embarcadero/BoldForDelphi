@@ -133,7 +133,7 @@ Illegal symbol combination
 {.$DEFINE NoAutoSubscription}
 
   // Mechanism for efficient fetching
-{.$DEFINE SpanFetch}
+{$DEFINE SpanFetch}
 
   // Turns off query mechanism
 {$DEFINE BOLD_NO_QUERIES}
@@ -229,7 +229,7 @@ Illegal symbol combination
 {$ENDIF}
 
 // settings for design package
-(*
+
 {$IFNDEF Attracs}
   {$DEFINE NoAutoSubscription}
   {$UNDEF SpanFetch}
@@ -242,4 +242,4 @@ Illegal symbol combination
   {$UNDEF ConvertZeroDateToDateNil}
   {$UNDEF BoldSystemBroadcastMemberEvents}
 {$ENDIF}
-*)
+
