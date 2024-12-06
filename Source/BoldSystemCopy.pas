@@ -26,7 +26,9 @@ type
   TBoldSystemCopyProgressEvent = procedure(Sender: TBoldSystemCopy; AProgress: integer; AMax: integer; AEstimatedRemainingTime: TDateTime) of object;
   TBoldSystemCopyLogEvent = procedure(Sender: TBoldSystemCopy; const aStatus: string) of object;
 
-  EBoldSystemCopyInterrupt = class(Exception);
+  EBoldSystemCopy = class(Exception);
+  EBoldSystemCopyInterrupt = class(EBoldSystemCopy);
+  EBoldSystemCopyDestinationNotEmpty = class(EBoldSystemCopy);
 
   TBoldSystemCopy = class(TComponent)
   private
@@ -43,7 +45,10 @@ type
     fProcessedObjects: TBoldObjectList;
     fSkippedObjects: TBoldObjectList;
     fLastUsedId: integer;
+    fNewObjectsWritten: integer;
+    fSourceAllInstanceCount: integer;
     fStopped: boolean;
+    fStartTime: TDateTime;
     function GetDestinationSystem: TBoldSystem;
     function GetSourceSystem: TBoldSystem;
     function FindHead(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
@@ -53,6 +58,7 @@ type
     procedure CopyMembers(ASource: TBoldObjectLocator; AMemberIdList: TBoldMemberIdList = nil; ATouchedList: TBoldObjectList = nil);
     procedure TranslateId(ASourceObject, ADestinationObject: TBoldObject);
     procedure UpdateLastUsedID;
+    procedure PreUpdateDestination(Sender: TObject);
     procedure CheckStop;
   protected
     procedure DoLogEvent(const Msg: string);
@@ -66,6 +72,7 @@ type
     function GetSourceAllInstanceCount: integer;
     function GetDestinationAllInstanceCount: integer;
     function GetAllInstanceCount(ASystemHandle: TBoldSystemHandle): integer;
+    function DoOnClass(AClass: TBoldClassTypeInfo): boolean;
   public
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
@@ -77,6 +84,7 @@ type
     property DestinationSystem: TBoldSystem read GetDestinationSystem;
     property SourceAllInstanceCount: integer read GetSourceAllInstanceCount;
     property DestinationAllInstanceCount: integer read GetDestinationAllInstanceCount;
+    property StartTime: TDateTime read fStartTime;
   published
     property SourceSystemHandle: TBoldSystemHandle read fSourceSystemHandle write fSourceSystemHandle;
     property DestinationSystemHandle: TBoldSystemHandle read fDestinationSystemHandle write fDestinationSystemHandle;
@@ -112,7 +120,7 @@ uses
   BoldValueSpaceInterfaces,
   BoldUNdoInterfaces,
   BoldDefaultTaggedValues,
-  BoldModel;
+  BoldModel, System.DateUtils;
 
 { TBoldSystemCopy }
 
@@ -126,6 +134,7 @@ begin
   fProcessedObjects := TBoldObjectList.Create;
   fSkippedObjects := TBoldObjectList.Create;
   BatchSize := 1000;
+  fSourceAllInstanceCount := -1;
 end;
 
 procedure TBoldSystemCopy.BeforeDestruction;
@@ -304,6 +313,8 @@ begin
     CheckStop;
     if ClassTypeInfo.IsAbstract or ClassTypeInfo.IsLinkClass or not ClassTypeInfo.Persistent then
       continue; // skip abstract, link and transient classes
+    if DoOnClass(ClassTypeInfo) then
+      continue;
     RoleTypeInfo := FindTail(ClassTypeInfo);
     if Assigned(RoleTypeInfo) then
     begin
@@ -575,6 +586,14 @@ begin
     fLogEvent(self, Msg);
 end;
 
+function TBoldSystemCopy.DoOnClass(AClass: TBoldClassTypeInfo): boolean;
+begin
+  if Assigned(fClassEvent) then
+    fClassEvent(self, AClass, result)
+  else
+    result := false;
+end;
+
 function TBoldSystemCopy.EnsureDestinationLocator(
   const ASourceLocator: TBoldObjectLocator;
   var ADestinationLocator: TBoldObjectLocator): boolean;
@@ -652,6 +671,21 @@ end;
 function TBoldSystemCopy.GetSourceSystem: TBoldSystem;
 begin
   result := SourceSystemHandle.System;
+end;
+
+procedure TBoldSystemCopy.PreUpdateDestination(Sender: TObject);
+var
+  BoldObject: TBoldObject;
+  Estimate: TDateTime;
+begin
+  for BoldObject in TBoldObjectList(Sender) do
+    if BoldObject.BoldObjectIsNew then
+      inc(fNewObjectsWritten);
+  if Assigned(OnProgress) then
+  begin
+    Estimate := IncSecond(0, Round(SecondsBetween(fStartTime, now) * (SourceAllInstanceCount / fNewObjectsWritten)));
+    OnProgress(self, fNewObjectsWritten, SourceAllInstanceCount, Estimate);
+  end;
 end;
 
 function TBoldSystemCopy.FindHead(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
@@ -753,6 +787,7 @@ end;
 procedure TBoldSystemCopy.Run;
 begin
   fStopped := false;
+  fNewObjectsWritten := 0;
   if not Assigned(SourceSystemHandle) then
     raise Exception.Create('Source system handle not set.');
   if not Assigned(DestinationSystemHandle) then
@@ -766,11 +801,14 @@ begin
     TBoldModel(DestinationSystemHandle.PersistenceHandleDB.BoldModel).EnsuredUMLModel.SetBoldTV(TAG_OPTIMISTICLOCKING, TV_OPTIMISTICLOCKING_OFF);
   end;
   DestinationSystemHandle.Active := true;
-  if (DestinationAllInstanceCount > 0) and (MessageDlg('Non empty destination, are you sure you want to proceed ?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes) then
-    exit;
+  if (DestinationAllInstanceCount > 0) then
+    raise EBoldSystemCopyDestinationNotEmpty.Create('Non empty destination, clean db is required for operation.');
+  fSourceAllInstanceCount := SourceAllInstanceCount;
   DestinationSystem.UndoHandlerInterface.Enabled := false;
   BoldLinks.BoldPerformMultilinkConsistencyCheck := false;
   BoldLinks.BoldPerformMultiLinkConsistenceCheckLimit := 0;
+  DestinationSystem.OnPreUpdate := PreUpdateDestination;
+  fStartTime := now;
   try
     CheckStop;
     CheckModelCompatibility;
@@ -779,10 +817,15 @@ begin
     CheckStop;
     CopyInstances;
     UpdateLastUsedID;
+    SourceSystemHandle.Active := false;
+    DestinationSystemHandle.Active := false;
     Report('Completed succesfully', []);
   except
     on e:EBoldSystemCopyInterrupt do
-    ; // silent
+    begin
+      fStartTime := 0;
+      ; // silent
+    end;
   end;
 end;
 
@@ -823,7 +866,9 @@ end;
 
 function TBoldSystemCopy.GetSourceAllInstanceCount: integer;
 begin
-  result := GetAllInstanceCount(SourceSystemHandle);
+  if fSourceAllInstanceCount = -1 then
+    fSourceAllInstanceCount := GetAllInstanceCount(SourceSystemHandle);
+  result := fSourceAllInstanceCount;
 end;
 
 function TBoldSystemCopy.GetDestinationAllInstanceCount: integer;
