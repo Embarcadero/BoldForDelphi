@@ -101,7 +101,9 @@ uses
   BoldMetaElementList,
   BoldValueInterfaces,
   BoldValueSpaceInterfaces,
-  BoldUNdoInterfaces;
+  BoldUNdoInterfaces,
+  BoldDefaultTaggedValues,
+  BoldModel;
 
 { TBoldSystemCopy }
 
@@ -727,17 +729,21 @@ begin
     raise Exception.Create('Destination system handle not set.');
   if SourceSystemHandle = DestinationSystemHandle then
     raise Exception.Create('Source and destination systems can not be same.');
+  SourceSystemHandle.Active := true;
+  if DestinationSystemHandle.StaticSystemTypeInfo.OptimisticLocking <> bolmOff then // turn off optimistic locking for performance reasons
+  begin
+    Report('Optimistic locking turned off.', []);
+    TBoldModel(DestinationSystemHandle.PersistenceHandleDB.BoldModel).EnsuredUMLModel.SetBoldTV(TAG_OPTIMISTICLOCKING, TV_OPTIMISTICLOCKING_OFF);
+  end;
+  DestinationSystemHandle.Active := true;
   if (DestinationAllInstanceCount > 0) and (MessageDlg('Non empty destination, are you sure you want to proceed ?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes) then
     exit;
-  SourceSystemHandle.Active := true;
-  DestinationSystemHandle.Active := true;
   DestinationSystem.UndoHandlerInterface.Enabled := false;
   BoldLinks.BoldPerformMultilinkConsistencyCheck := false;
   BoldLinks.BoldPerformMultiLinkConsistenceCheckLimit := 0;
-  if DestinationSystem.BoldSystemTypeInfo.OptimisticLocking <> bolmOff then
-    raise Exception.Create('OptimisticLocking is turned on, merge is faster with no locking. Adjust the model and retry.');
   CheckModelCompatibility;
   AnalyzeModel;
+  Report('Source objects: %d Destination objects %d', [SourceAllInstanceCount, DestinationAllInstanceCount]);
   CopyInstances;
   UpdateLastUsedID;
   Report('Completed succesfully', []);
