@@ -48,7 +48,7 @@ const
 
   beDefaultRequestedEvent = breReEvaluate;
 
-//  beServerSubscriberRemoved = 21; // Depricated - Only used in BoldCom Client/Server
+  beServerSubscriberRemoved = 21; // Depricated - Only used in BoldCom Client/Server
 
   beBeginUpdate = 22; // sent by TBoldObjectList before loops
   beEndUpdate = 23; // sent by TBoldObjectList after loops
