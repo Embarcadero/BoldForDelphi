@@ -42,6 +42,7 @@ type
     fSessionName: string;
     fHighestSeverity: TBoldLogType;
     fProgressPosition: integer;
+    fEnabled: Boolean;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -58,10 +59,12 @@ type
     procedure ProcessInterruption;
     procedure DoRefresh;
     procedure RefreshGUI(var Message: TMessage); message WM_REFRESHGUI;
+    procedure SetEnabled(const Value: Boolean);
   public
     constructor Create(Owner: TComponent); override;
     destructor Destroy; override;
     class function CreateSmallLogForm(Caption: string): TForm;
+    property Enabled: Boolean read fEnabled write SetEnabled;
     { Public declarations }
   end;
 
@@ -207,6 +210,11 @@ begin
   pgLog.position := Value;
   fProgressPosition := Value;
   CalculateTimeLeft;
+end;
+
+procedure TBoldLogFrame.SetEnabled(const Value: Boolean);
+begin
+  fEnabled := Value;
 end;
 
 procedure TBoldLogFrame.SetLogHeader(const Value: string);
