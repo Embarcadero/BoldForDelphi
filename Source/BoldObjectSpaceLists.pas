@@ -237,7 +237,7 @@ var
 begin
   if RequestedEvent = beValueChanged then
   begin
-    if Options.RehashOnChange then
+    if Options.RehashOnChange and not (Originator as TBoldMember).BoldSystem.IsDestroying then
     begin
       Locator := (Originator as TBoldMember).OwningObject.BoldObjectLocator;
       if not IsCorrectlyIndexed(Locator) then
