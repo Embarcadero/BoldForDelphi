@@ -40,7 +40,7 @@ type
     destructor Destroy; override;
     procedure CreateInterbaseDatabase(PageSize: integer = 4096);
     procedure EnsureInterbaseDatabase(PageSize: integer = 4096);
-    procedure CreateDatabase; override; 
+    procedure CreateDatabase(DropExisting: boolean = true); override;
   published
     property DataBase: TIBDataBase read GetDataBase write SetDataBase;
     {$IFNDEF T2H}
@@ -85,7 +85,7 @@ begin
     CreateInterbaseDatabase(PageSize);
 end;
 
-procedure TBoldDatabaseAdapterIB.CreateDatabase;
+procedure TBoldDatabaseAdapterIB.CreateDatabase(DropExisting: boolean);
 begin
   CreateInterbaseDatabase;
 end;

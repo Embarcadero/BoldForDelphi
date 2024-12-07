@@ -61,6 +61,7 @@ type
     procedure SetUseReadTransactions(value: boolean);
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
+    procedure Prepare;
   protected
     function GetDataSet: TDataSet; override;
     procedure ClearParams;
@@ -89,6 +90,7 @@ type
     procedure SetExclusive(NewValue: Boolean);
     function GetExclusive: Boolean;
     function GetExists: Boolean;
+
   protected
     function GetDataSet: TDataSet; override;
     procedure Open; override;
@@ -130,9 +132,10 @@ type
     function GetTable: IBoldTable; override;
     procedure ReleaseTable(var Table: IBoldTable); override;
   public
-    constructor create(DataBase: TIBDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
-    destructor destroy; override;
-    procedure CreateDatabase;
+    constructor Create(DataBase: TIBDataBase; SQLDataBaseConfig: TBoldSQLDatabaseConfig);
+    destructor Destroy; override;
+    procedure CreateDatabase(DropExisting: boolean = true);
+    function CreateAnotherDatabaseConnection: IBoldDatabase;
   end;
 
 implementation
@@ -365,6 +368,11 @@ begin
 end;
 
 
+procedure TBoldIBQuery.Prepare;
+begin
+  Query.prepare;
+end;
+
 {function TBoldIBQuery.Params: TParams;
 begin
   result := Query.Params;
@@ -545,6 +553,11 @@ begin
   fDataBase := DataBase;
 end;
 
+function TBoldIBDataBase.CreateAnotherDatabaseConnection: IBoldDatabase;
+begin
+  raise Exception.CreateFmt('%s.CreateAnotherDatabaseConnection: Not implemented', [ClassName]);
+end;
+
 destructor TBoldIBDataBase.destroy;
 begin
   fDatabase := nil;
@@ -558,7 +571,7 @@ begin
   dec(fExecuteQueryCount);
 end;
 
-procedure TBoldIBDataBase.CreateDatabase;
+procedure TBoldIBDataBase.CreateDatabase(DropExisting: boolean = true);
 var
   db: TIBDatabase;
   username: String;

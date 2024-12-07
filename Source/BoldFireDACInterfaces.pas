@@ -107,6 +107,7 @@ type
     procedure AssignSQLText(const SQL: string); override;
     function GetRowsAffected: Integer;
     function GetDataSet: TDataSet; override;
+    procedure Prepare;
     procedure ClearParams;
     procedure Open; override;
     procedure Close; override;
@@ -147,7 +148,7 @@ type
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
     function GetBatchQueryParamCount: integer;
-//    procedure Prepare;
+    procedure Prepare;
   protected
     procedure StartSQLBatch; virtual;
     procedure EndSQLBatch; virtual;
@@ -222,6 +223,7 @@ type
     procedure SetTransaction(const Value: TFDTransaction);
     procedure SetUpdateTransaction(const Value: TFDTransaction);
     function CreateAnotherDatabaseConnection: IBoldDatabase;
+    function GetImplementor: TObject;
   protected
     procedure AllTableNames(Pattern: string; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetTable: IBoldTable; override;
@@ -283,7 +285,7 @@ end;
 
 function TBoldFireDACQuery.GetParamCheck: Boolean;
 begin
-  result := true; // ?
+  result := Query.ResourceOptions.ParamCreate;
 end;
 
 function TBoldFireDACQuery.GetParamCount: Integer;
@@ -552,10 +554,14 @@ begin
   Result := TBoldFireDACParameter.Create(lFDParam, Self)
 end;
 
+procedure TBoldFireDACQuery.Prepare;
+begin
+  Query.Prepare;
+end;
+
 procedure TBoldFireDACQuery.SetParamCheck(value: Boolean);
 begin
-//  if Query.ParamCheck <> Value then
-//    Query.ParamCheck := Value;
+  Query.ResourceOptions.ParamCreate := Value;
 end;
 
 procedure TBoldFireDACQuery.SetRequestLiveQuery(NewValue: Boolean);
@@ -828,6 +834,11 @@ end;
 procedure TBoldFireDACConnection.Commit;
 begin
   FDConnection.Commit;
+end;
+
+function TBoldFireDACConnection.GetImplementor: TObject;
+begin
+  result := FDConnection;
 end;
 
 function TBoldFireDACConnection.GetInTransaction: Boolean;
@@ -1648,7 +1659,7 @@ end;
 
 function TBoldFireDACExecQuery.GetParamCheck: Boolean;
 begin
-  result := true;
+  result := ExecQuery.ResourceOptions.ParamCreate;
 end;
 
 function TBoldFireDACExecQuery.GetParamCount: Integer;
@@ -1700,14 +1711,14 @@ begin
   end;
 end;
 
-{procedure TBoldFireDACExecQuery.Prepare;
+procedure TBoldFireDACExecQuery.Prepare;
 begin
   ExecQuery.Prepare;
-end;}
+end;
 
 procedure TBoldFireDACExecQuery.SetParamCheck(value: Boolean);
 begin
-//  ExecQuery.ParamCheck := Value;
+  ExecQuery.ResourceOptions.ParamCreate := Value;
 end;
 
 procedure TBoldFireDACExecQuery.SetUseReadTransactions(value: boolean);

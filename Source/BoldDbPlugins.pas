@@ -56,6 +56,7 @@ type
   protected
     function GetOptions: TBoldUMLPluginOptions; override;
     procedure ExecuteValidator(Validator: TBoldDbValidator; context: IUMLModelPlugInContext);
+    procedure ValidationComplete(Sender: TObject); virtual;
   end;
 
   { TBolddbStructureValidatorPlugin }
@@ -163,13 +164,27 @@ end;
 procedure TBoldDbValidatorPlugIn.ExecuteValidator(Validator: TBoldDbValidator; context: IUMLModelPlugInContext);
 begin
   Validator.PersistenceHandle := GetValidPersistenceHandle(context);
-  if Validator.Execute then
-    ShowMessage('Database validated OK');
+  Validator.OnComplete := ValidationComplete;
+  Validator.Execute;
 end;
 
 function TBoldDbValidatorPlugIn.GetOptions: TBoldUMLPluginOptions;
 begin
   Result := [poRequireBoldified];
+end;
+
+procedure TBoldDbValidatorPlugIn.ValidationComplete(Sender: TObject);
+var
+  msg: string;
+begin
+  if (Sender as TBoldDbValidator).Remedy.Count = 0 then
+    msg := 'Database validated OK'
+  else
+    msg := 'Database validated found problems';
+  TThread.Queue(nil, procedure
+    begin
+      ShowMessage(msg);
+    end);
 end;
 
 { TBoldUMLDBEvolutorPlugin }
