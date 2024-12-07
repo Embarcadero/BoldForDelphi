@@ -16,7 +16,8 @@ type
 
   {---method types---}
   TBoldSubscribeToElementEvent = procedure (element: TBoldElement; Subscriber: TBoldSubscriber) of object;
-  TBoldPlaceableSubcriberReceive = procedure(sender: TBoldPlaceableSubscriber; Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const) of object;
+  TBoldPlaceableSubcriberReceive = procedure(sender: TBoldPlaceableSubscriber; Originator: TObject; OriginalEvent: TBoldEvent;
+      RequestedEvent: TBoldRequestedEvent) of object;
 
   {---TBoldPlaceableSubscriber---}
   [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
@@ -126,7 +127,7 @@ end;
 procedure TBoldPlaceableSubscriber.Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
 begin
   if Assigned(FOnReceive) then
-    fOnReceive(Self, Originator, OriginalEvent, RequestedEvent, Args);
+    fOnReceive(Self, Originator, OriginalEvent, RequestedEvent);
 end;
 
 procedure TBoldPlaceableSubscriber.ActOnHandleValueChanged(Sender: TObject);
