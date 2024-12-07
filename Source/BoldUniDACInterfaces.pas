@@ -108,6 +108,7 @@ type
     procedure Close; override;
     procedure ExecSQL; override;
     function GetRecNo: integer; override;
+    procedure Prepare;
     property Query: TUniQuery read GetQuery;
   public
     constructor Create(BoldUniDACConnection: TBoldUniDACConnection); reintroduce;
@@ -143,8 +144,8 @@ type
     procedure SetUseReadTransactions(value: boolean);
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
-    function GetBatchQueryParamCount: integer;    
-//    procedure Prepare;
+    function GetBatchQueryParamCount: integer;
+    procedure Prepare;
     function GetDataSet: TDataSet; override;
     procedure ClearParams;
     procedure ExecSQL; override;
@@ -590,6 +591,11 @@ var
 begin
   lUniParam := Query.Params.ParamByName(Value);
   Result := TBoldUniDACParameter.Create(lUniParam, Self)
+end;
+
+procedure TBoldUniDACQuery.Prepare;
+begin
+  Query.Prepare;
 end;
 
 procedure TBoldUniDACQuery.SetParamCheck(value: Boolean);
@@ -1739,10 +1745,10 @@ begin
   end;
 end;
 
-{procedure TBoldUniDACExecQuery.Prepare;
+procedure TBoldUniDACExecQuery.Prepare;
 begin
   ExecQuery.Prepare;
-end;}
+end;
 
 procedure TBoldUniDACExecQuery.SetParamCheck(value: Boolean);
 begin
