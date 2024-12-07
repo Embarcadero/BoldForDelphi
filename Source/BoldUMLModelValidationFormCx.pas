@@ -76,7 +76,7 @@ type
       Shift: TShiftState);
     procedure mnuCopyLogtoClipBoardClick(Sender: TObject);
     procedure BoldPlaceableSubscriber1Receive(sender: TBoldPlaceableSubscriber;
-      Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: Integer);
+      Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure tvViolationsDblClick(Sender: TObject);
     procedure actCopyValidationExecute(Sender: TObject);
     procedure actRecheckExecute(Sender: TObject);
@@ -185,7 +185,7 @@ end;
 
 procedure TfrmValidationCx.BoldPlaceableSubscriber1Receive(
   sender: TBoldPlaceableSubscriber; Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: Integer);
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
   Timer1.Enabled := true;
 end;

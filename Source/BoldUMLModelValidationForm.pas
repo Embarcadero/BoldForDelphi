@@ -69,7 +69,7 @@ type
     procedure Copy1Click(Sender: TObject);
     procedure Paste1Click(Sender: TObject);
     procedure BoldPlaceableSubscriber1Receive(sender: TBoldPlaceableSubscriber;
-      Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: Integer);
+      Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
     procedure FormResize(Sender: TObject);
   private
     FOnElementClick: TBoldUMLElementClickedEvent;
@@ -154,7 +154,7 @@ end;
 
 procedure TfrmValidation.BoldPlaceableSubscriber1Receive(
   sender: TBoldPlaceableSubscriber; Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: Integer);
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
 begin
   if blhViolations.Count > 0 then
     show;
