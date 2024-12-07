@@ -235,23 +235,22 @@ procedure TBoldMembersHashIndex._ReceiveEvent(Originator: TObject;
 var
   Locator: TBoldObjectLocator;
 begin
-  if RequestedEvent = beValueChanged then
+  if Options.RehashOnChange and not (Originator as TBoldMember).BoldSystem.IsDestroying then
   begin
-    if Options.RehashOnChange and not (Originator as TBoldMember).BoldSystem.IsDestroying then
+    Locator := (Originator as TBoldMember).OwningObject.BoldObjectLocator;
+    if not IsCorrectlyIndexed(Locator) then
     begin
-      Locator := (Originator as TBoldMember).OwningObject.BoldObjectLocator;
-      if not IsCorrectlyIndexed(Locator) then
-      begin
-        AutoResize := false;
-        RemoveChanged(Locator);
-        Add(locator);
-        AutoResize := true;
-      end;
-    end
-    else
-      fOwner.NotifyMemberIndexBad;
+      AutoResize := false;
+      RemoveChanged(Locator);
+      Add(locator);
+      AutoResize := true;
+    end;
+  end
+  else
+  begin
     if Assigned(fObjectList) then
       fObjectList.SendEvent(beQualifierChanged);
+    fOwner.NotifyMemberIndexBad;
   end;
 end;
 
