@@ -116,27 +116,27 @@ type
   end;
 
   { TBoldUniDACQuery }
-  TBoldUniDACExecQuery = class(TBoldAbstractQueryWrapper, IBoldExecQuery, IBoldParameterized)
+  TBoldUniDACExecQuery = class(TBoldBatchDataSetWrapper{TBoldAbstractQueryWrapper}, IBoldExecQuery, IBoldParameterized)
   private
     fExecQuery: TUniSQL;
     fReadTransactionStarted: Boolean;
     fUseReadTransactions: boolean;
     function GetExecQuery: TUniSQL;
-    function GetParams: TParams;
+    function GetParams: TParams;  override;
     procedure AssignParams(Sourceparams: TParams);
     function GetParamCount: Integer;
     function GetParam(i: Integer): IBoldParameter;
     function GetParamCheck: Boolean;
     procedure SetParamCheck(value: Boolean);
-    function ParamByName(const Value: string): IBoldParameter;
-    function FindParam(const Value: string): IBoldParameter;    
+    function ParamByName(const Value: string): IBoldParameter; override;
+    function FindParam(const Value: string): IBoldParameter; override;
     function Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload;
-    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload;
+    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; override;
     function EnsureParamByName(const Value: string): IBoldParameter;
-    function GetSQLText: string;
-    function GetSQLStrings: TStrings;
+    function GetSQLText: string; override;
+    function GetSQLStrings: TStrings; override;
     procedure AssignSQL(SQL: TStrings); virtual;
-    procedure AssignSQLText(const SQL: string);
+    procedure AssignSQLText(const SQL: string);  override;
     function GetRowsAffected: Integer;
     function GetUseReadTransactions: boolean;
     procedure SetUseReadTransactions(value: boolean);
@@ -145,9 +145,6 @@ type
     function GetBatchQueryParamCount: integer;    
 //    procedure Prepare;
   protected
-    procedure StartSQLBatch; virtual;
-    procedure EndSQLBatch; virtual;
-    procedure FailSQLBatch; virtual;
     procedure ClearParams;
     procedure ExecSQL; virtual;
     property ExecQuery: TUniSQL read GetExecQuery;
@@ -186,10 +183,10 @@ type
   { TBoldUniDACConnection }
   TBoldUniDACConnection = class(TBoldDatabaseWrapper, IBoldDataBase)
     fUniConnection: TUniConnection;
-    fCachedTable: TBoldUniDACTable;
-    fCachedQuery1: TBoldUniDACQuery;
-    fCachedQuery2: TBoldUniDACQuery;
-    fCachedExecQuery1: TBoldUniDACQuery;
+    fCachedTable: IBoldTable;
+    fCachedQuery1: IBoldQuery;
+    fCachedQuery2: IBoldQuery;
+    fCachedExecQuery1: IBoldExecQuery;
     fExecuteQueryCount: integer;
     function GetUniConnection: TUniConnection;
     property UniConnection: TUniConnection read GetUniConnection;
@@ -388,6 +385,7 @@ begin
   fReadTransactionStarted := false;
 end;
 
+
 constructor TBoldUniDACQuery.Create(BoldUniDACConnection: TBoldUniDACConnection);
 begin
   inherited Create(BoldUniDACConnection);
@@ -535,7 +533,7 @@ begin
       inherited;
       Done := true;
 {$IFDEF LAZYFETCHDEBUG}
-      if (Query.RecordCount = 1) and not InSpanFetch and not TBoldSystem.DefaultSystem.IsUpdatingDatabase and not FollowerGettingValue then
+      if (Query.RecordCount = 1) and not InSpanFetch and not TBoldSystem.DefaultSystem.IsUpdatingDatabase {and not FollowerGettingValue} then
         Assert(Assigned(query)); // Fake assert for placing breakpoint when debugging inefficient loading
 {$ENDIF}
     except
@@ -918,6 +916,7 @@ var
   vDatabaseName: string;
 begin
   vDatabaseName := LowerCase(UniConnection.Database);
+  UniConnection.Connected := false;
   UniConnection.Database := ''; // need to clear this to connect succesfully
   vQuery := GetQuery;
   try
@@ -947,9 +946,11 @@ var
   vUniScript: TUniScript;
 //  vIsInterbase: boolean;
   vIsMSSQL: boolean;
+  vIsPostgres: boolean;
 const
   cInterbase = 'InterBase';
   cMSSQL = 'SQL Server';
+  cPostgres = 'PostgreSQL';
   cDropDatabaseSQL = 'Drop Database %s';
   cGenerateDatabaseSQL = 'Create Database %s';
   cGenerateDatabaseInterbaseSQL = 'Create Database ''%s'' user ''%s'' password ''%s''';
@@ -963,9 +964,13 @@ begin
     vUniScript.Connection := UniConnection;
 //    vIsInterbase := UniConnection.ProviderName = cInterBase;
     vIsMSSQL := UniConnection.ProviderName = cMSSQL;
+    vIsPostgres := UniConnection.ProviderName = cPostgres;
     vUniScript.SQL.Text := Format(cDropDatabaseSQL, [vDatabaseName]);
     if vIsMSSQL then
-      UniConnection.Database := 'master';
+      UniConnection.Database := 'master'
+    else
+    if vIsPostgres then
+      UniConnection.Database := '';
     try
       vUniScript.Execute;
     except
@@ -1089,7 +1094,7 @@ begin
     fCachedExecQuery1 := nil;
   end else
   begin
-    Result := BoldUniDACQueryClass.Create(Self);
+    Result := TBoldUniDACExecQueryClass.Create(Self);
   end;
 end;
 
@@ -1157,59 +1162,43 @@ procedure TBoldUniDACConnection.ReleaseQuery(var Query: IBoldQuery);
 var
   lBoldUniDACQuery: TBoldUniDACQuery;
 begin
-  if (Query.Implementor is TBoldUniDACQuery) then
-  begin
-    lBoldUniDACQuery := Query.Implementor as TBoldUniDACQuery;
-    lBoldUniDACQuery.clear;
-    while lBoldUniDACQuery.SQLStrings.Updating do
-      lBoldUniDACQuery.SQLStrings.EndUpdate;
-    while TCollectionAccess(lBoldUniDACQuery.Params).UpdateCount > 0 do
-      lBoldUniDACQuery.Params.EndUpdate;
-    Query := nil;
-    if not Assigned(fCachedQuery1) then
-      fCachedQuery1 := lBoldUniDACQuery
-    else
-    if not Assigned(fCachedQuery2) then
-      fCachedQuery2 := lBoldUniDACQuery
-    else
-      lBoldUniDACQuery.free;
-  end
+  Assert(Query.Implementor is TBoldUniDACQuery);
+  lBoldUniDACQuery := Query.Implementor as TBoldUniDACQuery;
+  lBoldUniDACQuery.clear;
+  while lBoldUniDACQuery.SQLStrings.Updating do
+    lBoldUniDACQuery.SQLStrings.EndUpdate;
+  while TCollectionAccess(lBoldUniDACQuery.Params).UpdateCount > 0 do
+    lBoldUniDACQuery.Params.EndUpdate;
+  Query := nil;
+  if not Assigned(fCachedQuery1) and not (csDestroying in UniConnection.ComponentState) then
+    fCachedQuery1 := lBoldUniDACQuery
+  else
+  if not Assigned(fCachedQuery2) and not (csDestroying in UniConnection.ComponentState) then
+    fCachedQuery2 := lBoldUniDACQuery
+  else
+    lBoldUniDACQuery.free;
 end;
 
 procedure TBoldUniDACConnection.ReleaseExecQuery(var Query: IBoldExecQuery);
 var
-  lBoldUniDACQuery: TBoldUniDACQuery;
+  lBoldUniDACExecQuery: TBoldUniDACExecQuery;
 begin
-  if (Query.Implementor is TBoldUniDACQuery) then
+  Assert(Query.Implementor is TBoldUniDACExecQuery);
+  lBoldUniDACExecQuery := Query.Implementor as TBoldUniDACExecQuery;
+  if lBoldUniDACExecQuery.SQLStrings.Count <> 0 then
   begin
-    lBoldUniDACQuery := Query.Implementor as TBoldUniDACQuery;
-    if lBoldUniDACQuery.SQLStrings.Count <> 0 then
-    begin
-      lBoldUniDACQuery.SQLStrings.BeginUpdate;
-      lBoldUniDACQuery.clear;
-    end;
-    while lBoldUniDACQuery.SQLStrings.Updating do
-      lBoldUniDACQuery.SQLStrings.EndUpdate;
-    while TCollectionAccess(lBoldUniDACQuery.Params).UpdateCount > 0 do
-      lBoldUniDACQuery.Params.EndUpdate;
-    Query := nil;
-    if not Assigned(fCachedExecQuery1) then
-      fCachedExecQuery1 := lBoldUniDACQuery
-    else
-      lBoldUniDACQuery.free;
-  end
-{  else
-  if (Query.Implementor is TBoldUniDACExecQuery) then
-  begin
-    lBoldUniDACExecQuery := Query.Implementor as TBoldUniDACExecQuery;
+    lBoldUniDACExecQuery.SQLStrings.BeginUpdate;
     lBoldUniDACExecQuery.clear;
-    Query := nil;
-    if not Assigned(fCachedExecQuery1) then
-      fCachedExecQuery1 := lBoldUniDACExecQuery
-    else
-      lBoldUniDACExecQuery.free;
-  end
-}
+  end;
+  while lBoldUniDACExecQuery.SQLStrings.Updating do
+    lBoldUniDACExecQuery.SQLStrings.EndUpdate;
+  while TCollectionAccess(lBoldUniDACExecQuery.Params).UpdateCount > 0 do
+    lBoldUniDACExecQuery.Params.EndUpdate;
+  Query := nil;
+  if not Assigned(fCachedExecQuery1) and not (csDestroying in UniConnection.ComponentState) then
+    fCachedExecQuery1 := lBoldUniDACExecQuery
+  else
+    lBoldUniDACExecQuery.free;
 end;
 
 procedure TBoldUniDACConnection.ReleaseTable(var Table: IBoldTable);
@@ -1220,7 +1209,7 @@ begin
   begin
     lBoldUniDACTable := Table.Implementor as TBoldUniDACTable;
     Table := nil;
-    if not Assigned(fCachedTable) then
+    if not Assigned(fCachedTable) and not (csDestroying in UniConnection.ComponentState) then
       fCachedTable := lBoldUniDACTable
     else
       lBoldUniDACTable.free;
@@ -1468,10 +1457,17 @@ end;
 
 procedure TBoldUniDACConnection.ReleaseCachedObjects;
 begin
-  FreeAndNil(fCachedTable);
-  FreeAndNil(fCachedQuery1);
-  FreeAndNil(fCachedQuery2);
-  FreeAndNil(fCachedExecQuery1);
+  if Assigned(fCachedTable) then
+    ReleaseTable(fCachedTable);
+
+  if Assigned(fCachedQuery1) then
+    ReleaseQuery(fCachedQuery1);
+
+  if Assigned(fCachedQuery2) then
+    ReleaseQuery(fCachedQuery2);
+
+  if Assigned(fCachedExecQuery1) then
+    ReleaseExecQuery(fCachedExecQuery1);
 end;
 
 { TBoldUniDACExecQuery }
@@ -1528,10 +1524,14 @@ begin
   ExecQuery.Params.Clear;
 end;
 
+var
+  _x: integer;
+
 constructor TBoldUniDACExecQuery.Create(BoldUniDACConnection: TBoldUniDACConnection);
 begin
   inherited Create(BoldUniDACConnection);
   fUseReadTransactions := true;
+  inc(_x);
 end;
 
 function TBoldUniDACExecQuery.Createparam(FldType: TFieldType;
@@ -1553,6 +1553,7 @@ end;
 destructor TBoldUniDACExecQuery.Destroy;
 begin
   FreeAndNil(fExecQuery);
+  dec(_x);
   inherited;
 end;
 
@@ -1636,21 +1637,6 @@ begin
   finally
     EndExecuteQuery;
   end;
-end;
-
-procedure TBoldUniDACExecQuery.StartSQLBatch;
-begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'StartSQLBatch']); // do not localize
-end;
-
-procedure TBoldUniDACExecQuery.EndSQLBatch;
-begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'EndSQLBatch']); // do not localize
-end;
-
-procedure TBoldUniDACExecQuery.FailSQLBatch;
-begin
-  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'FailSQLBatch']); // do not localize
 end;
 
 function TBoldUniDACExecQuery.FindParam(const Value: string): IBoldParameter;
