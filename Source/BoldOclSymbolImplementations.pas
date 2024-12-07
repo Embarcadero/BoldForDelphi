@@ -2990,7 +2990,7 @@ begin
   begin
     ClassInfo := Params.values[0] as TBoldClassTypeInfo;
     Name := help.CreateNewMember(Help.StringType) as TBAString;
-    for i := 0 to ClassInfo.AllMembers.Count - 1 do
+    for i := 0 to ClassInfo.AllMembersCount - 1 do
     begin
       MemberRTInfo := ClassInfo.AllMembers[i];
       if MemberRTInfo.IsAttribute then
@@ -3016,7 +3016,7 @@ begin
   begin
     ClassInfo := Params.values[0] as TBoldClassTypeInfo;
     Name := help.CreateNewMember(Help.StringType) as TBAString;
-    for i := 0 to ClassInfo.AllMembers.Count - 1 do
+    for i := 0 to ClassInfo.AllMembersCount - 1 do
     begin
       MemberRTInfo := ClassInfo.AllMembers[i];
       if MemberRTInfo.IsRole then
@@ -3110,10 +3110,38 @@ begin
   end;
 end;
 
+function SQLLikeToRegEx(const AExpression: string): string;
+var
+  l: integer;
+  Starts, Ends: boolean;
+begin
+  l := Length(AExpression);
+  if l > 1 then
+  begin
+    Starts := Copy(AExpression, 1, 1) = '%';
+    Ends := Copy(AExpression, l, 1) = '%';
+    if Starts and Ends then
+      result := '^.*' + Copy(AExpression, 2, l-2) + '.*$'
+    else
+    if Starts then
+      result := '^.*' + Copy(AExpression, 2, MaxInt) + '$'
+    else
+    if Ends then
+      result := '^' + Copy(AExpression, 1, l-1) + '.*$'
+    else
+      result := '^' + Copy(AExpression, 1, l) + '$'
+  end
+  else
+  if AExpression = '%' then
+    result := '.*'
+  else
+    result := '^' + AExpression + '$'
+end;
+
 function EscapeRegEx(const ASource: string): string;
 begin
-  result := StringReplace(ASource, '%', '', [rfReplaceAll]);
-  result := TPerlRegEx.EscapeRegExChars(result);
+  result := TPerlRegEx.EscapeRegExChars(ASource);
+  result := SQLLikeToRegEx(result);
 end;
 
 procedure TBOS_SQLLike.Evaluate(const Params: TBoldOclSymbolParameters);
