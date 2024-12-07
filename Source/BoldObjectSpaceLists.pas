@@ -235,7 +235,7 @@ procedure TBoldMembersHashIndex._ReceiveEvent(Originator: TObject;
 var
   Locator: TBoldObjectLocator;
 begin
-  if OriginalEvent = beValueChanged then
+  if RequestedEvent = beValueChanged then
   begin
     if Options.RehashOnChange then
     begin
