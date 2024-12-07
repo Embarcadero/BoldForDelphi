@@ -346,9 +346,16 @@ end;
 function TBoldPMString.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
 begin
   if SystemPersistenceMapper.SQLDataBaseConfig.TreatStringFieldAsUnicode then
-    result := ftWideString
-  else
-    Result := ftString;
+  begin
+//    result := ftWideString
+// Changed from ftWideString to ftWudeMemo as MSSQL truncates string params to 8000
+    Result := ftWideMemo;
+  end else
+  begin
+//    Result := ftString;
+// Changed from ftString to ftMemo as MSSQL truncates string params to 8000
+    Result := ftMemo;
+  end;
 end;
 
 function TBoldPMString.GetColumnSize(ColumnIndex: Integer): Integer;
