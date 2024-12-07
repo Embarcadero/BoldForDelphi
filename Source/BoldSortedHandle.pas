@@ -5,6 +5,7 @@ unit BoldSortedHandle;
 interface
 
 uses
+  Classes,
   BoldSubscription,
   BoldElements,
   BoldSystem,
@@ -53,7 +54,6 @@ implementation
 
 uses
   SysUtils,
-  Classes,
   BoldDefs,
   {$IFDEF ATTRACS}
   AttracsPerformance,
