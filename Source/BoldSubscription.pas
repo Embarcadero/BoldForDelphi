@@ -43,11 +43,12 @@ const
   bePreUpdateId = 18;
   beObjectFetched = 19;
   beObjectUnloaded = 20; // sent by TBoldSystem before an object gets unloaded from memory
+  beLinkObjectEstablished = 21;
   breReEvaluate = beValueChanged; {backwards compatibility}
 
   beDefaultRequestedEvent = breReEvaluate;
 
-  beServerSubscriberRemoved = 21;
+//  beServerSubscriberRemoved = 21; // Depricated - Only used in BoldCom Client/Server
 
   beBeginUpdate = 22; // sent by TBoldObjectList before loops
   beEndUpdate = 23; // sent by TBoldObjectList after loops

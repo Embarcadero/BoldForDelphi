@@ -637,11 +637,11 @@ begin
       OtherEndController.SetAndModifyOrderNo(LocatorList.IndexOf(Locator));
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
 end;
 
 constructor TBoldDirectMultiLinkController.Create(OwningList: TBoldObjectList);
@@ -806,11 +806,11 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
 end;
 
 procedure TBoldDirectMultiLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode) ;
@@ -836,11 +836,11 @@ begin
     if Mode = blulMarkModified then
       EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [NewLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [NewLocator]);
 end;
 
 procedure TBoldDirectMultiLinkController.Move(CurrentIndex, NewIndex: Integer);
@@ -859,13 +859,12 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beOrderChanged, []);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beOrderChanged, []);
 end;
-
 
 procedure TBoldDirectMultiLinkController.RemoveByIndex(index: Integer);
 var
@@ -885,7 +884,7 @@ begin
     ReOrder;
     EndModify;
     Changed(beItemDeleted, [Locator]);
-    BoldSystem.CommitTransaction;    
+    BoldSystem.CommitTransaction;
   except
     BoldSystem.RollbackTransaction;
     raise;
@@ -1109,11 +1108,11 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemReplaced, [Locator, Index]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemReplaced, [Locator, Index]);
 end;
 
 function TBoldDirectMultiLinkController.GetStreamName: String;
@@ -1559,11 +1558,11 @@ begin
       SetAndModifyOrderNo(-1);
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beValueChanged, [NewLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beValueChanged, [NewLocator]);
 end;
 
 procedure TBoldDirectSingleLinkController.InternalSetLocator(NewLocator: TBoldObjectLocator);
@@ -1987,12 +1986,12 @@ begin
       fLinkObjectLocator := nil;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beValueChanged, [NewLocator]);
-    GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beValueChanged, [NewLocator]);
+  GetLinkObjectRoleController.Changed(beValueChanged, [fLinkObjectLocator]);
 end;
 
 function TBoldIndirectSingleLinkController.GetStreamName: String;
@@ -2111,12 +2110,13 @@ begin
       GetLinkObjectOwnLinkController(LinkObject).SetAndModifyOrderNo(LinkLocatorList.IndexOf(LinkObject.BoldObjectLocator));
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
-    GetLinkObjectListController.Changed(beItemAdded, [LinkObject.BoldObjectLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
+  GetLinkObjectListController.Changed(beItemAdded, [LinkObject.BoldObjectLocator]);
+  LinkObject.SendEvent(beLinkObjectEstablished);
 end;
 
 constructor TBoldIndirectMultiLinkController.Create(OwningList: TBoldObjectList);
@@ -2307,12 +2307,12 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beItemAdded, [Locator]);
-    GetLinkObjectListController.Changed(beItemAdded, [NewLinkLocator]);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beItemAdded, [Locator]);
+  GetLinkObjectListController.Changed(beItemAdded, [NewLinkLocator]);
 end;
 
 procedure TBoldIndirectMultiLinkController.LinkTo(NewLocator: TBoldObjectLocator; updateOrderNo: Boolean; Mode: TBoldLinkUnlinkMode);
@@ -2367,12 +2367,12 @@ begin
     ReOrder;
     EndModify;
     BoldSystem.CommitTransaction;
-    Changed(beOrderChanged, []);
-    GetLinkObjectListController. Changed(beOrderChanged, []);
   except
     BoldSystem.RollbackTransaction;
     raise;
   end;
+  Changed(beOrderChanged, []);
+  GetLinkObjectListController. Changed(beOrderChanged, []);
 end;
 
 function TBoldIndirectMultiLinkController.NewLink(OtherLocator: TBoldObjectLocator; Mode: TBoldLinkUnlinkMode): TBoldObject;
