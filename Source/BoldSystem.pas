@@ -5106,7 +5106,7 @@ begin
     InternalRaise(EBoldInternal, sValidate_InternalError, [ObjectDelphiName, MemberDelphiName]);
 
   if not (Member is MemberClass) then
-    InternalRaise(EBold, sValidate_InvalidMemberType, [ObjectDelphiName, MemberDelphiName, MemberClass.ClassName, Member.ClassName]);
+    InternalRaise(EBold, sValidate_InvalidMemberType, [ObjectDelphiName, MemberDelphiName, MemberClass.ClassName, Member.ClassName, Member.DebugInfo]);
 
   MemberRTInfo := Member.BoldMemberRTInfo;
 

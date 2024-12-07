@@ -409,7 +409,7 @@ const
   sValidate_MemberNotAssigned = 'Unable to access member %s.%s: %0:s is not assigned!';
   sValidate_NoSuchMember = 'Class %s has no member %s. (Generated code might be out of sync with model)';
   sValidate_MemberIndexOutOfSynch = 'Member indexes in generated code is out of sync with model (%s.%s has %d in code and %d in model';
-  sValidate_InvalidMemberType = 'Invalid member type for %s.%s. Expected %s, was %s (Generated code might be out of sync with model)';
+  sValidate_InvalidMemberType = 'Invalid member type for %s.%s. Expected %s, was %s. Member is %s (Generated code might be out of sync with model)';
   sValidate_WrongMember = 'Class %s member at index %d is %s, expected %s. (Generated code might be out of sync with model)';
   sValidate_InternalError = 'Internal Error: Member %s.%s is not assigned';
   sFailedToDerive = 'Failed to derive %s: %s (ID:%s)';
