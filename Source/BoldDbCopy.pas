@@ -165,8 +165,8 @@ begin
       DestinationTable := DestinationPersistenceMapper.AllTables.ItemsBySQLName[SourceTableName];
       Columns := DestinationTable.ColumnsList.ToString;
       var SelectSql := Format('select %s from %s', [Columns, SourceTableName]);
-//      MultiRowInsertLimit := 500;
-//      MaxBatchQueryParams := 100;
+//      MultiRowInsertLimit := 20;
+//      MaxBatchQueryParams := 10;
       BoldLog.LogHeader := Format('Loading from %s', [SourceTableName]);
       SourceQuery.SQLText := SelectSql;
       SourceQuery.Open;
@@ -205,7 +205,7 @@ begin
       var Batch := CalcBatchSize;
       repeat
         begin
-          if RemainingRecords < batch then
+          if RemainingRecords <= batch then
             Batch := CalcBatchSize;
           repeat
             if ParamIndex = DestinationQuery.ParamCount then
@@ -226,12 +226,12 @@ begin
               end;
             end;
             inc(bc);
-            Assert(not SourceQuery.Eof);
             SourceQuery.Next;
             inc(vRecNo);
             inc(ProcessedRecords);
             dec(RemainingRecords);
-          until ParamIndex = DestinationQuery.ParamCount;
+          until RemainingRecords = 0;
+          Assert(ParamIndex = DestinationQuery.ParamCount);
           try
             DestinationQuery.ExecSQL;
             bc := 0;
@@ -332,6 +332,8 @@ begin
     SourceQuery.Close;
   end;
   vTables.CustomSort(SortByDescendingRowCount);
+//  var q := vTables.IndexOfName('Person');
+//    vTables.Move(q, 0);
   for var i := 0 to vTables.Count-1 do
     fTableQueue.Enqueue(vTables.Names[i]);
   fTotalTables := fTableQueue.count;
