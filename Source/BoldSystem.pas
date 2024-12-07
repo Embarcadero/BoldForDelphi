@@ -405,7 +405,7 @@ type
     procedure GetAsList(ResultList: TBoldIndirectElement); override;
     function InTransaction: boolean;
     procedure RollbackTransaction(MinimalMode: TBoldSystemTransactionMode = stmNormal);
-    function CreateTransactionHandler(MinimalMode: TBoldSystemTransactionMode = stmNormal): IBoldTransactionHandler;    
+    function CreateTransactionHandler(MinimalMode: TBoldSystemTransactionMode = stmNormal): IBoldTransactionHandler;
     procedure StartTransaction(MinimalMode: TBoldSystemTransactionMode = stmNormal);
     function TryCommitTransaction(MinimalMode: TBoldSystemTransactionMode = stmNormal): Boolean;
     procedure UpdateDatabase;
@@ -1654,7 +1654,7 @@ begin
     begin
       // this is needed to catch the case when member becomes clean and thus object also becomes clean
       // which is only the case if there are no other dirty members, which we check via BoldObject.MemberModified
-      if not BoldObject.BoldObjectIsNew and fBoldSystem.DirtyObjectsInvalid then
+      if not fDirtyObjects.Empty and not BoldObject.BoldObjectIsNew and fBoldSystem.DirtyObjectsInvalid then
       begin
         if not BoldObject.MemberModifiedKnown then
           BoldObject.CalculateMemberModified;
@@ -1670,7 +1670,7 @@ begin
     begin
       // When object is deleted and then written to db then beLocatorDestroying is sent which removes object from dirty list automatically
       // in this case the call to Remove will do nothing since it's already removed, and we check for this via InDelayDestructionList, to avoid needless call to remove.
-      if not BoldObject.InDelayDestructionList then
+      if not fDirtyObjects.Empty and not BoldObject.InDelayDestructionList then
         fDirtyObjects.Remove(BoldObject, false);
     end;
   end;
@@ -2395,11 +2395,11 @@ begin
     begin
       fDirtyObjects.Add(BoldObject);
       BoldObject.InDirtyList := True;
-      BoldObject.SendExtendedEvent(beObjectBecomingDirty, [BoldObject]);
-      if not DirtyObjectsInvalid then
-        SendExtendedEvent(beDirtyListInvalidOrItemDeleted, [BoldObject]);
     end;
-  end;
+    BoldObject.SendExtendedEvent(beObjectBecomingDirty, [BoldObject]);
+    if not DirtyObjectsInvalid then
+      SendExtendedEvent(beDirtyListInvalidOrItemDeleted, [BoldObject]);
+    end;
 end;
 
 procedure TBoldSystem.MarkObjectClean(BoldObject: TBoldObject); {called by TBoldObject}
@@ -10568,7 +10568,7 @@ end;
 
 procedure TBoldTransactionHandler.BeforeDestruction;
 begin
-  if CanCommitOrRollback then  
+  if CanCommitOrRollback then
     Rollback;
   inherited;
 end;
