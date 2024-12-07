@@ -123,8 +123,7 @@ begin
   for i := 0 to length(IndexedMembers) - 1 do
     fMembers.Add(IndexedMembers[i]);
   fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(ObjectChangeReceive);
-  fBoldSystem.AddSmallSubscription(fSubscriber, [{beObjectCreated,} beCompleteModify, beObjectFetched, beObjectDeleted, beObjectUnloaded, beObjectDeleted, beDestroying], beDestroying);
-  fBoldSystem.AddSubscription(fSubscriber, beCompleteModify, beCompleteModify);
+  fBoldSystem.Classes[0].AddSmallSubscription(fSubscriber, [beCompleteModify, beObjectFetched, beObjectDeleted, beObjectUnloaded, beObjectDeleted, beDestroying], beDestroying);
   InitMembersIndex(nil, fMembers);
   AddLoadedObjects;
 end;
