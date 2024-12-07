@@ -356,12 +356,8 @@ end;
 
 function TBoldAbstractSnooper.ClassNameFromObjectID(const ABoldObjectId: TBoldObjectId): string;
 begin
-  if ABoldObjectId.TopSortedIndexExact then
-    Result := ABoldObjectId.TopSortedIndex.ToString // MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName
-  else
-//  self.PMExactifyIds(ABoldOb)
-//  ABoldObjectId.
-   Assert(false, 'non exact id, how to handle it ?');
+  Result := MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName;
+//  Result := ABoldObjectId.TopSortedIndex.ToString;
 end;
 
 procedure TBoldAbstractSnooper.DoPropagatorFailure(Sender: TObject; const ErrorMessage: string);
