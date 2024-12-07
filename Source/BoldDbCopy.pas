@@ -120,12 +120,13 @@ begin
       var s := DestinationQuery.Params.ToString;
       if i <> j then
       begin
-        x := 0;
-        repeat
-
-        until (x = i) or (x =j);
-
-        Assert(i=j, Format('Source field count %d does not match destination param count %d, source fields: %s destination params: %s', [j,i,Columns, Values]));
+        for var q := 0 to SourceQuery.FieldCount-1 do
+        begin
+          var ss := SourceQuery.Fields[q].FieldName;
+          var ds := DestinationQuery.Param[q].Name;
+          if DestinationQuery.Param[q].Name <> SourceQuery.Fields[q].FieldName then
+            Assert(false, Format('Source field count %d does not match destination param count %d, expected:  %s found: %s', [j, i, ss, ds]));
+        end;
       end;
       j := SourceQuery.RecordCount;
       if j = 0 then
