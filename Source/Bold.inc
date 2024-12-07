@@ -137,7 +137,7 @@ Illegal symbol combination
 
   // Do not allow creation of transient instances of a persistent class.
   // This is rarely used and if explicitly prohibited allows TBoldClassListController to not have to execute AddTransientFromSystem
-{.$DEFINE NoTransientInstancesOfPersistentClass}
+{$DEFINE NoTransientInstancesOfPersistentClass}
 
   // Do not allow adding of objects from different systems to same list
 {.$DEFINE AllowCrossSystemLists}
