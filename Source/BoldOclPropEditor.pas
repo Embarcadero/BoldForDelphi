@@ -68,6 +68,9 @@ type
     MRUPopupMenu: TPopupMenu;
     Persistentcb: TCheckBox;
     Transientcb: TCheckBox;
+    btnSetFont: TButton;
+    FontDialog1: TFontDialog;
+    procedure btnSetFontClick(Sender: TObject);
     procedure SelectBoxDblClick(Sender: TObject);
     procedure EditMemoEnter(Sender: TObject);
     procedure SelectBoxKeyPress(Sender: TObject; var Key: Char);
@@ -123,6 +126,8 @@ type
     function HasVariables: boolean;
     procedure UpdateWidth;
     procedure SetOclEvaluator(const Value: TBoldOCL);
+    procedure SaveFontSettings(const Font: TFont);
+    procedure LoadFontSettings(const Font: TFont);
   public
     { Public declarations }
     ShowSyntaxErrors: Boolean;
@@ -159,6 +164,10 @@ const
   OCLInfoLocal = 'doc\oclinfo.html';
   cMRUExpressionRegKey = '\MRU';
   cMRUExpressionRegKeyName = 'OCL Expression';
+  cFontSettingRegKey = '\OCLEditorFont';
+  cFontSettingRegKeyName = 'FontName';
+  cFontSettingRegKeyStyle = 'FontStyle';
+  cFontSettingRegKeySize = 'FontSize';
   cHiddenOCLVariables: array[0..3] of string = ('Nil', 'True', 'False', 'TimeStampNow');
 
 type
@@ -172,7 +181,7 @@ end;
 procedure TBoldOclPropEditForm.ClearClick(Sender: TObject);
 begin
   EditMemo.Lines.Clear;
-  EditMemoChange(Sender)
+  EditMemoChange(Sender);
 end;
 
 constructor TBoldOclPropEditForm.Create(AOwner: TComponent);
@@ -350,6 +359,52 @@ begin
     end;
     if vInclude then
       SelectBox.Items.Add(fCompleteSelectList[i]);
+  end;
+end;
+
+procedure TBoldOclPropEditForm.LoadFontSettings(const Font: TFont);
+var
+  lRegistry: TBoldRegistry;
+begin
+  lRegistry := TBoldRegistry.Create;
+  try
+    if lRegistry.OpenKey(cFontSettingRegKey) then
+    begin
+      Font.Name := lRegistry.ReadString(cFontSettingRegKeyName, Font.Name);
+      Font.Size := lRegistry.ReadInteger(cFontSettingRegKeySize, Font.Size);
+      Font.Style := TFontStyles(Byte(lRegistry.ReadInteger(cFontSettingRegKeyStyle, Byte(Font.Style))));
+      lRegistry.CloseKey;
+    end;
+  finally
+    lRegistry.Free;
+  end;
+end;
+
+procedure TBoldOclPropEditForm.SaveFontSettings(const Font: TFont);
+var
+  lRegistry: TBoldRegistry;
+begin
+  lRegistry := TBoldRegistry.Create;
+  try
+    if lRegistry.OpenKey(cFontSettingRegKey) then
+    begin
+      lRegistry.WriteString(cFontSettingRegKeyName, Font.Name);
+      lRegistry.WriteInteger(cFontSettingRegKeySize, Font.Size);
+      lRegistry.WriteInteger(cFontSettingRegKeyStyle, Byte(Font.Style));
+      lRegistry.CloseKey;
+    end;
+  finally
+    lRegistry.Free;
+  end;
+end;
+
+procedure TBoldOclPropEditForm.btnSetFontClick(Sender: TObject);
+begin
+  FontDialog1.Font := EditMemo.Font;
+  if FontDialog1.Execute then
+  begin
+    EditMemo.Font := FontDialog1.Font;
+    SaveFontSettings(EditMemo.Font);
   end;
 end;
 
@@ -848,6 +903,7 @@ procedure TBoldOclPropEditForm.FormCreate(Sender: TObject);
 begin
   fMRUExpressionList := TStringList.Create;
   FetchMRUExpressionList;
+  LoadFontSettings(EditMemo.Font);
 end;
 
 procedure TBoldOclPropEditForm.FormDestroy(Sender: TObject);

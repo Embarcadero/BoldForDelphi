@@ -2225,6 +2225,9 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
     BorderWidth = 5
     Caption = 'TabControlPanel'
     TabOrder = 0
+    DesignSize = (
+      716
+      318)
     object SplitterRight: TSplitter
       Left = 485
       Top = 5
@@ -2506,6 +2509,17 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
           end
         end
       end
+    end
+    object btnSetFont: TButton
+      Left = 443
+      Top = 4
+      Width = 36
+      Height = 22
+      Anchors = [akTop, akRight]
+      Caption = 'Font'
+      Images = ImageList1
+      TabOrder = 3
+      OnClick = btnSetFontClick
     end
   end
   object ImageList1: TImageList
@@ -2794,5 +2808,14 @@ object BoldOclPropEditForm: TBoldOclPropEditForm
   object MRUPopupMenu: TPopupMenu
     Left = 345
     Top = 223
+  end
+  object FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    Left = 419
+    Top = 53
   end
 end
