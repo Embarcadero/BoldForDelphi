@@ -1752,7 +1752,8 @@ end;
 
 procedure TBoldUniDACExecQuery.SetParamCheck(value: Boolean);
 begin
-  ExecQuery.ParamCheck := Value;
+  if ExecQuery.ParamCheck <> Value then
+    ExecQuery.ParamCheck := Value;
 end;
 
 procedure TBoldUniDACExecQuery.SetUseReadTransactions(value: boolean);
