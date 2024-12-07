@@ -1,4 +1,4 @@
-﻿
+
 { Global compiler directives }
 {$include bold.inc}
 unit BoldHandles;
@@ -154,18 +154,18 @@ type
   TBoldSystemExtensionComponent = class(TBoldHandle)
   private
     fStaticSystemHandle: TBoldAbstractSystemHandle;
-    fSubscriber: TBoldPassthroughSubscriber;
+    fSubscriber: TBoldExtendedPassthroughSubscriber;
     function GetBoldSystem: TBoldSystem;
-    function GetSubscriber: TBoldPassthroughSubscriber;
+    function GetSubscriber: TBoldExtendedPassthroughSubscriber;
   protected
-    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent); virtual;
+    procedure _Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const); virtual;
     function GetHandledObject: TObject; override;
     function GetStaticSystemHandle: TBoldAbstractSystemHandle; virtual;
     procedure SetStaticSystemHandle(Value: TBoldAbstractSystemHandle); virtual;
     procedure StaticBoldTypeChanged; virtual;
     procedure PlaceSubscriptions; virtual;
     property BoldSystem: TBoldSystem read GetBoldSystem;
-    property Subscriber: TBoldPassthroughSubscriber read GetSubscriber;
+    property Subscriber: TBoldExtendedPassthroughSubscriber read GetSubscriber;
   public
     destructor Destroy; override;
  published
@@ -647,10 +647,10 @@ begin
   result := fStaticSystemHandle;
 end;
 
-function TBoldSystemExtensionComponent.GetSubscriber: TBoldPassthroughSubscriber;
+function TBoldSystemExtensionComponent.GetSubscriber: TBoldExtendedPassthroughSubscriber;
 begin
   if not Assigned(fSubscriber) then
-    fSubscriber := TBoldPassthroughSubscriber.Create(_Receive);
+    fSubscriber := TBoldExtendedPassthroughSubscriber.CreateWithExtendedReceive(_Receive);
   result := fSubscriber;
 end;
 
@@ -680,7 +680,7 @@ begin
 end;
 
 procedure TBoldSystemExtensionComponent._Receive(Originator: TObject;
-  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent; const Args: array of const);
 begin
   Assert(RequestedEvent in [breFreeHandle, breValueIdentityChanged], IntToStr(OriginalEvent) + ',' + IntToStr(RequestedEvent));
   case RequestedEvent of
