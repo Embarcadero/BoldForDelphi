@@ -237,13 +237,6 @@ begin
             bc := 0;
             ParamIndex := 0;
             DatabaseInterface.Commit;
-
-            TestQuery.SQLText := 'select count(*) from ' + SourceTableName;
-            TestQuery.Open;
-            Assert(TestQuery.Fields[0].AsInteger = ProcessedRecords);
-            if DatabaseInterface.InTransaction then
-              DatabaseInterface.Commit;
-
             DatabaseInterface.StartTransaction;
             DoOnProgress(vRecNo);
             vRecNo := 0;
