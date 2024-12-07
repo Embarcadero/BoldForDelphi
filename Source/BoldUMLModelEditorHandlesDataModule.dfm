@@ -253,8 +253,8 @@ object dmBoldUMLModelEditorHandles: TdmBoldUMLModelEditorHandles
     InitialValues.Strings = (
       '0..1'
       '1..1'
-      '0..*'
-      '1..*')
+      '0..n'
+      '1..n')
     Left = 143
     Top = 269
   end

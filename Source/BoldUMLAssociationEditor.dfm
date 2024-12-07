@@ -13,10 +13,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
-  PixelsPerInch = 96
   TextHeight = 13
   object PageControl2: TPageControl
     Left = 0
@@ -51,7 +49,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 3
-        Width = 278
+        Width = 274
       end
       object cmbAssociationLinkClass: TcxBoldComboBox
         Left = 72
@@ -73,7 +71,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 6
-        Width = 278
+        Width = 274
       end
       object tbxAssociationName: TcxBoldTextEdit
         Left = 72
@@ -95,10 +93,10 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 1
-        Width = 278
+        Width = 274
       end
       object lblAssociationStereotype: TcxLabel
-        Left = 10
+        Left = 9
         Top = 32
         Margins.Bottom = 0
         Caption = '&Stereotype'
@@ -109,7 +107,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 68
       end
       object lblAssociationClass: TcxLabel
-        Left = 16
+        Left = 12
         Top = 56
         Margins.Bottom = 0
         Caption = 'Link C&lass'
@@ -120,7 +118,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 66
       end
       object lblAssociationName: TcxLabel
-        Left = 37
+        Left = 35
         Top = 8
         Margins.Bottom = 0
         Caption = '&Name'
@@ -131,7 +129,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 68
       end
       object bcbPersistent: TcxBoldCheckBox
-        Left = 356
+        Left = 352
         Top = 2
         Hint = 
           '|Copntrols if the association is persistent (saved in persistent' +
@@ -151,7 +149,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 0
       end
       object bcbAssociationDerived: TcxBoldCheckBox
-        Left = 356
+        Left = 352
         Top = 18
         Hint = '|Controls if the association is derived.'
         HelpContext = 1270
@@ -181,7 +179,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
       481
       41)
     object CancelBtn: TButton
-      Left = 394
+      Left = 390
       Top = 7
       Width = 75
       Height = 25
@@ -192,7 +190,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
       TabOrder = 1
     end
     object OKBtn: TButton
-      Left = 313
+      Left = 309
       Top = 7
       Width = 75
       Height = 25
@@ -217,7 +215,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         473
         339)
       object btAssoEndShowDeriExprEditor1: TButton
-        Left = 303
+        Left = 299
         Top = 208
         Width = 17
         Height = 21
@@ -231,7 +229,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Font.Name = 'Symbol'
         Font.Style = []
         ParentFont = False
-        TabOrder = 17
+        TabOrder = 14
         OnClick = btAssoEndShowDeriExprEditor1Click
       end
       object cmbAssoEndClass: TcxBoldComboBox
@@ -245,7 +243,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Properties.BoldRowProperties.Expression = ''
         Properties.DropDownListStyle = lsEditFixedList
         TabOrder = 5
-        Width = 231
+        Width = 227
       end
       object tbxAssoEndDerivationOCL: TcxBoldTextEdit
         Left = 88
@@ -266,8 +264,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 15
-        Width = 214
+        TabOrder = 11
+        Width = 210
       end
       object cmbAssoEndDeleteAction: TcxBoldComboBox
         Left = 88
@@ -287,8 +285,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Properties.DropDownListStyle = lsFixedList
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
-        TabOrder = 12
-        Width = 231
+        TabOrder = 10
+        Width = 227
       end
       object cmbMultiplicity: TcxBoldComboBox
         Left = 88
@@ -309,7 +307,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 6
-        Width = 231
+        Width = 227
       end
       object cmbAssoEndChangeability: TcxBoldComboBox
         Left = 88
@@ -330,7 +328,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 9
-        Width = 231
+        Width = 227
       end
       object cmbAssoEndVisibility: TcxBoldComboBox
         Left = 88
@@ -351,7 +349,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 8
-        Width = 231
+        Width = 227
       end
       object cmbAggregationKind: TcxBoldComboBox
         Left = 88
@@ -372,7 +370,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 7
-        Width = 231
+        Width = 227
       end
       object tbxAssociationEndStereotype: TcxBoldTextEdit
         Left = 88
@@ -394,7 +392,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 3
-        Width = 231
+        Width = 227
       end
       object tbxAssociationEndColumnName: TcxBoldTextEdit
         Left = 88
@@ -416,7 +414,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 26
-        Width = 231
+        Width = 227
       end
       object tbxAssociationEndExpressionName: TcxBoldTextEdit
         Left = 88
@@ -437,8 +435,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 23
-        Width = 231
+        TabOrder = 22
+        Width = 227
       end
       object tbxAssociationEndDelphiName: TcxBoldTextEdit
         Left = 88
@@ -459,8 +457,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 20
-        Width = 231
+        TabOrder = 18
+        Width = 227
       end
       object tbxAssociationEndName: TcxBoldTextEdit
         Left = 88
@@ -482,10 +480,10 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 1
-        Width = 231
+        Width = 227
       end
       object lblAssoEndDerivationOCL: TcxLabel
-        Left = 8
+        Left = 3
         Top = 212
         Margins.Bottom = 0
         Caption = 'Derivation OCL'
@@ -496,7 +494,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssoEndDeleteAction: TcxLabel
-        Left = 17
+        Left = 12
         Top = 188
         Margins.Bottom = 0
         Caption = '&Delete action'
@@ -507,7 +505,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lbMultiplicity: TcxLabel
-        Left = 31
+        Left = 23
         Top = 92
         Margins.Bottom = 0
         Caption = 'Multi&plicity'
@@ -518,7 +516,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssoEndChangeability: TcxLabel
-        Left = 15
+        Left = 9
         Top = 164
         Margins.Bottom = 0
         Caption = 'Changeability'
@@ -529,7 +527,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssoEndVisibility: TcxLabel
-        Left = 43
+        Left = 37
         Top = 140
         Margins.Bottom = 0
         Caption = 'Visibility'
@@ -540,7 +538,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object Label2: TcxLabel
-        Left = 21
+        Left = 15
         Top = 116
         Margins.Bottom = 0
         Caption = 'A&ggregation'
@@ -551,7 +549,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblStereotype: TcxLabel
-        Left = 26
+        Left = 25
         Top = 44
         Margins.Bottom = 0
         Caption = '&Stereotype'
@@ -562,7 +560,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssociationEndClass: TcxLabel
-        Left = 55
+        Left = 54
         Top = 68
         Margins.Bottom = 0
         Caption = 'C&lass'
@@ -573,7 +571,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssociationEndColumnName: TcxLabel
-        Left = 16
+        Left = 9
         Top = 285
         Margins.Bottom = 0
         Caption = 'C&olumn name'
@@ -584,7 +582,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssociationEndExpressionName: TcxLabel
-        Left = -1
+        Left = -6
         Top = 261
         Margins.Bottom = 0
         Caption = 'E&xpression name'
@@ -595,7 +593,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssociationEndDelphiName: TcxLabel
-        Left = 22
+        Left = 15
         Top = 237
         Margins.Bottom = 0
         Caption = 'Delph&i name'
@@ -606,7 +604,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object lblAssociationEndName: TcxLabel
-        Left = 53
+        Left = 51
         Top = 20
         Margins.Bottom = 0
         Caption = '&Name'
@@ -617,7 +615,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object bcbAssociationEndEmbed: TcxBoldCheckBox
-        Left = 326
+        Left = 322
         Top = 50
         Hint = '|Controls if the role is embedded in the owning object.'
         HelpContext = 48
@@ -634,7 +632,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 4
       end
       object bcbAssociationEndOrdered: TcxBoldCheckBox
-        Left = 326
+        Left = 322
         Top = 32
         Hint = '|Controls if order is preserved.'
         HelpContext = 46
@@ -651,7 +649,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 2
       end
       object bcbAssociationEndNavigable: TcxBoldCheckBox
-        Left = 326
+        Left = 322
         Top = 14
         Hint = '|Controls if the role is navigable in this direction.'
         HelpContext = 44
@@ -668,7 +666,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 0
       end
       object cxLabel14: TcxLabel
-        Left = 39
+        Left = 35
         Top = 309
         Margins.Bottom = 0
         Caption = 'Qualifier'
@@ -683,6 +681,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Top = 308
         DataBinding.BoldHandle = behAssociationEnd1
         DataBinding.BoldProperties.Expression = 'qualifier->asCommaText'
+        ParentFont = False
         Properties.Buttons = <
           item
             Default = True
@@ -700,7 +699,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         473
         339)
       object btAssoEndShowDeriExprEditor2: TButton
-        Left = 303
+        Left = 299
         Top = 208
         Width = 17
         Height = 21
@@ -714,7 +713,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Font.Name = 'Symbol'
         Font.Style = []
         ParentFont = False
-        TabOrder = 17
+        TabOrder = 14
         OnClick = btAssoEndShowDeriExprEditor2Click
       end
       object cxBoldComboBox1: TcxBoldComboBox
@@ -750,8 +749,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 15
-        Width = 214
+        TabOrder = 11
+        Width = 210
       end
       object cxBoldComboBox2: TcxBoldComboBox
         Left = 88
@@ -770,8 +769,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Properties.Alignment.Horz = taLeftJustify
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
-        TabOrder = 12
-        Width = 231
+        TabOrder = 10
+        Width = 227
       end
       object cxBoldComboBox3: TcxBoldComboBox
         Left = 88
@@ -791,7 +790,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 6
-        Width = 231
+        Width = 227
       end
       object cxBoldComboBox4: TcxBoldComboBox
         Left = 88
@@ -811,7 +810,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 9
-        Width = 231
+        Width = 227
       end
       object cxBoldComboBox5: TcxBoldComboBox
         Left = 88
@@ -831,7 +830,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 8
-        Width = 231
+        Width = 227
       end
       object cxBoldComboBox6: TcxBoldComboBox
         Left = 88
@@ -851,7 +850,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.BorderStyle = ebsFlat
         Style.Color = clWindow
         TabOrder = 7
-        Width = 231
+        Width = 227
       end
       object cxBoldTextEdit3: TcxBoldTextEdit
         Left = 88
@@ -873,7 +872,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 3
-        Width = 231
+        Width = 227
       end
       object cxBoldTextEdit4: TcxBoldTextEdit
         Left = 88
@@ -895,7 +894,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 26
-        Width = 231
+        Width = 227
       end
       object cxBoldTextEdit5: TcxBoldTextEdit
         Left = 88
@@ -916,8 +915,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 23
-        Width = 231
+        TabOrder = 22
+        Width = 227
       end
       object cxBoldTextEdit6: TcxBoldTextEdit
         Left = 88
@@ -938,8 +937,8 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Name = 'MS Sans Serif'
         Style.Font.Style = []
         Style.IsFontAssigned = True
-        TabOrder = 20
-        Width = 231
+        TabOrder = 18
+        Width = 227
       end
       object cxBoldTextEdit7: TcxBoldTextEdit
         Left = 88
@@ -961,10 +960,10 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Style.Font.Style = []
         Style.IsFontAssigned = True
         TabOrder = 1
-        Width = 231
+        Width = 227
       end
       object cxLabel1: TcxLabel
-        Left = 8
+        Left = 3
         Top = 212
         Margins.Bottom = 0
         Caption = 'Derivation OCL'
@@ -975,7 +974,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel2: TcxLabel
-        Left = 17
+        Left = 12
         Top = 188
         Margins.Bottom = 0
         Caption = '&Delete action'
@@ -986,7 +985,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel3: TcxLabel
-        Left = 31
+        Left = 23
         Top = 92
         Margins.Bottom = 0
         Caption = 'Multi&plicity'
@@ -997,7 +996,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel5: TcxLabel
-        Left = 15
+        Left = 9
         Top = 164
         Margins.Bottom = 0
         Caption = 'Changeability'
@@ -1008,7 +1007,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel6: TcxLabel
-        Left = 43
+        Left = 37
         Top = 140
         Margins.Bottom = 0
         Caption = 'Visibility'
@@ -1019,7 +1018,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel7: TcxLabel
-        Left = 21
+        Left = 15
         Top = 116
         Margins.Bottom = 0
         Caption = 'A&ggregation'
@@ -1030,7 +1029,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel8: TcxLabel
-        Left = 26
+        Left = 25
         Top = 44
         Margins.Bottom = 0
         Caption = '&Stereotype'
@@ -1041,7 +1040,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel9: TcxLabel
-        Left = 55
+        Left = 54
         Top = 68
         Margins.Bottom = 0
         Caption = 'C&lass'
@@ -1052,7 +1051,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel10: TcxLabel
-        Left = 16
+        Left = 9
         Top = 285
         Margins.Bottom = 0
         Caption = 'C&olumn name'
@@ -1063,7 +1062,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel11: TcxLabel
-        Left = -1
+        Left = -6
         Top = 261
         Margins.Bottom = 0
         Caption = 'E&xpression name'
@@ -1074,7 +1073,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel12: TcxLabel
-        Left = 22
+        Left = 15
         Top = 237
         Margins.Bottom = 0
         Caption = 'Delph&i name'
@@ -1085,7 +1084,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object cxLabel13: TcxLabel
-        Left = 53
+        Left = 51
         Top = 20
         Margins.Bottom = 0
         Caption = '&Name'
@@ -1096,7 +1095,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         AnchorX = 84
       end
       object BoldCheckBox5: TcxBoldCheckBox
-        Left = 326
+        Left = 322
         Top = 50
         Hint = '|Controls if the role is embedded in the owning object.'
         HelpContext = 48
@@ -1113,7 +1112,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 4
       end
       object BoldCheckBox3: TcxBoldCheckBox
-        Left = 326
+        Left = 322
         Top = 32
         Hint = '|Controls if order is preserved.'
         HelpContext = 46
@@ -1130,7 +1129,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 2
       end
       object BoldCheckBox1: TcxBoldCheckBox
-        Left = 326
+        Left = 322
         Top = 14
         Hint = '|Controls if the role is navigable in this direction.'
         HelpContext = 44
@@ -1147,7 +1146,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         TabOrder = 0
       end
       object cxLabel15: TcxLabel
-        Left = 39
+        Left = 35
         Top = 309
         Margins.Bottom = 0
         Caption = 'Qualifier'
@@ -1162,6 +1161,7 @@ object BoldUMLAssociationEditForm: TBoldUMLAssociationEditForm
         Top = 308
         DataBinding.BoldHandle = behAssociationEnd2
         DataBinding.BoldProperties.Expression = 'qualifier->asCommaText'
+        ParentFont = False
         Properties.Buttons = <
           item
             Default = True
