@@ -102,7 +102,7 @@ begin
 
   UseClassEvents := True; // Bold original behaviour = true
   UseMemberLevelOSS := True; // Bold original behaviour = false
-  UseSubscriptions := True; // // Bold original behaviour = true
+  UseSubscriptions := False; // // Bold original behaviour = true
 end;
 
 destructor TBoldAbstractSnooper.Destroy;
