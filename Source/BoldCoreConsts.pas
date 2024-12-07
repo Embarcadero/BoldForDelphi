@@ -362,7 +362,9 @@ const
 // BoldSystem
   sReasonUnknown = 'Reason unknown';
   sFailureMessage = '%s.%s failed: %s';
+  sObjectFromAnotherSystem = '%s Objects from wrong system passed to %s.';
   sBoldObjectAssigned = '%s.Destroy: BoldObject assigned';
+  sLocatorNotFound = '%s.%s. Locator not found for ID: %s';
   sNoSuchClass = '%s.%s: System contains no class named: %s';
   sCannotCreateInexact = 'Can not create objects with approximate type. ID: %s Class: %s';
   sClassDoesNotBelongHere = '%s.GetAllInClass: %s does not belong to this system';

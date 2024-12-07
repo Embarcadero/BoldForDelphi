@@ -2541,6 +2541,12 @@ procedure TBoldSystem.UpdateDatabaseWithList(ObjectList: TBoldObjectList);
 begin
   if IsUpdatingDatabase then
     raise EBold.CreateFmt(sUpdateDbRentry, []);
+  if BoldSystemCount > 1 then
+  begin
+    for var BO in ObjectList do
+      if BO.BoldSystem <> self then
+        raise EBold.CreateFmt(sObjectFromAnotherSystem, [classname, 'UpdateDatabaseWithList']);
+  end;
   SystemPersistenceHandler.UpdateDatabaseWithList(ObjectList);
   if (DirtyObjects.Count > 0) then
     fOldValueHandler.PurgeEqualValues
@@ -9898,16 +9904,21 @@ procedure TBoldSystem_Proxy.ApplytranslationList(
 var
   I: Integer;
   Locator: TBoldObjectLocator;
+  Id: TBoldObjectId;
 begin
   if IdTranslationList.Count = 0 then
     exit;
   for I := 0 to IdTranslationList.Count - 1 do
   begin
-    if Assigned(IdTranslationList.OldIDs[I]) then
+    Id := IdTranslationList.OldIDs[I];
+    if Assigned(Id) then
     begin
-      Locator := ProxedSystem.Locators.LocatorByID[IdTranslationList.OldIDs[I]];
-      if Assigned(IdTranslationList.NewIDs[I]) then
-        ProxedSystem.Locators.UpdateId(Locator, IdTranslationList.NewIds[i])
+      Locator := ProxedSystem.Locators.LocatorByID[Id];
+      if not Assigned(Locator) then
+        raise EBoldInternal.CreateFmt(sLocatorNotFound, [ClassName, 'ApplytranslationList', Id.AsString]);
+      Id := IdTranslationList.NewIDs[I];
+      if Assigned(Id) then
+        ProxedSystem.Locators.UpdateId(Locator, Id)
     end
     else
     begin
