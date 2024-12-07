@@ -16,6 +16,7 @@ type
   TBoldSortedHandle = class;
 
  { TBoldComparer }
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldComparer = class(TBoldSubscribableComponentViaBoldElem)
   private
     FOnCompare: TBoldElementCompare;

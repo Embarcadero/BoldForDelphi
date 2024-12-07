@@ -26,6 +26,7 @@ type
   TBoldDerivedHandle = class;
 
   {---TBoldDerviedHandle---}
+  [ComponentPlatforms(pidWin32 or pidWin64)]
   TBoldDerivedHandle = class(TBoldRootedHandle)
   private
     fOnDeriveAndSubscribe: TBoldHandleDeriveAndSubscribe;
