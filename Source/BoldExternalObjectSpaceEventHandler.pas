@@ -195,9 +195,7 @@ begin
     raise EBold.CreateFmt('%s.HandleMessage: The systemhandle (%s) is not active. Unable to handle messages', [self.ClassName, fBoldSystemHandle.name]);
 
   vEvents := TStringList.Create;
-  vEvents.Delimiter := ';';
-  vEvents.StrictDelimiter := true;
-  vEvents.DelimitedText := aMsg;
+  vEvents.CommaText := aMsg;
   vExactId := nil;
   vObjectID := TBoldDefaultID.Create;
   try
