@@ -837,8 +837,15 @@ begin
 
   // convert from fully qualified names in format: database.catalogue.table to just table name
   for i := 0 to lTempList.Count - 1 do
+  begin
     while pos('.', lTempList[i]) > 0 do
+    begin
       lTempList[i] := Copy(lTempList[i], pos('.', lTempList[i])+1, maxInt);
+    end;
+    // In case of Google BigQuery tablenames were surrounded with quotation marks.
+    // To return only tablenames, these quotation marks must be removed    
+    lTempList[i] := StringReplace(lTempList[i], '"', '', [rfReplaceAll]);
+  end;
 
   if Pattern = '' then
     TableNameList.Assign(lTempList)
