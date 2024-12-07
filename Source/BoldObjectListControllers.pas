@@ -435,7 +435,8 @@ begin
   end
   else
   if OwningObjectList.SubscribeToObjectsInList then
-    SubscriptionSource.AddSmallSubscription(FSubscriber, [beDestroying, beObjectDeleted]);
+    SubscriptionSource.AddSmallSubscription(FSubscriber, [beObjectDeleted]);
+  Locator.BoldSystem.AddSmallSubscription(FSubscriber, [beDestroying]);
 end;
 
 procedure TBoldObjectListController.DropSubscriptions;
