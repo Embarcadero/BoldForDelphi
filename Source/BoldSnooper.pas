@@ -6,6 +6,7 @@ unit BoldSnooper;
 interface
 
 uses
+  Classes,
   BoldAbstractSnooper,
   BoldPropagatorInterfaces_TLB,
   BoldDefs,
@@ -42,7 +43,6 @@ implementation
 uses
   Sysutils,
   Variants,
-  Classes,
   BoldPropagatorConstants,
   BoldLockingDefs,
   BoldUtils,
@@ -82,10 +82,10 @@ begin
       try
         if (Events.Count <> 0) then
           CheckError(Propagator.SendEvents(ClientID, StringListToVarArray(Events)), 'SendEvents');
-        if (Subscriptions.Count <> 0) then
-          CheckError(Propagator.AddSubscriptions(ClientID, StringListToVarArray(Subscriptions)), 'AddSubscriptions');
-        if (CancelledSubscriptions.Count <> 0) then
-          CheckError(Propagator.CancelSubscriptions(ClientID, StringListToVarArray(CancelledSubscriptions)), 'CancelSubscriptions');
+//        if (Subscriptions.Count <> 0) then
+//          CheckError(Propagator.AddSubscriptions(ClientID, StringListToVarArray(Subscriptions)), 'AddSubscriptions');
+//        if (CancelledSubscriptions.Count <> 0) then
+//          CheckError(Propagator.CancelSubscriptions(ClientID, StringListToVarArray(CancelledSubscriptions)), 'CancelSubscriptions');
       except on E: EOleSysError do
         DoPropagatorFailure(self, E.Message);
       end;
