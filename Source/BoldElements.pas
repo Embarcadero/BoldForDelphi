@@ -974,11 +974,16 @@ begin
 end;
 
 destructor TBoldExternalVariable.Destroy;
+var
+  vEvaluator: TBoldEvaluator;
 begin
   fSubscriber.Free;
-  if Assigned(fEvaluator) then
-    fEvaluator.UndefineVariable(self);
-  fEvaluator := nil;
+  vEvaluator := fEvaluator;
+  if Assigned(vEvaluator) then
+  begin
+    fEvaluator := nil;
+    vEvaluator.UndefineVariable(self);
+  end;
   inherited;
 end;
 
