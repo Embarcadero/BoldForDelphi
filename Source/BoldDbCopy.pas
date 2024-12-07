@@ -144,13 +144,14 @@ begin
   var InsertSql: string;
   var Values: string;
   var Field: IBoldField;
-  var SourceDatabaseInterface :=  SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
+  var SourceDatabaseInterface := SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
   SourceDatabaseInterface.Open;
-  SourceQuery :=  SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection.GetQuery;
+  SourceQuery := SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection.GetQuery;
   SourceQuery.UseReadTransactions := false;
-  var DatabaseInterface :=  DestinationPersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
+  var DatabaseInterface := DestinationPersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
   DatabaseInterface.Open;
   DestinationQuery := DatabaseInterface.GetExecQuery;
+  var TestQuery := DatabaseInterface.GetQuery;
   var sl := TStringList.Create;
   var sl2 := TStringList.Create;
   try
@@ -178,8 +179,23 @@ begin
       BoldLog.LogHeader := Format('%d records loaded from %s', [j, SourceTableName]);
       BoldLog.Log(Format('%d records in table %s', [j, DestinationTable.SQLName]));
       BoldLog.ProgressMax := j;
+
+            TestQuery.SQLText := 'select count(*) from ' + SourceTableName;
+            TestQuery.Open;
+            if TestQuery.Fields[0].AsInteger > 0 then
+            begin
+              DestinationQuery.SQLText := 'delete from ' + SourceTableName;
+              DestinationQuery.ExecSQL;
+              TestQuery.Close;
+              TestQuery.Open;
+            end;
+            TestQuery.Close;
+            if DatabaseInterface.InTransaction then
+              DatabaseInterface.Commit;
+
       DatabaseInterface.StartTransaction;
       RemainingRecords := SourceQuery.RecordCount;
+
       var ProcessedRecords := 0;
       var vRecNo := 0;
       var s: string;
@@ -210,6 +226,7 @@ begin
               end;
             end;
             inc(bc);
+            Assert(not SourceQuery.Eof);
             SourceQuery.Next;
             inc(vRecNo);
             inc(ProcessedRecords);
@@ -220,6 +237,13 @@ begin
             bc := 0;
             ParamIndex := 0;
             DatabaseInterface.Commit;
+
+            TestQuery.SQLText := 'select count(*) from ' + SourceTableName;
+            TestQuery.Open;
+            Assert(TestQuery.Fields[0].AsInteger = ProcessedRecords);
+            if DatabaseInterface.InTransaction then
+              DatabaseInterface.Commit;
+
             DatabaseInterface.StartTransaction;
             DoOnProgress(vRecNo);
             vRecNo := 0;
@@ -242,11 +266,20 @@ begin
       until RemainingRecords = 0;
       if DatabaseInterface.InTransaction then
         DatabaseInterface.Commit;
+
+      TestQuery.SQLText := 'select count(*) from ' + SourceTableName;
+      TestQuery.Open;
+      Assert(TestQuery.Fields[0].AsInteger = SourceQuery.RecordCount);
+      if DatabaseInterface.InTransaction then
+        DatabaseInterface.Commit;
+
     until fTableQueue.Empty;
   finally
     sl.free;
+    sl2.Free;
     SourceDatabaseInterface.ReleaseQuery(SourceQuery);
     DatabaseInterface.ReleaseExecQuery(DestinationQuery);
+    SourceDatabaseInterface.ReleaseQuery(TestQuery);
     SourceDatabaseInterface.Close;
     DatabaseInterface.Close;
     BoldLog.Log(Format('Thread %d completed', [TThread.CurrentThread.ThreadID]));
