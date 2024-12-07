@@ -5089,6 +5089,9 @@ begin
   if not assigned(self) then
     InternalRaise(EBold, sValidate_MemberNotAssigned, [ObjectDelphiName, MemberDelphiName, ObjectDelphiName]);
 
+  if (self.ClassType <> BoldClassTypeInfo.ObjectClass) then
+    InternalRaise(EBold, 'Object class %s does not match the BoldClassTypeInfo %s.', [self.ClassType.ClassName, BoldClassTypeInfo.ObjectClass.ClassName]);
+
   if Cardinal(GeneratedMemberIndex) >= Cardinal(BoldMemberCount) then
   begin
     MemberRTInfo := BoldClassTypeInfo.AllMembers.ItemsByDelphiName[MemberDelphiName] as TBoldMemberRTInfo;
