@@ -12,7 +12,7 @@ uses
 type
   TBoldDbCopy = class;
 
-  TBoldDbCopyProgressEvent = procedure(Sender: TBoldDbCopy; AProgress: integer; AMax: integer; AEstimatedEndTime: TDateTime) of object;
+  TBoldDbCopyProgressEvent = procedure(Sender: TBoldDbCopy; AProgress: integer) of object;
   TBoldDbCopyLogEvent = procedure(Sender: TBoldDbCopy; const aStatus: string) of object;
 
   TBoldDbCopy = class(TComponent)
@@ -24,13 +24,17 @@ type
     fStartTime: TDateTime;
     fTableQueue: TBoldThreadSafeStringQueue;
     fTotalTables: integer;
+    fTotalRecords: integer;
     FOnComplete: TNotifyEvent;
+    fProgressEvent: TBoldDbCopyProgressEvent;
     procedure SetDestinationPersistenceHandle(const Value: TBoldAbstractPersistenceHandleDB);
     procedure SetSourcePersistenceHandle(const Value: TBoldAbstractPersistenceHandleDB);
     procedure SetThreadCount(const Value: integer);
     procedure DoOnComplete;
     procedure ProcessTables;
     procedure SetOnComplete(const Value: TNotifyEvent);
+  protected
+    procedure DoOnProgress(AProcessedRecords: Integer);
   public
     procedure Run;
     procedure AfterConstruction; override;
@@ -40,7 +44,9 @@ type
     property DestinationPersistenceHandle: TBoldAbstractPersistenceHandleDB read fDestinationPersistenceHandle write SetDestinationPersistenceHandle;
     property ThreadCount: integer read fThreadCount write SetThreadCount;
     property OnComplete: TNotifyEvent read FOnComplete write SetOnComplete;
+    property OnProgress: TBoldDbCopyProgressEvent read fProgressEvent write fProgressEvent;
     property TotalTables: integer read fTotalTables;
+    property TotalRecords: integer read fTotalRecords;
   end;
 
   EBoldDbCopy = class(Exception);
@@ -55,7 +61,7 @@ uses
   Data.DB,
   System.DateUtils,
   System.Character,
-  Winapi.ActiveX, BoldLogHandler;
+  Winapi.ActiveX, BoldLogHandler, System.Math;
 
 { TBoldDbCopy }
 
@@ -80,6 +86,12 @@ begin
     FOnComplete(self);
 end;
 
+procedure TBoldDbCopy.DoOnProgress(AProcessedRecords: Integer);
+begin
+  if Assigned(fProgressEvent) then
+    fProgressEvent(self, AProcessedRecords);
+end;
+
 procedure TBoldDbCopy.ProcessTables;
 begin
   var InsertSql: string;
@@ -93,96 +105,124 @@ begin
   DatabaseInterface.Open;
   var DestinationQuery := DatabaseInterface.GetExecQuery;
   var sl := TStringList.Create;
+  var sl2 := TStringList.Create;
   try
-//    DoOnLog(Format('Thread %d started', [TThread.CurrentThread.ThreadID]));
     repeat
       var SourceTableName := fTableQueue.Dequeue;
       if SourceTableName = '' then
         exit;
       var DestinationPersistenceMapper := DestinationPersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
+      var MultiRowInsertLimit := DestinationPersistenceMapper.SQLDataBaseConfig.MultiRowInsertLimit;
       var DestinationTable := DestinationPersistenceMapper.AllTables.ItemsBySQLName[SourceTableName];
       var Columns := DestinationTable.ColumnsList.ToString;
       var SelectSql := Format('select %s from %s', [Columns, SourceTableName]);
       BoldLog.LogHeader := Format('Loading from %s', [SourceTableName]);
       SourceQuery.SQLText := SelectSql;
       SourceQuery.Open;
+      if SourceQuery.RecordCount = 0 then
+        continue;
       var i,j: integer;
       sl.Clear;
-      for i := 0 to DestinationTable.ColumnsList.Count-1 do
-        sl.Add(':'+ DestinationTable.ColumnsList[i].SQLName);
-      Values := sl.CommaText;
-      j := 0;
-      InsertSql := Format('insert into %s (%s) values (%s)', [DestinationTable.SQLName, Columns, Values]);
-      DestinationQuery.SQLText := InsertSql;
-      DestinationQuery.ParamCheck := true;
-      i := DestinationQuery.ParamCount;
-      j := SourceQuery.FieldCount;
-      var s := DestinationQuery.Params.ToString;
-      if i <> j then
-      begin
-        for var q := 0 to SourceQuery.FieldCount-1 do
-        begin
-          var ss := SourceQuery.Fields[q].FieldName;
-          var ds := DestinationQuery.Param[q].Name;
-          if DestinationQuery.Param[q].Name <> SourceQuery.Fields[q].FieldName then
-            Assert(false, Format('Source field count %d does not match destination param count %d, expected:  %s found: %s', [j, i, ss, ds]));
-        end;
-      end;
+      sl2.Clear;
       j := SourceQuery.RecordCount;
-      if j = 0 then
-        continue;
+      BoldLog.LogHeader := Format('%d records loaded from %s', [j, SourceTableName]);
       BoldLog.Log(Format('%d records in table %s', [j, DestinationTable.SQLName]));
       BoldLog.ProgressMax := j;
       DatabaseInterface.StartTransaction;
-      var vRecNo := 0;
+      var RemainingRecords := SourceQuery.RecordCount;
       var ProcessedRecords := 0;
-//      var s: string;
-      var Bytes: TBytes;
-      while not SourceQuery.Eof do
-      begin
-        for i := 0 to SourceQuery.FieldCount-1 do
+      var vRecNo := 0;
+      var PrevBatch := 0;
+      repeat
+        var Batch := Min(RemainingRecords, MultiRowInsertLimit);
+        if PrevBatch <> Batch then
         begin
-          DestinationQuery.Param[i].AssignFieldValue(SourceQuery.Fields[i]);
-          if DestinationQuery.Param[i].DataType = ftWideMemo then
+          PrevBatch := Batch;
+          for var _j := 0 to Batch-1 do
           begin
-            s := Trim(SourceQuery.Fields[i].AsString);
-            for var x := Length(s)-1 downto 1 do
-              if s[x].IsControl then
-                Delete(s, x, 1);
-            Bytes := TEncoding.UTF8.GetBytes(s);
-            DestinationQuery.Param[i].AsString := TEncoding.UTF8.GetString(Bytes);
+            for i := 0 to DestinationTable.ColumnsList.Count-1 do
+              sl.Add(':p'+ _j.ToString + '_' + i.ToString);
+            sl2.Add(Trim('(' + Trim(sl.CommaText) + ')'));
+            sl.Clear;
+          end;
+          sl2.QuoteChar := ' ';
+          sl2.StrictDelimiter := false;
+          Values := sl2.DelimitedText;
+          InsertSql := Format('insert into %s (%s) values %s;', [DestinationTable.SQLName, Columns, Values]);
+          DestinationQuery.ClearParams;
+          DestinationQuery.ParamCheck := true;
+          DestinationQuery.SQLText := InsertSql;
+          DestinationQuery.Prepare;
+        end;
+  {      i := DestinationQuery.ParamCount;
+        j := SourceQuery.FieldCount;
+        if i <> j then
+        begin // manually build params
+          DestinationQuery.ParamCheck := false;
+          DestinationQuery.ClearParams;
+          for var q := 0 to SourceQuery.FieldCount-1 do
+          begin
+            DestinationQuery.CreateParam( SourceQuery.Fields[q].Field.DataType, SourceQuery.Fields[q].FieldName);
           end;
         end;
-        try
+  }
+        var s: string;
+        var Bytes: TBytes;
+        var bc: Integer;
+        bc := 0;
+        var ParamIndex := 0;
+        while not SourceQuery.Eof do
+        begin
+          for i := 0 to SourceQuery.FieldCount-1 do
+          begin
+            var Param := DestinationQuery.Param[ParamIndex];
+            inc(ParamIndex);
+            Param.AssignFieldValue(SourceQuery.Fields[i]);
+            if Param.DataType = ftWideMemo then
+            begin
+              s := Trim(SourceQuery.Fields[i].AsString);
+              for var x := Length(s)-1 downto 1 do
+                if s[x].IsControl then
+                  Delete(s, x, 1);
+              Bytes := TEncoding.UTF8.GetBytes(s);
+              Param.AsString := TEncoding.UTF8.GetString(Bytes);
+            end;
+          end;
+          inc(bc);
           SourceQuery.Next;
-          DestinationQuery.ExecSQL;
           inc(vRecNo);
           inc(ProcessedRecords);
-          if vRecNo = 1000 then
-          begin
-            vRecNo := 0;
-            DatabaseInterface.Commit;
-            DatabaseInterface.StartTransaction;
-            var Estimate := IncSecond(fStartTime, Round(SecondsBetween(fStartTime, now) * (j / ProcessedRecords)));
-            BoldLog.Progress := ProcessedRecords;
-            BoldLog.LogHeader := Format('%d/%d records processed in table %s', [ProcessedRecords,j, DestinationTable.SQLName]);
-          end;
-        except
-          on e:Exception {EBoldDatabaseError} do
-          begin
-            if pos('invalid byte sequence for encoding', e.Message) > 0 then
-              continue
-            else
+          dec(RemainingRecords);
+          if (bc >= Batch) then
+          try
+            DestinationQuery.ExecSQL;
+            ParamIndex := 0;
+            bc := 0;
             begin
-              DatabaseInterface.RollBack;
-              raise;
+              DatabaseInterface.Commit;
+              DatabaseInterface.StartTransaction;
+              DoOnProgress(vRecNo);
+              vRecNo := 0;
+              var Estimate := IncSecond(fStartTime, Round(SecondsBetween(fStartTime, now) * (j / ProcessedRecords)));
+              BoldLog.Progress := ProcessedRecords;
+              BoldLog.LogHeader := Format('%d/%d records processed in table %s', [ProcessedRecords,j, DestinationTable.SQLName]);
+            end;
+          except
+            on e:Exception {EBoldDatabaseError} do
+            begin
+              if pos('invalid byte sequence for encoding', e.Message) > 0 then
+                continue
+              else
+              begin
+                DatabaseInterface.RollBack;
+                raise;
+              end;
             end;
           end;
         end;
-      end;
+      until RemainingRecords = 0;
       if DatabaseInterface.InTransaction then
         DatabaseInterface.Commit;
-//      DoOnProgress(ProcessedRecords, j, now);
     until fTableQueue.Empty;
   finally
     sl.free;
@@ -242,6 +282,7 @@ begin
     SourceQuery.Open;
     if SourceQuery.Fields[0].AsInteger = 0 then
       continue;
+    inc(fTotalRecords, SourceQuery.Fields[0].AsInteger);
     vTables.Values[SourceTable.SQLName] := SourceQuery.Fields[0].AsString;
     SourceQuery.Close;
   end;

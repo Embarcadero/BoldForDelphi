@@ -242,6 +242,7 @@ type
     procedure SetUseReadTransactions(value: boolean);
     function GetSQLStrings: TStrings;
     function GetBatchQueryParamCount: integer;
+    procedure Prepare;
     property RowsAffected: integer read GetRowsAffected;
     property Implementor: TObject read GetImplementor;
     property SQLText: String read GetSQLText write AssignSQLText;
@@ -265,6 +266,7 @@ type
     function GetUseReadTransactions: boolean;
     procedure SetUseReadTransactions(value: boolean);
     function GetRecNo: integer;
+    procedure Prepare;
     property RequestLiveQuery: Boolean read GetRequestLiveQuery write SetRequestLiveQuery;
     property RecordCount: integer read GetRecordCount;
     property SQLText: String read GetSQLText write AssignSQLText;
