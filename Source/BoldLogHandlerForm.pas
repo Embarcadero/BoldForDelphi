@@ -21,8 +21,11 @@ type
   private
     fLogForm: TBoldLogForm;
     fSessionName: String;
+    FEnabled: Boolean;
     function GetLogForm: TBoldLogForm;
     procedure HideProgressBar;
+    procedure SetEnabled(const Value: Boolean);
+    function GetEnabled: Boolean;
   protected
     property LogForm: TBoldLogForm read GetLogForm;
     procedure SetProgress(const Value: integer);
@@ -41,6 +44,7 @@ type
     procedure StartLog(const SessionName: String);
     procedure EndLog;
     procedure SaveLog;
+    property Enabled: Boolean read GetEnabled write SetEnabled;
   end;
 
 function BoldLogForm: IBoldLogReceiver;
@@ -94,6 +98,11 @@ begin
   Hideprogressbar;
 end;
 
+function TBoldLogHandlerReceiver.GetEnabled: Boolean;
+begin
+  Result := FEnabled;
+end;
+
 function TBoldLogHandlerReceiver.GetLogForm: TBoldLogForm;
 begin
   if not Assigned(fLogForm) then
@@ -128,6 +137,11 @@ procedure TBoldLogHandlerReceiver.SetProgress(const Value: integer);
 begin
   if LogForm.Visible then
     LogForm.ProgressBar1.Position := Value;
+end;
+
+procedure TBoldLogHandlerReceiver.SetEnabled(const Value: Boolean);
+begin
+  FEnabled := Value;
 end;
 
 procedure TBoldLogHandlerReceiver.SetLogHeader(const Value: string);

@@ -132,6 +132,7 @@ type
   TMyLogReceiver = class(TBoldNonRefCountedObject, IBoldLogReceiver)
   private
     fLogCount: Integer;
+    FEnabled: Boolean;
     procedure SetProgress(const Value: integer);
     procedure SetLogHeader(const Value: string);
     procedure SetProgressMax(const Value: integer);
@@ -144,6 +145,10 @@ type
     procedure ProcessInterruption;
     procedure StartLog(const sessionName: String);
     procedure EndLog;
+    procedure SetEnabled(const Value: Boolean);
+    function GetEnabled: Boolean;
+
+    property Enabled: Boolean read GetEnabled write SetEnabled;
   end;
 
 var
@@ -651,6 +656,11 @@ begin
 end;
 
 
+function TMyLogReceiver.GetEnabled: Boolean;
+begin
+  Result := FEnabled;
+end;
+
 procedure TMyLogReceiver.Hide;
 begin
 end;
@@ -666,6 +676,11 @@ end;
 
 procedure TMyLogReceiver.SetProgress(const Value: integer);
 begin
+end;
+
+procedure TMyLogReceiver.SetEnabled(const Value: Boolean);
+begin
+  FEnabled := Value;
 end;
 
 procedure TMyLogReceiver.SetLogHeader(const Value: string);
