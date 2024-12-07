@@ -183,6 +183,7 @@ type
 
   { TBoldUniDACConnection }
   TBoldUniDACConnection = class(TBoldDatabaseWrapper, IBoldDataBase)
+  private
     fUniConnection: TUniConnection;
     fCachedTable: IBoldTable;
     fCachedQuery1: IBoldQuery;
@@ -210,6 +211,7 @@ type
     function GetIsExecutingQuery: Boolean;
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
+    function CreateAnotherDatabaseConnection: IBoldDatabase;
   protected
     procedure AllTableNames(Pattern: string; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetTable: IBoldTable; override;
@@ -534,7 +536,7 @@ begin
       inherited;
       Done := true;
 {$IFDEF LAZYFETCHDEBUG}
-      if (Query.RecordCount = 1) and not InSpanFetch and not TBoldSystem.DefaultSystem.IsUpdatingDatabase {and not FollowerGettingValue} then
+      if (Query.RecordCount = 1) and (TBoldSystem.DefaultSystem <> nil) and not AttracsSpanFetchManager.InSpanFetch and not TBoldSystem.DefaultSystem.IsUpdatingDatabase {and not FollowerGettingValue} then
         Assert(Assigned(query)); // Fake assert for placing breakpoint when debugging inefficient loading
 {$ENDIF}
     except
@@ -994,6 +996,13 @@ constructor TBoldUniDACConnection.Create(aUniConnection: TUniConnection; SQLData
 begin
   inherited Create(SQLDataBaseConfig);
   fUniConnection := aUniConnection;
+end;
+
+function TBoldUniDACConnection.CreateAnotherDatabaseConnection: IBoldDatabase;
+begin
+  var Connection := TUniConnection.Create(nil); // owner ?
+  Connection.Assign(self.fUniConnection);
+  result := TBoldUniDACConnection.Create(Connection, SQLDatabaseConfig);
 end;
 
 procedure TBoldUniDACConnection.BeginExecuteQuery;

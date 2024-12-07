@@ -221,6 +221,7 @@ type
     function GetUpdateTransaction: TFDTransaction;
     procedure SetTransaction(const Value: TFDTransaction);
     procedure SetUpdateTransaction(const Value: TFDTransaction);
+    function CreateAnotherDatabaseConnection: IBoldDatabase;
   protected
     procedure AllTableNames(Pattern: string; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetTable: IBoldTable; override;
@@ -948,6 +949,13 @@ constructor TBoldFireDACConnection.Create(aFDConnection: TFDConnection; SQLDataB
 begin
   inherited Create(SQLDataBaseConfig);
   fFDConnection := aFDConnection;
+end;
+
+function TBoldFireDACConnection.CreateAnotherDatabaseConnection: IBoldDatabase;
+begin
+  var Connection := TFDConnection.Create(nil); // owner ?
+  Connection.Assign(self.fFDConnection);
+  result := TBoldFireDACConnection.Create(Connection, SQLDatabaseConfig);
 end;
 
 procedure TBoldFireDACConnection.BeginExecuteQuery;
