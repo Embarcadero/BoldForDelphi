@@ -397,8 +397,8 @@ begin
   CurrObj := GetObjectByID(AObjectID);
   if Assigned(CurrObj) then
   begin
-    if CurrObj.BoldClassTypeInfo.ExpressionName <> AClassName then
-      raise EOSS.CreateFmt('Object %s is %s, but expected type is %s.', [AObjectID.AsString, CurrObj.BoldClassTypeInfo.ExpressionName, AClassName]);
+//    if CurrObj.BoldClassTypeInfo.ExpressionName <> AClassName then
+//      raise EOSS.CreateFmt('Object %s is %s, but expected type is %s.', [AObjectID.AsString, CurrObj.BoldClassTypeInfo.ExpressionName, AClassName]);
     i := CurrObj.BoldMemberIndexByExpressionName[AMemberName];
     if i = -1 then
       raise EOSS.CreateFmt('Class %s does not have a member "%s", check OSS settings of other clients.', [CurrObj.DisplayName, AMemberName]);
