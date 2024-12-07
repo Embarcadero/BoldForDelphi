@@ -321,10 +321,10 @@ type
     property ContextString: string read GetContextString;
     property SubscriptionsAsText: string read GetSubscriptionsAsText;
     property HasSubscribers: Boolean read GetHasSubscribers;
-end;
+  end;
 
   {---TBoldSubscribableComponent---}
-  [ComponentPlatforms(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute (pidWin32 or pidWin64)]
   TBoldSubscribableComponent = class(TComponent)
   strict private
     fPublisher: TBoldPublisher;

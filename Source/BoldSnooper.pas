@@ -16,19 +16,21 @@ type
   {forward declarations}
   TBoldSnooper = class;
 
-
   { TBoldSnooper }
   TBoldSnooper = class(TBoldAbstractSnooper)
   private
     fOwner: TObject;
+    fEvents: TStringList;
   protected
     procedure EnsureDataBaseLock(const ClientID: TBoldClientID); override;
     procedure ReleaseDataBaseLock(const ClientID: TBoldClientID); override;
     function GetLockManager: IBoldLockManager; virtual;
     function GetPropagator: IBoldEventPropagator; virtual;
     function GetCheckDatabaseLock: Boolean; virtual;
+    property Events: TStringList read fEvents;
   public
     constructor Create(MoldModel: TMoldModel; aOwner: TObject); reintroduce;
+    destructor Destroy; override;
     procedure TransmitEvents(const ClientID: TBoldClientID); override;
     property Propagator: IBoldEventPropagator read GetPropagator;
     property LockManager: IBoldLockManager read GetLockManager;
@@ -89,8 +91,14 @@ begin
       end;
     end;
   finally
-    ClearEvents;
+    Events.Clear;
   end;
+end;
+
+destructor TBoldSnooper.Destroy;
+begin
+  fEvents.free;
+  inherited;
 end;
 
 procedure TBoldSnooper.EnsureDataBaseLock(const ClientId: TBoldClientID);
@@ -124,6 +132,7 @@ begin
   inherited Create(MoldModel);
   Assert(Assigned(aOwner));
   fOwner := aOwner;
+  fEvents := TStringList.Create;
 end;
 
 function TBoldSnooper.GetLockManager: IBoldLockManager;

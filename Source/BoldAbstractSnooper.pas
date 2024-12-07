@@ -23,40 +23,26 @@ type
   TBoldAbstractSnooper = class(TBoldPersistenceControllerPassthrough)
   private
     fMoldModel: TMoldModel;
-    fEvents: TStringList;
-    fEventsLength: integer;
     fEventClassFlags: TBooleanArray;
-    fSubscriptions: TStringList;
-    fCancelledSubscriptions: TStringList;
     fModelSorted: Boolean;
     FOnPropagatorFailure: TBoldNotifyEventWithErrorMessage;
     fClassesToIgnore: string;
     fArrayOfClassesToIgnore: TBooleanArray;
-    fUseSubscriptions: boolean;
     fUseClassEvents: boolean;
     fUseMemberLevelOSS: boolean;
-    fEventTimeStamp: TDateTime;
     procedure SetClassesToIgnore(const Value: string);
-    function GetUseSubscriptions: boolean;
-    procedure SetUseSubscriptions(const Value: boolean);
   protected
     procedure GenerateNonEmbeddedStateChangedEvent(OldID, NewID: TBoldObjectId; MoldClass: TMoldClass; const NonEmbeddedLinkName: string);
-    procedure SubscribeToNonEmbeddedStateChangedEvent(Id: TBoldObjectId; const NonEmbeddedLinkName: string);
     function ObjectIdByMemberIndex(Object_Content: IBoldObjectContents; MemberIndex: integer): TBoldObjectID;
     function MemberIsEmbeddedSingleLink(MoldMember: TMoldMember; var NonEmbeddedLink: TMoldRole): Boolean;
     function MemberIsNonEmbeddedLink(MoldMember: TMoldMember; var MemberName: string): Boolean;
-    function ClassNameFromClassID(const TopSortedIndex: integer): string;
     function ClassNameFromObjectID(const ABoldObjectId: TBoldObjectId): string;
     procedure NonEmbeddedStateOfObjectChanged(const Object_Content, NewObject_Content: IBoldObjectContents; MoldClass: TMoldClass);
-    procedure ClearEvents;
     procedure EnsureDataBaseLock(const ClientID: TBoldClientID); virtual;
     procedure ReleaseDataBaseLock(const ClientID: TBoldClientID); virtual;
     procedure DoPropagatorFailure(Sender: TObject; const ErrorMessage: string);
     procedure AddClassEvents(TopsortedIndex: integer);
-    procedure AddEvent(const AEvent: string);
-    procedure AddSubscription(const AEvent: string);
-    procedure CancelSubscription(const AEvent: string);
-    function EventLimitReached: boolean;
+    procedure AddEvent(const AEvent: string); virtual; abstract;
   public
     constructor Create(MoldModel: TMoldModel); virtual;
     destructor Destroy; override;
@@ -65,12 +51,8 @@ type
     procedure PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; Old_Values: IBoldValueSpace; Precondition: TBoldUpdatePrecondition; TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime; BoldClientID: TBoldClientID); override;
     procedure TransmitEvents(const ClientID: TBoldClientID); virtual; abstract;
     property MoldModel: TMoldModel read fMoldModel;
-    property Events: TStringList read fEvents;
     property UseClassEvents: boolean read fUseClassEvents write fUseClassEvents;
     property UseMemberLevelOSS: boolean read fUseMemberLevelOSS write fUseMemberLevelOSS;
-    property UseSubscriptions: boolean read GetUseSubscriptions write SetUseSubscriptions;
-    property Subscriptions: TStringList read fSubscriptions;
-    property CancelledSubscriptions: TStringList read fCancelledSubscriptions;
     property OnPropagatorFailure: TBoldNotifyEventWithErrorMessage read FOnPropagatorFailure write FOnPropagatorFailure;
     property ClassesToIgnore: string read fClassesToIgnore write SetClassesToIgnore;
   end;
@@ -90,105 +72,28 @@ begin
   inherited Create;
   fModelSorted := false;
   fMoldModel := MoldModel;
-  fEvents := TStringList.Create;
-  fEvents.Sorted := true;
-  fEvents.Duplicates := dupIgnore;
-  fEvents.Delimiter := ';';
-  fEvents.StrictDelimiter := true;
-  fSubscriptions := TStringList.Create;
-  fCancelledSubscriptions := TStringList.Create;
   SetLength(fEventClassFlags, MoldModel.Classes.Count);
   SetLength(fArrayOfClassesToIgnore, MoldModel.Classes.Count);
-
   UseClassEvents := True; // Bold original behaviour = true
   UseMemberLevelOSS := False; // Bold original behaviour = false
-  UseSubscriptions := False; // // Bold original behaviour = true
 end;
 
 destructor TBoldAbstractSnooper.Destroy;
 begin
-  FreeAndNil(fEvents);
-  FreeAndNil(fSubscriptions);
-  FreeAndNil(fCancelledSubscriptions);
   inherited;
 end;
 
 procedure TBoldAbstractSnooper.PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
             MemberIdList: TBoldMemberIdList; FetchMode: Integer;
             BoldClientID: TBoldClientID);
-var
-  i, j, MemberIndex: integer;
-  MoldClass: TMoldClass;
-  MemberName: string;
-  LoadingEmbedded: Boolean;
-  Object_Content: IBoldObjectContents;
 begin
   inherited;
-  if {(BoldClientID = NOTVALIDCLIENTID) or} not Assigned(MoldModel) or not UseSubscriptions then
-    Exit;
-  if not fModelSorted then
-  begin
-    MoldModel.EnsureTopSorted;
-    fModelSorted := true;
-  end;
-  try
-    for i:= 0 to ObjectIdList.Count - 1 do
-    begin
-      LoadingEmbedded := false;
-      Object_Content := ValueSpace.ObjectContentsbyObjectId[ObjectIdList[i]];
-
-
-      if Assigned(MemberIdList) then
-      begin
-        if Assigned(Object_Content) then
-        begin
-          MoldClass := MoldModel.Classes[ObjectIdList[i].TopSortedIndex];
-          for j:= 0 to MemberIdList.Count - 1 do
-          begin
-            MemberIndex := MemberIdList[j].MemberIndex;
-            if MemberIsNonEmbeddedLink(MoldClass.AllBoldMembers[MemberIndex], MemberName) then
-              SubscribeToNonEmbeddedStateChangedEvent(ObjectIdList[i], MemberName)
-            else
-              LoadingEmbedded := true;
-          end
-        end
-      end
-      else
-      begin
-        if Assigned(Object_Content) then
-        begin
-          LoadingEmbedded := true;
-          MoldClass := MoldModel.Classes[ObjectIdList[i].TopSortedIndex];
-          for j:= 0 to Object_Content.MemberCount - 1 do
-            if not (MoldClass.AllBoldMembers[j].EffectiveDelayedFetch) and
-               MemberIsNonEmbeddedLink(MoldClass.AllBoldMembers[j], MemberName) then
-                SubscribeToNonEmbeddedStateChangedEvent(ObjectIdList[i], MemberName);
-        end;
-      end;
-      if UseSubscriptions and LoadingEmbedded then
-        AddSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, '', '', '', ObjectIdList[i]));
-    end;
-    TransmitEvents(BoldClientID);
-  finally
-    Object_Content:= nil;
-  end;
 end;
 
 procedure TBoldAbstractSnooper.PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
             FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID);
-var
-  TopSortedIndex: integer;
 begin
   inherited;
-//  if (BoldClientID = NOTVALIDCLIENTID) then
-//    Exit;
-  if (Condition.ClassType = TBoldConditionWithClass) then
-  begin
-    TopSortedIndex := (Condition as TBoldConditionWithClass).TopSortedIndex;
-    if UseSubscriptions then
-      AddSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, ClassNameFromClassId(TopSortedIndex), '', '', nil));
-  end;
-  TransmitEvents(BoldClientID);
 end;
 
 procedure TBoldAbstractSnooper.PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace;
@@ -204,8 +109,8 @@ var
   Object_Content, NewObject_Content: IBoldObjectContents;
   ObjectId: TBoldObjectID;
   MoldClass: TMoldClass;
-  MemberName: string;
   MemberValue: IBoldValue;
+  TopSortedIndex: Integer;
   sl: TStringList;
 begin
   assert(assigned(MoldModel), sSnooperNoModel);
@@ -240,46 +145,38 @@ begin
 //    if (BoldClientID <> NOTVALIDCLIENTID) then
     for i := 0 to LocalObjectIDList.Count - 1 do
     begin
-      MoldClass := MoldModel.Classes[LocalObjectIdList[i].TopSortedIndex];
-      Object_Content := ValueSpace.ObjectContentsByObjectId[LocalObjectIdList[i]];
+      ObjectID := LocalObjectIdList[i];
+      TopSortedIndex := ObjectId.TopSortedIndex;
+      MoldClass := MoldModel.Classes[TopSortedIndex];
+      Object_Content := ValueSpace.ObjectContentsByObjectId[ObjectID];
       Assert(Assigned(Object_Content), Format('Object [%s] of type [%s] does not exist',
-        [LocalObjectIdList[i].AsString,
+        [ObjectID.AsString,
         MoldClass.ExpandedExpressionName]));
       if Object_Content.BoldPersistenceState = bvpsModified then
         case Object_Content.BoldExistenceState of
           besExisting:
             begin
-              if UseClassEvents and not fArrayOfClassesToIgnore[LocalObjectIdList[i].TopSortedIndex] then
-                AddClassEvents(LocalObjectIdList[i].TopSortedIndex);
-              if UseSubscriptions then
-                AddSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, '', '', '', TranslationList.TranslateToNewId[LocalObjectIdList[i]]));
+              if UseClassEvents and not fArrayOfClassesToIgnore[TopSortedIndex] then
+                AddClassEvents(TopSortedIndex);
               if not fArrayOfClassesToIgnore[MoldClass.TopSortedIndex] then
-                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectCreated, MoldClass.ExpandedExpressionName, '', '', LocalObjectIdList[i]));
+//                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectCreated, MoldClass.ExpandedExpressionName, '', '', ObjectID));
+                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectCreated, MoldClass.TopSortedIndex.ToString, '', '', ObjectID));
             end;
           besDeleted:
             begin
-              if not fArrayOfClassesToIgnore[LocalObjectIdList[i].TopSortedIndex] then
+              if not fArrayOfClassesToIgnore[TopSortedIndex] then
               begin
                 if UseClassEvents then
-                  AddClassEvents(LocalObjectIdList[i].TopSortedIndex);
-                Events.Add(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectDeleted, MoldClass.ExpandedExpressionName, '', '', LocalObjectIdList[i]));
-              end;
-              if UseSubscriptions then
-              begin
-                CancelSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, '', '', '', LocalObjectIdList[i])) ;
-                for j:= 0 to MoldClass.AllBoldMembers.Count - 1 do
-                begin
-                  MemberName := MoldClass.AllBoldMembers.Items[j].ExpandedExpressionName;
-                  if MemberIsNonEmbeddedLink(MoldClass.AllBoldMembers[j], MemberName) then
-                    CancelSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, '', MemberName, '', LocalObjectIdList[i]));
-                end;
+                  AddClassEvents(TopSortedIndex);
+                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectDeleted, MoldClass.TopSortedIndex.ToString, '', '', ObjectID));
               end;
             end;
         end
       else
       begin
-        if not fArrayOfClassesToIgnore[LocalObjectIdList[i].TopSortedIndex] then
+        if not fArrayOfClassesToIgnore[TopSortedIndex] then
         begin
+{
           if UseMemberLevelOss then
           begin
             sl:= TStringList.Create;
@@ -298,13 +195,14 @@ begin
               end;
               if sl.Count > 0 then
               begin
-                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsMemberChanged, ClassNameFromObjectID(LocalObjectIdList[i]), sl.CommaText, '', LocalObjectIdList[i]));
+                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsMemberChanged, ClassNameFromObjectID(ObjectID), sl.CommaText, '', ObjectID));
               end;
             finally
               sl.free;
             end;
           end;
-          AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, ClassNameFromObjectID(LocalObjectIdList[i]), '', '', LocalObjectIdList[i]));
+}
+          AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsEmbeddedStateOfObjectChanged, ClassNameFromObjectID(ObjectID), '', '', ObjectID));
         end;
       end;
     end;
@@ -312,15 +210,16 @@ begin
     begin
       for i:= LocalObjectIdList.Count - 1 downto 0 do
       begin
-        Object_Content := Old_Values.ObjectContentsbyObjectId[LocalObjectIdList[i]];
-        ObjectId := LocalObjectIdList[i];
+        Object_Content := Old_Values.ObjectContentsbyObjectId[ObjectID];
+        ObjectId := ObjectID;
+        TopSortedIndex := ObjectId.TopSortedIndex;
         if Assigned(ObjectId) then
           NewObject_Content := ValueSpace.ObjectContentsByObjectId[ObjectId]
         else
           NewObject_Content := nil;
-        if not fArrayOfClassesToIgnore[LocalObjectIdList[i].TopSortedIndex] then
+        if not fArrayOfClassesToIgnore[TopSortedIndex] then
           NonEmbeddedStateOfObjectChanged(Object_Content, NewObject_Content,
-                  MoldModel.Classes[LocalObjectIdList[i].TopSortedIndex]);
+                  MoldModel.Classes[TopSortedIndex]);
       end;
       TransmitEvents(BoldClientID);
     end;
@@ -350,11 +249,6 @@ begin
     AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, ClassNameFromObjectID(NewId), NonEmbeddedLinkName, '', NewID));
 end;
 
-function TBoldAbstractSnooper.GetUseSubscriptions: boolean;
-begin
-  result := fUseSubscriptions;
-end;
-
 procedure TBoldAbstractSnooper.SetClassesToIgnore(const Value: string);
 var
   sl: TStringList;
@@ -379,17 +273,6 @@ begin
   finally
     sl.free;
   end;
-end;
-
-procedure TBoldAbstractSnooper.SetUseSubscriptions(const Value: boolean);
-begin
-  fUseSubscriptions := Value;
-end;
-
-procedure TBoldAbstractSnooper.SubscribeToNonEmbeddedStateChangedEvent(Id: TBoldObjectId; const NonEmbeddedLinkName: string);
-begin
- if Assigned(Id) and UseSubscriptions then
-    AddSubscription(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsNonEmbeddedStateOfObjectChanged, '', NonEmbeddedLinkName, '', Id))
 end;
 
 function TBoldAbstractSnooper.ObjectIdByMemberIndex(Object_Content: IBoldObjectContents; MemberIndex: integer): TBoldObjectID;
@@ -471,48 +354,14 @@ begin
     end;
 end;
 
-procedure TBoldAbstractSnooper.AddEvent(const AEvent: string);
-begin
-  if Events.Count = 0 then
-  begin
-    fEventTimeStamp := now;
-    fEventsLength := 0;
-  end;
-  Events.Add(AEvent);
-  Inc(fEventsLength, Length(AEvent));
-  if EventLimitReached then
-    TransmitEvents(NOTVALIDCLIENTID);
-end;
-
-procedure TBoldAbstractSnooper.AddSubscription(const AEvent: string);
-begin
-  Subscriptions.Add(AEvent);
-end;
-
-procedure TBoldAbstractSnooper.CancelSubscription(const AEvent: string);
-begin
-  CancelledSubscriptions.Add(AEvent);
-end;
-
-function TBoldAbstractSnooper.ClassNameFromClassId(const TopSortedIndex: integer): string;
-begin
-  Result := MoldModel.Classes[TopSortedIndex].ExpandedExpressionName;
-end;
-
 function TBoldAbstractSnooper.ClassNameFromObjectID(const ABoldObjectId: TBoldObjectId): string;
 begin
-    Result := MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName;
-end;
-
-procedure TBoldAbstractSnooper.ClearEvents;
-var
-  i: integer;
-begin
-  Events.Clear;
-  Subscriptions.Clear;
-  CancelledSubscriptions.Clear;
-  for i := 0 to length(fEventClassFlags)-1 do
-    fEventClassFlags[i] := false;
+  if ABoldObjectId.TopSortedIndexExact then
+    Result := ABoldObjectId.TopSortedIndex.ToString // MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName
+  else
+//  self.PMExactifyIds(ABoldOb)
+//  ABoldObjectId.
+   Assert(false, 'non exact id, how to handle it ?');
 end;
 
 procedure TBoldAbstractSnooper.DoPropagatorFailure(Sender: TObject; const ErrorMessage: string);
@@ -529,7 +378,8 @@ begin
     exit;
   MoldClass := MoldModel.Classes[TopSortedIndex];
   if not fEventClassFlags[MoldClass.TopSortedIndex] then
-    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, MoldClass.ExpandedExpressionName, '', '', nil));
+//    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, MoldClass.ExpandedExpressionName, '', '', nil));
+    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, MoldClass.TopSortedIndex.ToString, '', '', nil));
   while assigned(MoldClass) do
   begin
      if not fEventClassFlags[MoldClass.TopSortedIndex] then
@@ -540,16 +390,6 @@ end;
 
 procedure TBoldAbstractSnooper.EnsureDataBaseLock(const ClientID: TBoldClientID);
 begin
-end;
-
-function TBoldAbstractSnooper.EventLimitReached: boolean;
-const
-  c1millisecond = 1 / 86400000;
-  cAgeLimit = c1millisecond * 200;
-  cMessageLengthLimit = 1200;
-begin
-  result := (fEventsLength > cMessageLengthLimit)
-            or (fEventTimeStamp>0) and (now - fEventTimeStamp > cAgeLimit);
 end;
 
 procedure TBoldAbstractSnooper.ReleaseDataBaseLock(const ClientID: TBoldClientID);

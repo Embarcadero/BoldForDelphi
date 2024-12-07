@@ -83,7 +83,6 @@ begin
   result := Snooper;
   Snooper.UseClassEvents := UseClassEvents;
   Snooper.UseMemberLevelOSS := UseMemberLevelOSS;
-  Snooper.UseSubscriptions := UseSubscriptions;
   Snooper.ClassesToIgnore := ClassesToIgnore;
   Subscribe(True);
 end;
@@ -138,7 +137,6 @@ begin
       begin
         Snooper.UseClassEvents := UseClassEvents;
         Snooper.UseMemberLevelOSS := UseMemberLevelOSS;
-        Snooper.UseSubscriptions := UseSubscriptions;
         Snooper.ClassesToIgnore := ClassesToIgnore;
       end;
     end;
