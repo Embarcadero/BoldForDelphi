@@ -213,6 +213,7 @@ type
     procedure BeginExecuteQuery;
     procedure EndExecuteQuery;
     function CreateAnotherDatabaseConnection: IBoldDatabase;
+    function GetImplementor: TObject;
   protected
     procedure AllTableNames(Pattern: string; ShowSystemTables: Boolean; TableNameList: TStrings); override;
     function GetTable: IBoldTable; override;
@@ -871,6 +872,11 @@ end;
 procedure TBoldUniDACConnection.Commit;
 begin
   UniConnection.Commit;
+end;
+
+function TBoldUniDACConnection.GetImplementor: TObject;
+begin
+  result := UniConnection;
 end;
 
 function TBoldUniDACConnection.GetInTransaction: Boolean;

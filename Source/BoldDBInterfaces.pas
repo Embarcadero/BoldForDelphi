@@ -332,6 +332,8 @@ type
     procedure DropDatabase;
     function DatabaseExists: boolean;
     function CreateAnotherDatabaseConnection: IBoldDatabase;
+    function GetImplementor: TObject;
+    property Implementor: TObject read GetImplementor;
   end;
 
   TBoldParameterWrapper = class(TBoldRefCountedObject)
@@ -396,7 +398,7 @@ type
   private
     fDatabaseWrapper: TBoldDatabaseWrapper;
   protected
-    function GetImplementor: TObject;
+    function GetImplementor: TObject; virtual;
   public
     constructor Create(DatabaseWrapper: TBoldDatabaseWrapper); virtual;
     procedure Clear; virtual;
