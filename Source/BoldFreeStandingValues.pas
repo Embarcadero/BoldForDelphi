@@ -23,6 +23,8 @@ type
 
   TBoldFreeStandingValue = class;
   TBFSString = class;
+  TBFSAnsiString = class;
+  TBFSUnicodeString = class;
   TBFSInteger = class;
   TBFSFloat = class;
   TBFSCurrency = class;
@@ -217,6 +219,42 @@ type
     class function ContentType: TBoldValueContentType; override;
     function IsEqualToValue(const Value: IBoldValue): Boolean; override;
     property AsString: String read GetContentAsString write SetContentAsString;
+  end;
+
+  { TBFSAnsiString }
+  TBFSAnsiString = class(TBoldFreeStandingNullableValue, IBoldAnsiStringContent)
+  private
+    fDataValue: AnsiString;
+    procedure SetContentAsAnsiString(const NewValue: TBoldAnsiString);
+    function GetContentAsAnsiString: TBoldAnsiString;
+    procedure SetContentAsString(const NewValue: String);
+  protected
+    function GetContentAsString: String; override;
+    function GetStreamName: string; override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
+  public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
+    property AsAnsiString: AnsiString read GetContentAsAnsiString write SetContentAsAnsiString;
+  end;
+
+  { TBFSUnicodeString }
+  TBFSUnicodeString = class(TBoldFreeStandingNullableValue, IBoldUnicodeStringContent)
+  private
+    fDataValue: UnicodeString;
+    procedure SetContentAsUnicodeString(const NewValue: TBoldUnicodeString);
+    function GetContentAsUnicodeString: TBoldUnicodeString;
+    procedure SetContentAsString(const NewValue: String);
+  protected
+    function GetContentAsString: String; override;
+    function GetStreamName: string; override;
+    procedure AssignContentValue(const Source: IBoldValue); override;
+    function GetValueAsVariant: Variant; override;
+  public
+    class function ContentType: TBoldValueContentType; override;
+    function IsEqualToValue(const Value: IBoldValue): Boolean; override;
+    property AsUnicodeString: UnicodeString read GetContentAsUnicodeString write SetContentAsUnicodeString;
   end;
 
   { TBFSCurrency }
@@ -862,6 +900,151 @@ begin
   SetToNonNull;
 end;
 
+procedure TBFSString.AssignContentValue(const Source: IBoldValue);
+var
+  s: IBoldStringContent;
+begin
+  if source.QueryInterface(IBoldStringContent, S) = S_OK then
+    if s.IsNull then
+      SetContentToNull
+    else
+      SetContentAsString(s.AsString)
+  else
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
+end;
+
+function TBFSString.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aStringValue: IBoldStringContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldStringContent, aStringValue) = S_OK) and
+      (AsString = aStringValue.asString);
+end;
+
+{ TBFSAnsiString }
+
+procedure TBFSAnsiString.AssignContentValue(const Source: IBoldValue);
+var
+  s: IBoldAnsiStringContent;
+begin
+  if source.QueryInterface(IBoldAnsiStringContent, S) = S_OK then
+    if s.IsNull then
+      SetContentToNull
+    else
+      SetContentAsAnsiString(s.asAnsiString)
+  else
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
+end;
+
+class function TBFSAnsiString.ContentType: TBoldValueContentType;
+begin
+  result := bctAnsiString;
+end;
+
+function TBFSAnsiString.GetContentAsAnsiString: TBoldAnsiString;
+begin
+  result := fDataValue;
+end;
+
+function TBFSAnsiString.GetContentAsString: String;
+begin
+  result := String(fDataValue);
+end;
+
+function TBFSAnsiString.GetStreamName: string;
+begin
+  result := BoldContentName_AnsiString;
+end;
+
+function TBFSAnsiString.GetValueAsVariant: Variant;
+begin
+  result := AsAnsiString;
+end;
+
+function TBFSAnsiString.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aAnsiStringValue: IBoldAnsiStringContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldAnsiStringContent, aAnsiStringValue) = S_OK) and
+      (AsAnsiString = aAnsiStringValue.asAnsiString);
+end;
+
+procedure TBFSAnsiString.SetContentAsAnsiString(const NewValue: TBoldAnsiString);
+begin
+  fDataValue := NewValue; // Use BoldSharedStringManager ?
+  SetToNonNull;
+end;
+
+procedure TBFSAnsiString.SetContentAsString(const NewValue: String);
+begin
+  fDataValue := AnsiString(NewValue); // Use BoldSharedStringManager ?
+  SetToNonNull;
+end;
+
+{ TBFSUnicodeString }
+
+procedure TBFSUnicodeString.AssignContentValue(const Source: IBoldValue);
+var
+  s: IBoldUnicodeStringContent;
+begin
+  if source.QueryInterface(IBoldUnicodeStringContent, S) = S_OK then
+    if s.IsNull then
+      SetContentToNull
+    else
+      SetContentAsUnicodeString(s.asUnicodeString)
+  else
+    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
+end;
+
+class function TBFSUnicodeString.ContentType: TBoldValueContentType;
+begin
+  result := bctUnicodeString;
+end;
+
+function TBFSUnicodeString.GetContentAsString: String;
+begin
+  result := fDataValue;
+end;
+
+function TBFSUnicodeString.GetContentAsUnicodeString: TBoldUnicodeString;
+begin
+  result := fDataValue;
+end;
+
+function TBFSUnicodeString.GetStreamName: string;
+begin
+  result := BoldContentName_UnicodeString;
+end;
+
+function TBFSUnicodeString.GetValueAsVariant: Variant;
+begin
+  result := AsUnicodeString;
+end;
+
+function TBFSUnicodeString.IsEqualToValue(const Value: IBoldValue): Boolean;
+var
+  aUnicodeStringValue: IBoldUnicodeStringContent;
+begin
+  Result := inherited IsEqualToValue(Value) and
+      (Value.QueryInterface(IBoldUnicodeStringContent, aUnicodeStringValue) = S_OK) and
+      (AsUnicodeString = aUnicodeStringValue.asUnicodeString);
+end;
+
+procedure TBFSUnicodeString.SetContentAsString(const NewValue: String);
+begin
+  fDataValue := NewValue; // Use BoldSharedStringManager ?
+  SetToNonNull;
+end;
+
+procedure TBFSUnicodeString.SetContentAsUnicodeString(
+  const NewValue: TBoldUnicodeString);
+begin
+  fDataValue := NewValue; // Use BoldSharedStringManager ?
+  SetToNonNull;
+end;
+
 {---TBFSCurrency---}
 
 function TBFSCurrency.GetStreamName: String;
@@ -1434,28 +1617,6 @@ begin
   Result := inherited IsEqualToValue(Value) and
       (Value.QueryInterface(IBoldIntegerContent, aIntegerValue) = S_OK) and
       (AsInteger = aIntegerValue.asInteger);
-end;
-
-procedure TBFSString.AssignContentValue(const Source: IBoldValue);
-var
-  s: IBoldStringContent;
-begin
-  if source.QueryInterface(IBoldStringContent, S) = S_OK then
-    if s.IsNull then
-      SetContentToNull
-    else
-      SetContentAsString(s.AsString)
-  else
-    raise EBold.CreateFmt(sUnknownTypeOfSource, [classname, sAssignContentValue]);
-end;
-
-function TBFSString.IsEqualToValue(const Value: IBoldValue): Boolean;
-var
-  aStringValue: IBoldStringContent;
-begin
-  Result := inherited IsEqualToValue(Value) and
-      (Value.QueryInterface(IBoldStringContent, aStringValue) = S_OK) and
-      (AsString = aStringValue.asString);
 end;
 
 procedure TBFSCurrency.AssignContentValue(const Source: IBoldValue);

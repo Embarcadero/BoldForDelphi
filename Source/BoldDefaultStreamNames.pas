@@ -20,6 +20,8 @@ const
 
 var
   BoldContentName_String: string;
+  BoldContentName_AnsiString: string;
+  BoldContentName_UnicodeString: string;
   BoldContentName_Integer: string;
   BoldContentName_Float: string;
   BoldContentName_Currency: string;
@@ -46,6 +48,8 @@ initialization
   BoldContentName_ObjectIdListRef := BoldSharedStringManager.GetSharedString('ObjectIdListRef');
   BoldContentName_ObjectIdListRefPair := BoldSharedStringManager.GetSharedString('ObjectIdListRefPair');
   BoldContentName_String  := BoldSharedStringManager.GetSharedString('String');
+  BoldContentName_AnsiString  := BoldSharedStringManager.GetSharedString('AnsiString');
+  BoldContentName_UnicodeString  := BoldSharedStringManager.GetSharedString('UnicodeString');
   BoldContentName_Integer := BoldSharedStringManager.GetSharedString('Integer');
   BoldContentName_Float := BoldSharedStringManager.GetSharedString('Float');
   BoldContentName_Currency := BoldSharedStringManager.GetSharedString('Currency');
