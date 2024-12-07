@@ -536,8 +536,13 @@ begin
   end
   else if (aBoldAttribute is TBANumeric) then
   begin
-    vInt := vMemberValueAsVariant;
-    Result := TJSONNumber.Create(vInt);
+    if (aBoldAttribute is TBAFloat) or  (aBoldAttribute is TBACurrency) then
+      Result := TJSONNumber.Create(TBANumeric(aBoldAttribute).AsFloat)
+    else
+    begin
+      vInt := vMemberValueAsVariant;
+      Result := TJSONNumber.Create(vInt);
+    end;
   end
   else if aBoldAttribute is TBABoolean then
   begin
