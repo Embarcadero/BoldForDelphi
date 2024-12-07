@@ -824,7 +824,7 @@ const
   sCommentRemoveSpaceLinkObjects = '-- Clean Linkobjects (%s) with space pointers';
   sLogBrokenLinkObjects = 'The following Linkobjects (class %s) have empty links in one direction:';
   sCommentRemoveBrokenLinkObjects = '-- Clean Linkobjects (%s) with broken links';
-  sLogObjectsWithBrokenLinks = 'The following objects of class %s have invalid links in %s:';
+  sLogObjectsWithBrokenLinks = 'The following objects of class %s have %d invalid links in %s:';
   sCommentCleanRelation = '-- Clean relation (%s.%s) ';
   sLogObjectsWithWrongLinks = 'The following %d objects of class %s have singlelinks (%s) pointing to objects that don''t point back (they might point elsewhere):';
   sLogObjectsWithIllegalType = 'The following invalid types occur in the objects listed below:';
@@ -1143,3 +1143,4 @@ const
 implementation
 
 end.
+

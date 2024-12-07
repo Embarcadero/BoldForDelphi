@@ -261,9 +261,14 @@ begin
         break;
       if DoCheckStop then exit;
       BoldLog.LogHeader := Format(sCheckingTable, [ObjectPMapper.ExpressionName]);
+      BoldLog.ProgressMax := 100;
+      BoldLog.Progress := 0;
       ValidateExistence(ObjectPMapper);
+      BoldLog.Progress := 20;
       ValidateRelations(ObjectPMapper);
-        ValidateNotNullColumns(ObjectPMapper);
+      BoldLog.Progress := 60;
+      ValidateNotNullColumns(ObjectPMapper);
+      BoldLog.Progress := 80;
       if ObjectPmapper is TBoldObjectDefaultMapper then
         ValidateStrayObjects(ObjectPMapper as TBoldObjectDefaultMapper);
       if ObjectPMapper.IsLinkClass then
@@ -378,9 +383,9 @@ var
   Tables: TBoldSQLTableDescriptionList;
   TempMapper: TBoldObjectSQLMapper;
 begin
+  BoldLog.LogHeader := Format('ValidateExistence %s', [ObjectSQLMapper.ExpressionName]);
   SetLength(OwnMapping, 0);
   SetLength(ParentMapping, 0);
-
   IdList := TStringList.Create;
   TypeList := TStringList.Create;
   Tables := TBoldSQLTableDescriptionList.Create(ObjectSQlMapper.SystemPersistenceMapper.PSSystemDescription);
@@ -498,7 +503,7 @@ begin
   if not (ttLinkObjectDupesTest in fValidatorTestTypes) then
     exit;
   IdList := TStringList.create;
-
+  BoldLog.LogHeader := Format('ValidateLinkObjectDupes %s.%s', [ObjectSQLMapper.ExpressionName]);
   LinkColumn1 := (ObjectSQLMapper.LinkClassRole1 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
   LinkColumn2 := (ObjectSQLMapper.LinkClassRole2 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
   LinkTable := ObjectSQLMapper.MainTable.SQLName;
@@ -600,6 +605,7 @@ var
 begin
   if not (ttLinkObjectTest in fValidatorTestTypes) then
     exit;
+  BoldLog.LogHeader := Format('ValidateLinkObjects %s', [ObjectSQLMapper.ExpressionName]);
   IdList := TStringList.create;
   LinkColumn1 := (ObjectSQLMapper.LinkClassRole1 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
   LinkColumn2 := (ObjectSQLMapper.LinkClassRole2 as TBoldEmbeddedSingleLinkDefaultMapper).MainColumnName;
@@ -636,6 +642,7 @@ var
 begin
   if not (ttNotNullColumns in fValidatorTestTypes) then
     exit;
+  BoldLog.LogHeader := Format('ValidateNotNullForColumn %s.%s', [BoldSQLColumnDescription.TableDescription.SQLName, BoldSQLColumnDescription.SQLName]);
   FieldNames := TStringList.Create;
   query.Close;
   TableName := BoldSQLColumnDescription.tableDescription.SQLName;
@@ -699,6 +706,7 @@ begin
   IdList := TStringList.create;
   LinkTable := ObjectSQLMapper.MainTable;
   MemberMappings := nil;
+  BoldLog.ProgressMax := ObjectSQLMapper.MemberPersistenceMappers.count;
   if not assigned(LinkTable) then
     exit;
   for i := 0 to ObjectSQLMapper.MemberPersistenceMappers.count-1 do
@@ -707,6 +715,8 @@ begin
     begin
       SingleLink := ObjectSQLMapper.MemberPersistenceMappers[i] as TBoldEmbeddedSingleLinkDefaultMapper;
       MemberMappings := ObjectSQLMapper.SystemPersistenceMapper.MappingInfo.GetMemberMappings(ObjectSQLMapper.ExpressionName, SingleLink.ExpressionName);
+      BoldLog.LogHeader := Format('ValidateRelation %s.%s', [ObjectSQLMapper.ExpressionName, SingleLink.ExpressionName]);
+      BoldLog.Progress := i;
       if (length(MemberMappings) = 1) and
          SameText(MemberMappings[0].TableName, LinkTable.SQLName) then
       begin
@@ -744,7 +754,7 @@ begin
           Query.Close;
           if IdList.Count > 0 then
           begin
-            BoldLog.LogFmt(sLogObjectsWithBrokenLinks, [IdList.Count, ObjectSQlMapper.ExpressionName, SingleLink.ExpressionName], ltWarning);
+            BoldLog.LogFmt(sLogObjectsWithBrokenLinks, [ObjectSQlMapper.ExpressionName, IdList.Count, SingleLink.ExpressionName], ltWarning);
             FetchBlockSize := SystemSQLMapper.SQLDataBaseConfig.FetchBlockSize;
             for Block := 0 to (IdList.Count div FetchBlockSize) do
             begin
@@ -882,6 +892,7 @@ var
 begin
   if not (ttStrayObjectsTest in fValidatorTestTypes) then
     exit;
+  BoldLog.LogHeader := Format('ValidateStrayObjects %s', [ObjectDefaultMapper.ExpressionName]);
   OwnMapping := SystemSQLMapper.MappingInfo.GetAllInstancesMapping(ObjectdefaultMapper.ExpressionName);
   if (length(OwnMapping)=1) and not OwnMapping[0].ClassIdRequired then
   begin
@@ -1200,5 +1211,6 @@ begin
 end;
 
 end.
+
 
 

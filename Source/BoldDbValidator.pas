@@ -212,6 +212,7 @@ end;
 procedure TBoldDbValidator.SetPersistenceHandle(const Value: TBoldAbstractPersistenceHandleDB);
 begin
   fPersistenceHandle := Value;
+  fSystemMapper := nil;
 end;
 
 procedure TBoldDbValidator.SetThreadCount(const Value: integer);
