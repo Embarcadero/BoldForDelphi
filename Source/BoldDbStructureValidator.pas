@@ -70,7 +70,11 @@ begin
   fCurrentTable := Database.GetTable;
   try
     repeat
-      Table := Validator.TableQueue.Dequeue as TBoldSQLTableDescription;
+      var vObject := Validator.TableQueue.Dequeue;
+      if not Assigned(vObject) then
+        break;
+      Assert(vObject is TBoldSQLTableDescription, vObject.Classname);
+      Table := vObject as TBoldSQLTableDescription;
       if not Assigned(Table) then
         break;
       if DoCheckStop then exit;

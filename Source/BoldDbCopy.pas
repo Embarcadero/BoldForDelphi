@@ -22,15 +22,12 @@ type
     fThreadCount: integer;
     fThreadList: TThreadList;
     fStartTime: TDateTime;
-    fOnProgress: TBoldDbCopyProgressEvent;
-    fOnLog: TBoldDbCopyLogEvent;
     fTableQueue: TBoldThreadSafeStringQueue;
+    fTotalTables: integer;
     FOnComplete: TNotifyEvent;
     procedure SetDestinationPersistenceHandle(const Value: TBoldAbstractPersistenceHandleDB);
     procedure SetSourcePersistenceHandle(const Value: TBoldAbstractPersistenceHandleDB);
     procedure SetThreadCount(const Value: integer);
-    procedure DoOnProgress(AProgress: integer; AMax: integer; AEstimatedEndTime: TDateTime);
-    procedure DoOnLog(const AStatus: string);
     procedure DoOnComplete;
     procedure ProcessTables;
     procedure SetOnComplete(const Value: TNotifyEvent);
@@ -38,12 +35,12 @@ type
     procedure Run;
     procedure AfterConstruction; override;
     procedure BeforeDestruction; override;
+    property TableQueue: TBoldThreadSafeStringQueue read fTableQueue;
     property SourcePersistenceHandle: TBoldAbstractPersistenceHandleDB read fSourcePersistenceHandle write SetSourcePersistenceHandle;
     property DestinationPersistenceHandle: TBoldAbstractPersistenceHandleDB read fDestinationPersistenceHandle write SetDestinationPersistenceHandle;
     property ThreadCount: integer read fThreadCount write SetThreadCount;
-    property OnProgress: TBoldDbCopyProgressEvent read fOnProgress write fOnProgress;
-    property OnLog: TBoldDbCopyLogEvent read fOnLog write fOnLog;
     property OnComplete: TNotifyEvent read FOnComplete write SetOnComplete;
+    property TotalTables: integer read fTotalTables;
   end;
 
   EBoldDbCopy = class(Exception);
@@ -58,7 +55,7 @@ uses
   Data.DB,
   System.DateUtils,
   System.Character,
-  Winapi.ActiveX;
+  Winapi.ActiveX, BoldLogHandler;
 
 { TBoldDbCopy }
 
@@ -83,19 +80,6 @@ begin
     FOnComplete(self);
 end;
 
-procedure TBoldDbCopy.DoOnLog(const AStatus: string);
-begin
-  if Assigned(fOnLog) then
-    fOnLog(self, AStatus);
-end;
-
-procedure TBoldDbCopy.DoOnProgress(AProgress, AMax: integer;
-  AEstimatedEndTime: TDateTime);
-begin
-  if Assigned(fOnProgress) then
-    fOnProgress(self, AProgress, AMax, AEstimatedEndTime);
-end;
-
 procedure TBoldDbCopy.ProcessTables;
 begin
   var InsertSql: string;
@@ -110,7 +94,7 @@ begin
   var DestinationQuery := DatabaseInterface.GetExecQuery;
   var sl := TStringList.Create;
   try
-    DoOnLog(Format('Thread %d started', [TThread.CurrentThread.ThreadID]));
+//    DoOnLog(Format('Thread %d started', [TThread.CurrentThread.ThreadID]));
     repeat
       var SourceTableName := fTableQueue.Dequeue;
       if SourceTableName = '' then
@@ -119,6 +103,7 @@ begin
       var DestinationTable := DestinationPersistenceMapper.AllTables.ItemsBySQLName[SourceTableName];
       var Columns := DestinationTable.ColumnsList.ToString;
       var SelectSql := Format('select %s from %s', [Columns, SourceTableName]);
+      BoldLog.LogHeader := Format('Loading from %s', [SourceTableName]);
       SourceQuery.SQLText := SelectSql;
       SourceQuery.Open;
       var i,j: integer;
@@ -132,15 +117,25 @@ begin
       DestinationQuery.ParamCheck := true;
       i := DestinationQuery.ParamCount;
       j := SourceQuery.FieldCount;
-      Assert(i=j);
+      var s := DestinationQuery.Params.ToString;
+      if i <> j then
+      begin
+        x := 0;
+        repeat
+
+        until (x = i) or (x =j);
+
+        Assert(i=j, Format('Source field count %d does not match destination param count %d, source fields: %s destination params: %s', [j,i,Columns, Values]));
+      end;
       j := SourceQuery.RecordCount;
       if j = 0 then
         continue;
-      DoOnLog(Format('%d records in table %s', [j, DestinationTable.SQLName]));
+      BoldLog.Log(Format('%d records in table %s', [j, DestinationTable.SQLName]));
+      BoldLog.ProgressMax := j;
       DatabaseInterface.StartTransaction;
       var vRecNo := 0;
       var ProcessedRecords := 0;
-      var s: string;
+//      var s: string;
       var Bytes: TBytes;
       while not SourceQuery.Eof do
       begin
@@ -168,7 +163,8 @@ begin
             DatabaseInterface.Commit;
             DatabaseInterface.StartTransaction;
             var Estimate := IncSecond(fStartTime, Round(SecondsBetween(fStartTime, now) * (j / ProcessedRecords)));
-            DoOnProgress(ProcessedRecords, j, Estimate);
+            BoldLog.Progress := ProcessedRecords;
+            BoldLog.LogHeader := Format('%d/%d records processed in table %s', [ProcessedRecords,j, DestinationTable.SQLName]);
           end;
         except
           on e:Exception {EBoldDatabaseError} do
@@ -185,7 +181,7 @@ begin
       end;
       if DatabaseInterface.InTransaction then
         DatabaseInterface.Commit;
-      DoOnProgress(ProcessedRecords, j, now);
+//      DoOnProgress(ProcessedRecords, j, now);
     until fTableQueue.Empty;
   finally
     sl.free;
@@ -193,7 +189,7 @@ begin
     DatabaseInterface.ReleaseExecQuery(DestinationQuery);
     SourceDatabaseInterface.Close;
     DatabaseInterface.Close;
-    DoOnLog(Format('Thread %d completed', [TThread.CurrentThread.ThreadID]));
+    BoldLog.Log(Format('Thread %d completed', [TThread.CurrentThread.ThreadID]));
   end;
 end;
 
@@ -251,6 +247,7 @@ begin
   vTables.CustomSort(SortByDescendingRowCount);
   for var i := 0 to vTables.Count-1 do
     fTableQueue.Enqueue(vTables.Names[i]);
+  fTotalTables := fTableQueue.count;
   for var I := 0 to ThreadCount-1 do
   begin
     var Thread := TThread.CreateAnonymousThread(procedure
@@ -264,7 +261,7 @@ begin
          if fThreadList.LockList.Count = 0 then
          begin
            var Duration := TTimeSpan.Subtract(now, fStartTime);
-           DoOnLog(Format('Operation completed after %s', [Duration.ToString]));
+           BoldLog.Log(Format('Operation completed after %s', [Duration.ToString]));
            DoOnComplete;
          end;
          fThreadList.UnlockList;
@@ -296,3 +293,4 @@ begin
 end;
 
 end.
+

@@ -93,6 +93,7 @@ type
     property SourceAllInstanceCount: integer read GetSourceAllInstanceCount;
     property DestinationAllInstanceCount: integer read GetDestinationAllInstanceCount;
     property StartTime: TDateTime read fStartTime;
+    property NewObjectsWritten: integer read fNewObjectsWritten;
   published
     property SourceSystemHandle: TBoldSystemHandle read fSourceSystemHandle write fSourceSystemHandle;
     property DestinationSystemHandle: TBoldSystemHandle read fDestinationSystemHandle write fDestinationSystemHandle;
@@ -830,6 +831,9 @@ var
   Query: IBoldQuery;
   RootTableName: string;
 begin
+  result := -1;
+  if not Assigned(ASystemHandle) or not ASystemHandle.PersistenceHandleDB.Active  then
+    exit;
   RootTableName := ASystemHandle.PersistenceHandleDB.PersistenceControllerDefault.PersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName;
   with ASystemHandle.System.PersistenceController.DatabaseInterface do
   begin
@@ -858,3 +862,4 @@ begin
 end;
 
 end.
+
