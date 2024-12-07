@@ -165,6 +165,11 @@ type
   private
     fName: String;
     fEvaluator: TBoldEvaluator;
+    fSubscriber: TBoldPassthroughSubscriber;
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+    function GetSubscriber: TBoldPassthroughSubscriber;
+    procedure SetEvaluator(const Value: TBoldEvaluator);
+    property Subscriber: TBoldPassthroughSubscriber read GetSubscriber;
   protected
     function GetValue: TBoldElement; virtual; abstract;
     function GetValueType: TBoldElementTypeInfo; virtual; abstract;
@@ -174,7 +179,7 @@ type
     property Value: TBoldElement read GetValue;
     property Name: String read fName;
     property ValueType: TBoldElementTypeInfo read GetValueType;
-    property Evaluator: TBoldEvaluator read fEvaluator write fEvaluator;
+    property Evaluator: TBoldEvaluator read fEvaluator write SetEvaluator;
   end;
 
   TBoldExternalVariableListTraverser = class(TBoldArrayTraverser)
@@ -209,7 +214,7 @@ type
   end;
 
   {---TBoldEvaluator---}
-  TBoldEvaluator = class(TBoldMemoryManagedObject)
+  TBoldEvaluator = class(TBoldSubscribableObject)
   protected
     function GetVariableCount: integer; virtual; abstract;
     function GetVariable(index: integer): TBoldIndirectElement; virtual; abstract;
@@ -964,16 +969,41 @@ end;
 constructor TBoldExternalVariable.Create(AEvaluator: TBoldEvaluator; const AName: String);
 begin
   inherited Create;
-  fEvaluator := AEvaluator;
+  Evaluator := AEvaluator;
   fName := AName;
 end;
 
 destructor TBoldExternalVariable.Destroy;
 begin
+  fSubscriber.Free;
   if Assigned(fEvaluator) then
     fEvaluator.UndefineVariable(self);
   fEvaluator := nil;
   inherited;
+end;
+
+function TBoldExternalVariable.GetSubscriber: TBoldPassthroughSubscriber;
+begin
+  if not Assigned(fSubscriber) then
+    fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
+  result := fSubscriber;
+end;
+
+procedure TBoldExternalVariable.Receive(Originator: TObject;
+  OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
+begin
+  fEvaluator := nil;
+end;
+
+procedure TBoldExternalVariable.SetEvaluator(const Value: TBoldEvaluator);
+begin
+  if fEvaluator <> Value then
+  begin
+    fEvaluator := Value;
+    Subscriber.CancelAllSubscriptions;
+    if Assigned(fEvaluator) then
+      fEvaluator.AddSmallSubscription(Subscriber, [beDestroying]);
+  end;
 end;
 
 { TBoldExternalOclVariableList }

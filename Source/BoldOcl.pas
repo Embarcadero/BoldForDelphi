@@ -304,6 +304,7 @@ end;
 
 destructor TBoldOcl.Destroy;
 begin
+  SendEvent(beDestroying);
   FreeAndNil(fOclDictionary);
   FreeAndNil(fSymbolTable);
   FreeAndNil(fGlobalEnv);
