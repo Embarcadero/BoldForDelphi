@@ -173,7 +173,7 @@ type
     function ItemAsKeyString(Item: TObject): string; override;
   end;
 
-procedure NavigateAndSubscribe(Obj: TBoldObject; RoleRT: TBoldRoleRtInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: Integer);
+procedure NavigateAndSubscribe(Obj: TBoldObject; RoleRT: TBoldRoleRtInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: TBoldRequestedEvent);
 var
   aMember: TBoldMember;
 begin
@@ -194,7 +194,7 @@ begin
 end;
 
 
-procedure DoReverseNavigationAndSubscribe(Obj: TBoldObject; Navigation: TBoldRoleRTInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: Integer);
+procedure DoReverseNavigationAndSubscribe(Obj: TBoldObject; Navigation: TBoldRoleRTInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: TBoldRequestedEvent);
 var
   ReverseRole: TBoldRoleRtInfo;
 begin
@@ -202,7 +202,7 @@ begin
   NavigateAndSubscribe(Obj, ReverseRole, resultElement, Subscriber, RequestedEvent);
 end;
 
-procedure DoNavigationAndSubscribe(Obj: TBoldObject; Navigation: TBoldRoleRTInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: Integer);
+procedure DoNavigationAndSubscribe(Obj: TBoldObject; Navigation: TBoldRoleRTInfo; ResultElement: TBoldIndirectElement; Subscriber: TBoldSubscriber; RequestedEvent: TBoldRequestedEvent);
 begin
   NavigateAndSubscribe(Obj, Navigation, ResultElement, Subscriber, RequestedEvent);
 end;
