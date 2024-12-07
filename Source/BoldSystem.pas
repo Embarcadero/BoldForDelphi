@@ -1156,6 +1156,7 @@ type
     function GetFreeStandingClass: TBoldFreeStandingElementClass; override;
     function IncludesElement(Item: TBoldElement): Boolean; override;
     function IndexOfElement(Item: TBoldElement): Integer; override;
+    function GetEvaluator: TBoldEvaluator; override;
     procedure Initialize; override;
     procedure InsertElement(index: Integer; Element: TBoldElement); override;
     procedure SetElement(index: Integer; Value: TBoldElement); override;
@@ -8295,6 +8296,18 @@ end;
 
 procedure TBoldObjectList.FreeData;
 begin
+end;
+
+function TBoldObjectList.GetEvaluator: TBoldEvaluator;
+begin
+  result := nil;
+  if IsPartOfSystem then
+    result := BoldSystem.Evaluator
+  else
+  if not Empty then
+    result := Locators[0].BoldSystem.Evaluator
+  else
+    result := inherited GetEvaluator;
 end;
 
 function TBoldObjectList.ObserverMayModify(Observer: TObject): Boolean;
