@@ -425,6 +425,14 @@ end;
 
 
 procedure TBoldPMString.ValueToParam(const ObjectContent: IBoldObjectContents; const Param: IBoldParameter; ColumnIndex: Integer; TranslationList: TBoldIdTranslationList);
+const
+{$IFDEF BOLD_UNICODE}
+  // check for 4000 chars, because since using unicode
+  // each char requires twice as much space
+  cnMaxMSSQLStringLength = 4000;
+{$ELSE}
+  cnMaxMSSQLStringLength = 8000;
+{$ENDIF}
 var
   aString: IBoldStringContent;
 begin
@@ -435,7 +443,7 @@ begin
   else
   begin
   // the setting of Param DataType is a workaround for UniDAC MSSQL param trim to 8000 bug.
-    if Length(aString.AsString) >= 8000 then
+    if Length(aString.AsString) >= cnMaxMSSQLStringLength then
       Param.DataType := GetColumnBDEFieldType(0);
     Param.AsString := aString.AsString;
   end;
