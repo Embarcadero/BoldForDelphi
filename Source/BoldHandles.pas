@@ -439,7 +439,10 @@ end;
 
 function TBoldAbstractSystemHandle.GetIsDefault: Boolean;
 begin
-  result :=  G_DefaultBoldSystemHandle = Self;
+  if (csdesigning in ComponentState) then
+    result := fIsDefault
+  else
+    result :=  G_DefaultBoldSystemHandle = Self;
 end;
 
 procedure TBoldAbstractSystemHandle.SetIsDefault(Value: Boolean);
