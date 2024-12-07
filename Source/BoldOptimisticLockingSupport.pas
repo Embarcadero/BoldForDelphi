@@ -177,6 +177,8 @@ procedure TBoldOptimisticLockHandler.GetLockingValuesForRegions(Regions: TBoldRe
 var
   Traverser: TBoldIndexableListTraverser;
 begin
+  if Regions.IsEmpty then
+    exit;
   Traverser := Regions.CreateTraverser;
   while Traverser.MoveNext do
   begin
@@ -446,6 +448,8 @@ procedure TBoldOptimisticLockHandler.AddRegionsObjectsToEnclosure(
 var
   Traverser: TBoldIndexableListTraverser;
 begin
+  if Regions.IsEmpty then
+    exit;
   Traverser := Regions.CreateTraverser;
   while Traverser.MoveNext do
   begin

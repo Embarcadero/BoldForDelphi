@@ -485,8 +485,9 @@ procedure TBoldRegionLookup.AddRegionLookup(Regions: TBoldRegionLookup);
 var
   Region: TBoldRegion;
 begin
-  for Region in Regions do
-    AddIfNotInLookup(Region);
+  if not Regions.IsEmpty then
+    for Region in Regions do
+      AddIfNotInLookup(Region);
 end;
 
 constructor TBoldRegionLookup.Create;
