@@ -209,8 +209,8 @@ begin
     begin
       for i:= LocalObjectIdList.Count - 1 downto 0 do
       begin
+        ObjectId := LocalObjectIdList[i];
         Object_Content := Old_Values.ObjectContentsbyObjectId[ObjectID];
-        ObjectId := ObjectID;
         TopSortedIndex := ObjectId.TopSortedIndex;
         if Assigned(ObjectId) then
           NewObject_Content := ValueSpace.ObjectContentsByObjectId[ObjectId]
