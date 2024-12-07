@@ -501,10 +501,7 @@ end;
 
 function TBoldAbstractSnooper.ClassNameFromObjectID(const ABoldObjectId: TBoldObjectId): string;
 begin
-  if ABoldObjectId.TopSortedIndexExact then
-    Result := MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName
-  else
-   Assert(false, 'non exact id, how to handle it ?');
+    Result := MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName;
 end;
 
 procedure TBoldAbstractSnooper.ClearEvents;
