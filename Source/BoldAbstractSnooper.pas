@@ -102,16 +102,16 @@ procedure TBoldAbstractSnooper.PMUpdate(ObjectIdList: TBoldObjectIdList; ValueSp
             TranslationList: TBoldIdTranslationList; var TimeStamp: TBoldTimeStampType; var TimeOfLatestUpdate: TDateTime;
             BoldClientID: TBoldClientID);
 var
-  i, j: integer;
+  i: integer;
   LocalOld_Values: TBoldFreeStandingValueSpace;
   LocalObjectIdList: TBoldObjectIdList;
   LocalTranslationList: TBoldIdTranslationList;
   Object_Content, NewObject_Content: IBoldObjectContents;
   ObjectId: TBoldObjectID;
   MoldClass: TMoldClass;
-  MemberValue: IBoldValue;
+//  MemberValue: IBoldValue;
   TopSortedIndex: Integer;
-  sl: TStringList;
+//  sl: TStringList;
 begin
   assert(assigned(MoldModel), sSnooperNoModel);
   LocalObjectIdList := ObjectIdList.Clone;
@@ -159,8 +159,7 @@ begin
               if UseClassEvents and not fArrayOfClassesToIgnore[TopSortedIndex] then
                 AddClassEvents(TopSortedIndex);
               if not fArrayOfClassesToIgnore[MoldClass.TopSortedIndex] then
-//                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectCreated, MoldClass.ExpandedExpressionName, '', '', ObjectID));
-                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectCreated, MoldClass.TopSortedIndex.ToString, '', '', ObjectID));
+                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectCreated, MoldClass.ExpandedExpressionName, '', '', ObjectID));
             end;
           besDeleted:
             begin
@@ -168,7 +167,7 @@ begin
               begin
                 if UseClassEvents then
                   AddClassEvents(TopSortedIndex);
-                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectDeleted, MoldClass.TopSortedIndex.ToString, '', '', ObjectID));
+                AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsObjectDeleted, MoldClass.ExpandedExpressionName, '', '', ObjectID));
               end;
             end;
         end
@@ -357,7 +356,6 @@ end;
 function TBoldAbstractSnooper.ClassNameFromObjectID(const ABoldObjectId: TBoldObjectId): string;
 begin
   Result := MoldModel.Classes[ABoldObjectId.TopSortedIndex].ExpandedExpressionName;
-//  Result := ABoldObjectId.TopSortedIndex.ToString;
 end;
 
 procedure TBoldAbstractSnooper.DoPropagatorFailure(Sender: TObject; const ErrorMessage: string);
@@ -374,8 +372,7 @@ begin
     exit;
   MoldClass := MoldModel.Classes[TopSortedIndex];
   if not fEventClassFlags[MoldClass.TopSortedIndex] then
-//    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, MoldClass.ExpandedExpressionName, '', '', nil));
-    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, MoldClass.TopSortedIndex.ToString, '', '', nil));
+    AddEvent(TBoldObjectSpaceExternalEvent.EncodeExternalEvent(bsClassChanged, MoldClass.ExpandedExpressionName, '', '', nil));
   while assigned(MoldClass) do
   begin
      if not fEventClassFlags[MoldClass.TopSortedIndex] then
