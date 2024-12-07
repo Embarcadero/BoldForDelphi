@@ -113,6 +113,7 @@ begin
         exit;
       var DestinationPersistenceMapper := DestinationPersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
       var MultiRowInsertLimit := DestinationPersistenceMapper.SQLDataBaseConfig.MultiRowInsertLimit;
+      var MaxBatchQueryParams := DestinationPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams;
       var DestinationTable := DestinationPersistenceMapper.AllTables.ItemsBySQLName[SourceTableName];
       var Columns := DestinationTable.ColumnsList.ToString;
       var SelectSql := Format('select %s from %s', [Columns, SourceTableName]);
@@ -122,6 +123,7 @@ begin
       if SourceQuery.RecordCount = 0 then
         continue;
       var i,j: integer;
+      var ParamCount := 0;
       sl.Clear;
       sl2.Clear;
       j := SourceQuery.RecordCount;
@@ -141,15 +143,25 @@ begin
           for var _j := 0 to Batch-1 do
           begin
             for i := 0 to DestinationTable.ColumnsList.Count-1 do
+            begin
               sl.Add(':p'+ _j.ToString + '_' + i.ToString);
+              inc(ParamCount);
+            end;
             sl2.Add(Trim('(' + Trim(sl.CommaText) + ')'));
             sl.Clear;
+            if ParamCount > MaxBatchQueryParams then
+            begin
+              Batch := _j;
+              PrevBatch := Batch;
+              break;
+            end;
           end;
           sl2.QuoteChar := ' ';
           sl2.StrictDelimiter := false;
           Values := sl2.DelimitedText;
           InsertSql := Format('insert into %s (%s) values %s;', [DestinationTable.SQLName, Columns, Values]);
           DestinationQuery.ClearParams;
+          Assert(DestinationQuery.ParamCount=0);
           DestinationQuery.ParamCheck := true;
           DestinationQuery.SQLText := InsertSql;
           DestinationQuery.Prepare;
@@ -193,7 +205,7 @@ begin
           inc(vRecNo);
           inc(ProcessedRecords);
           dec(RemainingRecords);
-          if (bc >= Batch) then
+          if (bc > Batch) then
           try
             DestinationQuery.ExecSQL;
             ParamIndex := 0;
