@@ -424,8 +424,8 @@ type
     procedure Append;
     function ParamByName(const Value: string): IBoldParameter; virtual; abstract;
     function FindParam(const Value: string): IBoldParameter; virtual; abstract;
-    function Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; virtual;
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; virtual;
+    function CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; virtual;
+    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; virtual;
     function EnsureParamByName(const Value: string): IBoldParameter; virtual;
     procedure Close; virtual;
     function FieldByName(const FieldName: string): IBoldField; virtual;
@@ -466,7 +466,7 @@ type
     function GetSqlText: string; virtual; abstract;
     procedure AssignSQLText(const SQL: string); virtual; abstract;
     function GetSQLStrings: TStrings; virtual; abstract;
-    function GetSqlLength: integer;
+    function GetSQLLength: integer;
     function ParamsContainBlob: Boolean;
     function GetBatchQueryParamCount: integer;
     procedure BatchExecSQL;
@@ -478,7 +478,7 @@ type
   public
     constructor Create(DatabaseWrapper: TBoldDatabaseWrapper); override;
     destructor Destroy; override;
-    property SqlText: string read GetSqlText write AssignSQLText;
+    property SQLText: string read GetSQLText write AssignSQLText;
     property SQLStrings: TStrings read GetSQLStrings;
     property Params: TParams read GetParams;
   end;
@@ -949,14 +949,14 @@ begin
      DataSet.Close;
 end;
 
-function TBoldDataSetWrapper.Createparam(FldType: TFieldType;
+function TBoldDataSetWrapper.CreateParam(FldType: TFieldType;
   const ParamName: string; ParamType: TParamType;
   Size: integer): IBoldParameter;
 begin
   raise EBold.CreateFmt(sCreateParamNotImplemented, [classname]);
 end;
 
-function TBoldDataSetWrapper.Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter;
+function TBoldDataSetWrapper.CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter;
 begin
   result := Createparam(FldType, Paramname, ptUnknown, 0);
 end;

@@ -96,7 +96,7 @@ type
   protected
     function ParamByName(const Value: string): IBoldParameter; override;
     function FindParam(const Value: string): IBoldParameter; override;
-    function Createparam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
+    function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; override;
     function GetParams: TParams; override;
     function GetSQLStrings: TStrings; override;
     function GetSqlText: string; override;
@@ -121,6 +121,7 @@ type
     fExecQuery: TUniSQL;
     fReadTransactionStarted: Boolean;
     fUseReadTransactions: boolean;
+  protected
     function GetExecQuery: TUniSQL;
     function GetParams: TParams;  override;
     procedure AssignParams(Sourceparams: TParams);
@@ -130,10 +131,10 @@ type
     procedure SetParamCheck(value: Boolean);
     function ParamByName(const Value: string): IBoldParameter; override;
     function FindParam(const Value: string): IBoldParameter; override;
-    function Createparam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload;
+    function CreateParam(FldType: TFieldType; const ParamName: string): IBoldParameter; overload; override;
     function CreateParam(FldType: TFieldType; const ParamName: string; ParamType: TParamType; Size: integer): IBoldParameter; overload; override;
-    function EnsureParamByName(const Value: string): IBoldParameter;
-    function GetSQLText: string; override;
+    function EnsureParamByName(const Value: string): IBoldParameter; override;
+    function GetSqlText: string; override;
     function GetSQLStrings: TStrings; override;
     procedure AssignSQL(SQL: TStrings); virtual;
     procedure AssignSQLText(const SQL: string);  override;
@@ -144,9 +145,9 @@ type
     procedure EndExecuteQuery;
     function GetBatchQueryParamCount: integer;    
 //    procedure Prepare;
-  protected
+    function GetDataSet: TDataSet; override;
     procedure ClearParams;
-    procedure ExecSQL; virtual;
+    procedure ExecSQL; override;
     property ExecQuery: TUniSQL read GetExecQuery;
   public
     constructor Create(BoldUniDACConnection: TBoldUniDACConnection); reintroduce;
@@ -1653,6 +1654,11 @@ begin
   result := 0; // update when batch support is implemented
 end;
 
+function TBoldUniDACExecQuery.GetDataSet: TDataSet;
+begin
+  raise EBold.CreateFmt('MethodNotImplemented', [ClassName, 'GetDataSet']); // do not localize
+end;
+
 function TBoldUniDACExecQuery.GetExecQuery: TUniSQL;
 begin
   if not Assigned(fExecQuery) then
@@ -1693,7 +1699,7 @@ begin
   result := ExecQuery.SQL;
 end;
 
-function TBoldUniDACExecQuery.GetSQLText: string;
+function TBoldUniDACExecQuery.GetSqlText: string;
 begin
   Result := ExecQuery.SQL.Text;
 end;
