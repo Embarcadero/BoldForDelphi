@@ -22,10 +22,14 @@ type
   { TBoldPersistenceControllerPassthrough }
   TBoldPersistenceControllerPassthrough = class(TBoldPersistenceController)
   private
+    fSubscriber: TBoldPassthroughSubscriber;
     fNextPersistenceController: TBoldPersistenceController;
     function GetNextPersistenceController: TBoldPersistenceController;
+    procedure SetNextPersistenceController(const Value: TBoldPersistenceController);
+    procedure Receive(Originator: TObject; OriginalEvent: TBoldEvent; RequestedEvent: TBoldRequestedEvent);
   public
     constructor Create;
+    destructor Destroy; override;
     procedure PMExactifyIds(ObjectIdList: TBoldObjectIdList; TranslationList: TBoldIdTranslationList; HandleNonExisting: Boolean); override;
     procedure PMFetch(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; MemberIdList: TBoldMemberIdList; FetchMode: Integer; BoldClientID: TBoldClientID); override;
     procedure PMFetchIDListWithCondition(ObjectIdList: TBoldObjectIdList; ValueSpace: IBoldValueSpace; FetchMode: Integer; Condition: TBoldCondition; BoldClientID: TBoldClientID); override;
@@ -43,8 +47,7 @@ type
     procedure CommitTransaction; override;
     procedure RollbackTransaction; override;
     function DatabaseInterface: IBoldDatabase; override;
-    property NextPersistenceController: TBoldPersistenceController read getNextPersistenceController
-              write fNextPersistenceController;
+    property NextPersistenceController: TBoldPersistenceController read GetNextPersistenceController write SetNextPersistenceController;
   end;
 
 implementation
@@ -61,6 +64,17 @@ function TBoldPersistenceControllerPassthrough.CanEvaluateInPS(sOCL: string;
   const aVariableList: TBoldExternalVariableList): Boolean;
 begin
   Result := NextPersistenceController.CanEvaluateInPS(sOCL, aSystem, aContext, aVariableList);
+end;
+
+procedure TBoldPersistenceControllerPassthrough.SetNextPersistenceController(const Value: TBoldPersistenceController);
+begin
+  if fNextPersistenceController <> value then
+  begin
+    fNextPersistenceController := Value;
+    FreeAndNil(fSubscriber);
+    fSubscriber := TBoldPassthroughSubscriber.Create(Receive);
+    fNextPersistenceController.AddSubscription(fSubscriber, beDestroying);
+  end;
 end;
 
 procedure TBoldPersistenceControllerPassthrough.StartTransaction;
@@ -89,6 +103,12 @@ begin
     Result := fNextPersistenceController.DatabaseInterface
   else
     result := nil;
+end;
+
+destructor TBoldPersistenceControllerPassthrough.Destroy;
+begin
+  FreeAndNil(fSubscriber);
+  inherited;
 end;
 
 function TBoldPersistenceControllerPassthrough.getNextPersistenceController: TBoldPersistenceController;
@@ -158,6 +178,13 @@ procedure TBoldPersistenceControllerPassthrough.SubscribeToPersistenceEvents(
   Subscriber: TBoldSubscriber; Events: TBoldSmallEventSet);
 begin
   NextPersistenceController.SubscribeToPersistenceEvents(Subscriber, Events);
+end;
+
+procedure TBoldPersistenceControllerPassthrough.Receive(Originator: TObject; OriginalEvent: TBoldEvent;
+  RequestedEvent: TBoldRequestedEvent);
+begin
+  if Originator = fNextPersistenceController then
+    fNextPersistenceController := nil;
 end;
 
 procedure TBoldPersistenceControllerPassthrough.ReserveNewIds(ValueSpace: IBoldValueSpace; ObjectIdList: TBoldObjectIdList;
