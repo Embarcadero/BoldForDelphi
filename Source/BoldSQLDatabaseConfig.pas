@@ -990,10 +990,19 @@ begin
       fMaxIndexNameLength := 63;
       fMaxDbIdentifierLength := 63;
       fMultiRowInsertLimit := 1000;
-      fIndexColumnExistsTemplate := 'select indexname from pg_indexes where upper(tablename) = upper(''<TableName>'')';
+      fIndexColumnExistsTemplate := 'select indexname name from pg_indexes where upper(tablename) = upper(''<TableName>'')';
       FColumnExistsTemplate := 'SELECT column_name FROM information_schema.columns WHERE upper(table_name)=upper(''<TableName>'') and upper(column_name)=upper(''<ColumnName>'')'; // do not localize
       fDatabaseExistsTemplate := 'select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower(''<DatabaseName>''));';
-//      IndexInfoTemplate := 'select indexname from pg_indexes where tablename = ''<TableName>'''; // this is not complete IndexName, IsPrimary, IsUnique, ColumnName
+//      IndexInfoTemplate fields: IndexName, IsPrimary, IsUnique, ColumnName
+      IndexInfoTemplate :=  'SELECT ix.relname IndexName, indisunique isUnique, indisprimary isPrimary, '+
+            '  regexp_replace(pg_get_indexdef(indexrelid), '#39'.*\((.*)\)'#39', '#39'\1'#39
++            ') columnName '
++          'FROM pg_index i '
++          'JOIN pg_class t ON t.oid = i.indrelid '
++          'JOIN pg_class ix ON ix.oid = i.indexrelid '
++          'WHERE t.relname = (''<TableName>'')';
+
+
       fReservedWords.Text := 'ALL, ANALYSE, AND, ANY, ARRAY, AS, ASC, ASYMMETRIC, AUTHORIZATION,'#10 + // do not localize
                              'BETWEEN, BINARY, BOOLEAN, BOTH, CASE, CAST, CHAR, CHARACTER, CHECK,'#10 + // do not localize
                              'CMIN, COALESCE, COLLATE, COLUMN, CONSTRAINT, CONVERT, CREATE, CROSS,'#10 + // do not localize
