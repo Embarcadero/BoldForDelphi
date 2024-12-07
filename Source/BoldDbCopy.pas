@@ -24,6 +24,7 @@ type
     fStartTime: TDateTime;
     fTableQueue: TBoldThreadSafeStringQueue;
     fTotalTables: integer;
+    fAllTables: TStringList;
     fTotalRecords: integer;
     FOnComplete: TNotifyEvent;
     fProgressEvent: TBoldDbCopyProgressEvent;
@@ -61,7 +62,7 @@ uses
   Data.DB,
   System.DateUtils,
   System.Character,
-  Winapi.ActiveX, BoldLogHandler, System.Math;
+  Winapi.ActiveX, BoldLogHandler, System.Math, Uni;
 
 { TBoldDbCopy }
 
@@ -71,11 +72,13 @@ begin
   fTableQueue := TBoldThreadSafeStringQueue.Create('TableQueue');
   ThreadCount := 4;
   fThreadList := TThreadList.Create;
+  fAllTables := TStringList.Create;
 end;
 
 procedure TBoldDbCopy.BeforeDestruction;
 begin
   fTableQueue.free;
+  fAllTables.free;
   fThreadList.Free;
   inherited;
 end;
@@ -145,9 +148,14 @@ begin
   var Values: string;
   var Field: IBoldField;
   var SourceDatabaseInterface := SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
+  (SourceDatabaseInterface.Implementor as TUniConnection).SpecificOptions.Values['ApplicationIntent'] := 'aiReadOnly';
   SourceDatabaseInterface.Open;
   SourceQuery := SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection.GetQuery;
   SourceQuery.UseReadTransactions := false;
+  (SourceQuery.AsDataSet as TUniQuery).SpecificOptions.Values['FetchAll'] := 'false';
+  (SourceQuery.AsDataSet as TUniQuery).SpecificOptions.Values['SQL Server.FetchAll'] := 'false';
+  (SourceQuery.AsDataSet as TUniQuery).UniDirectional := true;
+  (SourceQuery.AsDataSet as TUniQuery).ReadOnly := true;
   var DatabaseInterface := DestinationPersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
   DatabaseInterface.Open;
   DestinationQuery := DatabaseInterface.GetExecQuery;
@@ -159,6 +167,7 @@ begin
       var SourceTableName := fTableQueue.Dequeue;
       if SourceTableName = '' then
         exit;
+      var SourceRecordCount := fAllTables.Values[SourceTableName].ToInteger;
       var DestinationPersistenceMapper := DestinationPersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
       MultiRowInsertLimit := DestinationPersistenceMapper.SQLDataBaseConfig.MultiRowInsertLimit;
       MaxBatchQueryParams := DestinationPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams;
@@ -170,12 +179,10 @@ begin
       BoldLog.LogHeader := Format('Loading from %s', [SourceTableName]);
       SourceQuery.SQLText := SelectSql;
       SourceQuery.Open;
-      if SourceQuery.RecordCount = 0 then
-        continue;
       var i,j: integer;
       sl.Clear;
       sl2.Clear;
-      j := SourceQuery.RecordCount;
+      j := SourceRecordCount;
       BoldLog.LogHeader := Format('%d records loaded from %s', [j, SourceTableName]);
       BoldLog.Log(Format('%d records in table %s', [j, DestinationTable.SQLName]));
       BoldLog.ProgressMax := j;
@@ -194,7 +201,7 @@ begin
               DatabaseInterface.Commit;
 
       DatabaseInterface.StartTransaction;
-      RemainingRecords := SourceQuery.RecordCount;
+      RemainingRecords := SourceRecordCount;
 
       var ProcessedRecords := 0;
       var vRecNo := 0;
@@ -262,7 +269,7 @@ begin
 
       TestQuery.SQLText := 'select count(*) from ' + SourceTableName;
       TestQuery.Open;
-      Assert(TestQuery.Fields[0].AsInteger = SourceQuery.RecordCount);
+      Assert(TestQuery.Fields[0].AsInteger = SourceRecordCount);
       if DatabaseInterface.InTransaction then
         DatabaseInterface.Commit;
 
@@ -319,7 +326,6 @@ begin
   var SourceQuery: IBoldQuery;
   SourceQuery :=  SourcePersistenceHandle.DatabaseInterface.GetQuery;
 
-  var vTables := TStringList.Create;
   for SourceTable in SourcePersistenceMapper.AllTables do
   begin
     var SelectSql := Format('select count(*) from %s', [SourceTable.SQLName]);
@@ -328,14 +334,14 @@ begin
     if SourceQuery.Fields[0].AsInteger = 0 then
       continue;
     inc(fTotalRecords, SourceQuery.Fields[0].AsInteger);
-    vTables.Values[SourceTable.SQLName] := SourceQuery.Fields[0].AsString;
+    fAllTables.Values[SourceTable.SQLName] := SourceQuery.Fields[0].AsString;
     SourceQuery.Close;
   end;
-  vTables.CustomSort(SortByDescendingRowCount);
+  fAllTables.CustomSort(SortByDescendingRowCount);
 //  var q := vTables.IndexOfName('Person');
 //    vTables.Move(q, 0);
-  for var i := 0 to vTables.Count-1 do
-    fTableQueue.Enqueue(vTables.Names[i]);
+  for var i := 0 to fAllTables.Count-1 do
+    fTableQueue.Enqueue(fAllTables.Names[i]);
   fTotalTables := fTableQueue.count;
   for var I := 0 to ThreadCount-1 do
   begin
