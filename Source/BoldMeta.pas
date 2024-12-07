@@ -410,6 +410,7 @@ type
     function GetBoldUnitName: string;
     function GetImported: Boolean;
     function GetTableName: string;
+    function GetExternalTableName: string;
     procedure SetBoldUnitName(const Value: string);
     procedure SetIncFileName(const Value: string);
     function GetDefaultStringRepresentation: String;
@@ -450,6 +451,7 @@ type
     function EffectiveIncFileName(const DefaultExtension: String): String;
     property TableMapping: TTableMapping read GetTablemapping;
     property TableName: string read GetTableName;
+    property ExternalTableName: string read GetExternalTableName;
     property IsRootClass: Boolean read GetIsRootClass;
     property SuperClass: TMoldClass read FSuperClass write SetSuperClass;
     property SubClasses: TMoldClassList read FSubClasses;
@@ -2007,6 +2009,11 @@ end;
 function TMoldClass.GetTableName: string;
 begin
   result := BoldTVByName[TAG_TABLENAME];
+end;
+
+function TMoldClass.GetExternalTableName: string;
+begin
+  result := BoldTVByName[TAG_EXTERNALTABLENAME];
 end;
 
 procedure TMoldClass.SetBoldUnitName(const Value: string);

@@ -208,7 +208,7 @@ uses
 
 function _GetTableName(MoldClass: TMoldClass): String;
 begin
-  Result := BoldExpandName(MoldClass.TableName, MoldClass.name, xtSQL, -1, nccFalse);
+  Result := BoldExpandName(MoldClass.ExternalTableName, MoldClass.name, xtSQL, -1, nccFalse);
 end;
 
 function _GetColumnName(BoldMember: TMoldMember): String;
