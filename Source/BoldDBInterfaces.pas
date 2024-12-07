@@ -244,7 +244,7 @@ type
     function GetBatchQueryParamCount: integer;
     property RowsAffected: integer read GetRowsAffected;
     property Implementor: TObject read GetImplementor;
-    property SQLText: String read GetSQLText;
+    property SQLText: String read GetSQLText write AssignSQLText;
     property SQLStrings: TStrings read GetSQLStrings;
     property UseReadTransactions: boolean read GetUseReadTransactions write SetUseReadTransactions;
     property BatchQueryParamCount: integer read GetBatchQueryParamCount;
@@ -329,6 +329,7 @@ type
     procedure CreateDatabase(DropExisting: boolean = true);
     procedure DropDatabase;
     function DatabaseExists: boolean;
+    function CreateAnotherDatabaseConnection: IBoldDatabase;
   end;
 
   TBoldParameterWrapper = class(TBoldRefCountedObject)
