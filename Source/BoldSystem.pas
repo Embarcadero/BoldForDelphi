@@ -8864,6 +8864,9 @@ begin
   if vCount = 0 then
     exit;
   x := RestrictRange(FromIndex, 0, vCount - 1);
+  if ToIndex = -1 then
+    y := vCount - 1
+  else
   y := RestrictRange(ToIndex, 0, vCount - 1);
   CheckObjects(x,y);
 end;
