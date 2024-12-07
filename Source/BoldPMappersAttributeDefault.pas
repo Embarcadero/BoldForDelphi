@@ -347,14 +347,25 @@ function TBoldPMString.GetColumnBDEFieldType(ColumnIndex: Integer): TFieldType;
 begin
   if SystemPersistenceMapper.SQLDataBaseConfig.TreatStringFieldAsUnicode then
   begin
-//    result := ftWideString
-// Changed from ftWideString to ftWudeMemo as MSSQL truncates string params to 8000
-    Result := ftWideMemo;
+    if SystemPersistenceMapper.SQLDataBaseConfig.IsSQLServerEngine then
+    begin
+      // Changed from ftWideString to ftWideMemo as MSSQL truncates
+      // string params to 8000
+      Result := ftWideMemo;
+    end else
+    begin
+      Result := ftWideString
+    end;
   end else
   begin
-//    Result := ftString;
-// Changed from ftString to ftMemo as MSSQL truncates string params to 8000
-    Result := ftMemo;
+    if SystemPersistenceMapper.SQLDataBaseConfig.IsSQLServerEngine then
+    begin
+      // Changed from ftString to ftMemo as MSSQL truncates string params to 8000
+      Result := ftMemo;
+    end else
+    begin
+      Result := ftString;
+    end;
   end;
 end;
 

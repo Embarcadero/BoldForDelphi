@@ -210,6 +210,9 @@ type
         string;
     function GetIndexExistsQuery(const TableName, IndexName: string): string;
     function GetTableExistsQuery(const TableName: string): string;
+
+    function IsSQLServerEngine: Boolean;
+
     property EffectiveSQLForNotNull: string read GetEffectiveSQLForNotNull;
     property OnChange: TNotifyEvent read fOnChange write fOnChange;
     property Engine: TBoldDatabaseEngine read fEngine write fEngine;
@@ -1352,6 +1355,11 @@ destructor TBoldSQLDataBaseConfig.Destroy;
 begin
   FreeAndNil(fReservedWords);
   inherited;
+end;
+
+function TBoldSQLDataBaseConfig.IsSQLServerEngine: Boolean;
+begin
+  Result := Engine = dbeSQLServer;
 end;
 
 procedure TBoldSQLDataBaseConfig.SetColumnTypeForCurrency(const Value: string);
