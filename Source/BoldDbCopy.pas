@@ -93,17 +93,64 @@ begin
 end;
 
 procedure TBoldDbCopy.ProcessTables;
+
+var
+  SourceQuery: IBoldQuery;
+  MultiRowInsertLimit: Integer;
+  MaxBatchQueryParams: Integer;
+  DestinationTable: TBoldSQLTableDescription;
+  DestinationQuery: IBoldExecQuery;
+  Columns: string;
+  RemainingRecords: integer;
+  ParamIndex: integer;
+
+  function CalcBatchSize: integer;
+  begin
+    var sl := TStringList.Create;
+    var sl2 := TStringList.Create;
+    var ProcessedRecords := 0;
+    var vRecNo := 0;
+    var ParamCount:= 0;
+    Result := Min(RemainingRecords, MultiRowInsertLimit);
+    for var _j := 0 to Result-1 do
+    begin
+      for var i := 0 to DestinationTable.ColumnsList.Count-1 do
+      begin
+        sl.Add(':p'+ _j.ToString + '_' + i.ToString);
+        inc(ParamCount);
+      end;
+      sl2.Add(Trim('(' + Trim(sl.CommaText) + ')'));
+      sl.Clear;
+      if ParamCount >= MaxBatchQueryParams then
+      begin
+        Result := _j;
+        break;
+      end;
+    end;
+    sl2.QuoteChar := ' ';
+    sl2.StrictDelimiter := false;
+    var Values := sl2.DelimitedText;
+    var InsertSql := Format('insert into %s (%s) values %s;', [DestinationTable.SQLName, Columns, Values]);
+    DestinationQuery.ClearParams;
+    DestinationQuery.ParamCheck := true;
+    DestinationQuery.SQLText := InsertSql;
+    DestinationQuery.Prepare;
+    ParamIndex := 0;
+    sl.free;
+    sl2.free;
+  end;
+
 begin
   var InsertSql: string;
   var Values: string;
   var Field: IBoldField;
   var SourceDatabaseInterface :=  SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
   SourceDatabaseInterface.Open;
-  var SourceQuery :=  SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection.GetQuery;
+  SourceQuery :=  SourcePersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection.GetQuery;
   SourceQuery.UseReadTransactions := false;
   var DatabaseInterface :=  DestinationPersistenceHandle.DatabaseInterface.CreateAnotherDatabaseConnection;
   DatabaseInterface.Open;
-  var DestinationQuery := DatabaseInterface.GetExecQuery;
+  DestinationQuery := DatabaseInterface.GetExecQuery;
   var sl := TStringList.Create;
   var sl2 := TStringList.Create;
   try
@@ -112,18 +159,19 @@ begin
       if SourceTableName = '' then
         exit;
       var DestinationPersistenceMapper := DestinationPersistenceHandle.PersistenceControllerDefault.PersistenceMapper;
-      var MultiRowInsertLimit := DestinationPersistenceMapper.SQLDataBaseConfig.MultiRowInsertLimit;
-      var MaxBatchQueryParams := DestinationPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams;
-      var DestinationTable := DestinationPersistenceMapper.AllTables.ItemsBySQLName[SourceTableName];
-      var Columns := DestinationTable.ColumnsList.ToString;
+      MultiRowInsertLimit := DestinationPersistenceMapper.SQLDataBaseConfig.MultiRowInsertLimit;
+      MaxBatchQueryParams := DestinationPersistenceMapper.SQLDataBaseConfig.MaxBatchQueryParams;
+      DestinationTable := DestinationPersistenceMapper.AllTables.ItemsBySQLName[SourceTableName];
+      Columns := DestinationTable.ColumnsList.ToString;
       var SelectSql := Format('select %s from %s', [Columns, SourceTableName]);
+//      MultiRowInsertLimit := 500;
+//      MaxBatchQueryParams := 100;
       BoldLog.LogHeader := Format('Loading from %s', [SourceTableName]);
       SourceQuery.SQLText := SelectSql;
       SourceQuery.Open;
       if SourceQuery.RecordCount = 0 then
         continue;
       var i,j: integer;
-      var ParamCount := 0;
       sl.Clear;
       sl2.Clear;
       j := SourceQuery.RecordCount;
@@ -131,94 +179,53 @@ begin
       BoldLog.Log(Format('%d records in table %s', [j, DestinationTable.SQLName]));
       BoldLog.ProgressMax := j;
       DatabaseInterface.StartTransaction;
-      var RemainingRecords := SourceQuery.RecordCount;
+      RemainingRecords := SourceQuery.RecordCount;
       var ProcessedRecords := 0;
       var vRecNo := 0;
-      var PrevBatch := 0;
+      var s: string;
+      var Bytes: TBytes;
+      var bc: Integer;
+      bc := 0;
+      var Batch := CalcBatchSize;
       repeat
-        var Batch := Min(RemainingRecords, MultiRowInsertLimit);
-        if PrevBatch <> Batch then
         begin
-          PrevBatch := Batch;
-          for var _j := 0 to Batch-1 do
-          begin
-            for i := 0 to DestinationTable.ColumnsList.Count-1 do
-            begin
-              sl.Add(':p'+ _j.ToString + '_' + i.ToString);
-              inc(ParamCount);
-            end;
-            sl2.Add(Trim('(' + Trim(sl.CommaText) + ')'));
-            sl.Clear;
-            if ParamCount > MaxBatchQueryParams then
-            begin
-              Batch := _j;
-              PrevBatch := Batch;
+          if RemainingRecords < batch then
+            Batch := CalcBatchSize;
+          repeat
+            if ParamIndex = DestinationQuery.ParamCount then
               break;
-            end;
-          end;
-          sl2.QuoteChar := ' ';
-          sl2.StrictDelimiter := false;
-          Values := sl2.DelimitedText;
-          InsertSql := Format('insert into %s (%s) values %s;', [DestinationTable.SQLName, Columns, Values]);
-          DestinationQuery.ClearParams;
-          Assert(DestinationQuery.ParamCount=0);
-          DestinationQuery.ParamCheck := true;
-          DestinationQuery.SQLText := InsertSql;
-          DestinationQuery.Prepare;
-        end;
-  {      i := DestinationQuery.ParamCount;
-        j := SourceQuery.FieldCount;
-        if i <> j then
-        begin // manually build params
-          DestinationQuery.ParamCheck := false;
-          DestinationQuery.ClearParams;
-          for var q := 0 to SourceQuery.FieldCount-1 do
-          begin
-            DestinationQuery.CreateParam( SourceQuery.Fields[q].Field.DataType, SourceQuery.Fields[q].FieldName);
-          end;
-        end;
-  }
-        var s: string;
-        var Bytes: TBytes;
-        var bc: Integer;
-        bc := 0;
-        var ParamIndex := 0;
-        while not SourceQuery.Eof do
-        begin
-          for i := 0 to SourceQuery.FieldCount-1 do
-          begin
-            var Param := DestinationQuery.Param[ParamIndex];
-            inc(ParamIndex);
-            Param.AssignFieldValue(SourceQuery.Fields[i]);
-            if Param.DataType = ftWideMemo then
+            for i := 0 to SourceQuery.FieldCount-1 do
             begin
-              s := Trim(SourceQuery.Fields[i].AsString);
-              for var x := Length(s)-1 downto 1 do
-                if s[x].IsControl then
-                  Delete(s, x, 1);
-              Bytes := TEncoding.UTF8.GetBytes(s);
-              Param.AsString := TEncoding.UTF8.GetString(Bytes);
+              var Param := DestinationQuery.Param[ParamIndex];
+              inc(ParamIndex);
+              Param.AssignFieldValue(SourceQuery.Fields[i]);
+              if Param.DataType = ftWideMemo then
+              begin
+                s := Trim(SourceQuery.Fields[i].AsString);
+                for var x := Length(s)-1 downto 1 do
+                  if s[x].IsControl then
+                    Delete(s, x, 1);
+                Bytes := TEncoding.UTF8.GetBytes(s);
+                Param.AsString := TEncoding.UTF8.GetString(Bytes);
+              end;
             end;
-          end;
-          inc(bc);
-          SourceQuery.Next;
-          inc(vRecNo);
-          inc(ProcessedRecords);
-          dec(RemainingRecords);
-          if (bc > Batch) then
+            inc(bc);
+            SourceQuery.Next;
+            inc(vRecNo);
+            inc(ProcessedRecords);
+            dec(RemainingRecords);
+          until ParamIndex = DestinationQuery.ParamCount;
           try
             DestinationQuery.ExecSQL;
-            ParamIndex := 0;
             bc := 0;
-            begin
-              DatabaseInterface.Commit;
-              DatabaseInterface.StartTransaction;
-              DoOnProgress(vRecNo);
-              vRecNo := 0;
-              var Estimate := IncSecond(fStartTime, Round(SecondsBetween(fStartTime, now) * (j / ProcessedRecords)));
-              BoldLog.Progress := ProcessedRecords;
-              BoldLog.LogHeader := Format('%d/%d records processed in table %s', [ProcessedRecords,j, DestinationTable.SQLName]);
-            end;
+            ParamIndex := 0;
+            DatabaseInterface.Commit;
+            DatabaseInterface.StartTransaction;
+            DoOnProgress(vRecNo);
+            vRecNo := 0;
+            var Estimate := IncSecond(fStartTime, Round(SecondsBetween(fStartTime, now) * (j / ProcessedRecords)));
+            BoldLog.Progress := ProcessedRecords;
+            BoldLog.LogHeader := Format('%d/%d records processed in table %s', [ProcessedRecords,j, DestinationTable.SQLName]);
           except
             on e:Exception {EBoldDatabaseError} do
             begin
