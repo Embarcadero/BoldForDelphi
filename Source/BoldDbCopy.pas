@@ -130,6 +130,7 @@ var
         break;
       end;
     end;
+    (SourceQuery.AsDataSet as TUniQuery).FetchRows := result;
     sl2.QuoteChar := ' ';
     sl2.StrictDelimiter := false;
     var Values := sl2.DelimitedText;
@@ -177,6 +178,7 @@ begin
 //      MultiRowInsertLimit := 20;
 //      MaxBatchQueryParams := 10;
       BoldLog.LogHeader := Format('Loading from %s', [SourceTableName]);
+      (SourceQuery.AsDataSet as TUniQuery).FetchRows := MultiRowInsertLimit;
       SourceQuery.SQLText := SelectSql;
       SourceQuery.Open;
       var i,j: integer;
