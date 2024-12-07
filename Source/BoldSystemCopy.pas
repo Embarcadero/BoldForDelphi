@@ -14,6 +14,10 @@ uses
   System.SysUtils,
   Winapi.Windows;
 
+const
+  cDefaultBatchSize = 1000;
+  cDefaultMaxObjectsInMemory = 100000;
+
 type
   TBoldSystemCopy = class;
 
@@ -23,7 +27,7 @@ type
   TBoldSystemCopyLinkEvent = procedure(Sender: TBoldSystemCopy; const ASourceLink: TBoldMember; var ASkip: boolean) of object;
   TBoldSystemCopyAttributesEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldObject; const ADestinationObject: TBoldObject) of object;
   TBoldSystemCopyFindObjectEvent = procedure(Sender: TBoldSystemCopy; const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject) of object;
-  TBoldSystemCopyProgressEvent = procedure(Sender: TBoldSystemCopy; AProgress: integer; AMax: integer; AEstimatedRemainingTime: TDateTime) of object;
+  TBoldSystemCopyProgressEvent = procedure(Sender: TBoldSystemCopy; AProgress: integer; AMax: integer; AEstimatedEndTime: TDateTime) of object;
   TBoldSystemCopyLogEvent = procedure(Sender: TBoldSystemCopy; const aStatus: string) of object;
 
   EBoldSystemCopy = class(Exception);
@@ -40,19 +44,17 @@ type
     fClassEvent: TBoldSystemCopyClassEvent;
     fProgressEvent: TBoldSystemCopyProgressEvent;
     fLogEvent: TBoldSystemCopyLogEvent;
-    fHeadTailRoles: TBoldRoleRTInfoList;
     fDelayedProcessList: TBoldObjectList;
     fProcessedObjects: TBoldObjectList;
     fSkippedObjects: TBoldObjectList;
     fLastUsedId: integer;
     fNewObjectsWritten: integer;
     fSourceAllInstanceCount: integer;
-    fStopped: boolean;
+    fStopped: Integer;
     fStartTime: TDateTime;
+    FMaxObjectsInMemory: integer;
     function GetDestinationSystem: TBoldSystem;
     function GetSourceSystem: TBoldSystem;
-    function FindHead(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
-    function FindTail(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
     procedure CollectMembers(AClassTypeInfo: TBoldClassTypeInfo; AMemberIdList: TBoldMemberIdList; ARoleTypes: TBoldRoleSet; AAttributes: boolean; ADerived: boolean = false; ADelayedFetched: boolean = false);
     procedure CopyInstances;
     procedure CopyMembers(ASource: TBoldObjectLocator; AMemberIdList: TBoldMemberIdList = nil; ATouchedList: TBoldObjectList = nil);
@@ -60,10 +62,14 @@ type
     procedure UpdateLastUsedID;
     procedure PreUpdateDestination(Sender: TObject);
     procedure CheckStop;
+    procedure UnloadObject(const ABoldObject: TBoldObject);
+    procedure UnloadLocator(const ABoldObjectLocator: TBoldObjectLocator);
+    procedure UnloadList(const AList: TBoldObjectList);
+    procedure UnloadLocatorList(const AList: TBoldSystemLocatorList);
+    procedure SetMaxObjectsInMemory(const Value: integer);
   protected
     procedure DoLogEvent(const Msg: string);
     procedure Report(const Msg: string; const Args: array of const);
-    function SkipObject(const SourceObject: TBoldObject): boolean;
     function EnsureDestinationObject(const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject): boolean;
     function EnsureDestinationLocator(const ASourceLocator: TBoldObjectLocator; var ADestinationLocator: TBoldObjectLocator): boolean;
     procedure FindDestinationObject(const ASourceObject: TBoldObject; var ADestinationObject: TBoldObject);
@@ -79,7 +85,6 @@ type
     procedure Run;
     procedure Stop;
     procedure CheckModelCompatibility;
-    procedure AnalyzeModel;
     property SourceSystem: TBoldSystem read GetSourceSystem;
     property DestinationSystem: TBoldSystem read GetDestinationSystem;
     property SourceAllInstanceCount: integer read GetSourceAllInstanceCount;
@@ -94,6 +99,7 @@ type
     property OnLog: TBoldSystemCopyLogEvent read fLogEvent write fLogEvent;
     property OnProgress: TBoldSystemCopyProgressEvent read fProgressEvent write fProgressEvent;
     property BatchSize: integer read fBatchSize write fBatchSize;
+    property MaxObjectsInMemory: integer read FMaxObjectsInMemory write SetMaxObjectsInMemory;
   end;
 
 implementation
@@ -102,6 +108,7 @@ uses
   Vcl.Dialogs,
   Vcl.Controls,
   System.UITypes,
+  System.DateUtils,
 
   BoldLinks,
   BoldDBInterfaces,
@@ -120,81 +127,32 @@ uses
   BoldValueSpaceInterfaces,
   BoldUNdoInterfaces,
   BoldDefaultTaggedValues,
-  BoldModel, System.DateUtils;
+  BoldObjectListControllers,
+{$IFDEF SpanFetch}
+  AttracsSpanFetch, AttracsSpanFetchManager,
+{$ENDIF}
+  BoldModel;
 
 { TBoldSystemCopy }
 
 procedure TBoldSystemCopy.AfterConstruction;
 begin
   inherited;
-  fHeadTailRoles := TBoldRoleRTInfoList.Create;
-  fHeadTailRoles.OwnsEntries := false;
   fDelayedProcessList := TBoldObjectList.Create;
   fDelayedProcessList.DuplicateMode := bldmMerge;
   fProcessedObjects := TBoldObjectList.Create;
   fSkippedObjects := TBoldObjectList.Create;
-  BatchSize := 1000;
+  BatchSize := cDefaultBatchSize;
+  fMaxObjectsInMemory := cDefaultMaxObjectsInMemory;
   fSourceAllInstanceCount := -1;
 end;
 
 procedure TBoldSystemCopy.BeforeDestruction;
 begin
-  fHeadTailRoles.free;
   fDelayedProcessList.free;
   fProcessedObjects.free;
   fSkippedObjects.free;
   inherited;
-end;
-
-procedure TBoldSystemCopy.AnalyzeModel;
-var
-  TopSortedClasses: TBoldClassTypeInfoList;
-  ClassTypeInfo: TBoldClassTypeInfo;
-  RoleTypeInfo: TBoldRoleRTInfo;
-  HeadRoleTypeInfo: TBoldRoleRTInfo;
-  i: integer;
-begin
-  TopSortedClasses := self.fSourceSystemHandle.StaticSystemTypeInfo.TopSortedClasses;
-  for ClassTypeInfo in TopSortedClasses do
-  begin
-    with ClassTypeInfo do
-      if IsAbstract or IsLinkClass or (not Persistent) then
-        Continue;
-
-    for RoleTypeInfo in ClassTypeInfo.AllRoles do
-    begin
-      if not RoleTypeInfo.Persistent then
-        Continue;
-      if (RoleTypeInfo.Aggregation = akComposite) and RoleTypeInfo.RoleRTInfoOfOtherEnd.IsMultiRole then
-        Report(RoleTypeInfo.DebugInfo, []);
-      if (RoleTypeInfo.Aggregation = akComposite) {and RoleTypeInfo.RoleRTInfoOfOtherEnd.Mandatory} then
-        fHeadTailRoles.Add(RoleTypeInfo);
-    end;
-  end;
-
-  for ClassTypeInfo in TopSortedClasses do
-  begin
-    with ClassTypeInfo do
-      if IsAbstract or IsLinkClass or (not Persistent) then
-        Continue;
-
-    for RoleTypeInfo in ClassTypeInfo.AllRoles do
-    begin
-      if not RoleTypeInfo.Persistent then
-        Continue;
-      if (RoleTypeInfo.RoleRTInfoOfOtherEnd.Aggregation = akComposite) {and RoleTypeInfo.Mandatory }then
-      begin
-        HeadRoleTypeInfo := FindHead(ClassTypeInfo);
-        if Assigned(HeadRoleTypeInfo) then
-          fHeadTailRoles.Remove(HeadRoleTypeInfo);
-      end;
-    end;
-  end;
-  for i := fHeadTailRoles.Count-1 downto 0 do
-  begin
-    if FindTail(fHeadTailRoles[i].ClassTypeInfo) <> nil then
-      fHeadTailRoles.RemoveByIndex(i);
-  end;
 end;
 
 procedure TBoldSystemCopy.CheckModelCompatibility;
@@ -228,10 +186,12 @@ begin
 end;
 
 procedure TBoldSystemCopy.CheckStop;
+var
+  i: integer;
 begin
-  if fStopped then
+  AtomicExchange(i, fStopped);
+  if i > 0 then
   begin
-    fStopped := false;
     DoLogEvent('Use requested abort');
     raise EBoldSystemCopyInterrupt.Create('Use requested abort.');
   end;
@@ -290,11 +250,13 @@ var
   FilteredList: TBoldObjectList;
   MemberIdList1, MemberIdList2: TBoldMemberIdList;
   RoleTypeInfo: TBoldRoleRTInfo;
-  i, iStart, iEnd: integer;
+  i, j, iStart, iEnd: integer;
   DirtyObject: TBoldObject;
   DirtyObjects: TList;
   g: IBoldGuard;
 begin
+  for ClassTypeInfo in DestinationSystem.BoldSystemTypeInfo.TopSortedClasses do
+    DestinationSystem.Classes[ClassTypeInfo.TopSortedIndex].EnsureContentsCurrent;
   g := TBoldGuard.Create(BatchList, MemberIdList1, MemberIdList2, DestinationList, DirtyObjects);
   BatchList := TBoldObjectList.Create;
   BatchList.Capacity := BatchSize;
@@ -315,12 +277,6 @@ begin
       continue; // skip abstract, link and transient classes
     if DoOnClass(ClassTypeInfo) then
       continue;
-    RoleTypeInfo := FindTail(ClassTypeInfo);
-    if Assigned(RoleTypeInfo) then
-    begin
-      Report('Skipping tail class %s', [ClassTypeInfo.DebugInfo]);
-      Continue; // skip tail classes
-    end;
     ClassList := SourceSystem.Classes[ClassTypeInfo.TopSortedIndex];
     if ClassList.Empty then
     begin
@@ -352,12 +308,24 @@ begin
       CheckStop;
       DestinationSystem.StartTransaction;
       try
+        SourceSystem.FetchMembersWithObjects(FilteredList, MemberIdList1);
+        for j := 0 to MemberIdList1.Count-1 do
+        begin
+          var MemberRtInfo := ClassTypeInfo.AllMembers[MemberIdList1[j].MemberIndex];
+          if MemberRtInfo.IsRole and TBoldRoleRTInfo(MemberRtInfo).IsNavigable then
+          begin
+            {$IFDEF SpanFetch}
+            FetchOclSpan(FilteredList, MemberRtInfo.ExpressionName);
+            {$ELSE}
+            SourceSystem.FetchLinksWithObjects(FilteredList, MemberRtInfo.ExpressionName );
+            {$ENDIF}
+            FilteredList.EvaluateExpressionAsDirectElement(MemberRtInfo.ExpressionName);
+          end;
+        end;
         for I := 0 to FilteredList.Count - 1 do
         begin
           SourceLocator := FilteredList.Locators[i];
           DestinationLocator := nil;
-          if SkipObject(SourceLocator.EnsuredBoldObject) then
-            Continue;
           EnsureDestinationLocator(SourceLocator, DestinationLocator);
           CopyMembers(SourceLocator, MemberIdList1, DestinationList);
         end;
@@ -387,15 +355,17 @@ begin
         DirtyObjects.Clear;
         DestinationSystem.CommitTransaction;
         DestinationSystem.UpdateDatabase;
-        for i := DestinationList.Count-1 downto 0 do
-          DestinationList.Locators[i].UnloadBoldObject;
+        UnloadList(DestinationList);
+//        for i := DestinationList.Count-1 downto 0 do
+//          DestinationList.Locators[i].UnloadBoldObject;
         DestinationList.Clear;
       except
         DestinationSystem.RollbackTransaction;
         raise;
       end;
-      for i := FilteredList.Count-1 downto 0 do
-        FilteredList.Locators[i].UnloadBoldObject;
+      UnloadList(FilteredList);
+//      for i := FilteredList.Count-1 downto 0 do
+//        FilteredList.Locators[i].UnloadBoldObject;
       BatchList.Clear;
       FilteredList.free;
       if (iEnd = ClassList.Count-1) then
@@ -461,8 +431,6 @@ var
   Locator: TBoldObjectLocator;
   g: IBoldGuard;
 begin
-  if SkipObject(ASource.EnsuredBoldObject) then
-    exit;
   if fProcessedObjects.LocatorInList(ASource) then
     exit;
   fProcessedObjects.AddLocator(ASource);
@@ -487,6 +455,7 @@ begin
   try
     for j := MemberIdList.Count-1 downto 0 do
     begin
+      CheckStop;
       BoldMemberRTInfo := ASource.BoldClassTypeInfo.AllMembers[MemberIdList[j].MemberIndex];
       if BoldMemberRTInfo.IsAttribute then
       begin
@@ -500,12 +469,10 @@ begin
         if RoleRTInfo.IsSingleRole then
         begin
           SourceOtherEnd := ((ASource.EnsuredBoldObject.BoldMembers[RoleRTInfo.index]) as TBoldObjectReference).BoldObject;
-          if RoleRTInfo.Mandatory and not Assigned(SourceOtherEnd) then
-            Report('WARNING - Single role %s %s pointing to %s is mandatory but empty.', [RoleRTInfo.Debuginfo, ASource.BoldObjectID.AsString, RoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
+//          if RoleRTInfo.Mandatory and not Assigned(SourceOtherEnd) then
+//            Report('WARNING - Single role %s %s pointing to %s is mandatory but empty.', [RoleRTInfo.Debuginfo, ASource.BoldObjectID.AsString, RoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
           if Assigned(SourceOtherEnd) then
           begin
-            if SkipObject(SourceOtherEnd) then
-              Continue;
             EnsureDestinationObject(SourceOtherEnd, DestinationOtherEnd);
             if Assigned(ATouchedList) then
               ATouchedList.Add(DestinationOtherEnd);
@@ -525,8 +492,8 @@ begin
         else // multirole
         begin
           SourceList := ASource.EnsuredBoldObject.BoldMembers[RoleRTInfo.index] as TBoldObjectList;
-          if RoleRTInfo.Mandatory and SourceList.Empty  then
-            Report('WARNING - Multi role %s %s pointing to %s is mandatory but empty.', [RoleRTInfo.Debuginfo, ASource.BoldObjectID.AsString, RoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
+//          if RoleRTInfo.Mandatory and SourceList.Empty  then
+//            Report('WARNING - Multi role %s %s pointing to %s is mandatory but empty.', [RoleRTInfo.Debuginfo, ASource.BoldObjectID.AsString, RoleRTInfo.ClassTypeInfoOfOtherEnd.ExpressionName]);
           if SourceList.empty then
             Continue;
           SourceList.EnsureObjects;
@@ -534,8 +501,6 @@ begin
           for m := 0 to SourceList.Count -1 do
           begin
             SourceOtherEnd := SourceList[m];
-            if SkipObject(SourceOtherEnd) then
-              Continue;
             EnsureDestinationObject(SourceOtherEnd, DestinationOtherEnd);
             if Assigned(DestinationOtherEnd) then
             begin
@@ -572,10 +537,12 @@ begin
       end;
     end;
   finally
-    ASource.UnloadBoldObject;
+    UnloadLocator(ASource);
+//    ASource.UnloadBoldObject;
     FetchList.Free;
-    for Locator in LocatorUnloadList do
-      Locator.UnloadBoldObject;
+    UnloadLocatorList(LocatorUnloadList);
+//    for Locator in LocatorUnloadList do
+//      Locator.UnloadBoldObject;
     LocatorUnloadList.Free;
   end;
 end;
@@ -648,6 +615,64 @@ begin
   result := DestinationSystemHandle.System;
 end;
 
+type TBoldObjectListAccess = class(TBoldObjectList);
+
+procedure TBoldSystemCopy.UnloadList(const AList: TBoldObjectList);
+begin
+  if AList.Empty then
+    exit;
+var i: integer;
+var List: TBoldObjectListAccess;
+var BoldSystem:= AList.BoldSystem;
+  if not Assigned(BoldSystem) then
+    BoldSystem:= TBoldObject(AList.First).BoldSystem;
+ List := TBoldObjectListAccess(BoldSystem.Classes[0]);
+  if MaxObjectsInMemory > (list.ObjectListController as TBoldClassListController).LoadedObjectCount then
+    exit;
+  with AList.BoldSystem do
+    for i := AList.Count-1 downto 0 do
+      with AList.Locators[i] do
+      if Classes[BoldObjectID.TopSortedIndex].BoldPersistenceState <> bvpsCurrent then
+        UnloadBoldObject;
+end;
+
+procedure TBoldSystemCopy.UnloadLocator(const ABoldObjectLocator: TBoldObjectLocator);
+var
+  i: integer;
+  List: TBoldObjectListAccess;
+begin
+  List := TBoldObjectListAccess(ABoldObjectLocator.BoldSystem.Classes[0]);
+  if MaxObjectsInMemory > (list.ObjectListController as TBoldClassListController).LoadedObjectCount then
+    exit;
+  ABoldObjectLocator.UnloadBoldObject;
+end;
+
+procedure TBoldSystemCopy.UnloadLocatorList(const AList: TBoldSystemLocatorList);
+begin
+  if AList.IsEmpty then
+    exit;
+var i: integer;
+var List: TBoldObjectListAccess;
+var Locator: TBoldObjectLocator;
+
+  List := TBoldObjectListAccess((AList.Any as TBoldObjectLocator).BoldSystem.Classes[0]);
+  if MaxObjectsInMemory > (list.ObjectListController as TBoldClassListController).LoadedObjectCount then
+    exit;
+  for Locator in AList do
+    Locator.UnloadBoldObject;
+end;
+
+procedure TBoldSystemCopy.UnloadObject(const ABoldObject: TBoldObject);
+var
+  i: integer;
+  List: TBoldObjectListAccess;
+begin
+  List := TBoldObjectListAccess(ABoldObject.BoldSystem.Classes[0]);
+  if MaxObjectsInMemory > (list.ObjectListController as TBoldClassListController).LoadedObjectCount then
+    exit;
+  ABoldObject.BoldObjectLocator.UnloadBoldObject;
+end;
+
 procedure TBoldSystemCopy.UpdateLastUsedID;
 var
   Query: IBoldQuery;
@@ -656,7 +681,7 @@ begin
   Query := DestinationSystemHandle.PersistenceHandleDB.DatabaseInterface.GetQuery;
   ExecQuery := DestinationSystemHandle.PersistenceHandleDB.DatabaseInterface.GetExecQuery;
   try
-    Query.SQLText := 'Select max(bold_id) from ' + DestinationSystemHandle.StaticSystemTypeInfo.RootClassTypeInfo.ExpressionName;
+    Query.SQLText := 'Select max(bold_id) from ' + DestinationSystemHandle.PersistenceHandleDB.PersistenceControllerDefault.PersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName;
     Query.Open;
     fLastUsedId := Query.Fields[0].AsInteger;
     Query.Close;
@@ -665,6 +690,8 @@ begin
   finally
     DestinationSystemHandle.PersistenceHandleDB.DatabaseInterface.ReleaseQuery(Query);
     DestinationSystemHandle.PersistenceHandleDB.DatabaseInterface.ReleaseExecQuery(ExecQuery);
+    Query := nil;
+    ExecQuery := nil;
   end;
 end;
 
@@ -681,96 +708,22 @@ begin
   for BoldObject in TBoldObjectList(Sender) do
     if BoldObject.BoldObjectIsNew then
       inc(fNewObjectsWritten);
-  if Assigned(OnProgress) then
+  if Assigned(OnProgress) and (fNewObjectsWritten > 0) then
   begin
-    Estimate := IncSecond(0, Round(SecondsBetween(fStartTime, now) * (SourceAllInstanceCount / fNewObjectsWritten)));
+    Estimate := IncSecond(fStartTime, Round(SecondsBetween(fStartTime, now) * (SourceAllInstanceCount / fNewObjectsWritten)));
     OnProgress(self, fNewObjectsWritten, SourceAllInstanceCount, Estimate);
   end;
 end;
 
-function TBoldSystemCopy.FindHead(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
-var
-  i: integer;
+
+procedure TBoldSystemCopy.SetMaxObjectsInMemory(const Value: integer);
 begin
-  for i := 0 to fHeadTailRoles.Count -1 do
-  begin
-    result := fHeadTailRoles[i];
-    if result.ClassTypeInfo = AClassTypeInfo then
-      exit;
-  end;
-  result := nil;
-end;
-
-function TBoldSystemCopy.FindTail(AClassTypeInfo: TBoldClassTypeInfo): TBoldRoleRTInfo;
-var
-  i: integer;
-begin
-  for i := 0 to fHeadTailRoles.Count -1 do
-  begin
-    result := fHeadTailRoles[i];
-    if result.ClassTypeInfoOfOtherEnd = AClassTypeInfo then
-      exit;
-  end;
-  result := nil;
-end;
-
-function TBoldSystemCopy.SkipObject(
-  const SourceObject: TBoldObject): boolean;
-
-  function isTailOfSkippedHead: boolean;
-  var
-    j: integer;
-    RoleRTInfo: TBoldRoleRTInfo;
-    SourceOtherEnd: TBoldObject;
-  begin
-    result := false;
-    for j := SourceObject.BoldClassTypeInfo.AllRolesCount -1 downto 0 do
-    begin
-      RoleRTInfo := SourceObject.BoldClassTypeInfo.AllRoles[j];
-      if fHeadTailRoles.Includes(RoleRTInfo) or fHeadTailRoles.Includes(RoleRTInfo.RoleRTInfoOfOtherEnd) then
-      begin
-        if (RoleRTInfo.ClassTypeInfoOfOtherEnd = SourceObject.BoldClassTypeInfo) then
-        begin
-          if RoleRTInfo.IsSingleRole then
-          begin
-            if not RoleRTInfo.IsSingleRole then
-              continue; //Assert(RoleRTInfo.IsSingleRole, 'Multi ownership not supported.');
-            SourceOtherEnd := ((SourceObject.BoldMembers[RoleRTInfo.index]) as TBoldObjectReference).BoldObject;
-            result := SkipObject(SourceOtherEnd);
-          end;
-        end
-        else
-        if (RoleRTInfo.ClassTypeInfo = SourceObject.BoldClassTypeInfo) then
-        begin
-          if RoleRTInfo.RoleRTInfoOfOtherEnd.Aggregation = akComposite then
-          begin
-            if not RoleRTInfo.IsSingleRole then
-              continue; //Assert(RoleRTInfo.IsSingleRole, 'Multi ownership not supported.');
-            SourceOtherEnd := ((SourceObject.BoldMembers[RoleRTInfo.index]) as TBoldObjectReference).BoldObject;
-            if Assigned(SourceOtherEnd) then
-              result := SkipObject(SourceOtherEnd);
-          end;
-        end;
-      end;
-    end;
-  end;
-
-begin
-  Assert(assigned(SourceObject));
-  result := fSkippedObjects.Includes(SourceObject) or isTailOfSkippedHead;
-  if not result and Assigned(fObjectEvent) then
-  begin
-    OnObject(self, SourceObject, result);
-    if result then
-      fSkippedObjects.Add(SourceObject);
-  end;
-  if result then
-    Report('Skipping instance %s:%s', [SourceObject.ClassName, SourceObject.BoldObjectLocator.BoldObjectID.AsString]);
+  FMaxObjectsInMemory := Value;
 end;
 
 procedure TBoldSystemCopy.Stop;
 begin
-  fStopped := true;
+  AtomicIncrement(fStopped);
 end;
 
 procedure TBoldSystemCopy.Report(const Msg: string; const Args: array of const);
@@ -786,7 +739,7 @@ end;
 
 procedure TBoldSystemCopy.Run;
 begin
-  fStopped := false;
+  fStopped := 0;
   fNewObjectsWritten := 0;
   if not Assigned(SourceSystemHandle) then
     raise Exception.Create('Source system handle not set.');
@@ -812,14 +765,13 @@ begin
   try
     CheckStop;
     CheckModelCompatibility;
-    AnalyzeModel;
     Report('Source objects: %d Destination objects %d', [SourceAllInstanceCount, DestinationAllInstanceCount]);
     CheckStop;
     CopyInstances;
     UpdateLastUsedID;
+    Report('Completed succesfully, source: %d destination: %d.', [SourceAllInstanceCount, DestinationAllInstanceCount]);
     SourceSystemHandle.Active := false;
-    DestinationSystemHandle.Active := false;
-    Report('Completed succesfully', []);
+//    DestinationSystemHandle.Active := false;
   except
     on e:EBoldSystemCopyInterrupt do
     begin
@@ -853,14 +805,17 @@ var
   RootTableName: string;
 begin
   RootTableName := ASystemHandle.PersistenceHandleDB.PersistenceControllerDefault.PersistenceMapper.RootClassObjectPersistenceMapper.MainTable.SQLName;
-  Query := ASystemHandle.System.PersistenceController.DatabaseInterface.GetQuery;
-  try
-    Query.SQLText := 'select count(*) from ' + RootTableName;
-    Query.Open;
-    result := Query.Fields[0].AsInteger;
-    Query.Close;
-  finally
-    ASystemHandle.System.PersistenceController.DatabaseInterface.ReleaseQuery(Query);
+  with ASystemHandle.System.PersistenceController.DatabaseInterface do
+  begin
+    Query := GetQuery;
+    try
+      Query.SQLText := 'select count(*) from ' + RootTableName;
+      Query.Open;
+      result := Query.Fields[0].AsInteger;
+      Query.Close;
+    finally
+      ReleaseQuery(Query);
+    end;
   end;
 end;
 
