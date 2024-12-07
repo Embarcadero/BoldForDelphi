@@ -669,7 +669,7 @@ end;
 constructor TBoldHandleBasedExternalVariable.Create(Name: String;
   Handle: TBoldElementHandle; UseListElement: Boolean);
 begin
-  if Assigned(Handle.BoldSystem) then
+  if Assigned(Handle) and Assigned(Handle.BoldSystem) then
     inherited Create(Handle.BoldSystem.Evaluator , Name)
   else
     inherited Create(nil , Name);
