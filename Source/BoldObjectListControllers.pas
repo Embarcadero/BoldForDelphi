@@ -385,7 +385,13 @@ var
   DeletedLocator: TBoldObjectLocator;
 begin
   case OriginalEvent of
-    beLocatorDestroying, beObjectDeleted:
+    beObjectDeleted:
+      begin
+        DeletedLocator := (Originator as TBoldObject).BoldObjectLocator;
+        if LocatorList.Remove(DeletedLocator) then
+          Changed(beItemDeleted, [DeletedLocator]);
+      end;
+    beLocatorDestroying:
       begin
         DeletedLocator := Args[0].vObject as TBoldObjectLocator;
         if LocatorList.Remove(DeletedLocator) then
