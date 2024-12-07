@@ -101,7 +101,7 @@ begin
   SetLength(fArrayOfClassesToIgnore, MoldModel.Classes.Count);
 
   UseClassEvents := True; // Bold original behaviour = true
-  UseMemberLevelOSS := True; // Bold original behaviour = false
+  UseMemberLevelOSS := False; // Bold original behaviour = false
   UseSubscriptions := False; // // Bold original behaviour = true
 end;
 
