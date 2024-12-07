@@ -11,6 +11,7 @@ uses
   BoldDomainElement,
   BoldDefs,
   BoldUMLTypes,
+  BoldUnloader,
   System.SysUtils,
   Winapi.Windows;
 
@@ -53,6 +54,8 @@ type
     fStopped: Integer;
     fStartTime: TDateTime;
     FMaxObjectsInMemory: integer;
+    fSourceUnloader, fDestinationUnloader: TBoldUnloader;
+    fLastCheckStop: TDateTime;
     function GetDestinationSystem: TBoldSystem;
     function GetSourceSystem: TBoldSystem;
     procedure CollectMembers(AClassTypeInfo: TBoldClassTypeInfo; AMemberIdList: TBoldMemberIdList; ARoleTypes: TBoldRoleSet; AAttributes: boolean; ADerived: boolean = false; ADelayedFetched: boolean = false);
@@ -194,6 +197,12 @@ begin
   begin
     DoLogEvent('Use requested abort');
     raise EBoldSystemCopyInterrupt.Create('Use requested abort.');
+  end;
+  if SecondsBetween(now, fLastCheckStop) > 30 then
+  begin
+    fSourceUnloader.Tick;
+    fDestinationUnloader.Tick;
+    fLastCheckStop := now;
   end;
 end;
 
@@ -738,7 +747,17 @@ begin
 end;
 
 procedure TBoldSystemCopy.Run;
+var
+  g: IBoldGuard;
 begin
+  g := TBoldGuard.Create(fSourceUnloader, fDestinationUnloader);
+  fSourceUnloader := TBoldUnloader.Create;
+  fDestinationUnloader := TBoldUnloader.Create;
+  fSourceUnloader.ScanPerTick := 500;
+  fDestinationUnloader.ScanPerTick := 500;
+  fSourceUnloader.MinAgeForUnload := 20; // 20 * 30 sec
+  fDestinationUnloader.MinAgeForUnload := 20;
+
   fStopped := 0;
   fNewObjectsWritten := 0;
   if not Assigned(SourceSystemHandle) then
@@ -763,12 +782,19 @@ begin
   DestinationSystem.OnPreUpdate := PreUpdateDestination;
   fStartTime := now;
   try
+    fSourceUnloader.BoldSystem := SourceSystem;;
+    fDestinationUnloader.BoldSystem := DestinationSystem;
+    fLastCheckStop := now;
+    fSourceUnloader.Active := true;
+    fDestinationUnloader.Active := true;
     CheckStop;
     CheckModelCompatibility;
     Report('Source objects: %d Destination objects %d', [SourceAllInstanceCount, DestinationAllInstanceCount]);
     CheckStop;
     CopyInstances;
     UpdateLastUsedID;
+    fSourceUnloader.Active := false;
+    fDestinationUnloader.Active := false;
     Report('Completed succesfully, source: %d destination: %d.', [SourceAllInstanceCount, DestinationAllInstanceCount]);
     SourceSystemHandle.Active := false;
 //    DestinationSystemHandle.Active := false;
@@ -776,7 +802,7 @@ begin
     on e:EBoldSystemCopyInterrupt do
     begin
       fStartTime := 0;
-      ; // silent
+      raise;
     end;
   end;
 end;
