@@ -562,7 +562,6 @@
         <DCCReference Include="Source\BoldXMLRequests.pas"/>
         <DCCReference Include="Source\BoldXMLStreaming.pas"/>
         <DCCReference Include="Source\Bold_MSXML_TLB.pas"/>
-        <DCCReference Include="Source\BoldOSSMessage.pas"/>
         <DCCReference Include="Source\RationalRose_TLB.pas"/>
         <DCCReference Include="Source\RationalRose98_TLB.pas"/>
         <BuildConfiguration Include="Base">

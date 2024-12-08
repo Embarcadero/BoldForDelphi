@@ -485,7 +485,6 @@ contains
   BoldXMLRequests in 'Source\BoldXMLRequests.pas',
   BoldXMLStreaming in 'Source\BoldXMLStreaming.pas',
   Bold_MSXML_TLB in 'Source\Bold_MSXML_TLB.pas',
-  BoldOSSMessage in 'Source\BoldOSSMessage.pas',
   RationalRose_TLB in 'Source\RationalRose_TLB.pas',
   RationalRose98_TLB in 'Source\RationalRose98_TLB.pas';
 
