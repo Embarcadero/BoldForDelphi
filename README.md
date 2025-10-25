@@ -5,7 +5,7 @@ Version 4.0.1.0 Bold for Delphi, Release 4.0 - 2004-04-23
 
 Bold_Legacy branch is made for D7 or D2007 without Unicode.
 Due to copyright reason a unit BoldRegularExpression.pas is missing.
-That means Bold don't and OCL operator that use it like SQLLike don't work.
+That means Bold don't compile and OCL operator that use SQLLike don't work.
 If someone want to implement this for older versions of Delphi this is the branch to work with.
 
 Bold is a tool in the MDA (Model Driven Architecture) space, which allows you to start with an UML model of your application and a set of business rules written in a high level language and “execute” the model after creating a graphical user interface for it.
