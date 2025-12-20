@@ -8270,7 +8270,11 @@ begin
     Result := CreateNew;
     Obj := result as TBoldObject;
     EnsureContentsCurrent;
-    ObjectListController.AddLocator(Obj.BoldObjectLocator);
+    // Only add if not already in the list (e.g., for allInstances lists where
+    // CreateNew automatically adds the object to the system's class list)
+    if not ObjectListController.IncludesLocator(Obj.BoldObjectLocator) then
+      ObjectListController.AddLocator(Obj.BoldObjectLocator);
+
     aSystem.CommitTransaction;
   except
     aSystem.RollBackTransaction;
