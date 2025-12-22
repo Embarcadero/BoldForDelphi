@@ -1,4 +1,4 @@
-{ Global compiler directives }
+﻿{ Global compiler directives }
 {$include bold.inc}
 unit BoldObjectListControllers;
 
@@ -84,6 +84,7 @@ type
     procedure MarkListCurrent;
     procedure CheckStillCurrent;
     procedure SetPersistenceState(APersistenceState: TBoldValuePersistenceState);
+    procedure InternalAddLocator(Locator: TBoldObjectLocator);
   protected
     function GetCanCreateNew: Boolean; override;
     function GetStringrepresentation: String; override;
@@ -677,7 +678,7 @@ begin
           inc(fLoadedObjectCount);
           if not List.BoldPersistenceStateIsInvalid then
           begin
-            AddLocator(BoldObject.BoldObjectLocator);
+            InternalAddLocator(BoldObject.BoldObjectLocator);
             if List.HasSubscribers then
               List.Publisher.SendEvent(beValueInvalid);
           end;
@@ -698,7 +699,7 @@ begin
         if not List.BoldPersistenceStateIsInvalid then
         begin
           if not LocatorList.LocatorInList[BoldObject.BoldObjectLocator] then
-            AddLocator(BoldObject.BoldObjectLocator);
+            InternalAddLocator(BoldObject.BoldObjectLocator);
           if (List.BoldPersistenceState = bvpsTransient) and (fLoadedObjectCount = count) then
             MarkListCurrent;
         end;
@@ -756,10 +757,17 @@ begin
   result := HasLoadedSuperClass or (OwningObjectList.BoldPersistenceState = bvpsCurrent);
 end;
 
-procedure TBoldClassListController.AddLocator(Locator: TBoldObjectLocator);
+procedure TBoldClassListController.InternalAddLocator(
+  Locator: TBoldObjectLocator);
 begin
   LocatorList.Add(Locator);
   CheckStillCurrent;
+end;
+
+procedure TBoldClassListController.AddLocator(Locator: TBoldObjectLocator);
+begin
+// do nothing, class lists are updated automatically
+// could raise exception but we simply ignore for now
 end;
 
 function TBoldClassListController.AtTime(
