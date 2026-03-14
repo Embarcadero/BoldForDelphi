@@ -161,6 +161,7 @@ contains
   BoldDeriver in 'Source\Common\Subscription\BoldDeriver.pas',
   BoldSubscribableCollection in 'Source\Common\Subscription\BoldSubscribableCollection.pas',
   BoldSubscription in 'Source\Common\Subscription\BoldSubscription.pas',
+  BoldBase64 in 'Source\Common\Support\BoldBase64.pas',
   BoldCollections in 'Source\Common\Support\BoldCollections.pas',
   BoldCommonBitmaps in 'Source\Common\Support\BoldCommonBitmaps.pas',
   BoldControlPackDefs in 'Source\Common\Support\BoldControlPackDefs.pas',
