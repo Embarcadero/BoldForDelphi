@@ -219,7 +219,6 @@
         <DCCReference Include="Source\Common\Subscription\BoldDeriver.pas"/>
         <DCCReference Include="Source\Common\Subscription\BoldSubscribableCollection.pas"/>
         <DCCReference Include="Source\Common\Subscription\BoldSubscription.pas"/>
-        <DCCReference Include="Source\Common\Support\BoldBase64.pas"/>
         <DCCReference Include="Source\Common\Support\BoldCollections.pas"/>
         <DCCReference Include="Source\Common\Support\BoldCommonBitmaps.pas"/>
         <DCCReference Include="Source\Common\Support\BoldControlPackDefs.pas"/>

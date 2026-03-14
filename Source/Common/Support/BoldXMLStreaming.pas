@@ -178,7 +178,7 @@ uses
   BoldUtils,
   BoldDefs,
   BoldHashIndexes,
-  BoldBase64,
+  Flow.Encoding,
   BoldCommonConst;
 
 const
@@ -749,14 +749,11 @@ procedure TBoldXMLNode.WriteData(Value: string);
 
 var
   DataString: string;
-  Encoder: TBase64;
 begin
   if IncludesIllegalChar(Value) then
   begin
-    Encoder := TBase64.Create;
-    Encoder.EncodeData(Value, DataString);
+    DataString := TBase64.Encode(TEncoding.UTF8.GetBytes(Value));
     XMLDomElement.setAttribute('dt', 'binary.base64'); // do not localize
-    Encoder.Free;
   end else
     DataString := Value;
   WriteString(DataString);
@@ -766,17 +763,13 @@ function TBoldXMLNode.ReadData: string;
 var
   anAttr: IXMLDOMAttribute;
   DataString: string;
-  Decoder: TBase64;
 begin
   DataString := ReadString;
   anAttr := fNode.getAttributeNode('dt'); // do not localize
-  if assigned(anAttr) and (anAttr.Value = 'binary.base64') then // do not localize
-  begin
-    Decoder := TBase64.Create;
-    Decoder.DecodeData(DataString, result);
-    Decoder.Free;
-  end else
-    result := DataString;
+  if Assigned(anAttr) and (anAttr.Value = 'binary.base64') then // do not localize
+    Result := TEncoding.UTF8.GetString(TBase64.Decode(DataString))
+  else
+    Result := DataString;
 end;
 
 function TBoldXMLNode.GetIsNull: Boolean;
